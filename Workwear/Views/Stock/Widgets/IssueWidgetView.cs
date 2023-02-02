@@ -2,6 +2,7 @@ using System;
 using QS.Views.Dialog;
 using Workwear.ViewModels.Stock.Widgets;
 using Gamma.GtkWidgets;
+using Gamma.Utilities;
 using Gtk;
 
 using Workwear.Domain.Regulations;
@@ -29,7 +30,7 @@ namespace Workwear.Views.Stock.Widgets {
 			ItemListTable.Attach(label1, 1, 2, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 			var label2 = new Label {LabelProp = "Номенклатура нормы"};
-			ItemListTable.Attach(label2, 2, 3, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 100, 0);
+			ItemListTable.Attach(label2, 2, 3, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 			//var label3 = new Label {LabelProp = "Основная номенклатура"};
 			//ItemListTable.Attach(label3, 3, 4, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
@@ -48,12 +49,15 @@ namespace Workwear.Views.Stock.Widgets {
 					ItemListTable.Attach(check, 1, 2, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 					var label = new Label {LabelProp = item.ProtectionTools.Name};
-					ItemListTable.Attach(label, 2, 3, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+					label.Justify = Justification.Left;
+					label.Xalign = 0;
+					label.Wrap = true;
+					ItemListTable.Attach(label, 2, 3, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
 					//label = new Label{LabelProp = item?.Nomenclature.Name};
 					//ItemListTable.Attach(label, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
-					label = new Label {LabelProp = item.Type.ToString()};
+					label = new Label {LabelProp = item.Type.GetEnumTitle()};
 					ItemListTable.Attach(label, 3, 4, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 					label = new Label {LabelProp = item.NumberOfNeeds.ToString()};
@@ -62,10 +66,11 @@ namespace Workwear.Views.Stock.Widgets {
 					i++;
 				}
 
-//Костыль, будет время надо разобраться с динамикой
-				HeightRequest = 60 + rows * 30 < Screen.Height - 100 ? 60 + rows * 30 : Screen.Height - 100;
-				scrolledwindow1.WidthRequest = 800;
-			ItemListTable.ShowAll();
+				if(rows > 17) {
+					scrolledwindow1.VscrollbarPolicy = PolicyType.Automatic;
+					HeightRequest = 600;
+				}
+				ItemListTable.ShowAll();
 		}
 		
 		protected void OnAddToDocumentYbuttonClicked(object sender, EventArgs e) {

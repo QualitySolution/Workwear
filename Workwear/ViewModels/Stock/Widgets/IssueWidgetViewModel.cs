@@ -20,7 +20,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			this.items = wigetItems;
 			this.entityViewModel = entityViewModel;
 		}
-		
+
 		private Dictionary<int,IssueWidgetItem> items;
 		public Dictionary<int,IssueWidgetItem> Items {
 			get => items;
@@ -59,8 +59,8 @@ public class IssueWidgetItem : PropertyChangedBase {
 	
 	public IssueWidgetItem(ProtectionTools protectionTools, Nomenclature nomenclature, int numberOfNeeds = 1, bool active = true) {
 		this.active = active;
-		this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools)+" MY EXP ");
-		this.nomenclature = nomenclature;// ?? throw new ArgumentNullException(nameof(nomenclature)+" MY EXP ");
+		this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
+		this.nomenclature = nomenclature;// ?? throw new ArgumentNullException(nameof(nomenclature)");
 		this.type = protectionTools.Type.IssueType;
 		this.numberOfNeeds = numberOfNeeds;
 	}

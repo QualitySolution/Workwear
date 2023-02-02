@@ -4,7 +4,7 @@ namespace Workwear.Views.Stock.Widgets
 {
 	public partial class IssueWidgetView
 	{
-		private global::Gtk.Table table1;
+		private global::Gtk.VBox vbox1;
 
 		private global::Gtk.HBox hbox1;
 
@@ -25,11 +25,10 @@ namespace Workwear.Views.Stock.Widgets
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Views.Stock.Widgets.IssueWidgetView";
 			// Container child Workwear.Views.Stock.Widgets.IssueWidgetView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(1)), false);
-			this.table1.Name = "table1";
-			this.table1.RowSpacing = ((uint)(6));
-			this.table1.ColumnSpacing = ((uint)(6));
-			// Container child table1.Gtk.Table+TableChild
+			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
+			this.vbox1.Spacing = 6;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
@@ -75,14 +74,17 @@ namespace Workwear.Views.Stock.Widgets
 			w6.Position = 2;
 			w6.Expand = false;
 			w6.Fill = false;
-			this.table1.Add(this.hbox1);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox1]));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w7.Position = 0;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
+			this.scrolledwindow1.VscrollbarPolicy = ((global::Gtk.PolicyType)(2));
+			this.scrolledwindow1.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child scrolledwindow1.Gtk.Container+ContainerChild
 			global::Gtk.Viewport w8 = new global::Gtk.Viewport();
@@ -94,12 +96,10 @@ namespace Workwear.Views.Stock.Widgets
 			this.ItemListTable.ColumnSpacing = ((uint)(6));
 			w8.Add(this.ItemListTable);
 			this.scrolledwindow1.Add(w8);
-			this.table1.Add(this.scrolledwindow1);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.scrolledwindow1]));
-			w11.TopAttach = ((uint)(1));
-			w11.BottomAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			this.Add(this.table1);
+			this.vbox1.Add(this.scrolledwindow1);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.scrolledwindow1]));
+			w11.Position = 1;
+			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
