@@ -93,13 +93,23 @@ namespace Workwear.Views.Stock
 			
 			var addMenu = new Menu();
 			item = new MenuItem("Сотрудники");
-			item.Activated += (sender, e) => ViewModel.AddEmploees();
+			item.Activated += (sender, e) => ViewModel.AddEmployees();
 			addMenu.Add(item);
 			item = new MenuItem("Подразделения");
 			item.Activated += (sender, e) => ViewModel.AddSubdivizions();
 			addMenu.Add(item);
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();
+			
+			var refMenu = new Menu();
+			item = new MenuItem("Выбранного сотрудника");
+			item.Activated += (sender, e) => ViewModel.Refresh(ytreeItems.GetSelectedObjects<CollectiveExpenseItem>());
+			refMenu.Add(item);
+			item = new MenuItem("Всех в документе");
+			item.Activated += (sender, e) => ViewModel.Refresh(null);
+			refMenu.Add(item);
+			buttonRefresh.Menu = refMenu;
+			refMenu.ShowAll();
 		}
 
 		#region PopupMenu
@@ -170,27 +180,12 @@ namespace Workwear.Views.Stock
 
 		void YtreeItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = buttonRefreshEmployee.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-		}
-
-		protected void OnButtonAddClicked(object sender, EventArgs e)
-		{
-			ViewModel.AddItems();
+			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
 		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
 		{
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
-
-		protected void OnButtonRefreshEmployeesClicked(object sender, EventArgs e)
-		{
-			ViewModel.RefreshAll();
-		}
-
-		protected void OnButtonRefreshEmployeeClicked(object sender, EventArgs e)
-		{
-			ViewModel.RefreshItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
 		#endregion
 

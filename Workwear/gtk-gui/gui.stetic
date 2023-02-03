@@ -13451,22 +13451,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="buttonRefreshEmployees">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-redo Menu</property>
-                <property name="Label" translatable="yes">Перезаполнить всех</property>
-                <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonRefreshEmployeesClicked" />
-              </widget>
-              <packing>
-                <property name="PackType">End</property>
-                <property name="Position">1</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
+              <placeholder />
             </child>
           </widget>
           <packing>
@@ -13517,14 +13502,16 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="buttonRefreshEmployee">
+              <widget class="QS.Widgets.MenuButton" id="buttonRefresh">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-redo Menu</property>
-                <property name="Label" translatable="yes">Перезаполнить сотрудника</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Дополнить</property>
                 <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonRefreshEmployeeClicked" />
+                <property name="UseMarkup">False</property>
+                <property name="LabelXAlign">0</property>
+                <signal name="Clicked" handler="OnButtonDelClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -13542,6 +13529,9 @@
                 <property name="Icon">stock:gtk-remove Menu</property>
                 <property name="Label" translatable="yes">Удалить</property>
                 <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
                 <signal name="Clicked" handler="OnButtonDelClicked" />

@@ -107,14 +107,8 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		#endregion
 		#region Действия View
-		public void AddItems()
-		{
-			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += AddEmployees;
-		}
 
-		public void AddEmploees(){
+		public void AddEmployees(){
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
@@ -191,28 +185,6 @@ namespace Workwear.ViewModels.Stock
 			navigation.ForceClosePage(page);
 		}
 
-		public void AddEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
-		{
-			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			var progress = progressPage.ViewModel.Progress;
-
-			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
-			var employees = UoW.Query<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.List();
-			foreach(var employee in employees) {
-				progress.Add(text: employee.ShortName);
-				employee.FillWearInStockInfo(UoW, BaseParameters, Warehouse, Entity.Date);
-				progress.Add();
-			}
-			Entity.AddEmproees(employees.ToList(), BaseParameters);
-			Entity.ResortItems();
-			OnPropertyChanged(nameof(Sum));
-			progress.Close();
-			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
-		}
-
 		public void ShowAllSize(CollectiveExpenseItem item)
 		{
 			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
@@ -254,16 +226,11 @@ namespace Workwear.ViewModels.Stock
 
 		#region Обновление документа
 
-		public void RefreshAll() {
-			var Employees = Entity.Items.Select(x => x.Employee).Distinct().ToList();
-			Entity.ObservableItems.Clear();
-			AddEmployeesList(Employees);
-			Entity.ResortItems();
-		}
-
-		public void RefreshItem(CollectiveExpenseItem item) {
-			DeleteEmployee(item);
-			AddEmployeesList(new List<EmployeeCard>(){item.Employee});
+		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem = null) {
+			if(selectedCollectiveExpenseItem == null) 
+				AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).ToList());
+			else 
+				AddEmployeesList(selectedCollectiveExpenseItem.Select(x => x.Employee).ToList());
 			Entity.ResortItems();
 		}
 
