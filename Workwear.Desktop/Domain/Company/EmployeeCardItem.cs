@@ -81,17 +81,6 @@ namespace Workwear.Domain.Company
 		}
 		#endregion
 		#region Не хранимое в базе значение
-		private int amount;
-		/// <summary>
-		/// Внимание! значение не хранится в базе, для его заполнения используете метод EmployeeCard.FillWearReceivedInfo()
-		/// </summary>
-		[Display (Name = "Выданное количество")]
-		[Obsolete("УДАЛИТЬ")]
-		public virtual int Amount {
-			get => amount;
-			set => SetField (ref amount, value);
-		}
-		
 		private IList<StockBalanceDTO> inStock;
 		[Display (Name = "На складе")]
 		public virtual IList<StockBalanceDTO> InStock {
@@ -104,13 +93,14 @@ namespace Workwear.Domain.Company
 		#region Расчетное
 		public virtual string AmountColor {
 			get {
+				var amount = Issued(DateTime.Today);
 				if(ActiveNormItem == null)
 					return "Indigo";
-				if (ActiveNormItem.Amount == Amount)
+				if (ActiveNormItem.Amount == amount)
 					return "darkgreen";
-				if (ActiveNormItem.Amount < Amount)
+				if (ActiveNormItem.Amount < amount)
 					return "blue";
-				if (Amount == 0)
+				if (amount == 0)
 					return "red";
 				else
 					return "orange";
@@ -153,6 +143,8 @@ namespace Workwear.Domain.Company
 				return bestChoice;
 			}
 		}
+
+		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		#endregion
 		#region Расчетное для View
 		public virtual string MatchedNomenclatureShortText {
@@ -177,7 +169,7 @@ namespace Workwear.Domain.Company
 		public virtual string InStockText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? 
 			InStock?.Sum(x => x.Amount).ToString();
-		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
+		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 		#endregion

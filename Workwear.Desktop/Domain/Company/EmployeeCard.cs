@@ -421,7 +421,6 @@ namespace Workwear.Domain.Company
 		public virtual void FillWearReceivedInfo(EmployeeIssueRepository issueRepository) {
 			foreach(var item in WorkwearItems) {
 				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
-				item.Amount = 0;
 				item.LastIssue = null;
 			}
 
@@ -471,7 +470,6 @@ namespace Workwear.Domain.Company
 					.OrderByDescending(x => x.OperationTime.Date)
 					.ThenByDescending(x => x.ManualOperation).First();
 			var lastDate = lastOperation.OperationTime.Date;
-			item.Amount = operations.Where(x => x.OperationTime.Date == lastDate).Sum(x => x.Issued);
 			item.LastIssue = lastDate;
 			item.LastIssueOperation = lastOperation;
 			protectionGroups.Remove(protectionToolsId);
