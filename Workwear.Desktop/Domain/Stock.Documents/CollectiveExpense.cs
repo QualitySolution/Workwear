@@ -209,7 +209,7 @@ namespace Workwear.Domain.Stock.Documents
 			if (employeeCardItem.BestChoiceInStock.Any()) {
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
 			
-					if (position.Amount - AmountInList(position,addedItems) - AmountInList(position, Items) >= needPositionAmount && position.WearPercent == 0) //Частичных выдач не деелаем
+					if (position.Amount - AmountInList(position.StockPosition,addedItems) - AmountInList(position.StockPosition, Items) >= needPositionAmount && position.WearPercent == 0) //Частичных выдач не деелаем
 						return MakeItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
 				//Нехватает
@@ -219,7 +219,7 @@ namespace Workwear.Domain.Stock.Documents
 			return MakeItem(employeeCardItem);
 		}
 
-		public virtual int AmountInList(StockBalanceDTO position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке
+		public virtual int AmountInList(StockPosition position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке
 			return addedItems.Where(item => item.Nomenclature == position.Nomenclature 
 			                                && item.WearSize?.Id == position.WearSize?.Id
 			                                && item.Height?.Id == position.Height?.Id)

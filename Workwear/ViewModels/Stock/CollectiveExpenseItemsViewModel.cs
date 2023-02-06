@@ -74,6 +74,11 @@ namespace Workwear.ViewModels.Stock
 			globalProgress.Close();
 
 			Owners = UoW.GetAll<Owner>().ToList();
+			
+			savedItems = new List<CollectiveExpenseItem>();
+			foreach(var x in Entity.Items) {
+				savedItems.Add((CollectiveExpenseItem)x.Clone());
+			}
 		}
 
 		#region Хелперы
@@ -98,6 +103,14 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		public IList<Owner> Owners { get; }
+
+		private IList<CollectiveExpenseItem> savedItems;
+		/// <summary>
+		/// Копия выдач уже сохранённых в базе
+		/// </summary>
+		public IList<CollectiveExpenseItem> SavedItems {
+			get => savedItems;
+		}
 
 		#endregion
 		#region Sensetive
@@ -185,24 +198,41 @@ namespace Workwear.ViewModels.Stock
 			navigation.ForceClosePage(page);
 		}
 
-		public void ShowAllSize(CollectiveExpenseItem item)
+		public void ChangeStockPosition(CollectiveExpenseItem item) {
+			ChangeItemPositions(new List<CollectiveExpenseItem>(){item});
+		}
+
+		public void ChangeManyStockPositions(CollectiveExpenseItem item) {
+			ChangeItemPositions(Entity.Items.Where(x => x.ProtectionTools.Id == item.ProtectionTools.Id).ToList());
+		}
+		
+		private void ChangeItemPositions(List<CollectiveExpenseItem> items)
 		{
 			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
 
 			selectJournal.ViewModel.Filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
 			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
+			selectJournal.ViewModel.Filter.ProtectionTools = items.First().ProtectionTools;
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
-			selectJournal.Tag = item;
-			selectJournal.ViewModel.OnSelectResult += SetNomenclatureForRow;
+			selectJournal.Tag = items;
+			selectJournal.ViewModel.OnSelectResult +=SetNomenclatureForRows;
 		}
 
-		public void SetNomenclatureForRow(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		public void SetNomenclatureForRows(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				var item = page.Tag as CollectiveExpenseItem;
-				item.StockPosition = node.GetStockPosition(UoW);
+				foreach(var item in (List<CollectiveExpenseItem>)page.Tag) {
+					int a = item.EmployeeCardItem.Amount;
+					int b = Entity.AmountInList(node.GetStockPosition(UoW), Entity.Items);
+					int c = Entity.AmountInList(node.GetStockPosition(UoW), SavedItems);
+					int d = node.Amount;
+					//Сверка потребности с учётом сохранённого документа, добавленных строк и остатков на складе
+					if(!Equals(item.StockPosition, node.GetStockPosition(UoW)) && d>=a+b-c) {
+						item.StockPosition = node.GetStockPosition(UoW);
+						item.Amount = item.EmployeeCardItem.Amount;
+					}
+				}
 			}
 			OnPropertyChanged(nameof(Sum));
 		}
@@ -228,9 +258,9 @@ namespace Workwear.ViewModels.Stock
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem = null) {
 			if(selectedCollectiveExpenseItem == null) 
-				AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).ToList());
+				AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList());
 			else 
-				AddEmployeesList(selectedCollectiveExpenseItem.Select(x => x.Employee).ToList());
+				AddEmployeesList(selectedCollectiveExpenseItem.Select(x => x.Employee).Distinct().ToList());
 			Entity.ResortItems();
 		}
 

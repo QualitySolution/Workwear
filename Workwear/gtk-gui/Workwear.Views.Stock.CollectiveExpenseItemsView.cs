@@ -22,8 +22,6 @@ namespace Workwear.Views.Stock
 
 		private global::QS.Widgets.MenuButton buttonDel;
 
-		private global::Gtk.Button buttonShowAllSize;
-
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
@@ -69,6 +67,7 @@ namespace Workwear.Views.Stock
 			w4.Position = 1;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonAdd = new global::QS.Widgets.MenuButton();
@@ -123,31 +122,19 @@ namespace Workwear.Views.Stock
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonShowAllSize = new global::Gtk.Button();
-			this.buttonShowAllSize.Sensitive = false;
-			this.buttonShowAllSize.CanFocus = true;
-			this.buttonShowAllSize.Name = "buttonShowAllSize";
-			this.buttonShowAllSize.UseUnderline = true;
-			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Выбрать другой размер");
-			this.hbox1.Add(this.buttonShowAllSize);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonShowAllSize]));
-			w11.Position = 3;
-			w11.Expand = false;
-			w11.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.labelSum.UseMarkup = true;
 			this.hbox1.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w12.Position = 4;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
+			w11.Position = 3;
 			this.vbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-			w13.Position = 2;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
+			w12.Position = 2;
+			w12.Expand = false;
+			w12.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
@@ -157,7 +144,6 @@ namespace Workwear.Views.Stock
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonRefresh.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
-			this.buttonShowAllSize.Clicked += new global::System.EventHandler(this.OnButtonShowAllSizeClicked);
 		}
 	}
 }

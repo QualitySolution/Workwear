@@ -20,7 +20,7 @@ namespace Workwear.Domain.Stock.Documents
 		Genitive = "строки коллективной выдачи"
 		)]
 	[HistoryTrace]
-	public class CollectiveExpenseItem : PropertyChangedBase, IDomainObject
+	public class CollectiveExpenseItem : PropertyChangedBase, IDomainObject, ICloneable
 	{
 		#region Сохраняемые свойства
 		public virtual int Id { get; set; }
@@ -167,6 +167,25 @@ namespace Workwear.Domain.Stock.Documents
 			uow.Save(EmployeeIssueOperation);
 		}
 		#endregion
+
+		public virtual object Clone() {
+			CollectiveExpenseItem result = new CollectiveExpenseItem();
+
+			result.Id = Id;
+			result.document = document;
+			result.employee = employee;
+			result.protectionTools = protectionTools;
+			result.nomenclature = nomenclature;
+			result.issuanceSheetItem = issuanceSheetItem;
+			result.amount = amount;
+			result.employeeIssueOperation = employeeIssueOperation;
+			result.warehouseOperation = warehouseOperation;
+			result.height = height;
+			result.employeeCardItem = employeeCardItem;
+			result.stockBalanceSetter = stockBalanceSetter;
+			
+			return result;
+		}
 	}
 }
 

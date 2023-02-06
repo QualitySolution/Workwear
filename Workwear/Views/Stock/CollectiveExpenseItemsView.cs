@@ -135,6 +135,18 @@ namespace Workwear.Views.Stock
 			itemOpenNomenclature.Sensitive = selected.Nomenclature != null;
 			itemOpenNomenclature.Activated += Item_Activated;
 			menu.Add(itemOpenNomenclature);
+			
+			var itemCangeOperation = new MenuItemId<CollectiveExpenseItem>("Заменить выдачу");
+			itemCangeOperation.ID = selected;
+			itemCangeOperation.Sensitive = selected.Employee != null;
+			itemCangeOperation.Activated += itemCangeOperation_Activated;
+			menu.Add(itemCangeOperation);
+			
+			var itemCangeManyOperation = new MenuItemId<CollectiveExpenseItem>("Заменить выдачу у всех");
+			itemCangeManyOperation.ID = selected;
+			itemCangeManyOperation.Sensitive = selected.Employee != null;
+			itemCangeManyOperation.Activated += itemCangeManyOperation_Activated;
+			menu.Add(itemCangeManyOperation);
 
 			menu.ShowAll();
 			menu.Popup();
@@ -154,6 +166,16 @@ namespace Workwear.Views.Stock
 		{
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}
+		
+		void itemCangeOperation_Activated(object sender, EventArgs e)
+		{
+			ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+		}
+		void itemCangeManyOperation_Activated(object sender, EventArgs e)
+		{
+			ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+		}
+
 		#endregion
 
 		#region private
@@ -180,13 +202,9 @@ namespace Workwear.Views.Stock
 
 		void YtreeItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
-		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
-		{
-			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
 		#endregion
 
 		#region События
