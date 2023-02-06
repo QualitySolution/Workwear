@@ -57,12 +57,13 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 public class IssueWidgetItem : PropertyChangedBase {
 	
-	public IssueWidgetItem(ProtectionTools protectionTools, Nomenclature nomenclature, int numberOfNeeds = 1, bool active = true) {
+	public IssueWidgetItem(ProtectionTools protectionTools, Nomenclature nomenclature, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
 		this.active = active;
 		this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
 		this.nomenclature = nomenclature;// ?? throw new ArgumentNullException(nameof(nomenclature)");
 		this.type = protectionTools.Type.IssueType;
 		this.numberOfNeeds = numberOfNeeds;
+		this.numberOfIssused = numberOfIssused;
 	}
 		
 	private bool active;

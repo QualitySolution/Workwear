@@ -24,7 +24,7 @@ namespace Workwear.Views.Stock.Widgets {
 		private void ConfigureDlg() {
 
 			var rows = ViewModel.Items.Count;
-			ItemListTable.Resize((uint)(rows + 1), 4);
+			ItemListTable.Resize((uint)(rows + 1), 5);
 
 			var label1 = new Label {LabelProp = "Добавить"};
 			ItemListTable.Attach(label1, 1, 2, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
@@ -40,6 +40,9 @@ namespace Workwear.Views.Stock.Widgets {
 
 			var label4 = new Label {LabelProp = "Сотрудников"};
 			ItemListTable.Attach(label4, 4, 5, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			
+			var label5 = new Label {LabelProp = "Штук"};
+			ItemListTable.Attach(label5, 5, 6, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 			var items = ViewModel.Items;
 			uint i = 1;
@@ -64,6 +67,9 @@ namespace Workwear.Views.Stock.Widgets {
 					label = new Label {LabelProp = item.NumberOfNeeds.ToString()};
 					ItemListTable.Attach(label, 4, 5, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 	
+					label = new Label {LabelProp = item.NumberOfIssused.ToString()};
+					ItemListTable.Attach(label, 5, 6, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+
 					i++;
 				}
 

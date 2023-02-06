@@ -176,10 +176,12 @@ namespace Workwear.ViewModels.Stock
 			var itemsList = Entity.FillListItems(needs, BaseParameters, false);
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
 			foreach(var item in itemsList) {
-				if(wigetList.Any(x => x.Key == item.ProtectionTools.Id))
+				if(wigetList.Any(x => x.Key == item.ProtectionTools.Id)) {
 					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
+					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.EmployeeCardItem.Amount;
+				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, item.Nomenclature, 1,
+					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, item.Nomenclature, 1,item.EmployeeCardItem.Amount,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
 			}
 			

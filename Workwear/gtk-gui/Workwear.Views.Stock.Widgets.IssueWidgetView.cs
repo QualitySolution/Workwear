@@ -83,14 +83,13 @@ namespace Workwear.Views.Stock.Widgets
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
-			this.scrolledwindow1.VscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.scrolledwindow1.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child scrolledwindow1.Gtk.Container+ContainerChild
 			global::Gtk.Viewport w8 = new global::Gtk.Viewport();
 			w8.ShadowType = ((global::Gtk.ShadowType)(0));
 			// Container child GtkViewport.Gtk.Container+ContainerChild
-			this.ItemListTable = new global::Gtk.Table(((uint)(1)), ((uint)(4)), false);
+			this.ItemListTable = new global::Gtk.Table(((uint)(1)), ((uint)(5)), false);
 			this.ItemListTable.Name = "ItemListTable";
 			this.ItemListTable.RowSpacing = ((uint)(6));
 			this.ItemListTable.ColumnSpacing = ((uint)(6));

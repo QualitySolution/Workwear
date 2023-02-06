@@ -21121,9 +21121,12 @@
                 <child>
                   <widget class="Gtk.Table" id="ItemListTable">
                     <property name="MemberName" />
-                    <property name="NColumns">4</property>
+                    <property name="NColumns">5</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
                     <child>
                       <placeholder />
                     </child>
