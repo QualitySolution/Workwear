@@ -72,6 +72,7 @@ namespace Workwear.Domain.Operations.Graph
 				if (interval.Reset)
 					resetDate = date;
 				var activeItems = graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date &&
+				                                        (x.IssueOperation.AutoWriteoffDate == null || x.IssueOperation.AutoWriteoffDate >= date) &&
 				                                        (x.IssueOperation.OperationTime.Date > resetDate ||
 				                                         (x.IssueOperation.OperationTime.Date == resetDate &&
 				                                          x.IssueOperation.OverrideBefore)));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.DomainModel.UoW;
@@ -263,7 +264,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 0,
 				LastIssue = null,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = DateTime.Today.AddDays(30)
@@ -282,7 +282,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 4,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-30),
@@ -309,7 +308,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 1,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-30),
@@ -336,7 +334,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 2,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddMonths(-30),
@@ -364,7 +361,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 1,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-40),
@@ -391,7 +387,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 1,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddMonths(-5),
@@ -425,7 +420,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 0,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = new DateTime(2022, 5, 20)
 			};
@@ -455,7 +449,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				Amount = 1,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = new DateTime(2021, 5, 20),
@@ -636,6 +629,70 @@ namespace Workwear.Test.Domain.Company
 
 			return employeeItem.MatchStockPosition(new StockPosition(nomenclature, 0, null, null, null));
 		}
+		#endregion
+		#region LastIssued
+		[Test(Description = "Проверяем базовый случай отображения последних выдач")]
+		public void LastIssued_IssuesExistCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(30);
+
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation { //Старая выдача не отображаем
+					OperationTime = new DateTime(2020, 1, 1),
+					StartOfUse = new DateTime(2020, 1, 1),
+					ExpiryByNorm = new DateTime(2020, 2, 1),
+					AutoWriteoffDate = new DateTime(2020, 2, 1),
+					Issued = 1
+				},
+				new EmployeeIssueOperation { //Первая отображаемая
+					OperationTime = new DateTime(2022, 1, 1),
+					StartOfUse = new DateTime(2022, 1, 1),
+					ExpiryByNorm = new DateTime(2023, 1, 1),
+					AutoWriteoffDate = new DateTime(2023, 1, 1),
+					Issued = 1
+				},
+				new EmployeeIssueOperation { //Вторая отображаемая
+					OperationTime = new DateTime(2022, 4, 1),
+					StartOfUse = new DateTime(2022, 4, 1),
+					ExpiryByNorm = new DateTime(2023, 4, 1),
+					AutoWriteoffDate = new DateTime(2023, 4, 1),
+					Issued = 1
+				}
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем только первую, вторая еще как бы не выдана
+			Assert.That(item.LastIssued(new DateTime(2022, 3,1)).Count(), Is.EqualTo(1));
+			var issue = item.LastIssued(new DateTime(2022, 3, 1)).First();
+			Assert.That(issue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(issue.amount, Is.EqualTo(1));
+			Assert.That(issue.removed, Is.EqualTo(0));
+			
+			//Отображаем обе выдачи
+			Assert.That(item.LastIssued(new DateTime(2022, 6,1)).Count(), Is.EqualTo(2));
+			var issue1 = item.LastIssued(new DateTime(2022, 6, 1)).First(x => x.date == new DateTime(2022, 1, 1));
+			Assert.That(issue1.amount, Is.EqualTo(1));
+			Assert.That(issue1.removed, Is.EqualTo(0));
+			var issue2 = item.LastIssued(new DateTime(2022, 6, 1)).First(x => x.date == new DateTime(2022, 4, 1));
+			Assert.That(issue2.amount, Is.EqualTo(1));
+			Assert.That(issue2.removed, Is.EqualTo(0));
+			
+			//Только оставшуюся
+			Assert.That(item.LastIssued(new DateTime(2023, 2,1)).Count(), Is.EqualTo(1));
+			issue2 = item.LastIssued(new DateTime(2023, 2, 1)).First();
+			Assert.That(issue2.amount, Is.EqualTo(1));
+			Assert.That(issue2.removed, Is.EqualTo(0));
+			
+			//Последнюю даже с учетом того что уже не числится
+			Assert.That(item.LastIssued(new DateTime(2024, 2,1)).Count(), Is.EqualTo(1));
+			issue2 = item.LastIssued(new DateTime(2024, 2, 1)).First();
+			Assert.That(issue2.amount, Is.EqualTo(1));
+			Assert.That(issue2.removed, Is.EqualTo(0));
+		}
+
 		#endregion
 	}
 }

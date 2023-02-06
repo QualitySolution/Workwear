@@ -47,6 +47,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			Assert.That(graph.IntervalOfDate(new DateTime(2018, 2, 2)), Is.Null);
 		}
 
+		#region IssueGraphConstructor
 		[Test(Description = "Проверяем что механизм создания графа добавляет в конце пустой интервал с нулевым количеством числящегося.")]
 		public void IssueGraphConstructor_ExistEndingIntervalWithZeroAmountTest()
 		{
@@ -102,6 +103,30 @@ namespace Workwear.Test.Domain.Operations.Graph
 			Assert.That(graph.Intervals.First().StartDate, Is.EqualTo(new DateTime(2018, 1, 1)));
 			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
 		}
+		#endregion
+		#region ActiveIssues
+		[Test(Description = "Проверяем что при создании интервалов в ActiveItems не попадают операции которые уже списаны.")]
+		public void ActiveIssues_DontAddWriteoffItemsTest()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 2, 1));
+			operation1.Issued.Returns(1);
+
+			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.OperationTime.Returns(new DateTime(2018, 1, 15));
+			operation2.AutoWriteoffDate.Returns(new DateTime(2018, 2, 15));
+			operation2.Issued.Returns(2);
+
+			var list = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var graph = new IssueGraph(list);
+			
+			var interval = graph.IntervalOfDate(new DateTime(2018, 2, 7));
+			Assert.That(interval.StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
+			Assert.That(interval.ActiveIssues.Count, Is.EqualTo(1));
+			Assert.That(interval.ActiveIssues.First().IssueOperation.Issued, Is.EqualTo(2));
+		}
+		#endregion
 
 		[Test(Description = "Проверяем что механизм при подсчете итого выданного за день и возвращенного, отображаются все операции. Создан про реальному кейсу, в котором проблема была в наличии времени в операции.")]
 		public void IssuedAndWriteofAtDay_ShowAllMovmentsInOneDayTest()

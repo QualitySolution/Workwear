@@ -55,10 +55,10 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name).WrapWidth(700)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
-				.AddColumn("Дата получения")
+				.AddColumn("Послед. получение")
 					.AddPixbufRenderer(node => node.LastIssueOperation != null && node.LastIssueOperation.ManualOperation ? handIcon : null) //FIXME пока так определяем ручную операцию. Когда будут типы операций надо переделать.
-					.AddTextRenderer(node => String.Format("{0:d}", node.LastIssue))
-				.AddColumn("Получено").AddTextRenderer(node => node.AmountText)
+					.AddTextRenderer(node => node.LastIssuedText)
+				.AddColumn("Числится").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение")
 					.ToolTipText(node => node.NextIssueAnnotation)

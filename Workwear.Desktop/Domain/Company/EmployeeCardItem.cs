@@ -145,6 +145,24 @@ namespace Workwear.Domain.Company
 		}
 
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
+		
+		public virtual IEnumerable<(DateTime date, int amount, int removed)> LastIssued(DateTime onDate) {
+			if(!Graph.Intervals.Any())
+				yield break;
+			var currentInterval = Graph.IntervalOfDate(onDate);
+			if(currentInterval.ActiveIssues.Any()) {
+				foreach(var item in currentInterval.ActiveIssues) {
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
+						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate));
+				}
+			}
+			else {
+				var last = Graph.OrderedIntervalsReverse.First(x => x.StartDate <= onDate);
+				foreach(var item in last.ActiveItems) {
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0);
+				}
+			}
+		}
 		#endregion
 		#region Расчетное для View
 		public virtual string MatchedNomenclatureShortText {
@@ -172,6 +190,9 @@ namespace Workwear.Domain.Company
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
+
+		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 		public EmployeeCardItem () { }
 		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)
