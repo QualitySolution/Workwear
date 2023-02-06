@@ -181,12 +181,12 @@ namespace Workwear.ViewModels.Stock
 					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.EmployeeCardItem.Amount;
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, item.Nomenclature, 1,item.EmployeeCardItem.Amount,
+					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.EmployeeCardItem.Amount,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
 			}
 			
-			var page = navigation.OpenViewModel<IssueWidgetViewModel, CollectiveExpenseItemsViewModel, Dictionary<int, IssueWidgetItem>>
-				(null, this, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x => x.Key, x => x.Value));
+			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
+				(null, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x => x.Key, x => x.Value));
 			page.ViewModel.AddItems += () => AddItemsAdvanced(itemsList, wigetList, page);
 		}
 		public void AddItemsAdvanced(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {

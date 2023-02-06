@@ -6,19 +6,11 @@ using Workwear.Domain.Stock;
 using QS.DomainModel.Entity;
 using System.Collections.Generic;
 
-using System.Linq;
-using FluentNHibernate.Data;
-using QS.DomainModel.UoW;
-using Workwear.Domain.Stock;
-using Workwear.Domain.Stock.Documents;
-using Workwear.Measurements;
-
-
 namespace Workwear.ViewModels.Stock.Widgets {
 	public class IssueWidgetViewModel : WindowDialogViewModelBase {
-		public IssueWidgetViewModel(INavigationManager navigation, CollectiveExpenseItemsViewModel entityViewModel, Dictionary<int,IssueWidgetItem> wigetItems) : base(navigation) {
+		public IssueWidgetViewModel(INavigationManager navigation, Dictionary<int,IssueWidgetItem> wigetItems) : base(navigation) {
 			this.items = wigetItems;
-			this.entityViewModel = entityViewModel;
+			Title = "Добавить для выбранных сотрудников:";
 		}
 
 		private Dictionary<int,IssueWidgetItem> items;
@@ -26,10 +18,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			get => items;
 			set => items = value;
 		}
-
-		private CollectiveExpenseItemsViewModel entityViewModel;
-
-//Пока не понял как вклинить местные arg в событие gtk надо разобраться, сейчас пробрасываю ссылку на справочник		
+		
 		public class IssueWigetArgs : EventArgs {
 			public readonly Dictionary<int,IssueWidgetItem> wigetItems;
 			public IssueWigetArgs(Dictionary<int,IssueWidgetItem> wigetItems) {
@@ -43,7 +32,6 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			foreach(var item in items) 
 				if(!item.Value.Active)
 					item.Value.Active = true;
-			
 		}
 
 		public void UnSelectAll() {
@@ -54,13 +42,11 @@ namespace Workwear.ViewModels.Stock.Widgets {
 	};
 }
 
-
 public class IssueWidgetItem : PropertyChangedBase {
 	
-	public IssueWidgetItem(ProtectionTools protectionTools, Nomenclature nomenclature, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
+	public IssueWidgetItem(ProtectionTools protectionTools, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
 		this.active = active;
 		this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
-		this.nomenclature = nomenclature;// ?? throw new ArgumentNullException(nameof(nomenclature)");
 		this.type = protectionTools.Type.IssueType;
 		this.numberOfNeeds = numberOfNeeds;
 		this.numberOfIssused = numberOfIssused;
@@ -77,12 +63,6 @@ public class IssueWidgetItem : PropertyChangedBase {
 		get => protectionTools;
 	}
 
-	private Nomenclature nomenclature;
-	public Nomenclature Nomenclature {
-		get => nomenclature;
-		set => nomenclature = value;
-	}
-
 	private IssueType type;
 	public IssueType Type {
 		get => type;
@@ -92,5 +72,11 @@ public class IssueWidgetItem : PropertyChangedBase {
 	public int NumberOfNeeds {
 		get => numberOfNeeds;
 		set => numberOfNeeds = value;
+	}
+	
+	private int numberOfIssused;
+	public int NumberOfIssused {
+		get => numberOfIssused;
+		set => numberOfIssused = value;
 	}
 }

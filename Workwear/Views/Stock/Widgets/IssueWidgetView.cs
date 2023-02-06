@@ -5,15 +5,6 @@ using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gtk;
 
-using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock;
-using QS.DomainModel.Entity;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Workwear.Domain.Sizes;
-using System.ComponentModel;
-
-
 namespace Workwear.Views.Stock.Widgets {
 	public partial class IssueWidgetView : DialogViewBase<IssueWidgetViewModel> {
 		public IssueWidgetView(IssueWidgetViewModel viewModel) : base(viewModel) {
@@ -31,14 +22,11 @@ namespace Workwear.Views.Stock.Widgets {
 
 			var label2 = new Label {LabelProp = "Номенклатура нормы"};
 			ItemListTable.Attach(label2, 2, 3, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
-
-			//var label3 = new Label {LabelProp = "Основная номенклатура"};
-			//ItemListTable.Attach(label3, 3, 4, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 			
-			var label3 = new Label {LabelProp = "Выдача"};
+			var label3 = new Label {LabelProp = "Тип выдачи"};
 			ItemListTable.Attach(label3, 3, 4, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
-			var label4 = new Label {LabelProp = "Сотрудников"};
+			var label4 = new Label {LabelProp = "Выдач"};
 			ItemListTable.Attach(label4, 4, 5, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
 			var label5 = new Label {LabelProp = "Штук"};
@@ -55,11 +43,7 @@ namespace Workwear.Views.Stock.Widgets {
 					label.Justify = Justification.Left;
 					label.Xalign = 0;
 					label.Wrap = true;
-					//label.WidthChars = 60;
 					ItemListTable.Attach(label, 2, 3, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
-
-					//label = new Label{LabelProp = item?.Nomenclature.Name};
-					//ItemListTable.Attach(label, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 					label = new Label {LabelProp = item.Type.GetEnumTitle()};
 					ItemListTable.Attach(label, 3, 4, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);

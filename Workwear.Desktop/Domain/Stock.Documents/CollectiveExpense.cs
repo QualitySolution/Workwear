@@ -149,7 +149,6 @@ namespace Workwear.Domain.Stock.Documents
 		/// <param name="onlyCollectiveIissueType"></param> для отсечения строк только коллективной выдачи
 		/// <returns></returns>
 		public virtual List<CollectiveExpenseItem> FillListItems(List<EmployeeCardItem> items, BaseParameters baseParameters,  bool onlyCollectiveIissueType = true) { 
-//*Возможно стоит добавить IssueType.Any
 			List<CollectiveExpenseItem> result = new List<CollectiveExpenseItem>(); 
 			foreach(var item in items) {
 				if(onlyCollectiveIissueType && item.ProtectionTools?.Type.IssueType != IssueType.Collective)
