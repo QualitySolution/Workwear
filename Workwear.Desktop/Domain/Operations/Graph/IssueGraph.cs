@@ -118,7 +118,7 @@ namespace Workwear.Domain.Operations.Graph
 
 		public GraphInterval IntervalOfDate(DateTime date)
 		{
-			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
+			return OrderedIntervalsReverse.FirstOrDefault(x => x.StartDate <= date.Date);
 		}
 
 		#endregion
