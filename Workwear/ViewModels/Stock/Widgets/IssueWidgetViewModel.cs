@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using QS.DomainModel.Entity;
 using QS.ViewModels.Dialog;
 using QS.Navigation;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using QS.DomainModel.Entity;
-using System.Collections.Generic;
 
 namespace Workwear.ViewModels.Stock.Widgets {
 	public class IssueWidgetViewModel : WindowDialogViewModelBase {
@@ -18,15 +18,8 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			get => items;
 			set => items = value;
 		}
-		
-		public class IssueWigetArgs : EventArgs {
-			public readonly Dictionary<int,IssueWidgetItem> wigetItems;
-			public IssueWigetArgs(Dictionary<int,IssueWidgetItem> wigetItems) {
-				this.wigetItems = wigetItems;
-			}
-		}
 
-		public Action AddItems;
+		public Action<Dictionary<int,IssueWidgetItem>> AddItems;
 		
 		public void SelectAll() {
 			foreach(var item in items) 
@@ -46,7 +39,7 @@ public class IssueWidgetItem : PropertyChangedBase {
 	
 	public IssueWidgetItem(ProtectionTools protectionTools, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
 		this.active = active;
-		this.protectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
+		this.ProtectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
 		this.type = protectionTools.Type.IssueType;
 		this.numberOfNeeds = numberOfNeeds;
 		this.numberOfIssused = numberOfIssused;
@@ -58,10 +51,7 @@ public class IssueWidgetItem : PropertyChangedBase {
 		set => SetField(ref active, value);
 	}
 
-	private ProtectionTools protectionTools;
-	public ProtectionTools ProtectionTools {
-		get => protectionTools;
-	}
+	public ProtectionTools ProtectionTools { get; }
 
 	private IssueType type;
 	public IssueType Type {

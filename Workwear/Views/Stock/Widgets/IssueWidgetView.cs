@@ -1,9 +1,9 @@
 using System;
-using QS.Views.Dialog;
-using Workwear.ViewModels.Stock.Widgets;
+using Gtk;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
-using Gtk;
+using QS.Views.Dialog;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.Views.Stock.Widgets {
 	public partial class IssueWidgetView : DialogViewBase<IssueWidgetViewModel> {
@@ -29,7 +29,7 @@ namespace Workwear.Views.Stock.Widgets {
 			var label4 = new Label {LabelProp = "Выдач"};
 			ItemListTable.Attach(label4, 4, 5, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label5 = new Label {LabelProp = "Штук"};
+			var label5 = new Label {LabelProp = "Кол-во"};
 			ItemListTable.Attach(label5, 5, 6, 0, 0 + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 			var items = ViewModel.Items;
@@ -65,7 +65,7 @@ namespace Workwear.Views.Stock.Widgets {
 		}
 		
 		protected void OnAddToDocumentYbuttonClicked(object sender, EventArgs e) {
-			ViewModel.AddItems();
+			ViewModel.AddItems(ViewModel.Items);
 		}
 
 		protected void OnSelectAllYbuttonClicked(object sender, EventArgs e) {

@@ -17,11 +17,12 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Measurements;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
-using Workwear.Measurements;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
@@ -138,14 +139,13 @@ namespace Workwear.ViewModels.Stock
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
 
 			var progress = progressPage.ViewModel.Progress;
-			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
+			progress.Start(employeeIds.Length + 1, text: "Загружаем сотрудников");
 			var employees = UoW.Query<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
 				.List();
 			foreach(var employee in employees) {
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-				progress.Add();
 			}
 			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			AddEmployeesList(employees);
@@ -154,14 +154,11 @@ namespace Workwear.ViewModels.Stock
 		private void LoadSubdivizions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var subdivizionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			
 
-			var employees = UoW.Query<EmployeeCard>()
-				.Where(x => x.Subdivision.Id.IsIn(subdivizionIds))
-				.List();
+			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivizionIds);
 			
 			var progress = progressPage.ViewModel.Progress;
-			progress.Start(employees.Count * 2 + 1, text: "Загружаем сотрудников");
+			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
 			foreach(var employee in employees) {
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
@@ -188,10 +185,10 @@ namespace Workwear.ViewModels.Stock
 			
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
 				(null, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x => x.Key, x => x.Value));
-			page.ViewModel.AddItems += () => AddItemsAdvanced(itemsList, wigetList, page);
-		}
-		public void AddItemsAdvanced(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {
+			page.ViewModel.AddItems = (w) => AddItemsFromWiget(itemsList, w, page);
 			
+		}
+		public void AddItemsFromWiget(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {
 			for (int i = itemsList.Count - 1; i >= 0; i--) //корректировка в соответствии с данными виджета
 				if(!wigetItems.First(x => x.Key == itemsList[i].ProtectionTools.Id)
 				   .Value.Active)

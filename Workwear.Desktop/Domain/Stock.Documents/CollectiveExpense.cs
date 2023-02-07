@@ -131,7 +131,7 @@ namespace Workwear.Domain.Stock.Documents
 		/// <summary>
 		/// Добавить в документ потребности списка сотрудников
 		/// </summary>
-		public virtual void AddEmproees(List<EmployeeCard> employees, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) {
+		public virtual void AddEmployees(List<EmployeeCard> employees, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) {
 			List<EmployeeCardItem> items = new List<EmployeeCardItem>();
 			foreach(var employee in employees) {
 				foreach(var item in employee.WorkwearItems) {
@@ -195,7 +195,7 @@ namespace Workwear.Domain.Stock.Documents
 		/// <param name="employeeCardItem"></param> потребность
 		/// <param name="addedItems"></param>формируемый список строк, который ещё в документ не добавлен 
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception> 1 выдача (не ввыдаёт частично, не выдаёт разные по одной потребности)
+		/// <exception cref="ArgumentNullException"></exception> 1 выдача (не выдаёт частично, не выдаёт разные по одной потребности)
 		public virtual CollectiveExpenseItem PickItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
