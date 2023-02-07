@@ -497,7 +497,7 @@ namespace Workwear.Test.Domain.Company
 		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
 		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
 		[TestCase(Sex.None, ClothesSex.Universal, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex? clothesSex)
+		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex clothesSex)
 		{
 			var employee = new EmployeeCard();
 			employee.Sex = employeeSex;
