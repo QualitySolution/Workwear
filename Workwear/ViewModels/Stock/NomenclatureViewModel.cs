@@ -67,8 +67,7 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
 		#region Visible
-		public bool VisibleClothesSex =>
-			Entity.Type != null && Entity.Type.Category == ItemTypeCategory.wear;
+		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
 
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
