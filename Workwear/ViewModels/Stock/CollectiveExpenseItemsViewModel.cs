@@ -32,7 +32,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
-
+		private readonly EmployeeRepository employeeRepository;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
@@ -41,8 +41,9 @@ namespace Workwear.ViewModels.Stock
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
+			this.employeeRepository = new EmployeeRepository(UoW);
+			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа

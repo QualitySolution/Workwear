@@ -124,7 +124,7 @@ namespace Workwear.ViewModels.Statements
 			foreach(var subdivisionNode in e.GetSelectedObjects<SubdivisionJournalNode>()) {
 				if(issuanceSheetViewModel.Entity.Subdivision == null)
 					issuanceSheetViewModel.Entity.Subdivision = issuanceSheetViewModel.UoW.GetById<Subdivision>(subdivisionNode.Id);
-				var inSubdivision = employeeRepository.GetActiveEmployeesFromSubdivision(issuanceSheetViewModel.UoW, subdivisionNode.Id);
+				var inSubdivision = employeeRepository.GetActiveEmployeesFromSubdivisions(issuanceSheetViewModel.UoW, new int[] {subdivisionNode.Id });
 				foreach(var employee in inSubdivision) {
 					if(employees.All(x => x.Id != employee.Id))
 						observableEmployees.Add(employee);
