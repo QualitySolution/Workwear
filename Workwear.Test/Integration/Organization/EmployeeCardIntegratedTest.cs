@@ -511,7 +511,7 @@ namespace Workwear.Test.Integration.Organization
 
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Amount, Is.EqualTo(1));
+				Assert.That(item.Issued(new DateTime(2018, 2 ,1)), Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
@@ -593,9 +593,10 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
+				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Amount, Is.EqualTo(1));
+				Assert.That(item.Issued(today), Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
@@ -694,9 +695,10 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
+				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Amount, Is.EqualTo(5));
+				Assert.That(item.Issued(today), Is.EqualTo(5));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
@@ -774,10 +776,11 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
+				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
-				Assert.That(item.Amount, Is.EqualTo(1));
+				Assert.That(item.Issued(today), Is.EqualTo(1));
 				
 			}
 		}
@@ -841,9 +844,9 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
+				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Amount, Is.EqualTo(1));
 				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
@@ -934,11 +937,12 @@ namespace Workwear.Test.Integration.Organization
 
 				uow.Commit();
 
+				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item1 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem);
-				Assert.That(item1.Amount, Is.EqualTo(1));
+				Assert.That(item1.Issued(today), Is.EqualTo(1));
 				var item2 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem2);
-				Assert.That(item2.Amount, Is.EqualTo(2));
+				Assert.That(item2.Issued(today), Is.EqualTo(2));
 
 			}
 		}

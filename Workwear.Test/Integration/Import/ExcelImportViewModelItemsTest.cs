@@ -168,13 +168,13 @@ namespace Workwear.Test.Integration.Import
 					var savedEmployee = uow.GetById<EmployeeCard>(employee.Id);
 					Assert.That(savedEmployee.FirstName, Is.EqualTo("Алексей"));
 					var wearitemSuit = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection5.Id);
-					Assert.That(wearitemSuit.Amount, Is.EqualTo(1));
+					Assert.That(wearitemSuit.Issued(new DateTime(2020, 7, 18)), Is.EqualTo(1));
 					Assert.That(wearitemSuit.LastIssue, Is.EqualTo(new DateTime(2020, 6, 18)));
 					var wearitemGloves = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection2.Id);
-					Assert.That(wearitemGloves.Amount, Is.EqualTo(12));
+					Assert.That(wearitemGloves.Issued(new DateTime(2021, 6, 18)), Is.EqualTo(12));
 					Assert.That(wearitemGloves.LastIssue, Is.EqualTo(new DateTime(2021, 5, 18)));
 					var wearitemPPE = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection4.Id);
-					Assert.That(wearitemPPE.Amount, Is.EqualTo(5));
+					Assert.That(wearitemPPE.Issued(new DateTime(2021, 5, 18)), Is.EqualTo(5));
 					Assert.That(wearitemPPE.LastIssue, Is.EqualTo(new DateTime(2021, 5, 18)));
 					
 					//Проверяем создание операций...
