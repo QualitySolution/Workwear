@@ -634,9 +634,6 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "Проверяем базовый случай отображения последних выдач")]
 		public void LastIssued_IssuesExistCase()
 		{
-			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(30);
-
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation { //Старая выдача не отображаем
 					OperationTime = new DateTime(2020, 1, 1),
@@ -691,6 +688,63 @@ namespace Workwear.Test.Domain.Company
 			issue2 = item.LastIssued(new DateTime(2024, 2, 1)).First();
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
+		}
+		
+		[Test(Description = "Проверяем что в последних выдачах адекватно отображаем количество списанного")]
+		public void LastIssued_ShowRemoveCountCase() {
+			var issue = new EmployeeIssueOperation {
+				//Выдача
+				OperationTime = new DateTime(2022, 1, 1),
+				StartOfUse = new DateTime(2022, 1, 1),
+				ExpiryByNorm = new DateTime(2023, 1, 1),
+				AutoWriteoffDate = new DateTime(2023, 1, 1),
+				Issued = 10
+			};
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				issue,
+				new EmployeeIssueOperation { //Списание
+					OperationTime = new DateTime(2022, 2, 1),
+					IssuedOperation = issue,
+					Returned = 2
+				},
+				new EmployeeIssueOperation { //Списание
+					OperationTime = new DateTime(2022, 4, 1),
+					IssuedOperation = issue,
+					Returned = 1
+				}
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем полную выдачу
+			Assert.That(item.LastIssued(new DateTime(2022, 1,20)).Count(), Is.EqualTo(1));
+			var lastissue = item.LastIssued(new DateTime(2022, 1, 20)).First();
+			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(lastissue.amount, Is.EqualTo(10));
+			Assert.That(lastissue.removed, Is.EqualTo(0));
+			
+			//С первым списанием
+			Assert.That(item.LastIssued(new DateTime(2022, 2,10)).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2022, 2, 10)).First();
+			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(lastissue.amount, Is.EqualTo(10));
+			Assert.That(lastissue.removed, Is.EqualTo(2));
+			
+			//Со обоими списаниями
+			Assert.That(item.LastIssued(new DateTime(2022, 5,10)).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2022, 5, 10)).First();
+			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(lastissue.amount, Is.EqualTo(10));
+			Assert.That(lastissue.removed, Is.EqualTo(3));
+			
+			//После основного списания
+			Assert.That(item.LastIssued(new DateTime(2023, 5,10)).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2023, 5, 20)).First();
+			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(lastissue.amount, Is.EqualTo(10));
+			//Assert.That(lastissue.removed, Is.EqualTo(3)); Здесь не знаю как правильно, поэтому пока не проверяем, предположу то не надо усложнять вро уже списанное.
 		}
 
 		#endregion
