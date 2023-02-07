@@ -127,9 +127,13 @@ namespace Workwear.Test.Integration.Import
 				var norm = new Norm();
 				norm.AddPost(post);
 				norm.AddItem(protection1);
-				norm.AddItem(protection2);
+				var normItem = norm.AddItem(protection2);
+				normItem.Amount = 12;
+				normItem.NormPeriod = NormPeriodType.Month;
 				norm.AddItem(protection3);
-				norm.AddItem(protection4);
+				normItem = norm.AddItem(protection4);
+				normItem.Amount = 5;
+				normItem.NormPeriod = NormPeriodType.Month;
 				norm.AddItem(protection5);
 				uowPrepare.Save(norm);
 
@@ -166,12 +170,15 @@ namespace Workwear.Test.Integration.Import
 
 					var uow = itemsLoad.UoW;
 					var savedEmployee = uow.GetById<EmployeeCard>(employee.Id);
+					savedEmployee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 					Assert.That(savedEmployee.FirstName, Is.EqualTo("Алексей"));
 					var wearitemSuit = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection5.Id);
 					Assert.That(wearitemSuit.Issued(new DateTime(2020, 7, 18)), Is.EqualTo(1));
 					Assert.That(wearitemSuit.LastIssue, Is.EqualTo(new DateTime(2020, 6, 18)));
 					var wearitemGloves = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection2.Id);
-					Assert.That(wearitemGloves.Issued(new DateTime(2021, 6, 18)), Is.EqualTo(12));
+					Assert.That(wearitemGloves.Issued(new DateTime(2021, 4, 20)), Is.EqualTo(12));
+					Assert.That(wearitemGloves.Issued(new DateTime(2021, 5, 20)), Is.EqualTo(12));
+					Assert.That(wearitemGloves.Issued(new DateTime(2021, 6, 20)), Is.EqualTo(0));
 					Assert.That(wearitemGloves.LastIssue, Is.EqualTo(new DateTime(2021, 5, 18)));
 					var wearitemPPE = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection4.Id);
 					Assert.That(wearitemPPE.Issued(new DateTime(2021, 5, 18)), Is.EqualTo(5));
