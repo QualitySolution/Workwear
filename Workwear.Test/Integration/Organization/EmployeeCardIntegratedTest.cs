@@ -508,11 +508,12 @@ namespace Workwear.Test.Integration.Organization
 				};
 				uow.Save(operation);
 				uow.Commit();
-
+				
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+				var today = new DateTime(2018, 2, 1);
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.Issued(new DateTime(2018, 2 ,1)), Is.EqualTo(1));
-				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
+				Assert.That(item.Issued(today), Is.EqualTo(1));
+				Assert.That(item.LastIssued(today).First().date, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
 
@@ -597,7 +598,7 @@ namespace Workwear.Test.Integration.Organization
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Issued(today), Is.EqualTo(1));
-				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
+				Assert.That(item.LastIssued(today).First().date, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
 
@@ -699,7 +700,7 @@ namespace Workwear.Test.Integration.Organization
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
 				Assert.That(item.Issued(today), Is.EqualTo(5));
-				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2019, 1, 20)));
+				Assert.That(item.LastIssued(today).First().date, Is.EqualTo(new DateTime(2019, 1, 20)));
 			}
 		}
 
@@ -779,9 +780,8 @@ namespace Workwear.Test.Integration.Organization
 				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
-				Assert.That(item.Issued(today), Is.EqualTo(1));
-				
+				Assert.That(item.LastIssued(today).First().date, Is.EqualTo(new DateTime(2018, 1, 20)));
+				Assert.That(item.LastIssued(today).First().amount, Is.EqualTo(1));
 			}
 		}
 
@@ -847,7 +847,7 @@ namespace Workwear.Test.Integration.Organization
 				var today = new DateTime(2020, 1, 1);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 				var item = employee.WorkwearItems.First();
-				Assert.That(item.LastIssue, Is.EqualTo(new DateTime(2018, 1, 20)));
+				Assert.That(item.LastIssued(today).First().date, Is.EqualTo(new DateTime(2018, 1, 20)));
 			}
 		}
 

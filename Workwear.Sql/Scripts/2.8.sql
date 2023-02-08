@@ -1091,7 +1091,8 @@ ALTER TABLE `posts`
 
 -- Удаляем более не используемое поле
 ALTER TABLE `wear_cards_item`
-DROP COLUMN `amount`;
+	DROP COLUMN `amount`,
+	DROP COLUMN `last_issue`;
 
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;

@@ -58,13 +58,6 @@ namespace Workwear.Domain.Company
 			set => SetField (ref created, value);
 		}
 
-		private DateTime? lastIssue;
-		[Display (Name = "Последняя выдача")]
-		public virtual DateTime? LastIssue {
-			get => lastIssue;
-			set => SetField (ref lastIssue, value);
-		}
-
 		private DateTime? nextIssue;
 		[Display (Name = "Следующая выдача")]
 		public virtual DateTime? NextIssue {

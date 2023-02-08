@@ -15,6 +15,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.Models.Import.Issuance;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
@@ -153,9 +154,10 @@ namespace Workwear.Test.Integration.Import
 				var interactive = Substitute.For<IInteractiveMessage>();
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository());
 				var setting = new SettingsWorkwearItemsViewModel();
 				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
-				var model = new ImportModelWorkwearItems(dataparser, setting);
+				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 					itemsLoad.ProgressStep = progressStep;
 					itemsLoad.FileName = "Samples/Excel/items_vostok.xls";
@@ -174,15 +176,15 @@ namespace Workwear.Test.Integration.Import
 					Assert.That(savedEmployee.FirstName, Is.EqualTo("Алексей"));
 					var wearitemSuit = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection5.Id);
 					Assert.That(wearitemSuit.Issued(new DateTime(2020, 7, 18)), Is.EqualTo(1));
-					Assert.That(wearitemSuit.LastIssue, Is.EqualTo(new DateTime(2020, 6, 18)));
+					Assert.That(wearitemSuit.LastIssued(new DateTime(2020, 7, 18)).First().date, Is.EqualTo(new DateTime(2020, 6, 18)));
 					var wearitemGloves = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection2.Id);
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 4, 20)), Is.EqualTo(12));
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 5, 20)), Is.EqualTo(12));
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 6, 20)), Is.EqualTo(0));
-					Assert.That(wearitemGloves.LastIssue, Is.EqualTo(new DateTime(2021, 5, 18)));
+					Assert.That(wearitemGloves.LastIssued(new DateTime(2021, 6, 20)).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
 					var wearitemPPE = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection4.Id);
 					Assert.That(wearitemPPE.Issued(new DateTime(2021, 5, 18)), Is.EqualTo(5));
-					Assert.That(wearitemPPE.LastIssue, Is.EqualTo(new DateTime(2021, 5, 18)));
+					Assert.That(wearitemPPE.LastIssued(new DateTime(2021, 5, 18)).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
 					
 					//Проверяем создание операций...
 					var issueRepository = new EmployeeIssueRepository(uow);
@@ -293,8 +295,9 @@ namespace Workwear.Test.Integration.Import
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
 				var setting = new SettingsWorkwearItemsViewModel();
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository());
 				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
-				var model = new ImportModelWorkwearItems(dataparser, setting);
+				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 					itemsLoad.ProgressStep = progressStep;
 					itemsLoad.FileName = "Samples/Excel/items_dateCells.xlsx";
@@ -394,8 +397,9 @@ namespace Workwear.Test.Integration.Import
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
 				var setting = new SettingsWorkwearItemsViewModel();
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository());
 				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
-				var model = new ImportModelWorkwearItems(dataparser, setting);
+				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
 					itemsLoad.ProgressStep = progressStep;
 					itemsLoad.FileName = "Samples/Excel/items_dateCells.xlsx";

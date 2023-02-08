@@ -78,5 +78,16 @@ namespace Workwear.Models.Operations {
 
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
 		#endregion
+
+		#region Employees
+		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null) {
+			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
+			if(notSavedOperations != null)
+				operations.AddRange(notSavedOperations);
+			foreach(var employee in employees) {
+				employee.FillWearReceivedInfo(operations.Where(x => x.Employee.IsSame(employee)).ToList());
+			}
+		}
+		#endregion
 	}
 }

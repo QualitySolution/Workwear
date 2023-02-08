@@ -419,13 +419,11 @@ namespace Workwear.Domain.Company
 		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
 		/// </summary>
 		public virtual void FillWearReceivedInfo(EmployeeIssueRepository issueRepository) {
-			foreach(var item in WorkwearItems) {
-				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
-				item.LastIssue = null;
-			}
-
 			if(Id == 0) {
-				// Не лезть в базу, так как сотрудник еще не сохранен.
+				// Нет смысла лезть в базу, так как сотрудник еще не сохранен.
+				foreach(var item in WorkwearItems) {
+					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+				}
 				return;
 			}
 			FillWearReceivedInfo(issueRepository.AllOperationsForEmployee(this));
@@ -435,6 +433,10 @@ namespace Workwear.Domain.Company
 		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
 		/// </summary>
 		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
+			foreach(var item in WorkwearItems) {
+				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+			}
+			
 			var protectionGroups = 
 				operations
 					.Where(x => x.ProtectionTools != null)
@@ -469,8 +471,6 @@ namespace Workwear.Domain.Company
 					.Where(i => i.Issued > 0)
 					.OrderByDescending(x => x.OperationTime.Date)
 					.ThenByDescending(x => x.ManualOperation).First();
-			var lastDate = lastOperation.OperationTime.Date;
-			item.LastIssue = lastDate;
 			item.LastIssueOperation = lastOperation;
 			protectionGroups.Remove(protectionToolsId);
 		}

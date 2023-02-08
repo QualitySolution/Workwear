@@ -264,7 +264,6 @@ namespace Workwear.Test.Domain.Company
 			};
 			var item = new EmployeeCardItem {
 				ActiveNormItem = norm,
-				LastIssue = null,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
@@ -291,7 +290,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 4
 					}
 				}),
-				LastIssue = DateTime.Today.AddDays(-30),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
@@ -317,7 +315,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 1
 					}
 				}),
-				LastIssue = DateTime.Today.AddDays(-30),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(3));
@@ -344,7 +341,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 2
 					}
 				}),
-				LastIssue = DateTime.Today.AddMonths(-30),
 				NextIssue = null
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
@@ -370,7 +366,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 1
 					}
 				}),
-				LastIssue = DateTime.Today.AddDays(-40),
 				NextIssue = DateTime.Today.AddDays(-10)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
@@ -396,7 +391,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 1
 					}
 				}),
-				LastIssue = DateTime.Today.AddMonths(-5),
 				NextIssue = DateTime.Today.AddDays(-10)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(1));
@@ -458,7 +452,6 @@ namespace Workwear.Test.Domain.Company
 						Issued = 1
 					}
 				}),
-				LastIssue = new DateTime(2021, 5, 20),
 				NextIssue = new DateTime(2022, 5, 20)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 3, 20)), Is.EqualTo(0));//Еще действует старая выдача
