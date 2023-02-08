@@ -447,7 +447,8 @@ namespace Workwear.Domain.Company
 			foreach (var item in WorkwearItems) {
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
-				SetLastIssue(item, item.ProtectionTools.Id, protectionGroups);
+				item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 			
 			//Дополнительно ищем по аналогам.
@@ -457,22 +458,9 @@ namespace Workwear.Domain.Company
 					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
 				if(matched == null)
 					continue;
-				SetLastIssue(item, matched.Id, protectionGroups);
+				item.Graph = new IssueGraph(protectionGroups[matched.Id].ToList());
+				protectionGroups.Remove(matched.Id);
 			}
-		}
-
-		private void SetLastIssue(EmployeeCardItem item, int protectionToolsId, Dictionary<int,IGrouping<int, EmployeeIssueOperation>> protectionGroups) {
-			var operations = protectionGroups[protectionToolsId].ToList();
-			item.Graph = new IssueGraph(operations);
-			//В сортировке ManualOperation, чтобы в ситуации когда на одну дату есть несколько операция,
-			//чтобы выводилась именно ручная.
-			var lastOperation = 
-				operations
-					.Where(i => i.Issued > 0)
-					.OrderByDescending(x => x.OperationTime.Date)
-					.ThenByDescending(x => x.ManualOperation).First();
-			item.LastIssueOperation = lastOperation;
-			protectionGroups.Remove(protectionToolsId);
 		}
 
 		public virtual void FillWearInStockInfo(

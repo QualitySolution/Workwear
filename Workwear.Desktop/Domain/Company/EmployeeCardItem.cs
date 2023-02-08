@@ -80,10 +80,11 @@ namespace Workwear.Domain.Company
 			get => inStock;
 			set => SetField (ref inStock, value);
 		}
-		public virtual EmployeeIssueOperation LastIssueOperation { get; set; }
+
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
+		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item.IssueOperation;
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -139,20 +140,20 @@ namespace Workwear.Domain.Company
 
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
-		public virtual IEnumerable<(DateTime date, int amount, int removed)> LastIssued(DateTime onDate) {
+		public virtual IEnumerable<(DateTime date, int amount, int removed, GraphItem item)> LastIssued(DateTime onDate) {
 			if(!Graph.Intervals.Any())
 				yield break;
 			var currentInterval = Graph.IntervalOfDate(onDate);
 			if(currentInterval.ActiveIssues.Any()) {
 				foreach(var item in currentInterval.ActiveIssues) {
 					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
-						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate));
+						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item);
 				}
 			}
 			else {
 				var last = Graph.OrderedIntervalsReverse.First(x => x.StartDate <= onDate);
 				foreach(var item in last.ActiveItems) {
-					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0);
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
 				}
 			}
 		}
