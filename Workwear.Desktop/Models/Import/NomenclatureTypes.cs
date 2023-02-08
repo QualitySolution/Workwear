@@ -202,13 +202,13 @@ namespace Workwear.Models.Import
 			{"универсальная", ClothesSex.Universal},
 		};
 
-		public ClothesSex? ParseSex(string name) {
+		public ClothesSex ParseSex(string name) {
 			var parts = name.ToLower().Split(' ', '-');
 			foreach(var word in parts) {
 				if(SexKeywords.TryGetValue(word, out var sex))
 					return sex;
 			}
-			return null;
+			return ClothesSex.Universal;
 		}
 		#region Получение специфичных типов.
 		public ItemsType GetUnknownType() {

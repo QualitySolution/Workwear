@@ -32,7 +32,7 @@ namespace Workwear.Views.Stock {
 
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding
-				.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull)
+				.AddBinding (Entity, e => e.Sex, w => w.SelectedItem)
 				.InitializeFromSource ();
 			ycomboClothesSex.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleClothesSex, w => w.Visible)
