@@ -65,6 +65,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Расчетные
 		public virtual string Title => $"Коллективная выдача №{Id} от {Date:d}";
+		public virtual IEnumerable<EmployeeCard> Employees => Items.Select(x => x.Employee).Distinct();
 		#endregion
 
 		#region IValidatableObject implementation
@@ -212,7 +213,7 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
-		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
+		public virtual void PrepareItems(IUnitOfWork uow)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
 			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems);

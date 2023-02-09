@@ -22,6 +22,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
+using Workwear.Models.Operations;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -30,22 +31,25 @@ namespace Workwear.ViewModels.Stock
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
+		private readonly EmployeeIssueModel issueModel;
 		private readonly IDeleteEntityService deleteService;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
+		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, EmployeeIssueModel issueModel, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
 		{
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			issueModel.UoW = UoW;
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(2);
+			globalProgress.Start(4);
 			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.Where(x => x.Document.Id == Entity.Id)
 				.Fetch(SelectMode.ChildFetch, x => x)
@@ -63,16 +67,18 @@ namespace Workwear.ViewModels.Stock
 
 			query.ToList();
 			globalProgress.Add();
-
-			Entity.PrepareItems(UoW, baseParameters);
+			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
+			globalProgress.Add();
+			Entity.PrepareItems(UoW);
 			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
-			globalProgress.Close();
 
+			globalProgress.Add();
 			Owners = UoW.GetAll<Owner>().ToList();
+			globalProgress.Close();
 		}
 
 		#region Хелперы
@@ -119,10 +125,12 @@ namespace Workwear.ViewModels.Stock
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
 			var progress = progressPage.ViewModel.Progress;
 
-			progress.Start(employeeIds.Length * 2 + 1, text: "Загружаем сотрудников");
+			progress.Start(employeeIds.Length * 2 + 2, text: "Загружаем сотрудников");
 			var employees = UoW.Query<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
 				.List();
+			progress.Add();
+			issueModel.FillWearReceivedInfo(employees.ToArray());
 			foreach(var employee in employees) {
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Warehouse, Entity.Date);

@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-			this.interactive = interactive;
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
