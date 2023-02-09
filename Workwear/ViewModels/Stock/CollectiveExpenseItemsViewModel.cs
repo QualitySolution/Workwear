@@ -116,7 +116,11 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensetiveAddButton => Entity.Warehouse != null;
+		public bool SensitiveAddButton => Entity.Warehouse != null;
+		public bool SensitiveButtonChange => selectedItem != null;
+		public bool SensitiveButtonDel => selectedItem != null;
+		public bool SensitiveRefreshMenuItem => selectedItem != null;
+		public bool SensitiveRefreshAllMenuItem => Entity.Items.Any();
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
@@ -256,11 +260,12 @@ namespace Workwear.ViewModels.Stock
 
 		#region Обновление документа
 
-		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem = null) {
-			if(selectedCollectiveExpenseItem == null) 
-				AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList());
-			else 
-				AddEmployeesList(selectedCollectiveExpenseItem.Select(x => x.Employee).Distinct().ToList());
+		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
+			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList());
+			Entity.ResortItems();
+		}
+		public void RefreshAll() {
+			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList());
 			Entity.ResortItems();
 		}
 
@@ -283,15 +288,21 @@ namespace Workwear.ViewModels.Stock
 		}
 		#endregion
 
-		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
-		{
+		public void View_YtreeItems_Selection_Changed(object sender, EventArgs e) {
+			OnPropertyChanged(nameof(SensitiveButtonDel));
+			OnPropertyChanged(nameof(SensitiveButtonChange));
+			OnPropertyChanged(nameof(SensitiveRefreshMenuItem));
+		}
+
+		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
+			OnPropertyChanged(nameof(SensitiveRefreshAllMenuItem));
 			OnPropertyChanged(nameof(Sum));
 		}
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(nameof(Entity.Warehouse) == e.PropertyName)
-				OnPropertyChanged(nameof(SensetiveAddButton));
+			if(nameof(Entity.Warehouse) == e.PropertyName) 
+				OnPropertyChanged(nameof(SensitiveAddButton));
 		}
 		private void DeleteItem(CollectiveExpenseItem deleteItem)
 		{

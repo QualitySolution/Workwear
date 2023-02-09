@@ -18,9 +18,9 @@ namespace Workwear.Views.Stock
 
 		private global::QS.Widgets.MenuButton buttonAdd;
 
-		private global::QS.Widgets.MenuButton buttonRefresh;
-
 		private global::QS.Widgets.MenuButton buttonDel;
+
+		private global::QS.Widgets.MenuButton buttonChange;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
@@ -86,22 +86,6 @@ namespace Workwear.Views.Stock
 			w6.Expand = false;
 			w6.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonRefresh = new global::QS.Widgets.MenuButton();
-			this.buttonRefresh.CanFocus = true;
-			this.buttonRefresh.Name = "buttonRefresh";
-			this.buttonRefresh.UseUnderline = true;
-			this.buttonRefresh.UseMarkup = false;
-			this.buttonRefresh.LabelXAlign = 0F;
-			this.buttonRefresh.Label = global::Mono.Unix.Catalog.GetString("Дополнить");
-			global::Gtk.Image w7 = new global::Gtk.Image();
-			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
-			this.buttonRefresh.Image = w7;
-			this.hbox1.Add(this.buttonRefresh);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonRefresh]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonDel = new global::QS.Widgets.MenuButton();
 			this.buttonDel.Sensitive = false;
 			this.buttonDel.CanFocus = true;
@@ -113,11 +97,28 @@ namespace Workwear.Views.Stock
 			this.buttonDel.UseMarkup = false;
 			this.buttonDel.LabelXAlign = 0F;
 			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w9 = new global::Gtk.Image();
-			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w9;
+			global::Gtk.Image w7 = new global::Gtk.Image();
+			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonDel.Image = w7;
 			this.hbox1.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonDel]));
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonDel]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.buttonChange = new global::QS.Widgets.MenuButton();
+			this.buttonChange.Sensitive = false;
+			this.buttonChange.CanFocus = true;
+			this.buttonChange.Name = "buttonChange";
+			this.buttonChange.UseUnderline = true;
+			this.buttonChange.UseMarkup = false;
+			this.buttonChange.LabelXAlign = 0F;
+			this.buttonChange.Label = global::Mono.Unix.Catalog.GetString("Дополнить");
+			global::Gtk.Image w9 = new global::Gtk.Image();
+			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
+			this.buttonChange.Image = w9;
+			this.hbox1.Add(this.buttonChange);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonChange]));
 			w10.Position = 2;
 			w10.Expand = false;
 			w10.Fill = false;
@@ -142,8 +143,8 @@ namespace Workwear.Views.Stock
 			}
 			this.Hide();
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
-			this.buttonRefresh.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
+			this.buttonChange.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 		}
 	}
 }

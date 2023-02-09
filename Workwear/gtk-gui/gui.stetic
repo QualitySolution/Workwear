@@ -13502,13 +13502,17 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.Widgets.MenuButton" id="buttonRefresh">
+              <widget class="QS.Widgets.MenuButton" id="buttonDel">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-refresh Menu</property>
-                <property name="Label" translatable="yes">Дополнить</property>
+                <property name="Icon">stock:gtk-remove Menu</property>
+                <property name="Label" translatable="yes">Удалить</property>
                 <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
                 <signal name="Clicked" handler="OnButtonDelClicked" />
@@ -13521,17 +13525,14 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.Widgets.MenuButton" id="buttonDel">
+              <widget class="QS.Widgets.MenuButton" id="buttonChange">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-remove Menu</property>
-                <property name="Label" translatable="yes">Удалить</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Дополнить</property>
                 <property name="UseUnderline">True</property>
-                <property name="FocusOnClick">False</property>
-                <property name="Xalign">0</property>
-                <property name="Yalign">0</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
                 <signal name="Clicked" handler="OnButtonDelClicked" />

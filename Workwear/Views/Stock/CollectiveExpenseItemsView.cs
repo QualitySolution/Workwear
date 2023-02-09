@@ -30,7 +30,7 @@ namespace Workwear.Views.Stock
 		public void Configure()
 		{
 			CreateTable();
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.Selection.Changed += viewModel.View_YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding
 				.AddSource(ViewModel)
@@ -38,7 +38,9 @@ namespace Workwear.Views.Stock
 				.AddSource(ViewModel.Entity)
 					.AddBinding(e => e.ObservableItems, w => w.ItemsDataSource)
 				.InitializeFromSource();
-
+			buttonAdd.Binding.AddBinding(viewModel,v =>v.SensitiveAddButton,w=>w.Sensitive).InitializeFromSource();
+			buttonDel.Binding.AddBinding(viewModel,v =>v.SensitiveButtonDel,w=>w.Sensitive).InitializeFromSource();
+			buttonChange.Binding.AddBinding(viewModel,v =>v.SensitiveButtonChange,w=>w.Sensitive).InitializeFromSource();
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			MakeMenu();
@@ -82,34 +84,45 @@ namespace Workwear.Views.Stock
 
 		void MakeMenu() {
 			var delMenu = new Menu();
-			var item = new MenuItem("Удалить строку");
+			var item = new yMenuItem("Удалить строку");
 			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			delMenu.Add(item);
-			item = new MenuItem("Удалить все строки сотрудника");
+			item = new yMenuItem("Удалить все строки сотрудника");
 			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			delMenu.Add(item);
 			buttonDel.Menu = delMenu;
 			delMenu.ShowAll();
-			
+
 			var addMenu = new Menu();
-			item = new MenuItem("Сотрудники");
+			item = new yMenuItem("Сотрудников");
 			item.Activated += (sender, e) => ViewModel.AddEmployees();
 			addMenu.Add(item);
-			item = new MenuItem("Подразделения");
+			item = new yMenuItem("Подразделения");
 			item.Activated += (sender, e) => ViewModel.AddSubdivizions();
 			addMenu.Add(item);
+			addMenu.Add(new SeparatorMenuItem());
+			item = new yMenuItem("Дополнительно выбранному сотруднику");
+			item.Activated += (sender, e) => ViewModel.Refresh(ytreeItems.GetSelectedObjects<CollectiveExpenseItem>());
+			item.Binding.AddBinding(ViewModel, v => v.SensitiveRefreshMenuItem, w => w.Sensitive).InitializeFromSource();
+			addMenu.Add(item);
+			item = new yMenuItem("Дополнительно всем");
+			item.Activated += (sender, e) => ViewModel.RefreshAll();
+			item.Binding.AddBinding(ViewModel, v => v.SensitiveRefreshAllMenuItem, w => w.Sensitive).InitializeFromSource();
+			addMenu.Add(item);
+
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();
 			
-			var refMenu = new Menu();
-			item = new MenuItem("Выбранного сотрудника");
-			item.Activated += (sender, e) => ViewModel.Refresh(ytreeItems.GetSelectedObjects<CollectiveExpenseItem>());
-			refMenu.Add(item);
-			item = new MenuItem("Всех в документе");
-			item.Activated += (sender, e) => ViewModel.Refresh(null);
-			refMenu.Add(item);
-			buttonRefresh.Menu = refMenu;
-			refMenu.ShowAll();
+//todo Выводить сообщение если не хватило всем
+			var changeMenu = new Menu();
+			item = new yMenuItem("Выделенное");
+			item.Activated += (sender, e) => ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			changeMenu.Add(item);
+			item = new yMenuItem("Аналгичные в документе");
+			item.Activated += (sender, e) => ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			changeMenu.Add(item);
+			buttonChange.Menu = changeMenu;
+			changeMenu.ShowAll();
 		}
 
 		#region PopupMenu
@@ -136,18 +149,6 @@ namespace Workwear.Views.Stock
 			itemOpenNomenclature.Activated += Item_Activated;
 			menu.Add(itemOpenNomenclature);
 			
-			var itemCangeOperation = new MenuItemId<CollectiveExpenseItem>("Заменить выдачу");
-			itemCangeOperation.ID = selected;
-			itemCangeOperation.Sensitive = selected.Employee != null;
-			itemCangeOperation.Activated += itemCangeOperation_Activated;
-			menu.Add(itemCangeOperation);
-			
-			var itemCangeManyOperation = new MenuItemId<CollectiveExpenseItem>("Заменить выдачу у всех");
-			itemCangeManyOperation.ID = selected;
-			itemCangeManyOperation.Sensitive = selected.Employee != null;
-			itemCangeManyOperation.Activated += itemCangeManyOperation_Activated;
-			menu.Add(itemCangeManyOperation);
-
 			menu.ShowAll();
 			menu.Popup();
 		}
@@ -165,15 +166,6 @@ namespace Workwear.Views.Stock
 		void ItemOpenProtection_Activated(object sender, EventArgs e)
 		{
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
-		}
-		
-		void itemCangeOperation_Activated(object sender, EventArgs e)
-		{
-			ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
-		void itemCangeManyOperation_Activated(object sender, EventArgs e)
-		{
-			ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
 
 		#endregion
@@ -199,12 +191,6 @@ namespace Workwear.Views.Stock
 		{
 			viewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
-
-		void YtreeItems_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-		}
-
 		#endregion
 
 		#region События
