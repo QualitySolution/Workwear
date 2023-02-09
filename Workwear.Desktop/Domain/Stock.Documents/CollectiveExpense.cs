@@ -129,21 +129,6 @@ namespace Workwear.Domain.Stock.Documents
 		#region Добавление удаление строк
 
 		/// <summary>
-		/// Добавить в документ потребности списка сотрудников
-		/// </summary>
-		public virtual void AddEmployees(List<EmployeeCard> employees, BaseParameters baseParameters, bool onlyCollectiveIissueType = true) {
-			List<EmployeeCardItem> items = new List<EmployeeCardItem>();
-			foreach(var employee in employees) {
-				foreach(var item in employee.WorkwearItems) {
-					if(item.ProtectionTools?.Type.IssueType != IssueType.Collective)
-						continue;
-					items.Add(item);
-				}
-			}
-			AddListItems(FillListItems(items, baseParameters, onlyCollectiveIissueType));
-		}
-		
-		/// <summary>
 		/// Сформировать список строк документа(выдач) из списка потребностей
 		/// </summary>
 		/// <param name="onlyCollectiveIissueType"></param> для отсечения строк только коллективной выдачи
@@ -153,26 +138,16 @@ namespace Workwear.Domain.Stock.Documents
 			foreach(var item in items) {
 				if(onlyCollectiveIissueType && item.ProtectionTools?.Type.IssueType != IssueType.Collective)
 					continue;
-				var itemResult = PickItem(item, result, baseParameters);
+				var itemResult = AddItem(item, result, baseParameters);
 				if(itemResult != null) result.Add(itemResult);
 			}
 			return result;
-		}
-		
-		/// <summary>
-		/// Добавить в документ списк строк
-		/// </summary>
-		public virtual void AddListItems(List<CollectiveExpenseItem> list)
-		{
-			foreach(var item in list) {
-				ObservableItems.Add(item);
-			}
 		}
 	
 		/// <summary>
 		/// Создание строки документа. 
 		/// </summary>
-		public virtual CollectiveExpenseItem MakeItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
 		{
 			var newItem = new CollectiveExpenseItem() {
 				Document = this,
@@ -196,7 +171,7 @@ namespace Workwear.Domain.Stock.Documents
 		/// <param name="addedItems"></param>формируемый список строк, который ещё в документ не добавлен 
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception> 1 выдача (не выдаёт частично, не выдаёт разные по одной потребности)
-		public virtual CollectiveExpenseItem PickItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
@@ -209,13 +184,13 @@ namespace Workwear.Domain.Stock.Documents
 				foreach (var position in employeeCardItem.BestChoiceInStock) {
 			
 					if (position.Amount - AmountInList(position.StockPosition,addedItems) - AmountInList(position.StockPosition, Items) >= needPositionAmount && position.WearPercent == 0) //Частичных выдач не деелаем
-						return MakeItem(employeeCardItem, position.StockPosition, needPositionAmount);
+						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
 				}
 				//Нехватает
-				return MakeItem(employeeCardItem);
+				return AddItem(employeeCardItem);
 			}
 			//Нет подходящих
-			return MakeItem(employeeCardItem);
+			return AddItem(employeeCardItem);
 		}
 
 		public virtual int AmountInList(StockPosition position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке

@@ -190,7 +190,6 @@ namespace Workwear.ViewModels.Stock
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
 				(null, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x => x.Key, x => x.Value));
 			page.ViewModel.AddItems = (w) => AddItemsFromWiget(itemsList, w, page);
-			
 		}
 		public void AddItemsFromWiget(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {
 			for (int i = itemsList.Count - 1; i >= 0; i--) //корректировка в соответствии с данными виджета
@@ -198,7 +197,9 @@ namespace Workwear.ViewModels.Stock
 				   .Value.Active)
 					itemsList.RemoveAt(i); 
 			
-			Entity.AddListItems(itemsList);
+			foreach(var item in itemsList) {
+				Entity.ObservableItems.Add(item);
+			}
 			navigation.ForceClosePage(page);
 		}
 
