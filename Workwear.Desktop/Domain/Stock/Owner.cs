@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 
@@ -6,9 +6,9 @@ namespace Workwear.Domain.Stock
 {
 	[Appellative (
 		Gender = GrammaticalGender.Masculine,
-		NominativePlural = "собственики имущества",
-		Nominative = "собственик имущества",
-		Genitive = "собственика имущества")] 
+		NominativePlural = "собственники имущества",
+		Nominative = "собственник имущества",
+		Genitive = "собственника имущества")] 
 	[HistoryTrace]
 	public class Owner : PropertyChangedBase, IDomainObject
 	{
