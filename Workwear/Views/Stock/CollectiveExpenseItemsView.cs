@@ -30,7 +30,6 @@ namespace Workwear.Views.Stock
 		public void Configure()
 		{
 			CreateTable();
-			ytreeItems.Selection.Changed += viewModel.View_YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding
 				.AddSource(ViewModel)

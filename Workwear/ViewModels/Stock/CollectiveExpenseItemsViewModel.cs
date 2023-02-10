@@ -99,6 +99,9 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private CollectiveExpenseItem selectedItem;
+		[PropertyChangedAlso(nameof(SensitiveButtonDel))]
+		[PropertyChangedAlso(nameof(SensitiveButtonChange))]
+		[PropertyChangedAlso(nameof(SensitiveRefreshMenuItem))]
 		public virtual CollectiveExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -117,9 +120,9 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Sensetive
 		public bool SensitiveAddButton => Entity.Warehouse != null;
-		public bool SensitiveButtonChange => selectedItem != null;
-		public bool SensitiveButtonDel => selectedItem != null;
-		public bool SensitiveRefreshMenuItem => selectedItem != null;
+		public bool SensitiveButtonChange => SelectedItem != null;
+		public bool SensitiveButtonDel => SelectedItem != null;
+		public bool SensitiveRefreshMenuItem => SelectedItem != null;
 		public bool SensitiveRefreshAllMenuItem => Entity.Items.Any();
 		#endregion
 		#region Visible
@@ -288,12 +291,6 @@ namespace Workwear.ViewModels.Stock
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
-
-		public void View_YtreeItems_Selection_Changed(object sender, EventArgs e) {
-			OnPropertyChanged(nameof(SensitiveButtonDel));
-			OnPropertyChanged(nameof(SensitiveButtonChange));
-			OnPropertyChanged(nameof(SensitiveRefreshMenuItem));
-		}
 
 		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
 			OnPropertyChanged(nameof(SensitiveRefreshAllMenuItem));
