@@ -462,7 +462,7 @@ namespace Workwear.Domain.Company
 			bool onlyUnderreceived = false, Action progressStep = null)
 		{
 			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
-			FillWearInStockInfo(uow, warehouse, onTime, actualItems);
+			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
 		}
 		
 		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогрес бара. Метод выполняет 4 шага.</param>
@@ -470,6 +470,7 @@ namespace Workwear.Domain.Company
 			Warehouse warehouse, 
 			DateTime onTime, 
 			IEnumerable<EmployeeCardItem> items,
+			IEnumerable<WarehouseOperation> excludeOperations,
 			Action progressStep = null)
 		{
 			progressStep?.Invoke();
@@ -479,7 +480,7 @@ namespace Workwear.Domain.Company
 				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
 			progressStep?.Invoke();
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
+			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime, excludeOperations);
 			progressStep?.Invoke();
 			foreach(var item in items) {
 				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();

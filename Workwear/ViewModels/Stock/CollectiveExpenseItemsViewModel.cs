@@ -176,33 +176,33 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		private void AddEmployeesList(IList<EmployeeCard> employees) {
-			List<EmployeeCardItem> needs = employees.SelectMany(x => x.WorkwearItems).ToList();
-
-			var itemsList = Entity.FillListItems(needs, BaseParameters, false);
+			var needs = employees.SelectMany(x => x.WorkwearItems).ToList();
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
-			foreach(var item in itemsList) {
+			
+			foreach(var item in needs) {
 				if(wigetList.Any(x => x.Key == item.ProtectionTools.Id)) {
 					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.EmployeeCardItem.Amount;
+					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.Amount;
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.EmployeeCardItem.Amount,
+					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.Amount,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
 			}
-			
+//Сортировка(вторая), возможно, спорная Если нужно поставлю другую или по алфавиту			
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
-				(null, wigetList.OrderByDescending(x => x.Value.Active).ToDictionary(x => x.Key, x => x.Value));
-			page.ViewModel.AddItems = (w) => AddItemsFromWiget(itemsList, w, page);
-		}
-		public void AddItemsFromWiget(List<CollectiveExpenseItem> itemsList, Dictionary<int, IssueWidgetItem> wigetItems, IPage<IssueWidgetViewModel> page) {
-			for (int i = itemsList.Count - 1; i >= 0; i--) //корректировка в соответствии с данными виджета
-				if(!wigetItems.First(x => x.Key == itemsList[i].ProtectionTools.Id)
-				   .Value.Active)
-					itemsList.RemoveAt(i); 
+				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenByDescending(x=>x.Value.NumberOfNeeds)
+					.ToDictionary(x => x.Key, x => x.Value));
 			
-			foreach(var item in itemsList) {
-				Entity.ObservableItems.Add(item);
+			page.ViewModel.AddItems = (w) => AddItemsFromWiget(w, needs, page);
+		}
+
+		public void AddItemsFromWiget(Dictionary<int, IssueWidgetItem> wigetItems, List<EmployeeCardItem> needs,
+			IPage<IssueWidgetViewModel> page) {
+			foreach(var item in needs) {
+				if(wigetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
+					Entity.AddItem(item, BaseParameters);
 			}
+//Возможно вернуть в вызывающий			
 			navigation.ForceClosePage(page);
 		}
 

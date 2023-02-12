@@ -58,9 +58,12 @@ namespace Workwear.Views.Stock.Widgets {
 				}
 
 				if(rows > 17) {
-					scrolledwindow1.VscrollbarPolicy = PolicyType.Automatic;
+					scrolledwindow1.VscrollbarPolicy = PolicyType.Always;
 					HeightRequest = 600;
 				}
+				else
+					scrolledwindow1.VscrollbarPolicy = PolicyType.Never;
+				
 				ItemListTable.ShowAll();
 		}
 		

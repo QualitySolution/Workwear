@@ -9,26 +9,22 @@ using Workwear.Domain.Stock;
 namespace Workwear.ViewModels.Stock.Widgets {
 	public class IssueWidgetViewModel : WindowDialogViewModelBase {
 		public IssueWidgetViewModel(INavigationManager navigation, Dictionary<int,IssueWidgetItem> wigetItems) : base(navigation) {
-			this.items = wigetItems;
+			this.Items = wigetItems;
 			Title = "Добавить для выбранных сотрудников:";
 		}
 
-		private Dictionary<int,IssueWidgetItem> items;
-		public Dictionary<int,IssueWidgetItem> Items {
-			get => items;
-			set => items = value;
-		}
+		public Dictionary<int,IssueWidgetItem> Items {get; set; }
 
 		public Action<Dictionary<int,IssueWidgetItem>> AddItems;
 		
 		public void SelectAll() {
-			foreach(var item in items) 
+			foreach(var item in Items) 
 				if(!item.Value.Active)
 					item.Value.Active = true;
 		}
 
 		public void UnSelectAll() {
-			foreach(var item in items) 
+			foreach(var item in Items) 
 				if(item.Value.Active)
 					item.Value.Active = false;
 		}
@@ -59,14 +55,8 @@ public class IssueWidgetItem : PropertyChangedBase {
 	}
 
 	private int numberOfNeeds;
-	public int NumberOfNeeds {
-		get => numberOfNeeds;
-		set => numberOfNeeds = value;
-	}
+	public int NumberOfNeeds {get; set; }
 	
 	private int numberOfIssused;
-	public int NumberOfIssused {
-		get => numberOfIssused;
-		set => numberOfIssused = value;
-	}
+	public int NumberOfIssused {get; set; }
 }

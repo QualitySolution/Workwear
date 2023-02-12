@@ -127,7 +127,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Добавление удаление строк
-
+//Надо удалять
 		/// <summary>
 		/// Сформировать список строк документа(выдач) из списка потребностей
 		/// </summary>
@@ -138,7 +138,7 @@ namespace Workwear.Domain.Stock.Documents
 			foreach(var item in items) {
 				if(onlyCollectiveIissueType && item.ProtectionTools?.Type.IssueType != IssueType.Collective)
 					continue;
-				var itemResult = AddItem(item, result, baseParameters);
+				var itemResult = AddItem(item, baseParameters);
 				if(itemResult != null) result.Add(itemResult);
 			}
 			return result;
@@ -156,44 +156,42 @@ namespace Workwear.Domain.Stock.Documents
 				EmployeeCardItem = employeeCardItem,
 				ProtectionTools = employeeCardItem.ProtectionTools
 			};
-			if(position != null) {
-				newItem.Nomenclature = position.Nomenclature;
-				newItem.WearSize = position.WearSize;
-				newItem.Height = position.Height;
-			}
+			if(position != null) 
+				newItem.StockPosition = position;
+			
+			ObservableItems.Add(newItem);
 			return newItem;
 		}
 
 		/// <summary>
 		/// Подобрать номенклатуру по потребности с учётом текущего документа
 		/// </summary>
-		/// <param name="employeeCardItem"></param> потребность
-		/// <param name="addedItems"></param>формируемый список строк, который ещё в документ не добавлен 
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception> 1 выдача (не выдаёт частично, не выдаёт разные по одной потребности)
-		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, List<CollectiveExpenseItem> addedItems, BaseParameters baseParameters)
+		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
 				throw new ArgumentNullException(nameof(employeeCardItem));
 
-			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)) || addedItems.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
+			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
-			if (employeeCardItem.BestChoiceInStock.Any()) {
-				foreach (var position in employeeCardItem.BestChoiceInStock) {
-			
-					if (position.Amount - AmountInList(position.StockPosition,addedItems) - AmountInList(position.StockPosition, Items) >= needPositionAmount && position.WearPercent == 0) //Частичных выдач не деелаем
-						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
+			StockPosition want = employeeCardItem.BestChoiceInStock.FirstOrDefault()?.StockPosition;
+			if(want != null)
+				foreach(var position in employeeCardItem.BestChoiceInStock) {
+					if(position.Amount - 
+					   Items.Where(x =>x.StockPosition.Nomenclature!= null)
+							.Where(item => position.Equals(item?.StockPosition)) 
+							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не деелаем
+						want = position.StockPosition;
 				}
-				//Нехватает
-				return AddItem(employeeCardItem);
-			}
-			//Нет подходящих
-			return AddItem(employeeCardItem);
+			return AddItem(employeeCardItem, want, needPositionAmount);
 		}
 
 		public virtual int AmountInList(StockPosition position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке
+
+			addedItems.Where(item => item.StockPosition.Equals(position)).Sum(x => x.Amount);
+			
 			return addedItems.Where(item => item.Nomenclature == position.Nomenclature 
 			                                && item.WearSize?.Id == position.WearSize?.Id
 			                                && item.Height?.Id == position.Height?.Id)
@@ -232,7 +230,8 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems);
+			var excludeOperations = Items.Select(x => x.WarehouseOperation);
+			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems, excludeOperations);
 			foreach(var docItem in Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
