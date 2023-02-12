@@ -76,11 +76,6 @@ namespace Workwear.ViewModels.Stock
 			globalProgress.Close();
 
 			Owners = UoW.GetAll<Owner>().ToList();
-			
-			savedItems = new List<CollectiveExpenseItem>();
-			foreach(var x in Entity.Items) {
-				savedItems.Add((CollectiveExpenseItem)x.Clone());
-			}
 		}
 
 		#region Хелперы
@@ -108,14 +103,6 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		public IList<Owner> Owners { get; }
-
-		private IList<CollectiveExpenseItem> savedItems;
-		/// <summary>
-		/// Копия выдач уже сохранённых в базе
-		/// </summary>
-		public IList<CollectiveExpenseItem> SavedItems {
-			get => savedItems;
-		}
 
 		#endregion
 		#region Sensetive
@@ -169,7 +156,6 @@ namespace Workwear.ViewModels.Stock
 			foreach(var employee in employees) {
 				progress.Add(text: employee.ShortName);
 				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-				progress.Add();
 			}
 			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			AddEmployeesList(employees);
@@ -202,7 +188,6 @@ namespace Workwear.ViewModels.Stock
 				if(wigetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
 					Entity.AddItem(item, BaseParameters);
 			}
-//Возможно вернуть в вызывающий			
 			navigation.ForceClosePage(page);
 		}
 
@@ -224,6 +209,7 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = items;
 			selectJournal.ViewModel.OnSelectResult +=SetNomenclatureForRows;
+//Изменения текущего документа, не учитываются. 
 		}
 
 		public void SetNomenclatureForRows(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
@@ -231,16 +217,9 @@ namespace Workwear.ViewModels.Stock
 			var page = navigation.FindPage((DialogViewModelBase)sender);
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				foreach(var item in (List<CollectiveExpenseItem>)page.Tag) {
-					int a = item.EmployeeCardItem.Amount;
-					int b = Entity.AmountInList(node.GetStockPosition(UoW), Entity.Items);
-					int c = Entity.AmountInList(node.GetStockPosition(UoW), SavedItems);
-					int d = node.Amount;
-					//Сверка потребности с учётом сохранённого документа, добавленных строк и остатков на складе
-					if(!Equals(item.StockPosition, node.GetStockPosition(UoW)) && d>=a+b-c) {
-						item.StockPosition = node.GetStockPosition(UoW);
+					item.StockPosition = node.GetStockPosition(UoW);
 						item.Amount = item.EmployeeCardItem.Amount;
 					}
-				}
 			}
 			OnPropertyChanged(nameof(Sum));
 		}

@@ -114,7 +114,7 @@ namespace Workwear.Views.Stock
 			
 //todo Выводить сообщение если не хватило всем
 			var changeMenu = new Menu();
-			item = new yMenuItem("Выделенное");
+			item = new yMenuItem("В выделенной строке");
 			item.Activated += (sender, e) => ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			changeMenu.Add(item);
 			item = new yMenuItem("Аналгичные в документе");

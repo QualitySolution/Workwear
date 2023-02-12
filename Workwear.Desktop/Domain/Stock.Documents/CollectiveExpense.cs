@@ -127,22 +127,6 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Добавление удаление строк
-//Надо удалять
-		/// <summary>
-		/// Сформировать список строк документа(выдач) из списка потребностей
-		/// </summary>
-		/// <param name="onlyCollectiveIissueType"></param> для отсечения строк только коллективной выдачи
-		/// <returns></returns>
-		public virtual List<CollectiveExpenseItem> FillListItems(List<EmployeeCardItem> items, BaseParameters baseParameters,  bool onlyCollectiveIissueType = true) { 
-			List<CollectiveExpenseItem> result = new List<CollectiveExpenseItem>(); 
-			foreach(var item in items) {
-				if(onlyCollectiveIissueType && item.ProtectionTools?.Type.IssueType != IssueType.Collective)
-					continue;
-				var itemResult = AddItem(item, baseParameters);
-				if(itemResult != null) result.Add(itemResult);
-			}
-			return result;
-		}
 	
 		/// <summary>
 		/// Создание строки документа. 
@@ -180,22 +164,12 @@ namespace Workwear.Domain.Stock.Documents
 			if(want != null)
 				foreach(var position in employeeCardItem.BestChoiceInStock) {
 					if(position.Amount - 
-					   Items.Where(x =>x.StockPosition.Nomenclature!= null)
+					   Items.Where(x =>x.Nomenclature!= null)
 							.Where(item => position.Equals(item?.StockPosition)) 
 							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не деелаем
 						want = position.StockPosition;
 				}
 			return AddItem(employeeCardItem, want, needPositionAmount);
-		}
-
-		public virtual int AmountInList(StockPosition position, IList<CollectiveExpenseItem> addedItems) { //уже выданное в списке
-
-			addedItems.Where(item => item.StockPosition.Equals(position)).Sum(x => x.Amount);
-			
-			return addedItems.Where(item => item.Nomenclature == position.Nomenclature 
-			                                && item.WearSize?.Id == position.WearSize?.Id
-			                                && item.Height?.Id == position.Height?.Id)
-				.Aggregate(0, (current, item) => current + item.Amount); 
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)

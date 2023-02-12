@@ -13531,7 +13531,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-refresh Menu</property>
-                <property name="Label" translatable="yes">Дополнить</property>
+                <property name="Label" translatable="yes">Выбрать номенклатуру</property>
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>

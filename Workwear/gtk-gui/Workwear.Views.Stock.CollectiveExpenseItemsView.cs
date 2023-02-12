@@ -113,7 +113,7 @@ namespace Workwear.Views.Stock
 			this.buttonChange.UseUnderline = true;
 			this.buttonChange.UseMarkup = false;
 			this.buttonChange.LabelXAlign = 0F;
-			this.buttonChange.Label = global::Mono.Unix.Catalog.GetString("Дополнить");
+			this.buttonChange.Label = global::Mono.Unix.Catalog.GetString("Выбрать номенклатуру");
 			global::Gtk.Image w9 = new global::Gtk.Image();
 			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
 			this.buttonChange.Image = w9;
