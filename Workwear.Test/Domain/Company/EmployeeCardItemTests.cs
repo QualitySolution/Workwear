@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NSubstitute;
 using NUnit.Framework;
@@ -490,16 +490,14 @@ namespace Workwear.Test.Domain.Company
 		}
 
 		[Test(Description = "Проверяем что при поиске соответствия обрабатываем установленный пол для номенклатуры.")]
-		[TestCase(Sex.M, null, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Men, ExpectedResult = true)]
 		[TestCase(Sex.M, ClothesSex.Women, ExpectedResult = false)]
 		[TestCase(Sex.M, ClothesSex.Universal, ExpectedResult = true)]
-		[TestCase(Sex.F, null, ExpectedResult = true)]
 		[TestCase(Sex.F, ClothesSex.Men, ExpectedResult = false)]
 		[TestCase(Sex.F, ClothesSex.Women, ExpectedResult = true)]
 		[TestCase(Sex.F, ClothesSex.Universal, ExpectedResult = true)]
-		[TestCase(Sex.None, null, ExpectedResult = true)]
-		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex? clothesSex)
+		[TestCase(Sex.None, ClothesSex.Universal, ExpectedResult = true)]
+		public bool MatcheStockPosition_ClothesSex(Sex employeeSex, ClothesSex clothesSex)
 		{
 			var employee = new EmployeeCard();
 			employee.Sex = employeeSex;

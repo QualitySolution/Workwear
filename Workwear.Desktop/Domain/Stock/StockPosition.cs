@@ -47,13 +47,13 @@ namespace Workwear.Domain.Stock
 			var anotherPos = obj as StockPosition;
 			return
 				anotherPos?.Nomenclature.Id == Nomenclature.Id &&
-				anotherPos.WearSize == WearSize &&
-				anotherPos.Height == Height &&
+				anotherPos.WearSize?.Id == WearSize?.Id &&
+				anotherPos.Height?.Id == Height?.Id &&
 				anotherPos.WearPercent == WearPercent &&
-				anotherPos.Owner == Owner;
+				anotherPos.Owner?.Id == Owner?.Id;
 		}
 		public override int GetHashCode() {
-			return (Nomenclature.Id, WearSize, Height, WearPercent, Owner).GetHashCode();
+			return (Nomenclature.Id, WearSize?.Id, Height?.Id, WearPercent, Owner?.Id).GetHashCode();
 		}
 		#endregion
 	}
