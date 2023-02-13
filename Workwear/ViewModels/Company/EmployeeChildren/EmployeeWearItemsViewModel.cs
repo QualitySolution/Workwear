@@ -54,8 +54,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-
-			employeeIssueRepository.RepoUow = UoW;
+			
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
 		}
 
