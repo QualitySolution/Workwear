@@ -18,9 +18,9 @@ namespace Workwear.Domain.Operations.Graph
 		public List<GraphItem> ActiveItems = new List<GraphItem>();
 
 		/// <summary>
-		/// Все выдачи графа где выданное количество действует в течении интервала. То есть ActiveItems, но без списанного в первый день.
+		/// Все выдачи графа где выданное количество действует в течении интервала. То есть ActiveItems, но без списанного в это день.
 		/// </summary>
-		public IEnumerable<GraphItem> ActiveIssues => ActiveItems.Where(x => x.IssueOperation.AutoWriteoffDate != StartDate);
+		public IEnumerable<GraphItem> ActiveIssues => ActiveItems.Where(x => x.AmountAtEndOfDay(StartDate) > 0);
 		public int CurrentCount;
 
 		public int Issued => ActiveItems.Sum(x => x.IssuedAtDate(StartDate));

@@ -738,6 +738,43 @@ namespace Workwear.Test.Domain.Company
 			//Assert.That(lastissue.removed, Is.EqualTo(3)); Здесь не знаю как правильно, поэтому пока не проверяем, предположу то не надо усложнять вро уже списанное.
 		}
 
+		[Test(Description = "Проверяем что в последних выдачах не показываем полное списание, в дату самого списания тоже.")]
+		public void LastIssued_DontShowFullRemovedCase() {
+			var firstIssue = new EmployeeIssueOperation {
+				//Старая выдача не отображаем
+				OperationTime = new DateTime(2023, 1, 13),
+				StartOfUse = new DateTime(2023, 1, 13),
+				ExpiryByNorm = new DateTime(2024, 1, 13),
+				AutoWriteoffDate = new DateTime(2024, 1, 13),
+				Issued = 1
+			};
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				firstIssue,
+				new EmployeeIssueOperation { //Выдали заново
+					OperationTime = new DateTime(2023, 2, 13),
+					StartOfUse = new DateTime(2023, 2, 13),
+					ExpiryByNorm = new DateTime(2024, 2, 13),
+					AutoWriteoffDate = new DateTime(2024, 2, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation { //Списали выданное ранее
+					OperationTime = new DateTime(2023, 2, 13),
+					Returned = 1,
+					IssuedOperation = firstIssue
+				}
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем только действующую выдачу.
+			var today = new DateTime(2023, 2, 13);
+			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(1));
+			var issue = item.LastIssued(today).First();
+			Assert.That(issue.date, Is.EqualTo(new DateTime(2023, 2, 13)));
+			Assert.That(issue.amount, Is.EqualTo(1));
+			Assert.That(issue.removed, Is.EqualTo(0));
+		}
 		#endregion
 	}
 }
