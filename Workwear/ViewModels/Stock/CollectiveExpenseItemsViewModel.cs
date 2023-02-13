@@ -9,7 +9,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Project.Services;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
@@ -32,19 +31,17 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly EmployeeIssueModel issueModel;
-		private readonly IDeleteEntityService deleteService;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, EmployeeIssueModel issueModel, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
+		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, EmployeeIssueModel issueModel, SizeService sizeService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
 		{
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
-			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
