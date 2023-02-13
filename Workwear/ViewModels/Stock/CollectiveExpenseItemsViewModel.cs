@@ -164,7 +164,10 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		private void AddEmployeesList(IList<EmployeeCard> employees) {
-			var needs = employees.SelectMany(x => x.WorkwearItems).ToList();
+			var needs = employees
+				.SelectMany(x => x.WorkwearItems)
+				.Where(x=> !Entity.Items.Any(y =>y.EmployeeCardItem == x))
+				.ToList();
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
 			
 			foreach(var item in needs) {
