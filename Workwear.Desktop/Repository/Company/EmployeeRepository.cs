@@ -30,17 +30,10 @@ namespace Workwear.Repository.Company
 			return (uow ?? RepoUow).Session.QueryOver<EmployeeCard>().Where (e => e.DismissDate == null);
 		}
 
-		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, Subdivision subdivision)
+		public IList<EmployeeCard> GetActiveEmployeesFromSubdivisions(IUnitOfWork uow, int[] subdivizionIds)
 		{
 			return ActiveEmployeesQuery(uow)
-				.Where(x => x.Subdivision == subdivision)
-				.List();
-		}
-
-		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, int subdivisionId)
-		{
-			return ActiveEmployeesQuery(uow)
-				.Where(x => x.Subdivision.Id == subdivisionId)
+				.Where(x => x.Subdivision.Id.IsIn(subdivizionIds))
 				.List();
 		}
 
