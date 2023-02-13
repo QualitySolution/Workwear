@@ -17,12 +17,24 @@ namespace Workwear.Repository.Operations
 {
 	public class EmployeeIssueRepository
 	{
-		public IUnitOfWork RepoUow;
-
-		public EmployeeIssueRepository(IUnitOfWork uow = null)
+		private readonly UnitOfWorkProvider unitOfWorkProvider;
+		private IUnitOfWork repoUow;
+		
+		[Obsolete("Лучше используйте конструктор с провайдером Uow")]
+		public EmployeeIssueRepository(IUnitOfWork uow)
 		{
 			RepoUow = uow;
 		}
+		
+		public EmployeeIssueRepository(UnitOfWorkProvider unitOfWorkProvider = null) {
+			this.unitOfWorkProvider = unitOfWorkProvider;
+		}
+
+		public IUnitOfWork RepoUow {
+			get => repoUow ?? unitOfWorkProvider.UoW;
+			set => repoUow = value;
+		}
+
 		/// <summary>
 		/// Получаем все операции выдачи сотруднику отсортированные в порядке убывания.
 		/// </summary>

@@ -14,24 +14,17 @@ using Workwear.Tools;
 namespace Workwear.Models.Operations {
 	public class EmployeeIssueModel {
 		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly UnitOfWorkProvider unitOfWorkProvider;
 		private Dictionary<string, IssueGraph> graphs = new Dictionary<string, IssueGraph>();
-		private IUnitOfWork uow;
-
-		#region SetUp
-
-		public EmployeeIssueModel(EmployeeIssueRepository employeeIssueRepository) {
+		
+		public EmployeeIssueModel(EmployeeIssueRepository employeeIssueRepository, UnitOfWorkProvider unitOfWorkProvider = null) {
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.unitOfWorkProvider = unitOfWorkProvider;
 		}
-
-		public IUnitOfWork UoW {
-			get => uow;
-			set => uow = employeeIssueRepository.RepoUow = value;
-		}
-
-		#endregion
 
 		#region public
-		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IProgressBarDisplayable progress = null) {
+		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IUnitOfWork uow = null, IProgressBarDisplayable progress = null) {
+			uow = uow ?? unitOfWorkProvider.UoW;
 			progress?.Start(operations.Count() + 2);
 			CheckAndPrepareGraphs(operations.Select(o => o.Employee).Distinct().ToArray(), operations.Select(o => o.ProtectionTools).Distinct().ToArray());
 			progress?.Add();
@@ -45,20 +38,20 @@ namespace Workwear.Models.Operations {
 							DomainHelper.EqualDomainObjects(x.ProtectionTools, operation.ProtectionTools));
 
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
-					UoW.Save(operation);
+					uow.Save(operation);
 					graph.Refresh();
 
 					if(cardItem != null) {
 						cardItem.Graph = graph;
-						cardItem.UpdateNextIssue(UoW);
-						UoW.Save(cardItem);
+						cardItem.UpdateNextIssue(uow);
+						uow.Save(cardItem);
 					}
 					progress?.Add();
 				}
 			}
 
 			progress?.Add(text: "Завершаем...");
-			UoW.Commit();
+			uow.Commit();
 			progress?.Close();
 		}
 		#endregion

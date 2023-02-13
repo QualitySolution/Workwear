@@ -38,6 +38,7 @@ namespace Workwear.ViewModels.Regulations
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
 			IInteractiveService interactive,
@@ -46,10 +47,9 @@ namespace Workwear.ViewModels.Regulations
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
-			employeeIssueRepository.RepoUow = UoW;
 			this.interactive = interactive;
 			this.changeMonitor = changeMonitor;
 			this.employeeRepository = employeeRepository;
@@ -302,8 +302,7 @@ namespace Workwear.ViewModels.Regulations
 			
 			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
 			progressCreator.Title = "Обновляем операции выдачи";
-			issueModel.UoW = UoW;
-			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progressCreator);
+			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
 			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
 		#endregion
@@ -337,8 +336,7 @@ namespace Workwear.ViewModels.Regulations
 					if(answer == "Все выдачи" || answer == "Только последние"){
 						var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
 						progressCreator.Title = "Обновляем операции выдачи";
-						issueModel.UoW = UoW;
-						issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progressCreator);
+						issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
 					}
 				}
 			}

@@ -46,11 +46,10 @@ namespace Workwear.Models.Import.Issuance
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
 			progress.Start(maxValue: grouped.Count(), text: "Подготовка");
-			issueModel.UoW = uow;
 			issueModel.FillWearReceivedInfo(
 				grouped.Select(x => x.Key).ToArray(),
 				UsedRows.Where(x => x.Operation != null).Select(x => x.Operation).ToArray()
-				);
+			);
 			progress.Add();
 			foreach(var employeeGroup in grouped) {
 				progress.Add(text: $"Подготовка {employeeGroup.Key.ShortName}");

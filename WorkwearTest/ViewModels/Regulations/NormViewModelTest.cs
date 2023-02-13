@@ -63,6 +63,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 
 			var builder = new ContainerBuilder();
 			builder.RegisterType<NormViewModel>().AsSelf();
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();

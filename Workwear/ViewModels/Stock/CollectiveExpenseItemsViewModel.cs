@@ -43,7 +43,6 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			issueModel.UoW = UoW;
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
