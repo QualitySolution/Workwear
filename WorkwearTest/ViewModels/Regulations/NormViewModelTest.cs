@@ -98,7 +98,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 				norm.DateFrom = new DateTime(2022, 1, 11);
 				var normItem = norm.AddItem(protectionTools);
 				normItem.Amount = 6;
-				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.NormPeriod = NormPeriodType.Month;
 				normItem.PeriodCount = 1;
 				uow.Save(norm);
 
