@@ -36,9 +36,9 @@ public class IssueWidgetItem : PropertyChangedBase {
 	public IssueWidgetItem(ProtectionTools protectionTools, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
 		this.active = active;
 		this.ProtectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
-		this.type = protectionTools.Type.IssueType;
-		this.numberOfNeeds = numberOfNeeds;
-		this.numberOfIssused = numberOfIssused;
+		this.Type = protectionTools.Type.IssueType;
+		this.NumberOfNeeds = numberOfNeeds;
+		this.NumberOfIssused = numberOfIssused;
 	}
 		
 	private bool active;
@@ -49,14 +49,9 @@ public class IssueWidgetItem : PropertyChangedBase {
 
 	public ProtectionTools ProtectionTools { get; }
 
-	private IssueType type;
-	public IssueType Type {
-		get => type;
-	}
+	public IssueType Type { get; }
 
-	private int numberOfNeeds;
 	public int NumberOfNeeds {get; set; }
 	
-	private int numberOfIssused;
 	public int NumberOfIssused {get; set; }
 }

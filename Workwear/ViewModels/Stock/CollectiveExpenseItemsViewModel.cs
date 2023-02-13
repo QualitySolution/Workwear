@@ -185,9 +185,8 @@ namespace Workwear.ViewModels.Stock
 				return;
 			}
 
-//Сортировка(вторая), возможно, спорная Если нужно поставлю другую или по алфавиту			
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
-				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenByDescending(x=>x.Value.NumberOfNeeds)
+				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 					.ToDictionary(x => x.Key, x => x.Value));
 			
 			page.ViewModel.AddItems = (w) => AddItemsFromWiget(w, needs, page);
@@ -226,12 +225,10 @@ namespace Workwear.ViewModels.Stock
 		public void SetNomenclatureForRows(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
-			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				foreach(var item in (List<CollectiveExpenseItem>)page.Tag) {
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) 
+				foreach(var item in (List<CollectiveExpenseItem>)page.Tag) 
 					item.StockPosition = node.GetStockPosition(UoW);
-						item.Amount = item.EmployeeCardItem.Amount;
-					}
-			}
+
 			OnPropertyChanged(nameof(Sum));
 		}
 
