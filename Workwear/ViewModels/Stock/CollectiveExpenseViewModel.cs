@@ -44,6 +44,7 @@ namespace Workwear.ViewModels.Stock
 
 		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			IValidator validator,
@@ -55,7 +56,7 @@ namespace Workwear.ViewModels.Stock
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			IChangeMonitor<CollectiveExpenseItem> changeMonitor
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -63,8 +64,8 @@ namespace Workwear.ViewModels.Stock
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
+			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
