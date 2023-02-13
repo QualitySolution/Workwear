@@ -23,13 +23,18 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+
+			ShowSex = false;
+			ShowSize = true;
+			Summary = true;
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
 					{"issue_type", IssueType?.ToString() },
 					{"show_sex", ShowSex },
-					{"summary", Summary}
+					{"summary", Summary},
+					{"show_size", ShowSize}
 				 };
 
 		#region Параметры
@@ -40,12 +45,8 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		public bool ShowSex { get; set; }
-		
-		private bool summary = true;
-		public virtual bool Summary {
-			get => summary;
-			set => SetField(ref summary, value);
-		}
+		public bool ShowSize { get; set; }
+		public bool Summary { get; set; }
 		
 		#endregion
 		#region Свойства
