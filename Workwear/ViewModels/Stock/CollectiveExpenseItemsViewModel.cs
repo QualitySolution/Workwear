@@ -33,13 +33,15 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IDeleteEntityService deleteService;
+		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
+		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, IInteractiveMessage interactive, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
 		{
 			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
@@ -174,6 +176,12 @@ namespace Workwear.ViewModels.Stock
 					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.Amount,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
 			}
+
+			if(!wigetList.Any()) {
+				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
+				return;
+			}
+
 //Сортировка(вторая), возможно, спорная Если нужно поставлю другую или по алфавиту			
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
 				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenByDescending(x=>x.Value.NumberOfNeeds)
