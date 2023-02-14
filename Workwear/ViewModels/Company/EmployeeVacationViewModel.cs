@@ -37,7 +37,7 @@ namespace Workwear.ViewModels.Company
             if (UoW.IsNew) {
                 Entity.Employee.AddVacation(Entity);
             }
-            Entity.UpdateRelatedOperations(UoW, new EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive());
+            Entity.Employee.RecalculateDatesOfIssueOperations(UoW, new EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive(), Entity);
             UoW.Save(Entity.Employee);
             return base.Save();
         }

@@ -15,6 +15,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
@@ -27,28 +28,34 @@ namespace Workwear.ViewModels.Regulations
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly IChangeMonitor<NormItem> changeMonitor;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly BaseParameters baseParameters;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly ModalProgressCreator progressCreator;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			IChangeMonitor<NormItem> changeMonitor,
 			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			EmployeeIssueModel issueModel,
+			ModalProgressCreator progressCreator,
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
-			employeeIssueRepository.RepoUow = UoW;
 			this.interactive = interactive;
 			this.changeMonitor = changeMonitor;
 			this.employeeRepository = employeeRepository;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
@@ -256,6 +263,9 @@ namespace Workwear.ViewModels.Regulations
 		}
 		#endregion
 
+		/// <summary>
+		/// Ручной перечет операций выдачи через контекстное меню строки нормы.
+		/// </summary>
 		public void ReSaveLastIssue(NormItem normItem) 
 		{
 			if(UoW.HasChanges && !Save())
@@ -269,6 +279,12 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Employee),
 				beginDate: Entity.DateFrom);
 
+			if(!operations.Any()) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Последние выдачи отсутствуют. Нечего пересчитывать.");
+				logger.Info("Нечего пересчитывать.");
+				return;
+			}
+
 			var operationsLasts = operations
 				.GroupBy(x => x.Employee)
 				.Select(o => 
@@ -277,30 +293,16 @@ namespace Workwear.ViewModels.Regulations
 			
 			var answer = interactive.Question(
 				new[] { "Все выдачи", "Только последние" },
-				Entity.DateFrom.HasValue
-					? $"C {Entity.DateFrom:d} по "
-					: "По " +
+				(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") +
 					  $"строке нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
+				$"В зависимости от настроек учета, данный пересчет может так же изменять сроки начала использования СИЗ. " +
 					  $"Какие выдачи пересчитывать?");
 			if(answer == null)
 				return;
 			
 			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
-			foreach (var operation in modifiableOperations)
-			{
-				operation.RecalculateExpiryByNorm(baseParameters, interactive);
-				UoW.Save(operation);
-
-				var cardItem = operation.Employee.WorkwearItems
-						.FirstOrDefault(x => 
-							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
-
-				if(cardItem != null) {
-					cardItem.UpdateNextIssue(UoW);
-					UoW.Save(cardItem);
-				}
-			}
-			UoW.Commit();
+			progressCreator.Title = "Обновляем операции выдачи";
+			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
 			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
 		#endregion
@@ -328,25 +330,13 @@ namespace Workwear.ViewModels.Regulations
 				if(operations.Any()) {
 					var answer = interactive.Question(
 						new[] { "Все выдачи", "Только последние", "Не пересчитывать" },
-						Entity.DateFrom.HasValue
-							? $"C {Entity.DateFrom:d} по "
-							: "По " +
-							  $"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
-							  $"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
+						(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") + 
+						$"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " + 
+						"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
 					if(answer == "Все выдачи" || answer == "Только последние"){
-						var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-						var progress = progressPage.ViewModel.Progress;
 						var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
-						progress.Start(modifiableOperations.Count, text: "Обновляем операции выдачи");
-						foreach(var operation in modifiableOperations) {
-							progress.Add();
-							operation.RecalculateExpiryByNorm(baseParameters, interactive);
-							UoW.Save(operation);
-						}
-
-						progress.Add(text: "Завершаем...");
-						UoW.Commit();
-						NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+						progressCreator.Title = "Обновляем операции выдачи";
+						issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
 					}
 				}
 			}

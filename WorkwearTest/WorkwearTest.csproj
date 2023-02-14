@@ -50,7 +50,9 @@
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
+    <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
+    <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
   </ItemGroup>
@@ -78,6 +80,10 @@
     <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
       <Project>{bc159ba7-ef22-4800-ac34-de4b2b386aae}</Project>
       <Name>QS.Updater.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WearLk.Client\QS.Cloud.WearLk.Client.csproj">
+      <Project>{b0f853e4-43c9-4c7e-8812-2060fa43b5fe}</Project>
+      <Name>QS.Cloud.WearLk.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>

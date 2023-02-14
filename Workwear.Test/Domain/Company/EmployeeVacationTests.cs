@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NHibernate;
 using NSubstitute;
@@ -60,10 +60,9 @@ namespace Workwear.Test.Domain.Company
 			issue.Issued = 1;
 
 			var operations = new List<EmployeeIssueOperation>() { issue };
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(operations);
 
 			var employeeIssueRepository = Substitute.For<EmployeeIssueRepository>(uow);
-			employeeIssueRepository.GetOperationsTouchDates(Arg.Any<IUnitOfWork>(), Arg.Any<EmployeeCard[]>(), Arg.Any<DateTime>(), Arg.Any<DateTime>(), Arg.Any<Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>>>())
+			employeeIssueRepository.AllOperationsForEmployee(Arg.Any<EmployeeCard>(), Arg.Any<Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>>>(),Arg.Any<IUnitOfWork>())
 				.Returns(operations);
 
 			var ask = Substitute.For<IInteractiveQuestion>();
@@ -72,7 +71,7 @@ namespace Workwear.Test.Domain.Company
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
-			vacation.UpdateRelatedOperations(uow, employeeIssueRepository, baseParameters, ask);
+			employee.RecalculateDatesOfIssueOperations(uow, employeeIssueRepository, baseParameters, ask, vacation);
 
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2019, 5, 20)));
 			Assert.That(issue.AutoWriteoffDate, Is.EqualTo(new DateTime(2019, 5, 20)));

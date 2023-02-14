@@ -58,20 +58,6 @@ namespace Workwear.Domain.Company
 			set => SetField (ref created, value);
 		}
 
-		private int amount;
-		[Display (Name = "Выданное количество")]
-		public virtual int Amount {
-			get => amount;
-			set => SetField (ref amount, value);
-		}
-
-		private DateTime? lastIssue;
-		[Display (Name = "Последняя выдача")]
-		public virtual DateTime? LastIssue {
-			get => lastIssue;
-			set => SetField (ref lastIssue, value);
-		}
-
 		private DateTime? nextIssue;
 		[Display (Name = "Следующая выдача")]
 		public virtual DateTime? NextIssue {
@@ -94,18 +80,21 @@ namespace Workwear.Domain.Company
 			get => inStock;
 			set => SetField (ref inStock, value);
 		}
-		public virtual EmployeeIssueOperation LastIssueOperation { get; set; }
+
+		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
+		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item.IssueOperation;
 		public virtual string AmountColor {
 			get {
+				var amount = Issued(DateTime.Today);
 				if(ActiveNormItem == null)
 					return "Indigo";
-				if (ActiveNormItem.Amount == Amount)
+				if (ActiveNormItem.Amount == amount)
 					return "darkgreen";
-				if (ActiveNormItem.Amount < Amount)
+				if (ActiveNormItem.Amount < amount)
 					return "blue";
-				if (Amount == 0)
+				if (amount == 0)
 					return "red";
 				else
 					return "orange";
@@ -148,7 +137,28 @@ namespace Workwear.Domain.Company
 				return bestChoice;
 			}
 		}
+
+		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
+		
+		public virtual IEnumerable<(DateTime date, int amount, int removed, GraphItem item)> LastIssued(DateTime onDate) {
+			if(!Graph.Intervals.Any())
+				yield break;
+			var currentInterval = Graph.IntervalOfDate(onDate);
+			if(currentInterval.ActiveIssues.Any()) {
+				foreach(var item in currentInterval.ActiveIssues) {
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
+						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item);
+				}
+			}
+			else {
+				var last = Graph.OrderedIntervalsReverse.First(x => x.StartDate <= onDate);
+				foreach(var item in last.ActiveItems) {
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
+				}
+			}
+		}
 		#endregion
+		#region Расчетное для View
 		public virtual string MatchedNomenclatureShortText {
 			get {
 				if(InStockState == StockStateInfo.UnknownNomenclature)
@@ -166,15 +176,17 @@ namespace Workwear.Domain.Company
 				return text;
 			}
 		}
-		#region Расчетное для View
 		public virtual string AmountByNormText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
 		public virtual string InStockText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? 
 			InStock?.Sum(x => x.Amount).ToString();
-		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount) ?? Amount.ToString();
+		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
+
+		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 		public EmployeeCardItem () { }
 		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)
@@ -187,21 +199,25 @@ namespace Workwear.Domain.Company
 
 		#region Methods
 		/// <summary>
-		/// Необходимое к выдачи количество.
-		/// Внимание! Не корректно считает сложные ситуации, с неполной выдачей.
+		/// Получить необходимое к выдачи количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters) {
-			if (ActiveNormItem?.NormCondition?.IssuanceStart != null && ActiveNormItem?.NormCondition?.IssuanceEnd != null) {
-				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(DateTime.Today);
-				if (DateTime.Today < nextPeriod.Begin)
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
+			
+			if(ActiveNormItem == null)
+				return 0;
+			
+			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
+				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
+				if (onDate < nextPeriod.Begin)
 					return 0;
 			}
-			if(NextIssue.HasValue && NextIssue.Value.AddDays(-parameters.ColDayAheadOfShedule) <= DateTime.Today)
-				return ActiveNormItem.Amount;
-			return ActiveNormItem.Amount <= Amount ? 0 : ActiveNormItem.Amount - Amount;
+
+			return ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule));
 		}
 
-		public virtual bool MatcheStockPosition(StockPosition stockPosition) {
+		public virtual bool MatchStockPosition(StockPosition stockPosition) {
 			if (ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)
@@ -241,18 +257,21 @@ namespace Workwear.Domain.Company
 			return suitableStockPositionHeights.Contains(employeeHeight);
 		}
 
+		/// <summary>
+		/// Обновляет дату следующей выдачи.
+		/// Перед вызовом метода Graph должен быть заполнен!
+		/// </summary>
+		/// <param name="uow">Необходим для сохранения строки.</param>
+		/// <exception cref="NullReferenceException"></exception>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
-			IssueGraph graph = null;
-
-			if(EmployeeCard.Id > 0){ //Если карточка еще не разу не сохранялась. То и нечего запрашивать выдачи.
-				graph = GetIssueGraphForItem(uow);
-			}
-
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета UpdateNextIssue, Graph должен быть заполнен!");
+			
 			DateTime? wantIssue = new DateTime();
 			NextIssueAnnotation = null;
-			if(graph != null && graph.Intervals.Any())
+			if(Graph.Intervals.Any())
 			{
-				var listReverse = graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
+				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
 					//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
@@ -308,11 +327,6 @@ namespace Workwear.Domain.Company
 				NextIssueAnnotation = $"У строки нормы указан период - до износа";
 			if(ActiveNormItem.NormPeriod == NormPeriodType.Duty)
 				NextIssueAnnotation = $"У строки нормы указан период - дежурный";
-		}
-		#endregion
-		#region Зазоры для тестирования
-		protected internal virtual IssueGraph GetIssueGraphForItem(IUnitOfWork uow) {
-			return IssueGraph.MakeIssueGraph(uow, EmployeeCard, ProtectionTools);
 		}
 		#endregion
 	}

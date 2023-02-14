@@ -101,7 +101,7 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(x => x.EmployeeIssueOperation != null && 
 						                      !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? 
 					x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
 		}
 
@@ -138,29 +138,7 @@ namespace Workwear.Views.Stock
 			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
 		}
 		#endregion
-
-		#region private
-
-		private string GetRowColor(ExpenseItem item)
-		{
-			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
-				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
-			if(requiredIssue > 0 && item.Nomenclature == null)
-				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue <= 0 && item.Amount == 0)
-				return "gray";
-			if(requiredIssue > item.Amount)
-				return "blue";
-			if(requiredIssue < item.Amount)
-				return "Purple";
-			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
-				return "darkgreen";
-			return null;
-		}
-
-		#endregion
-
+		
 		#region События
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{

@@ -54,6 +54,7 @@ namespace Workwear.ViewModels.Company
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			IValidator validator,
 			IUserService userService,
@@ -66,7 +67,7 @@ namespace Workwear.ViewModels.Company
 			LkUserManagerService lkUserManagerService,
 			BaseParameters baseParameters,
 			SizeService sizeService,
-			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
