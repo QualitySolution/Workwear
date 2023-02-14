@@ -17,10 +17,12 @@ namespace Workwear.Measurements
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
 			bool onlyUseInEmployee = false, 
-			bool onlyUseInNomenclature = false)
+			bool onlyUseInNomenclature = false,
+			bool fetchSuitableSizes = false
+			)
 		{
 			if(sizes is null)
-				sizes = SizeRepository.GetSize(uow);
+				sizes = SizeRepository.GetSize(uow, fetchSuitableSizes);
 			var filterSizes = (IEnumerable<Size>)sizes;
 			if (sizeType != null)
 				filterSizes = filterSizes.Where(x => x.SizeType.Id == sizeType.Id);

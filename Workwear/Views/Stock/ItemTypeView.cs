@@ -86,7 +86,7 @@ namespace Workwear.Views.Stock
 			.AddColumn("Наименование").AddTextRenderer(p => p.Name)
 				.WrapWidth(700)
 			.AddColumn("Пол")
-				.AddTextRenderer(p => p.Sex != null ? p.Sex.GetEnumTitle() : String.Empty)
+				.AddTextRenderer(p => p.Sex.GetEnumTitle())
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 		}

@@ -40,9 +40,9 @@ namespace Workwear.Domain.Stock {
 			get => type;
 			set => SetField (ref type, value);
 		}
-		private ClothesSex? sex;
+		private ClothesSex sex;
 		[Display (Name = "Пол одежды")]
-		public virtual ClothesSex? Sex {
+		public virtual ClothesSex Sex {
 			get => sex;
 			set => SetField (ref sex, value);
 		}
@@ -137,13 +137,13 @@ namespace Workwear.Domain.Stock {
 		#endregion
 		#region Функции
 		public virtual bool MatchingEmployeeSex(Sex employeeSex) {
-			if(Sex == null)
+			if(Sex == ClothesSex.Universal)
 				return true;
 			switch(employeeSex) {
 				case Workwear.Domain.Company.Sex.F:
-					return Sex == ClothesSex.Women || Sex == ClothesSex.Universal;
+					return Sex == ClothesSex.Women;
 				case Workwear.Domain.Company.Sex.M:
-					return Sex == ClothesSex.Men || Sex == ClothesSex.Universal;
+					return Sex == ClothesSex.Men;
 				default:
 					return false;
 			}

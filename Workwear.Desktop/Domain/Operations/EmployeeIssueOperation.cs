@@ -449,6 +449,9 @@ namespace Workwear.Domain.Operations
 		public virtual void RecalculateExpiryByNorm(BaseParameters baseParameters, IInteractiveQuestion askUser){
 			if(!CheckRecalculateCondition())
 				return;
+
+			if(StartOfUse == null)
+				StartOfUse = OperationTime;
 			
 			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
 			

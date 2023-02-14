@@ -6,14 +6,14 @@ namespace Workwear.Domain.Stock
 {
 	[Appellative (
 		Gender = GrammaticalGender.Masculine,
-		NominativePlural = "собственики имущества",
-		Nominative = "собственик имущества",
-		Genitive = "собственика имущества")] 
+		NominativePlural = "собственники имущества",
+		Nominative = "собственник имущества",
+		Genitive = "собственника имущества")] 
 	[HistoryTrace]
 	public class Owner : PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
-		public virtual int Id { get; }
+		public virtual int Id { get; set; }
 
 		private string name;
 		[Display (Name = "Название")]

@@ -177,6 +177,7 @@
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
@@ -416,6 +417,8 @@
     <Compile Include="ViewModels\Company\CostCenterViewModel.cs" />
     <Compile Include="Views\Company\CostCenterView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.CostCenterView.cs" />
+    <Compile Include="Views\Stock\Widgets\IssueWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.IssueWidgetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

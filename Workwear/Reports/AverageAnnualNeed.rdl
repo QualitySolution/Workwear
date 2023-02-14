@@ -37,7 +37,7 @@
           <TableColumn>
             <Width>266.6pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>30.0pt</Width>
             <Visibility>
               <Hidden>=!{?show_sex}</Hidden>
@@ -45,14 +45,20 @@
           </TableColumn>
           <TableColumn>
             <Width>53.3pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_size}</Hidden>
+            </Visibility>            
           </TableColumn>
           <TableColumn>
             <Width>51.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_size}</Hidden>
+            </Visibility>            
           </TableColumn>
           <TableColumn>
             <Width>50.5pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>64.4pt</Width>
           </TableColumn>
         </TableColumns>
@@ -609,8 +615,8 @@
     protection_tools.id AS type_id,
     protection_tools.assessed_cost AS assessed_cost,
     IF(@show_sex, wear_cards.sex, NULL) as sex,
-    heightAlias.name AS growth,
-    sizeAlias.name AS size,
+    IF(@show_size, heightAlias.name, NULL) AS growth,
+    IF(@show_size, sizeAlias.name, NULL) AS size,
     measurement_units.name AS unit,
     measurement_units.okei AS okei,
     SUM(CASE norms_item.period_type
@@ -661,6 +667,9 @@ ORDER BY type_name, size, growth, sex</CommandText>
           </QueryParameter>
           <QueryParameter Name="@show_sex">
             <Value>={?show_sex}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_size">
+            <Value>={?show_size}</Value>
           </QueryParameter>
           <QueryParameter Name="@summary">
             <Value>={?summary}</Value>
@@ -753,6 +762,14 @@ ORDER BY type_name, size, growth, sex</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt>
       </Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_size">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt> 
     </ReportParameter>
     <ReportParameter Name="summary">
       <DataType>Boolean</DataType>

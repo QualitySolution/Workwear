@@ -1089,6 +1089,12 @@ ALTER TABLE `posts`
 			ON DELETE NO ACTION
 			ON UPDATE CASCADE;
 
+-- Исправляем ситуацию с номенклатурами в новой версии пол номенклатуры обязательное значение.
+UPDATE nomenclature SET nomenclature.sex = 'Universal' WHERE nomenclature.sex IS NULL;
+
+ALTER TABLE `nomenclature`
+	CHANGE COLUMN `sex` `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal';
+
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 

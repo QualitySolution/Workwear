@@ -246,19 +246,19 @@ namespace workwear
 			if(item.Nomenclature == null)
 				return;
 
-			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).ToList();
-			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
+			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).Cast<IDocItemSizeInfo>().ToList();
+			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
 				(null, item, UoW, existItems);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			foreach (var i in e.SizesWithAmount.ToList()) {
-				var exist = IncomeDoc.FindItem(e.Source, i.Size, e.Height, item.Owner);
+				var exist = IncomeDoc.FindItem(item.Nomenclature, i.Size, e.Height, item.Owner);
 				if(exist != null)
 					exist.Amount = i.Amount;
 				else 
-					IncomeDoc.AddItem(e.Source,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
+					IncomeDoc.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
 			}
 			if(item.WearSize == null)
 				IncomeDoc.RemoveItem(item);
