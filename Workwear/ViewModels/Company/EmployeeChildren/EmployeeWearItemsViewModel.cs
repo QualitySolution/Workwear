@@ -20,7 +20,6 @@ using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 using Workwear.Tools.Features;
-using Workwear.Domain.Operations.Graph;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
@@ -31,7 +30,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
+		private readonly ITdiCompatibilityNavigation tdiNavigation; //FIXME Временно пока не перепишем IncomeDocDlg на ViewModel
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 		private readonly IProgressBarDisplayable progress;
 
@@ -41,7 +41,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueRepository employeeIssueRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
-			ITdiCompatibilityNavigation navigation,
+			INavigationManager navigation,
+			ITdiCompatibilityNavigation tdiNavigation,
 			OpenStockDocumentsModel stockDocumentsModel,
 			FeaturesService featuresService,
 			IProgressBarDisplayable progress)
@@ -50,12 +51,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.tdiNavigation = tdiNavigation ?? throw new ArgumentNullException(nameof(tdiNavigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			
-			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem, EmployeeIssueOperation>(HandleEntityChangeEvent);
 		}
 
 		#region Хелперы
@@ -98,9 +100,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!isConfigured)
 				return;
-			if(changeEvents.First().Session == UoW.Session)
-				return; //Не чего не делаем если это наше собственное изменение.
-			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
+			bool isMySession = changeEvents.First().Session == UoW.Session;
+			//Не чего не делаем если это наше собственное изменение.
+			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
@@ -113,7 +115,17 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				return;
 			}
 
-			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
+			foreach(var op in changeEvents
+				        .Where(x => x.EventType == TypeOfChangeEvent.Update)
+				        .Select(x => x.Entity)
+				        .OfType<EmployeeIssueOperation>()
+				        .Where(x => x.Employee.IsSame(Entity))) {
+				
+				var myOP = UoW.Session.Get<EmployeeIssueOperation>(op.Id);
+				UoW.Session.Refresh(myOP);
+			}
+
+			if(!isMySession && changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
 				RefreshWorkItems();
 			}
 		}
@@ -131,7 +143,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			tdiNavigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)
