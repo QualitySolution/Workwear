@@ -23,7 +23,6 @@ using Workwear.Measurements;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
-using Workwear.Measurements;
 using Workwear.Models.Operations;
 
 namespace Workwear.ViewModels.Stock
@@ -33,7 +32,6 @@ namespace Workwear.ViewModels.Stock
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
-		private readonly IDeleteEntityService deleteService;
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly EmployeeIssueModel issueModel;
@@ -41,15 +39,23 @@ namespace Workwear.ViewModels.Stock
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
-		public CollectiveExpenseItemsViewModel(CollectiveExpenseViewModel сollectiveExpenseViewModel, FeaturesService featuresService, INavigationManager navigation, SizeService sizeService, IDeleteEntityService deleteService, BaseParameters baseParameters, IProgressBarDisplayable globalProgress)
+		public CollectiveExpenseItemsViewModel(
+			CollectiveExpenseViewModel collectiveExpenseViewModel,
+			FeaturesService featuresService,
+			INavigationManager navigation,
+			SizeService sizeService,
+			EmployeeIssueModel issueModel,
+			EmployeeRepository employeeRepository,
+			IInteractiveMessage interactive,
+			BaseParameters baseParameters,
+			IProgressBarDisplayable globalProgress)
 		{
-			this.сollectiveExpenseViewModel = сollectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(сollectiveExpenseViewModel));
+			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			this.employeeRepository = new EmployeeRepository(UoW);
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
@@ -78,7 +84,7 @@ namespace Workwear.ViewModels.Stock
 			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
+			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
 
 			globalProgress.Add();
@@ -130,10 +136,10 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
-		public void AddSubdivizions() {
+		public void AddSubdivisions() {
 			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += LoadSubdivizions;
+			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
 		}
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
@@ -155,11 +161,11 @@ namespace Workwear.ViewModels.Stock
 			AddEmployeesList(employees);
 		}
 		
-		private void LoadSubdivizions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var subdivizionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
+		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
 
-			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivizionIds);
+			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			
 			var progress = progressPage.ViewModel.Progress;
 			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
@@ -179,13 +185,13 @@ namespace Workwear.ViewModels.Stock
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
 			
 			foreach(var item in needs) {
-				if(wigetList.Any(x => x.Key == item.ProtectionTools.Id)) {
+				if(wigetList.ContainsKey(item.ProtectionTools.Id)) {
 					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.Amount;
+					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.Amount,
-						item.ProtectionTools.Type.IssueType == IssueType.Collective ? true : false));
+					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.CalculateRequiredIssue(BaseParameters, Entity.Date),
+						item.ProtectionTools.Type.IssueType == IssueType.Collective));
 			}
 
 			if(!wigetList.Any()) {
@@ -197,13 +203,13 @@ namespace Workwear.ViewModels.Stock
 				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 					.ToDictionary(x => x.Key, x => x.Value));
 			
-			page.ViewModel.AddItems = (w) => AddItemsFromWiget(w, needs, page);
+			page.ViewModel.AddItems = (w) => AddItemsFromWidget(w, needs, page);
 		}
 
-		public void AddItemsFromWiget(Dictionary<int, IssueWidgetItem> wigetItems, List<EmployeeCardItem> needs,
+		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs,
 			IPage<IssueWidgetViewModel> page) {
 			foreach(var item in needs) {
-				if(wigetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
+				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
 					Entity.AddItem(item, BaseParameters);
 			}
 			navigation.ForceClosePage(page);
@@ -227,7 +233,6 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = items;
 			selectJournal.ViewModel.OnSelectResult +=SetNomenclatureForRows;
-//Изменения текущего документа, не учитываются. 
 		}
 
 		public void SetNomenclatureForRows(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
@@ -299,7 +304,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		#endregion
 
-		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
+		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
 			OnPropertyChanged(nameof(SensitiveRefreshAllMenuItem));
 			OnPropertyChanged(nameof(Sum));
 		}

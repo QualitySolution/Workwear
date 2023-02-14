@@ -97,7 +97,7 @@ namespace Workwear.Views.Stock
 			item.Activated += (sender, e) => ViewModel.AddEmployees();
 			addMenu.Add(item);
 			item = new yMenuItem("Подразделения");
-			item.Activated += (sender, e) => ViewModel.AddSubdivizions();
+			item.Activated += (sender, e) => ViewModel.AddSubdivisions();
 			addMenu.Add(item);
 			addMenu.Add(new SeparatorMenuItem());
 			item = new yMenuItem("Дополнительно выбранному сотруднику");

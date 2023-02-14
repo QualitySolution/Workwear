@@ -160,14 +160,14 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
 			StockPosition want = employeeCardItem.BestChoiceInStock.FirstOrDefault()?.StockPosition;
 			if(want != null)
 				foreach(var position in employeeCardItem.BestChoiceInStock) {
 					if(position.Amount - 
 					   Items.Where(x =>x.Nomenclature!= null)
 							.Where(item => position.Equals(item?.StockPosition)) 
-							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не деелаем
+							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не делаем
 						want = position.StockPosition;
 				}
 			return AddItem(employeeCardItem, want, needPositionAmount);

@@ -470,11 +470,11 @@ namespace Workwear.Domain.Company
 			DateTime onTime, 
 			bool onlyUnderreceived = false, Action progressStep = null)
 		{
-			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
+			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters, onTime) : WorkwearItems;
 			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
 		}
 		
-		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогрес бара. Метод выполняет 4 шага.</param>
+		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогресс бара. Метод выполняет 4 шага.</param>
 		public static void FillWearInStockInfo(IUnitOfWork uow,
 			Warehouse warehouse, 
 			DateTime onTime, 
