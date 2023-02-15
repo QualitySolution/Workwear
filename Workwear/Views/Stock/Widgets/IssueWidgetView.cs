@@ -17,31 +17,31 @@ namespace Workwear.Views.Stock.Widgets {
 			var rows = ViewModel.Items.Count;
 			ItemListTable.Resize((uint)(rows + 1), 5);
 
-			var label1 = new Label {LabelProp = "Добавить"};
+			var label1 = new Label {Markup = "<b>Добавить</b>"};
 			ItemListTable.Attach(label1, 1, 2, 0, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
-			var label2 = new Label {LabelProp = "Номенклатура нормы"};
+			var label2 = new Label {Markup = "<b>Номенклатура нормы</b>"};
 			ItemListTable.Attach(label2, 2, 3, 0, 2, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 			
-			var label3 = new Label {LabelProp = "Тип выдачи"};
+			var label3 = new Label {Markup = "<b>Тип выдачи</b>"};
 			ItemListTable.Attach(label3, 3, 4, 0, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
-			var label4 = new Label {LabelProp = "Потребности"};
+			var label4 = new Label {Markup = "<b>Потребности</b>"};
 			ItemListTable.Attach(label4, 4, 6, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label5 = new Label {LabelProp = "Количество"};
+			var label5 = new Label {Markup = "<b>Количество</b>"};
 			ItemListTable.Attach(label5, 6, 8, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label6 = new Label {LabelProp = "Неудовлетворённые"};
+			var label6 = new Label {Markup = "<b>Неудовлетворённые</b>"};
 			ItemListTable.Attach(label6, 4, 5, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label7 = new Label {LabelProp = "Всего"};
+			var label7 = new Label {Markup = "<b>Всего</b>"};
 			ItemListTable.Attach(label7, 5, 6, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label8 = new Label {LabelProp = "К выдаче"};
+			var label8 = new Label {Markup = "<b>К выдаче</b>"};
 			ItemListTable.Attach(label8, 6, 7, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
-			var label9 = new Label {LabelProp = "На складе"};
+			var label9 = new Label {Markup = "<b>На складе</b>"};
 			ItemListTable.Attach(label9, 7, 8, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 			var items = ViewModel.Items;
