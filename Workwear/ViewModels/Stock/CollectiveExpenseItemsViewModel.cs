@@ -147,61 +147,52 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-
-			var progress = progressPage.ViewModel.Progress;
-			progress.Start(employeeIds.Length + 2, text: "Загружаем сотрудников");
-			var employees = UoW.Query<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.List();
-			progress.Add();
-			issueModel.FillWearReceivedInfo(employees.ToArray());
-			foreach(var employee in employees) {
-				progress.Add(text: employee.ShortName);
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
-			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			AddEmployeesList(employees);
+			progressPage.ViewModel.Progress.Start(3, text: "Загружаем сотрудников");
+			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
+			progressPage.ViewModel.Progress.Add();
+			
+			AddEmployeesList(employees, progressPage);
 		}
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-
+			progressPage.ViewModel.Progress.Start(3, text: "Загружаем сотрудников");
+			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
+			progressPage.ViewModel.Progress.Add();
 			
-			var progress = progressPage.ViewModel.Progress;
-			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
-			foreach(var employee in employees) {
-				progress.Add(text: employee.ShortName);
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
-			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			AddEmployeesList(employees);
+			AddEmployeesList(employees, progressPage);
 		}
 		
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+			progressPage.ViewModel.Progress.Start(3, text: "Загружаем список сотрудников");
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
 			
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			var progress = progressPage.ViewModel.Progress;
-			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
-			foreach(var employee in employees) {
-				progress.Add(text: employee.ShortName);
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
-			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			AddEmployeesList(employees);
+			AddEmployeesList(employees, progressPage);
 		}
 		
-		private void AddEmployeesList(IList<EmployeeCard> employees) {
+		private void AddEmployeesList(IList<EmployeeCard> employees, IPage<ProgressWindowViewModel> progressPage = null) {
+			progressPage?.ViewModel.Progress.Add(text:"Загружаем потребности");
+			issueModel.FillWearReceivedInfo(employees.ToArray());
+			
+			progressPage?.ViewModel.Progress.Add(text:"Загружаем складские остатки");
+			foreach(var employee in employees) {
+				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
+			}
+			progressPage?.ViewModel.Progress.Add();
+			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			
+			//Подготавливаем виджет
+			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
+			
 			var needs = employees
 				.SelectMany(x => x.WorkwearItems)
 				.Where(x=> !Entity.Items.Any(y =>y.EmployeeCardItem == x))
 				.ToList();
-			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
 			
 			foreach(var item in needs) {
 				if(wigetList.ContainsKey(item.ProtectionTools.Id)) {
