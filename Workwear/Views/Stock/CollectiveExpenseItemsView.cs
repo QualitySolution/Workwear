@@ -124,6 +124,8 @@ namespace Workwear.Views.Stock
 			item.Activated += (sender, e) => ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			changeMenu.Add(item);
 			buttonChange.Menu = changeMenu;
+			buttonChange.TooltipText = "Заменить в строке выдаваемую позицию. Можно проставить любую номенклатуру подходящую по номенклатуре" +
+			                           " нормы из имеющихся в наличии на складе, независимо от размера, роста и других критерииев.";
 			changeMenu.ShowAll();
 		}
 
