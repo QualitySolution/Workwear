@@ -24,6 +24,7 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
+using Workwear.Repository.Stock;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -34,6 +35,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly StockRepository stockRepository;
 		private readonly EmployeeIssueModel issueModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -45,9 +47,9 @@ namespace Workwear.ViewModels.Stock
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
 			EmployeeRepository employeeRepository,
+			IProgressBarDisplayable globalProgress, StockRepository stockRepository,
 			IInteractiveMessage interactive,
-			BaseParameters baseParameters,
-			IProgressBarDisplayable globalProgress)
+			BaseParameters baseParameters)
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -55,6 +57,7 @@ namespace Workwear.ViewModels.Stock
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
@@ -197,11 +200,18 @@ namespace Workwear.ViewModels.Stock
 			foreach(var item in needs) {
 				if(wigetList.ContainsKey(item.ProtectionTools.Id)) {
 					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					wigetList[item.ProtectionTools.Id].NumberOfIssused += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
+					wigetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
+					if(item.CalculateRequiredIssue(BaseParameters, Entity.Date) != 0)
+						wigetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools, 1,item.CalculateRequiredIssue(BaseParameters, Entity.Date),
-						item.ProtectionTools.Type.IssueType == IssueType.Collective));
+					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
+						item.ProtectionTools.Type.IssueType == IssueType.Collective,
+						item.CalculateRequiredIssue(BaseParameters, Entity.Date)>0 ? 1 : 0,
+						1,
+						item.CalculateRequiredIssue(BaseParameters, Entity.Date),
+						stockRepository.StockBalances(UoW,Entity.Warehouse,item.ProtectionTools.Nomenclatures,Entity.Date)
+								.Sum(x =>x.Amount)));
 			}
 
 			if(!wigetList.Any()) {
