@@ -15,7 +15,7 @@ namespace Workwear.Views.Stock.Widgets {
 		private void ConfigureDlg() {
 
 			var rows = ViewModel.Items.Count;
-			ItemListTable.Resize((uint)(rows + 1), 5);
+			ItemListTable.Resize((uint)(rows + 2), 9);
 
 			var label1 = new Label {Markup = "<b>Добавить</b>"};
 			ItemListTable.Attach(label1, 1, 2, 0, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
@@ -27,23 +27,26 @@ namespace Workwear.Views.Stock.Widgets {
 			ItemListTable.Attach(label3, 3, 4, 0, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 			var label4 = new Label {Markup = "<b>Потребности</b>"};
-			ItemListTable.Attach(label4, 4, 6, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label4, 5, 7, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
 			var label5 = new Label {Markup = "<b>Количество</b>"};
-			ItemListTable.Attach(label5, 6, 8, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label5, 8, 10, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 			
 			var label6 = new Label {Markup = "<b>Неудовлетворённые</b>"};
-			ItemListTable.Attach(label6, 4, 5, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label6, 5, 6, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 3, 0);
 			
 			var label7 = new Label {Markup = "<b>Всего</b>"};
-			ItemListTable.Attach(label7, 5, 6, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label7, 6, 7, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 3, 0);
 			
 			var label8 = new Label {Markup = "<b>К выдаче</b>"};
-			ItemListTable.Attach(label8, 6, 7, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label8, 8, 9, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 3, 0);
 			
 			var label9 = new Label {Markup = "<b>На складе</b>"};
-			ItemListTable.Attach(label9, 7, 8, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label9, 9, 10, 1, 2, AttachOptions.Shrink, AttachOptions.Shrink, 3, 0);
 
+			ItemListTable.Attach(new VSeparator(), 4, 5, 0, (uint)(rows + 2));
+			ItemListTable.Attach(new VSeparator(), 7, 8, 0, (uint)(rows + 2));
+			
 			var items = ViewModel.Items;
 			uint i = 2;
 				foreach(var item in items.Values) {
@@ -61,17 +64,18 @@ namespace Workwear.Views.Stock.Widgets {
 					ItemListTable.Attach(label, 3, 4, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
 					label = new Label {LabelProp = item.NumberOfCurrentNeeds.ToString()}; //Неудовлетворённых потребностей
-					ItemListTable.Attach(label, 4, 5, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+					ItemListTable.Attach(label, 5, 6, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 	
 					label = new Label {LabelProp = item.NumberOfNeeds.ToString()}; //Всего потребностей
-					ItemListTable.Attach(label, 5, 6, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-					
-					label = new Label {LabelProp = item.ItemQuantityForIssuse.ToString()}; //Количество К выдаче
 					ItemListTable.Attach(label, 6, 7, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 					
+					label = new Label {LabelProp = item.ItemQuantityForIssuse.ToString()}; //Количество К выдаче
+					ItemListTable.Attach(label, 8, 9, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+					
 					label = new Label {LabelProp = item.ItemStockBalance.ToString()}; // Количество на складе
-					if(item.ItemStockBalance<item.ItemQuantityForIssuse)label.ModifyFg(StateType.Normal, new Gdk.Color(255, 0, 0));
-					ItemListTable.Attach(label, 7, 8, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+					if(item.ItemStockBalance<item.ItemQuantityForIssuse)
+						label.ModifyFg(StateType.Normal, new Gdk.Color(255, 0, 0));
+					ItemListTable.Attach(label, 9, 10, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 					
 					i++;
 				}
