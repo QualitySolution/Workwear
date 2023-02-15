@@ -74,6 +74,8 @@ namespace Workwear.Models.Operations {
 
 		#region Employees
 		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null) {
+			if(!employees.Any())
+				return;
 			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
 			if(notSavedOperations != null)
 				operations.AddRange(notSavedOperations);
