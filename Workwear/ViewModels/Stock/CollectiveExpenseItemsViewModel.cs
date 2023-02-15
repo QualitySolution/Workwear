@@ -35,7 +35,6 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly EmployeeIssueModel issueModel;
-
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
@@ -141,6 +140,11 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
 		}
+		public void AddDepartments() {
+			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
+		}
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
@@ -167,6 +171,21 @@ namespace Workwear.ViewModels.Stock
 
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			
+			var progress = progressPage.ViewModel.Progress;
+			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
+			foreach(var employee in employees) {
+				progress.Add(text: employee.ShortName);
+				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
+			}
+			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			AddEmployeesList(employees);
+		}
+		
+		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
+			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
+			
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
 			var progress = progressPage.ViewModel.Progress;
 			progress.Start(employees.Count + 1, text: "Загружаем сотрудников");
 			foreach(var employee in employees) {
