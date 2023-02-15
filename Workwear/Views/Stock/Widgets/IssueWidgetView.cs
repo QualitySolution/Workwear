@@ -70,6 +70,7 @@ namespace Workwear.Views.Stock.Widgets {
 					ItemListTable.Attach(label, 6, 7, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 					
 					label = new Label {LabelProp = item.ItemStockBalance.ToString()}; // Количество на складе
+					if(item.ItemStockBalance<item.ItemQuantityForIssuse)label.ModifyFg(StateType.Normal, new Gdk.Color(255, 0, 0));
 					ItemListTable.Attach(label, 7, 8, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 					
 					i++;
