@@ -9,6 +9,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Utilities.Debug;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
@@ -76,18 +77,23 @@ namespace Workwear.ViewModels.Stock
 				.Future();
 
 			query.ToList();
-			globalProgress.Add();
-			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
+			PerformanceHelper.AddTimePoint("query");
 			globalProgress.Add();
 			Entity.PrepareItems(UoW);
+			PerformanceHelper.AddTimePoint("PrepareItems");
+			globalProgress.Add();
+			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
+			PerformanceHelper.AddTimePoint("FillWearReceivedInfo");
 			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
 
+			PerformanceHelper.AddTimePoint("Sum");
 			globalProgress.Add();
 			Owners = UoW.GetAll<Owner>().ToList();
+			PerformanceHelper.AddTimePoint("Owners");
 			globalProgress.Close();
 		}
 

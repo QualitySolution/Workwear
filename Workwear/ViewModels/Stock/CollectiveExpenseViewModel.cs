@@ -15,6 +15,7 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
 using QS.Tools;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -65,6 +66,8 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
+
+			PerformanceHelper.StartMeasurement("Диалог");
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -74,16 +77,22 @@ namespace Workwear.ViewModels.Stock
 				.TargetField(x => x.Employee);
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 
+			PerformanceHelper.AddTimePoint("entryBuilder и changeMonitor");
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 
+			PerformanceHelper.AddTimePoint("Warehouse");
+			PerformanceHelper.StartPointsGroup("CollectiveExpenseItemsViewModel");
 			var parameter = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
 			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameter);
+			PerformanceHelper.EndPointsGroup();
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			PerformanceHelper.AddTimePoint("Конец");
+			PerformanceHelper.Main.PrintAllPoints(logger);
 		}
 
 		#region EntityViewModels
