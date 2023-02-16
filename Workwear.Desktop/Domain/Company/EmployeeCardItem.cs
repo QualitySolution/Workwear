@@ -214,7 +214,7 @@ namespace Workwear.Domain.Company
 					return 0;
 			}
 
-			return ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule));
+			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {

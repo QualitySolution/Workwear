@@ -295,6 +295,31 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
 		}
 		
+		[Test(Description = "Все получали больше чем надо. Не показываем минус.")]
+		public void CalculateRequiredIssue_ReceivedMoreThenNormCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			
+			var norm = new NormItem {
+				Amount = 4
+			};
+			var item = new EmployeeCardItem {
+				ActiveNormItem = norm,
+				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+					new EmployeeIssueOperation {
+						OperationTime = DateTime.Today.AddDays(-30),
+						StartOfUse = DateTime.Today.AddDays(-30),
+						ExpiryByNorm = DateTime.Today.AddDays(30),
+						AutoWriteoffDate = DateTime.Today.AddDays(30),
+						Issued = 8
+					}
+				}),
+				NextIssue = DateTime.Today.AddDays(30)
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(0));
+		}
+		
 		[Test(Description = "Получили частично")]
 		public void CalculateRequiredIssue_ReceivedPartCase()
 		{
