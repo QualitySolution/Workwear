@@ -151,7 +151,7 @@ namespace Workwear.ViewModels.Stock
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(3, text: "Загружаем сотрудников");
+			progressPage.ViewModel.Progress.Start(4, text: "Загружаем сотрудников");
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
 			progressPage.ViewModel.Progress.Add();
@@ -161,7 +161,7 @@ namespace Workwear.ViewModels.Stock
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(3, text: "Загружаем сотрудников");
+			progressPage.ViewModel.Progress.Start(4, text: "Загружаем сотрудников");
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			progressPage.ViewModel.Progress.Add();
@@ -171,7 +171,7 @@ namespace Workwear.ViewModels.Stock
 		
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(3, text: "Загружаем список сотрудников");
+			progressPage.ViewModel.Progress.Start(4, text: "Загружаем список сотрудников");
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
 			
