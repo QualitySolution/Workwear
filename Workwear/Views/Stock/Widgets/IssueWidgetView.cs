@@ -2,6 +2,7 @@ using System;
 using Gtk;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
+using Gdk;
 using QS.Views.Dialog;
 using Workwear.ViewModels.Stock.Widgets;
 
@@ -44,12 +45,12 @@ namespace Workwear.Views.Stock.Widgets {
 			var label9 = new Label {Markup = "<b><i>На складе</i></b>"};
 			ItemListTable.Attach(label9, 14, 15, 3, 4, AttachOptions.Shrink, AttachOptions.Shrink, 3, 0);
 
-			ItemListTable.Attach(new VSeparator(), 3, 4, 0, (uint)(rows + 5));
-			ItemListTable.Attach(new VSeparator(), 5, 6, 0, (uint)(rows + 5));
-			ItemListTable.Attach(new VSeparator(), 7, 8, 0, (uint)(rows + 5));
-			ItemListTable.Attach(new VSeparator(), 9, 10, 3, (uint)(rows + 5));
-			ItemListTable.Attach(new VSeparator(), 11, 12, 0, (uint)(rows + 5));
-			ItemListTable.Attach(new VSeparator(), 13, 14, 3, (uint)(rows + 5));
+			ItemListTable.Attach(new VSeparator(), 3, 4, 0, (uint)(2 * rows + 5));
+			ItemListTable.Attach(new VSeparator(), 5, 6, 0, (uint)(2 * rows + 5));
+			ItemListTable.Attach(new VSeparator(), 7, 8, 0, (uint)(2 * rows + 5));
+			ItemListTable.Attach(new VSeparator(), 9, 10, 3, (uint)(2 * rows + 5));
+			ItemListTable.Attach(new VSeparator(), 11, 12, 0, (uint)(2 * rows + 5));
+			ItemListTable.Attach(new VSeparator(), 13, 14, 3, (uint)(2 * rows + 5));
 			
 			ItemListTable.Attach(new HSeparator(), 0, 15, 4, 5);
 			ItemListTable.Attach(new HSeparator(), 8, 15, 2, 3);
@@ -83,8 +84,10 @@ namespace Workwear.Views.Stock.Widgets {
 					if(item.ItemStockBalance<item.ItemQuantityForIssuse)
 						label.ModifyFg(StateType.Normal, new Gdk.Color(255, 0, 0));
 					ItemListTable.Attach(label, 14, 15, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-					
-					i++;
+
+					ItemListTable.Attach(new HSeparator(), 0, 15, i+1, i+2);
+
+					i += 2;
 				}
 
 				if(rows > 17) {
