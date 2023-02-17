@@ -17,6 +17,8 @@ namespace Workwear.Domain.Operations.Graph
 
 		public List<GraphInterval> Intervals = new List<GraphInterval>();
 
+		private readonly IList<EmployeeIssueOperation> operations;
+
 		public IssueGraph()
 		{
 
@@ -26,27 +28,35 @@ namespace Workwear.Domain.Operations.Graph
 
 		public IEnumerable<GraphInterval> OrderedIntervalsReverse => Intervals.OrderByDescending(x => x.StartDate);
 
-		public IssueGraph(IList<EmployeeIssueOperation> issues)
-		{
-			//создаем интервалы.
-			List<DateTime> starts = issues.Select(x => x.OperationTime.Date).ToList();
-			starts.AddRange(issues.Where(x => x.StartOfUse.HasValue).Select(x => x.StartOfUse.Value.Date));
-			starts.AddRange(issues.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value.Date));
+		public IssueGraph(IList<EmployeeIssueOperation> issues) {
+			operations = issues;
+			Refresh();
+		}
+
+		/// <summary>
+		/// Метод перестраивает граф после изменения дат в его операциях.
+		/// Если необходимо добавить или удалить операции просто пересоздайте граф.
+		/// </summary>
+		public void Refresh(){
+			Intervals = new List<GraphInterval>();
+			List<DateTime> starts = operations.Select(x => x.OperationTime.Date).ToList();
+			starts.AddRange(operations.Where(x => x.StartOfUse.HasValue).Select(x => x.StartOfUse.Value.Date));
+			starts.AddRange(operations.Where(x => x.AutoWriteoffDate.HasValue).Select(x => x.AutoWriteoffDate.Value.Date));
 			starts = starts.Distinct().OrderBy(x => x.Ticks).ToList();
 
-			var graphItems = issues.Where(x => x.Issued > 0).Select(x => new GraphItem(x)).ToList();
-			foreach (var issue in issues.Where(x => x.Returned > 0))
+			var graphItems = operations.Where(x => x.Issued > 0).Select(x => new GraphItem(x)).ToList();
+			foreach (var issue in operations.Where(x => x.Returned > 0))
 			{
 				if (issue.IssuedOperation == null)
 				{
-					logger.Error($"{typeof(EmployeeIssueOperation).Name}:{issue.Id} списывает спецодежду с сотрудника при этом не имеет ссылки на операцию по которой эта одежда была выдана сотруднику. Операция была пропущена в построение графа выдачи.");
+					logger.Error($"{nameof(EmployeeIssueOperation)}:{issue.Id} списывает спецодежду с сотрудника при этом не имеет ссылки на операцию по которой эта одежда была выдана сотруднику. Операция была пропущена в построение графа выдачи.");
 					continue;
 				}
 
 				var item = graphItems.FirstOrDefault(x => x.IssueOperation.Id == issue.IssuedOperation.Id);
 				if (item == null)
 				{
-					logger.Error($"{typeof(EmployeeIssueOperation).Name}:{issue.Id} ссылается на некоректную операцию выдачи. Операция была пропущена в построение графа выдачи.");
+					logger.Error($"{nameof(EmployeeIssueOperation)}:{issue.Id} ссылается на некоректную операцию выдачи. Операция была пропущена в построение графа выдачи.");
 					continue;
 				}
 				item.WriteOffOperations.Add(issue);
@@ -62,6 +72,7 @@ namespace Workwear.Domain.Operations.Graph
 				if (interval.Reset)
 					resetDate = date;
 				var activeItems = graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date &&
+				                                        (x.IssueOperation.AutoWriteoffDate == null || x.IssueOperation.AutoWriteoffDate >= date) &&
 				                                        (x.IssueOperation.OperationTime.Date > resetDate ||
 				                                         (x.IssueOperation.OperationTime.Date == resetDate &&
 				                                          x.IssueOperation.OverrideBefore)));
@@ -108,7 +119,7 @@ namespace Workwear.Domain.Operations.Graph
 
 		public GraphInterval IntervalOfDate(DateTime date)
 		{
-			return Intervals.Where(x => x.StartDate <= date.Date).OrderByDescending(x => x.StartDate).Take(1).SingleOrDefault();
+			return OrderedIntervalsReverse.FirstOrDefault(x => x.StartDate <= date.Date);
 		}
 
 		#endregion

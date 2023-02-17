@@ -65,6 +65,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Расчетные
 		public virtual string Title => $"Коллективная выдача №{Id} от {Date:d}";
+		public virtual IEnumerable<EmployeeCard> Employees => Items.Select(x => x.Employee).Distinct();
 		#endregion
 
 		#region IValidatableObject implementation
@@ -159,14 +160,14 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
 			StockPosition want = employeeCardItem.BestChoiceInStock.FirstOrDefault()?.StockPosition;
 			if(want != null)
 				foreach(var position in employeeCardItem.BestChoiceInStock) {
 					if(position.Amount - 
 					   Items.Where(x =>x.Nomenclature!= null)
 							.Where(item => position.Equals(item?.StockPosition)) 
-							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не деелаем
+							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не делаем
 						want = position.StockPosition;
 				}
 			return AddItem(employeeCardItem, want, needPositionAmount);
@@ -201,7 +202,7 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
-		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
+		public virtual void PrepareItems(IUnitOfWork uow)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
 			var excludeOperations = Items.Select(x => x.WarehouseOperation);
@@ -220,9 +221,9 @@ namespace Workwear.Domain.Stock.Documents
 			
 			foreach(var employeeGroup in groups) {
 				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
+				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 				progress.Add();
-				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
 				UoW.Save(employeeGroup.Key);
 			}
 		}

@@ -114,21 +114,21 @@ namespace Workwear.Domain.Operations
 		[Display(Name = "Начало использования")]
 		public virtual DateTime? StartOfUse {
 			get => startOfUse;
-			set => SetField(ref startOfUse, value);
+			set => SetField(ref startOfUse, value?.Date);
 		}
 
 		private DateTime? expiryByNorm;
 		[Display(Name = "Износ по норме")]
 		public virtual DateTime? ExpiryByNorm {
 			get => expiryByNorm;
-			set => SetField(ref expiryByNorm, value);
+			set => SetField(ref expiryByNorm, value?.Date);
 		}
 
 		private DateTime? autoWriteoffDate;
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
-			set => SetField(ref autoWriteoffDate, value);
+			set => SetField(ref autoWriteoffDate, value?.Date);
 		}
 
 		private EmployeeIssueOperation issuedOperation;
@@ -228,6 +228,15 @@ namespace Workwear.Domain.Operations
 		public virtual decimal CalculatePercentWear(DateTime atDate) => 
 			CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
 
+		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
+
+		public virtual bool IsTouchDates(DateTime start, DateTime end) =>
+			(OperationTime <= end || StartOfUse <= end)
+			&& (ExpiryByNorm >= start || AutoWriteoffDate >= start || (ExpiryByNorm == null && AutoWriteoffDate == null));
+		#endregion
+
+		#region Статические методы
 		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
@@ -238,9 +247,6 @@ namespace Workwear.Domain.Operations
 
 			return beginWearPercent + (decimal)addPercent;
 		}
-
-		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
-			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
 
 		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
 			if(startOfUse == null || expiryByNorm == null)

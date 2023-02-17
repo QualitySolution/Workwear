@@ -13,7 +13,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
-			Map (x => x.Operation).Column ("operation").CustomType<ExpenseOperationsType> ();
+			Map (x => x.Operation).Column ("operation");
 			Map (x => x.Date).Column ("date");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");

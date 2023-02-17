@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
@@ -42,6 +43,8 @@ namespace Workwear.Test.Integration.Organization
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.ExtendPeriod.Returns(AnswerOptions.No);
+			baseParameters.ShiftExpluatacion.Returns(AnswerOptions.No);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 
@@ -64,9 +67,13 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.AddNomeclature(nomenclature);
-				protectionTools.AddNomeclature(nomenclature2);
-				protectionTools.Name = "СИЗ для тестирования";
+				protectionTools.Name = "СИЗ для тестирования увеличиваем срок носки";
 				uow.Save(protectionTools);
+				
+				var protectionTools2 = new ProtectionTools();
+				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.Name = "СИЗ для тестирования не увеличиваем";
+				uow.Save(protectionTools2);
 
 				var position2 = new StockPosition(nomenclature2, 0, null, null, null);
 
@@ -75,6 +82,10 @@ namespace Workwear.Test.Integration.Organization
 				normItem.Amount = 1;
 				normItem.NormPeriod = NormPeriodType.Year;
 				normItem.PeriodCount = 1;
+				var normItem2 = norm.AddItem(protectionTools2);
+				normItem2.Amount = 1;
+				normItem2.NormPeriod = NormPeriodType.Month;
+				normItem2.PeriodCount = 6;
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
@@ -109,8 +120,12 @@ namespace Workwear.Test.Integration.Organization
 				expense.UpdateEmployeeWearItems();
 				uow.Commit();
 
-				Assert.That(employee.WorkwearItems[0].NextIssue,
-					Is.EqualTo(new DateTime(2020, 5, 10))
+				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools).NextIssue,
+					Is.EqualTo(new DateTime(2019, 5, 10))
+				);
+				
+				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools2).NextIssue,
+					Is.EqualTo(new DateTime(2018, 11, 10))
 				);
 
 				//Добавляем новый отпуск на 10 дней.
@@ -123,13 +138,17 @@ namespace Workwear.Test.Integration.Organization
 				vacation.EndDate = new DateTime(2019, 2, 10);
 				vacation.VacationType = vacationType;
 				employee.AddVacation(vacation);
-				vacation.UpdateRelatedOperations(uow, new Workwear.Repository.Operations.EmployeeIssueRepository(), baseParameters, ask);
+				employee.RecalculateDatesOfIssueOperations(uow, new Workwear.Repository.Operations.EmployeeIssueRepository(uow), baseParameters, ask, vacation);
 				uow.Save(vacationType);
 				uow.Save(vacation);
 				uow.Save(employee);
 
-				Assert.That(employee.WorkwearItems[0].NextIssue,
-					Is.EqualTo(new DateTime(2020, 5, 20))
+				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools).NextIssue,
+					Is.EqualTo(new DateTime(2019, 5, 20))
+				);
+				
+				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools2).NextIssue,
+					Is.EqualTo(new DateTime(2018, 11, 10))
 				);
 			}
 		}

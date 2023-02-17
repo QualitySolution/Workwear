@@ -201,8 +201,8 @@ namespace Workwear.Domain.Stock.Documents
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 
-			if(Employee.GetUnderreceivedItems(baseParameters).Contains(employeeCardItem) && newItem.Nomenclature != null && newItem.ProtectionTools?.Type.IssueType == IssueType.Personal) 
-				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters);
+			if(newItem.Nomenclature != null && newItem.ProtectionTools?.Type.IssueType == IssueType.Personal) 
+				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date);
 			else newItem.Amount = 0;
 
 			return newItem;
@@ -246,8 +246,8 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void UpdateEmployeeWearItems()
 		{
+			Employee.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			Employee.UpdateNextIssue(Items.Where(x => x.ProtectionTools != null).Select(x => x.ProtectionTools).ToArray());
-			Employee.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
 			UoW.Save(Employee);
 		}
 
@@ -331,13 +331,6 @@ namespace Workwear.Domain.Stock.Documents
 		Employee,
 		[Display(Name = "Выдача на подразделение")]
 		Object
-	}
-
-	public class ExpenseOperationsType : NHibernate.Type.EnumStringType
-	{
-		public ExpenseOperationsType () : base (typeof(ExpenseOperations))
-		{
-		}
 	}
 }
 

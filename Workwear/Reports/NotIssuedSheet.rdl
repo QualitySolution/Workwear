@@ -266,7 +266,7 @@
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -283,7 +283,7 @@
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -774,7 +774,7 @@
     ) AS employee,
     wear_cards.personnel_number,
     wear_cards_item.next_issue,
-    wear_cards_item.last_issue,
+    (SELECT MAX(operation_issued_by_employee.operation_time) FROM operation_issued_by_employee WHERE operation_issued_by_employee.employee_id = wear_cards.id AND protection_tools.id = operation_issued_by_employee.protection_tools_id AND operation_issued_by_employee.issued &gt; 0) as last_issue,
     IF(
         wear_cards_item.next_issue &lt;= CONVERT(@report_date, DATE),
         DATEDIFF(
@@ -981,22 +981,12 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev26;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2021-10-01</Value>
-          <Value>2021-12-01</Value>
+          <Value>2023-10-01</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1028,7 +1018,7 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="exclude_before">
       <DataType>String</DataType>
-      <Nullable>false</Nullable>
+      <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt>
@@ -1036,6 +1026,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>True</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -1043,4 +1038,13 @@ ORDER BY
       </Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>database=workwear_osmbt_copy;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>

@@ -22,6 +22,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
@@ -41,6 +42,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
 		private readonly IProgressBarDisplayable progress;
+		private readonly EmployeeIssueRepository issueRepository;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -55,6 +57,7 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			IProgressBarDisplayable progress,
+			EmployeeIssueRepository issueRepository,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
@@ -65,6 +68,8 @@ namespace Workwear.ViewModels.Stock {
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
+			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
+			this.issueRepository.RepoUow = UoW;
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -118,6 +123,7 @@ namespace Workwear.ViewModels.Stock {
 		public string WriteoffDocNumber => (Entity.WriteOffDoc?.Id > 0) ? Entity.WriteOffDoc?.Id.ToString() : null;
 		#endregion
 
+		#region Заполение документа
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
@@ -125,12 +131,20 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Employee == null)
 				return;
 
+			Entity.Employee.FillWearReceivedInfo(issueRepository);
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item, baseParameters);
 			}
 		}
+
+		private void UpdateAmounts() {
+			foreach(var item in Entity.Items) {
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(baseParameters, Entity.Date) ?? 0;
+			}
+		}
+		#endregion
 
 		public void FillAktNumber()
 		{
@@ -254,6 +268,10 @@ namespace Workwear.ViewModels.Stock {
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch(e.PropertyName) {
+				case nameof(Entity.Date):
+					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
+					UpdateAmounts();
+					break;
 				case nameof(Entity.Employee):
 					FillUnderreceived();
 					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));

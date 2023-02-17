@@ -144,7 +144,7 @@ namespace Workwear.Views.Company
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
 		{
 			MessageDialogHelper.RunInfoDialog(
-				"<b>Колонка «Получено»:</b>\n" +
+				"<b>Колонка «Числится»:</b>\n" +
 				"<span color='darkgreen'>●</span> — потребность закрыта полностью\n" +
 				"<span color='blue'>●</span> — получено больше необходимого\n" +
 				"<span color='orange'>●</span> — получено меньше необходимого\n" +

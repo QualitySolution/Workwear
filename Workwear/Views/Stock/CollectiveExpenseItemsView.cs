@@ -77,7 +77,7 @@ namespace Workwear.Views.Stock
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
 		}
 
@@ -97,7 +97,10 @@ namespace Workwear.Views.Stock
 			item.Activated += (sender, e) => ViewModel.AddEmployees();
 			addMenu.Add(item);
 			item = new yMenuItem("Подразделения");
-			item.Activated += (sender, e) => ViewModel.AddSubdivizions();
+			item.Activated += (sender, e) => ViewModel.AddSubdivisions();
+			addMenu.Add(item);
+			item = new yMenuItem("Отделы");
+			item.Activated += (sender, e) => ViewModel.AddDepartments();
 			addMenu.Add(item);
 			addMenu.Add(new SeparatorMenuItem());
 			item = new yMenuItem("Дополнительно выбранному сотруднику");
@@ -121,6 +124,8 @@ namespace Workwear.Views.Stock
 			item.Activated += (sender, e) => ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			changeMenu.Add(item);
 			buttonChange.Menu = changeMenu;
+			buttonChange.TooltipText = "Заменить в строке выдаваемую позицию. Можно проставить любую номенклатуру подходящую по номенклатуре" +
+			                           " нормы из имеющихся в наличии на складе, независимо от размера, роста и других критерииев.";
 			changeMenu.ShowAll();
 		}
 
@@ -165,21 +170,6 @@ namespace Workwear.Views.Stock
 		void ItemOpenProtection_Activated(object sender, EventArgs e)
 		{
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
-		}
-
-		#endregion
-
-		#region private
-
-		private string GetRowColor(CollectiveExpenseItem item) {
-			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(requiredIssue > 0 && item.Nomenclature == null)
-				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
-			if(requiredIssue <= 0 && item.Amount == 0)
-				return "gray";
-			return null;
 		}
 
 		#endregion

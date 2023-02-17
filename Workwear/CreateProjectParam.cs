@@ -62,6 +62,7 @@ using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
+using Workwear.Models.Operations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
@@ -175,6 +176,7 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<ProgressInterceptor>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
@@ -284,6 +286,7 @@ namespace workwear
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			#endregion
 
 			#region Repository

@@ -231,6 +231,26 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#endregion
 
+		#region Расчет для View
+		public string GetRowColor(ExpenseItem item)
+		{
+			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
+			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
+				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
+			if(requiredIssue > 0 && item.Nomenclature == null)
+				return item.Amount == 0 ? "red" : "Dark red";
+			if(requiredIssue <= 0 && item.Amount == 0)
+				return "gray";
+			if(requiredIssue > item.Amount)
+				return "blue";
+			if(requiredIssue < item.Amount)
+				return "Purple";
+			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
+				return "darkgreen";
+			return null;
+		}
+		#endregion
+
 		public void CalculateTotal()
 		{
 			Sum = String.Format("Позиций в документе: <u>{0}</u>  Количество единиц: <u>{1}</u>",

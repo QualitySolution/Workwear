@@ -34,8 +34,9 @@ namespace Workwear.ViewModels.Import
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
 			IInteractiveMessage interactiveMessage, 
-			ProgressInterceptor progressInterceptor, 
-			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName)
+			ProgressInterceptor progressInterceptor,
+			UnitOfWorkProvider unitOfWorkProvider,
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName, unitOfWorkProvider)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			ImportModel.Init(UoW);

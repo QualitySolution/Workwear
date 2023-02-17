@@ -36,6 +36,12 @@ namespace Workwear.Repository.Company
 				.Where(x => x.Subdivision.Id.IsIn(subdivizionIds))
 				.List();
 		}
+		public IList<EmployeeCard> GetActiveEmployeesFromDepartments(IUnitOfWork uow, int[] departmentIds)
+		{
+			return ActiveEmployeesQuery(uow)
+				.Where(x => x.Department.Id.IsIn(departmentIds))
+				.List();
+		}
 
 		#region Norms
 		public IList<EmployeeCard> GetEmployeesUseNorm(Norm[] norms, IUnitOfWork uow = null)
