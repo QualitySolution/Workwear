@@ -33,12 +33,14 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 public class IssueWidgetItem : PropertyChangedBase {
 	
-	public IssueWidgetItem(ProtectionTools protectionTools, int numberOfNeeds = 1, int numberOfIssused = 1,bool active = true) {
+	public IssueWidgetItem(ProtectionTools protectionTools, bool active = true, int numberOfCurrentNeeds = 0, int numberOfNeeds = 1, int itemQuantityForIssuse = 0, int itemStockBalance = 0) {
 		this.active = active;
 		this.ProtectionTools = protectionTools ?? throw new ArgumentNullException(nameof(protectionTools));
 		this.Type = protectionTools.Type.IssueType;
 		this.NumberOfNeeds = numberOfNeeds;
-		this.NumberOfIssused = numberOfIssused;
+		this.ItemQuantityForIssuse = itemQuantityForIssuse;
+		this.NumberOfCurrentNeeds = numberOfCurrentNeeds;
+		this.ItemStockBalance = itemStockBalance;
 	}
 		
 	private bool active;
@@ -52,6 +54,7 @@ public class IssueWidgetItem : PropertyChangedBase {
 	public IssueType Type { get; }
 
 	public int NumberOfNeeds {get; set; }
-	
-	public int NumberOfIssused {get; set; }
+	public int NumberOfCurrentNeeds {get; set; }
+	public int ItemQuantityForIssuse {get; set; }
+	public int ItemStockBalance {get; set; }
 }
