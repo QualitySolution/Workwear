@@ -13,6 +13,7 @@ using QS.Deletion;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.Dialog;
+using QS.Dialog.Views;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;

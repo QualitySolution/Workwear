@@ -19,6 +19,7 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
