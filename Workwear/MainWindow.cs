@@ -218,6 +218,7 @@ public partial class MainWindow : Gtk.Window
 		                         || FeaturesService.Available(WorkwearFeature.Claims) 
 		                         || FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 	}
 	#endregion
 

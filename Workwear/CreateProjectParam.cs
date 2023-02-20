@@ -163,10 +163,12 @@ namespace workwear
 			#endregion
 
 			#region Временные будут переопределены
+			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(
-				typeof(UpdateProcessView)
+				typeof(UpdateProcessView),
+				typeof(ProgressWindowView)
 			)).As<IGtkViewResolver>();
 			#endregion
 		}

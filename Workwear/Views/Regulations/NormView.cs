@@ -53,7 +53,7 @@ namespace Workwear.Views.Regulations
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty)
 				.AddEnumRenderer(i => i.NormPeriod).Editing()
-				.AddColumn("Условие нормы")
+				.AddColumn("Условие нормы").Visible(ViewModel.VisibleNormCondition)
 					.AddComboRenderer(i => i.NormCondition)
 						.SetDisplayFunc(x => x?.Name)
 						.SetDisplayListFunc(x => x?.Name ?? "нет")
