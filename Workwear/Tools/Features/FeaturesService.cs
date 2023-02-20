@@ -113,7 +113,7 @@ namespace workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "История изменений")]
 		HistoryLog,
-		[Display(Name = "Ограничения нормы")]
+		[Display(Name = "Условия нормы")]
 		ConditionNorm,
 		#endregion
 		#region С облаком
