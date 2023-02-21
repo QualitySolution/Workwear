@@ -84,7 +84,7 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
-		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item.IssueOperation;
+		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);

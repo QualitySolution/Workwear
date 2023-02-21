@@ -801,5 +801,47 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(issue.removed, Is.EqualTo(0));
 		}
 		#endregion
+		#region LastIssueOperation
+
+		[Test(Description = "Проверяем базовый случай отображения последнюю выдачу")]
+		public void LastIssueOperation_IssuesExistCase() {
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					//Первая отображаемая
+					OperationTime = new DateTime(2022, 1, 1),
+					StartOfUse = new DateTime(2022, 1, 1),
+					ExpiryByNorm = new DateTime(2023, 1, 1),
+					AutoWriteoffDate = new DateTime(2023, 1, 1),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					//Вторая отображаемая
+					OperationTime = new DateTime(2022, 4, 1),
+					StartOfUse = new DateTime(2022, 4, 1),
+					ExpiryByNorm = new DateTime(2023, 4, 1),
+					AutoWriteoffDate = new DateTime(2023, 4, 1),
+					Issued = 1
+				}
+			});
+
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем только первую, вторая еще как бы не выдана
+			Assert.That(item.LastIssueOperation.OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
+		}
+
+		[Test(Description = "Проверяем базовый случай отображения последнюю выдачу")]
+		public void LastIssueOperation_NotExistCase() {
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			});
+
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем только первую, вторая еще как бы не выдана
+			Assert.That(item.LastIssueOperation, Is.Null);
+		}
+		#endregion
 	}
 }
