@@ -19,6 +19,7 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
@@ -47,6 +48,7 @@ namespace Workwear.ViewModels.Regulations
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
+			FeaturesService featuresService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -59,6 +61,7 @@ namespace Workwear.ViewModels.Regulations
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
+			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
@@ -88,6 +91,10 @@ namespace Workwear.ViewModels.Regulations
 			set => SetField(ref cancelSensitive, value);
 		}
 
+		#endregion
+		
+		#region Visible
+		public bool VisibleNormCondition { get; }
 		#endregion
 
 		#region Свойства

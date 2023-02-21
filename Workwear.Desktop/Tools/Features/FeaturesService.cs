@@ -122,6 +122,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
+				case WorkwearFeature.ConditionNorm:
 					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
@@ -142,6 +143,8 @@ namespace Workwear.Tools.Features
 		BatchProcessing,
 		[Display(Name = "История изменений")]
 		HistoryLog,
+		[Display(Name = "Ограничения нормы")]
+		ConditionNorm,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]

@@ -21,6 +21,7 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 
 namespace WorkwearTest.ViewModels.Regulations {
@@ -54,9 +55,11 @@ namespace WorkwearTest.ViewModels.Regulations {
 			progressPage.ViewModel.Returns(progressViewModel);
 			navigation.OpenViewModel<ProgressWindowViewModel>(null).Returns(progressPage);
 			
-			var validator = new ValidatorForTests();
-			var monitor = Substitute.For<IChangeMonitor<NormItem>>();
+			var featuresService = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveService>();
+			var monitor = Substitute.For<IChangeMonitor<NormItem>>();
+			var validator = new ValidatorForTests();
+			
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ExtendPeriod.Returns(AnswerOptions.Yes);
 			baseParameters.ShiftExpluatacion.Returns(AnswerOptions.Yes);
@@ -67,13 +70,14 @@ namespace WorkwearTest.ViewModels.Regulations {
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
-			builder.Register(x => monitor).As<IChangeMonitor<NormItem>>();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => interactive).As<IInteractiveService>();
-			builder.Register(x => validator).As<IValidator>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
+			builder.Register(x => featuresService).AsSelf();
+			builder.Register(x => interactive).As<IInteractiveService>();
+			builder.Register(x => monitor).As<IChangeMonitor<NormItem>>();
+			builder.Register(x => navigation).As<INavigationManager>();
 			builder.Register(x => progressCreator).As<ModalProgressCreator>();
+			builder.Register(x => validator).As<IValidator>();
 			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {

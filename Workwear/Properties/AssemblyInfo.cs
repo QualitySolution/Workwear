@@ -14,7 +14,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
-[assembly: AssemblyCopyright("Quality Solution 2022")]
+[assembly: AssemblyCopyright("Quality Solution 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("Workwear.icon.logo.png")]

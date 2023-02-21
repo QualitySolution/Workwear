@@ -292,7 +292,7 @@ namespace Workwear.Domain.Stock.Documents
 					.FirstOrDefault(x => EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
 
 			if(IsWriteOff) {
-				if(relatedWriteoffItem == null) {
+				if(relatedWriteoffItem == null && ProtectionTools != null) {
 					var graph = IssueGraph.MakeIssueGraph(uow, expenseDoc.Employee, ProtectionTools);
 					var interval = graph.IntervalOfDate(ExpenseDoc.Date);
 					var toWriteoff = interval.ActiveItems.First(x => x.IssueOperation != EmployeeIssueOperation);

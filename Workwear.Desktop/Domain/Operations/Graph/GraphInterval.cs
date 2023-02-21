@@ -15,7 +15,7 @@ namespace Workwear.Domain.Operations.Graph
 		/// <summary>
 		/// Все выдачи графа затрагивающие стартовый переход периода
 		/// </summary>
-		public List<GraphItem> ActiveItems = new List<GraphItem>();
+		public readonly List<GraphItem> ActiveItems = new List<GraphItem>();
 
 		/// <summary>
 		/// Все выдачи графа где выданное количество действует в течении интервала. То есть ActiveItems, но без списанного в это день.
