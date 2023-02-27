@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -13,6 +14,8 @@ using Workwear.Tools;
 
 namespace Workwear.Models.Operations {
 	public class EmployeeIssueModel {
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly UnitOfWorkProvider unitOfWorkProvider;
 		private Dictionary<string, IssueGraph> graphs = new Dictionary<string, IssueGraph>();
@@ -54,6 +57,47 @@ namespace Workwear.Models.Operations {
 			uow.Commit();
 			progress?.Close();
 		}
+
+		/// <summary>
+		/// Выполняет пересчет всех даты следующих выдач для всех сотрудников.
+		/// </summary>
+		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 1</param>
+		public void UpdateNextIssueAll(EmployeeCard[] employees, IProgressBarDisplayable progress = null, CancellationToken? cancellation = null, uint commitBatchSize = 1000, Action<EmployeeCard, string[]> changeLog = null) {
+			bool needClose = false;
+			IUnitOfWork uow = unitOfWorkProvider.UoW;
+			if(progress != null && !progress.IsStarted) {
+				progress.Start(employees.Length + 1);
+				needClose = true;
+			}
+			progress.Add(text: "Получаем информацию о прошлых выдачах");
+			CheckAndPrepareGraphs(employees);
+
+			int step = 0;
+			foreach(var employee in employees) {
+				if(cancellation?.IsCancellationRequested ?? false) {
+					break;
+				}
+				progress.Add(text: $"Обработка {employee.ShortName}");
+				step++;
+				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
+				
+				foreach(var wearItem in employee.WorkwearItems) {
+					wearItem.Graph = GetPreparedOrEmptyGraph(employee, wearItem.ProtectionTools);
+					wearItem.UpdateNextIssue(uow);
+				}
+				
+				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue?.Date != oldDates[i]?.Date ? $"Изменена дата следующей выдачи с {oldDates[i]:d} на {x.NextIssue:d} для потребности [{x.Title}]" : null)
+					.Where(x => x != null).ToArray();
+				changeLog?.Invoke(employee, changes);
+				if(changes.Any())
+					uow.Save(employee);
+				if(step % commitBatchSize == 0)
+					uow.Commit();
+			}
+			progress.Add(text: "Готово");
+			if(needClose)
+				progress.Close();
+		}
 		#endregion
 
 		#region Graph
@@ -69,6 +113,13 @@ namespace Workwear.Models.Operations {
 			}
 		}
 
+		private IssueGraph GetPreparedOrEmptyGraph(EmployeeCard employee, ProtectionTools protectionTools) {
+			var key = GetKey(employee, protectionTools);
+			if(graphs.TryGetValue(key, out IssueGraph graph))
+				return graph;
+			return new IssueGraph(new List<EmployeeIssueOperation>());
+		} 
+		
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
 		#endregion
 

@@ -409,6 +409,7 @@ namespace Workwear.Domain.Company
 		/// Обновляет дату следующей выдачи у всех потребностей.
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
+		[Obsolete("Под удаление, используйте аналогичный механизм из EmployeeIssueModel.")]
 		public virtual void UpdateNextIssueAll() {
 			foreach(var wearItem in WorkwearItems) {
 				wearItem.UpdateNextIssue(UoW);
