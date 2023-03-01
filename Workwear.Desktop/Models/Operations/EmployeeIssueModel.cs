@@ -26,15 +26,31 @@ namespace Workwear.Models.Operations {
 		}
 
 		#region public
-		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IUnitOfWork uow = null, IProgressBarDisplayable progress = null) {
+		/// <summary>
+		/// Выполняет пресчёт даты(даты начала использования и даты списания) выдачи в переданных операциях
+		/// </summary>
+		/// <param name="operations">Операции которые требуется пересчитать</param>
+		/// <param name="baseParameters">Для параметров учета</param>
+		/// <param name="interactive">Для вопросов при пересчете.</param>
+		/// <param name="uow">Используется для сохранения измененных строк сотрудника.</param>
+		/// <param name="progress">Прогрес бар, можно передать уже начатый. Количество шагов метода будет равно количеству операция + 3.</param>
+		/// <param name="cancellation">Токен отмены операции</param>
+		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IProgressBarDisplayable progress = null, CancellationToken? cancellation = null, IUnitOfWork uow = null, Action<EmployeeCard, string[]> changeLog = null) {
 			uow = uow ?? unitOfWorkProvider.UoW;
-			progress?.Start(operations.Count() + 2);
+			bool needClose = false;
+			if(progress != null && !progress.IsStarted) {
+				progress.Start(operations.Count() + 3);
+				needClose = true;
+			}
+			progress?.Add(text: "Получаем информацию о прошлых выдачах");
 			CheckAndPrepareGraphs(operations.Select(o => o.Employee).Distinct().ToArray(), operations.Select(o => o.ProtectionTools).Distinct().ToArray());
 			progress?.Add();
 			foreach(var employeeGroup in operations.GroupBy(x => x.Employee)) {
 				progress?.Update($"Обработка {employeeGroup.Key.ShortName}");
+				var changes = new List<string>();
 
 				foreach(var operation in employeeGroup.OrderBy(x => x.OperationTime)) {
+					var oldExpiry = operation.ExpiryByNorm;
 					var graph = graphs[GetKey(employeeGroup.Key, operation.ProtectionTools)];
 					var cardItem = operation.Employee.WorkwearItems
 						.FirstOrDefault(x =>
@@ -44,18 +60,28 @@ namespace Workwear.Models.Operations {
 					uow.Save(operation);
 					graph.Refresh();
 
+					if(operation.ExpiryByNorm?.Date != oldExpiry?.Date) {
+						changes.Add($"Изменена дата окончания носки с {oldExpiry:d} на {operation.ExpiryByNorm:d} для выдачи {operation.OperationTime} [{operation.Title}]");
+					}
+
 					if(cardItem != null) {
+						var oldNextIssue = cardItem.NextIssue;
 						cardItem.Graph = graph;
 						cardItem.UpdateNextIssue(uow);
-						uow.Save(cardItem);
+						if(cardItem.NextIssue?.Date != oldNextIssue?.Date) {
+							uow.Save(cardItem);
+							changes.Add($"Изменена дата следующей выдачи с {oldNextIssue:d} на {cardItem.NextIssue:d} для потребности [{cardItem.Title}]");
+						}
 					}
 					progress?.Add();
 				}
+				changeLog?.Invoke(employeeGroup.Key, changes.ToArray());
 			}
 
 			progress?.Add(text: "Завершаем...");
 			uow.Commit();
-			progress?.Close();
+			if(needClose)
+				progress.Close();
 		}
 
 		/// <summary>
@@ -69,7 +95,7 @@ namespace Workwear.Models.Operations {
 				progress.Start(employees.Length + 1);
 				needClose = true;
 			}
-			progress.Add(text: "Получаем информацию о прошлых выдачах");
+			progress?.Add(text: "Получаем информацию о прошлых выдачах");
 			CheckAndPrepareGraphs(employees);
 
 			int step = 0;
@@ -77,7 +103,7 @@ namespace Workwear.Models.Operations {
 				if(cancellation?.IsCancellationRequested ?? false) {
 					break;
 				}
-				progress.Add(text: $"Обработка {employee.ShortName}");
+				progress?.Add(text: $"Обработка {employee.ShortName}");
 				step++;
 				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
 				
@@ -94,7 +120,7 @@ namespace Workwear.Models.Operations {
 				if(step % commitBatchSize == 0)
 					uow.Commit();
 			}
-			progress.Add(text: "Готово");
+			progress?.Add(text: "Готово");
 			if(needClose)
 				progress.Close();
 		}
