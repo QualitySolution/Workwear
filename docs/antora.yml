@@ -1,6 +1,6 @@
 name: workwear
 title: 'QS: Спецодежда и имущество'
-version: 2.8
+version: 2.9
 start_page: introduction.adoc
 nav:
 - modules/ROOT/nav.adoc
