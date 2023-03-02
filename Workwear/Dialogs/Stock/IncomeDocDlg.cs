@@ -52,7 +52,6 @@ namespace workwear
 			userService = AutofacScope.Resolve<IUserService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
-//пока спорно. не забыть про сохранение перед вызовом			
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
 			
@@ -82,8 +81,11 @@ namespace workwear
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
-			sizeService = AutofacScope.Resolve<SizeService>();
+			sizeService = AutofacScope.Resolve<SizeService>(); 
+//пока спорно.
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
+			interactiveService = AutofacScope.Resolve<IInteractiveService>();
+			
 			ConfigureDlg ();
 		}
 
@@ -212,6 +214,11 @@ namespace workwear
 		}
 		
 		protected void OnPrintClicked(object sender, EventArgs e) {
+			if(UoW.HasChanges && !interactiveService.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Документ №{0}", Entity.Id),
 				Identifier = IncomeDocReport.RefundSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
