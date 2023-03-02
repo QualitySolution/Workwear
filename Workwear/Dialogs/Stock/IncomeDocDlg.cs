@@ -221,7 +221,7 @@ namespace workwear
 			
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Документ №{0}", Entity.Id),
-				Identifier = IncomeDocReport.RefundSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Identifier = IncomeDocReport.ReturnSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }
 				}
@@ -302,8 +302,8 @@ namespace workwear
 		public enum IncomeDocReport
 		{
 			[Display(Name = "Документ возврата")]
-			[ReportIdentifier("RefundSheet")]
-			RefundSheet,
+			[ReportIdentifier("ReturnSheet")]
+			ReturnSheet,
 		}
 	}
 }

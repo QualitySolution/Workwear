@@ -753,7 +753,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox39">
-                      <Value>={amount_refund}</Value>
+                      <Value>={amount_return}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -827,7 +827,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox41">
-                      <Value>=Sum({amount_refund})</Value>
+                      <Value>=Sum({amount_return})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1569,7 +1569,7 @@ old_issuse.ExpiryByNorm as date_expiry,
 norms_item.period_count AS period_num,
 norms_item.period_type AS period_type,
 old_issuse.issued as amount_issuse,
-this_issuse.returned as amount_refund,
+this_issuse.returned as amount_return,
 this_issuse.wear_percent * 100 as wear_percent
 
 FROM stock_income_detail
@@ -1613,8 +1613,8 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
           <DataField>amount_issuse</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
-        <Field Name="amount_refund">
-          <DataField>amount_refund</DataField>
+        <Field Name="amount_return">
+          <DataField>amount_return</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="wear_percent">

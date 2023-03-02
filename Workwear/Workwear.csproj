@@ -669,7 +669,7 @@
     <None Include="Reports\RequestSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	<None Include="Reports\RefundSheet.rdl">
+	<None Include="Reports\ReturnSheet.rdl">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
     <None Include="RdlEngineConfig.Linux.xml">
