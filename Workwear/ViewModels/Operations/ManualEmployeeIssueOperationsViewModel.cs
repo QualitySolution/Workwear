@@ -95,10 +95,7 @@ namespace Workwear.ViewModels.Operations
 			get => dateTime;
 			set {
 				if(SetField(ref dateTime, value) && SelectOperation.StartOfUse != value) {
-					SelectOperation.OperationTime = value;
-					SelectOperation.StartOfUse = value;
-					SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(value);
-					SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
+					RecalculateDatesOfSelectedOperation();
 				}
 			}
 		}
@@ -108,8 +105,10 @@ namespace Workwear.ViewModels.Operations
 			get => issued;
 			set {
 				if(SetField(ref issued, value))
-					if(SelectOperation != null)
+					if(SelectOperation != null) {
 						SelectOperation.Issued = value;
+						RecalculateDatesOfSelectedOperation();
+					}
 			}
 		}
 
@@ -126,6 +125,17 @@ namespace Workwear.ViewModels.Operations
 		public bool CanAddOperation => EmployeeCardItem != null;
 
 		public event Action<ProtectionTools> SaveChanged; 
+
+		#endregion
+
+		#region private
+		void RecalculateDatesOfSelectedOperation() {
+			SelectOperation.OperationTime = DateTime;
+			SelectOperation.StartOfUse = DateTime;
+			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(DateTime, SelectOperation.Issued);
+			if(SelectOperation.UseAutoWriteoff)
+				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
+		}
 
 		#endregion
 
