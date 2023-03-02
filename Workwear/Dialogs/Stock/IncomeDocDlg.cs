@@ -264,10 +264,10 @@ namespace workwear
 		}
 
 		private void OnYcomboOperationChanged (object sender, EventArgs e) {
-			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
-			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
+			labelTTN.Visible = yentryNumber.Visible = ybuttonReadInFile.Visible = Entity.Operation == IncomeOperations.Enter;
+			labelWorker.Visible = yentryEmployee.Visible = ybuttonPrint.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
-
+			
 			if (UoWGeneric.IsNew)
 				switch (Entity.Operation)
 				{
