@@ -9714,7 +9714,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView" design-size="961 315">
+  <widget class="Gtk.Bin" id="workwear.Views.Company.EmployeeChilds.EmployeeWearItemsView" design-size="1682 315">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -9814,6 +9814,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yButton" id="buttonManualIssueDate">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Установить дату выдачи</property>
@@ -9830,6 +9831,7 @@
             <child>
               <widget class="Gtk.Button" id="buttonTimeLine">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:workwear.icon.buttons.timeline_marker.png</property>
