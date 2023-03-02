@@ -9717,6 +9717,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yButton" id="buttonManualIssueDate">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:Workwear.icon.rows.нand.png</property>
@@ -9734,6 +9735,7 @@
             <child>
               <widget class="Gtk.Button" id="buttonTimeLine">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">resource:Workwear.icon.buttons.timeline_marker.png</property>
