@@ -7,7 +7,8 @@ echo "2) nuget restore"
 echo "3) cleanup packages directories"
 echo "4) cleanup bin and obj directories"
 echo "5) run dotnet tests"
-echo "6) run Net4.x tests"
+echo "6) run SQL tests"
+echo "7) run Net4.x tests"
 echo "Можно вызывать вместе, например git+nuget=12"
 read case;
 
@@ -51,9 +52,12 @@ nuget restore ../QSProjects/QSProjectsLib.sln;
 nuget restore ../My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
 ;;&
     *5*)
-dotnet test Workwear.dotnet.sln
+dotnet test Workwear.Test/Workwear.Test.csproj
 ;;&
     *6*)
+dotnet test Workwear.Test.Sql/Workwear.Test.Sql.csproj
+;;&
+    *7*)
 msbuild /p:Configuration=Debug /p:Platform=x86 Workwear.sln    
 cd WorkwearTest/bin/Debug/
 cp -r ~/.nuget/packages/nunit.consolerunner/3.12.0/tools/* .

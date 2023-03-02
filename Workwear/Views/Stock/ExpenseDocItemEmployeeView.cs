@@ -43,6 +43,16 @@ namespace Workwear.Views.Stock
 
 			buttonAdd.Sensitive = ViewModel.Warehouse != null;
 
+			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
+				.InitializeFromSource();
+			buttonPrintBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
+				.InitializeFromSource();
+
 			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 
 			ViewModel.PropertyChanged += PropertyChanged;
@@ -54,8 +64,10 @@ namespace Workwear.Views.Stock
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png");
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+					.WrapWidth(700)
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
-				.SetDisplayFunc(x => x.Nomenclature?.Name)
+					.WrapWidth(700)
+					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
@@ -67,16 +79,18 @@ namespace Workwear.Views.Stock
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
-				.AddColumn("Собственики")
+				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
-				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
+				.AddColumn("Износ").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
+				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
+					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
@@ -87,7 +101,7 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(x => x.EmployeeIssueOperation != null && 
 						                      !String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? 
 					x.EmployeeIssueOperation.SignCardKey + " " + x.EmployeeIssueOperation.SignTimestamp.Value.ToString("dd.MM.yyyy HH:mm:ss") : null)
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
 		}
 
@@ -109,6 +123,7 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Sensitive = selected?.Nomenclature != null;
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
+			
 			menu.ShowAll();
 			menu.Popup();
 		}
@@ -123,29 +138,7 @@ namespace Workwear.Views.Stock
 			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
 		}
 		#endregion
-
-		#region private
-
-		private string GetRowColor(ExpenseItem item)
-		{
-			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
-				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
-			if(requiredIssue > 0 && item.Nomenclature == null)
-				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue <= 0 && item.Amount == 0)
-				return "gray";
-			if(requiredIssue > item.Amount)
-				return "blue";
-			if(requiredIssue < item.Amount)
-				return "Purple";
-			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
-				return "darkgreen";
-			return null;
-		}
-
-		#endregion
-
+		
 		#region События
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -155,7 +148,7 @@ namespace Workwear.Views.Stock
 
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			buttonFillBuhDoc.Sensitive = ViewModel.SensetiveFillBuhDoc;
+			buttonFillBuhDoc.Sensitive = ViewModel.SensitiveFillBuhDoc;
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
 				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
 				var path = ytreeItems.YTreeModel.GetPath(iter);
@@ -203,6 +196,16 @@ namespace Workwear.Views.Stock
 				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
 				"<span color='#7B3F00'>●</span> — выдача коллективной номенклатуры"
 			);
+		}
+
+		protected void OnButtonCreateOrDeleteBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.ReleaseBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
+		}
+
+		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.PrintBarcodes();
+			ytreeItems.YTreeModel.EmitModelChanged();
 		}
 		#endregion
 	}

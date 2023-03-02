@@ -30,17 +30,16 @@ namespace Workwear.Repository.Company
 			return (uow ?? RepoUow).Session.QueryOver<EmployeeCard>().Where (e => e.DismissDate == null);
 		}
 
-		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, Subdivision subdivision)
+		public IList<EmployeeCard> GetActiveEmployeesFromSubdivisions(IUnitOfWork uow, int[] subdivizionIds)
 		{
 			return ActiveEmployeesQuery(uow)
-				.Where(x => x.Subdivision == subdivision)
+				.Where(x => x.Subdivision.Id.IsIn(subdivizionIds))
 				.List();
 		}
-
-		public IList<EmployeeCard> GetActiveEmployeesFromSubdivision(IUnitOfWork uow, int subdivisionId)
+		public IList<EmployeeCard> GetActiveEmployeesFromDepartments(IUnitOfWork uow, int[] departmentIds)
 		{
 			return ActiveEmployeesQuery(uow)
-				.Where(x => x.Subdivision.Id == subdivisionId)
+				.Where(x => x.Department.Id.IsIn(departmentIds))
 				.List();
 		}
 
@@ -149,6 +148,23 @@ namespace Workwear.Repository.Company
 			return Projections.SqlFunction("replace", NHibernateUtil.String, 
 					Projections.SqlFunction("replace", NHibernateUtil.String, property, Projections.Constant("ё"), Projections.Constant("е"))
 				, Projections.Constant("Ё"), Projections.Constant("Е"));
+		}
+		#endregion
+
+		#region EmployeeNames
+		public Dictionary<string,FIO> GetFioByPhones(string[] phones) {
+			FIO fioAlias = null;
+
+			return RepoUow.Session.QueryOver<EmployeeCard>()
+				.Where(e => e.PhoneNumber.IsIn(phones))
+				.SelectList(list => list
+					.Select(e => e.PhoneNumber).WithAlias(() => fioAlias.UserData)	
+					.Select(e => e.LastName).WithAlias(() => fioAlias.LastName)
+					.Select(e => e.FirstName).WithAlias(() => fioAlias.FirstName)
+					.Select(e => e.Patronymic).WithAlias(() => fioAlias.Patronymic)
+				).TransformUsing(Transformers.AliasToBean<FIO>())
+				.List<FIO>()
+				.ToDictionary(x => (string)x.UserData, x => x);
 		}
 		#endregion
 	}

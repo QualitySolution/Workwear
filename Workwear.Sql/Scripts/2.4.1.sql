@@ -1,8 +1,4 @@
-﻿-- Исправляем индексы таблицы документа перемещения
-ALTER TABLE `stock_transfer_detail` 
-DROP FOREIGN KEY `fk_stock_transfer_detail_1`,
-DROP FOREIGN KEY `fk_stock_transfer_detail_2`,
-DROP FOREIGN KEY `fk_stock_transfer_detail_3`;
+﻿-- Исправляем индексы таблицы документа перемещения 
 
 ALTER TABLE `stock_transfer_detail` 
 CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_general_ci ,

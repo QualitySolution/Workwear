@@ -86,8 +86,10 @@ namespace Workwear.Views.Stock
 			treeItems.ModifyFont(fontDesc);
 			treeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
 				.AddColumn("Номенклатуры нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+					.WrapWidth(700)
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
-				.SetDisplayFunc(x => x.Nomenclature?.Name)
+					.WrapWidth(700)
+					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
@@ -107,7 +109,7 @@ namespace Workwear.Views.Stock
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("")
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
 
 			var titleFont = new Pango.FontDescription();
@@ -122,18 +124,6 @@ namespace Workwear.Views.Stock
 				column.Widget = aLabel;
 				column.Alignment = 1;
 			}
-		}
-
-		private string GetRowColor(ExpenseItem item)
-		{
-			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(requiredIssue > 0 && item.Nomenclature == null)
-				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
-			if(requiredIssue <= 0 && item.Amount == 0)
-				return "gray";
-			return null;
 		}
 		#endregion
 		#region Обработка событий

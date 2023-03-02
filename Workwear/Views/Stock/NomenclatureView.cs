@@ -5,6 +5,7 @@ using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.ViewModels.Stock;
 using Gtk;
+using Gamma.Binding.Converters;
 
 namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
@@ -31,7 +32,7 @@ namespace Workwear.Views.Stock {
 
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding
-				.AddBinding (Entity, e => e.Sex, w => w.SelectedItemOrNull)
+				.AddBinding (Entity, e => e.Sex, w => w.SelectedItem)
 				.InitializeFromSource ();
 			ycomboClothesSex.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleClothesSex, w => w.Visible)
@@ -50,7 +51,13 @@ namespace Workwear.Views.Stock {
 			ycheckArchival.Binding
 				.AddBinding(Entity, e => e.Archival, w => w.Active)
 				.InitializeFromSource();
-			
+
+			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Binding
+				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter())
+				.InitializeFromSource();
+
 			ybuttonratingDetails.Binding
 				.AddSource(ViewModel)
 					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
@@ -65,6 +72,11 @@ namespace Workwear.Views.Stock {
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.VisibleRating, w => w.Visible)
 				.AddBinding(wm => wm.RatingLabel, w => w.Text)
+				.InitializeFromSource();
+
+			ycheckBarcode.Visible = ViewModel.VisibleBarcode;
+			ycheckBarcode.Binding
+				.AddBinding(Entity, e => e.UseBarcode, w => w.Active)
 				.InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;

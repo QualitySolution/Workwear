@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
+using System.Reflection;
 using QS.BaseParameters;
 
 namespace Workwear.Tools
@@ -10,7 +12,12 @@ namespace Workwear.Tools
 		/// <summary>
 		/// Используется только для тестов!!!
 		/// </summary>
-		public BaseParameters() { }
+		public BaseParameters() {
+			var exe = Assembly.GetEntryAssembly();
+			if(exe?.ManifestModule.Name == "workwear.exe")
+				throw new InvalidProgramException(
+					$"Использовать пустой конструктор для {nameof(BaseParameters)} можно только в тестах.");
+		}
 		#region Типизированный доступ и дефолтные значения
 		//Ключевое слово virtual у свойств необходимо для возможности подмены в тестах.
 		public virtual bool DefaultAutoWriteoff {
@@ -43,6 +50,14 @@ namespace Workwear.Tools
 		public virtual AnswerOptions ExtendPeriod {
 			get => Dynamic.ExtendPeriod(typeof(AnswerOptions)) ?? AnswerOptions.Ask;
 			set => Dynamic[nameof(ExtendPeriod)] = value;
+		}
+		/// <summary>
+		/// Префикс для штрихкодов, желательно чтобы был разный для каждой базы, чтобы штрихкоды не пересекались.
+		/// По умолчанию заполняется последними цифрами кода клиента прочитанного из серийного номера. 
+		/// </summary>
+		public virtual int? BarcodePrefix {
+			get => Dynamic.BarcodePrefix(typeof(int?));
+			set => Dynamic[nameof(BarcodePrefix)] = value;
 		}
 		#endregion
 	}

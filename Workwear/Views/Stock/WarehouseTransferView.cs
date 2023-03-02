@@ -21,17 +21,17 @@ namespace Workwear.Views.Stock
 		private void ConfigureDlg() {
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			entryNumber.Binding.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter()).InitializeFromSource();
-			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? 
-				DomainHelper.GetTitle(e.CreatedbyUser) : String.Empty, w => w.Text).InitializeFromSource();
+			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer).InitializeFromSource();
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
 			table.CreateFluentColumnsConfig<TransferItem>()
 			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
+				.WrapWidth(700)
 			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.WearSize.Name)
 			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Height.Name)
-			.AddColumn("Собственики")
+			.AddColumn("Собственники")
 				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 				.AddComboRenderer(x => x.Owner)
 				.SetDisplayFunc(x => x.Name)

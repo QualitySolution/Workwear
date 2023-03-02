@@ -54,6 +54,7 @@ namespace Workwear.ViewModels.Company
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			IValidator validator,
 			IUserService userService,
@@ -66,7 +67,7 @@ namespace Workwear.ViewModels.Company
 			LkUserManagerService lkUserManagerService,
 			BaseParameters baseParameters,
 			SizeService sizeService,
-			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
@@ -465,6 +466,10 @@ namespace Workwear.ViewModels.Company
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
 			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
+				if(Entity.Id == 0 && !Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+					interactive.ShowMessage(ImportanceLevel.Error, "Норма не установлена, так как не все данные сотрудника заполнены корректно.");
+					return;
+				} 
 				Entity.NormFromPost(UoW, NormRepository);
 			}
 		}

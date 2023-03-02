@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
@@ -17,17 +17,29 @@ namespace Workwear.Repository.Operations
 {
 	public class EmployeeIssueRepository
 	{
-		public IUnitOfWork RepoUow;
-
-		public EmployeeIssueRepository(IUnitOfWork uow = null)
+		private readonly UnitOfWorkProvider unitOfWorkProvider;
+		private IUnitOfWork repoUow;
+		
+		[Obsolete("Лучше используйте конструктор с провайдером Uow")]
+		public EmployeeIssueRepository(IUnitOfWork uow)
 		{
 			RepoUow = uow;
 		}
+		
+		public EmployeeIssueRepository(UnitOfWorkProvider unitOfWorkProvider = null) {
+			this.unitOfWorkProvider = unitOfWorkProvider;
+		}
+
+		public IUnitOfWork RepoUow {
+			get => repoUow ?? unitOfWorkProvider.UoW;
+			set => repoUow = value;
+		}
+
 		/// <summary>
 		/// Получаем все операции выдачи сотруднику отсортированные в порядке убывания.
 		/// </summary>
 		/// <returns></returns>
-		public IList<EmployeeIssueOperation> AllOperationsForEmployee(
+		public virtual IList<EmployeeIssueOperation> AllOperationsForEmployee(
 			EmployeeCard employee, 
 			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
 		{
@@ -37,6 +49,28 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 
 			return query.OrderBy(x => x.OperationTime).Desc.List();
+		}
+
+		/// <summary>
+		/// Получаем все операции выдачи сотрудникам.
+		/// </summary>
+		/// <returns></returns>
+		public virtual IList<EmployeeIssueOperation> AllOperationsFor(
+			EmployeeCard[] employees = null,
+			ProtectionTools[] protectionTools = null,
+			Action<IQueryOver<EmployeeIssueOperation, EmployeeIssueOperation>> makeEager = null,
+			IUnitOfWork uow = null)
+		{
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>();
+			if(employees != null && employees.Any())
+				query.Where(o => o.Employee.IsIn(employees));
+
+			if(protectionTools != null && protectionTools.Any())
+				query.Where(o => o.ProtectionTools.IsIn(protectionTools));
+
+			makeEager?.Invoke(query);
+
+			return query.List();
 		}
 
 		/// <summary>
@@ -50,7 +84,7 @@ namespace Workwear.Repository.Operations
 			var employeeIds = employees.Select(x => x.Id).Distinct().ToArray();
 			var query = RepoUow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем попадает ли операция в диапазон, обратным сравнением условий.
 				//Проверяем 2 даты и начала и конца,
 				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime < end.Date.AddDays(1)) && (o.OperationTime >= begin));
@@ -67,7 +101,7 @@ namespace Workwear.Repository.Operations
 
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.Employee.Id.IsIn(employeeIds))
-				//Проверяем попадает ли операция в диапазон, обратным стравлением условий.
+				//Проверяем попадает ли операция в диапазон, обратным сравнением условий.
 				//Проверяем 2 даты и начала и конца,
 				//так как по сути для наса важны StartOfUse и ExpiryByNorm но они могут быть null.
 				.Where(o => (o.OperationTime <= end || o.StartOfUse <= end) 
@@ -122,11 +156,13 @@ namespace Workwear.Repository.Operations
 		/// </summary>
 		/// <returns></returns>
 		public IList<EmployeeIssueOperation> GetOperationsForNormItem(
-			NormItem normItem, Action<IQueryOver<EmployeeIssueOperation, 
-				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null)
-		{
+			NormItem[] normItems, Action<IQueryOver<EmployeeIssueOperation, 
+				EmployeeIssueOperation>> makeEager = null, IUnitOfWork uow = null, DateTime? beginDate = null) {
+			var itemIds = normItems.Select(i => i.Id).ToArray();
 			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
-				.Where(o => o.NormItem == normItem);
+				.Where(o => o.NormItem.Id.IsIn(itemIds));
+			if(beginDate.HasValue)
+				query.Where(o => o.OperationTime >= beginDate);
 			makeEager?.Invoke(query);
 			return query.List();
 		}
@@ -134,6 +170,7 @@ namespace Workwear.Repository.Operations
 		{
 			OperationToDocumentReference docAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
@@ -141,6 +178,7 @@ namespace Workwear.Repository.Operations
 			
 			var result = RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.Left.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -149,6 +187,7 @@ namespace Workwear.Repository.Operations
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
 					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
+					.Select(() => expenseAlias.Operation).WithAlias(() => docAlias.ExpenseOperation)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
@@ -184,9 +223,9 @@ namespace Workwear.Repository.Operations
 		/// Метод подсчитывает количество числящегося за сотрудником на определенную дату.
 		/// ВНИМАНИЕ!! Метод пока не учитывает ручные операции скидывающие историю. Это надо будет дорабатывать.
 		/// </summary>
-		public virtual IList<EmployeeRecivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, int[] excludeOperationsIds = null, IUnitOfWork uow = null)
+		public virtual IList<EmployeeReceivedInfo> ItemsBalance(EmployeeCard employee, DateTime onDate, int[] excludeOperationsIds = null, IUnitOfWork uow = null)
 		{
-			EmployeeRecivedInfo resultAlias = null;
+			EmployeeReceivedInfo resultAlias = null;
 
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperationReceivedAlias = null;
@@ -228,18 +267,18 @@ namespace Workwear.Repository.Operations
 				   .Select(projection).WithAlias(() => resultAlias.Amount)
 				   .Select(() => employeeIssueOperationAlias.Nomenclature.Id).WithAlias(()=> resultAlias.NomenclatureId)
 				)
-				.TransformUsing(Transformers.AliasToBean<EmployeeRecivedInfo>())
-				.List<EmployeeRecivedInfo>();
+				.TransformUsing(Transformers.AliasToBean<EmployeeReceivedInfo>())
+				.List<EmployeeReceivedInfo>();
 		}
 	}
 	
-	public class EmployeeRecivedInfo
+	public class EmployeeReceivedInfo
 	{
 		public int? NormRowId { get; set; }
 
 		public int? ProtectionToolsId { get; set;}
 		
-		public  int? NomenclatureId { get; set; }
+		public int? NomenclatureId { get; set; }
 
 		public DateTime LastReceive { get; set;}
 

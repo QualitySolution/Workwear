@@ -85,7 +85,7 @@ namespace workwear
 		public IncomeDocItemsView() {
 			this.Build();
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
-				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
 				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
@@ -97,7 +97,7 @@ namespace workwear
 					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
-				.AddColumn("Собственики")
+				.AddColumn("Собственники")
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
@@ -241,20 +241,27 @@ namespace workwear
 			}
 		}
 
-		private void OnButtonAddSizesCliked(object sender, EventArgs e) {
+		private void OnButtonAddSizesClicked(object sender, EventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
 			if(item.Nomenclature == null)
 				return;
 
-			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IncomeItem, IUnitOfWork, IList<IncomeItem>>
-				(null, item, UoW, ytreeItems.ItemsDataSource as IList<IncomeItem>);
+			var existItems = IncomeDoc.Items.Where(i => i.Nomenclature.IsSame(item.Nomenclature) && i.Owner == item.Owner).Cast<IDocItemSizeInfo>().ToList();
+			var page = MainClass.MainWin.NavigationManager.OpenViewModel<SizeWidgetViewModel, IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
+				(null, item, UoW, existItems);
 			page.ViewModel.AddedSizes += SelectWearSize_SizeSelected;
 		}
 		private void SelectWearSize_SizeSelected(object sender , AddedSizesEventArgs e) {
 			var item = ytreeItems.GetSelectedObject<IncomeItem>();
-			e.SizesWithAmount.ToList()
-				.ForEach(i => IncomeDoc
-					.AddItem(e.Source,  i.Key, e.Height, i.Value, item.Certificate, item.Cost, item.Owner));
+			foreach (var i in e.SizesWithAmount.ToList()) {
+				var exist = IncomeDoc.FindItem(item.Nomenclature, i.Size, e.Height, item.Owner);
+				if(exist != null)
+					exist.Amount = i.Amount;
+				else 
+					IncomeDoc.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
+			}
+			if(item.WearSize == null)
+				IncomeDoc.RemoveItem(item);
 			CalculateTotal();
 		}
 	}

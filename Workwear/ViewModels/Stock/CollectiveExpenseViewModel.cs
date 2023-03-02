@@ -15,6 +15,7 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
 using QS.Tools;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -44,6 +45,7 @@ namespace Workwear.ViewModels.Stock
 
 		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			IValidator validator,
@@ -55,16 +57,18 @@ namespace Workwear.ViewModels.Stock
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			IChangeMonitor<CollectiveExpenseItem> changeMonitor
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-			this.interactive = interactive;
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
+
+			PerformanceHelper.StartMeasurement("Диалог");
+			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			}
@@ -73,16 +77,22 @@ namespace Workwear.ViewModels.Stock
 				.TargetField(x => x.Employee);
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 
+			PerformanceHelper.AddTimePoint("entryBuilder и changeMonitor");
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 
+			PerformanceHelper.AddTimePoint("Warehouse");
+			PerformanceHelper.StartPointsGroup("CollectiveExpenseItemsViewModel");
 			var parameter = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
 			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameter);
+			PerformanceHelper.EndPointsGroup();
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			PerformanceHelper.AddTimePoint("Конец");
+			PerformanceHelper.Main.PrintAllPoints(logger);
 		}
 
 		#region EntityViewModels
@@ -121,13 +131,7 @@ namespace Workwear.ViewModels.Stock
 			return true;
 		}
 
-		private void IssuanceSheetOpen()
-		{
-			Save();
-			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
-		}
-
-		public void OpenIssuenceSheet()
+		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
 				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
@@ -136,13 +140,13 @@ namespace Workwear.ViewModels.Stock
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		public void CreateIssuenceSheet()
+		public void CreateIssuanceSheet()
 		{
 			var userSettings = userRepository.GetCurrentUserSettings(UoW);
 			Entity.CreateIssuanceSheet(userSettings);
 		}
 
-		public void PrintIssuenceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())

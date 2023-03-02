@@ -53,6 +53,14 @@ namespace Workwear.Domain.Company
 			}
 		}
 
+		private CostCenter costCenter;
+
+		[Display(Name = "Место возникновения затрат")]
+		public virtual CostCenter CostCenter {
+			get => costCenter;
+			set => SetField(ref costCenter, value);
+		}
+
 		private string comments;
 		[Display(Name = "Комментарии")]
 		public virtual string Comments {

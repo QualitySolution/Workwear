@@ -152,7 +152,7 @@ namespace workwear
 			this.buttonFillBuhDoc.Clicked += new global::System.EventHandler(this.OnButtonFillBuhDocClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
-			this.buttonAddSizes.Clicked += new global::System.EventHandler(this.OnButtonAddSizesCliked);
+			this.buttonAddSizes.Clicked += new global::System.EventHandler(this.OnButtonAddSizesClicked);
 		}
 	}
 }

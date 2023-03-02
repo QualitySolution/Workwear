@@ -29,9 +29,9 @@ namespace QS.Cloud.WearLk.Client
 			}
 		}
 		
-		public void Dispose()
+		public virtual void Dispose()
 		{
-			channel?.ShutdownAsync();
+			channel?.ShutdownAsync().Wait();
 		}
 	}
 }

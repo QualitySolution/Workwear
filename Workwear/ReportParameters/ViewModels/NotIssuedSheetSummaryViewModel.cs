@@ -33,6 +33,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"issue_type", IssueType?.ToString() },
 					{"show_sex", ShowSex },
+					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", excludeInVacation },
 					{"exclude_before", ExcludeBefore }
 				 };
@@ -67,6 +68,12 @@ namespace workwear.ReportParameters.ViewModels
 		public bool ShowSex {
 			get => showSex;
 			set => SetField(ref showSex, value);
+		}
+
+		private bool showEmployees;
+		public virtual bool ShowEmployees {
+			get => showEmployees;
+			set => SetField(ref showEmployees, value);
 		}
 		#endregion
 		#region Свойства

@@ -1,6 +1,7 @@
 properties([parameters([
 	booleanParam(defaultValue: false, description: 'Запускать тесты скриптов SQL', name: 'SQLTests'),
-	booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish')
+	booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish'),
+	booleanParam(defaultValue: false, description: 'Старый плагин отображения покрытия', name: 'OldCoverage')
 ])])
 node {
    stage('Workwear') {
@@ -33,7 +34,12 @@ node {
    	  sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear/Workwear.Test/Workwear.Test.csproj'
       } catch (e) {}
       finally{
-   	  cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, zoomCoverageChart: false
+      if (params.OldCoverage) {
+   	    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/TestResults/**/coverage.cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, zoomCoverageChart: false
+   	  }
+   	  else {
+   	    publishCoverage adapters: [coberturaAdapter(mergeToOneReport: true, path: '**/TestResults/**/coverage.cobertura.xml')], checksName: '', sourceFileResolver: sourceFiles('STORE_LAST_BUILD')
+   	  }
    	  mstest testResultsFile:"**/*.trx", keepLongStdio: true
       }
    }
@@ -58,20 +64,27 @@ node {
    }
    if (params.SQLTests) {
       stage('SQLTests'){
-         sh 'dotnet test Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
+         sh 'rm -rf Workwear/Workwear.Test.Sql/TestResults'
+         try {  
+            sh 'dotnet test --logger trx Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
+         } catch (e) {}
+         finally{
+            mstest testResultsFile:"**/*.trx", keepLongStdio: true
+         }
       }
    }
    if (params.Publish) {
       stage('VirusTotal'){
          sh 'vt scan file Workwear/WinInstall/workwear-*.exe > file_hash'
-         waitUntil (initialRecurrencePeriod: 10000){
+         waitUntil (){
+            sleep(30) //VirusTotal позволяет выполнить не более 4-х запросов за минуту.
             sh 'cut file_hash -d" " -f2 | vt analysis - > analysis'
             return readFile('analysis').contains('status: "completed"')
          }
          sh 'cat analysis'
          script {
             def status = readFile(file: "analysis")
-            if ( !(status.contains('failure: 0') && status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+            if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
                unstable('VirusTotal in not clean')
             }
          }

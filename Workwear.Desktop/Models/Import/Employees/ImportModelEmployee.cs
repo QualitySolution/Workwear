@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -39,6 +39,7 @@ namespace Workwear.Models.Import.Employees
 		                                            "\nПри загрузки листа программа автоматически пытается найти " +
 		                                            "заголовок таблицы и выбрать тип данных.\nОбязательными данными " +
 		                                            "являются Фамилия и Имя или ФИО.";
+
 		#endregion
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => 

@@ -1,18 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using Gamma.Widgets;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QS.Report.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 
-namespace workwear.ReportParameters.ViewModels
-{
+namespace workwear.ReportParameters.ViewModels {
 	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
 	{
 		private readonly IUnitOfWork unitOfWork;
@@ -25,7 +27,6 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
-			Identifier = "AmountIssuedWear";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
 				SelectedSubdivison resultAlias = null;
 				Subdivisions = subdivisionRepository.ActiveQuery(uow) 
@@ -46,12 +47,13 @@ namespace workwear.ReportParameters.ViewModels
 			}
 			unitOfWork = uowFactory.CreateWithoutRoot();
 			Owners = unitOfWork.GetAll<Owner>().ToList();
+			OwnersVisible = FeaturesService.Available(WorkwearFeature.Owners) && Owners.Any();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},
-					{"summary", Summary},
+					{"summary", !BySubdivision},
 					{"bySize", BySize},
 					{"withoutsub", Subdivisions.First(x =>x.Id == -1).Select },
 					{"subdivisions", SelectSubdivisons() },
@@ -59,13 +61,27 @@ namespace workwear.ReportParameters.ViewModels
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
 					{"alternativeName", UseAlternativeName},
-					{"showOwners", FeaturesService.Available(WorkwearFeature.Owners)},
+					{"showOwners", OwnersVisible && SelectOwner.Equals(SpecialComboState.All)}, //Подумал что не стоит показывать колонку если выбран конкретный собственник
 					{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
-					{"ownerId", (SelectOwner as Owner)?.Id ?? -1}
+					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
+					{"byEmployee", ByEmployee},
+					{"showCost", ShowCost},
+					{"showCostCenter", ShowCostCenter}
 		};
 
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+
 		#region Параметры
+		private AmountIssuedWearReportType reportType;
+		public virtual AmountIssuedWearReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+
 		private DateTime? startDate;
 		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime? StartDate {
@@ -86,10 +102,16 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref issueType, value);
 		}
 
-		private bool summary = true;
-		public virtual bool Summary {
-			get => summary;
-			set => SetField(ref summary, value);
+		private bool bySubdividion = true;
+		public virtual bool BySubdivision {
+			get => bySubdividion;
+			set => SetField(ref bySubdividion, value);
+		}
+
+		private bool byEmployee;
+		public virtual bool ByEmployee {
+			get => byEmployee;
+			set => SetField(ref byEmployee, value);
 		}
 
 		private bool bySize;
@@ -118,8 +140,21 @@ namespace workwear.ReportParameters.ViewModels
 			get => selectOwner;
 			set => SetField(ref selectOwner, value);
 		}
+
+		private bool showCost;
+		public virtual bool ShowCost {
+			get => showCost;
+			set => SetField(ref showCost, value);
+		}
+
+		private bool showCostCenter;
+		public virtual bool ShowCostCenter {
+			get => showCostCenter;
+			set => SetField(ref showCostCenter, value);
+		}
+
 		#endregion
-		
+
 		#region Свойства
 
 		private bool selectAll = true;
@@ -144,6 +179,10 @@ namespace workwear.ReportParameters.ViewModels
 		}
 
 		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
+
+		#region Visible
+		public bool OwnersVisible;
+		#endregion
 
 		private string matchString;
 		public string MatchString {
@@ -190,5 +229,14 @@ namespace workwear.ReportParameters.ViewModels
 		 
 		public int Id { get; set; }
 		public string Name { get; set; }
+	}
+
+	public enum AmountIssuedWearReportType {
+		[ReportIdentifier("AmountIssuedWear")]
+		[Display(Name = "Для печати A4 с группировкой")]
+		Common,
+		[ReportIdentifier("AmountIssuedWearFlat")]
+		[Display(Name = "Для экспорта (только данные)")]
+		Flat
 	}
 }

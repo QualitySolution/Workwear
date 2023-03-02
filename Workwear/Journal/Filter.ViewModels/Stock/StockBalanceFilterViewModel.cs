@@ -3,10 +3,12 @@ using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -57,13 +59,20 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 
-		public StockBalanceFilterViewModel(IUnitOfWorkFactory unitOfWorkFactory, JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService): base(journal, unitOfWorkFactory)
+		public StockBalanceFilterViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			JournalViewModelBase journal,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			StockRepository stockRepository,
+			FeaturesService featuresService): base(journal, unitOfWorkFactory)
 		{
+			FeaturesService = featuresService;
 			date = DateTime.Today;
 
 			var builder = new CommonEEVMBuilderFactory<StockBalanceFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
-			FeaturesService = featuresService;
+			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()

@@ -30,7 +30,6 @@ namespace Workwear.Views.Stock
 		public void Configure()
 		{
 			CreateTable();
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding
 				.AddSource(ViewModel)
@@ -38,10 +37,10 @@ namespace Workwear.Views.Stock
 				.AddSource(ViewModel.Entity)
 					.AddBinding(e => e.ObservableItems, w => w.ItemsDataSource)
 				.InitializeFromSource();
-
+			buttonAdd.Binding.AddBinding(viewModel,v =>v.SensitiveAddButton,w=>w.Sensitive).InitializeFromSource();
+			buttonDel.Binding.AddBinding(viewModel,v =>v.SensitiveButtonDel,w=>w.Sensitive).InitializeFromSource();
+			buttonChange.Binding.AddBinding(viewModel,v =>v.SensitiveButtonChange,w=>w.Sensitive).InitializeFromSource();
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
-			buttonAdd.Binding.AddBinding(ViewModel, v => v.SensetiveAddButton, w => w.Sensitive).InitializeFromSource();
-
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			MakeMenu();
 		}
@@ -51,7 +50,9 @@ namespace Workwear.Views.Stock
 			ytreeItems.ColumnsConfig = ColumnsConfigFactory.Create<CollectiveExpenseItem>()
 				.AddColumn("Сотрудник").AddTextRenderer(x => x.Employee.ShortName)
 				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+					.WrapWidth(700)
 				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
+					.WrapWidth(700)
 					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
@@ -66,7 +67,7 @@ namespace Workwear.Views.Stock
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
-				.AddColumn("Собственики")
+				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
@@ -76,20 +77,56 @@ namespace Workwear.Views.Stock
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
+				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
 		}
 
 		void MakeMenu() {
-			var menu = new Menu();
-			var item = new MenuItem("Удалить строку");
+			var delMenu = new Menu();
+			var item = new yMenuItem("Удалить строку");
 			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-			menu.Add(item);
-			item = new MenuItem("Удалить все строки сотрудника");
+			delMenu.Add(item);
+			item = new yMenuItem("Удалить все строки сотрудника");
 			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-			menu.Add(item);
-			buttonDel.Menu = menu;
-			menu.ShowAll();
+			delMenu.Add(item);
+			buttonDel.Menu = delMenu;
+			delMenu.ShowAll();
+
+			var addMenu = new Menu();
+			item = new yMenuItem("Сотрудников");
+			item.Activated += (sender, e) => ViewModel.AddEmployees();
+			addMenu.Add(item);
+			item = new yMenuItem("Подразделения");
+			item.Activated += (sender, e) => ViewModel.AddSubdivisions();
+			addMenu.Add(item);
+			item = new yMenuItem("Отделы");
+			item.Activated += (sender, e) => ViewModel.AddDepartments();
+			addMenu.Add(item);
+			addMenu.Add(new SeparatorMenuItem());
+			item = new yMenuItem("Дополнительно выбранному сотруднику");
+			item.Activated += (sender, e) => ViewModel.Refresh(ytreeItems.GetSelectedObjects<CollectiveExpenseItem>());
+			item.Binding.AddBinding(ViewModel, v => v.SensitiveRefreshMenuItem, w => w.Sensitive).InitializeFromSource();
+			addMenu.Add(item);
+			item = new yMenuItem("Дополнительно всем");
+			item.Activated += (sender, e) => ViewModel.RefreshAll();
+			item.Binding.AddBinding(ViewModel, v => v.SensitiveRefreshAllMenuItem, w => w.Sensitive).InitializeFromSource();
+			addMenu.Add(item);
+
+			buttonAdd.Menu = addMenu;
+			addMenu.ShowAll();
+			
+//todo Выводить сообщение если не хватило всем
+			var changeMenu = new Menu();
+			item = new yMenuItem("В выделенной строке");
+			item.Activated += (sender, e) => ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			changeMenu.Add(item);
+			item = new yMenuItem("Аналгичные в документе");
+			item.Activated += (sender, e) => ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			changeMenu.Add(item);
+			buttonChange.Menu = changeMenu;
+			buttonChange.TooltipText = "Заменить в строке выдаваемую позицию. Можно проставить любую номенклатуру подходящую по номенклатуре" +
+			                           " нормы из имеющихся в наличии на складе, независимо от размера, роста и других критерииев.";
+			changeMenu.ShowAll();
 		}
 
 		#region PopupMenu
@@ -115,7 +152,7 @@ namespace Workwear.Views.Stock
 			itemOpenNomenclature.Sensitive = selected.Nomenclature != null;
 			itemOpenNomenclature.Activated += Item_Activated;
 			menu.Add(itemOpenNomenclature);
-
+			
 			menu.ShowAll();
 			menu.Popup();
 		}
@@ -134,20 +171,6 @@ namespace Workwear.Views.Stock
 		{
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}
-		#endregion
-
-		#region private
-
-		private string GetRowColor(CollectiveExpenseItem item) {
-			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(ViewModel.BaseParameters);
-			if(requiredIssue > 0 && item.Nomenclature == null)
-				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
-			if(requiredIssue <= 0 && item.Amount == 0)
-				return "gray";
-			return null;
-		}
 
 		#endregion
 
@@ -156,31 +179,6 @@ namespace Workwear.Views.Stock
 		private void OnButtonDelClicked(object sender, EventArgs e)
 		{
 			viewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
-
-		void YtreeItems_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = buttonRefreshEmployee.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-		}
-
-		protected void OnButtonAddClicked(object sender, EventArgs e)
-		{
-			ViewModel.AddItem();
-		}
-
-		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
-		{
-			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
-
-		protected void OnButtonRefreshEmployeesClicked(object sender, EventArgs e)
-		{
-			ViewModel.RefreshAll();
-		}
-
-		protected void OnButtonRefreshEmployeeClicked(object sender, EventArgs e)
-		{
-			ViewModel.RefreshItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 		}
 		#endregion
 

@@ -28,16 +28,16 @@ namespace QS.Cloud.WearLk.Client
 			return client.GetClaim(request, Headers).Messages;
 		}
 
-		public void SetChanges(Claim claim) {
-			var client = new ClaimManager.ClaimManagerClient(Channel);
-			var request = new EditClaimRequest { ClaimId = claim.Id, ClaimState = claim.ClaimState, Title = claim.Title };
-			client.EditClaim(request, Headers);
-		}
-
 		public void Send(int claimId, string text) {
 			var client = new ClaimManager.ClaimManagerClient(Channel);
 			var request = new SendAnswerRequest { ClaimId = claimId, Text = text };
 			client.SendAnswer(request, Headers);
+		}
+		
+		public void CloseClaim(int claimId, string text) {
+			var client = new ClaimManager.ClaimManagerClient(Channel);
+			var request = new CloseClaimRequest { ClaimId = claimId, Text = text ?? String.Empty};
+			client.CloseClaim(request, Headers);
 		}
 		#endregion
 
@@ -45,18 +45,21 @@ namespace QS.Cloud.WearLk.Client
 		public event EventHandler<ReceiveNeedForResponseCountEventArgs> NeedForResponseCountChanged;
 		private DateTime? FailSince;
 
+		private CancellationTokenSource cancellation;
+		private Task responseReaderTask;
 		public void SubscribeNeedForResponseCount() {
-			SubscribeNeedForResponseCountConnect(new CancellationToken());
+			cancellation = new CancellationTokenSource();
+			SubscribeNeedForResponseCountConnect(cancellation.Token);
 		}
 		private void SubscribeNeedForResponseCountConnect(CancellationToken token)
 		{
 			var client = new ClaimManager.ClaimManagerClient(Channel);
 
 			var request = new NeedForResponseCountRequest();
-			var response = client.NeedForResponseCount(request);
+			var response = client.NeedForResponseCount(request, Headers);
 			//var watcher = new NotificationConnectionWatcher(channel, OnChanalStateChanged);
 
-			var responseReaderTask = Task.Run(async () =>
+			responseReaderTask = Task.Run(async () =>
 				{
 					while(await response.ResponseStream.MoveNext(token))
 					{
@@ -93,8 +96,12 @@ namespace QS.Cloud.WearLk.Client
 		{
 			NeedForResponseCountChanged?.Invoke(this, new ReceiveNeedForResponseCountEventArgs{Count = count});
 		}
-		
 		#endregion
+
+		public override void Dispose() {
+			cancellation.Cancel();
+			base.Dispose();
+		}
 	}
 	
 	public class ReceiveNeedForResponseCountEventArgs : EventArgs

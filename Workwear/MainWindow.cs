@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,6 +17,7 @@ using QS.HistoryLog;
 using QS.Navigation;
 using QS.NewsFeed.Views;
 using QS.NewsFeed;
+using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Versioning;
 using QS.Project.Views;
@@ -137,7 +139,7 @@ public partial class MainWindow : Gtk.Window
 
 		//Настраиваем новости
 		var feeds = new List<NewsFeed>(){
-			new NewsFeed("workwearsite", "Новости программы", "http://workwear.qsolution.ru/?feed=atom")
+			new NewsFeed("workwearsite", "Новости программы", "https://workwear.qsolution.ru/?feed=atom")
 			};
 		var reader = AutofacScope.Resolve<FeedReader>(new TypedParameter(typeof(List<NewsFeed>), feeds));
 		reader.LoadReadFeed();
@@ -160,15 +162,22 @@ public partial class MainWindow : Gtk.Window
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(UoW.GetAll<Warehouse>().Count() == 0)
 			CreateDefaultWarehouse();
-		//Если у базы еще нет Guid создаем его.
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
+			//Если у базы еще нет Guid создаем его.
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
+			
+			FeaturesService = AutofacScope.Resolve<FeaturesService>();
+			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
+			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
+				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
+				logger.Info($"Создали префикс штрихкодов для базы: {prefix}");
+				baseParam.Dynamic.BarcodePrefix = prefix;
+			}
 		}
 		#endregion
-
-		FeaturesService = AutofacScope.Resolve<FeaturesService>();
+		
 		DisableFeatures();
 		if(FeaturesService.Available(WorkwearFeature.Claims)) {
 			var button = toolbarMain.Children.FirstOrDefault(x => x.Action == ActionClaims);
@@ -209,10 +218,26 @@ public partial class MainWindow : Gtk.Window
 		                         || FeaturesService.Available(WorkwearFeature.Claims) 
 		                         || FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 	}
 	#endregion
 
-	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
+	#region Helpers
+	void OpenUrl(string url) {
+		//Здесь пробуем исправить ошибку 35026 на нашем багтрекере.
+		//Предположил что проблема в этом https://github.com/dotnet/runtime/issues/28005
+		//Но проверить действительно ли это так негде.
+		ProcessStartInfo psi = new ProcessStartInfo
+		{
+			FileName = url,
+			UseShellExecute = true
+		};
+		Process.Start (psi);
+	}
+	#endregion
+
+	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
+	{
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
 		DialogViewModelBase after = null;
@@ -337,7 +362,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			System.Diagnostics.Process.Start("user-guide.pdf");
+			OpenUrl("user-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -570,37 +595,37 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionSiteActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenSite");
-		System.Diagnostics.Process.Start("http://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionOpenReformalActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("OpenReformal.ru");
-		System.Diagnostics.Process.Start("http://qs-workwear.reformal.ru/");
+		OpenUrl("http://qs-workwear.reformal.ru/");
 	}
 
 	protected void OnActionVKActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("vk.com");
-		System.Diagnostics.Process.Start("https://vk.com/qualitysolution");
+		OpenUrl("https://vk.com/qualitysolution");
 	}
 
 	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("ok.ru");
-		System.Diagnostics.Process.Start("https://ok.ru/qualitysolution");
+		OpenUrl("https://ok.ru/qualitysolution");
 	}
 
 	protected void OnActionTwitterActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("twitter.com");
-		System.Diagnostics.Process.Start("https://twitter.com/QSolutionRu");
+		OpenUrl("https://twitter.com/QSolutionRu");
 	}
 
 	protected void OnActionYouTubeActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("youtube.com");
-		System.Diagnostics.Process.Start("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
+		OpenUrl("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e)
@@ -725,7 +750,7 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionPayActivated(object sender, EventArgs e)
 	{
 		MainTelemetry.AddCount("pay.qsolution.ru");
-		System.Diagnostics.Process.Start("http://pay.qsolution.ru/");
+		OpenUrl("https://pay.qsolution.ru/");
 	}
 
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e)
@@ -737,7 +762,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			System.Diagnostics.Process.Start("admin-guide.pdf");
+			OpenUrl("admin-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -797,5 +822,12 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionOwnerActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<OwnerJournalViewModel>(null);
+	}
+
+	protected void BarcodeActivated(object sender, EventArgs e) => 
+		NavigationManager.OpenViewModel<BarcodeJournalViewModel>(null);
+
+	protected void OnActionCostCenterActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CostCenterJournalViewModel>(null);
 	}
 }

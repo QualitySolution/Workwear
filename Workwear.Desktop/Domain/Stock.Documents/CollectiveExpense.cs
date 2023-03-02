@@ -65,6 +65,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Расчетные
 		public virtual string Title => $"Коллективная выдача №{Id} от {Date:d}";
+		public virtual IEnumerable<EmployeeCard> Employees => Items.Select(x => x.Employee).Distinct();
 		#endregion
 
 		#region IValidatableObject implementation
@@ -127,16 +128,10 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Добавление удаление строк
-
-		public virtual void AddItems(EmployeeCard employee, BaseParameters baseParameters)
-		{
-			foreach(var item in employee.WorkwearItems) {
-				if(item.ProtectionTools?.Type.IssueType != IssueType.Collective)
-					continue;
-				AddItem(item, baseParameters);
-			}
-		}
-
+	
+		/// <summary>
+		/// Создание строки документа. 
+		/// </summary>
 		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, StockPosition position = null, int amount = 0) 
 		{
 			var newItem = new CollectiveExpenseItem() {
@@ -146,16 +141,17 @@ namespace Workwear.Domain.Stock.Documents
 				EmployeeCardItem = employeeCardItem,
 				ProtectionTools = employeeCardItem.ProtectionTools
 			};
-			if(position != null) {
-				newItem.Nomenclature = position.Nomenclature;
-				newItem.WearSize = position.WearSize;
-				newItem.Height = position.Height;
-			}
-
+			if(position != null) 
+				newItem.StockPosition = position;
+			
 			ObservableItems.Add(newItem);
 			return newItem;
 		}
 
+		/// <summary>
+		/// Подобрать номенклатуру по потребности с учётом текущего документа
+		/// </summary>
+		/// <returns></returns>
 		public virtual CollectiveExpenseItem AddItem(EmployeeCardItem employeeCardItem, BaseParameters baseParameters)
 		{
 			if(employeeCardItem == null)
@@ -164,23 +160,17 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any(x => employeeCardItem.IsSame(x.EmployeeCardItem)))
 				return null;
 
-			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters); //Количество которое нужно выдать
-			if (employeeCardItem.BestChoiceInStock.Any()) {
-				foreach (var position in employeeCardItem.BestChoiceInStock) {
-					var expancePositionAmount =
-						Items.Where(item => item.Nomenclature == position.Nomenclature
-						                    && item.WearSize?.Id == position.WearSize?.Id
-						                    && item.Height?.Id == position.Height?.Id)
-							.Aggregate(position.Amount, (current, item) => current - item.Amount); //Есть на складе
-
-					if (expancePositionAmount >= needPositionAmount && position.WearPercent == 0)
-						return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);
+			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
+			StockPosition want = employeeCardItem.BestChoiceInStock.FirstOrDefault()?.StockPosition;
+			if(want != null)
+				foreach(var position in employeeCardItem.BestChoiceInStock) {
+					if(position.Amount - 
+					   Items.Where(x =>x.Nomenclature!= null)
+							.Where(item => position.Equals(item?.StockPosition)) 
+							.Sum(x => x.Amount) >= needPositionAmount) //Частичных выдач не делаем
+						want = position.StockPosition;
 				}
-
-				return AddItem(employeeCardItem);
-			}
-
-			return AddItem(employeeCardItem);
+			return AddItem(employeeCardItem, want, needPositionAmount);
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
@@ -212,10 +202,11 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
-		public virtual void PrepareItems(IUnitOfWork uow, BaseParameters baseParameters)
+		public virtual void PrepareItems(IUnitOfWork uow)
 		{
 			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems);
+			var excludeOperations = Items.Select(x => x.WarehouseOperation);
+			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems, excludeOperations);
 			foreach(var docItem in Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
@@ -230,9 +221,9 @@ namespace Workwear.Domain.Stock.Documents
 			
 			foreach(var employeeGroup in groups) {
 				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
+				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 				progress.Add();
-				employeeGroup.Key.FillWearRecivedInfo(new EmployeeIssueRepository(UoW));
+				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
 				UoW.Save(employeeGroup.Key);
 			}
 		}

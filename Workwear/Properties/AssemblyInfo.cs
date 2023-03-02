@@ -13,18 +13,18 @@ using QS.Project.Versioning;
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
 [assembly: AssemblyProduct("QS: Спецодежда и имущество")]
-[assembly: AssemblyCopyright("Quality Solution 2022")]
+[assembly: AssemblyCopyright("Quality Solution 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyLogoIcon("Workwear.icon.logo.png")]
 [assembly: AssemblySupport("Телефон тех. поддержки +7(812)309-71-77")]
-[assembly: AssemblyAppWebsite("http://workwear.qsolution.ru/")]
+[assembly: AssemblyAppWebsite("https://workwear.qsolution.ru/")]
 
 [assembly: InternalsVisibleTo("WorkwearTest")]
 
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 [assembly: AssemblyAuthor("Горячев Иван <space@qsolution.ru>")]
-[assembly: AssemblyAuthor("Мингалимов Ильяс <mi@qsolution.ru>")]
+[assembly: AssemblyAuthor("Мингалимов Ильяс 2022")]
 [assembly: AssemblyAuthor("Солдаткина Алина 2020")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".

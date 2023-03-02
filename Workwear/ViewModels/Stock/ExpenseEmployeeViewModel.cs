@@ -6,7 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -23,6 +22,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
@@ -30,18 +30,19 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 
-namespace Workwear.ViewModels.Stock
-{
+namespace Workwear.ViewModels.Stock {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
 		private ILifetimeScope autofacScope;
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
-		private IInteractiveQuestion interactive;
+		private IInteractiveService interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
+		private readonly IProgressBarDisplayable progress;
+		private readonly EmployeeIssueRepository issueRepository;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -50,20 +51,25 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator,
 			IUserService userService,
 			UserRepository userRepository,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
+			IProgressBarDisplayable progress,
+			EmployeeIssueRepository issueRepository,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-			this.interactive = interactive;
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
+			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
+			this.issueRepository.RepoUow = UoW;
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -108,6 +114,16 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
 
+		#region Свойства для View
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool WriteoffOpenVisible => Entity.WriteOffDoc != null;
+		public string WriteoffDocNumber => (Entity.WriteOffDoc?.Id > 0) ? Entity.WriteOffDoc?.Id.ToString() : null;
+		#endregion
+
+		#region Заполение документа
 		private void FillUnderreceived()
 		{
 			Entity.ObservableItems.Clear();
@@ -115,12 +131,20 @@ namespace Workwear.ViewModels.Stock
 			if(Entity.Employee == null)
 				return;
 
+			Entity.Employee.FillWearReceivedInfo(issueRepository);
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item, baseParameters);
 			}
 		}
+
+		private void UpdateAmounts() {
+			foreach(var item in Entity.Items) {
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(baseParameters, Entity.Date) ?? 0;
+			}
+		}
+		#endregion
 
 		public void FillAktNumber()
 		{
@@ -130,57 +154,90 @@ namespace Workwear.ViewModels.Stock
 						i.AktNumber = item.AktNumber;
 		}
 
+		public bool SkipBarcodeCheck;
+		
 		public override bool Save()
 		{
-			if(!Validate())
+			progress.Start(7);
+			if(!Validate()) {
+				progress.Close();
 				return false;
+			}
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 
-			logger.Info("Запись документа...");
+			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
+				return false;
+			}
 
+			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
+			//Придерживайтесь следующего порядка:
+			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
+			// 2 - Сохраняем основной документ, без закрытия транзакции.
+			// 3 - Обрабатываем и сохраняем доп документы.
+			
+			logger.Info("Обработка строк документа выдачи...");
+			progress.Add();
+			Entity.CleanupItems();
+			Entity.CleanupItemsWriteOff();
+			progress.Add();
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
 				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
 			}
-
-			Entity.CleanupItems();
-			Entity.CleanupItemsWriteOff();
+			if(Entity.WriteOffDoc != null) {
+				logger.Info("Предварительная запись списания...");
+				UoW.Save(Entity.WriteOffDoc);
+			}
+			progress.Add();
+			Entity.CleanupIssuanceSheetItems();
+			if(Entity.IssuanceSheet != null) {
+				logger.Info("Предварительная запись ведомости...");
+				UoW.Save(Entity.IssuanceSheet);
+			}
+			progress.Add();
+			logger.Info("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
+			
+			progress.Add();
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
+			progress.Add();
 			Entity.UpdateIssuedWriteOffOperation();
-
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			UoWGeneric.Save();
-			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
+			progress.Add();
+			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
 			UoWGeneric.Commit();
 			logger.Info("Ok");
+			progress.Close();
 			return true;
 		}
 
-		public void OpenIssuenceSheet()
+		#region Ведомость
+		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(!MessageDialogHelper.RunQuestionDialog("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		public void CreateIssuenceSheet()
+		public void CreateIssuanceSheet()
 		{
 			var userSettings = userRepository.GetCurrentUserSettings(UoW);
 			Entity.CreateIssuanceSheet(userSettings);
 		}
 
-		public void PrintIssuenceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
 				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
@@ -197,18 +254,43 @@ namespace Workwear.ViewModels.Stock
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+		#endregion
+		#region Списание
+		public void OpenWriteoff() {
+			if(UoW.HasChanges) {
+				if(!interactive.Question("В документе были изменения. Сохранить документ выдачи перед открытием связанного списания?") || !Save())
+					return;
+			}
+			MainClass.MainWin.NavigationManager.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.WriteOffDoc.Id));
+		}
+		#endregion
 
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(Entity.Employee)) {
-				FillUnderreceived();
+			switch(e.PropertyName) {
+				case nameof(Entity.Date):
+					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
+					UpdateAmounts();
+					break;
+				case nameof(Entity.Employee):
+					FillUnderreceived();
+					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+					break;
+				case nameof(Entity.IssuanceSheet):
+					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					break;
+				case nameof(Entity.WriteOffDoc):
+					OnPropertyChanged(nameof(WriteoffOpenVisible));
+					break;
 			}
 		}
 
 		#region ISelectItem
 		public void SelectItem(int id)
 		{
-			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.First(x => x.Id == id);
+			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
 	}

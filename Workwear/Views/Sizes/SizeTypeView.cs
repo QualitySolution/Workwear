@@ -46,8 +46,8 @@ namespace Workwear.Views.Sizes
 				.InitializeFromSource();
 			ytreeviewSizes.ColumnsConfig = ColumnsConfigFactory.Create<Size>()
 				.AddColumn("Значение").AddTextRenderer(x => x.Name)
-				.AddColumn("Открыты для сотрудника").AddTextRenderer(x => x.ShowInEmployee ? "☑" : "☒")
-				.AddColumn("Открыты для номенклатуры").AddTextRenderer(x => x.ShowInNomenclature ? "☑" : "☒")
+				.AddColumn("Использовать в сотрудника").AddToggleRenderer(x => x.ShowInEmployee)
+				.AddColumn("Использовать в номенклатуры").AddToggleRenderer(x => x.ShowInNomenclature)
 				.AddColumn("Аналоги").AddTextRenderer(x =>
 					String.Join(", ", x.SuitableSizes.Union(x.SizesWhereIsThisSizeAsSuitable).Select(z => z.Name)))
 				.Finish();

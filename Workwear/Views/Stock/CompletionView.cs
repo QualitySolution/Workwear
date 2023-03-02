@@ -7,6 +7,7 @@ using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock
@@ -26,18 +27,22 @@ namespace Workwear.Views.Stock
 			buttonAddReceiptNomenclature.Clicked += AddResultItems;
 			buttonDelExpenseNomenclature.Clicked += DelSourceItems;
 			buttonDelReceiptNomenclature.Clicked += DelResultItems;
+			buttonAddSizesReceiptNomenclature.Clicked += AddSizessResultItems;
 			ytreeExpenseItems.Selection.Changed += ytreeExpenseItems_Selection_Changed;
 			ytreeReceiptItems.Selection.Changed += ytreeReceiptItems_Selection_Changed;
 			buttonDelExpenseNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.CanDelItemSource, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensetiveDellSourceItemButton, b => b.Sensitive)
 				.InitializeFromSource();
 			buttonDelReceiptNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.CanDelItemResult, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensetiveDellResultItemButton, b => b.Sensitive)
+				.InitializeFromSource(); 
+			buttonAddSizesReceiptNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.SensetiveAddSizesResultButton, b => b.Sensitive)
 				.InitializeFromSource();
 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
 			 	.InitializeFromSource();
-			 ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser.Name, w => w.LabelProp)
+			 ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 			 	.InitializeFromSource();
 			 ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			 ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
@@ -49,6 +54,7 @@ namespace Workwear.Views.Stock
 			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+					.WrapWidth(700)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -57,7 +63,7 @@ namespace Workwear.Views.Stock
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
-				 .AddColumn("Собственики")
+				 .AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
@@ -76,6 +82,7 @@ namespace Workwear.Views.Stock
 			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+					.WrapWidth(700)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -84,7 +91,7 @@ namespace Workwear.Views.Stock
 				 .AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
-				 .AddColumn("Собственики")
+				 .AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
@@ -101,12 +108,12 @@ namespace Workwear.Views.Stock
 		
 		void ytreeExpenseItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelExpenseNomenclature.Sensitive = ytreeExpenseItems.Selection.CountSelectedRows() > 0;
+			ViewModel.SelectedSourceItem = ytreeExpenseItems.GetSelectedObject<CompletionSourceItem>();
 		}
 		
 		void ytreeReceiptItems_Selection_Changed(object sender, EventArgs e)
 		{
-			buttonDelReceiptNomenclature.Sensitive = ytreeReceiptItems.Selection.CountSelectedRows() > 0;
+			ViewModel.SelectedResultItem = ytreeReceiptItems.GetSelectedObject<CompletionResultItem>();
 		}
 		void AddSourceItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSourceItems();
@@ -119,6 +126,9 @@ namespace Workwear.Views.Stock
 		}
 		void DelResultItems(object sender, EventArgs eventArgs) {
 			ViewModel.DelResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+		}
+		void AddSizessResultItems(object sender, EventArgs eventArgs) {
+			ViewModel.AddSizesResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
 		}
 	}
 }

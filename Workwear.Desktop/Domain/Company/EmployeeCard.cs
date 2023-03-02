@@ -260,8 +260,8 @@ namespace Workwear.Domain.Company
 
 		#endregion
 		#region Фильтрованные коллекции
-		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters) => 
-			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters) > 0);
+		public virtual IEnumerable<EmployeeCardItem> GetUnderreceivedItems(BaseParameters baseParameters, DateTime onDate) => 
+			WorkwearItems.Where(x => x.CalculateRequiredIssue(baseParameters, onDate) > 0);
 		#endregion
 		public EmployeeCard () { }
 		#region IValidatableObject implementation
@@ -317,6 +317,10 @@ namespace Workwear.Domain.Company
 		#endregion
 		#region Функции для работы с коллекцией норм
 		public virtual void AddUsedNorm(Norm norm) {
+			if(norm == null) {
+				logger.Warn ("Попытка добавить null вместо нормы! Ай-Ай-Ай!");
+				return;
+			}
 			if(UsedNorms.Any (p => DomainHelper.EqualDomainObjects (p, norm))) {
 				logger.Warn ("Такая норма уже добавлена. Пропускаем...");
 				return;
@@ -378,6 +382,9 @@ namespace Workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
+			//Обновляем информацию о прошлых выдачах, перед обновление даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
+			if(processed.Any())
+				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			//Обновляем срок следующей выдачи
 			foreach(var item in processed) {
 				item.UpdateNextIssue(UoW);
@@ -385,6 +392,11 @@ namespace Workwear.Domain.Company
 			logger.Info("Ok");
 		}
 
+		/// <summary>
+		/// Обновляет дату следующей выдачи у потребностей по указанному списку номенклатур нормы.
+		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
+		/// </summary>
+		/// <param name="protectionTools">список номенклатур нормы потребности в которых надо обновлять.</param>
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
@@ -393,35 +405,51 @@ namespace Workwear.Domain.Company
 			}
 		}
 
+		/// <summary>
+		/// Обновляет дату следующей выдачи у всех потребностей.
+		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
+		/// </summary>
+		[Obsolete("Под удаление, используйте аналогичный механизм из EmployeeIssueModel.")]
 		public virtual void UpdateNextIssueAll() {
 			foreach(var wearItem in WorkwearItems) {
 				wearItem.UpdateNextIssue(UoW);
 			}
 		}
 
-		public virtual void FillWearRecivedInfo(EmployeeIssueRepository issueRepository) {
-			if (Id == 0) // Не надо проверять выдачи, так как сотрудник еще не сохранен.
-				return; 
-			foreach(var item in WorkwearItems) {
-				item.Amount = 0;
-				item.LastIssue = null;
+		/// <summary>
+		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(EmployeeIssueRepository issueRepository) {
+			if(Id == 0) {
+				// Нет смысла лезть в базу, так как сотрудник еще не сохранен.
+				foreach(var item in WorkwearItems) {
+					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+				}
+				return;
 			}
+			FillWearReceivedInfo(issueRepository.AllOperationsForEmployee(this));
+		}
 
-			var receiveds = 
-				issueRepository
-					.AllOperationsForEmployee(this)
-					.Where(x => x.Issued > 0);
+		/// <summary>
+		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
+			foreach(var item in WorkwearItems) {
+				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+			}
+			
 			var protectionGroups = 
-				receiveds
+				operations
 					.Where(x => x.ProtectionTools != null)
-					.GroupBy(x => x.ProtectionTools?.Id)
+					.GroupBy(x => x.ProtectionTools.Id)
 					.ToDictionary(g => g.Key, g => g);
 
 			//Основное заполнение выдачи
 			foreach (var item in WorkwearItems) {
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
-				SetLastIssue(item, item.ProtectionTools.Id, protectionGroups);
+				item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 			
 			//Дополнительно ищем по аналогам.
@@ -431,23 +459,9 @@ namespace Workwear.Domain.Company
 					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
 				if(matched == null)
 					continue;
-				SetLastIssue(item, matched.Id, protectionGroups);
+				item.Graph = new IssueGraph(protectionGroups[matched.Id].ToList());
+				protectionGroups.Remove(matched.Id);
 			}
-		}
-
-		private void SetLastIssue(EmployeeCardItem item, int protectionToolsId,  Dictionary<int?,IGrouping<int?,EmployeeIssueOperation>> protectionGroups) {
-			var operations = protectionGroups[protectionToolsId];
-			//В сортировке ManualOperation, чтобы в ситуации когда на одну дату есть несколько операция,
-			//чтобы выводилась именно ручная.
-			var lastOperation = 
-				operations
-					.OrderByDescending(x => x.OperationTime.Date)
-					.ThenByDescending(x => x.ManualOperation).First();
-			var lastDate = lastOperation.OperationTime.Date;
-			item.Amount = operations.Where(x => x.OperationTime.Date == lastDate).Sum(x => x.Issued);
-			item.LastIssue = lastDate;
-			item.LastIssueOperation = lastOperation;
-			protectionGroups.Remove(protectionToolsId);
 		}
 
 		public virtual void FillWearInStockInfo(
@@ -455,24 +469,31 @@ namespace Workwear.Domain.Company
 			BaseParameters baseParameters, 
 			Warehouse warehouse, 
 			DateTime onTime, 
-			bool onlyUnderreceived = false)
+			bool onlyUnderreceived = false, Action progressStep = null)
 		{
-			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters) : WorkwearItems;
-			FillWearInStockInfo(uow, warehouse, onTime, actualItems);
+			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters, onTime) : WorkwearItems;
+			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
 		}
-
+		
+		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогресс бара. Метод выполняет 4 шага.</param>
 		public static void FillWearInStockInfo(IUnitOfWork uow,
 			Warehouse warehouse, 
 			DateTime onTime, 
-			IEnumerable<EmployeeCardItem> items)
+			IEnumerable<EmployeeCardItem> items,
+			IEnumerable<WarehouseOperation> excludeOperations,
+			Action progressStep = null)
 		{
+			progressStep?.Invoke();
 			FetchEntitiesInWearItems(uow, items);
+			progressStep?.Invoke();
 			var allNomenclatures = 
 				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+			progressStep?.Invoke();
 			var stockRepo = new StockRepository();
-			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime);
+			var stock = stockRepo.StockBalances(uow, warehouse, allNomenclatures, onTime, excludeOperations);
+			progressStep?.Invoke();
 			foreach(var item in items) {
-				item.InStock = stock.Where(x => item.MatcheStockPosition(x.StockPosition)).ToList();
+				item.InStock = stock.Where(x => item.MatchStockPosition(x.StockPosition)).ToList();
 			}
 		}
 
@@ -520,22 +541,27 @@ namespace Workwear.Domain.Company
 			ObservableVacations.Add(vacation);
 		}
 
+		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
+			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,
+			IInteractiveQuestion askUser, EmployeeVacation vacation) {
+			RecalculateDatesOfIssueOperations(uow, employeeIssueRepository, baseParameters, askUser, vacation.BeginDate, vacation.EndDate);
+		}
+
 		#endregion
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
 			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,
 			IInteractiveQuestion askUser, DateTime begin, DateTime end)
 		{
-			var operations = employeeIssueRepository.GetOperationsTouchDates(uow, new[] {this}, begin, end,
-				q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools)
-			);
-			foreach (var typeGroup in operations.GroupBy(o => o.ProtectionTools)) {
+			var operations = employeeIssueRepository.AllOperationsForEmployee(this, q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools), uow);
+			var toRecalculate = operations.Where(x => x.IsTouchDates(begin, end)).ToList();
+			foreach (var typeGroup in toRecalculate.GroupBy(o => o.ProtectionTools)) {
+				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList());
 				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
-					var graph = IssueGraph.MakeIssueGraph(uow, this, typeGroup.Key);
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);
-
 				}
 			}
+			FillWearReceivedInfo(operations);
 			UpdateNextIssueAll();
 		}
 	}

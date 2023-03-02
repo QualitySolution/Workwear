@@ -775,10 +775,10 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    item_types.name AS name_siz,
+    IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
     (
     SELECT
         stock_income_detail.certificate
@@ -831,7 +831,7 @@ CONCAT_WS(
         FROM
             operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
-        LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+        LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
         LEFT JOIN operation_warehouse ON operation_issued_by_employee.warehouse_operation_id = operation_warehouse.id
         LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
         LEFT JOIN(
@@ -862,7 +862,7 @@ CONCAT_WS(
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="name_siz">
           <DataField>name_siz</DataField>
           <TypeName>System.String</TypeName>

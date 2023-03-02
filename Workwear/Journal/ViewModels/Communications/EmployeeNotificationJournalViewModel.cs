@@ -14,10 +14,10 @@ using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Project.Versioning;
 using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
@@ -36,27 +36,19 @@ namespace workwear.Journal.ViewModels.Communications
 	[DontUseAsDefaultViewModel]
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
 	{
-		private readonly IInteractiveService interactive;
 		private readonly NotificationManagerService notificationManager;
-		private readonly BaseParameters baseParameters;
-		private readonly IDataBaseInfo dataBaseInfo;
 
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
-			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NotificationManagerService notificationManager,
-			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
+			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NotificationManagerService notificationManager, 
 			ICurrentPermissionService currentPermissionService = null)
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			Title = "Уведомление сотрудников";
-			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<EmployeeNotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope.Resolve<EmployeeNotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = HandlePostLoadProcessing;
 
@@ -234,12 +226,12 @@ namespace workwear.Journal.ViewModels.Communications
 			);
 			chooseAction.ChildActionsList.Add(chooseAllAction);
 
-			var sendMessange = new JournalAction("Отправить сообщение",
+			var sendMessage = new JournalAction("Отправить сообщение",
 				(selected) => Items?.Cast<EmployeeNotificationJournalNode>().Any(x => x.Selected) ?? false,
 				(selected) => true,
-				(selected) => SendMessange(selected)
+				(selected) => SendMessage(selected)
 			);
-			NodeActionsList.Add(sendMessange);
+			NodeActionsList.Add(sendMessage);
 
 			var editAction = new JournalAction("Открыть сотрудника",
 					(selected) => selected.Any(),
@@ -277,7 +269,7 @@ namespace workwear.Journal.ViewModels.Communications
 			Refresh();
 		}
 
-		void SendMessange(object[] nodes)
+		void SendMessage(object[] nodes)
 		{
 			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
 			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
@@ -387,7 +379,7 @@ namespace workwear.Journal.ViewModels.Communications
 		public UserStatusInfo StatusInfo;
 
 		public string UnreadMessagesText => StatusInfo?.UnreadMessages > 0 ? StatusInfo.UnreadMessages.ToString() : String.Empty;
-		public string LastVisit => StatusInfo?.LastVisit?.ToDateTime().ToString("g");
+		public string LastVisit => StatusInfo?.LastVisit?.ToDateTime().ToLocalTime().ToString("g");
 		
 		public string StatusText {
 			get {

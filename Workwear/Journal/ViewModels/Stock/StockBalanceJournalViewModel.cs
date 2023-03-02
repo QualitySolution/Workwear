@@ -76,12 +76,12 @@ namespace workwear.Journal.ViewModels.Stock
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
-				             && (warehouseExpenseOperationAlias.WearSize.Id == sizeAlias.Id
-				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
-				             && (warehouseExpenseOperationAlias.Height.Id == heightAlias.Id
-				                 || warehouseOperationAlias.Height == null && heightAlias == null)
-				             && (warehouseExpenseOperationAlias.Owner.Id == ownerAlias.Id
-								 || warehouseOperationAlias.Owner == null && ownerAlias == null)
+				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
+				                 || warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
+				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
+				                 || warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null)
+				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
+				                 || warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 
@@ -96,12 +96,12 @@ namespace workwear.Journal.ViewModels.Stock
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
-				             && (warehouseIncomeOperationAlias.WearSize.Id == sizeAlias.Id
-				                 || warehouseOperationAlias.WearSize == null && sizeAlias == null)
-				             && (warehouseIncomeOperationAlias.Height.Id == heightAlias.Id
-				                 || warehouseOperationAlias.Height == null && heightAlias == null)
-				             && (warehouseIncomeOperationAlias.Owner.Id == ownerAlias.Id
-								 || warehouseOperationAlias.Owner == null && ownerAlias == null)
+				             && (warehouseIncomeOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
+				                 || warehouseIncomeOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
+				             && (warehouseIncomeOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
+				                 || warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null)
+				             && (warehouseIncomeOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
+				                 || warehouseIncomeOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
 				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
 			if(Filter.Warehouse == null)
@@ -158,8 +158,8 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-			   .SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
-			   .SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
+			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 			   .SelectGroup(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
 			   .SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
 			   .SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)

@@ -201,7 +201,6 @@ Section "${PRODUCT_NAME}" SecProgram
   ; Удаляем файлы используемые до версии 2.0
   Delete $INSTDIR\EncryptionProvider.dll
   Delete $INSTDIR\Newtonsoft.Json.dll
-  Delete $INSTDIR\RdlCri.dll
   Delete $INSTDIR\RdlReader.exe
   Delete $INSTDIR\RdlViewer.dll
   Delete $INSTDIR\zxing.dll

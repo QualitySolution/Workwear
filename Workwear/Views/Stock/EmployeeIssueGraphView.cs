@@ -19,6 +19,7 @@ namespace Workwear.Views.Stock
 				.AddColumn("Выдано").AddNumericRenderer(node => node.Issued)
 				.AddColumn("Списано").AddNumericRenderer(node => node.WriteOff)
 				.AddColumn("Числится").AddNumericRenderer(node => node.CurrentCount)
+				.AddColumn("Используется").AddNumericRenderer(n => n.Used)
 				.AddColumn("Корректировка").AddTextRenderer(x => x.Reset ? "Да" : String.Empty)
 				.Finish();
 			

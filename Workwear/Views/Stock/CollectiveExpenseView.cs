@@ -24,7 +24,7 @@ namespace Workwear.Views.Stock
 			expensedocitememployeeview1.ViewModel = ViewModel.CollectiveExpenseItemsViewModel;
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource();
 
-			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser.Name, w => w.LabelProp).InitializeFromSource();
+			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 
 			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 
@@ -45,18 +45,18 @@ namespace Workwear.Views.Stock
 
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
 		{
-			ViewModel.CreateIssuenceSheet();
+			ViewModel.CreateIssuanceSheet();
 			IssuanceSheetSensetive();
 		}
 
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
 		{
-			ViewModel.OpenIssuenceSheet();
+			ViewModel.OpenIssuanceSheet();
 		}
 
 		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
 		{
-			ViewModel.PrintIssuenceSheet((IssuedSheetPrint)e.ItemEnum);
+			ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

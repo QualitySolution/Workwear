@@ -6,6 +6,7 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -15,7 +16,7 @@ namespace Workwear.Domain.Stock.Documents
 		Genitive = "строки прихода"
 		)]
 	[HistoryTrace]
-	public class IncomeItem : PropertyChangedBase, IDomainObject
+	public class IncomeItem : PropertyChangedBase, IDomainObject , IDocItemSizeInfo
 	{
 		#region Свойства
 
@@ -35,6 +36,16 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
+		}
+
+		[Display(Name = "Тип Роста")]
+		public virtual SizeType HeightType {
+			get => nomenclature.Type.HeightType;
+		}
+		
+		[Display(Name = "Тип размера одежды")]
+		public virtual SizeType WearSizeType {
+			get => nomenclature.Type.SizeType;
 		}
 
 		private int amount;

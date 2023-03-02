@@ -43,9 +43,10 @@ namespace Workwear.Test.Integration.Import
 				var interactive = Substitute.For<IInteractiveMessage>();
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
+				var unitOfWorkProvider = new UnitOfWorkProvider();
 				var dataparser = new DataParserNorm(new NormRepository(), new ProtectionToolsRepository(), new SizeService());
 				var model = new ImportModelNorm(dataparser);
-				using(var normsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor)) {
+				using(var normsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
 					normsLoad.ProgressStep = progressStep;
 					normsLoad.FileName = "Samples/Excel/norms_agronom.xlsx";
 					Assert.That(normsLoad.Sheets.Count, Is.EqualTo(3));

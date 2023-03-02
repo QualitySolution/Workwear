@@ -5,11 +5,13 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 using Workwear.Measurements;
+using Workwear.Repository.Stock;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {
@@ -116,6 +118,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
+			StockRepository stockRepository,
 			SizeService sizeService,
 			Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
 		{
@@ -126,6 +129,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			if(nomenclature != null)
 				this.nomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
 
+			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
 		}

@@ -9,6 +9,7 @@
 * xref:reports.adoc[Отчеты]
 * xref:settings.adoc[Настройки программы]
 * xref:manipulation.adoc[Обработка]
+* xref:history-log.adoc[Журнал изменений]
 * xref:import.adoc[Импорт данных]
 * xref:mobile-app.adoc[Кабинет сотрудника]
 

@@ -24,8 +24,7 @@ namespace Workwear.ViewModels.Operations
 			EmployeeIssueRepository repository,
 			EmployeeCardItem cardItem = null,
 			EmployeeIssueOperation selectOperation = null,
-			IValidator validator = null, 
-			string UoWTitle = null) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, "Редактирование ручных операций") 
 		{
 			Resizable = true;
 			Deletable = true;
@@ -48,15 +47,15 @@ namespace Workwear.ViewModels.Operations
 			}
 			else
 				throw new ArgumentNullException(nameof(selectOperation) + nameof(cardItem));
-
-			SelectOperation = selectOperation != null 
-				? Operations.First(x => x.Id == selectOperation.Id) 
-				: Operations.FirstOrDefault();
 			
 			//Исправляем ситуацию когда у операции пропала ссылка на норму, это может произойти в случает обновления нормы.
 			if(EmployeeCardItem != null)
 				foreach (var operation in Operations.Where(operation => operation.NormItem == null))
 					operation.NormItem = EmployeeCardItem.ActiveNormItem;
+			
+			SelectOperation = selectOperation != null 
+				? Operations.First(x => x.Id == selectOperation.Id) 
+				: Operations.FirstOrDefault();
 		}
 
 		#region PublicProperty
@@ -95,11 +94,8 @@ namespace Workwear.ViewModels.Operations
 		public DateTime DateTime {
 			get => dateTime;
 			set {
-				if(SetField(ref dateTime, value)) {
-					SelectOperation.OperationTime = value;
-					SelectOperation.StartOfUse = value;
-					SelectOperation.ExpiryByNorm = SelectOperation.NormItem.CalculateExpireDate(value);
-					SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
+				if(SetField(ref dateTime, value) && SelectOperation.StartOfUse != value) {
+					RecalculateDatesOfSelectedOperation();
 				}
 			}
 		}
@@ -109,8 +105,10 @@ namespace Workwear.ViewModels.Operations
 			get => issued;
 			set {
 				if(SetField(ref issued, value))
-					if(SelectOperation != null)
+					if(SelectOperation != null) {
 						SelectOperation.Issued = value;
+						RecalculateDatesOfSelectedOperation();
+					}
 			}
 		}
 
@@ -130,18 +128,35 @@ namespace Workwear.ViewModels.Operations
 
 		#endregion
 
-		public void CancelOnClicked() => Close(false, CloseSource.Cancel);
-		public void SaveOnClicked() {
+		#region private
+		void RecalculateDatesOfSelectedOperation() {
+			SelectOperation.OperationTime = DateTime;
+			SelectOperation.StartOfUse = DateTime;
+			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(DateTime, SelectOperation.Issued);
+			if(SelectOperation.UseAutoWriteoff)
+				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
+		}
+
+		#endregion
+
+		public override bool Save() {
+			Validations.Clear();
+			Validations.AddRange(Operations.Select(x => new ValidationRequest(x)));
+			if(!Validate())
+				return false;
 			foreach(var operation in Operations)
 				UoW.Save(operation);
 			UoW.Commit();
 			SaveChanged?.Invoke(protectionTools);
 			Close(false, CloseSource.Save);
+			return true;
 		}
 
 		public void AddOnClicked() {
 			if(EmployeeCardItem == null)
 				throw new ArgumentNullException(nameof(EmployeeCardItem));
+			var startDate = EmployeeCardItem.NextIssue ?? DateTime.Today;
+			var endDate = EmployeeCardItem.ActiveNormItem?.CalculateExpireDate(startDate);
 			var issue = new EmployeeIssueOperation {
 				Employee = EmployeeCardItem.EmployeeCard,
 				Issued = EmployeeCardItem.ActiveNormItem?.Amount ?? 1,
@@ -151,13 +166,16 @@ namespace Workwear.ViewModels.Operations
 				Returned = 0,
 				WearPercent = 0m,
 				UseAutoWriteoff = true,
-				OperationTime = EmployeeCardItem.NextIssue ?? DateTime.Today 
+				OperationTime =  startDate,
+				StartOfUse = startDate,
+				AutoWriteoffDate = endDate,
+				ExpiryByNorm = endDate
 			};
 			if(!Operations.Any())
 				issue.OverrideBefore = true;
 			
-			issue.ExpiryByNorm = issue.NormItem?.CalculateExpireDate(DateTime.Today);
 			Operations.Add(issue);
+			SelectOperation = issue;
 		}
 
 		public void DeleteOnClicked(EmployeeIssueOperation deleteOperation) {
@@ -167,7 +185,7 @@ namespace Workwear.ViewModels.Operations
 		
 		#region Windows Settings
 
-		public bool IsModal { get; }
+		public bool IsModal { get; } = true;
 		public bool EnableMinimizeMaximize { get; }
 		public bool Resizable { get; }
 		public bool Deletable { get; }

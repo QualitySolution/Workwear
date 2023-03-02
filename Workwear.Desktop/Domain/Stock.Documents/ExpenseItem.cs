@@ -116,7 +116,7 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Выдача по списанию")]
 		public virtual bool IsWriteOff {
 			get => isWriteOff;
-			set => isWriteOff = value;
+			set => SetField(ref isWriteOff, value);
 		}
 
 		private string aktNumber;
@@ -203,6 +203,38 @@ namespace Workwear.Domain.Stock.Documents
 				Nomenclature.Type.Units?.Name
 			).TrimEnd();
 
+		public virtual string BarcodesText {
+			get {
+				if((EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0) {
+					if(Amount > 0 && (Nomenclature?.UseBarcode ?? false))
+						return "необходимо создать";
+					return null;
+				}
+
+				//Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
+				var willTake = EmployeeIssueOperation.BarcodeOperations.Count > 3 ? 2 : 3; 
+				var text = String.Join("\n", EmployeeIssueOperation.BarcodeOperations.Take(willTake).Select(x => x.Barcode.Title));
+				if(EmployeeIssueOperation?.BarcodeOperations.Count > 3)
+					text += $"\nещё {EmployeeIssueOperation?.BarcodeOperations.Count - 2}";
+				return text;
+			}
+		}
+
+		public virtual string BarcodesTextColor {
+			get {
+				if(Nomenclature == null || !Nomenclature.UseBarcode || EmployeeIssueOperation == null)
+					return null;
+
+				if(Amount == EmployeeIssueOperation.BarcodeOperations.Count)
+					return null;
+
+				if(Amount < EmployeeIssueOperation.BarcodeOperations.Count)
+					return "blue";
+				if(Amount > EmployeeIssueOperation.BarcodeOperations.Count)
+					return "red";
+				return null;
+			}
+		}
 		#endregion
 
 		public ExpenseItem ()
@@ -260,13 +292,14 @@ namespace Workwear.Domain.Stock.Documents
 					.FirstOrDefault(x => EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
 
 			if(IsWriteOff) {
-				if(relatedWriteoffItem == null) {
+				if(relatedWriteoffItem == null && ProtectionTools != null) {
 					var graph = IssueGraph.MakeIssueGraph(uow, expenseDoc.Employee, ProtectionTools);
 					var interval = graph.IntervalOfDate(ExpenseDoc.Date);
 					var toWriteoff = interval.ActiveItems.First(x => x.IssueOperation != EmployeeIssueOperation);
 					relatedWriteoffItem = ExpenseDoc.WriteOffDoc.AddItem(toWriteoff.IssueOperation, toWriteoff.AmountAtEndOfDay(ExpenseDoc.Date));
 					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = relatedWriteoffItem.EmployeeWriteoffOperation;
 				}
+				relatedWriteoffItem.Amount = Amount;
 				relatedWriteoffItem.AktNumber = this.AktNumber;
 				relatedWriteoffItem.UpdateOperations(uow);
 
@@ -277,9 +310,7 @@ namespace Workwear.Domain.Stock.Documents
 					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
 			}
 		}
-
 		#endregion
-
 	}
 }
 

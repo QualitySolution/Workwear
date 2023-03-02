@@ -7,6 +7,8 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using workwear;
@@ -18,6 +20,8 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
+using Workwear.Tools.Barcodes;
+using QS.Dialog;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -26,8 +30,10 @@ namespace Workwear.ViewModels.Stock
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
+		private readonly IInteractiveQuestion interactive;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
+		private readonly BarcodeService barcodeService;
 
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -36,21 +42,25 @@ namespace Workwear.ViewModels.Stock
 		public ExpenseDocItemsEmployeeViewModel(
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
 			FeaturesService featuresService, 
-			INavigationManager navigation, 
+			INavigationManager navigation,
+			IInteractiveQuestion interactive,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
 			EmployeeIssueRepository employeeRepository,
-			BaseParameters baseParameters)
+			BaseParameters baseParameters,
+			BarcodeService barcodeService)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			employeeRepository.RepoUow = UoW;
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
+			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			Entity.FillCanWriteoffInfo(employeeRepository);
@@ -87,10 +97,15 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
+		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
+		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
+			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
+		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
+			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
+		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		#endregion
 		#region Действия View
 		public void FillBuhDoc()
@@ -156,8 +171,9 @@ namespace Workwear.ViewModels.Stock
 		public void Delete(ExpenseItem item)
 		{
 			if(item.Id > 0) {
-				if(Entity.Items.Any(x => x.Id == 0))
-					expenseEmployeeViewModel.Save(); //Сохраняем документ если есть добавленные строки. Иначе получим исключение.
+				if(UoW.HasChanges)
+					if(!expenseEmployeeViewModel.Save())//Сохраняем документ если есть добавленные строки или другие изменения. Иначе получим исключение.
+						return;
 				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
 			}
 			else
@@ -174,6 +190,65 @@ namespace Workwear.ViewModels.Stock
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
+
+		#region Штрих коды
+		public string ButtonCreateOrRemoveBarcodesTitle => 
+			Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
+			? "Обновить штрихкоды" : "Создать штрихкоды";
+		
+		public void ReleaseBarcodes() {
+			expenseEmployeeViewModel.SkipBarcodeCheck = true;
+			var saveResult = expenseEmployeeViewModel.Save();
+			expenseEmployeeViewModel.SkipBarcodeCheck = false;
+			if(!saveResult)
+				return;
+
+			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
+			barcodeService.CreateOrRemove(UoW, operations);
+			UoW.Commit();
+			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+		}
+
+		public void PrintBarcodes() {
+			if(SensitiveCreateBarcodes) {
+				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
+					ReleaseBarcodes();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = "Штрихкоды",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> {
+					{"operations", Entity.Items.Where(x => x.EmployeeIssueOperation.BarcodeOperations.Any()).Select(x => x.EmployeeIssueOperation.Id).ToArray()}
+				}
+			};
+
+			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}
+		#endregion
+		#endregion
+
+		#region Расчет для View
+		public string GetRowColor(ExpenseItem item)
+		{
+			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
+			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
+				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
+			if(requiredIssue > 0 && item.Nomenclature == null)
+				return item.Amount == 0 ? "red" : "Dark red";
+			if(requiredIssue <= 0 && item.Amount == 0)
+				return "gray";
+			if(requiredIssue > item.Amount)
+				return "blue";
+			if(requiredIssue < item.Amount)
+				return "Purple";
+			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
+				return "darkgreen";
+			return null;
+		}
 		#endregion
 
 		public void CalculateTotal()
@@ -185,7 +260,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region События
-		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
+		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
 		}
@@ -194,6 +269,11 @@ namespace Workwear.ViewModels.Stock
 		{ 
 			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
 				expenseEmployeeViewModel.HasChanges = true;
+			}
+			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
+				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
+				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
 		}
 

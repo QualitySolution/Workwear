@@ -10,6 +10,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 	[TestFixture(TestOf = typeof(GraphItem))]
 	public class GraphItemTest
 	{
+		#region AmountOfDay
 		[Test(Description = "Проверяем что при расчете количества за день, мы корректно можем исключить операцию выдачи. Случай с одинаковыми объектами но 0 id.")]
 		public void AmountOfDay_ExcludeOperationInIssue_SameObjectZeroIdTest()
 		{
@@ -140,5 +141,6 @@ namespace Workwear.Test.Domain.Operations.Graph
 			Assert.That(item.AmountAtBeginOfDay(startDate.AddDays(1), writeoff1_copy), Is.EqualTo(8), "Количество на начало дня неверно.");
 			Assert.That(item.AmountAtEndOfDay(startDate.AddDays(1), writeoff1_copy), Is.EqualTo(8), "Количество на конец дня неверно.");
 		}
+		#endregion
 	}
 }

@@ -49,6 +49,14 @@ namespace workwear.Journal
 			#endregion
 
 			#region Company
+			TreeViewColumnsConfigFactory.Register<CostCenterJournalViewModel>(
+				() => FluentColumnsConfig<CostCenterJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Код ВМЗ").AddTextRenderer(node => node.Code).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -67,7 +75,7 @@ namespace workwear.Journal
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
-					.AddColumn("Отдел").AddTextRenderer(node => node.Department)
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
 					.Finish()
@@ -99,12 +107,14 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
-				() => FluentColumnsConfig<PostJournalNode>.Create()
+				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
 					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
+					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).SearchHighlight()
 					.Finish()
 			);
 
@@ -122,7 +132,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник")
 					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
 					.AddColumn ("Наименование")
-					.AddTextRenderer(e => e.NomenclatureName)
+					.AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
@@ -138,7 +148,7 @@ namespace workwear.Journal
 				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
 					.AddColumn("Подразделение").Visible(jwm.Filter.Subdivision is null)
 					.AddTextRenderer(e => e.SubdivisionName)
-					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName)
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
 					.AddColumn("Срок службы").AddProgressRenderer(e => 
 						(int) (100 - e.Percentage * 100))
@@ -226,10 +236,15 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<NomenclatureJournalViewModel>(
 				(jvm) => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => node.Number).SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
-					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings)).AddTextRenderer(node => node.RatingText)
+					.AddColumn("Стоимость продажи").Visible(false).Visible(jvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(node => node.SaleCostText)
+					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
+						.AddTextRenderer(node => node.RatingText)
+					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(n => n.UseBarcodeText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
@@ -237,7 +252,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
 					.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
-					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.HeightName).SearchHighlight()
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
@@ -246,16 +261,6 @@ namespace workwear.Journal
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddTextRenderer(e => e.OwnerName)
 					.Finish()
-			);
-
-			TreeViewColumnsConfigFactory.Register<StockBalanceShortSummaryJournalViewModel>(
-				() => FluentColumnsConfig<StockBalanceShortSummaryJournalNode>.Create()
-						.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
-						.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
-						.AddColumn("Размер").AddTextRenderer(e => e.Size).SearchHighlight()
-						.AddColumn("Пол одежды").AddTextRenderer(e => e.Sex != null ? e.Sex.GetAttribute<DisplayAttribute>().Name : "").SearchHighlight()
-						.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
-						.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
@@ -273,10 +278,10 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
-				() => FluentColumnsConfig<StockMovmentsJournalNode>.Create()
+				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").AddTextRenderer(node => node.DocumentText)
-					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).SearchHighlight()
+					.AddColumn("Наименование").AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()
 					.AddColumn("Сотрудник").AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(e => e.WearSizeName).SearchHighlight()
 					.AddColumn("Рост").AddTextRenderer(e => e.HeightName).SearchHighlight()
@@ -300,12 +305,22 @@ namespace workwear.Journal
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
+				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
+					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("Значение").AddTextRenderer(node => node.Value)
+					.Finish()
+				);
 			#endregion
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
 				() => FluentColumnsConfig<SizeJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Значение").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Другое значение").AddTextRenderer(node => node.AlternativeName).SearchHighlight()
+					.AddColumn("Для сотрудника").AddToggleRenderer(n => n.ShowInEmployee).Editing(false)
+					.AddColumn("Для номенклатуры").AddToggleRenderer(n => n.ShowInNomenclature).Editing(false)
 					.AddColumn("Тип размера").AddTextRenderer(node => node.SizeTypeName).SearchHighlight()
 					.Finish()
 			);

@@ -13,6 +13,7 @@ using QS.Deletion;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.Dialog;
+using QS.Dialog.Views;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
@@ -62,6 +63,8 @@ using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
+using Workwear.Models.Operations;
+using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -71,9 +74,9 @@ using Workwear.Tools.Nhibernate;
 using workwear.Tools;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
-using Workwear.ViewModels.Company;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Import;
 
 namespace workwear
@@ -145,10 +148,13 @@ namespace workwear
 			containerBuilder.Register(c => new  ErrorReportingSettings(true, false, true, 300)).As<IErrorReportingSettings>();
 			#endif
 
+			containerBuilder.RegisterType<MySqlExceptionErrorNumberLogger>().As<IErrorHandler>();
+			containerBuilder.RegisterType<MySqlConnectorExceptionErrorNumberLogger>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
+			containerBuilder.RegisterType<MySqlConnectorConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
 			#region Обновления и версии
@@ -158,10 +164,12 @@ namespace workwear
 			#endregion
 
 			#region Временные будут переопределены
+			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(
-				typeof(UpdateProcessView)
+				typeof(UpdateProcessView),
+				typeof(ProgressWindowView)
 			)).As<IGtkViewResolver>();
 			#endregion
 		}
@@ -171,6 +179,7 @@ namespace workwear
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<ProgressInterceptor>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
@@ -202,6 +211,7 @@ namespace workwear
 			builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
+			builder.RegisterType<BarcodeService>().AsSelf();
 			#endregion
 
 			#region Навигация
@@ -223,12 +233,14 @@ namespace workwear
 			)).As<IGtkViewResolver>();
 			#endregion
 
-			#region Главное окно
+			#region Прогрес бар
 			builder.Register((ctx) => MainWin.ProgressBar).As<IProgressBarDisplayable>().ExternallyOwned();
+			builder.RegisterType<ModalProgressCreator>().AsSelf();
 			#endregion
 
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf();
+			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
 			#endregion
 
 			#region Старые диалоги
@@ -277,6 +289,7 @@ namespace workwear
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			#endregion
 
 			#region Repository

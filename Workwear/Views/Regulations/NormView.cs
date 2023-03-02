@@ -6,7 +6,6 @@ using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
-using Workwear.Domain.Regulations;
 
 namespace Workwear.Views.Regulations
 {
@@ -54,7 +53,7 @@ namespace Workwear.Views.Regulations
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty)
 				.AddEnumRenderer(i => i.NormPeriod).Editing()
-				.AddColumn("Условие нормы")
+				.AddColumn("Условие нормы").Visible(ViewModel.VisibleNormCondition)
 					.AddComboRenderer(i => i.NormCondition)
 						.SetDisplayFunc(x => x?.Name)
 						.SetDisplayListFunc(x => x?.Name ?? "нет")
@@ -64,6 +63,8 @@ namespace Workwear.Views.Regulations
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
+			ytreeItems.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.SelectedItem, w => w.SelectedRow);
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
@@ -128,7 +129,7 @@ namespace Workwear.Views.Regulations
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<NormItem>();
 				var menuItem = 
-					new MenuItemId<NormItem>("пересчитать сроки носки в документах выдачи");
+					new MenuItemId<NormItem>("Пересчитать сроки носки в документах выдачи");
 				menuItem.ID = selected;
 				menuItem.Activated += (sender, e) => ViewModel.ReSaveLastIssue(((MenuItemId<NormItem>)sender).ID);
 				menu.Add(menuItem);

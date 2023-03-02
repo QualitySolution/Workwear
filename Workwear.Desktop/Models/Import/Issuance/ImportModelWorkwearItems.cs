@@ -5,6 +5,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Issuance
@@ -15,11 +16,13 @@ namespace Workwear.Models.Import.Issuance
 
 		private readonly DataParserWorkwearItems dataParser;
 		private readonly SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel;
+		private readonly EmployeeIssueModel issueModel;
 
-		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser, SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel) : base(dataParser, typeof(CountersWorkwearItems), settingsWorkwearItemsViewModel)
+		public ImportModelWorkwearItems(DataParserWorkwearItems dataParser, SettingsWorkwearItemsViewModel settingsWorkwearItemsViewModel, EmployeeIssueModel issueModel) : base(dataParser, typeof(CountersWorkwearItems), settingsWorkwearItemsViewModel)
 		{
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 			this.settingsWorkwearItemsViewModel = settingsWorkwearItemsViewModel ?? throw new ArgumentNullException(nameof(settingsWorkwearItemsViewModel));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 		}
 
 		#region Параметры
@@ -43,18 +46,15 @@ namespace Workwear.Models.Import.Issuance
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
 			progress.Start(maxValue: grouped.Count(), text: "Подготовка");
+			issueModel.FillWearReceivedInfo(
+				grouped.Select(x => x.Key).ToArray(),
+				UsedRows.Where(x => x.Operation != null).Select(x => x.Operation).ToArray()
+			);
+			progress.Add();
 			foreach(var employeeGroup in grouped) {
 				progress.Add(text: $"Подготовка {employeeGroup.Key.ShortName}");
-				var rowByItem = employeeGroup.GroupBy(x => x.WorkwearItem);
-				foreach(var itemGroup in rowByItem) {
-					var last = itemGroup.OrderByDescending(x => x.Date).First();
-					if(itemGroup.Key.LastIssue == null || itemGroup.Key.LastIssue < last.Date) {
-						itemGroup.Key.LastIssue = last.Date;
-						itemGroup.Key.Amount = last.Operation.Issued;
-						itemGroup.Key.NextIssue = itemGroup.Key.ActiveNormItem.CalculateExpireDate(last.Date.Value, itemGroup.Key.Amount);
-						dataParser.ChangedEmployees.Add(employeeGroup.Key);
-					}
-				}
+				employeeGroup.Key.UpdateNextIssueAll();
+				dataParser.ChangedEmployees.Add(employeeGroup.Key);
 			}
 
 			List<object> toSave = new List<object>();

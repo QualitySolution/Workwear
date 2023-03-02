@@ -17,7 +17,6 @@ using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Project.Versioning;
 using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
@@ -26,6 +25,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
@@ -43,21 +43,33 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly NormRepository normRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
+		private readonly EmployeeIssueModel issueModel;
+		/// <summary>
+		/// Внимание все диалоги создаются отменяемыми!!! Не забывайте использовать токен отмены.
+		/// </summary>
+		private readonly ModalProgressCreator progressCreator;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
 			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
+			EmployeeIssueModel issueModel,
+			ModalProgressCreator progressCreator,
+			UnitOfWorkProvider unitOfWorkProvider,
 			ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			Title = "Корректировка сотрудников";
+			unitOfWorkProvider.UoW = UoW;
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			progressCreator.UserCanCancel = true;
 			AutofacScope = autofacScope;
 			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
@@ -294,103 +306,66 @@ namespace workwear.Journal.ViewModels.Tools
 
 		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
 		{
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-			progressPage.PageClosed += ProgressPageOnPageClosed;
-			var progress = progressPage.ViewModel.Progress;
 			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
-
-			progress.Start(nodes.Length + 1, text: "Загружаем сотрудников");
-			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
-
-			int step = 0;
-			foreach(var employee in employees) {
-				if(cancelUpdate) {
-						cancelUpdate = false;
-						break;
-				}
-				progress.Add(text: $"Обработка {employee.ShortName}");
-				step++;
-				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
-				employee.UpdateNextIssueAll();
-				var changes = employee.WorkwearItems.Select((x, i) => x.NextIssue?.Date != oldDates[i]?.Date ? $"Изменена дата следующей выдачи с {oldDates[i]:d} на {x.NextIssue:d} для потребности [{x.Title}]" : null)
-					.Where(x => x != null).ToArray();
-				if(changes.Length > 0) {
-					Results[employee.Id] = NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк");
-					foreach(var message in changes)
-						loggerProcessing.Info(message);
-				}
-				else
-					Results[employee.Id] = "Без изменений";
-				UoW.Save(employee);
-				if(step % 10 == 0)
-					UoW.Commit();
-			}
-			progress.Add(text: "Готово");
+			
+			progressCreator.Start(nodes.Length + 3, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
+			
+			issueModel.UpdateNextIssueAll(employees, progressCreator, cancellation, 10,
+				(employee, changes) => {
+					if(changes.Length > 0) {
+						Results[employee.Id] = NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк");
+						foreach(var message in changes)
+							loggerProcessing.Info(message);
+					}
+					else
+						Results[employee.Id] = "Без изменений";
+				});
+			if(cancellation.IsCancellationRequested)
+				return;
+			progressCreator.Add(text: "Завершаем...");
 			UoW.Commit();
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			progressCreator.Add(text: "Обновляем журнал");
 			Refresh();
+			progressCreator.Close();
 		}
 
 		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
 		{
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-			progressPage.PageClosed += ProgressPageOnPageClosed;
-			var progress = progressPage.ViewModel.Progress;
 			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
-
-			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			progressCreator.Start(nodes.Length + 6, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
+			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
-			progress.Add(text: $"Получаем последние выдачи");
-			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(IUnitOfWork), UoW));
+			progressCreator.Add(text: $"Получаем последние выдачи");
+			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>();
 			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
-			int step = 0;
+
+			progressCreator.Add(text: $"Проверка выданного");
+			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
 			foreach(var employee in employees) {
-				if(cancelUpdate) {
-					cancelUpdate = false;
-					break;
-				}
-				progress.Add(text: $"Обработка {employee.ShortName}");
-				step++;
-				var employeeOperations = operations.Where(x => x.Employee.IsSame(employee)).ToList();
-				if(employeeOperations.Count == 0) {
+				if(!operationsEmployeeIds.Contains(employee.Id)) 
 					Results[employee.Id] = "Нет выданного";
-					continue;
-				}
-				int changes = 0;
-				foreach(var operation in employeeOperations) {
-					if(operation.ProtectionTools == null)
-						continue;
-					var oldDate = operation.ExpiryByNorm;
-					var graph = IssueGraph.MakeIssueGraph(UoW, employee, operation.ProtectionTools);
-					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
-					if(operation.ExpiryByNorm?.Date != oldDate?.Date) {
-						UoW.Save(operation);
-						loggerProcessing.Info($"Изменена дата окончания носки с {oldDate:d} на {operation.ExpiryByNorm:d} для выдачи {operation.OperationTime} [{operation.Title}]");
-						changes++;
-						var item = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(operation.ProtectionTools));
-						if(item != null) {
-							var lastDate = item.NextIssue;
-							item.UpdateNextIssue(UoW);
-							if(item.NextIssue?.Date != lastDate?.Date)
-								loggerProcessing.Info($"Изменена дата следующей выдачи с {lastDate:d} на {item.NextIssue:d} для потребности [{item.Title}]");
-						}
-					}
-				}
-				if(changes > 0) {
-					Results[employee.Id] = NumberToTextRus.FormatCase(changes, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат");
-					UoW.Save(employee);
-				}
-				else
-					Results[employee.Id] = "Без изменений";
-				if(step % 10 == 0)
-					UoW.Commit();
 			}
-			progress.Add(text: "Готово");
-			UoW.Commit();
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+
+			issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation, 
+				changeLog: (employee, changes) => {
+					if(changes.Length > 0) {
+						Results[employee.Id] =
+							NumberToTextRus.FormatCase(changes.Length, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат");
+						foreach(var message in changes)
+							loggerProcessing.Info(message);
+					}
+					else
+						Results[employee.Id] = "Без изменений";
+				});
+			
+			progressCreator.Add(text: "Обновляем журнал");
 			Refresh();
+			progressCreator.Close();
 		}
 
 		void LoadAll()

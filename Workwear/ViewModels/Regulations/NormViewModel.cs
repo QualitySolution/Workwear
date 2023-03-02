@@ -15,43 +15,57 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class NormViewModel : EntityDialogViewModelBase<Norm>
+	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly IChangeMonitor<NormItem> changeMonitor;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly BaseParameters baseParameters;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly ModalProgressCreator progressCreator;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			IChangeMonitor<NormItem> changeMonitor,
 			EmployeeRepository employeeRepository,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			BaseParameters baseParameters,
+			EmployeeIssueModel issueModel,
+			ModalProgressCreator progressCreator,
+			FeaturesService featuresService,
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
-			employeeIssueRepository.RepoUow = UoW;
 			this.interactive = interactive;
+			this.changeMonitor = changeMonitor;
+			this.employeeRepository = employeeRepository;
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
+			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
 			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
-
-			this.changeMonitor = changeMonitor;
-			this.employeeRepository = employeeRepository;
 		}
 
 		/// <summary>
@@ -78,9 +92,19 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		#endregion
+		
+		#region Visible
+		public bool VisibleNormCondition { get; }
+		#endregion
 
 		#region Свойства
 		public List<NormCondition> NormConditions { get; set; }
+		
+		private NormItem selectedItem;
+		public virtual NormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
 		#endregion
 
 		#region Действия View
@@ -204,7 +228,7 @@ namespace Workwear.ViewModels.Regulations
 			if(item.Id > 0) {
 				logger.Info("Поиск ссылок на заменяемую строку нормы...");
 				IList<EmployeeCard> worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, item);
-				var operations = employeeIssueRepository.GetOperationsForNormItem(item, q => q.Fetch(SelectMode.Fetch, x => x.Employee));
+				var operations = employeeIssueRepository.GetOperationsForNormItem(new []{item}, q => q.Fetch(SelectMode.Fetch, x => x.Employee));
 				if(worksEmployees.Count > 0) {
 					var names = worksEmployees.Union(operations.Select(x => x.Employee)).Distinct().Select(x => x.ShortName).ToList();
 					var mes = "Замена номенклатуры нормы затронет потребности и прошлые выдачи следующих сотрудников:\n";
@@ -245,74 +269,108 @@ namespace Workwear.ViewModels.Regulations
 			}
 		}
 		#endregion
-		#endregion
 
+		/// <summary>
+		/// Ручной перечет операций выдачи через контекстное меню строки нормы.
+		/// </summary>
 		public void ReSaveLastIssue(NormItem normItem) 
 		{
+			if(UoW.HasChanges && !Save())
+				return;
+				
 			logger.Info("Пересчитываем последнии выдачи сотрудников");
-			
 			var operations = employeeIssueRepository.GetOperationsForNormItem(
-				normItem, 
+				new []{normItem}, 
 				q => q.Fetch(
 					SelectMode.Fetch, 
-					x => x.Employee)
-				);
+					x => x.Employee),
+				beginDate: Entity.DateFrom);
 
-			operations = operations
+			if(!operations.Any()) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Последние выдачи отсутствуют. Нечего пересчитывать.");
+				logger.Info("Нечего пересчитывать.");
+				return;
+			}
+
+			var operationsLasts = operations
 				.GroupBy(x => x.Employee)
 				.Select(o => 
 					o.OrderByDescending(d => d.OperationTime).First())
 				.ToList();
-
-			foreach (var operation in operations)
-			{
-				var dateStart = operation.StartOfUse ?? operation.OperationTime;
-				var dateExpiryByNorm = normItem.CalculateExpireDate(dateStart, operation.Issued);
-				operation.ExpiryByNorm = dateExpiryByNorm;
-				if (operation.UseAutoWriteoff)
-					operation.AutoWriteoffDate = dateExpiryByNorm;
-
-				var cardItem = operation.Employee.WorkwearItems
-						.FirstOrDefault(x => 
-							DomainHelper.EqualDomainObjects(x.ProtectionTools, normItem.ProtectionTools));
-
-				cardItem?.UpdateNextIssue(UoW);
-			}
+			
+			var answer = interactive.Question(
+				new[] { "Все выдачи", "Только последние" },
+				(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") +
+					  $"строке нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " +
+				$"В зависимости от настроек учета, данный пересчет может так же изменять сроки начала использования СИЗ. " +
+					  $"Какие выдачи пересчитывать?");
+			if(answer == null)
+				return;
+			
+			var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
+			progressCreator.Title = "Обновляем операции выдачи";
+			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
+			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
-		
+		#endregion
 		#region Сохранение
 		public override bool Save() 
 		{
 			if(!base.Save())
 				return false;
-			
+
+			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
+			if(changeMonitor.IdsUpdateEntities.Any()) {
+				var operations = employeeIssueRepository.GetOperationsForNormItem(
+					Entity.Items.Where(i => changeMonitor.IdsUpdateEntities.Contains(i.Id)).ToArray(), 
+					q => q.Fetch(
+						SelectMode.Fetch, 
+						x => x.Employee),
+					beginDate: Entity.DateFrom
+				);
+				//Оставляем только последние
+				var operationsLasts = operations
+					.GroupBy(x => $"{x.Employee.Id}.{x.NormItem.Id}")
+					.Select(o => o.OrderByDescending(d => d.OperationTime).First())
+					.ToList();
+
+				if(operations.Any()) {
+					var answer = interactive.Question(
+						new[] { "Все выдачи", "Только последние", "Не пересчитывать" },
+						(Entity.DateFrom.HasValue ? $"C {Entity.DateFrom:d} по " : "По ") + 
+						$"измененным строкам нормы было выполнено {operations.Count} выдач из них последних {operationsLasts.Count}. " + 
+						"Пересчитать сроки носки у уже выданного в соответствии с изменениями?");
+					if(answer == "Все выдачи" || answer == "Только последние"){
+						var modifiableOperations = answer == "Только последние" ? operationsLasts : operations;
+						progressCreator.Title = "Обновляем операции выдачи";
+						issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
+					}
+				}
+			}
+
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
-			
 			if (employees.Any() && (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any())) 
 			{
-				if(!interactive.Question(
-					    "Для сохранения требуется обновить потребности сотрудников. \n Продолжить ?"))
-					return false;
-				
 				logger.Info("Пересчитываем сотрудников");
-				
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
 				var progress = progressPage.ViewModel.Progress;
-				if (employees.Any()) {
-					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
-					foreach (var employee in employees) {
-						progress.Add(text: $"Обработка {employee.ShortName}");
-						employee.UpdateWorkwearItems();
-						UoW.Save(employee);
-					}
-					progress.Add(text: "Завершаем...");
-					UoW.Commit();
-					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-					logger.Info("Ok");
+				progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
+				foreach (var employee in employees) {
+					progress.Add(text: $"Обработка {employee.ShortName}");
+					employee.UpdateWorkwearItems();
+					UoW.Save(employee);
 				}
+				progress.Add(text: "Завершаем...");
+				UoW.Commit();
+				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+				logger.Info("Ok");
 			}
 			return true;
 		}
 		#endregion
+
+		public void SelectItem(int id) {
+			SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
+		}
 	}
 }

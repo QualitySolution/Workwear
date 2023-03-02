@@ -20,17 +20,20 @@ using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 using Workwear.Tools.Features;
-using Workwear.Domain.Operations.Graph;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
+		private readonly ITdiCompatibilityNavigation tdiNavigation; //FIXME Временно пока не перепишем IncomeDocDlg на ViewModel
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
+		private readonly IProgressBarDisplayable progress;
 
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
@@ -38,20 +41,23 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueRepository employeeIssueRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
-			ITdiCompatibilityNavigation navigation,
+			INavigationManager navigation,
+			ITdiCompatibilityNavigation tdiNavigation,
 			OpenStockDocumentsModel stockDocumentsModel,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.tdiNavigation = tdiNavigation ?? throw new ArgumentNullException(nameof(tdiNavigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
+			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-
-			employeeIssueRepository.RepoUow = UoW;
-			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem>(HandleEntityChangeEvent);
+			
+			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem, EmployeeIssueOperation>(HandleEntityChangeEvent);
 		}
 
 		#region Хелперы
@@ -68,9 +74,15 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (isConfigured) return;
 			isConfigured = true;
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			var start = DateTime.Now;
+			progress.Start(2+4);
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
+			progress.Add();
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			progress.Add();
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
+			progress.Close();
+			logger.Debug($"Время заполнения таблицы «Спецодежда по нормам»: {(DateTime.Now - start).TotalSeconds} сек." );
 		}
 
 		#endregion
@@ -88,9 +100,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!isConfigured)
 				return;
-			if(changeEvents.First().Session == UoW.Session)
-				return; //Не чего не делаем если это наше собственное изменение.
-			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
+			bool isMySession = changeEvents.First().Session == UoW.Session;
+			//Не чего не делаем если это наше собственное изменение.
+			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
@@ -103,7 +115,17 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				return;
 			}
 
-			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
+			foreach(var op in changeEvents
+				        .Where(x => x.EventType == TypeOfChangeEvent.Update)
+				        .Select(x => x.Entity)
+				        .OfType<EmployeeIssueOperation>()
+				        .Where(x => x.Employee.IsSame(Entity))) {
+				
+				var myOP = UoW.Session.Get<EmployeeIssueOperation>(op.Id);
+				UoW.Session.Refresh(myOP);
+			}
+
+			if(!isMySession && changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
 				RefreshWorkItems();
 			}
 		}
@@ -121,7 +143,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			tdiNavigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)
@@ -166,14 +188,21 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools)
 		{
 			UoW.Commit();
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
+			UoW.Save();
 		}
 		#endregion
 		#region Контекстное меню
 		public void OpenProtectionTools(EmployeeCardItem row)
 		{
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ProtectionTools.Id));
+		}
+		
+		public void OpenActiveNorm(EmployeeCardItem row)
+		{
+			var page = navigation.OpenViewModel<NormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(row.ActiveNormItem.Norm.Id));
+			page.ViewModel.SelectItem(row.ActiveNormItem.Id);
 		}
 
 		public void OpenLastIssue(EmployeeCardItem row)
@@ -200,9 +229,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 						operation.NormItem = norm;
 				}
 			}
-			var graph = IssueGraph.MakeIssueGraph(UoW, row.EmployeeCard, operation.ProtectionTools);
-			operation.RecalculateDatesOfIssueOperation(graph, BaseParameters, interactive);
-				row.UpdateNextIssue(UoW);
+			operation.RecalculateDatesOfIssueOperation(row.Graph, BaseParameters, interactive);
+			row.UpdateNextIssue(UoW);
 		}
 
 		#endregion
@@ -215,7 +243,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				UoW.Session.Refresh(item);
 			}
 			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-			Entity.FillWearRecivedInfo(employeeIssueRepository);
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 		}
 
 		public void Dispose()

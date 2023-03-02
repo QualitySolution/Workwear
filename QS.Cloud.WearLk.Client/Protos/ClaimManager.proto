@@ -10,6 +10,7 @@ service ClaimManager {
 	rpc GetClaim (GetClaimRequest) returns (GetClaimResponse);
 	rpc SendAnswer (SendAnswerRequest) returns (SendAnswerResponse);
 	rpc EditClaim (EditClaimRequest) returns (EditClaimResponse);
+	rpc CloseClaim (CloseClaimRequest) returns (CloseClaimResponse);
 }
 
 // GetClaims
@@ -28,6 +29,7 @@ message Claim{
 	int32 id = 1;
 	string title = 2;
 	ClaimState claim_state = 3;
+	string user_phone = 4;
 }
 
 enum ClaimState{
@@ -75,13 +77,23 @@ message SendAnswerResponse{
 
 }
 
-//EditClaim
-message EditClaimRequest{
+//CloseClaim
+message CloseClaimRequest{
 	int32 claim_id = 1;
-	string title = 2;
-	ClaimState claim_state = 3;
+	optional string text = 2;
+}
+
+message CloseClaimResponse{
+
+}
+
+//EditClaim (Возможно будет удален)
+message EditClaimRequest{
+    int32 claim_id = 1;
+    string title = 2;
+    ClaimState claim_state = 3;
 }
 
 message EditClaimResponse{
-
+    
 }

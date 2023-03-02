@@ -6,14 +6,14 @@ using Workwear.ViewModels.Operations;
 
 namespace Workwear.Views.Operations 
 {
-	public partial class ManualEmployeeIssueOperationsView : DialogViewBase<ManualEmployeeIssueOperationsViewModel> 
+	public partial class ManualEmployeeIssueOperationsView : SavedDialogViewBase<ManualEmployeeIssueOperationsViewModel> 
 	{
 		public ManualEmployeeIssueOperationsView(ManualEmployeeIssueOperationsViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
 			
-			buttonCancel.Clicked += ButtonCancelOnClicked;
-			buttonSave.Clicked += ButtonSaveOnClicked;
+			CommonButtonSubscription();
+			
 			ybuttonAdd.Clicked += ButtonAddOnClicked;
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
 
@@ -60,7 +60,5 @@ namespace Workwear.Views.Operations
 		private void ButtonDeleteOnClicked(object sender, EventArgs e) => ViewModel.DeleteOnClicked(
 			ytreeviewOperations.GetSelectedObject<EmployeeIssueOperation>());
 		private void ButtonAddOnClicked(object sender, EventArgs e) => ViewModel.AddOnClicked();
-		private void ButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.SaveOnClicked();
-		private void ButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.CancelOnClicked();
 	}
 }

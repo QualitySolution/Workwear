@@ -34,6 +34,7 @@ namespace workwear.Models.WearLk {
 			get => unansweredCount; set {
 				unansweredCount = value;
 				PangoText.SetMarkup($"<span foreground=\"red\"><b>{unansweredCount}</b></span>");
+				button.QueueDraw();
 			}
 		}
 
