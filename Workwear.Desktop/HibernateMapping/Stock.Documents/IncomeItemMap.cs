@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			Map (x => x.Amount).Column ("quantity");
 			Map (x => x.Cost).Column ("cost");
 			Map(x => x.Certificate).Column("certificate");
+			Map (x => x.СommentReturn).Column ("comment_return");
 
 			References(x => x.Document).Column("stock_income_id");
 			References (x => x.Nomenclature).Column ("nomenclature_id");

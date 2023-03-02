@@ -30,7 +30,7 @@ namespace workwear
 	[ToolboxItem(true)]
 	public partial class IncomeDocItemsView : WidgetOnDialogBase
 	{
-		private enum ColumnTags { BuhDoc }
+		private enum ColumnTags { BuhDoc, CommentReturn }
 		private Income incomeDoc;
 		public SizeService SizeService { get; set; }
 		public IInteractiveMessage Interactive { get; set; }
@@ -80,6 +80,9 @@ namespace workwear
 			var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
 			buhDocColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
 			buttonFillBuhDoc.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+			
+			var сommentReturnColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.CommentReturn).First();
+			сommentReturnColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
 		}
 
 		public IncomeDocItemsView() {
@@ -113,6 +116,11 @@ namespace workwear
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost)
 					.Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
+				.AddColumn ("Отметка о износе")
+					.Tag(ColumnTags.CommentReturn)	
+//спросить у Андрея 				
+					.AddTextRenderer (e => e.СommentReturn)
+					.Editable()
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
 				.Finish ();

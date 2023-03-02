@@ -70,6 +70,13 @@ namespace Workwear.Domain.Stock.Documents
 			get => certificate;
 			set { SetField(ref certificate, value, () => Certificate); }
 		}
+		
+		private string commentReturn;
+		[Display(Name = "Отметка о возврате")]
+		public virtual string СommentReturn {
+			get => commentReturn;
+			set { SetField(ref commentReturn, value, () => СommentReturn); }
+		}
 
 		private EmployeeIssueOperation returnFromEmployeeOperation;
 		[Display(Name = "Операция возврата от сотрудника")]
