@@ -55,7 +55,6 @@ namespace workwear
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
 			
-			
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			if(Entity.Warehouse == null)
@@ -82,7 +81,6 @@ namespace workwear
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
 			sizeService = AutofacScope.Resolve<SizeService>(); 
-//пока спорно.
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			

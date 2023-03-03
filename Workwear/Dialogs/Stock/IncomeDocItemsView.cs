@@ -117,8 +117,7 @@ namespace workwear
 					.Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
 				.AddColumn ("Отметка о износе")
-					.Tag(ColumnTags.CommentReturn)	
-//спросить у Андрея 				
+					.Tag(ColumnTags.CommentReturn)
 					.AddTextRenderer (e => e.СommentReturn)
 					.Editable()
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
