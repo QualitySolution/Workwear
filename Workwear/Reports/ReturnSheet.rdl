@@ -620,7 +620,7 @@
         <Details>
           <TableRows>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>14 pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -1418,13 +1418,15 @@
             <Width>600pt</Width>
             <Value>={fio}</Value>
             <ZIndex>1</ZIndex>
-            <Left>110pt</Left>
+            <Left>100pt</Left>
             <Top>15pt</Top>
             <Style>
-              <BorderStyle />
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
               <BorderColor />
               <BorderWidth />
-              <FontSize>11pt</FontSize>
+              <FontSize>12pt</FontSize>
               <TextAlign>Left</TextAlign>
             </Style>
             <CanGrow>true</CanGrow>
@@ -1435,10 +1437,12 @@
             <Width>600pt</Width>
             <Value>={subdivision}</Value>
             <ZIndex>1</ZIndex>
-            <Left>110.00pt</Left>
-            <Top>35.00pt</Top>
+            <Left>100pt</Left>
+            <Top>40pt</Top>
             <Style>
-              <BorderStyle />
+              <BorderStyle>
+                <Bottom>Solid</Bottom>
+              </BorderStyle>
               <BorderColor />
               <BorderWidth />
               <FontSize>12pt</FontSize>
@@ -1446,14 +1450,15 @@
               <Direction>LTR</Direction>
               <TextDecoration>None</TextDecoration>
             </Style>
+            <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox79" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
             <Height>12pt</Height>
             <Width>90pt</Width>
-            <Value>=Format({doc_date}, "dd/MM/yyyy") + " г. "</Value>
+            <Value>=Format({doc_date}, "d") + " г. "</Value>
             <ZIndex>1</ZIndex>
-            <Left>705pt</Left>
-            <Top>55pt</Top>
+            <Left>710pt</Left>
+            <Top>40pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -1461,45 +1466,6 @@
               <FontSize>12pt</FontSize>
             </Style>
           </Textbox>
-          <Line Name="Line1">
-            <Height>0.00pt</Height>
-            <Width>700.00pt</Width>
-            <Style>
-              <BorderStyle>
-                <Default>Solid</Default>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-            </Style>
-            <Left>100.00pt</Left>
-            <Top>30pt</Top>
-          </Line>
-          <Line Name="Line2">
-            <Height>0pt</Height>
-            <Width>700pt</Width>
-            <Style>
-              <BorderStyle>
-                <Default>Solid</Default>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-            </Style>
-            <Left>100pt</Left>
-            <Top>50pt</Top>
-          </Line>
-          <Line Name="Line3">
-            <Height>0pt</Height>
-            <Width>600pt</Width>
-            <Style>
-              <BorderStyle>
-                <Default>Solid</Default>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-            </Style>
-            <Left>100pt</Left>
-            <Top>70pt</Top>
-          </Line>
           <Textbox Name="Textbox77">
             <Height>12pt</Height>
             <Width>1in</Width>
@@ -1526,20 +1492,6 @@
               <BorderWidth />
             </Style>
           </Textbox>
-          <Textbox Name="Textbox44">
-            <Height>12pt</Height>
-            <Width>600pt</Width>
-            <Value>={department}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>110pt</Left>
-            <Top>55pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>12pt</FontSize>
-            </Style>
-          </Textbox>
         </ReportItems>
         <DataSetName>DocInfo</DataSetName>
         <Style>
@@ -1559,7 +1511,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 nomenclature.name as nomenclature_name,
@@ -1584,7 +1536,7 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_name">
           <DataField>nomenclature_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1624,16 +1576,23 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="DocInfo">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 stock_income.date AS doc_date,
-objects.name AS subdivision,
-departments.name AS department,
+CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
 CONCAT(wear_cards.last_name, " ", wear_cards.first_name, " ", wear_cards.patronymic_name) AS fio
 
 FROM stock_income
 LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id
+LEFT JOIN objects as ob1 ON ob1.id = wear_cards.object_id
+LEFT JOIN objects as ob2 ON ob2.id = ob1.parent_object_id 
+LEFT JOIN objects as ob3 ON ob3.id = ob2.parent_object_id
+LEFT JOIN objects as ob4 ON ob4.id = ob3.parent_object_id
+LEFT JOIN objects as ob5 ON ob5.id = ob4.parent_object_id
+LEFT JOIN objects as ob6 ON ob6.id = ob5.parent_object_id
+LEFT JOIN objects as ob7 ON ob7.id = ob6.parent_object_id
+LEFT JOIN objects as ob8 ON ob8.id = ob7.parent_object_id
 LEFT JOIN objects ON objects.id = wear_cards.object_id
 LEFT JOIN departments ON departments.id = wear_cards.department_id
 
@@ -1644,17 +1603,13 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>
         </Field>
         <Field Name="subdivision">
           <DataField>subdivision</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="department">
-          <DataField>department</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="fio">
@@ -1664,12 +1619,21 @@ WHERE stock_income.id = @id</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>database=workwear_vodokanal23_copy;user=;password=;server=office.qsolution.ru;port=3306</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>141</Value>
+          <Value>85</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1679,13 +1643,4 @@ WHERE stock_income.id = @id</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_agronom_copy;user=;password=;server=office.qsolution.ru;port=3306</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
