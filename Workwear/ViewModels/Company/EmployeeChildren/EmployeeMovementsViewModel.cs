@@ -96,6 +96,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
+			ProtectionTools[] protectionToolsForUpdate = {item.Operation.ProtectionTools, protectionTools};
 
 			item.Operation.ProtectionTools = protectionTools;
 			UoW.Save(item.Operation);
@@ -120,6 +121,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				default:
 					throw new NotSupportedException("Unknown document type.");
 			}
+
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			Entity.UpdateNextIssue(protectionToolsForUpdate);
 		}
 
 		#endregion
