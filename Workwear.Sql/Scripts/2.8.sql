@@ -1103,6 +1103,10 @@ ALTER TABLE `nomenclature`
 -- Обновляем хранимую процедуру
 DROP function IF EXISTS `count_issue`;
 
+-- Добавляем отметку о возврате
+ALTER TABLE `stock_income_detail`
+    ADD COLUMN `comment_return` VARCHAR(120) NULL DEFAULT NULL AFTER `height_id`
+
 DELIMITER $$
 
 CREATE FUNCTION `count_issue`(

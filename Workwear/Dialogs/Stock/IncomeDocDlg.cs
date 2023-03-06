@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Binding.Converters;
+using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.Gtk;
@@ -9,6 +12,8 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -20,7 +25,6 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using Workwear.Models.Import;
 using Workwear.Repository.Stock;
-using Workwear.Repository.User;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Company;
@@ -35,7 +39,7 @@ namespace workwear
 		private readonly IUserService userService;
 		private readonly SizeService sizeService;
 		private readonly IInteractiveService interactiveService;
-		private readonly INavigationManager navigationManager;
+		private readonly ITdiCompatibilityNavigation tdiNavigationManager;
 		private readonly IProgressBarDisplayable progressBar;
 
 		private FeaturesService featuresService;
@@ -48,9 +52,8 @@ namespace workwear
 			userService = AutofacScope.Resolve<IUserService>();
 			sizeService = AutofacScope.Resolve<SizeService>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
-			navigationManager = AutofacScope.Resolve<INavigationManager>();
+			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
-			
 			
 			Entity.Date = DateTime.Today;
 			Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -77,7 +80,10 @@ namespace workwear
 			AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 			UoWGeneric = UnitOfWorkFactory.CreateForRoot<Income> (id);
 			featuresService = AutofacScope.Resolve<FeaturesService>();
-			sizeService = AutofacScope.Resolve<SizeService>();
+			sizeService = AutofacScope.Resolve<SizeService>(); 
+			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
+			interactiveService = AutofacScope.Resolve<IInteractiveService>();
+			
 			ConfigureDlg ();
 		}
 
@@ -169,7 +175,7 @@ namespace workwear
 					foreach(var notFoundNomenclature in reader.NotFoundNomenclatures) {
 						var type = nomenclatureTypes.ParseNomenclatureName(notFoundNomenclature.Name);
 						if(type is null) {
-							var page = navigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
+							var page = tdiNavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(null,
 								EntityUoWBuilder.ForCreate(),
 								OpenPageOptions.AsSlave);
 							page.ViewModel.Entity.Name = notFoundNomenclature.Name;
@@ -203,6 +209,22 @@ namespace workwear
 					Entity.AddItem(item.Nomenclature, item.Size, item.Height, item.Amount, null, item.Cost);
 			else
 				interactiveService.ShowMessage(ImportanceLevel.Info, "Указанный файл не содержит строк поступления");
+		}
+		
+		protected void OnPrintClicked(object sender, EventArgs e) {
+			if(UoW.HasChanges && !interactiveService.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Документ №{0}", Entity.Id),
+				Identifier = IncomeDocReport.ReturnSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			tdiNavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 
 		private string Open1CFile() {
@@ -240,10 +262,10 @@ namespace workwear
 		}
 
 		private void OnYcomboOperationChanged (object sender, EventArgs e) {
-			labelTTN.Visible = yentryNumber.Visible = Entity.Operation == IncomeOperations.Enter;
-			labelWorker.Visible = yentryEmployee.Visible = Entity.Operation == IncomeOperations.Return;
+			labelTTN.Visible = yentryNumber.Visible = ybuttonReadInFile.Visible = Entity.Operation == IncomeOperations.Enter;
+			labelWorker.Visible = yentryEmployee.Visible = ybuttonPrint.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
-
+			
 			if (UoWGeneric.IsNew)
 				switch (Entity.Operation)
 				{
@@ -274,6 +296,13 @@ namespace workwear
 			}
 		}
 		#endregion
+		
+		public enum IncomeDocReport
+		{
+			[Display(Name = "Документ возврата")]
+			[ReportIdentifier("ReturnSheet")]
+			ReturnSheet,
+		}
 	}
 }
 
