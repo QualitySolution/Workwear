@@ -96,22 +96,31 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
+			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools>()
+				{item.Operation.ProtectionTools, protectionTools};
+
 			item.Operation.ProtectionTools = protectionTools;
 			
-//нужно менять в документе
 			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
+			if(item.EmployeeIssueReference.ItemId == null)
+				throw new NullReferenceException("ItemID is Null");
+			
 			switch(item.EmployeeIssueReference.DocumentType) {
 				case StockDocumentType.ExpenseEmployeeDoc:
+					protectionToolsForUpdate.Add(UoW.GetById<ExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools);
+					UoW.GetById<ExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools = protectionTools;
 					break;
 				case StockDocumentType.CollectiveExpense:
+					protectionToolsForUpdate.Add(UoW.GetById<CollectiveExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools);
+					UoW.GetById<CollectiveExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools = protectionTools;
 					break;
-				case StockDocumentType.ExpenseObjectDoc:
-					break;
+				default:
+					throw new Exception("Unknown document type.");
 			}
-//Обновить потребности			
-			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
 
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
 
 		#endregion

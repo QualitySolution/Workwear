@@ -66,7 +66,6 @@ namespace Workwear.Views.Company.EmployeeChildren
 				foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
 					var ptItem = new MenuItem(protectionTools.Name);
 					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
-					//ptItem.Activated += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
 					submenu.Append(ptItem);
 				}
 				itemChangeProtectionTools.Submenu = submenu;
