@@ -11,6 +11,7 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -90,6 +91,30 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			employeeViewModel.Save();
 		}
 		
+		
+		#region Замена Номенклатуры нормы
+		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
+
+		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
+			item.Operation.ProtectionTools = protectionTools;
+			
+//нужно менять в документе
+			if(item.EmployeeIssueReference?.DocumentType == null)
+				return;
+			switch(item.EmployeeIssueReference.DocumentType) {
+				case StockDocumentType.ExpenseEmployeeDoc:
+					break;
+				case StockDocumentType.CollectiveExpense:
+					break;
+				case StockDocumentType.ExpenseObjectDoc:
+					break;
+			}
+//Обновить потребности			
+			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
+
+		}
+
+		#endregion
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);

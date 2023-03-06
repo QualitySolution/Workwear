@@ -1,6 +1,7 @@
 using System.Reflection;
 using Gtk;
 using QSWidgetLib;
+using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace Workwear.Views.Company.EmployeeChildren
@@ -60,6 +61,17 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 
+				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
+				var submenu = new Menu();
+				foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
+					var ptItem = new MenuItem(protectionTools.Name);
+					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+					//ptItem.Activated += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+					submenu.Append(ptItem);
+				}
+				itemChangeProtectionTools.Submenu = submenu;
+				menu.Add(itemChangeProtectionTools);
+				
 				menu.ShowAll();
 				menu.Popup();
 			}
@@ -83,7 +95,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 					.AddSetter((c, e) => c.Visible = e.AmountReceived > 0)
 					.AddSetter((c, e) => c.Activatable = e.Operation.ExpiryByNorm.HasValue)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
-				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
+				.AddColumn(" Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 					.AddPixbufRenderer(x => x.IsSigned ? cardIcon : null)
 					.AddTextRenderer(x => x.SingText)
 				.Finish();
