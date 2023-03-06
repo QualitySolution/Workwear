@@ -1,6 +1,7 @@
 using System.Reflection;
 using Gtk;
 using QSWidgetLib;
+using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace Workwear.Views.Company.EmployeeChildren
@@ -60,6 +61,16 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 
+				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
+				var submenu = new Menu();
+				foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
+					var ptItem = new MenuItem(protectionTools.Name);
+					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+					submenu.Append(ptItem);
+				}
+				itemChangeProtectionTools.Submenu = submenu;
+				menu.Add(itemChangeProtectionTools);
+				
 				menu.ShowAll();
 				menu.Popup();
 			}

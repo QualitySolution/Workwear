@@ -11,6 +11,7 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -90,6 +91,42 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			employeeViewModel.Save();
 		}
 		
+		
+		#region Замена Номенклатуры нормы
+		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
+
+		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
+			ProtectionTools[] protectionToolsForUpdate = {item.Operation.ProtectionTools, protectionTools};
+
+			item.Operation.ProtectionTools = protectionTools;
+			UoW.Save(item.Operation);
+			
+			if(item.EmployeeIssueReference?.DocumentType == null)
+				return;
+			if(item.EmployeeIssueReference.ItemId == null)
+				throw new NullReferenceException("ItemID is Null");
+			
+			switch(item.EmployeeIssueReference.DocumentType) {
+				case StockDocumentType.ExpenseEmployeeDoc:
+					var docI =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					docI.ProtectionTools = protectionTools;
+					UoW.Save(docI);
+						
+					break;
+				case StockDocumentType.CollectiveExpense:
+					var docC =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					docC.ProtectionTools = protectionTools;
+					UoW.Save(docC);
+					break;
+				default:
+					throw new NotSupportedException("Unknown document type.");
+			}
+
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			Entity.UpdateNextIssue(protectionToolsForUpdate);
+		}
+
+		#endregion
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
