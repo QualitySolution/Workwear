@@ -96,10 +96,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
-			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools>()
-				{item.Operation.ProtectionTools, protectionTools};
 
 			item.Operation.ProtectionTools = protectionTools;
+			UoW.Save(item.Operation);
 			
 			if(item.EmployeeIssueReference?.DocumentType == null)
 				return;
@@ -108,19 +107,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			
 			switch(item.EmployeeIssueReference.DocumentType) {
 				case StockDocumentType.ExpenseEmployeeDoc:
-					protectionToolsForUpdate.Add(UoW.GetById<ExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools);
-					UoW.GetById<ExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools = protectionTools;
+					var docI =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					docI.ProtectionTools = protectionTools;
+					UoW.Save(docI);
+						
 					break;
 				case StockDocumentType.CollectiveExpense:
-					protectionToolsForUpdate.Add(UoW.GetById<CollectiveExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools);
-					UoW.GetById<CollectiveExpenseItem>((int)item.EmployeeIssueReference.ItemId).ProtectionTools = protectionTools;
+					var docC =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					docC.ProtectionTools = protectionTools;
+					UoW.Save(docC);
 					break;
 				default:
-					throw new Exception("Unknown document type.");
+					throw new NotSupportedException("Unknown document type.");
 			}
-
-			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
 
 		#endregion
