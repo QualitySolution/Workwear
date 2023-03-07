@@ -135,7 +135,6 @@ namespace Workwear.Views.Stock
 			w12.Position = 1;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
-			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
