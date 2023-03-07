@@ -10,6 +10,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Testing.DB;
+using QS.Testing.Testing.Navigation;
 using QS.Tools;
 using QS.Validation;
 using QS.Validation.Testing;
@@ -46,18 +47,10 @@ namespace WorkwearTest.ViewModels.Regulations {
 		{
 			NewSessionWithSameDB();
 
-			var navigation = Substitute.For<INavigationManager>();
-			var progressCreator = Substitute.For<ModalProgressCreator>(navigation);
-			var progressPage = Substitute.For<IPage<ProgressWindowViewModel>>();
-			var progressViewModel = new ProgressWindowViewModel(navigation) {
-				Progress = Substitute.For<IProgressBarDisplayable>()
-			};
-			progressPage.ViewModel.Returns(progressViewModel);
-			navigation.OpenViewModel<ProgressWindowViewModel>(null).Returns(progressPage);
-			
 			var featuresService = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveService>();
 			var monitor = Substitute.For<IChangeMonitor<NormItem>>();
+			var progress = Substitute.For<IProgressBarDisplayable>();
 			var validator = new ValidatorForTests();
 			
 			var baseParameters = Substitute.For<BaseParameters>();
@@ -65,19 +58,20 @@ namespace WorkwearTest.ViewModels.Regulations {
 			baseParameters.ShiftExpluatacion.Returns(AnswerOptions.Yes);
 
 			var builder = new ContainerBuilder();
-			builder.RegisterType<NormViewModel>().AsSelf();
-			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<EmployeeRepository>().AsSelf();
-			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => featuresService).AsSelf();
-			builder.Register(x => interactive).As<IInteractiveService>();
+			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>();
 			builder.Register(x => monitor).As<IChangeMonitor<NormItem>>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => progressCreator).As<ModalProgressCreator>();
 			builder.Register(x => validator).As<IValidator>();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<EmployeeRepository>().AsSelf();
+			builder.RegisterType<ModalProgressCreator>().AsSelf();
+			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
+			builder.RegisterType<NormViewModel>().AsSelf();
+			builder.RegisterType<ProgressWindowViewModel>().AsSelf().WithProperty(x => x.Progress, progress);
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -166,12 +160,10 @@ namespace WorkwearTest.ViewModels.Regulations {
 				uow.Commit();
 				
 				//Открываем норму и запускаем пересчет.
-				using (var vmNorm = container.Resolve<NormViewModel>(new [] {
-					       new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForOpen(norm.Id))
-					       }))
-				{
-					vmNorm.ReSaveLastIssue(vmNorm.Entity.Items.First());
-				}
+				var navigation = container.Resolve<NavigationManagerForTests>();
+				var vmNorm = navigation.OpenViewModel<NormViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(norm.Id)).ViewModel;
+				vmNorm.ReSaveLastIssue(vmNorm.Entity.Items.First());
+				vmNorm.Close(false, CloseSource.ClosePage);
 
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {
 					var employee2 = uow2.GetById<EmployeeCard>(employee.Id);

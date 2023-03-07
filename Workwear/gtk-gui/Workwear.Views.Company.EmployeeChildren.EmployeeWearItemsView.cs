@@ -109,6 +109,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			w10.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonManualIssueDate = new global::Gamma.GtkWidgets.yButton();
+			this.buttonManualIssueDate.Sensitive = false;
 			this.buttonManualIssueDate.CanFocus = true;
 			this.buttonManualIssueDate.Name = "buttonManualIssueDate";
 			this.buttonManualIssueDate.UseUnderline = true;
@@ -123,6 +124,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			w12.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
 			this.buttonTimeLine = new global::Gtk.Button();
+			this.buttonTimeLine.Sensitive = false;
 			this.buttonTimeLine.CanFocus = true;
 			this.buttonTimeLine.Name = "buttonTimeLine";
 			this.buttonTimeLine.UseUnderline = true;
