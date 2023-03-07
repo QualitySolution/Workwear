@@ -540,7 +540,12 @@ namespace Workwear.Domain.Company
 			vacation.Employee = this;
 			ObservableVacations.Add(vacation);
 		}
-
+		public virtual bool OnVacation(DateTime date) {
+			foreach(var vacation in Vacations) 
+				if(vacation.BeginDate <= date && vacation.EndDate > date)
+					return true;
+			return false;
+		}
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
 			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,
 			IInteractiveQuestion askUser, EmployeeVacation vacation) {
