@@ -542,7 +542,7 @@ namespace Workwear.Domain.Company
 		}
 		public virtual bool OnVacation(DateTime date) {
 			foreach(var vacation in Vacations) 
-				if(vacation.BeginDate <= date && vacation.EndDate > date)
+				if(vacation.BeginDate <= date && vacation.EndDate.AddDays(1) > date)
 					return true;
 			return false;
 		}
