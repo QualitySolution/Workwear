@@ -214,9 +214,9 @@ namespace Workwear.Domain.Company
 			
 			if(ActiveNormItem == null)
 				return 0;
-			if(employeeCard != null && employeeCard.DismissDate != null)
+			if(employeeCard.DismissDate != null)
 				return 0;
-			if(employeeCard != null && employeeCard.OnVacation(onDate))
+			if(employeeCard.OnVacation(onDate))
 				return 0;
 			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
