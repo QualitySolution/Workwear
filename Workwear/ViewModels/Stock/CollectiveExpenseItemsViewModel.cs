@@ -157,7 +157,7 @@ namespace Workwear.ViewModels.Stock
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(4, text: "Загружаем сотрудников");
+			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
 			progressPage.ViewModel.Progress.Add();
@@ -167,7 +167,7 @@ namespace Workwear.ViewModels.Stock
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(4, text: "Загружаем сотрудников");
+			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			progressPage.ViewModel.Progress.Add();
@@ -193,7 +193,8 @@ namespace Workwear.ViewModels.Stock
 				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
 			}
 			progressPage?.ViewModel.Progress.Add();
-			navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			if(progressPage != null)
+				navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			
 			//Подготавливаем виджет
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
@@ -303,11 +304,18 @@ namespace Workwear.ViewModels.Stock
 		#region Обновление документа
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
-			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList());
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
+			progressPage.ViewModel.Progress.Add();
+			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList(),progressPage);
+			
 			Entity.ResortItems();
 		}
 		public void RefreshAll() {
-			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList());
+			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
+			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
+			progressPage.ViewModel.Progress.Add();
+			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList(),progressPage);
 			Entity.ResortItems();
 		}
 
