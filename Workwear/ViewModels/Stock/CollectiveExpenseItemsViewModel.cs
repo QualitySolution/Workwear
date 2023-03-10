@@ -229,14 +229,17 @@ namespace Workwear.ViewModels.Stock
 				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 					.ToDictionary(x => x.Key, x => x.Value));
 			
-			page.ViewModel.AddItems = (w) => AddItemsFromWidget(w, needs, page);
+			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, page, vac);
 		}
 
 		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs,
-			IPage<IssueWidgetViewModel> page) {
+			IPage page, bool excludeOnVaction) {
 			foreach(var item in needs) {
 				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
-					Entity.AddItem(item, BaseParameters);
+					if(excludeOnVaction && item.EmployeeCard.OnVacation(Entity.Date))
+						continue;
+					else
+						Entity.AddItem(item, BaseParameters);
 			}
 			navigation.ForceClosePage(page);
 		}
