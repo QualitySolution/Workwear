@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using fyiReporting.RDL;
-using fyiReporting.RdlGtkViewer;
 using NUnit.Framework;
 using QS.Utilities.Text;
 using RdlEngine;
