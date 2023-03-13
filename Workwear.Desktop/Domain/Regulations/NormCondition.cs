@@ -51,12 +51,13 @@ namespace Workwear.Domain.Regulations
 
 		public virtual bool MatchesForEmployee(EmployeeCard employee)
 		{
-
 			switch(employee.Sex) {
 				case Workwear.Domain.Company.Sex.F:
 					return SexNormCondition == SexNormCondition.OnlyWomen || SexNormCondition == SexNormCondition.ForAll;
 				case Workwear.Domain.Company.Sex.M:
 					return SexNormCondition == SexNormCondition.OnlyMen || SexNormCondition == SexNormCondition.ForAll;
+				case Workwear.Domain.Company.Sex.None:
+					return SexNormCondition == SexNormCondition.ForAll;
 				default:
 					return false;
 			}
