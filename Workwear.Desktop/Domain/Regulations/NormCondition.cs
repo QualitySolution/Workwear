@@ -59,7 +59,7 @@ namespace Workwear.Domain.Regulations
 				case Workwear.Domain.Company.Sex.None:
 					return SexNormCondition == SexNormCondition.ForAll;
 				default:
-					return false;
+					throw new NotSupportedException("Unknown sex value.");
 			}
 		}
 
