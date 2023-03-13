@@ -61,6 +61,10 @@
       <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
       <Name>QS.BaseParameters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Configuration\QS.Configuration.csproj">
+      <Project>{5d124360-c8fb-4779-958b-0da5d6b90c29}</Project>
+      <Name>QS.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{c01ae5a4-3cff-4c7b-884d-45b07acde761}</Project>
       <Name>QS.Project.Core</Name>
