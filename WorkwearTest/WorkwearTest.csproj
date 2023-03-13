@@ -65,6 +65,10 @@
       <Project>{5d124360-c8fb-4779-958b-0da5d6b90c29}</Project>
       <Name>QS.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj">
+      <Project>{e95be5dc-a197-4657-87dc-a2d677eadb76}</Project>
+      <Name>QS.Project.Abstract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{c01ae5a4-3cff-4c7b-884d-45b07acde761}</Project>
       <Name>QS.Project.Core</Name>
