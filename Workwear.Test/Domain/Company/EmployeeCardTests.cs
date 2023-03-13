@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
@@ -144,6 +145,44 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(item2.ActiveNormItem, Is.EqualTo(norm2item1));
 			var item3 = employee.WorkwearItems.First(x => x.ProtectionTools == protectionTools3);
 			Assert.That(item3.ActiveNormItem, Is.EqualTo(norm2item2));
+		}
+
+		[Test(Description = "Проверяем что работает обновление потребности с учётом ограничения нормы по полу")]
+		public void UpdateWorkwearItems_SexCondition() {
+
+			var conditionF = new NormCondition() { SexNormCondition = SexNormCondition.OnlyWomen };
+			var conditionM = new NormCondition() { SexNormCondition = SexNormCondition.OnlyMen };
+			var conditionN = new NormCondition() { SexNormCondition = SexNormCondition.ForAll };
+
+			var normF = new Norm();
+			var normM = new Norm();
+			var normN = new Norm();
+			var protectionToolsF = Substitute.For<ProtectionTools>();
+			var protectionToolsM = Substitute.For<ProtectionTools>();	
+			var protectionToolsN = Substitute.For<ProtectionTools>();	
+			normF.AddItem(protectionToolsF).NormCondition = conditionF;
+			normM.AddItem(protectionToolsM).NormCondition = conditionM;
+			normN.AddItem(protectionToolsN).NormCondition = conditionN;
+			
+			var employeeF = new EmployeeCard() { Sex = Sex.F };
+			var employeeM = new EmployeeCard() { Sex = Sex.M };
+			var employeeN = new EmployeeCard() { Sex = Sex.None };
+			
+			employeeF.AddUsedNorm(normF); 
+			employeeM.AddUsedNorm(normM);
+			employeeN.AddUsedNorm(normN);
+			//UpdateWorkwearItems() вызывается при добавлении
+			Assert.That(employeeF.WorkwearItems, Has.Count.EqualTo(1));
+			Assert.That(employeeM.WorkwearItems, Has.Count.EqualTo(1));
+			Assert.That(employeeN.WorkwearItems, Has.Count.EqualTo(1));
+			
+			employeeF.AddUsedNorm(normM); employeeF.AddUsedNorm(normN);
+			employeeM.AddUsedNorm(normF); employeeM.AddUsedNorm(normN);
+			employeeN.AddUsedNorm(normF); employeeN.AddUsedNorm(normM); 
+			//UpdateWorkwearItems() вызывается при добавлении
+			Assert.That(employeeF.WorkwearItems, Has.Count.EqualTo(2));
+			Assert.That(employeeM.WorkwearItems, Has.Count.EqualTo(2));
+			Assert.That(employeeN.WorkwearItems, Has.Count.EqualTo(1));
 		}
 	}
 }
