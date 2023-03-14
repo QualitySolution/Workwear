@@ -146,43 +146,64 @@ namespace Workwear.Test.Domain.Company
 			var item3 = employee.WorkwearItems.First(x => x.ProtectionTools == protectionTools3);
 			Assert.That(item3.ActiveNormItem, Is.EqualTo(norm2item2));
 		}
-
-		[Test(Description = "Проверяем что работает обновление потребности с учётом ограничения нормы по полу")]
-		public void UpdateWorkwearItems_SexCondition() {
-
-			var conditionF = new NormCondition() { SexNormCondition = SexNormCondition.OnlyWomen };
-			var conditionM = new NormCondition() { SexNormCondition = SexNormCondition.OnlyMen };
-			var conditionN = new NormCondition() { SexNormCondition = SexNormCondition.ForAll };
-
-			var normF = new Norm();
-			var normM = new Norm();
-			var normN = new Norm();
-			var protectionToolsF = Substitute.For<ProtectionTools>();
-			var protectionToolsM = Substitute.For<ProtectionTools>();	
-			var protectionToolsN = Substitute.For<ProtectionTools>();	
-			normF.AddItem(protectionToolsF).NormCondition = conditionF;
-			normM.AddItem(protectionToolsM).NormCondition = conditionM;
-			normN.AddItem(protectionToolsN).NormCondition = conditionN;
+		
+		[Test(Description = "Проверяем что при добавлении нормы обновляется потребность с учётом огрничения по полу ")]
+		[TestCase(Sex.None, SexNormCondition.ForAll, ExpectedResult = 1)]
+		[TestCase(Sex.F, SexNormCondition.ForAll, ExpectedResult = 1)]
+		[TestCase(Sex.M, SexNormCondition.ForAll, ExpectedResult = 1)]
+		[TestCase(Sex.None, SexNormCondition.OnlyMen, ExpectedResult = 0)]
+		[TestCase(Sex.F, SexNormCondition.OnlyMen, ExpectedResult = 0)]
+		[TestCase(Sex.M, SexNormCondition.OnlyMen, ExpectedResult = 1)]
+		[TestCase(Sex.None, SexNormCondition.OnlyWomen, ExpectedResult = 0)]
+		[TestCase(Sex.F, SexNormCondition.OnlyWomen, ExpectedResult = 1)]
+		[TestCase(Sex.M, SexNormCondition.OnlyWomen, ExpectedResult = 0)]
+		public int UpdateWorkwearItems_SexCondition(Sex employeeSex, SexNormCondition sexNormCondition) {
 			
-			var employeeF = new EmployeeCard() { Sex = Sex.F };
-			var employeeM = new EmployeeCard() { Sex = Sex.M };
-			var employeeN = new EmployeeCard() { Sex = Sex.None };
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var norm = new Norm();
+			var normCondition = new NormCondition() { SexNormCondition = sexNormCondition };
+			norm.AddItem(protectionTools).NormCondition = normCondition;
+			var employee = new EmployeeCard() { Sex = employeeSex };
+			employee.AddUsedNorm(norm);
+
+			return employee.WorkwearItems.Count;
+		}
+
+		[Test(Description = "Проверяем что при добавлении в норму обновляется количество потребностей")]
+		public void UpdateWorkwearItems_AddItemToNorm() {
 			
-			employeeF.AddUsedNorm(normF); 
-			employeeM.AddUsedNorm(normM);
-			employeeN.AddUsedNorm(normN);
-			//UpdateWorkwearItems() вызывается при добавлении
-			Assert.That(employeeF.WorkwearItems, Has.Count.EqualTo(1));
-			Assert.That(employeeM.WorkwearItems, Has.Count.EqualTo(1));
-			Assert.That(employeeN.WorkwearItems, Has.Count.EqualTo(1));
+			var norm = new Norm();
+			var protectionTools1 = Substitute.For<ProtectionTools>();
+			norm.AddItem(protectionTools1);
+			var employee = new EmployeeCard();
+			employee.AddUsedNorm(norm);
+			var before = employee.WorkwearItems.Count;
 			
-			employeeF.AddUsedNorm(normM); employeeF.AddUsedNorm(normN);
-			employeeM.AddUsedNorm(normF); employeeM.AddUsedNorm(normN);
-			employeeN.AddUsedNorm(normF); employeeN.AddUsedNorm(normM); 
-			//UpdateWorkwearItems() вызывается при добавлении
-			Assert.That(employeeF.WorkwearItems, Has.Count.EqualTo(2));
-			Assert.That(employeeM.WorkwearItems, Has.Count.EqualTo(2));
-			Assert.That(employeeN.WorkwearItems, Has.Count.EqualTo(1));
+			var protectionTools2 = Substitute.For<ProtectionTools>();
+			norm.AddItem(protectionTools2);
+			employee.UpdateWorkwearItems();
+			var after = employee.WorkwearItems.Count;
+			
+			Assert.That(after - before, Is.EqualTo(1));
+		}
+		
+		[Test(Description = "Проверяем что при удалении из нормы обновляется количество потребностей")]
+		public void UpdateWorkwearItems_RemoveItemFromNorm() {
+			
+			var norm = new Norm();
+			var protectionTools1 = Substitute.For<ProtectionTools>();
+			norm.AddItem(protectionTools1);
+			var protectionTools2 = Substitute.For<ProtectionTools>();
+			var secondItem = norm.AddItem(protectionTools2);
+			var employee = new EmployeeCard();
+			employee.AddUsedNorm(norm);
+			var before = employee.WorkwearItems.Count;
+			
+			norm.RemoveItem(secondItem);
+			employee.UpdateWorkwearItems();
+			var after = employee.WorkwearItems.Count;
+			
+			Assert.That(after - before, Is.EqualTo(-1));
 		}
 	}
 }
