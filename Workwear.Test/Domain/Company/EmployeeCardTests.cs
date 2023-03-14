@@ -168,7 +168,26 @@ namespace Workwear.Test.Domain.Company
 
 			return employee.WorkwearItems.Count;
 		}
+		
+		[Test(Description = "Проверяем что наличие дефолтного условия нормы не влияет на количество потребностей.")]
+		[TestCase(Sex.None, ExpectedResult = true)]
+		[TestCase(Sex.F, ExpectedResult = true)]
+		[TestCase(Sex.M, ExpectedResult = true)]
+		public bool WorkwearItemsCount_WithCondition_equal_NOtCondition(Sex employeeSex) {
+			
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var normWithoutCondition = new Norm();
+			normWithoutCondition.AddItem(protectionTools);
+			var employeeWithoutCondition = new EmployeeCard() { Sex = employeeSex };
+			employeeWithoutCondition.AddUsedNorm(normWithoutCondition);
+			
+			var normWithCondition = new Norm();
+			normWithCondition.AddItem(protectionTools).NormCondition = new NormCondition();
+			var employeeWithCondition = new EmployeeCard() { Sex = employeeSex };
+			employeeWithCondition.AddUsedNorm(normWithCondition);
 
+			return employeeWithCondition.WorkwearItems.Count == employeeWithoutCondition.WorkwearItems.Count;
+		}
 		[Test(Description = "Проверяем что при добавлении в норму обновляется количество потребностей")]
 		public void UpdateWorkwearItems_AddItemToNorm() {
 			
