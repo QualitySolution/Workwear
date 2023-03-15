@@ -102,7 +102,6 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
@@ -124,7 +123,6 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
         }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {

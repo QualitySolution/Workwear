@@ -40,6 +40,8 @@ namespace workwear.Journal.ViewModels.Company
 	        Title = employeeCard != null 
 		        ? $"Числится за сотрудником - {Filter.Employee.Title}" 
 		        : "Остатки по сотрудникам";
+	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
+	        SelectionMode = JournalSelectionMode.Multiple;
         }
 
         #region Query

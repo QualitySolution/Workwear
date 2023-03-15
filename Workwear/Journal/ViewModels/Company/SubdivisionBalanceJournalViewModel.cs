@@ -38,6 +38,8 @@ namespace workwear.Journal.ViewModels.Company
 	        Title = subdivision != null 
 		        ? $"Числится за подразделением - {Filter.Subdivision.Name}" 
 		        : "Остатки по подразделениям";
+	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
+	        SelectionMode = JournalSelectionMode.Multiple;
         }
 
         #region Query
