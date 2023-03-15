@@ -86,7 +86,6 @@ namespace Workwear.Test.Domain.Company
 			norm2item2.NormCondition.ReturnsNull();
 			norm2.Items.Returns(new List<NormItem> { norm2item1, norm2item2 });
 			
-			
 			employee.AddUsedNorm(norm1);
 			employee.AddUsedNorm(norm2);
 
@@ -147,7 +146,7 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(item3.ActiveNormItem, Is.EqualTo(norm2item2));
 		}
 		
-		[Test(Description = "Проверяем что при добавлении нормы обновляется потребность с учётом огрничения по полу ")]
+		[Test(Description = "Проверяем что при добавлении нормы обновляется потребность с учётом ограничения по полу ")]
 		[TestCase(Sex.None, SexNormCondition.ForAll, ExpectedResult = 1)]
 		[TestCase(Sex.F, SexNormCondition.ForAll, ExpectedResult = 1)]
 		[TestCase(Sex.M, SexNormCondition.ForAll, ExpectedResult = 1)]
@@ -170,10 +169,10 @@ namespace Workwear.Test.Domain.Company
 		}
 		
 		[Test(Description = "Проверяем что наличие дефолтного условия нормы не влияет на количество потребностей.")]
-		[TestCase(Sex.None, ExpectedResult = true)]
-		[TestCase(Sex.F, ExpectedResult = true)]
-		[TestCase(Sex.M, ExpectedResult = true)]
-		public bool WorkwearItemsCount_WithCondition_equal_NOtCondition(Sex employeeSex) {
+		[TestCase(Sex.None)]
+		[TestCase(Sex.F)]
+		[TestCase(Sex.M)]
+		public void WorkwearItemsCount_WithCondition_equal_NotCondition(Sex employeeSex) {
 			
 			var protectionTools = Substitute.For<ProtectionTools>();
 			var normWithoutCondition = new Norm();
@@ -186,8 +185,9 @@ namespace Workwear.Test.Domain.Company
 			var employeeWithCondition = new EmployeeCard() { Sex = employeeSex };
 			employeeWithCondition.AddUsedNorm(normWithCondition);
 
-			return employeeWithCondition.WorkwearItems.Count == employeeWithoutCondition.WorkwearItems.Count;
+			Assert.That(employeeWithCondition.WorkwearItems.Count, Is.EqualTo(employeeWithoutCondition.WorkwearItems.Count));
 		}
+		
 		[Test(Description = "Проверяем что при добавлении в норму обновляется количество потребностей")]
 		public void UpdateWorkwearItems_AddItemToNorm() {
 			
