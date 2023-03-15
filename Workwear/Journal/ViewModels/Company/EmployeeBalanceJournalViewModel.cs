@@ -75,11 +75,11 @@ namespace workwear.Journal.ViewModels.Company
 			);
 			if (Filter.Employee != null)
 				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
-					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
@@ -102,11 +102,11 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 			else {
 				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
-					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
