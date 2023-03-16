@@ -1295,6 +1295,7 @@ CASE norms_item.period_type
     WHEN 'Shift' THEN 'время'
     WHEN 'Wearout' THEN 'До износа'
     WHEN 'Duty' THEN 'Дежурный'
+    ELSE ' '
 END as period_specificity,
 old_issuse.issued as amount_issuse,
 this_issuse.returned as amount_return,
