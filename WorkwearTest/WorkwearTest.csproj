@@ -55,6 +55,7 @@
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
+    <Compile Include="ViewModels\Stock\WriteOffViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
