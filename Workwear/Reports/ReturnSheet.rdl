@@ -1271,26 +1271,26 @@ old_issuse.ExpiryByNorm as date_expiry,
 norms_item.period_count AS period_num,
 IF(norms_item.period_count BETWEEN 11 AND 19,
    CASE norms_item.period_type
- 		WHEN 'month' THEN 'месяцев'
+ 		WHEN 'Month' THEN 'месяцев'
    		WHEN 'Year' THEN 'лет'
    		WHEN 'Shift' THEN 'смен'
    END, IF(norms_item.period_count % 10 = 1,
    			CASE norms_item.period_type
-  				WHEN 'month' THEN 'месяц'
+  				WHEN 'Month' THEN 'месяц'
   				WHEN 'Year' THEN 'год'
            		WHEN 'Shift' THEN 'смена'
 		END, IF(norms_item.period_count % 10 BETWEEN 2 and 4,
    				CASE norms_item.period_type
-  					WHEN 'month' THEN 'месяца'
+  					WHEN 'Month' THEN 'месяца'
   					WHEN 'Year' THEN 'года'
                 	WHEN 'Shift' THEN 'смены'
 				END, CASE norms_item.period_type
-  						WHEN 'month' THEN 'месяцев'
+  						WHEN 'Month' THEN 'месяцев'
   						WHEN 'Year' THEN 'лет'
                 		WHEN 'Shift' THEN 'смен'
            			 END))) as period_type,
 CASE norms_item.period_type
-	WHEN 'month' THEN 'время'
+	WHEN 'Month' THEN 'время'
   	WHEN 'Year' THEN 'время'
     WHEN 'Shift' THEN 'время'
     WHEN 'Wearout' THEN 'До износа'
