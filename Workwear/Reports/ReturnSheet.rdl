@@ -499,7 +499,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>={period_num} + " " + {period_type}</Value>
+                      <Value>=(Iif({period_specificity}="время", {period_num} + " " + {period_type}, {period_specificity}))</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -618,7 +618,7 @@
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan >3</ColSpan>
+                  <ColSpan>3</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1269,18 +1269,33 @@ nomenclature.number as nomenclature_number,
 old_issuse.StartOfUse as date_start,
 old_issuse.ExpiryByNorm as date_expiry,
 norms_item.period_count AS period_num,
-if(norms_item.period_count = 1,
+IF(norms_item.period_count BETWEEN 11 AND 19,
    CASE norms_item.period_type
-  		WHEN 'month' THEN 'Месяц'
-  		WHEN 'Year' THEN 'Год'
-	END, if(norms_item.period_count BETWEEN 2 and 4,
-   		CASE norms_item.period_type
-  			WHEN 'month' THEN 'Месяца'
-  			WHEN 'Year' THEN 'Года'
-		END, CASE norms_item.period_type
-  				WHEN 'month' THEN 'Месяцев'
-  				WHEN 'Year' THEN 'Лет'
-           	END)) as period_type,
+ 		WHEN 'month' THEN 'месяцев'
+   		WHEN 'Year' THEN 'лет'
+   		WHEN 'Shift' THEN 'смен'
+   END, IF(norms_item.period_count % 10 = 1,
+   			CASE norms_item.period_type
+  				WHEN 'month' THEN 'месяц'
+  				WHEN 'Year' THEN 'год'
+           		WHEN 'Shift' THEN 'смена'
+		END, IF(norms_item.period_count % 10 BETWEEN 2 and 4,
+   				CASE norms_item.period_type
+  					WHEN 'month' THEN 'месяца'
+  					WHEN 'Year' THEN 'года'
+                	WHEN 'Shift' THEN 'смены'
+				END, CASE norms_item.period_type
+  						WHEN 'month' THEN 'месяцев'
+  						WHEN 'Year' THEN 'лет'
+                		WHEN 'Shift' THEN 'смен'
+           			 END))) as period_type,
+CASE norms_item.period_type
+	WHEN 'month' THEN 'время'
+  	WHEN 'Year' THEN 'время'
+    WHEN 'Shift' THEN 'время'
+    WHEN 'Wearout' THEN 'До износа'
+    WHEN 'Duty' THEN 'Дежурный'
+END as period_specificity,
 old_issuse.issued as amount_issuse,
 this_issuse.returned as amount_return,
 this_issuse.wear_percent * 100 as wear_percent
@@ -1331,6 +1346,10 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
         </Field>
         <Field Name="wear_percent">
           <DataField>wear_percent</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="period_specificity">
+          <DataField>period_specificity</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1394,7 +1413,7 @@ WHERE stock_income.id = @id</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
