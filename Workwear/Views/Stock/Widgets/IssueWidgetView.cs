@@ -15,6 +15,8 @@ namespace Workwear.Views.Stock.Widgets {
 
 		private void ConfigureDlg() {
 
+			ycheckbuttonVacation.Binding.AddBinding(ViewModel, v => v.ExcludeOnVacation, w => w.Active).InitializeFromSource();
+
 			var rows = ViewModel.Items.Count;
 			ItemListTable.Resize((uint)(rows + 2), 9);
 
@@ -100,8 +102,10 @@ namespace Workwear.Views.Stock.Widgets {
 				ItemListTable.ShowAll();
 		}
 		
+		#region Обработка кнопок
+		
 		protected void OnAddToDocumentYbuttonClicked(object sender, EventArgs e) {
-			ViewModel.AddItems(ViewModel.Items);
+			ViewModel.AddItems(ViewModel.Items, ViewModel.ExcludeOnVacation);
 		}
 
 		protected void OnSelectAllYbuttonClicked(object sender, EventArgs e) {
@@ -111,6 +115,7 @@ namespace Workwear.Views.Stock.Widgets {
 		protected void OnUnSelectAllYbuttonClicked(object sender, EventArgs e) {
 			ViewModel.UnSelectAll();
 		}
+		#endregion
 	}
 }
 

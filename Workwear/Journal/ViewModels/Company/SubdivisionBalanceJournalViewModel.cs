@@ -3,6 +3,7 @@ using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
@@ -38,6 +39,8 @@ namespace workwear.Journal.ViewModels.Company
 	        Title = subdivision != null 
 		        ? $"Числится за подразделением - {Filter.Subdivision.Name}" 
 		        : "Остатки по подразделениям";
+	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
+	        SelectionMode = JournalSelectionMode.Multiple;
         }
 
         #region Query
@@ -69,9 +72,9 @@ namespace workwear.Journal.ViewModels.Company
 			if(Filter.Subdivision != null)
 				expense
 					.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
-					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
-					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
-					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => issueOperationAlias.Subdivision, () => subdivisionAlias)
 					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
@@ -86,10 +89,10 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 			else {
 				expense
-					.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias)
-					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
-					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
-					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+					.JoinAlias(() => issueOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => issueOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => issueOperationAlias.Subdivision, () => subdivisionAlias)
 					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))

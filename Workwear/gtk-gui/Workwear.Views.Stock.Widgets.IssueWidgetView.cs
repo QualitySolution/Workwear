@@ -14,6 +14,10 @@ namespace Workwear.Views.Stock.Widgets
 
 		private global::Gamma.GtkWidgets.yButton UnSelectAll_ybutton;
 
+		private global::Gtk.HBox hbox2;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonVacation;
+
 		private global::Gtk.ScrolledWindow scrolledwindow1;
 
 		private global::Gtk.Table ItemListTable;
@@ -80,24 +84,46 @@ namespace Workwear.Views.Stock.Widgets
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox2 = new global::Gtk.HBox();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.ycheckbuttonVacation = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonVacation.CanFocus = true;
+			this.ycheckbuttonVacation.Name = "ycheckbuttonVacation";
+			this.ycheckbuttonVacation.Label = global::Mono.Unix.Catalog.GetString("Не добавлять сотрудников в отпуске");
+			this.ycheckbuttonVacation.Active = true;
+			this.ycheckbuttonVacation.DrawIndicator = true;
+			this.ycheckbuttonVacation.UseUnderline = true;
+			this.hbox2.Add(this.ycheckbuttonVacation);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.ycheckbuttonVacation]));
+			w8.Position = 0;
+			w8.Expand = false;
+			w8.Fill = false;
+			this.vbox1.Add(this.hbox2);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox2]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
 			this.scrolledwindow1.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child scrolledwindow1.Gtk.Container+ContainerChild
-			global::Gtk.Viewport w8 = new global::Gtk.Viewport();
-			w8.ShadowType = ((global::Gtk.ShadowType)(0));
+			global::Gtk.Viewport w10 = new global::Gtk.Viewport();
+			w10.ShadowType = ((global::Gtk.ShadowType)(0));
 			// Container child GtkViewport.Gtk.Container+ContainerChild
 			this.ItemListTable = new global::Gtk.Table(((uint)(1)), ((uint)(5)), false);
 			this.ItemListTable.Name = "ItemListTable";
 			this.ItemListTable.RowSpacing = ((uint)(6));
 			this.ItemListTable.ColumnSpacing = ((uint)(6));
-			w8.Add(this.ItemListTable);
-			this.scrolledwindow1.Add(w8);
+			w10.Add(this.ItemListTable);
+			this.scrolledwindow1.Add(w10);
 			this.vbox1.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.scrolledwindow1]));
-			w11.Position = 1;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.scrolledwindow1]));
+			w13.Position = 2;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

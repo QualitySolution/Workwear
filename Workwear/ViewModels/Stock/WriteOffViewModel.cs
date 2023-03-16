@@ -16,6 +16,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using Workwear.Models.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
 
@@ -23,7 +24,8 @@ namespace Workwear.ViewModels.Stock
 {
     public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	    private readonly EmployeeIssueModel issueModel;
+	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
         public Subdivision Subdivision { get;}
@@ -33,13 +35,16 @@ namespace Workwear.ViewModels.Stock
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
-            IUnitOfWorkFactory unitOfWorkFactory, 
+            IUnitOfWorkFactory unitOfWorkFactory,
+            UnitOfWorkProvider unitOfWorkProvider,
             INavigationManager navigation,
             SizeService sizeService,
             FeaturesService featuresService,
+            EmployeeIssueModel issueModel,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
-            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+	        this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
@@ -102,7 +107,6 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
@@ -124,7 +128,6 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
         }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
@@ -154,34 +157,28 @@ namespace Workwear.ViewModels.Stock
 
         #region Save
         public override bool Save() {
-            Logger.Info ("Запись документа...");
+            logger.Info ("Запись документа...");
             
             Entity.UpdateOperations(UoW);
             if (Entity.Id == 0)
                 Entity.CreationDate = DateTime.Now;
-            
-            if(Entity.Items.Any(w => w.WriteoffFrom == WriteoffFrom.Employee)) {
-                Logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-                foreach(var employeeGroup in 
-                    Entity.Items.Where(w => w.WriteoffFrom == WriteoffFrom.Employee)
-                        .GroupBy(w => w.EmployeeWriteoffOperation.Employee))
-                {
-                    var employee = employeeGroup.Key;
-                    foreach(var itemsGroup in 
-                        employeeGroup.GroupBy(i => i.Nomenclature.Type.Id))
-                    {
-                        var wearItem = 
-                            employee.WorkwearItems.FirstOrDefault(i => i.ProtectionTools.Id == itemsGroup.Key);
-                        if(wearItem == null) {
-                            Logger.Debug($"Позиции <{itemsGroup.First().Nomenclature.Type.Name}> не требуется к выдаче, пропускаем...");
-                            continue;
-                        }
-                        wearItem.UpdateNextIssue (UoW);
-                    }
-                }
+
+            if(!base.Save()) {
+	            logger.Info("Не Ок.");
+	            return false;
             }
-            Logger.Info ("Ok");
-            return base.Save();
+            
+            var employeeOperations = Entity.Items.Where(w => w.WriteoffFrom == WriteoffFrom.Employee)
+	            .Select(w => w.EmployeeWriteoffOperation)
+	            .Where(w => w.ProtectionTools != null)
+	            .ToArray();
+            if(employeeOperations.Any()) {
+                logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
+                issueModel.UpdateNextIssue(employeeOperations, changeLog: (operation, s) => logger.Debug(s));
+                UoW.Commit();
+            }
+            logger.Info ("Ok");
+            return true;
         }
         #endregion
     }
