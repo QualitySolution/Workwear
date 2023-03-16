@@ -43,6 +43,8 @@ using QS.Tdi;
 using QS.Tools;
 using QS.Updater.DB.Views;
 using QS.Updater;
+using QS.Updater.App;
+using QS.Updater.App.Views;
 using QS.Utilities.Numeric;
 using QS.Validation;
 using QS.ViewModels.Resolve;
@@ -158,7 +160,8 @@ namespace workwear
 			#endregion
 			
 			#region Обновления и версии
-			containerBuilder.RegisterModule(new UpdaterAutofacModule());
+			containerBuilder.RegisterModule(new UpdaterDesktopAutofacModule());
+			containerBuilder.RegisterModule(new UpdaterAppAutofacModule());
 			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion
@@ -192,8 +195,7 @@ namespace workwear
 			#region Ошибки
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var user = new UserService().GetCurrentUser(uow);
-				builder.RegisterType<DesktopErrorReporter>().As<IErrorReporter>()
-					.WithParameter(new TypedParameter(typeof(UserBase), user));
+				builder.Register(c => user).As<IUserInfo>();
 			}
 			#endregion
 			
@@ -226,7 +228,8 @@ namespace workwear
 			builder.Register(cc => new ClassNamesBaseGtkViewResolver(
 				typeof(RdlViewerView), 
 				typeof(OrganizationView), 
-				typeof(DeletionView), 
+				typeof(DeletionView),
+				typeof(NewVersionView),
 				typeof(UpdateProcessView),
 				typeof(SerialNumberView),
 				typeof(HistoryView)

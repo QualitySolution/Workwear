@@ -23,7 +23,9 @@ namespace WorkwearTest
 			//при этом тест проходил так как номера их совпадали.
 			MappingParams.UseIdsForTest = true;
 			Console.WriteLine("Инициализация");
-			var db_config = FluentNHibernate.Cfg.Db.MonoSqliteConfiguration.Standard.InMemory();
+			var db_config = FluentNHibernate.Cfg.Db.MonoSqliteConfiguration.Standard.InMemory()
+				//.ShowSql().FormatSql()
+				;
 
 			Console.WriteLine("ORM");
 			// Настройка ORM

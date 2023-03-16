@@ -89,8 +89,10 @@ public partial class MainWindow : Gtk.Window
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 
-		var checker = new VersionCheckerService(MainClass.AppDIContainer);
-		checker.RunUpdate();
+		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
+			var checker = updateScope.Resolve<VersionCheckerService>();
+			checker.RunUpdate();
+		}
 
 		var userService = AutofacScope.Resolve<IUserService>();
 		var user = userService.GetCurrentUser(UoW);
@@ -381,8 +383,8 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
-			var updater = scope.Resolve<ApplicationUpdater>();
-			updater.StartCheckUpdate(UpdaterFlags.ShowAnyway, scope);
+			var updater = scope.Resolve<IAppUpdater>();
+			updater.CheckUpdate(true);
 		}
 	}
 
@@ -394,7 +396,7 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionNormsActivated(object sender, EventArgs e)
 	{
-		var page = NavigationManager.OpenViewModelNamedArgs<NormJournalViewModel>(null, new Dictionary<string, object> {{ "useMultiSelect", true }});
+		NavigationManager.OpenViewModelNamedArgs<NormJournalViewModel>(null, new Dictionary<string, object> {{ "useMultiSelect", true }});
 	}
 
 	protected void OnActionConditionNormsActivated(object sender, EventArgs e)

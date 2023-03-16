@@ -124,6 +124,54 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+		
+		/// <summary>
+		/// Выполняет пересчет всех даты следующих выдач связанные с перечисленными операциями.
+		/// </summary>
+		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству операций + 1</param>
+		public void UpdateNextIssue(EmployeeIssueOperation[] operations, IProgressBarDisplayable progress = null, CancellationToken? cancellation = null, Action<EmployeeIssueOperation, string> changeLog = null) {
+			bool needClose = false;
+			IUnitOfWork uow = unitOfWorkProvider.UoW;
+			if(progress != null && !progress.IsStarted) {
+				progress.Start(operations.Length + 1);
+				needClose = true;
+			}
+			progress?.Add(text: "Получаем информацию о прошлых выдачах");
+			var employees = operations.Select(x => x.Employee).Distinct().ToArray();
+			var protectionTools = operations.Select(x => x.ProtectionTools).Distinct().ToArray();
+			CheckAndPrepareGraphs(employees, protectionTools);
+
+			int step = 0;
+			foreach(var operation in operations) {
+				if(cancellation?.IsCancellationRequested ?? false) {
+					break;
+				}
+
+				var employee = operation.Employee;
+				progress?.Add(text: $"Обработка {employee.ShortName}");
+				step++;
+				
+				if(operation.ProtectionTools == null)
+					continue;
+
+				var wearItem = employee.WorkwearItems.FirstOrDefault(i => operation.ProtectionTools.IsSame(i.ProtectionTools));
+				if(wearItem == null) 
+					continue;
+				
+				var oldDate = wearItem.NextIssue;
+				
+				wearItem.Graph = GetPreparedOrEmptyGraph(employee, wearItem.ProtectionTools);
+				wearItem.UpdateNextIssue(uow);
+
+				if(wearItem.NextIssue != oldDate) {
+					changeLog?.Invoke(operation, $"Изменена дата следующей выдачи с {oldDate:d} на {wearItem.NextIssue:d} для потребности [{wearItem.Title}]");
+					uow.Save(wearItem);
+				}
+			}
+			progress?.Add(text: "Готово");
+			if(needClose)
+				progress.Close();
+		}
 		#endregion
 
 		#region Graph

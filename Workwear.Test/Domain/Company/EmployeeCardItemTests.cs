@@ -258,11 +258,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 5
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = DateTime.Today.AddDays(30)
@@ -275,11 +276,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -300,11 +302,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -325,11 +328,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -350,11 +354,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 2
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -376,11 +381,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 1
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -401,11 +407,12 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(30);
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 1
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
@@ -426,7 +433,7 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0); //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
-
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var normCondition = new NormCondition {
 				Name = "Зима",
 				IssuanceStart = new DateTime(2001, 10, 1),
@@ -438,6 +445,7 @@ namespace Workwear.Test.Domain.Company
 				NormCondition = normCondition
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
 				NextIssue = new DateTime(2022, 5, 20)
@@ -455,7 +463,7 @@ namespace Workwear.Test.Domain.Company
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.ColDayAheadOfShedule.Returns(0);  //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
-			
+			var employeeCard = Substitute.For<EmployeeCard>();
 			var normCondition = new NormCondition {
 				Name = "Зима",
 				IssuanceStart = new DateTime(2001, 10, 1),
@@ -467,6 +475,7 @@ namespace Workwear.Test.Domain.Company
 				NormCondition = normCondition
 			};
 			var item = new EmployeeCardItem {
+				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {

@@ -15,7 +15,13 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 		public Dictionary<int,IssueWidgetItem> Items {get; set; }
 
-		public Action<Dictionary<int,IssueWidgetItem>> AddItems;
+		private bool excludeOnVacation = true;
+		public virtual bool ExcludeOnVacation {
+			get => excludeOnVacation;
+			set => SetField(ref excludeOnVacation, value);
+		}
+	
+		public Action<Dictionary<int,IssueWidgetItem>,bool> AddItems;
 		
 		public void SelectAll() {
 			foreach(var item in Items) 

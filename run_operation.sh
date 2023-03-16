@@ -60,8 +60,8 @@ dotnet test Workwear.Test.Sql/Workwear.Test.Sql.csproj
     *7*)
 msbuild /p:Configuration=Debug /p:Platform=x86 Workwear.sln    
 cd WorkwearTest/bin/Debug/
-cp -r ~/.nuget/packages/nunit.consolerunner/3.12.0/tools/* .
-mono nunit3-console.exe WorkwearTest.dll
+cp -r ~/.nuget/packages/nunit.consolerunner/3.16.3/tools/* .
+mono nunit3-console.exe WorkwearTest.dll --framework=mono-4.0
 cd "$(dirname "$0")"
 ;;&
 esac
