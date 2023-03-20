@@ -13,7 +13,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Card">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     IFNULL(wear_cards.card_number, wear_cards.id) AS id,
@@ -71,7 +71,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.String</TypeName>
@@ -153,11 +153,26 @@ WHERE
     protection_tools.name AS type_name,
     norms.ton_paragraph,
     measurement_units.name AS unit,
-    CASE norms_item.period_type
-        WHEN 'Year' THEN CONCAT(norms_item.amount, IF(norms_item.period_count = 1, '', CONCAT('/', norms_item.period_count)))
-        WHEN 'Month' THEN TRIM(norms_item.amount * 12 / norms_item.period_count)+0
-        WHEN 'Shift' THEN CONCAT(norms_item.amount, IF(norms_item.period_count = 1, '', CONCAT('/', norms_item.period_count)), ' (на смену)')
-    END AS count_by_year
+CASE 
+	WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
+    WHEN norms_item.period_type = 'Wearout' THEN ',До износа' 
+ 	WHEN norms_item.period_type = 'Year'
+    	THEN IF (norms_item.period_count = 1, norms_item.amount, 
+        	CONCAT(norms_item.amount, ' на ', norms_item.period_count,
+    			CASE 
+       		 		WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' лет'
+            	    WHEN norms_item.period_count % 10 = 1 THEN ' год'
+                	WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN ' года'
+                	ELSE ' лет'
+            	END))
+	WHEN norms_item.period_type = 'Month' THEN 
+		CASE
+        	WHEN norms_item.period_count &gt; 12 THEN
+            	CONCAT(norms_item.amount, ' на ', CAST(norms_item.amount * norms_item.period_count / 12 AS FLOAT), ' года')           
+            WHEN norms_item.period_count &lt;= 12 THEN
+            	CONCAT(CAST(norms_item.amount * 12 / norms_item.period_count AS FLOAT))       
+        END
+END AS count_by_year
 FROM
     wear_cards_item
         LEFT JOIN
@@ -421,8 +436,8 @@ WHERE
               <FontSize>11pt</FontSize>
               <TextAlign>Center</TextAlign>
             </Style>
-            <CanShrink >true</CanShrink>
-            <CanGrow >true</CanGrow>
+            <CanShrink>true</CanShrink>
+            <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox15">
             <Height>12.75pt</Height>
@@ -469,8 +484,8 @@ WHERE
               <FontSize>11pt</FontSize>
               <TextAlign>Center</TextAlign>
             </Style>
-            <CanGrow >true</CanGrow>
-            <CanShrink >true</CanShrink>
+            <CanGrow>true</CanGrow>
+            <CanShrink>true</CanShrink>
           </Textbox>
           <Textbox Name="Textbox18">
             <Height>12.75pt</Height>
