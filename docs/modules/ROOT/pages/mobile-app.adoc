@@ -1,3 +1,4 @@
+[#mobile-app]
 = Мобильный кабинет сотрудника
 :experimental:
 

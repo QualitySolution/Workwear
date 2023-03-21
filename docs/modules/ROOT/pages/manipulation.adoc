@@ -1,3 +1,4 @@
+[#manipulation]
 = Обработка
 :experimental:
 

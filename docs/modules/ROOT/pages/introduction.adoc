@@ -34,53 +34,53 @@
 |по числу лицензий
 |по числу лицензий
 
-|xref:update.adoc[Обновление] на следующий значительный релиз
+|<<update.adoc##update-application,Обновление>> на следующий значительный релиз
 |∞
 |в течении года
 |в течении года
 
-|xref:stock-documents.adoc#collective-issue[Документ коллективной выдачи]
+|<<stock-documents.adoc#collective-issue,Документ коллективной выдачи>>
 |-
 |+
 |+
 
-|xref:stock-documents.adoc#completion[Документ комплектации]
+|<<stock-documents.adoc#completion,Документ комплектации>>
 |-
 |+
 |+
 
 
-|xref:import.adoc[Импорт из Excel(1С)]
+|<<import.adoc#import,Импорт из Excel(1С)>>
 |-
 |+
 |+
 
-|xref:manipulation.adoc[Групповая обработка объектов]
+|<<manipulation.adoc#manipulation,Групповая обработка объектов>>
 |-
 |+
 |+
 
-|xref:history-log.adoc[Просмотр истории изменений]
+|<<history-log.adoc#history-log,Просмотр истории изменений>>
 |-
 |+
 |+
 
-|xref:regulations.adoc#norm-conditions[Условия нормы]
+|<<regulations.adoc#norm-conditions,Условия нормы>>
 |-
 |+
 |+
 
-|xref:mobile-app.adoc[Мобильный кабинет сотрудника и Push уведомления о получении спецодежды]
+|<<mobile-app.adoc#mobile-app,Мобильный кабинет сотрудника и Push уведомления о получении спецодежды>>
 |-
 |+ (покупается отдельно)
 |+ (покупается отдельно)
 
-|xref:nomenclature.adoc#warehouses[Работа с несколькими складами]
+|<<nomenclature.adoc#warehouses,Работа с несколькими складами>>
 |-
 |-
 |+
 
-|xref:employees.adoc#identity-cards[Идентификация сотрудника по карте]
+|<<employees.adoc#identity-cards,Идентификация сотрудника по карте>>
 |-
 |-
 |+
