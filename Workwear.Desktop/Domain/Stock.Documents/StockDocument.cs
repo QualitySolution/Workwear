@@ -75,6 +75,9 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Списание")]
 		WriteoffDoc,
 		[Display(Name = "Комплектация")]
-		Completion
+		Completion,
+		[Display(Name = "Оценка")]
+		Inspection
+		
 	}
 }

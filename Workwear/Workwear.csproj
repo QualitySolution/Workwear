@@ -176,6 +176,7 @@
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\WarehouseTransferViewModel.cs" />
     <Compile Include="Views\Stock\EmployeeIssueGraphView.cs" />
+    <Compile Include="Views\Stock\InspectionView.cs" />
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WarehouseView.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />

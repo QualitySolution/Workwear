@@ -43,6 +43,9 @@ namespace workwear.Models.Stock
 				case StockDocumentType.Completion:
 					navigation.OpenViewModel<CompletionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
+				case StockDocumentType.Inspection:
+					navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
+					break;
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}
