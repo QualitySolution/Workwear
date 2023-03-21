@@ -1,6 +1,6 @@
 :title-separator: {sp}|
 = QS: Спецодежда и имущество | Руководство системного администратора
-Quality Solution 2022
+Quality Solution 2023
 версия 2.7
 :organization: Quality Solution
 :doctype: book
