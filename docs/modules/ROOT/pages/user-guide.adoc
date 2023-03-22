@@ -22,11 +22,11 @@ include::interface.adoc[]
 
 include::organization.adoc[]
 
-include::nomenclature.adoc[]
-
 include::regulations.adoc[]
 
 include::employees.adoc[]
+
+include::stock.adoc[]
 
 include::stock-documents.adoc[]
 
