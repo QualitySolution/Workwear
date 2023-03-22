@@ -90,8 +90,6 @@ namespace Workwear.Views.Stock
 			this.Name = "Workwear.Views.Stock.CompletionView";
 			// Container child Workwear.Views.Stock.CompletionView.Gtk.Container+ContainerChild
 			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
-			this.yvbox1.WidthRequest = 0;
-			this.yvbox1.HeightRequest = 0;
 			this.yvbox1.Name = "yvbox1";
 			this.yvbox1.Spacing = 6;
 			// Container child yvbox1.Gtk.Box+BoxChild
