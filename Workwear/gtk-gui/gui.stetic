@@ -8,6 +8,8 @@
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../../QSProjects/Binding/Gamma.Binding/bin/Debug/GammaBinding.dll" />
     <widget-library name="../../../QSProjects/QS.HistoryLog.Gtk/bin/Debug/QS.HistoryLog.Gtk.dll" />
+    <widget-library name="../../../QSProjects/QS.Updater.App.Gtk/bin/Debug/QS.Updater.App.Gtk.dll" />
+    <widget-library name="../../../QSProjects/QS.Updater.DB.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
     <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
@@ -16,7 +18,6 @@
     <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
     <widget-library name="../../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
     <widget-library name="../../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater.Gtk/bin/Debug/QSUpdater.dll" />
     <widget-library name="../../../QSProjects/QS.Features.Gtk/bin/Debug/QS.Features.Gtk.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>

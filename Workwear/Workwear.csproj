@@ -421,6 +421,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.CostCenterView.cs" />
     <Compile Include="Views\Stock\Widgets\IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.IssueWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.InspectionView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
