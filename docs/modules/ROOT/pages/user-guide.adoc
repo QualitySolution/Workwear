@@ -5,14 +5,12 @@ Quality Solution 2023
 :organization: Quality Solution
 :doctype: book
 :sectnums:
+:!chapter-signifier:
 :toc: left
 :icons: font
-:chapter-label:
 :toc-title: Содержание
 :toclevels: 3
 :imagesdir: ../images
-
-:sectnums:
 
 :leveloffset: 1
 
