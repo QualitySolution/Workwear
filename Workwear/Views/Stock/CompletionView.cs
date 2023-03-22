@@ -7,11 +7,9 @@ using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
-using Workwear.ViewModels.Stock.Widgets;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
-namespace Workwear.Views.Stock
-{
+namespace Workwear.Views.Stock {
 	public partial class CompletionView : EntityDialogViewBase<CompletionViewModel, Completion>
 	{
 		public CompletionView(CompletionViewModel viewModel): base(viewModel)
@@ -129,6 +127,14 @@ namespace Workwear.Views.Stock
 		}
 		void AddSizessResultItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSizesResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+		}
+
+		int lastHpanedWidth;
+		protected void OnHpaned1SizeAllocated(object o, SizeAllocatedArgs args) {
+			if(lastHpanedWidth != hpaned1.Allocation.Width) {
+				lastHpanedWidth = hpaned1.Allocation.Width;
+				hpaned1.Position = hpaned1.Allocation.Width / 2;
+			}
 		}
 	}
 }
