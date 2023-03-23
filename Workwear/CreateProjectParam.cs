@@ -162,6 +162,7 @@ namespace workwear
 			#region Обновления и версии
 			containerBuilder.RegisterModule(new UpdaterDesktopAutofacModule());
 			containerBuilder.RegisterModule(new UpdaterAppAutofacModule());
+			containerBuilder.RegisterModule(new UpdaterDBAutofacModule());
 			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion
