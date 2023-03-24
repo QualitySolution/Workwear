@@ -100,11 +100,11 @@ namespace Workwear.Tools.Features
 						
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 				}
@@ -145,7 +145,6 @@ namespace Workwear.Tools.Features
 		HistoryLog,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
-		#endregion
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
@@ -153,12 +152,7 @@ namespace Workwear.Tools.Features
 		[IsCloudFeature]
 		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
-		[IsCloudFeature]
-		[Display(Name = "Обращения сотрудников")]
-		Claims,
-		[IsCloudFeature]
-		[Display(Name = "Отзывы")]
-		Ratings,
+		#endregion
 		#endregion
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
@@ -171,6 +165,14 @@ namespace Workwear.Tools.Features
 		CostCenter,
 		[Display(Name = "Штрихкоды")]
 		Barcodes,
+		#region С облаком
+		[IsCloudFeature]
+		[Display(Name = "Обращения сотрудников")]
+		Claims,
+		[IsCloudFeature]
+		[Display(Name = "Отзывы")]
+		Ratings,
+		#endregion
 		#endregion
 		#region Спецредакции
 		[Display(Name = "Продажа")]

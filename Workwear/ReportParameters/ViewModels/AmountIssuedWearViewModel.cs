@@ -15,15 +15,14 @@ using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
+	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase
 	{
-		private readonly IUnitOfWork unitOfWork;
 		public readonly FeaturesService FeaturesService;
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
 			IUnitOfWorkFactory uowFactory, 
 			SubdivisionRepository subdivisionRepository,
-			FeaturesService featuresService) : base(rdlViewerViewModel) 
+			FeaturesService featuresService) : base(rdlViewerViewModel, uowFactory) 
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
@@ -45,9 +44,11 @@ namespace workwear.ReportParameters.ViewModels {
 			foreach(var item in Subdivisions) {
 				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			}
-			unitOfWork = uowFactory.CreateWithoutRoot();
-			Owners = unitOfWork.GetAll<Owner>().ToList();
-			OwnersVisible = FeaturesService.Available(WorkwearFeature.Owners) && Owners.Any();
+			
+			if(FeaturesService.Available(WorkwearFeature.Owners))
+				VisibleOwners = UoW.GetAll<Owner>().Any();
+			if(FeaturesService.Available(WorkwearFeature.CostCenter))
+				VisibleCostCenter = UoW.GetAll<CostCenter>().Any();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -61,7 +62,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
 					{"alternativeName", UseAlternativeName},
-					{"showOwners", OwnersVisible && SelectOwner.Equals(SpecialComboState.All)}, //Подумал что не стоит показывать колонку если выбран конкретный собственник
+					{"showOwners", VisibleOwners && SelectOwner.Equals(SpecialComboState.All)}, //Подумал что не стоит показывать колонку если выбран конкретный собственник
 					{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
 					{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
@@ -181,7 +182,8 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
 
 		#region Visible
-		public bool OwnersVisible;
+		public bool VisibleOwners;
+		public bool VisibleCostCenter;
 		#endregion
 
 		private string matchString;
@@ -207,7 +209,7 @@ namespace workwear.ReportParameters.ViewModels {
 			
 			if (!AddChildSubdivisions) return selectedId.ToArray();
 
-			var parents = unitOfWork.Session.QueryOver<Subdivision>()
+			var parents = UoW.Session.QueryOver<Subdivision>()
 				.WhereRestrictionOn(c => c.Id).IsIn(selectedId)
 				.List();
 

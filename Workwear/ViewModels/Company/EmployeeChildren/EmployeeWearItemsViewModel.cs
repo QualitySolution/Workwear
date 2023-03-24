@@ -230,6 +230,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				}
 			}
 			operation.RecalculateDatesOfIssueOperation(row.Graph, BaseParameters, interactive);
+			row.Graph.Refresh();
 			row.UpdateNextIssue(UoW);
 		}
 

@@ -154,6 +154,7 @@ namespace workwear
 			containerBuilder.RegisterType<MySqlConnectorExceptionErrorNumberLogger>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
+			containerBuilder.RegisterType<MySqlExceptionAccessDenied>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlConnectorConnectionIsLost>().As<IErrorHandler>();
@@ -162,6 +163,7 @@ namespace workwear
 			#region Обновления и версии
 			containerBuilder.RegisterModule(new UpdaterDesktopAutofacModule());
 			containerBuilder.RegisterModule(new UpdaterAppAutofacModule());
+			containerBuilder.RegisterModule(new UpdaterDBAutofacModule());
 			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
 			#endregion

@@ -52,7 +52,7 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(vm => vm.VisibleUseAlternative, w => w.Visible)
 				.InitializeFromSource();
 
-			ylabelOwners.Visible = yspeccomboboxOwners.Visible = ViewModel.OwnersVisible;
+			ylabelOwners.Visible = yspeccomboboxOwners.Visible = ViewModel.VisibleOwners;
 			yspeccomboboxOwners.SelectedItemStrictTyped = false;
 			yspeccomboboxOwners.Binding
 				.AddSource(ViewModel)
@@ -65,7 +65,7 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(ViewModel, wm => wm.ShowCost, w => w.Active)
 				.InitializeFromSource();
 
-			checkShowCostCenter.Visible = ViewModel.FeaturesService.Available(WorkwearFeature.CostCenter);
+			checkShowCostCenter.Visible = ViewModel.VisibleCostCenter;
 			checkShowCostCenter.Binding.AddBinding(ViewModel, v => v.ShowCostCenter, w => w.Active).InitializeFromSource();
 		}
 

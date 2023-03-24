@@ -276,7 +276,6 @@ namespace Workwear.Domain.Company
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета UpdateNextIssue, Graph должен быть заполнен!");
-			
 			DateTime? wantIssue = new DateTime();
 			NextIssueAnnotation = null;
 			if(Graph.Intervals.Any())

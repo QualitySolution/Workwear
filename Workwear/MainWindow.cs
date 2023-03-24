@@ -221,6 +221,7 @@ public partial class MainWindow : Gtk.Window
 		                         || FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
+		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
 
 		#region Для спецпошива
 		ActionPay.Visible = false;
