@@ -21505,12 +21505,12 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.Button" id="buttonAddEmployee">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAdd">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-add Menu</property>
-                    <property name="Label" translatable="yes">С работника</property>
+                    <property name="Label" translatable="yes">Добавить</property>
                     <property name="UseUnderline">True</property>
                   </widget>
                   <packing>
@@ -21521,13 +21521,13 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yButton" id="buttonDel">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
-                    <property name="UseStock">True</property>
-                    <property name="Type">StockItem</property>
-                    <property name="StockId">gtk-remove</property>
-                    <property name="label">gtk-remove</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">stock:gtk-remove Menu</property>
+                    <property name="Label" translatable="yes">Удалить</property>
+                    <property name="UseUnderline">True</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>

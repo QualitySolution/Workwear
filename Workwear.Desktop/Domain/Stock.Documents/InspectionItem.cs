@@ -63,25 +63,6 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField (ref writeOfDateAfter, value, () => WriteOfDateAfter); }
 		}
 
-		#region Списание со склада
-
-		private Warehouse warehouse;
-		[Display(Name = "Склад")]
-		public virtual Warehouse Warehouse {
-			get => warehouse;
-			set { SetField(ref warehouse, value, () => Warehouse); }
-		}
-
-		private WarehouseOperation warehouseOperation;
-		[Display(Name = "Операция на складе")]
-		[IgnoreHistoryTrace]
-		public virtual WarehouseOperation WarehouseOperation {
-			get => warehouseOperation;
-			set => SetField(ref warehouseOperation, value);
-		}
-
-		#endregion
-
 		private string aktNumber;
 		[Display(Name = "Номер акта")]
 		public virtual string AktNumber {

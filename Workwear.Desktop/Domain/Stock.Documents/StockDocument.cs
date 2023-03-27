@@ -31,7 +31,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		public StockDocument() { }
 
-		private DateTime? creationDate;
+		private DateTime? creationDate = DateTime.Now;
 		[Display(Name = "Дата создания")]
 		public virtual DateTime? CreationDate {
 			get => creationDate;
@@ -55,6 +55,8 @@ namespace Workwear.Domain.Stock.Documents
 					return typeof(Transfer);
 				case StockDocumentType.Completion:
 					return typeof(Completion);
+				case StockDocumentType.InspectionDoc:
+					return typeof(Inspection);
 			}
 			throw new NotSupportedException();
 		}
@@ -77,7 +79,6 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Комплектация")]
 		Completion,
 		[Display(Name = "Оценка")]
-		Inspection
-		
+		InspectionDoc
 	}
 }

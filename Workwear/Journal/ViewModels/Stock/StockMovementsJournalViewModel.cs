@@ -64,6 +64,7 @@ namespace workwear.Journal.ViewModels.Stock
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeOffItemAlias = null;
+			InspectionItem inspectionItemAlias = null;
 			EmployeeCard employeeCardAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			CompletionResultItem completionResultItemAlias = null;
@@ -193,6 +194,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.SelectGroup(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.SelectGroup(() => inspectionItemAlias.Document.Id).WithAlias(() => resultAlias.InspectionId)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 
@@ -225,6 +227,8 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
 					.Select(() => writeOffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
 					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
+					.Select(() => inspectionItemAlias.Id).WithAlias(() => resultAlias.InspectionItemId)
+					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.InspectionId)
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)

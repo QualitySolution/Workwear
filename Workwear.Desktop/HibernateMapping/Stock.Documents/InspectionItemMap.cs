@@ -17,8 +17,6 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 
 			References (x => x.Document).Column ("stock_inspection_id").Not.Nullable ();
 			References(x => x.OperationIssue).Column("operation_issue_id").Not.Nullable ();
-
-			
 		}
 	}
 }

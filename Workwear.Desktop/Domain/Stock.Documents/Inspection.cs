@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
+using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative(Gender = GrammaticalGender.Masculine,
@@ -10,7 +12,7 @@ namespace Workwear.Domain.Stock.Documents {
 		Nominative = "акт оценки",
 		Genitive = "акта оценки"
 	)]
-	public class Inspection: StockDocument, IValidatableObject
+	public class Inspection: StockDocument//, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -37,6 +39,11 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			throw new NotImplementedException();
+		public virtual void RemoveItem(InspectionItem item) {
+			ObservableItems.Remove (item);
+		}
+		public virtual void AddItem(EmployeeIssueOperation operation) {
+			ObservableItems.Add(new InspectionItem() { Document = this, OperationIssue = operation });
 		}
 	}
 }

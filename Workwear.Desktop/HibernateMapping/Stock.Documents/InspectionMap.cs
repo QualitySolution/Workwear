@@ -14,6 +14,14 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			Map (x => x.Date).Column ("date");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");
+			
+			References (x => x.CreatedbyUser).Column ("user_id");
+			
+			HasMany (x => x.Items)
+				.Inverse()
+				.KeyColumn ("stock_inspection_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
+				.LazyLoad ();
 		}
 	}
 }

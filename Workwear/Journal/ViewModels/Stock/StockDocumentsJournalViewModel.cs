@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -60,6 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.AddQuery(QueryCompletionDoc);
+			dataLoader.AddQuery(QueryInspectionDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
 			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
@@ -358,6 +359,35 @@ namespace workwear.Journal.ViewModels.Stock
 			.ThenBy(() => completionAlias.CreationDate).Desc
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 			return completionQuery;
+		}
+		
+		protected IQueryOver<Inspection> QueryInspectionDoc(IUnitOfWork uow) {
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.InspectionDoc)
+				return null;
+
+			Inspection inspectionAlias = null;
+
+			var inspectionQuery = uow.Session.QueryOver<Inspection>(() => inspectionAlias);
+			if(Filter.StartDate.HasValue)
+				inspectionQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				inspectionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+
+			inspectionQuery
+				.JoinAlias(() => inspectionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+			   			.SelectGroup(() => inspectionAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => inspectionAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+						.Select(() => StockDocumentType.InspectionDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => inspectionAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => inspectionAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+					   )
+			.OrderBy(() => inspectionAlias.Date).Desc
+			.ThenBy(() => inspectionAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return inspectionQuery;
 		}
 		#endregion
 		#region Действия
