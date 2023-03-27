@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using NHibernate.Criterion;
 using NLog;
@@ -6,6 +6,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Operations;
@@ -16,11 +17,13 @@ namespace Workwear.ViewModels.Stock {
 	public class InspectionViewModel : EntityDialogViewModelBase<Inspection> {
 		public InspectionViewModel(
 			IEntityUoWBuilder uowBuilder, 
-			IUnitOfWorkFactory unitOfWorkFactory, 
+			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation, 
-			IValidator validator = null, 
-			UnitOfWorkProvider unitOfWorkProvider = null) 
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+			IUserService userService,
+			IValidator validator = null)
+			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+			if(UoW.IsNew)
+				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 
 			DelSensitive = true;
 			AddEmployeeSensitive = true;
