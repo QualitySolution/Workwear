@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Linq;
 using NHibernate.Criterion;
 using NLog;
@@ -52,16 +53,18 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.DateSensitive = false;
 			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
+			selectJournal.ViewModel.OnSelectResult += LoadItems;
 		}
 		
-		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			//var selectVM = sender as StockBalanceJournalViewModel;
+		private void LoadItems(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var selectedNodes = e.GetSelectedObjects<EmployeeBalanceJournalNode>();
 			var operations = 
-				UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>()
+				UoW.GetById<EmployeeIssueOperation>(selectedNodes.Select(x => x.Id));
 					.Select(x => x.Id));
 			foreach (var operation in operations) 
 				Entity.AddItem(operation);
+			foreach (var node in selectedNodes) 
+				Entity.AddItem(operations.FirstOrDefault(o => o.Id == node.Id), node.Percentage);
 			//CalculateTotal(null, null);
 		}
 		

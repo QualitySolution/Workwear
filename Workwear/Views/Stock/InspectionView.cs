@@ -1,8 +1,11 @@
 using System;
-using Gamma.Binding.Converters;
+using Gtk;
 using QS.Views.Dialog;
+using QS.Widgets.GtkUI;
+using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
+using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock {
 	public partial class InspectionView : EntityDialogViewBase<InspectionViewModel, Inspection> {
@@ -39,13 +42,24 @@ namespace Workwear.Views.Stock {
 			ybuttonAdd.Clicked += OnButtonAddClicked;
 
 		}
-		
+		 
 				private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<InspectionItem> ()
 					.AddColumn ("Сотрудник").AddReadOnlyTextRenderer(e => e.Employee.FullName)
-					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name)
-					.AddColumn ("Дата").AddReadOnlyTextRenderer(e => e.IssuedDate.ToShortDateString())
+					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(800)
+					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
+					.AddColumn("Износ").AddTextRenderer(e => e.WearPercentBefore.ToString("P0") ?? String.Empty)
+					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  String.Empty)
+					//.AddColumn ("Установить износ").AddReadOnlyTextRenderer(e => e.WearPercentAfter.ToString("P0"))
+					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
+						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
+						.AddTextRenderer (e => "%", expand: false)
+					
+					.AddColumn ("Установить дату списания")
+					.AddReadOnlyTextRenderer(e => e.WriteOffDateAfter?.ToShortDateString() ??  String.Empty)
+					
+					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).Editable()
 					.Finish ();
 			
 			ytreeItems.Binding

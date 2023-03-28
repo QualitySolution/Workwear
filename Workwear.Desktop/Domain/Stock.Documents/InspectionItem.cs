@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -42,11 +42,11 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField (ref wearPercentBefore, value, () => WearPercentBefore); }
 		}
 		
-		private DateTime writeOfDateBefore;
+		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
-		public virtual DateTime WriteOfDateBefore {
-			get => writeOfDateBefore;
-			set { SetField (ref writeOfDateBefore, value, () => WriteOfDateBefore); }
+		public virtual DateTime? WriteOffDateBefore {
+			get => writeOffDateBefore;
+			set { SetField (ref writeOffDateBefore, value, () => WriteOffDateBefore); }
 		}
 
 		private decimal wearPercentAfter;
@@ -56,11 +56,11 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField (ref wearPercentAfter, value, () => WearPercentAfter); }
 		}
 		
-		private DateTime writeOfDateAfter;
+		private DateTime? writeOffDateAfter;
 		[Display (Name = "Дата списания после оценки")]	
-		public virtual DateTime WriteOfDateAfter {
-			get => writeOfDateAfter;
-			set { SetField (ref writeOfDateAfter, value, () => WriteOfDateAfter); }
+		public virtual DateTime? WriteOffDateAfter {
+			get => writeOffDateAfter;
+			set { SetField (ref writeOffDateAfter, value, () => WriteOffDateAfter); }
 		}
 
 		private string aktNumber;
