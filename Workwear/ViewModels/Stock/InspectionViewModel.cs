@@ -68,6 +68,23 @@ namespace Workwear.ViewModels.Stock {
 			//CalculateTotal(null, null);
 		}
 		
+		public override bool Save() {
+			logger.Info ("Запись документа...");
+
+			foreach(var item in Entity.Items) {
+				if(item.OperationIssue.FixedOperation == false && item.WearPercentAfter != item.WearPercentBefore)
+					item.OperationIssue.FixedOperation = true;
+			}	
+			
+			if(!base.Save()) {
+				logger.Info("Не Ок.");
+				return false;
+			}
+
+			logger.Info ("Ok");
+			return true;
+		}
+		
 		private void CalculateTotal() {
 			Total = "";
 			throw new System.NotImplementedException();

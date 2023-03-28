@@ -195,6 +195,13 @@ namespace Workwear.Domain.Operations
 			set => SetField(ref manualOperation, value);
 		}
 		
+		private bool fixedOperation;
+		[Display(Name = "Не пересчитывать износ и дату автосписания")]
+		public virtual bool FixedOperation {
+			get => fixedOperation;
+			set => SetField(ref fixedOperation, value);
+		}
+		
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
 		[Display(Name = "Операции")]
 		public virtual IList<BarcodeOperation> BarcodeOperations {

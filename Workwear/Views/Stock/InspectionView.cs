@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
@@ -51,14 +51,10 @@ namespace Workwear.Views.Stock {
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
 					.AddColumn("Износ").AddTextRenderer(e => e.WearPercentBefore.ToString("P0") ?? String.Empty)
 					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  String.Empty)
-					//.AddColumn ("Установить износ").AddReadOnlyTextRenderer(e => e.WearPercentAfter.ToString("P0"))
 					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
-					
-					.AddColumn ("Установить дату списания")
-					.AddReadOnlyTextRenderer(e => e.WriteOffDateAfter?.ToShortDateString() ??  String.Empty)
-					
+					.AddColumn ("Установить дату списания").AddDateRenderer(e => e.WriteOffDateBefore).Editable()
 					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).Editable()
 					.Finish ();
 			

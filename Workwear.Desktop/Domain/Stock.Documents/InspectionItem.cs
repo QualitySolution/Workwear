@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -33,7 +33,6 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual EmployeeCard Employee { get => operationIssue.Employee; }
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
-		public virtual DateTime IssuedDate { get => operationIssue.OperationTime; }
 
 		private decimal wearPercentBefore;
 		[Display (Name = "Изос до оценки")]	
