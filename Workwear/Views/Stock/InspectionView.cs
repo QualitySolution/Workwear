@@ -54,7 +54,7 @@ namespace Workwear.Views.Stock {
 					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
-					.AddColumn ("Установить дату списания").AddDateRenderer(e => e.WriteOffDateBefore).Editable()
+					.AddColumn ("Установить дату списания").AddDateRenderer(e => e.WriteOffDateAfter).Editable()
 					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).Editable()
 					.Finish ();
 			

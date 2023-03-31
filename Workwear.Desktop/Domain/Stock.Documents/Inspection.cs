@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
@@ -37,8 +37,10 @@ namespace Workwear.Domain.Stock.Documents {
 			}
 		}
 
-		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			throw new NotImplementedException();
+		//public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+		//	throw new NotImplementedException();
+		//}
+
 		public virtual void RemoveItem(InspectionItem item) {
 			ObservableItems.Remove (item);
 		}

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using NHibernate.Criterion;
@@ -60,9 +60,6 @@ namespace Workwear.ViewModels.Stock {
 			var selectedNodes = e.GetSelectedObjects<EmployeeBalanceJournalNode>();
 			var operations = 
 				UoW.GetById<EmployeeIssueOperation>(selectedNodes.Select(x => x.Id));
-					.Select(x => x.Id));
-			foreach (var operation in operations) 
-				Entity.AddItem(operation);
 			foreach (var node in selectedNodes) 
 				Entity.AddItem(operations.FirstOrDefault(o => o.Id == node.Id), node.Percentage);
 			//CalculateTotal(null, null);
@@ -71,11 +68,9 @@ namespace Workwear.ViewModels.Stock {
 		public override bool Save() {
 			logger.Info ("Запись документа...");
 
-			foreach(var item in Entity.Items) {
-				if(item.OperationIssue.FixedOperation == false && item.WearPercentAfter != item.WearPercentBefore)
-					item.OperationIssue.FixedOperation = true;
-			}	
-			
+			foreach(var item in Entity.Items) 
+				item.OperationIssue.FixedOperation = true;
+
 			if(!base.Save()) {
 				logger.Info("Не Ок.");
 				return false;
