@@ -44,9 +44,12 @@ namespace workwear.ReportParameters.ViewModels {
 			foreach(var item in Subdivisions) {
 				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			}
-			
-			if(FeaturesService.Available(WorkwearFeature.Owners))
+
+			if(FeaturesService.Available(WorkwearFeature.Owners)) {
+				Owners = UoW.GetAll<Owner>().ToList();
 				VisibleOwners = UoW.GetAll<Owner>().Any();
+			}
+				
 			if(FeaturesService.Available(WorkwearFeature.CostCenter))
 				VisibleCostCenter = UoW.GetAll<CostCenter>().Any();
 		}
