@@ -71,7 +71,8 @@ namespace workwear.Representations.Organization
 					.Select (() => expenseOperationAlias.Issued).WithAlias (() => resultAlias.Added)
 					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
 					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
-					.Select (() => expenseOperationAlias.ExpiryByNorm).WithAlias (() => resultAlias.ExpiryDate)
+					.Select (() => expenseOperationAlias.AutoWriteoffDate).WithAlias (() => resultAlias.AutoWriteoffDate)
+					.Select (() => expenseOperationAlias.FixedOperation).WithAlias (() => resultAlias.FixedOperation)
 					.SelectSubQuery (subQueryRemove).WithAlias (() => resultAlias.Removed)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeBalanceVMNode> ())
@@ -86,7 +87,7 @@ namespace workwear.Representations.Organization
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
-			.AddSetter ((w, e) => w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : string.Empty)
+			.AddSetter ((w, e) => w.Text = e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
 			.Finish ();
 		public override IColumnsConfig ColumnsConfig => treeViewConfig;
 		#endregion
@@ -111,13 +112,13 @@ namespace workwear.Representations.Organization
 		public decimal WearPercent { get; set;}
 		public DateTime IssuedDate { get; set;}
 		public DateTime? StartUseDate { get; set; }
-		public DateTime? ExpiryDate { get; set;}
-		public decimal Percentage => 
-			EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent);
+		public DateTime? AutoWriteoffDate { get; set;}
+		public decimal Percentage => AutoWriteoffDate != null ? EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, AutoWriteoffDate, WearPercent) : 0;
 		public int Added { get; set;}
 		public int Removed { get; set;}
 		public string BalanceText => $"{Added - Removed} {UnitsName}";
-		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
+		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
+		public bool FixedOperation { get; set; }
 	}
 }
 
