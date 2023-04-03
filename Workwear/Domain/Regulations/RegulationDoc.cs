@@ -6,7 +6,6 @@ using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
-using QS.Utilities.Text;
 
 namespace workwear.Domain.Regulations
 {
@@ -31,13 +30,7 @@ namespace workwear.Domain.Regulations
 			get { return name; }
 			set { SetField(ref name, value, () => Name); }
 		}
-		
-		
-		[Display(Name = "Обрезанное название документа")]
-		[StringLength(101)]
-		public virtual string CroppedName {
-			get { return StringManipulationHelper.EllipsizeMiddle(name, 101); }
-		}
+
 		private string number;
 
 		[Display(Name = "Номер")]
