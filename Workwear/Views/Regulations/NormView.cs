@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.ColumnConfig;
+using QS.Utilities.Text;
 using QS.Views.Dialog;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
@@ -23,8 +24,10 @@ namespace workwear.Views.Regulations
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
-			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
+			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,200));
+			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,200));
 			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
+			yentryRegulationDoc.WidthRequest = 70;
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
 			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
 			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
