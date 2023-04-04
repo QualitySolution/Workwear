@@ -71,7 +71,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 					{"byEmployee", ByEmployee},
 					{"showCost", ShowCost},
-					{"showCostCenter", ShowCostCenter}
+					{"showCostCenter", ShowCostCenter},
+					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm}
 		};
 
 		public override string Identifier { 
@@ -156,6 +157,12 @@ namespace workwear.ReportParameters.ViewModels {
 			get => showCostCenter;
 			set => SetField(ref showCostCenter, value);
 		}
+		
+		private bool showOnlyWithoutNorm;
+		public virtual bool ShowOnlyWithoutNorm {
+        			get => showOnlyWithoutNorm;
+        			set => SetField(ref showOnlyWithoutNorm, value);
+        		}
 
 		#endregion
 
