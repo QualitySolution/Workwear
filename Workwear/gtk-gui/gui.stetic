@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -13777,7 +13777,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 585">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 601">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14163,6 +14163,23 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowOnlyWithoutNorm">
+            <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">Отобразить в отчёте только выданное в ручную, например сверех нормы</property>
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Только выданное без нормы</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">7</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckChild">
             <property name="MemberName" />
             <property name="Tooltip" translatable="yes">Включать в отчет так же дочерние подразделения выбранных подразделений.</property>
@@ -14173,7 +14190,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">7</property>
+            <property name="Position">8</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -14189,7 +14206,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">8</property>
+            <property name="Position">9</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -14208,7 +14225,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">9</property>
+            <property name="Position">10</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -14223,7 +14240,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
-            <property name="Position">10</property>
+            <property name="Position">11</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

@@ -598,6 +598,7 @@ and operation_issued_by_employee.returned = 0 AND ((@withoutsub AND objects.id I
 and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
 GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
@@ -646,6 +647,9 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <QueryParameter Name="byEmployee">
             <Value>={?byEmployee}</Value>
           </QueryParameter>
+          <QueryParameter Name="showOnlyWithoutNorm">
+            <Value>={?showOnlyWithoutNorm}</Value>
+          </QueryParameter>             
         </QueryParameters>
       </Query>
       <Fields>
@@ -859,5 +863,13 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <Prompt>
       </Prompt>
     </ReportParameter>
+    <ReportParameter Name="showOnlyWithoutNorm">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>    
   </ReportParameters>
 </Report>
