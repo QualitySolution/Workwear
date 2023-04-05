@@ -1548,7 +1548,7 @@ AND ((@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
 AND (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 AND (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
-AND (NOT @showOnlyWithoutNorm OR @showOnlyWithoutNorm AND operation_issued_by_employee.protection_tools_id IS NULL)
+AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
 GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
