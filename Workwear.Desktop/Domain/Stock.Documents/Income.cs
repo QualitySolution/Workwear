@@ -131,13 +131,6 @@ namespace Workwear.Domain.Stock.Documents
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
 							new[] { nameof(Items) });
 				}
-
-			foreach(var duplicate in Items.GroupBy(x => x.StockPosition)
-				.Where(x => x.Count() > 1)) {
-				var caseCountText = NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз");
-				yield return new ValidationResult($"Складская позиция {duplicate.First().Title} указана в документе {caseCountText}.",
-					new[] { this.GetPropertyName(o => o.Items) });
-			}
 		}
 
 		#endregion
