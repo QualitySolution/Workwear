@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -17479,7 +17479,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:stock_mail-send Menu</property>
+                <property name="Icon">resource:workwear.icon.buttons.send.png</property>
                 <property name="Label" translatable="yes">Отправить</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonSend" />
