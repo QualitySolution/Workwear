@@ -100,6 +100,11 @@
 |-
 |+
 
+|https://doc.qsolution.ru/api/v1/common.html[Доступ к API]
+|-
+|-
+|+ (при размещении на QS:Облако)
+
 |<<mobile-app.adoc#claims,Обращения сотрудников>>
 |-
 |-
