@@ -248,7 +248,8 @@ namespace workwear
 			string duplicateMessage = "";
 			foreach(var duplicate in Entity.Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
 				duplicateMessage += $"- {duplicate.First().StockPosition.Title} указано " +
-				                    $"{NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз")}.\n";
+				                    $"{NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз")}" 
+				                    + $", общим колличеством {duplicate.Sum(x=>x.Amount)} \n";
 			}
 			if(!interactiveService.Question($"В документе есть повторяющиеся складские позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
