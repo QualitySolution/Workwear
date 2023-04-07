@@ -393,6 +393,44 @@ namespace Workwear.Domain.Operations
 			WearSize = item.WearSize;
 			Height = item.Height;
 		}
+
+		public virtual void UpdateWritoffOperation(EmployeeIssueOperation issueOperation, DateTime date) {
+			IssuedOperation = issueOperation;
+			Employee = issueOperation.Employee;
+			Nomenclature = issueOperation.Nomenclature;
+			operationTime = date;
+			Issued = 0;
+			Returned = issueOperation.issued;
+			WarehouseOperation = null;
+			BuhDocument = null;
+			NormItem = null;
+			ExpiryByNorm = null;
+			AutoWriteoffDate = null;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			ManualOperation = false;
+			OverrideBefore = false;
+			FixedOperation = true;
+		}
+		
+		public virtual void UpdateIssueOperation(EmployeeIssueOperation issueOperation, DateTime date) {
+			Employee = issueOperation.Employee;
+			Nomenclature = issueOperation.Nomenclature;
+			operationTime = date;
+			Issued = issueOperation.issued;
+			Returned = 0;
+			WarehouseOperation = null;
+			BuhDocument = null;
+			NormItem = issueOperation.normItem;;
+			ExpiryByNorm = null;
+			AutoWriteoffDate = null;
+			protectionTools = issueOperation.protectionTools;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			ManualOperation = false;
+			OverrideBefore = false;
+			FixedOperation = true;
+		}
 		#endregion
 		#region Пересчет выдачи
 

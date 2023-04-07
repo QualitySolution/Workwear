@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -15,6 +16,9 @@ namespace Workwear.Domain.Stock.Documents {
 	{
 		public virtual int Id { get; set; }
 
+		public virtual string Title =>
+			$"{Employee.ShortName} - переоценка {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
+		
 		private Inspection document;
 		[Display(Name = "Акт оценки")]
 		[IgnoreHistoryTrace]
@@ -29,39 +33,54 @@ namespace Workwear.Domain.Stock.Documents {
 			get => operationIssue;
 			set { SetField (ref operationIssue, value, () => OperationIssue); }
 		}
+		private EmployeeIssueOperation operationWriteoff = new EmployeeIssueOperation();
+		[Display (Name = "Операция списания")]	
+		public virtual EmployeeIssueOperation OperationWriteoff {
+			get => operationWriteoff;
+			set { SetField (ref operationWriteoff, value, () => OperationWriteoff); }
+		}
+		private EmployeeIssueOperation newOperationIssue = new EmployeeIssueOperation();
+		[Display (Name = "Новая операция выдачи")]	
+		public virtual EmployeeIssueOperation NewOperationIssue {
+			get => newOperationIssue;
+			set { SetField (ref newOperationIssue, value, () => NewOperationIssue); }
+		}
 		
 		public virtual EmployeeCard Employee { get => operationIssue.Employee; }
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
 
-		private decimal wearPercentBefore;
 		[Display (Name = "Изос до оценки")]	
 		public virtual decimal WearPercentBefore {
-			get => wearPercentBefore;
-			set { SetField (ref wearPercentBefore, value, () => WearPercentBefore); }
+			get => operationWriteoff.WearPercent;
 		}
 		
-		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
 		public virtual DateTime? WriteOffDateBefore {
-			get => writeOffDateBefore;
-			set { SetField (ref writeOffDateBefore, value, () => WriteOffDateBefore); }
+			get => OperationIssue.AutoWriteoffDate;
 		}
 
-		private decimal wearPercentAfter;
 		[Display (Name = "Изос после оценки")]	
 		public virtual decimal WearPercentAfter {
-			get => wearPercentAfter;
-			set { SetField (ref wearPercentAfter, value, () => WearPercentAfter); }
+			get => newOperationIssue.WearPercent;
+			set {
+				if(newOperationIssue.WearPercent != value) {
+					newOperationIssue.WearPercent = value;
+					OnPropertyChanged();
+				}
+			}
 		}
-		
 		private DateTime? writeOffDateAfter;
 		[Display (Name = "Дата списания после оценки")]	
 		public virtual DateTime? WriteOffDateAfter {
-			get => writeOffDateAfter;
-			set { SetField (ref writeOffDateAfter, value, () => WriteOffDateAfter); }
+			get => newOperationIssue.AutoWriteoffDate;
+			set {
+				if(newOperationIssue.AutoWriteoffDate != value) {
+					newOperationIssue.AutoWriteoffDate = value;
+					OnPropertyChanged();
+				}
+			}
 		}
-
 		private string aktNumber;
 		[Display(Name = "Номер акта")]
 		public virtual string AktNumber {

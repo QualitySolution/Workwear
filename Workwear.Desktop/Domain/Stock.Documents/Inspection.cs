@@ -45,14 +45,24 @@ namespace Workwear.Domain.Stock.Documents {
 			ObservableItems.Remove (item);
 		}
 		public virtual void AddItem(EmployeeIssueOperation operation, decimal wearPercent) {
-			ObservableItems.Add(new InspectionItem() {
-				Document = this, 
-				OperationIssue = operation,
-				WearPercentBefore = wearPercent,
-				WearPercentAfter = wearPercent,
-				WriteOffDateBefore = operation.AutoWriteoffDate,
-				WriteOffDateAfter = operation.AutoWriteoffDate
+			var item = (new InspectionItem() {
+				Document = this,
+				OperationIssue = operation
 			});
+			item.OperationWriteoff.UpdateWritoffOperation(operation, Date);
+			item.OperationWriteoff.IssuedOperation = operation;
+//пока на старте 0			
+			item.OperationWriteoff.WearPercent = wearPercent;
+			item.OperationWriteoff.UseAutoWriteoff = false;
+			item.OperationWriteoff.Returned = operation.Issued;
+
+			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
+			item.NewOperationIssue.AutoWriteoffDate = operation.AutoWriteoffDate; 
+			item.NewOperationIssue.UseAutoWriteoff = false;
+			item.NewOperationIssue.EmployeeOperationIssueOnWriteOff = item.OperationWriteoff;
+			item.NewOperationIssue.FixedOperation = true;
+			
+			ObservableItems.Add(item);
 		}
 	}
 }
