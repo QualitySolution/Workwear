@@ -100,7 +100,7 @@
 |-
 |+
 
-|<<stock.adoc#barcodes,Загрузка поступления в формате XML(1C)>>
+|<<import.adoc#import-stock-incomes,Загрузка поступлений в формате XML(1C)>>
 |-
 |-
 |+
