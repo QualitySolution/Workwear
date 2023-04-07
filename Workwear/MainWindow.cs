@@ -208,6 +208,7 @@ public partial class MainWindow : Gtk.Window
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
