@@ -118,6 +118,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
+				case WorkwearFeature.Exchange1C:
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
@@ -167,6 +168,8 @@ namespace Workwear.Tools.Features
 		CostCenter,
 		[Display(Name = "Штрихкоды")]
 		Barcodes,
+		[Display(Name = "Обмен с 1С")]
+		Exchange1C,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]

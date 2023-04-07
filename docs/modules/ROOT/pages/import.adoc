@@ -89,3 +89,6 @@ image::import_norm-step-2.png[]
 Количество:: Количество выданного.
 
 image::import_issues-step-3.png[]
+
+[#import-stock-incomes]
+== Загрузка документов поступления

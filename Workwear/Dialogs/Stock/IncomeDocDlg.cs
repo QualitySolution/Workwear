@@ -294,6 +294,8 @@ namespace workwear
 					entityWarehouseIncome.ViewModel.Entity = Entity.Warehouse = new StockRepository()
 						.GetDefaultWarehouse(UoW, featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 			}
+
+			ybuttonReadInFile.Visible = featuresService.Available(WorkwearFeature.Exchange1C);
 		}
 		#endregion
 		
