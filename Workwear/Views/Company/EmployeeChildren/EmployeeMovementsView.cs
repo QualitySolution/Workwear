@@ -92,7 +92,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Сдано\\списано").AddTextRenderer(e => e.AmountReturnedText)
 				.AddColumn("Автосписание").AddToggleRenderer(e => e.UseAutoWriteOff, false)
 					.AddSetter((c, e) => c.Visible = e.AmountReceived > 0)
-					.AddSetter((c, e) => c.Activatable = e.Operation.ExpiryByNorm.HasValue)
+					.AddSetter((c, e) => c.Activatable = !e.Operation.FixedOperation && e.Operation.ExpiryByNorm.HasValue)
 					.AddTextRenderer(e => e.AutoWriteOffDateTextColored, useMarkup: true)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 					.AddPixbufRenderer(x => x.IsSigned ? cardIcon : null)

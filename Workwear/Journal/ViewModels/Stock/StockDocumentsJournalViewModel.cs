@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -68,8 +68,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), 
-				typeof(Income), typeof(Writeoff), typeof(Transfer), typeof(Completion));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), 
+				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection));
 		}
 
 		#region Опциональные зависимости

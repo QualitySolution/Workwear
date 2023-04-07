@@ -62,6 +62,8 @@ namespace Workwear.Domain.Stock.Documents {
 			item.NewOperationIssue.EmployeeOperationIssueOnWriteOff = item.OperationWriteoff;
 			item.NewOperationIssue.FixedOperation = true;
 			
+			item.WriteOffDateAfter = operation.AutoWriteoffDate;
+			
 			ObservableItems.Add(item);
 		}
 	}
