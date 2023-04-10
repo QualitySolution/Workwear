@@ -271,8 +271,8 @@ namespace Workwear.Test.Domain.Operations.Graph
 		}
 		#endregion
 		
-		[Test(Description = "Проверяем обработку операций с  выдачей и списание одновременно.")]
-		public void Issued_And_Remove_Test()
+		[Test(Description = "Проверяем обработку операций с выдачей и списанием в одной операции.")]
+		public void AmountAtDay_OperationIssuedAndRemove_Test()
 		{
 			var operation1 = Substitute.For<EmployeeIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1, 9, 0, 0));
