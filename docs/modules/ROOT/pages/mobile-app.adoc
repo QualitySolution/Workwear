@@ -16,7 +16,7 @@ image:mobile-app_google-ru.svg[width=210,link=https://play.google.com/store/apps
 * Проверить сроки получения спецодежды
 * Получать Push-уведомления сообщениями от работников склада
 
-image:mobile-app_screen-1.png[width=210] image:mobile-app_screen-2.png[width=210] image:mobile-app_screen-3.png[width=210]
+image:mobile-app_screen-1.png[width=210] image:mobile-app_screen-2.png[width=210] image:mobile-app_screen-3.jpg[width=210]
 
 == Оповещение сотрудников
 
