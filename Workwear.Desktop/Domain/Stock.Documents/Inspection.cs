@@ -45,12 +45,6 @@ namespace Workwear.Domain.Stock.Documents {
 				OperationIssue = operation,
 				WearPercentBefore = wearPercent
 			});
-			item.OperationWriteoff.UpdateWritoffOperation(operation, Date);
-			item.OperationWriteoff.IssuedOperation = operation;
-//пока на старте 0			
-			item.OperationWriteoff.WearPercent = wearPercent;
-			item.OperationWriteoff.UseAutoWriteoff = false;
-			item.OperationWriteoff.Returned = operation.Issued;
 
 			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
 			item.NewOperationIssue.IssuedOperation = operation;

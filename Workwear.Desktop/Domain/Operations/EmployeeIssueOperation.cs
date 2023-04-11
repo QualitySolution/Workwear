@@ -410,7 +410,6 @@ namespace Workwear.Domain.Operations
 			Height = issueOperation.Height;
 			ManualOperation = false;
 			OverrideBefore = false;
-			FixedOperation = true;
 		}
 		#endregion
 		#region Пересчет выдачи
