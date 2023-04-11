@@ -44,7 +44,7 @@
 |+
 |+
 
-|<<stock-documents.adoc#completion,Документ комплектации>>
+|<<stock-documents.adoc#complectation,Документ комплектации>>
 |-
 |+
 |+
