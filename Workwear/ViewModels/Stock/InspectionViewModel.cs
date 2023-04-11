@@ -68,8 +68,10 @@ namespace Workwear.ViewModels.Stock {
 		public override bool Save() {
 			logger.Info ("Запись документа...");
 
-			foreach(var item in Entity.Items) 
+			foreach(var item in Entity.Items) {
 				item.OperationIssue.FixedOperation = true;
+				item.NewOperationIssue.StartOfUse = Entity.Date;
+			}
 
 			if(!base.Save()) {
 				logger.Info("Не Ок.");

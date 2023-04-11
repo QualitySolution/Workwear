@@ -63,7 +63,6 @@ namespace Workwear.Views.Stock {
 				.InitializeFromSource();
 		}
 
-		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<InspectionItem>());
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
 		

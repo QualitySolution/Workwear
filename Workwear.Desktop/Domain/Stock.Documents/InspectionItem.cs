@@ -33,12 +33,7 @@ namespace Workwear.Domain.Stock.Documents {
 			get => operationIssue;
 			set { SetField (ref operationIssue, value, () => OperationIssue); }
 		}
-		private EmployeeIssueOperation operationWriteoff = new EmployeeIssueOperation();
-		[Display (Name = "Операция списания")]	
-		public virtual EmployeeIssueOperation OperationWriteoff {
-			get => operationWriteoff;
-			set { SetField (ref operationWriteoff, value, () => OperationWriteoff); }
-		}
+
 		private EmployeeIssueOperation newOperationIssue = new EmployeeIssueOperation();
 		[Display (Name = "Новая операция выдачи")]	
 		public virtual EmployeeIssueOperation NewOperationIssue {
@@ -50,14 +45,18 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
 
+		private decimal wearPercentBefore;
 		[Display (Name = "Изос до оценки")]	
 		public virtual decimal WearPercentBefore {
-			get => operationWriteoff.WearPercent;
+			get => wearPercentBefore;
+			set => SetField(ref wearPercentBefore, value);
 		}
-		
+
+		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
 		public virtual DateTime? WriteOffDateBefore {
-			get => OperationIssue.AutoWriteoffDate;
+			get => writeOffDateBefore;
+			set => SetField(ref writeOffDateBefore, value);
 		}
 
 		[Display (Name = "Изос после оценки")]	
@@ -70,7 +69,7 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
-		private DateTime? writeOffDateAfter;
+
 		[Display (Name = "Дата списания после оценки")]	
 		public virtual DateTime? WriteOffDateAfter {
 			get => newOperationIssue.AutoWriteoffDate;

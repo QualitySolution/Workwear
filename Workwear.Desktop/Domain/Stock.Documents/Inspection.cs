@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Documents {
@@ -37,17 +36,14 @@ namespace Workwear.Domain.Stock.Documents {
 			}
 		}
 
-		//public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-		//	throw new NotImplementedException();
-		//}
-
 		public virtual void RemoveItem(InspectionItem item) {
 			ObservableItems.Remove (item);
 		}
 		public virtual void AddItem(EmployeeIssueOperation operation, decimal wearPercent) {
 			var item = (new InspectionItem() {
 				Document = this,
-				OperationIssue = operation
+				OperationIssue = operation,
+				WearPercentBefore = wearPercent
 			});
 			item.OperationWriteoff.UpdateWritoffOperation(operation, Date);
 			item.OperationWriteoff.IssuedOperation = operation;
@@ -57,13 +53,12 @@ namespace Workwear.Domain.Stock.Documents {
 			item.OperationWriteoff.Returned = operation.Issued;
 
 			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
-			item.NewOperationIssue.AutoWriteoffDate = operation.AutoWriteoffDate; 
+			item.NewOperationIssue.IssuedOperation = operation;
+			item.NewOperationIssue.Returned = operation.Issued;
 			item.NewOperationIssue.UseAutoWriteoff = false;
-			item.NewOperationIssue.EmployeeOperationIssueOnWriteOff = item.OperationWriteoff;
-			item.NewOperationIssue.FixedOperation = true;
-			
 			item.WriteOffDateAfter = operation.AutoWriteoffDate;
 			
+			operation.EmployeeOperationIssueOnWriteOff = item.NewOperationIssue;
 			ObservableItems.Add(item);
 		}
 	}
