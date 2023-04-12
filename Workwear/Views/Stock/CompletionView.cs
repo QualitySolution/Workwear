@@ -7,11 +7,9 @@ using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
-using Workwear.ViewModels.Stock.Widgets;
 using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
-namespace Workwear.Views.Stock
-{
+namespace Workwear.Views.Stock {
 	public partial class CompletionView : EntityDialogViewBase<CompletionViewModel, Completion>
 	{
 		public CompletionView(CompletionViewModel viewModel): base(viewModel)
@@ -54,7 +52,7 @@ namespace Workwear.Views.Stock
 			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
-					.WrapWidth(700)
+					.WrapWidth(500)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -63,13 +61,13 @@ namespace Workwear.Views.Stock
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
-				 .AddColumn("Собственники")
+				 .AddColumn("Собственник")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
-				 .AddColumn ("Процент износа")
+				 .AddColumn ("Износ")
 					.AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 				 .Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 					.AddTextRenderer(e => "%", expand: false)
@@ -82,7 +80,7 @@ namespace Workwear.Views.Stock
 			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
 				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
-					.WrapWidth(700)
+					.WrapWidth(500)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -91,13 +89,13 @@ namespace Workwear.Views.Stock
 				 .AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.HeightType, onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
-				 .AddColumn("Собственники")
+				 .AddColumn("Собственник")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
 					.Editing()
-				 .AddColumn ("Процент износа").AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
+				 .AddColumn ("Износ").AddNumericRenderer (e => e.WearPercent, new MultiplierToPercentConverter()).Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 				 .AddTextRenderer (e => "%", expand: false)
 				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
@@ -129,6 +127,14 @@ namespace Workwear.Views.Stock
 		}
 		void AddSizessResultItems(object sender, EventArgs eventArgs) {
 			ViewModel.AddSizesResultItems(ytreeReceiptItems.GetSelectedObject<CompletionResultItem> ());
+		}
+
+		int lastHpanedWidth;
+		protected void OnHpaned1SizeAllocated(object o, SizeAllocatedArgs args) {
+			if(lastHpanedWidth != hpaned1.Allocation.Width) {
+				lastHpanedWidth = hpaned1.Allocation.Width;
+				hpaned1.Position = hpaned1.Allocation.Width / 2;
+			}
 		}
 	}
 }

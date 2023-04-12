@@ -1,18 +1,16 @@
 :title-separator: {sp}|
 = QS: Спецодежда и имущество | Руководство пользователя
-Quality Solution 2022
-версия 2.7
+Quality Solution 2023
+версия 2.8
 :organization: Quality Solution
 :doctype: book
 :sectnums:
+:!chapter-signifier:
 :toc: left
 :icons: font
-:chapter-label:
 :toc-title: Содержание
 :toclevels: 3
 :imagesdir: ../images
-
-:sectnums:
 
 :leveloffset: 1
 
@@ -22,11 +20,11 @@ include::interface.adoc[]
 
 include::organization.adoc[]
 
-include::nomenclature.adoc[]
-
 include::regulations.adoc[]
 
 include::employees.adoc[]
+
+include::stock.adoc[]
 
 include::stock-documents.adoc[]
 

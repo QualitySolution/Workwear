@@ -22,6 +22,8 @@ namespace Workwear.Views.Company
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivision;
 			entityDepartment.ViewModel = ViewModel.EntryDepartment;
 			entryCostCenter.ViewModel = ViewModel.EntryCostCenter;
+			entryCostCenter.Binding.AddBinding(ViewModel, v => v.VisibleCostCenter, w => w.Visible).InitializeFromSource();
+			labelCostCenter.Binding.AddBinding(ViewModel, v => v.VisibleCostCenter, w => w.Visible).InitializeFromSource();
 			ytextComments.Binding.AddBinding(Entity, e => e.Comments, w => w.Buffer.Text).InitializeFromSource();
 		}
 	}

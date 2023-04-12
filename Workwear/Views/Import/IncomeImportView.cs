@@ -18,7 +18,6 @@ namespace Workwear.Views.Import
 			ybuttonFileChoose.Clicked += OnFileChooseClick;
 			ViewModel.DocumentLoaded += ViewModelOnDocumentLoaded;
 			ybuttonDownload.Clicked += OnDownloadClicked;
-			ybuttonCancel.Clicked += YButtonCancelOnClicked;
 			ybuttonCreateIncome.Clicked += YButtonSaveOnClicked;
 			ybuttonCreateNomenclature.Clicked += YButtonCreateNomenclatureOnClicked;
 			ybuttonSelectAll.Clicked += YButtonSelectAllOnClicked;
@@ -36,9 +35,9 @@ namespace Workwear.Views.Import
 				.InitializeFromSource();
 			
 			ytreeview1.ColumnsConfig = ColumnsConfigFactory.Create<DocumentViewModel>()
+				.AddColumn("Загружать?").AddToggleRenderer(c => c.WantDownload)
 				.AddColumn("Номер").AddNumericRenderer(c => c.Number)
 				.AddColumn("Документ").AddTextRenderer(c => c.DocumentType)
-				.AddColumn("Загружать?").AddToggleRenderer(c => c.WantDownload)
 				.Finish();
 			
 			ytreeview1.Binding
@@ -123,7 +122,6 @@ namespace Workwear.Views.Import
 		}
 
 		private void ViewModelOnDocumentLoaded() => ytreeview1.YTreeModel.EmitModelChanged();
-		private void YButtonCancelOnClicked(object sender, EventArgs e) => ViewModel.Cancel();
 		private void YButtonSaveOnClicked(object sender, EventArgs e) => ViewModel.CreateIncome();
 		private void YButtonCreateNomenclatureOnClicked(object sender, EventArgs e) => ViewModel.CreateNomenclature();
 		private void YButtonSelectAllOnClicked(object sender, EventArgs e) {

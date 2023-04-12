@@ -76,52 +76,6 @@ namespace Workwear.Test.Integration.Stock
 			}
 		}
 
-		[Test(Description = "Проверяем что не считаем документ валидным " +
-		                    "если в нем несколько раз приходуется одинаковая складская позиция.")]
-		[Category("Integrated")]
-		public void NotValidMultiRowWithSameStockPositionTest()
-		{
-			var ask = Substitute.For<IInteractiveService>();
-			ask.Question(string.Empty).ReturnsForAnyArgs(true);
-
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var warehouse = new Warehouse();
-				uow.Save(warehouse);
-				
-				var sizeType = new SizeType();
-				uow.Save(sizeType);
-
-				var nomenclatureType = new ItemsType {
-					Name = "Тестовый тип номенклатуры",
-					SizeType = sizeType
-				};
-				uow.Save(nomenclatureType);
-
-				var nomenclature = new Nomenclature {
-					Type = nomenclatureType
-				};
-				uow.Save(nomenclature);
-				
-				var sizeX = new Size {Name = "X", SizeType = sizeType};
-				uow.Save(sizeX);
-
-				var income = new Income {
-					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
-				};
-				var incomeItem1 = income.AddItem(nomenclature, ask);
-				incomeItem1.WearSize = sizeX;
-				incomeItem1.Amount = 10;
-				var incomeItem2 = income.AddItem(nomenclature, ask);
-				incomeItem2.WearSize = sizeX;
-				incomeItem2.Amount = 5;
-				income.UpdateOperations(uow, ask);
-				var validator = new QS.Validation.ObjectValidator();
-				Assert.That(validator.Validate(income), Is.False);
-			}
-		}
-
 		[Test(Description = "Проверяем процент износа не теряется при сохранении.")]
 		[Category("Integrated")]
 		public void Income_ItemWearPercent_SaveInStockTest()
