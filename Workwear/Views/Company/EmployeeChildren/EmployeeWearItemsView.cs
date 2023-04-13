@@ -63,7 +63,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение")
 					.ToolTipText(node => node.NextIssueAnnotation)
-					.AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
+					.AddTextRenderer(node => $"{node.NextIssue:d}")
 					.AddSetter((w, node) => w.Foreground = node.NextIssueColor(ViewModel.BaseParameters))
 					.AddPixbufRenderer(node => String.IsNullOrEmpty(node.NextIssueAnnotation) ? null : infoIcon)
 				.AddColumn("Просрочка").AddTextRenderer(
