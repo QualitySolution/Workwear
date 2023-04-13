@@ -740,19 +740,21 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем полную выдачу
+			//Всегда показываем все списания!!
+			
+			//До списаний
 			Assert.That(item.LastIssued(new DateTime(2022, 1,20)).Count(), Is.EqualTo(1));
 			var lastissue = item.LastIssued(new DateTime(2022, 1, 20)).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
-			Assert.That(lastissue.removed, Is.EqualTo(0));
+			Assert.That(lastissue.removed, Is.EqualTo(3));
 			
-			//С первым списанием
+			//После первого списания
 			Assert.That(item.LastIssued(new DateTime(2022, 2,10)).Count(), Is.EqualTo(1));
 			lastissue = item.LastIssued(new DateTime(2022, 2, 10)).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
-			Assert.That(lastissue.removed, Is.EqualTo(2));
+			Assert.That(lastissue.removed, Is.EqualTo(3));
 			
 			//Со обоими списаниями
 			Assert.That(item.LastIssued(new DateTime(2022, 5,10)).Count(), Is.EqualTo(1));
@@ -766,7 +768,7 @@ namespace Workwear.Test.Domain.Company
 			lastissue = item.LastIssued(new DateTime(2023, 5, 20)).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
-			//Assert.That(lastissue.removed, Is.EqualTo(3)); Здесь не знаю как правильно, поэтому пока не проверяем, предположу то не надо усложнять вро уже списанное.
+			Assert.That(lastissue.removed, Is.EqualTo(3));
 		}
 
 		[Test(Description = "Проверяем что в последних выдачах не показываем полное списание, в дату самого списания тоже.")]

@@ -144,19 +144,12 @@ namespace Workwear.Domain.Company
 			if(!Graph.Intervals.Any())
 				return Array.Empty<(DateTime date, int amount, int removed, GraphItem item)>();
 			Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)> showed = new Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)>();
-			var currentInterval = Graph.IntervalOfDate(onDate);
-			if(currentInterval != null && currentInterval.ActiveIssues.Any()) {
-				foreach(var item in currentInterval.ActiveIssues) {
-					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
-						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item));
-				}
-			}
-			//Будущие операции показываем всегда.
+			
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
 				foreach(var item in interval.ActiveIssues) {
 					if(showed.ContainsKey(item.IssueOperation.Id))
 						continue;
-					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item));
+					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued, item.WriteOffOperations.Sum(x => x.Returned), item));
 				}
 				if(interval.StartDate <= onDate && showed.Any())
 					break;
