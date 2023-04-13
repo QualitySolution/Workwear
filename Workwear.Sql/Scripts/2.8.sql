@@ -967,6 +967,7 @@ DROP TABLE IF EXISTS `stock_mass_expense` ;
 -- Добавляем дежурные сиз в нормы
 ALTER TABLE norms_item
     CHANGE COLUMN `period_type` `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year';
+
 -- Увеличиваем размер колонки с названием СИЗ
 ALTER TABLE protection_tools
 	CHANGE COLUMN `name` `name` VARCHAR(800) NOT NULL ;
@@ -976,9 +977,18 @@ ALTER TABLE `base_parameters`
 CHANGE COLUMN `name` `name` VARCHAR(80) NOT NULL ,
 CHANGE COLUMN `str_value` `str_value` VARCHAR(500) NULL DEFAULT NULL;
 
+-- Увеличиваем размер поля с ТТН
+ALTER TABLE stock_income
+  CHANGE COLUMN `number` `number` VARCHAR(15) NULL DEFAULT NULL;
+
 -- Меняем тип колонки а номенклатурным номером.
 ALTER TABLE `nomenclature`
 	CHANGE COLUMN `number` `number` VARCHAR(20) NULL DEFAULT NULL ;
+
+-- Добавляем рейтинги номенклатуры
+ALTER TABLE `nomenclature`
+  ADD COLUMN `rating` FLOAT NULL DEFAULT NULL AFTER `archival`,
+  ADD COLUMN `rating_count` INT NULL DEFAULT NULL AFTER `rating`;
 
 -- Добавляем собственников на продукцию
 ALTER TABLE `operation_warehouse`
@@ -1100,12 +1110,94 @@ UPDATE nomenclature SET nomenclature.sex = 'Universal' WHERE nomenclature.sex IS
 ALTER TABLE `nomenclature`
 	CHANGE COLUMN `sex` `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal';
 
--- Обновляем хранимую процедуру
-DROP function IF EXISTS `count_issue`;
-
 -- Добавляем отметку о возврате
 ALTER TABLE `stock_income_detail`
-    ADD COLUMN `comment_return` VARCHAR(120) NULL DEFAULT NULL AFTER `height_id`
+    ADD COLUMN `comment_return` VARCHAR(120) NULL DEFAULT NULL AFTER `height_id`;
+
+-- Создаем новый документ переоценки
+CREATE TABLE IF NOT EXISTS `stock_inspection` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `date` DATE NOT NULL,
+  `creation_date` DATETIME NULL DEFAULT NULL,
+  `user_id` INT UNSIGNED NULL DEFAULT NULL,
+  `director_id` INT UNSIGNED NULL DEFAULT NULL,
+  `chairman_id` INT UNSIGNED NULL DEFAULT NULL,
+  `comment` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `stock_inspection_fk_1_idx` (`user_id` ASC),
+  INDEX `stock_inspection_fk_2_idx` (`director_id` ASC),
+  INDEX `stock_inspection_fk_3_idx` (`chairman_id` ASC),
+  CONSTRAINT `stock_inspection_fk_1`
+    FOREIGN KEY (`user_id`)
+      REFERENCES `users` (`id`)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  CONSTRAINT `stock_inspection_fk_2`
+    FOREIGN KEY (`director_id`)
+      REFERENCES `leaders` (`id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE,
+  CONSTRAINT `stock_inspection_fk_3`
+    FOREIGN KEY (`chairman_id`)
+      REFERENCES `leaders` (`id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE)
+  ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `stock_inspection_items` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stock_inspection_id` INT UNSIGNED NOT NULL,
+  `operation_issue_id` INT UNSIGNED NOT NULL,
+  `new_operation_issue_id` INT UNSIGNED NOT NULL,
+  `writeoff_date_before` DATE NULL DEFAULT NULL,
+  `wear_percent_before` DECIMAL(3,2) NOT NULL DEFAULT 0.00,
+  `cause` TEXT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `stock_inspection_detail_fk_1_idx` (`stock_inspection_id` ASC),
+  INDEX `stock_inspection_detail_fk_2_idx` (`operation_issue_id` ASC),
+  INDEX `stock_inspection_detail_fk_3_idx` (`new_operation_issue_id` ASC),
+  CONSTRAINT `stock_inspection_detail_fk_1`
+    FOREIGN KEY (`stock_inspection_id`)
+      REFERENCES `stock_inspection` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+  CONSTRAINT `stock_inspection_detail_fk_2`
+    FOREIGN KEY (`operation_issue_id`)
+      REFERENCES `operation_issued_by_employee` (`id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE,
+  CONSTRAINT `stock_inspection_detail_fk_3`
+    FOREIGN KEY (`new_operation_issue_id`)
+      REFERENCES `operation_issued_by_employee` (`id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE)
+  ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stock_inspection_id` INT UNSIGNED NOT NULL,
+  `member_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `stock_inspection_members_fk1_idx` (`stock_inspection_id` ASC),
+  INDEX `stock_inspection_members_fk2_idx` (`member_id` ASC),
+  CONSTRAINT `stock_inspection_members_fk1`
+    FOREIGN KEY (`stock_inspection_id`)
+      REFERENCES `stock_inspection` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+  CONSTRAINT `stock_inspection_members_fk2`
+    FOREIGN KEY (`member_id`)
+      REFERENCES `leaders` (`id`)
+      ON DELETE RESTRICT
+      ON UPDATE CASCADE)
+  ENGINE = InnoDB;
+
+ALTER TABLE `operation_issued_by_employee`
+  ADD COLUMN `override_before` TINYINT(1) NOT NULL DEFAULT manual_operation AFTER `manual_operation`,
+  ADD COLUMN `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0 AFTER `override_before`;
+
+-- Обновляем хранимую процедуру
+DROP function IF EXISTS `count_issue`;
 
 DELIMITER $$
 
