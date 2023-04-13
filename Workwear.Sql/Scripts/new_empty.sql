@@ -1411,7 +1411,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense_detail` (
   INDEX `fk_stock_collective_expense_detail_6_idx` (`employee_id` ASC),
   INDEX `fk_stock_collective_expense_detail_7_idx` (`size_id` ASC),
   INDEX `fk_stock_collective_expense_detail_8_idx` (`height_id` ASC),
-  INDEX `fk_stock_collective_expense_detail_1_idx` (`employee_issue_operation_id` ASC),
+  INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_detail_1`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
