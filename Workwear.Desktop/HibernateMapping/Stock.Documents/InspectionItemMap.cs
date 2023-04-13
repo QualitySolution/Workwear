@@ -6,7 +6,7 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 
 		public InspectionItemMap() {
 
-			Table ("stock_inspection_detail");
+			Table ("stock_inspection_items");
 
 			if(Workwear.HibernateMapping.MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
