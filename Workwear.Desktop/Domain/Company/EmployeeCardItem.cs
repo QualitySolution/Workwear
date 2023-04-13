@@ -192,7 +192,7 @@ namespace Workwear.Domain.Company
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 
-		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => x.date > DateTime.Today ? $"<span foreground=\"violet\"{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => x.date > DateTime.Today ? $"<span foreground=\"darkviolet\">{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
 		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 		public EmployeeCardItem () { }

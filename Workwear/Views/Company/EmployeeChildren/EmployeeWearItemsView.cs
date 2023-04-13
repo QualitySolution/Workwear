@@ -58,7 +58,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
 				.AddColumn("Послед. получения")
 					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null) //FIXME пока так определяем ручную операцию. Когда будут типы операций надо переделать.
-					.AddTextRenderer(node => node.LastIssuedText)
+					.AddTextRenderer(node => node.LastIssuedText, useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение")
