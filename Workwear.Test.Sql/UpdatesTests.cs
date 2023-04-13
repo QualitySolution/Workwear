@@ -159,11 +159,12 @@ namespace Workwear.Test.Sql
 			var versionDb2 = GetVersion(connection2, connection2.Database);
 			Assert.That(versionDb1, Is.EqualTo(versionDb2), $"Версии у баз различаются. '{ versionDb1}' и '{versionDb2}'");
 
-			Assert.That(DBSchemaEqual(connection1, connection2, Console.WriteLine), Is.True,"Схемы баз отличаются");
-			Assert.That(DBSchemaEqual(connection2, connection1, Console.WriteLine), Is.True,"Схемы баз отличаются");
+			var compareResult = DBSchemaEqual(connection1, connection2, true, Console.WriteLine);
+			var reverseCompareResult = DBSchemaEqual(connection2, connection1, false, Console.WriteLine);
+			Assert.That(compareResult && reverseCompareResult, Is.True,"Схемы баз отличаются");
 		}
 
-		private bool DBSchemaEqual(MySqlConnection connection1, MySqlConnection connection2, RowOfSchema.Log log) {
+		private bool DBSchemaEqual(MySqlConnection connection1, MySqlConnection connection2, bool checkDiff, RowOfSchema.Log log) {
 			bool result = true;
 
 			foreach(string schema in new List<string> {"Tables", "Foreign Keys", "Indexes", "IndexColumns", "Columns"})  {
@@ -179,7 +180,7 @@ namespace Workwear.Test.Sql
 
 				foreach(var row in db1) {
 					if(db2.ContainsKey(row.Key)) {
-						if(db1[row.Key].IsDiff(db2[row.Key], log)) {
+						if(checkDiff && db1[row.Key].IsDiff(db2[row.Key], log)) {
 							//детали переданы в log()
 							result = false;
 						}

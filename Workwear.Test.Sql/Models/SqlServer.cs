@@ -54,6 +54,7 @@ namespace QS.DBScripts.Models
 					Assert.Fail($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.");
 				Thread.Sleep(500);
 			}
+			Console.WriteLine();
 		}
 		
 		public void Stop()
