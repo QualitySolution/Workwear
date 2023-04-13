@@ -84,7 +84,7 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
-		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item?.IssueOperation;
+		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) => LastIssued(onDate, baseParameters).FirstOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -140,12 +140,18 @@ namespace Workwear.Domain.Company
 
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
-		public virtual (DateTime date, int amount, int removed, GraphItem item)[] LastIssued(DateTime onDate) {
+		public virtual (DateTime date, int amount, int removed, GraphItem item)[] LastIssued(DateTime onDate, BaseParameters baseParameters) {
 			if(!Graph.Intervals.Any())
 				return Array.Empty<(DateTime date, int amount, int removed, GraphItem item)>();
 			Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)> showed = new Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)>();
 			
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
+				if(interval.StartDate <= onDate 
+				   && showed.Count == 1 
+				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormItem?.Amount
+				   && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
+					break;
+				
 				foreach(var item in interval.ActiveIssues) {
 					if(showed.ContainsKey(item.IssueOperation.Id))
 						continue;
@@ -184,9 +190,6 @@ namespace Workwear.Domain.Company
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
-
-		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => x.date > DateTime.Today ? $"<span foreground=\"darkviolet\">{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
-		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 		public EmployeeCardItem () { }
 		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)
