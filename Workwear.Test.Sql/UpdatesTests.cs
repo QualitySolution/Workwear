@@ -4,10 +4,9 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using Dapper;
-using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using NLog;
 using NUnit.Framework;
 using QS.DBScripts.Controllers;
 using QS.DBScripts.Models;
@@ -41,6 +40,13 @@ namespace Workwear.Test.Sql
 			}
 		}
 
+		[OneTimeSetUp]
+		public void Setup() {
+			LogManager.Setup().LoadConfiguration(builder => {
+				builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
+			});
+		}
+		
 		[TestCaseSource(nameof(DbSamples))]
 		public void ApplyUpdatesTest(SqlServer server, DbSample sample) {
 			var updateConfiguration = ScriptsConfiguration.MakeUpdateConfiguration();
