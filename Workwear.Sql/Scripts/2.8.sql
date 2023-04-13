@@ -1018,7 +1018,7 @@ ALTER TABLE `nomenclature`
 
 CREATE TABLE IF NOT EXISTS `barcodes` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`creation_date` DATE NOT NULL DEFAULT CURRENT_DATE(),
+	`creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
 	`title` VARCHAR(13) NULL DEFAULT NULL,
 	`nomenclature_id` INT(10) UNSIGNED NOT NULL,
 	`size_id` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -1194,7 +1194,7 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
   ENGINE = InnoDB;
 
 ALTER TABLE `operation_issued_by_employee`
-  ADD COLUMN `override_before` TINYINT(1) NOT NULL DEFAULT manual_operation AFTER `manual_operation`,
+  ADD COLUMN `override_before` TINYINT(1) NOT NULL DEFAULT (manual_operation) AFTER `manual_operation`,
   ADD COLUMN `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0 AFTER `override_before`;
 
 -- Обновляем хранимую процедуру

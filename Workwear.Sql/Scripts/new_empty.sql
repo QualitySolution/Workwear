@@ -688,7 +688,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `sign_key` VARCHAR(16) NULL DEFAULT NULL,
   `sign_timestamp` DATETIME NULL DEFAULT NULL,
   `manual_operation` TINYINT(1) NOT NULL DEFAULT 0,
-  `override_before` TINYINT(1) NOT NULL DEFAULT manual_operation,
+  `override_before` TINYINT(1) NOT NULL DEFAULT (manual_operation),
   `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
@@ -1788,7 +1788,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `creation_date` DATE NOT NULL DEFAULT CURRENT_DATE(),
+  `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
