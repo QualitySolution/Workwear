@@ -143,25 +143,25 @@ namespace Workwear.Domain.Company
 		public virtual IEnumerable<(DateTime date, int amount, int removed, GraphItem item)> LastIssued(DateTime onDate) {
 			if(!Graph.Intervals.Any())
 				yield break;
+			HashSet<int> showed = new HashSet<int>();
 			var currentInterval = Graph.IntervalOfDate(onDate);
 			if(currentInterval != null && currentInterval.ActiveIssues.Any()) {
 				foreach(var item in currentInterval.ActiveIssues) {
+					showed.Add(item.IssueOperation.Id);
 					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
 						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item);
 				}
 			}
-			else {
-				HashSet<int> showed = new HashSet<int>();
-				foreach(var interval in Graph.OrderedIntervalsReverse) {
-					foreach(var item in interval.ActiveItems) {
-						if(showed.Contains(item.IssueOperation.Id))
-							continue;
-						showed.Add(item.IssueOperation.Id);
-						yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
-					}
-					if(interval.StartDate <= onDate)
-						break;
+			//Будущие операции показываем всегда.
+			foreach(var interval in Graph.OrderedIntervalsReverse) {
+				foreach(var item in interval.ActiveItems) {
+					if(showed.Contains(item.IssueOperation.Id))
+						continue;
+					showed.Add(item.IssueOperation.Id);
+					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
 				}
+				if(interval.StartDate <= onDate)
+					break;
 			}
 		}
 		#endregion

@@ -872,6 +872,58 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
 		}
+		
+		[Test(Description = "Проверяем что показываем все выдачи будущего сколько бы их не было.")]
+		public void LastIssued_AllInFutureCase() {
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2024, 3, 13),
+					AutoWriteoffDate = new DateTime(2024, 3, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2024, 1, 13),
+					StartOfUse = new DateTime(2024, 1, 13),
+					ExpiryByNorm = new DateTime(2025, 1, 13),
+					AutoWriteoffDate = new DateTime(2025, 1, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 3,
+					OperationTime = new DateTime(2024, 2, 13),
+					StartOfUse = new DateTime(2024, 2, 13),
+					ExpiryByNorm = new DateTime(2025, 2, 13),
+					AutoWriteoffDate = new DateTime(2025, 2, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 5,
+					OperationTime = new DateTime(2024, 6, 13),
+					StartOfUse = new DateTime(2024, 6, 13),
+					ExpiryByNorm = new DateTime(2025, 6, 13),
+					AutoWriteoffDate = new DateTime(2025, 6, 13),
+					Issued = 1
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем все последние выдачи даже в будущем.
+			var today = new DateTime(2022, 2, 13);
+			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(4));
+			var issue = item.LastIssued(today).First(x => x.date == new DateTime(2023, 3, 13));
+			Assert.That(issue.amount, Is.EqualTo(1));
+			Assert.That(issue.removed, Is.EqualTo(0));
+			//Вторая 
+			var issue2 = item.LastIssued(today).First(x => x.date == new DateTime(2024, 6, 13));
+			Assert.That(issue2.amount, Is.EqualTo(1));
+			Assert.That(issue2.removed, Is.EqualTo(0));
+		}
 		#endregion
 		#region LastIssueOperation
 
