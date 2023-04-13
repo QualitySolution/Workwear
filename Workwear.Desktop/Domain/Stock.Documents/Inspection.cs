@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using QS.DomainModel.Entity;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Documents {
@@ -34,6 +35,27 @@ namespace Workwear.Domain.Stock.Documents {
 					observableItems = new GenericObservableList<InspectionItem> (Items);
 				return observableItems;
 			}
+		}
+
+		private Leader director;
+		[Display (Name = "Утверждающее лицо")]
+		public virtual Leader Director {
+			get { return director; }
+			set { SetField (ref director, value, () => Director); }
+		}
+		
+		private Leader chairman;
+		[Display (Name = "Председатель комисии")]
+		public virtual Leader Chairman {
+			get { return chairman; }
+			set { SetField (ref chairman, value, () => Chairman); }
+		}
+		
+		private IList<Leader> members = new List<Leader>();
+		[Display(Name = "Члены комисии")]
+		public virtual IList<Leader> Members {
+			get { return members; }
+			set { SetField(ref members, value, () => Members); }
 		}
 
 		public virtual void RemoveItem(InspectionItem item) {

@@ -16,6 +16,8 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			Map(x => x.CreationDate).Column("creation_date");
 			
 			References (x => x.CreatedbyUser).Column ("user_id");
+			References (x => x.Director).Column ("director_id");
+			References (x => x.Chairman).Column ("chairman_id");
 			
 			HasMany (x => x.Items)
 				.Inverse()

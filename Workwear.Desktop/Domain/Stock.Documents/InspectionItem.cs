@@ -80,12 +80,6 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
-		private string aktNumber;
-		[Display(Name = "Номер акта")]
-		public virtual string AktNumber {
-			get => aktNumber;
-			set => SetField(ref aktNumber, value);
-		}
 		
 		private string cause;
 		[Display(Name = "Причина износа")]

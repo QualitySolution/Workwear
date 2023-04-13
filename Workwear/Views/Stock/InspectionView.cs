@@ -17,9 +17,8 @@ namespace Workwear.Views.Stock {
 		}
 
 		private void ConfigureDlg() {
-			ylabelId.Binding
-				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
-				.InitializeFromSource();
+			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
+			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
 			ylabelUser.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource();
