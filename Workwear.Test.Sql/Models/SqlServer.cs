@@ -48,10 +48,11 @@ namespace QS.DBScripts.Models
 				} catch (Exception e)
 				{
 					Console.Write('.');
+					if(DateTime.Now > endTime) {
+						throw new TimeoutException($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.", e);
+					}
 				}
 
-				if (DateTime.Now > endTime)
-					Assert.Fail($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.");
 				Thread.Sleep(500);
 			}
 			Console.WriteLine();
