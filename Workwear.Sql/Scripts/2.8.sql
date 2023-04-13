@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards_sizes` (
   INDEX `fk_wear_cards_sizes_1_idx` (`employee_id` ASC),
   INDEX `fk_wear_cards_sizes_2_idx` (`size_type_id` ASC),
   INDEX `fk_wear_cards_sizes_3_idx` (`size_id` ASC),
+  UNIQUE INDEX `wear_cards_sizes_unique` USING BTREE (`employee_id`, `size_type_id`),
   CONSTRAINT `fk_wear_cards_sizes_1`
     FOREIGN KEY (`employee_id`)
     REFERENCES `wear_cards` (`id`)
