@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using NHibernate.Criterion;
 using NLog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -30,9 +31,6 @@ namespace Workwear.ViewModels.Stock {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
-
-			DelSensitive = true;
-			AddEmployeeSensitive = true;
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -47,8 +45,6 @@ namespace Workwear.ViewModels.Stock {
 				.Finish();
 		}
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		public bool DelSensitive { get; set; }
-		public bool AddEmployeeSensitive { get; set; }
 		
 		private string total;
 		public string Total {
@@ -58,12 +54,29 @@ namespace Workwear.ViewModels.Stock {
 
 		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
 		public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
-		
+
+		public void DeleteMember(InspectionMember member) {
+			Entity.RemoveMember(member);
+		}
+		public void AddMembers()
+		{
+			var selectPage = NavigationManager.OpenViewModel<LeadersJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.OnSelectResult += MemberOnSelectResult;
+		}
+		void MemberOnSelectResult(object sender, JournalSelectedEventArgs e)
+		{
+			var members = UoW.GetById<Leader>(e.SelectedObjects.Select(x => x.GetId()));
+			foreach(var member in members) {
+				Entity.AddMember(member);
+			}
+		}
+
 		public void DeleteItem(InspectionItem item) {
 			Entity.RemoveItem(item);
 			//CalculateTotal();
 		}
-
+		
 		public void AddItems() {
 			
 			var selectJournal = 
