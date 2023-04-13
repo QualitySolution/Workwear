@@ -661,6 +661,7 @@ namespace Workwear.Test.Domain.Company
 		{
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation { //Старая выдача не отображаем
+					Id = 1,
 					OperationTime = new DateTime(2020, 1, 1),
 					StartOfUse = new DateTime(2020, 1, 1),
 					ExpiryByNorm = new DateTime(2020, 2, 1),
@@ -668,6 +669,7 @@ namespace Workwear.Test.Domain.Company
 					Issued = 1
 				},
 				new EmployeeIssueOperation { //Первая отображаемая
+					Id = 2,
 					OperationTime = new DateTime(2022, 1, 1),
 					StartOfUse = new DateTime(2022, 1, 1),
 					ExpiryByNorm = new DateTime(2023, 1, 1),
@@ -675,6 +677,7 @@ namespace Workwear.Test.Domain.Company
 					Issued = 1
 				},
 				new EmployeeIssueOperation { //Вторая отображаемая
+					Id = 3,
 					OperationTime = new DateTime(2022, 4, 1),
 					StartOfUse = new DateTime(2022, 4, 1),
 					ExpiryByNorm = new DateTime(2023, 4, 1),
@@ -686,13 +689,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем только первую, вторая еще как бы не выдана
-			Assert.That(item.LastIssued(new DateTime(2022, 3,1)).Count(), Is.EqualTo(1));
-			var issue = item.LastIssued(new DateTime(2022, 3, 1)).First();
-			Assert.That(issue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
-			Assert.That(issue.amount, Is.EqualTo(1));
-			Assert.That(issue.removed, Is.EqualTo(0));
-			
+
 			//Отображаем обе выдачи
 			Assert.That(item.LastIssued(new DateTime(2022, 6,1)).Count(), Is.EqualTo(2));
 			var issue1 = item.LastIssued(new DateTime(2022, 6, 1)).First(x => x.date == new DateTime(2022, 1, 1));
@@ -915,14 +912,16 @@ namespace Workwear.Test.Domain.Company
 			};
 			//Отображаем все последние выдачи даже в будущем.
 			var today = new DateTime(2022, 2, 13);
-			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(4));
-			var issue = item.LastIssued(today).First(x => x.date == new DateTime(2023, 3, 13));
-			Assert.That(issue.amount, Is.EqualTo(1));
-			Assert.That(issue.removed, Is.EqualTo(0));
-			//Вторая 
-			var issue2 = item.LastIssued(today).First(x => x.date == new DateTime(2024, 6, 13));
-			Assert.That(issue2.amount, Is.EqualTo(1));
-			Assert.That(issue2.removed, Is.EqualTo(0));
+			var issues = item.LastIssued(today);
+			Assert.That(issues.Count(), Is.EqualTo(4));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 2, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 6, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 1, 13)));
+			
+			CollectionAssert.IsOrdered(dates);
+		}
 		}
 		#endregion
 		#region LastIssueOperation

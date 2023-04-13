@@ -140,29 +140,29 @@ namespace Workwear.Domain.Company
 
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
-		public virtual IEnumerable<(DateTime date, int amount, int removed, GraphItem item)> LastIssued(DateTime onDate) {
+		public virtual (DateTime date, int amount, int removed, GraphItem item)[] LastIssued(DateTime onDate) {
 			if(!Graph.Intervals.Any())
-				yield break;
-			HashSet<int> showed = new HashSet<int>();
+				return Array.Empty<(DateTime date, int amount, int removed, GraphItem item)>();
+			Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)> showed = new Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)>();
 			var currentInterval = Graph.IntervalOfDate(onDate);
 			if(currentInterval != null && currentInterval.ActiveIssues.Any()) {
 				foreach(var item in currentInterval.ActiveIssues) {
-					showed.Add(item.IssueOperation.Id);
-					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
-						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item);
+					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
+						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item));
 				}
 			}
 			//Будущие операции показываем всегда.
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
-				foreach(var item in interval.ActiveItems) {
-					if(showed.Contains(item.IssueOperation.Id))
+				foreach(var item in interval.ActiveIssues) {
+					if(showed.ContainsKey(item.IssueOperation.Id))
 						continue;
-					showed.Add(item.IssueOperation.Id);
-					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
+					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item));
 				}
-				if(interval.StartDate <= onDate)
+				if(interval.StartDate <= onDate && showed.Any())
 					break;
 			}
+
+			return showed.Values.OrderBy(x => x.date).ToArray();
 		}
 		#endregion
 		#region Расчетное для View
