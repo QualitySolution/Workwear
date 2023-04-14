@@ -19,6 +19,12 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			References (x => x.Director).Column ("director_id");
 			References (x => x.Chairman).Column ("chairman_id");
 			
+			HasMany (x => x.Members)
+				.Inverse()
+				.KeyColumn ("stock_inspection_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
+				.LazyLoad ();
+
 			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_inspection_id").Not.KeyNullable ()

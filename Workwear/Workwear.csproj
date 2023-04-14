@@ -740,6 +740,9 @@
     <None Include="Reports\NotIssuedSheetSummary.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	  <None Include="Reports\InspectionSheet.rdl">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />

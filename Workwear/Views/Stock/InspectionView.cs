@@ -1,17 +1,18 @@
 ﻿using System;
+using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
-using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock {
 	public partial class InspectionView : EntityDialogViewBase<InspectionViewModel, Inspection> {
 		public InspectionView(InspectionViewModel viewModel) : base(viewModel) {
 			Build();
 			ConfigureDlg();
+			ConfigureMembers();
 			ConfigureItems();
 			CommonButtonSubscription();
 		}
@@ -19,29 +20,33 @@ namespace Workwear.Views.Stock {
 		private void ConfigureDlg() {
 			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
 			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
+			
 			ylabelUser.Binding
-				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
-				.InitializeFromSource();
+				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 			ydateDoc.Binding
-				.AddBinding(Entity, e => e.Date, w => w.Date)
-				.InitializeFromSource();
+				.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			ytextComment.Binding
-				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
-				.InitializeFromSource();
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			labelSum.Binding
-				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
-				.InitializeFromSource();
-			ybuttonDel.Binding
-				.AddBinding(ViewModel, vm => vm.DelSensitive, w => w.Sensitive)
-				.InitializeFromSource();
-			ybuttonAdd.Binding
-				.AddBinding(ViewModel, vm => vm.AddEmployeeSensitive, w => w.Sensitive)
-				.InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
+			ytreeMembers.Selection.Changed += Members_Selection_Changed;
+			ybuttonAddMember.Clicked += OnButtonAddMembersClicked;
+			ybuttonDelMember.Clicked += OnButtonDelMembersClicked;
+			ytreeItems.Selection.Changed += Items_Selection_Changed;
 			ybuttonDel.Clicked += OnButtonDelClicked;
 			ybuttonAdd.Clicked += OnButtonAddClicked;
+			buttonPrint.Clicked += OnButtonPrintClicked;
 		}
-		 
-				private void ConfigureItems()
+
+		private void ConfigureMembers() {
+			ytreeMembers.ColumnsConfig = FluentColumnsConfig<InspectionMember>.Create()
+				.AddColumn("ФИО").AddTextRenderer(l => l.Member.Title)
+				.AddColumn("Должность").AddTextRenderer(l => l.Member.Position)
+				.Finish();
+			ytreeMembers.ItemsDataSource = Entity.ObservableMembers;
+		}
+		
+		private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<InspectionItem> ()
 					.AddColumn ("Сотрудник").AddReadOnlyTextRenderer(e => e.Employee.FullName)
@@ -62,8 +67,17 @@ namespace Workwear.Views.Stock {
 				.InitializeFromSource();
 		}
 
+		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
+		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<InspectionMember>());
+		private void Members_Selection_Changed(object sender, EventArgs e){
+			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0;
+		}
+		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<InspectionItem>());
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
-		
+		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
+		private void Items_Selection_Changed(object sender, EventArgs e){
+			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+		}
 	}
 }
