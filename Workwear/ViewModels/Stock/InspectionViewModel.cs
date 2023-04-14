@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
-using NHibernate.Criterion;
 using NLog;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -26,12 +29,13 @@ namespace Workwear.ViewModels.Stock {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation, 
 			IUserService userService,
+			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+			this.interactive = interactive;
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
-			
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
 			};
@@ -44,16 +48,18 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
 		}
+		
+		private IInteractiveService interactive;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
+		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
+		public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
 		
 		private string total;
 		public string Total {
 			get => total;
 			set => SetField(ref total, value);
 		}
-
-		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
-		public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
 
 		public void DeleteMember(InspectionMember member) {
 			Entity.RemoveMember(member);
@@ -118,6 +124,22 @@ namespace Workwear.ViewModels.Stock {
 		private void CalculateTotal() {
 			Total = "";
 			throw new System.NotImplementedException();
+		}
+		
+		public void Print() {
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Документ переоценки №{0}", Entity.Id),
+				Identifier = "InspectionSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }

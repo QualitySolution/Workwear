@@ -1,11 +1,11 @@
 ﻿using System;
+using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
-using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock {
 	public partial class InspectionView : EntityDialogViewBase<InspectionViewModel, Inspection> {
@@ -35,6 +35,7 @@ namespace Workwear.Views.Stock {
 			ytreeItems.Selection.Changed += Items_Selection_Changed;
 			ybuttonDel.Clicked += OnButtonDelClicked;
 			ybuttonAdd.Clicked += OnButtonAddClicked;
+			buttonPrint.Clicked += OnButtonPrintClicked;
 		}
 
 		private void ConfigureMembers() {
@@ -74,6 +75,7 @@ namespace Workwear.Views.Stock {
 		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<InspectionItem>());
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
+		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 		private void Items_Selection_Changed(object sender, EventArgs e){
 			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
