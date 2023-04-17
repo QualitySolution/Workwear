@@ -114,9 +114,10 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Запись документа...");
 
 			foreach(var item in Entity.Items) {
-				item.OperationIssue.FixedOperation = true;
+				item.NewOperationIssue.FixedOperation = true;
 				item.NewOperationIssue.StartOfUse = Entity.Date;
-				if(item.NewOperationIssue.AutoWriteoffDate != null)
+				item.OperationIssue.EmployeeOperationIssueOnWriteOff = item.NewOperationIssue;
+				if(item.WriteOffDateAfter != null)
 					item.NewOperationIssue.UseAutoWriteoff = true;
 				else 
 					item.NewOperationIssue.UseAutoWriteoff = false;

@@ -90,11 +90,9 @@ namespace Workwear.Domain.Stock.Documents {
 			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
 			item.NewOperationIssue.IssuedOperation = operation;
 			item.NewOperationIssue.Returned = operation.Issued;
-			item.NewOperationIssue.UseAutoWriteoff = false;
-			item.NewOperationIssue.AutoWriteoffDate = operation.AutoWriteoffDate;
-			item.NewOperationIssue.WearPercent = wearPercent; 
+			item.WriteOffDateAfter = operation.AutoWriteoffDate;
+			item.WearPercentAfter = wearPercent; 
 			
-			operation.EmployeeOperationIssueOnWriteOff = item.NewOperationIssue;
 			ObservableItems.Add(item);
 		}
 		
