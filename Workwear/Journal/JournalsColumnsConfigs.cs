@@ -137,10 +137,8 @@ namespace workwear.Journal
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
-					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => 
-						((int)(e.Percentage * 100)).Clamp(0, 100))
-					.AddSetter ((w, e) => 
-						w.Text = e.ExpiryDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
+					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
+						.AddSetter ((w, e) => w.Text = e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
 					.Finish ()
 			);
 

@@ -244,7 +244,7 @@ namespace Workwear.Domain.Operations
 		#endregion
 
 		#region Статические методы
-		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent) {
+		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
 
