@@ -96,6 +96,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
 						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -123,6 +124,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
 						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -148,8 +150,9 @@ namespace workwear.Journal.ViewModels.Company
 	    public DateTime IssuedDate { get; set;}
 	    public DateTime? StartUseDate { get; set; }
 	    public DateTime? ExpiryDate { get; set;}
-	    public decimal Percentage => 
-		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent);
+	    public DateTime? AutoWriteoffDate {get; set;}
+	    public decimal Percentage => ExpiryDate != null ? 
+		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;

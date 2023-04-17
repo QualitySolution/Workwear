@@ -140,7 +140,7 @@ namespace workwear.Journal
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => 
 						((int)(e.Percentage * 100)).Clamp(0, 100))
 					.AddSetter ((w, e) => 
-						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
+						w.Text = e.ExpiryDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
 					.Finish ()
 			);
 

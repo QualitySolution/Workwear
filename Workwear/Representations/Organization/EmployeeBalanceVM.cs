@@ -71,6 +71,7 @@ namespace workwear.Representations.Organization
 					.Select (() => expenseOperationAlias.Issued).WithAlias (() => resultAlias.Added)
 					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
 					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
+					.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
 					.Select (() => expenseOperationAlias.AutoWriteoffDate).WithAlias (() => resultAlias.AutoWriteoffDate)
 					.Select (() => expenseOperationAlias.FixedOperation).WithAlias (() => resultAlias.FixedOperation)
 					.SelectSubQuery (subQueryRemove).WithAlias (() => resultAlias.Removed)
@@ -112,8 +113,10 @@ namespace workwear.Representations.Organization
 		public decimal WearPercent { get; set;}
 		public DateTime IssuedDate { get; set;}
 		public DateTime? StartUseDate { get; set; }
+		public DateTime? ExpiryDate { get; set;}
 		public DateTime? AutoWriteoffDate { get; set;}
-		public decimal Percentage => AutoWriteoffDate != null ? EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, AutoWriteoffDate, WearPercent) : 0;
+		public decimal Percentage => ExpiryDate != null ? 
+			EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 		public int Added { get; set;}
 		public int Removed { get; set;}
 		public string BalanceText => $"{Added - Removed} {UnitsName}";
