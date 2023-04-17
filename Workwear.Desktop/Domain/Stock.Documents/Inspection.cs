@@ -13,7 +13,7 @@ namespace Workwear.Domain.Stock.Documents {
 		Nominative = "акт оценки",
 		Genitive = "акта оценки"
 	)]
-	public class Inspection: StockDocument//, IValidatableObject
+	public class Inspection: StockDocument, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
@@ -109,6 +109,13 @@ namespace Workwear.Domain.Stock.Documents {
 				return;
 			}
 			ObservableMembers.Add(new InspectionMember(){Member = member, Document = this});
+		}
+		#endregion
+		
+		#region Валидатор
+//todo Надо Сделать валидацию		
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(false) yield return new ValidationResult("Валидация не реализована");
 		}
 		#endregion
 	}

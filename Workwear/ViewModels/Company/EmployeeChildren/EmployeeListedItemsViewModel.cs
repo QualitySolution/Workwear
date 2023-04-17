@@ -55,6 +55,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public bool SensetiveButtonGiveWear => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonReturn => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonWriteoff => !employeeViewModel.UoW.IsNew;
+		public bool SensetiveButtonInspecton => !employeeViewModel.UoW.IsNew;
 
 		#endregion
 
@@ -76,6 +77,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void WriteOffWear()
 		{
 			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+		}
+
+		public void InspectionWear() {
+			navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		#endregion

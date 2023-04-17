@@ -31,11 +31,14 @@ namespace Workwear.ViewModels.Stock {
 			IUserService userService,
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
+			EmployeeCard employee = null, 
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+			if (employee != null)
+				Employee = UoW.GetById<EmployeeCard>(employee.Id);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
 			};
@@ -54,6 +57,7 @@ namespace Workwear.ViewModels.Stock {
 
 		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
 		public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
+		public EmployeeCard Employee { get;}
 		
 		private string total;
 		public string Total {
@@ -86,11 +90,13 @@ namespace Workwear.ViewModels.Stock {
 		public void AddItems() {
 			
 			var selectJournal = 
-				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel>(
+				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
+					Employee,
 					OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.Filter.DateSensitive = false;
 			selectJournal.ViewModel.Filter.Date = Entity.Date;
+			selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadItems;
 		}
