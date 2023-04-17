@@ -110,6 +110,11 @@ namespace Workwear.ViewModels.Stock {
 			foreach(var item in Entity.Items) {
 				item.OperationIssue.FixedOperation = true;
 				item.NewOperationIssue.StartOfUse = Entity.Date;
+				if(item.NewOperationIssue.AutoWriteoffDate != null)
+					item.NewOperationIssue.UseAutoWriteoff = true;
+				else 
+					item.NewOperationIssue.UseAutoWriteoff = false;
+				UoW.Save(item.NewOperationIssue);
 			}
 
 			if(!base.Save()) {
