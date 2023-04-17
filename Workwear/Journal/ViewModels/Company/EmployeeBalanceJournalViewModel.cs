@@ -125,6 +125,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
 						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
+						.Select(() => expenseOperationAlias.FixedOperation).WithAlias(() => resultAlias.FixedOperation)
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -151,8 +152,9 @@ namespace workwear.Journal.ViewModels.Company
 	    public DateTime? StartUseDate { get; set; }
 	    public DateTime? ExpiryDate { get; set;}
 	    public DateTime? AutoWriteoffDate {get; set;}
-	    public decimal Percentage => ExpiryDate != null ? 
-		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
+	    public decimal Percentage => FixedOperation ? WearPercent : (ExpiryDate != null ? 
+		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0);
+	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;

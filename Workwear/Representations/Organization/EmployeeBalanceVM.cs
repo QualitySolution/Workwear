@@ -88,8 +88,9 @@ namespace workwear.Representations.Organization
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
-			.AddSetter ((w, e) => w.Text = e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
-			.Finish ();
+			.AddSetter ((w, e) => w.Text = 
+				(e.FixedOperation ? "фиксировано " : "") + (e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа"))
+				.Finish ();
 		public override IColumnsConfig ColumnsConfig => treeViewConfig;
 		#endregion
 		#region implemented abstract members of RepresentationModelEntityBase
@@ -115,8 +116,8 @@ namespace workwear.Representations.Organization
 		public DateTime? StartUseDate { get; set; }
 		public DateTime? ExpiryDate { get; set;}
 		public DateTime? AutoWriteoffDate { get; set;}
-		public decimal Percentage => ExpiryDate != null ? 
-			EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
+		public decimal Percentage => FixedOperation ? WearPercent : (ExpiryDate != null ? 
+			EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0);
 		public int Added { get; set;}
 		public int Removed { get; set;}
 		public string BalanceText => $"{Added - Removed} {UnitsName}";

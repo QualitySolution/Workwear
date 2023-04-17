@@ -138,8 +138,9 @@ namespace workwear.Journal
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
-						.AddSetter ((w, e) => w.Text = e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа")
-					.Finish ()
+						.AddSetter ((w, e) => w.Text = 
+						(e.FixedOperation ? "фиксировано " : "") + (e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа"))
+						.Finish ()
 			);
 
 			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
