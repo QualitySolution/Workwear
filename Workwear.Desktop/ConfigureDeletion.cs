@@ -214,7 +214,11 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<InspectionItem>()
 				.AddRemoveFromDependence<Inspection>(x => x.Items)
-				.AddDeleteCascadeDependence(x => x.NewOperationIssue); 
+				.AddDeleteCascadeDependence(x => x.NewOperationIssue);
+
+			DeleteConfig.AddHibernateDeleteInfo<InspectionMember>()
+				.AddRemoveFromDependence<Inspection>(x => x.Items);
+				
 			#endregion
 			#region Statements
 
