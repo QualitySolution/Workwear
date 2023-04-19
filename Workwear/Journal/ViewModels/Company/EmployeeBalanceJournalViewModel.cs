@@ -63,8 +63,9 @@ namespace workwear.Journal.ViewModels.Company
 
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
-			if (Filter.Subdivision != null)
-				query.Where(e => e.Employee.Subdivision == Filter.Subdivision);
+			if(Filter.Subdivision != null)
+				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
+
 			var subQueryRemove = QueryOver.Of(() => removeOperationAlias)
 				.Where(() => removeOperationAlias.IssuedOperation.Id == expenseOperationAlias.Id)
 				.Select(Projections.Sum<EmployeeIssueOperation>(o => o.Returned));
