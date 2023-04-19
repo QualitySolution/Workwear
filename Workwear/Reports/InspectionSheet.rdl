@@ -6,14 +6,6 @@
   </Author>
   <PageHeight>210mm</PageHeight>
   <PageWidth>297 mm</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_vodokanal23_copy;user id=test828;password=123789852;</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>7.5in</Width>
   <TopMargin>.15in</TopMargin>
   <LeftMargin>.15in</LeftMargin>
@@ -86,7 +78,7 @@ WHERE doc.id =  @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Doc">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 doc.id,
@@ -94,7 +86,11 @@ users.name as user_name,
 doc.date,
 CONCAT_WS(" ",dir.surname, dir.name,dir.patronymic) as director_fio,
 dir.position as dir_position,
-CONCAT_WS(" ",chair.surname, chair.name,chair.patronymic) as chairman_fio
+CONCAT_WS(" ",
+    chair.surname,
+    CONCAT(LEFT(chair.name, 1), "."),
+    CONCAT(LEFT(chair.patronymic, 1), ".")
+    )as chairman_fio
           
 FROM stock_inspection as doc
 LEFT JOIN users on doc.user_id = users.id
@@ -108,7 +104,7 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -139,15 +135,29 @@ WHERE doc.id = @id</CommandText>
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-CONCAT_WS(" ",members.surname, members.name,members.patronymic) as member_fio
+CONCAT_WS(" ",
+    members.surname,
+    CONCAT(LEFT(members.name, 1), "."),
+    CONCAT(LEFT(members.patronymic, 1), ".")
+    )as member_fio,
+members.position
 
 FROM stock_inspection_members
 LEFT JOIN leaders as members on stock_inspection_members.member_id = members.id
-WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
+WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+        </QueryParameters>
       </Query>
       <Fields>
         <Field Name="member_fio">
           <DataField>member_fio</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="position">
+          <DataField>position</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -836,17 +846,18 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox39" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>13.50pt</Height>
-            <Width>205.43pt</Width>
+            <Height>12.75pt</Height>
+            <Width>140.67pt</Width>
             <Value>Председатель комисии:</Value>
             <ZIndex>1</ZIndex>
-            <Left>12.4pt</Left>
-            <Top>118.9pt</Top>
+            <Left>4.4pt</Left>
+            <Top>119.7pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
               <FontSize>12pt</FontSize>
+              <TextAlign>Right</TextAlign>
             </Style>
           </Textbox>
           <Textbox Name="Textbox41" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -878,8 +889,8 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
             </Style>
           </Textbox>
           <Line Name="Line4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>0in</Height>
-            <Width>4in</Width>
+            <Height>0.00pt</Height>
+            <Width>289.08pt</Width>
             <Style>
               <BorderStyle>
                 <Default>Solid</Default>
@@ -887,8 +898,8 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
               <BorderColor />
               <BorderWidth />
             </Style>
-            <Left>531.0pt</Left>
-            <Top>65.5pt</Top>
+            <Left>531.00pt</Left>
+            <Top>65.50pt</Top>
           </Line>
           <Line Name="Line5" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
             <Height>0in</Height>
@@ -959,7 +970,11 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
         </NoRows>
         <Style>
           <BorderStyle>
-            <Default>Solid</Default>
+            <Default>None</Default>
+            <Left>None</Left>
+            <Right>None</Right>
+            <Top>None</Top>
+            <Bottom>None</Bottom>
           </BorderStyle>
           <BorderColor />
           <BorderWidth />
@@ -977,7 +992,7 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>=Fields!member_fio.Value</Value>
+                      <Value>=Fields!member_fio.Value +", "+ Fields!position.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1016,8 +1031,153 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
           <TextAlign>Right</TextAlign>
         </Style>
       </Textbox>
+      <Table Name="Table2">
+        <DataSetName>Members</DataSetName>
+        <NoRows>
+        </NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>None</Default>
+            <Left>None</Left>
+            <Right>None</Right>
+            <Top>None</Top>
+            <Bottom>None</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>254.5pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>254.5pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>20 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox24">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox26">
+                      <Value>=Fields!member_fio.Value </Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>12pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>302.9pt</Left>
+        <Top>274.2pt</Top>
+      </Table>
+      <Textbox Name="Textbox27" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>16.54pt</Height>
+        <Width>101.76pt</Width>
+        <Value>Члены комисии:</Value>
+        <ZIndex>1</ZIndex>
+        <Left>197.0pt</Left>
+        <Top>274.5pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>12pt</FontSize>
+          <TextAlign>Right</TextAlign>
+        </Style>
+      </Textbox>
+      <List Name="List2">
+        <Height>21.12pt</Height>
+        <Width>669.29pt</Width>
+        <Left>154.10pt</Left>
+        <Top>250.80pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <DataSetName>Doc</DataSetName>
+        <ReportItems>
+          <Textbox Name="Textbox28" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>13.52pt</Height>
+            <Width>229.59pt</Width>
+            <Value>={chairman_fio}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>404.5pt</Left>
+            <Top>3.6pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>12pt</FontSize>
+            </Style>
+          </Textbox>
+          <Line Name="Line1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>0.00pt</Height>
+            <Width>252.92pt</Width>
+            <Style>
+              <BorderStyle>
+                <Default>Solid</Default>
+              </BorderStyle>
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+            <Left>149pt</Left>
+            <Top>20.60pt</Top>
+          </Line>
+          <Textbox Name="Textbox29" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Height>12.75pt</Height>
+            <Width>140.67pt</Width>
+            <Value>Председатель комисии:</Value>
+            <ZIndex>1</ZIndex>
+            <Left>3.9pt</Left>
+            <Top>7.2pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>12pt</FontSize>
+              <TextAlign>Right</TextAlign>
+            </Style>
+          </Textbox>
+        </ReportItems>
+      </List>
     </ReportItems>
-    <Height>228.2pt</Height>
+    <Height>442.9pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -1055,4 +1215,13 @@ WHERE stock_inspection_members.stock_inspection_id = 57</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_vodokanal23_copy;user id=test828;password=123789852;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
