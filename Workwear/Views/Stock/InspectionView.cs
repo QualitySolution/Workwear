@@ -50,9 +50,9 @@ namespace Workwear.Views.Stock {
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<InspectionItem> ()
 					.AddColumn ("Сотрудник").AddReadOnlyTextRenderer(e => e.Employee.FullName)
+					.AddColumn("Табельный номер").AddTextRenderer(e => e.Employee.PersonnelNumber ?? String.Empty)
 					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(800)
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
-					.AddColumn("Износ").AddTextRenderer(e => e.WearPercentBefore.ToString("P0") ?? String.Empty)
 					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  String.Empty)
 					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
