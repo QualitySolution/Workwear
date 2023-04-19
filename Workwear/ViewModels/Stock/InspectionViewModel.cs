@@ -133,6 +133,10 @@ namespace Workwear.ViewModels.Stock {
 			return true;
 		}
 		
+		public void OpenEmployee(InspectionItem item) {
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(item.Employee.Id));
+		}
+		
 		private void CalculateTotal() {
 			Total = "";
 			throw new System.NotImplementedException();

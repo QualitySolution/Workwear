@@ -4,6 +4,7 @@ using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
+using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
@@ -21,6 +22,7 @@ namespace Workwear.Views.Stock {
 			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
 			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
 			
+			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ylabelUser.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 			ydateDoc.Binding
@@ -79,5 +81,26 @@ namespace Workwear.Views.Stock {
 		private void Items_Selection_Changed(object sender, EventArgs e){
 			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
+		
+		#region PopupMenu
+		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeItems.GetSelectedObject<InspectionItem>();
+			
+			var itemOpenEmployee = new MenuItemId<InspectionItem>("Открыть сотрудника");
+			itemOpenEmployee.ID = selected;
+			itemOpenEmployee.Sensitive = selected.Employee != null;
+			itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
+			menu.Add(itemOpenEmployee);
+			
+			menu.ShowAll();
+			menu.Popup();
+		}
+		
+		void ItemOpenEmployee_Activated(object sender, EventArgs e) {
+			ViewModel.OpenEmployee(((MenuItemId<InspectionItem>) sender).ID);
+		}	
+		#endregion
 	}
 }
