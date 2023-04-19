@@ -20,8 +20,12 @@ namespace workwear.Journal.Filter.Views.Company
 			yentryEmployee.Binding
 				.AddBinding(ViewModel, vm => vm.EmployeeSensitive, w=> w.Sensitive)
 				.InitializeFromSource();
+			yentrySubdivision.Binding
+				.AddBinding(ViewModel, vm => vm.SubdivisionSensitive, w=> w.Sensitive)
+				.InitializeFromSource();
 
 			yentryEmployee.ViewModel = ViewModel.EmployeeEntry;
+			yentrySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 		}	
 	}
 }

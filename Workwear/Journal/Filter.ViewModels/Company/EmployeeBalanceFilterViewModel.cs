@@ -18,15 +18,19 @@ namespace workwear.Journal.Filter.ViewModels.Company
         {
             var builder = new CommonEEVMBuilderFactory<EmployeeBalanceFilterViewModel>(
                 journalViewModel, this, UoW, navigation, autofacScope);
-            EmployeeEntry = builder.ForProperty(x => x.Employee)
-                .MakeByType()
-                .Finish();
+            EmployeeEntry = builder.ForProperty(x => x.Employee).MakeByType().Finish();
+            SubdivisionEntry = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
             Date = DateTime.Today;
         }
         private EmployeeCard employee;
         public EmployeeCard Employee {
             get => employee;
             set => SetField(ref employee, value);
+        }
+        private Subdivision subdivision;
+        public Subdivision Subdivision {
+            get => subdivision;
+            set => SetField(ref subdivision, value);
         }
         private DateTime date;
         public DateTime Date {
@@ -43,6 +47,12 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => employeeSensitive;
             set => SetField(ref employeeSensitive, value);
         }
+        private bool subdivisionSensitive = true;
+        public bool SubdivisionSensitive {
+            get => subdivisionSensitive;
+            set => SetField(ref subdivisionSensitive, value);
+        }
         public EntityEntryViewModel<EmployeeCard> EmployeeEntry;
+        public EntityEntryViewModel<Subdivision> SubdivisionEntry;
     }
 }

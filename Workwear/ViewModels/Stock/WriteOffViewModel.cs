@@ -105,6 +105,7 @@ namespace Workwear.ViewModels.Stock
                     Employee,
                     OpenPageOptions.AsSlave);
             selectJournal.ViewModel.Filter.DateSensitive = false;
+            selectJournal.ViewModel.Filter.SubdivisionSensitive = false;
             selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
