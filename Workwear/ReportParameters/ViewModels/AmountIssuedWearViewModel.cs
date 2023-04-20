@@ -194,6 +194,7 @@ namespace workwear.ReportParameters.ViewModels {
 		#region Visible
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
+		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
 		#endregion
 
 		private string matchString;

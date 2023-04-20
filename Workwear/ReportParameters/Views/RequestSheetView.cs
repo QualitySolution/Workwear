@@ -15,6 +15,7 @@ namespace workwear.ReportParameters.Views {
 			this.Build();
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			yenumIssueType.ItemsEnum = typeof(IssueType);
 			yenumIssueType.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.IssueTypeOptions, w => w.SelectedItemOrNull)

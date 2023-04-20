@@ -11,6 +11,7 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
@@ -114,6 +115,7 @@ namespace workwear.ReportParameters.ViewModels {
 				.List<SelectedProtectionTools>();
 		}
 
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensetiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
 		#endregion
 
