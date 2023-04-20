@@ -79,8 +79,6 @@ namespace Workwear.Tools.Features
 
 		public virtual bool Available(WorkwearFeature feature) 
 		{
-			if(feature == WorkwearFeature.Barcodes)
-				return true;
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
 
@@ -114,6 +112,7 @@ namespace Workwear.Tools.Features
 				#if	DEBUG //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Selling:
 				#endif
+				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:

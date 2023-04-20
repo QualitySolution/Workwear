@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5967,7 +5967,7 @@
         <property name="ShortLabel" translatable="yes">Собственники имущества</property>
         <signal name="Activated" handler="OnActionOwnerActivated" />
       </action>
-      <action id="Action40">
+      <action id="ActionBarcodes">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Штрихкоды</property>
         <property name="ShortLabel" translatable="yes">Штрихкоды</property>
@@ -6055,7 +6055,7 @@
                 <node type="Menuitem" action="Action6" />
                 <node type="Menuitem" action="ActionWarehouse" />
                 <node type="Menuitem" action="ActionOwner" />
-                <node type="Menuitem" action="Action40" />
+                <node type="Menuitem" action="ActionBarcodes" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSizeType" />
                 <node type="Menuitem" action="ActionSize" />
