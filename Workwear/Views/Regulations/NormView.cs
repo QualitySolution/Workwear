@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using Gamma.ColumnConfig;
 using Gtk;
+using QS.Utilities.Text;
 using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.Domain.Company;
@@ -24,8 +25,11 @@ namespace Workwear.Views.Regulations
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
-			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => x.Title);
+			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
+			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
 			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
+			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не учавствовав в расчёте минимальной ширины окна
+			ycomboAnnex.WidthRequest = 1;  
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
 			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
 			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
