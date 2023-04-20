@@ -13,7 +13,6 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			Map (x => x.WriteOffDateBefore).Column ("writeoff_date_before");
-			Map (x => x.WearPercentBefore).Column ("wear_percent_before");
 			Map (x => x.Cause).Column ("cause");
 
 			References (x => x.Document).Column ("stock_inspection_id").Not.Nullable ();

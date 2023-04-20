@@ -4,7 +4,6 @@ using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -44,13 +43,6 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual EmployeeCard Employee { get => operationIssue.Employee; }
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
-
-		private decimal wearPercentBefore;
-		[Display (Name = "Изос до оценки")]	
-		public virtual decimal WearPercentBefore {
-			get => wearPercentBefore;
-			set => SetField(ref wearPercentBefore, value);
-		}
 
 		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
