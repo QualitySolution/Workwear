@@ -16,7 +16,10 @@ namespace workwear.ReportParameters.Views {
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 
 			yenumIssueType.ItemsEnum = typeof(IssueType);
-			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
+			yenumIssueType.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssueTypeOptions, w => w.SelectedItemOrNull)
+				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
+				.InitializeFromSource();
 
 			spinStartYear.Binding.AddBinding(ViewModel, v => v.BeginYear, w => w.ValueAsInt).InitializeFromSource();
 			spinEndYear.Binding.AddBinding(ViewModel, v => v.EndYear, w => w.ValueAsInt).InitializeFromSource();

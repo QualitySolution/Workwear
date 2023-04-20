@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.UoW;
@@ -13,9 +13,12 @@ namespace workwear.ReportParameters.ViewModels
 	public class AverageAnnualNeedViewModel : ReportParametersViewModelBase, IDisposable
 	{
 		IUnitOfWork UoW;
+		private readonly FeaturesService featuresService;
 
-		public AverageAnnualNeedViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope) : base(rdlViewerViewModel)
+		public AverageAnnualNeedViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+
 			Title = "Среднегодовая потребность";
 			Identifier = "AverageAnnualNeed";
 
@@ -50,6 +53,7 @@ namespace workwear.ReportParameters.ViewModels
 		
 		#endregion
 		#region Свойства
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensetiveLoad => true;
 		#endregion
 

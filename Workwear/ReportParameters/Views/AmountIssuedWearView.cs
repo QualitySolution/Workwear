@@ -20,8 +20,12 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
-			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
+			comboIssueType.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssueType, w => w.SelectedItemOrNull)
+				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
+				.InitializeFromSource();
 
 			checkBySubdivision.Binding.AddBinding(viewModel, v => v.BySubdivision, w => w.Active).InitializeFromSource();
 			checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();

@@ -14,13 +14,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Label label1;
 
+		private global::Gamma.GtkWidgets.yLabel labelIssueType;
+
 		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker;
 
 		private global::Gamma.GtkWidgets.yEntry yentryMatch;
 
 		private global::Gamma.GtkWidgets.yEntry yentryNoMatch;
-
-		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
@@ -108,6 +108,17 @@ namespace workwear.ReportParameters.Views
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Период:");
 			this.ytable1.Add(this.label1);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
+			w3.TopAttach = ((uint)(1));
+			w3.BottomAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.labelIssueType = new global::Gamma.GtkWidgets.yLabel();
+			this.labelIssueType.Name = "labelIssueType";
+			this.labelIssueType.Xalign = 1F;
+			this.labelIssueType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
+			this.ytable1.Add(this.labelIssueType);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.labelIssueType]));
 			w3.TopAttach = ((uint)(1));
 			w3.BottomAttach = ((uint)(2));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));

@@ -30,8 +30,6 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.Widgets.yDatePicker ydateReport;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel1;
-
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;

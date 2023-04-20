@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -15,8 +15,12 @@ using Workwear.Domain.Stock;
 namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
 	{
-		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope) : base(rdlViewerViewModel)
+		private readonly FeaturesService featuresService;
+
+		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
 
