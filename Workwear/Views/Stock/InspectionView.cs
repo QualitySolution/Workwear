@@ -2,7 +2,6 @@
 using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
-using QS.Widgets.GtkUI;
 using QSOrmProject;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
@@ -55,15 +54,15 @@ namespace Workwear.Views.Stock {
 					.AddColumn("Табельный номер").AddTextRenderer(e => e.Employee.PersonnelNumber ?? String.Empty)
 					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(800)
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
-					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  String.Empty)
+					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  "до износа")
 					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
 					//.AddColumn ("Автосписание").AddToggleRenderer(e => e.UseAutoWriteoff).Editing()
-					.AddColumn ("Установить дату списания").AddDateRenderer(e => e.WriteOffDateAfter).Editable()
+					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing()
+					.AddColumn ("Продлить").AddDateRenderer(e => e.WriteOffDateAfter).Editable()
 					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).Editable()
 					.Finish ();
-			
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.ObservableItems, w => w.ItemsDataSource)
 				.InitializeFromSource();

@@ -37,7 +37,7 @@ namespace Workwear.Domain.Stock.Documents {
 		[Display (Name = "Новая операция выдачи")]	
 		public virtual EmployeeIssueOperation NewOperationIssue {
 			get => newOperationIssue;
-			set { SetField (ref newOperationIssue, value, () => NewOperationIssue); }
+			set => SetField (ref newOperationIssue, value);
 		}
 		
 		public virtual EmployeeCard Employee { get => operationIssue.Employee; }
@@ -47,16 +47,15 @@ namespace Workwear.Domain.Stock.Documents {
 		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
 		public virtual DateTime? WriteOffDateBefore {
-			get => writeOffDateBefore;
-			set => SetField(ref writeOffDateBefore, value);
+			get => OperationIssue.AutoWriteoffDate;
 		}
 
 		[Display (Name = "Изос после оценки")]	
 		public virtual decimal WearPercentAfter {
-			get => newOperationIssue.WearPercent;
+			get => NewOperationIssue.WearPercent;
 			set {
-				if(newOperationIssue.WearPercent != value) {
-					newOperationIssue.WearPercent = value;
+				if(NewOperationIssue.WearPercent != value) {
+					NewOperationIssue.WearPercent = value;
 					OnPropertyChanged();
 				}
 			}
@@ -64,15 +63,29 @@ namespace Workwear.Domain.Stock.Documents {
 
 		[Display (Name = "Дата списания после оценки")]	
 		public virtual DateTime? WriteOffDateAfter {
-			get => newOperationIssue.AutoWriteoffDate;
+			get => NewOperationIssue.AutoWriteoffDate;
 			set {
-				if(newOperationIssue.AutoWriteoffDate != value) {
-					newOperationIssue.AutoWriteoffDate = value;
+				if(NewOperationIssue.AutoWriteoffDate != value) {
+					NewOperationIssue.AutoWriteoffDate = value;
+					if(value != null) Writeoff = false;
 					OnPropertyChanged();
 				}
 			}
 		}
-		
+
+		[Display(Name = "Списать")]
+		public virtual bool Writeoff {
+			get => NewOperationIssue.Issued == 0;
+			set {
+				if(value != (NewOperationIssue.Issued == 0)) {
+					NewOperationIssue.Issued = value ? 0 : OperationIssue.Issued;
+					if(value) NewOperationIssue.AutoWriteoffDate = null;
+					OnPropertyChanged();
+					OnPropertyChanged(nameof(WriteOffDateAfter));
+				}
+			}
+		}
+
 		private string cause;
 		[Display(Name = "Причина износа")]
 		public virtual string Cause {
