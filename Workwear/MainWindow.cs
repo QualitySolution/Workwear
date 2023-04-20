@@ -213,7 +213,7 @@ public partial class MainWindow : Gtk.Window
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
