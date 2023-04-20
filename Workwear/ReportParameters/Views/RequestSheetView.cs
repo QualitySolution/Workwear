@@ -20,7 +20,10 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 			ViewModel.PeriodType = PeriodType.Month;
 			yenumIssueType.ItemsEnum = typeof(IssueType);
-			yenumIssueType.Binding.AddBinding(ViewModel, v => v.IssueTypeOptions, w => w.SelectedItemOrNull).InitializeFromSource();
+			yenumIssueType.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssueTypeOptions, w => w.SelectedItemOrNull)
+				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
+				.InitializeFromSource();
 
 			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()

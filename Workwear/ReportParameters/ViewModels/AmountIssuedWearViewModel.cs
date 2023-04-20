@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
@@ -10,17 +10,22 @@ using QS.Report.ViewModels;
 using workwear.Domain.Company;
 using workwear.Domain.Stock;
 using workwear.Repository.Company;
+using workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
 {
 	public class AmountIssuedWearViewModel : ReportParametersViewModelBase
 	{
+		private readonly FeaturesService featuresService;
 		private readonly IUnitOfWork unitOfWork;
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
-			IUnitOfWorkFactory uowFactory, 
+			IUnitOfWorkFactory uowFactory,
+			FeaturesService featuresService,
 			SubdivisionRepository subdivisionRepository) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			
 			Title = "Справка о выданной спецодежде";
 			Identifier = "AmountIssuedWear";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
@@ -118,6 +123,10 @@ namespace workwear.ReportParameters.ViewModels
 
 		public bool SensetiveLoad => StartDate != null && EndDate != null && (Summary || Subdivisons.Any(x => x.Select));
 		public bool SensetiveSubdivisions => !Summary;
+
+		#region Visible
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		#endregion
 
 		private string matchString;
 		public string MatchString {

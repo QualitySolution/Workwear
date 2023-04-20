@@ -12,9 +12,13 @@ namespace workwear.ReportParameters.Views
 		{
 			this.Build();
 
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			comboIssueType.ItemsEnum = typeof(IssueType);
-			comboIssueType.Binding.AddBinding(ViewModel, v => v.IssueType, w => w.SelectedItemOrNull).InitializeFromSource();
+			comboIssueType.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssueType, w => w.SelectedItemOrNull)
+				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
+				.InitializeFromSource();
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();

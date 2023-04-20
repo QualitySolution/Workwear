@@ -12,13 +12,18 @@ using QS.ViewModels.Control.EEVM;
 using workwear.Domain.Company;
 using workwear.Domain.Regulations;
 using workwear.Domain.Stock;
+using workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
 {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
 	{
-		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope) : base(rdlViewerViewModel)
+		private readonly FeaturesService featuresService;
+
+		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
 
@@ -35,6 +40,8 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 
 		#region Свойства View
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		
 		private PeriodType periodType = PeriodType.Year;
 		public virtual PeriodType PeriodType {
 			get => periodType;
