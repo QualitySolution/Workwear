@@ -27,12 +27,15 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => employee;
             set {
 	            if(SetField(ref employee, value))
-		            if(employee != null) {
+		            if(value != null) {
 			            SubdivisionSensitive = false;
 			            Subdivision = employee.Subdivision;
 		            }
-		            else 
+		            else {
 			            SubdivisionSensitive = true;
+			            Subdivision = null;
+		            }
+			            
             }
         }
         private Subdivision subdivision;
@@ -44,7 +47,13 @@ namespace workwear.Journal.Filter.ViewModels.Company
         public DateTime Date {
             get => date;
             set => SetField(ref date, value);
+        } 
+        private bool checkShowAll;
+        public bool CheckShowAll {
+	        get => checkShowAll;
+	        set => SetField(ref checkShowAll, value);
         }
+
         private bool dateSensitive;
         public bool DateSensitive {
             get => dateSensitive;
@@ -60,6 +69,12 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => subdivisionSensitive;
             set => SetField(ref subdivisionSensitive, value);
         }
+        private bool checkShowWriteoffVisible = true;
+        public bool CheckShowWriteoffVisible {
+	        get => checkShowWriteoffVisible;
+	        set => SetField(ref checkShowWriteoffVisible, value);
+        }
+        
         public EntityEntryViewModel<EmployeeCard> EmployeeEntry;
         public EntityEntryViewModel<Subdivision> SubdivisionEntry;
     }

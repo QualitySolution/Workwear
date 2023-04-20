@@ -65,7 +65,9 @@ namespace workwear.Journal.ViewModels.Company
 				query.Where(e => e.Employee == Filter.Employee);
 			if(Filter.Subdivision != null)
 				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
-
+			if(!Filter.CheckShowAll)
+				query.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date);
+			
 			var subQueryRemove = QueryOver.Of(() => removeOperationAlias)
 				.Where(() => removeOperationAlias.IssuedOperation.Id == expenseOperationAlias.Id)
 				.Select(Projections.Sum<EmployeeIssueOperation>(o => o.Returned));
@@ -87,7 +89,6 @@ namespace workwear.Journal.ViewModels.Company
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
 					.JoinAlias(() => employeeCardAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
-					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -116,7 +117,6 @@ namespace workwear.Journal.ViewModels.Company
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
 					.JoinAlias(() => employeeCardAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
-					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)

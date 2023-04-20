@@ -140,7 +140,8 @@ namespace workwear.Journal
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = 
 						(e.FixedOperation ? "фиксировано " : "") + (e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа"))
-						.Finish ()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
+					.Finish ()
 			);
 
 			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
