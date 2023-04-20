@@ -66,9 +66,8 @@ namespace workwear.Domain.Regulations
 		 	if (IssuanceStart is null || IssuanceEnd is null)
 		 		throw new ArgumentException("В условиях нормы не заданы даты");
 		    
-		    var wantYear = dateFrom > DateTime.Today ? dateFrom : DateTime.Today;
-		    var end = new DateTime(wantYear.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
-		    if (end < wantYear)
+		    var end = new DateTime(dateFrom.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
+		    if (end < dateFrom)
 			    end = end.AddYears(1);
 		    var start = new DateTime(end.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
 		    if (start > end)
