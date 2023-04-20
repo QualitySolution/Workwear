@@ -27,7 +27,14 @@ wc.personnel_number,
 opissue.operation_time as issue_operation_time, 
 opissue.auto_writeoff_date as writeoff_date_before, 
 opinspect.wear_percent as percent_after, 
-opinspect.auto_writeoff_date as writeoff_date_after,
+IF(opinspect.issued = 0,
+  IF(opissue.auto_writeoff_date IS NOT NULL AND opissue.auto_writeoff_date &gt; opinspect.operation_time,
+   	"списать",
+    "списать досрочно"),     
+  IF(opinspect.auto_writeoff_date IS NULL,
+   	"продлить до износа", 
+   	CONCAT("продлить до ",DATE_FORMAT(opinspect.auto_writeoff_date, "%d.%m.%Y"),"г.")))
+as writeoff_date_after,
 items.cause
 FROM stock_inspection_items as items
 LEFT JOIN stock_inspection as doc on doc.id = items.stock_inspection_id
@@ -190,10 +197,10 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             <Width>32.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>126.2pt</Width>
+            <Width>115.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>50.1pt</Width>
+            <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>60.5pt</Width>
@@ -202,13 +209,13 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             <Width>58.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>86.1pt</Width>
+            <Width>29.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>38.8pt</Width>
+            <Width>101.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>100.2pt</Width>
+            <Width>96.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -404,23 +411,6 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox33">
-                      <Value>Отметка</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox17">
                       <Value>
                       </Value>
@@ -441,6 +431,24 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                   <ReportItems>
                     <Textbox Name="Textbox18">
                       <Value>Продлить/списать/</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>Отметка</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -564,23 +572,6 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox34">
-                      <Value>об износе</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox8">
                       <Value>Износ</Value>
                       <Style>
@@ -592,6 +583,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -601,6 +593,24 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                     <Textbox Name="Textbox9">
                       <Value>списать досрочно</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>10pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>об износе</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -728,23 +738,6 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox35">
-                      <Value>=Fields!cause.Value</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="percent_after">
                       <Value>=Fields!percent_after.Value *100 + "%"</Value>
                       <CanGrow>false</CanGrow>
@@ -767,6 +760,23 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                       <Value>=Format({writeoff_date_after}, "dd/MM/yyyy")</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>=Fields!cause.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -1099,6 +1109,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <FontSize>12pt</FontSize>
+                        <VerticalAlign >Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1142,8 +1153,8 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             <Width>229.59pt</Width>
             <Value>={chairman_fio}</Value>
             <ZIndex>1</ZIndex>
-            <Left>404.50pt</Left>
-            <Top>3.60pt</Top>
+            <Left>404.5pt</Left>
+            <Top>6.8pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
