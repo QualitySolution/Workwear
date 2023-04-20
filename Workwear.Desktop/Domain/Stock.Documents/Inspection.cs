@@ -84,9 +84,8 @@ namespace Workwear.Domain.Stock.Documents {
 			var item = (new InspectionItem() {
 				Document = this,
 				OperationIssue = operation,
-				WearPercentBefore = wearPercent
 			});
-
+			item.NewOperationIssue.FixedOperation = true;
 			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
 			item.NewOperationIssue.IssuedOperation = operation;
 			item.NewOperationIssue.Returned = operation.Issued;

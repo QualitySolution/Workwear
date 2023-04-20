@@ -113,16 +113,15 @@ namespace Workwear.ViewModels.Stock {
 		public override bool Save() {
 			logger.Info ("Запись документа...");
 
-			foreach(var item in Entity.Items) {
-				item.NewOperationIssue.FixedOperation = true;
-				item.NewOperationIssue.StartOfUse = Entity.Date;
-				item.OperationIssue.EmployeeOperationIssueOnWriteOff = item.NewOperationIssue;
-				if(item.WriteOffDateAfter != null)
-					item.NewOperationIssue.UseAutoWriteoff = true;
-				else 
-					item.NewOperationIssue.UseAutoWriteoff = false;
-				UoW.Save(item.NewOperationIssue);
-			}
+			foreach(var item in Entity.Items)
+				if(item.Id == 0) {
+					item.NewOperationIssue.StartOfUse = Entity.Date;
+					if(item.WriteOffDateAfter != null)
+						item.NewOperationIssue.UseAutoWriteoff = true;
+					else
+						item.NewOperationIssue.UseAutoWriteoff = false;
+					UoW.Save(item.NewOperationIssue);
+				}
 
 			if(!base.Save()) {
 				logger.Info("Не Ок.");
