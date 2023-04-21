@@ -44,7 +44,6 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
 
-		private DateTime? writeOffDateBefore;
 		[Display (Name = "Дата списания до оценки")]	
 		public virtual DateTime? WriteOffDateBefore {
 			get => OperationIssue.AutoWriteoffDate;

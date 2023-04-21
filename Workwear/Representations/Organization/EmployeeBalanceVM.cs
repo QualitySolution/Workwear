@@ -116,8 +116,10 @@ namespace workwear.Representations.Organization
 		public DateTime? StartUseDate { get; set; }
 		public DateTime? ExpiryDate { get; set;}
 		public DateTime? AutoWriteoffDate { get; set;}
-		public decimal Percentage => FixedOperation ? WearPercent : (ExpiryDate != null ? 
-			EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0);
+		public decimal Percentage => ExpiryDate != null ? 
+				EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 
+				(AutoWriteoffDate != null ? 
+				EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, AutoWriteoffDate, WearPercent) : 0);
 		public int Added { get; set;}
 		public int Removed { get; set;}
 		public string BalanceText => $"{Added - Removed} {UnitsName}";

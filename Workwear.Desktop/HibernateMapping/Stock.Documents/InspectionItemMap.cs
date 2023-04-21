@@ -12,7 +12,6 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
-			Map (x => x.WriteOffDateBefore).Column ("writeoff_date_before");
 			Map (x => x.Cause).Column ("cause");
 
 			References (x => x.Document).Column ("stock_inspection_id").Not.Nullable ();
