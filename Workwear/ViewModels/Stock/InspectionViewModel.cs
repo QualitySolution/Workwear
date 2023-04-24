@@ -20,6 +20,8 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Repository.Company;
+using Workwear.Repository.Stock;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
@@ -31,10 +33,13 @@ namespace Workwear.ViewModels.Stock {
 			IUserService userService,
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
-			EmployeeCard employee = null, 
+			OrganizationRepository organizationRepository,
+			EmployeeCard employee = null,
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
+			this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+			
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			if (employee != null)
@@ -50,14 +55,24 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
+			ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
+				.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
+				.UseViewModelDialog<OrganizationViewModel>()
+				.Finish();
+
+			if(Entity.Id == 0)
+				Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
 		
 		private IInteractiveService interactive;
+		private OrganizationRepository organizationRepository;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
 		public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
+		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 		public EmployeeCard Employee { get;}
+
 		
 		private string total;
 		public string Total {

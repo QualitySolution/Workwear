@@ -21,6 +21,7 @@ namespace Workwear.Views.Stock {
 		private void ConfigureDlg() {
 			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
 			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
+			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
 			
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ylabelUser.Binding

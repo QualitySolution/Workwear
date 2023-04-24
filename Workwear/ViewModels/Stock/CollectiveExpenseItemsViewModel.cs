@@ -48,7 +48,8 @@ namespace Workwear.ViewModels.Stock
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
 			EmployeeRepository employeeRepository,
-			IProgressBarDisplayable globalProgress, StockRepository stockRepository,
+			IProgressBarDisplayable globalProgress, 
+			StockRepository stockRepository,
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters)
 		{
