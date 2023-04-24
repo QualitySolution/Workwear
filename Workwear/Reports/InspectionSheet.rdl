@@ -26,7 +26,8 @@ CONCAT_WS(" ",
 IF(wc.card_number IS NOT NULL, wc.card_number, wc.id) as personnel_number,
 opissue.operation_time as issue_operation_time, 
 opissue.auto_writeoff_date as writeoff_date_before, 
-CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after, 
+CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after,
+CONCAT(TRUNCATE(opissue.wear_percent * 100, 0), "%") as percent_before,
 IF(opinspect.issued = 0,
   IF(opissue.auto_writeoff_date IS NOT NULL AND opissue.auto_writeoff_date &gt; opinspect.operation_time,
    	"списать",
@@ -78,6 +79,10 @@ WHERE doc.id = @id</CommandText>
           <DataField>percent_after</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="percent_before">
+          <DataField>percent_before</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="writeoff_date_after">
           <DataField>writeoff_date_after</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -97,6 +102,7 @@ users.name as user_name,
 doc.date,
 CONCAT_WS(" ",dir.surname, dir.name,dir.patronymic) as director_fio,
 dir.position as dir_position,
+chair.position as chair_position,
 CONCAT_WS(" ",
     chair.surname,
     CONCAT(LEFT(chair.name, 1), "."),
@@ -134,6 +140,10 @@ WHERE doc.id = @id</CommandText>
         </Field>
         <Field Name="dir_position">
           <DataField>dir_position</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="chair_position">
+          <DataField>chair_position</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="chairman_fio">
@@ -194,13 +204,13 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>269.8pt</Width>
+            <Width>219.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>32.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>115.2pt</Width>
+            <Width>114.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>41.0pt</Width>
@@ -212,13 +222,16 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             <Width>58.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>88.4pt</Width>
+            <Width>56.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>91.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>105.5pt</Width>
+            <Width>99.9pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -278,7 +291,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>4</ColSpan>
+                  <ColSpan>5</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -414,6 +427,24 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox8">
+                      <Value>% износа на дату выдачи</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox48">
                       <Value>Причина износа</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -506,7 +537,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Right</TextAlign>
+                        <TextAlign>Center</TextAlign>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
@@ -561,6 +592,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -578,6 +610,24 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value>=Fields!percent_before.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -679,12 +729,12 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox37" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12pt</Height>
-            <Width>1in</Width>
+            <Height>12.01pt</Height>
+            <Width>286.79pt</Width>
             <Value>=Fields!dir_position.Value</Value>
             <ZIndex>1</ZIndex>
-            <Left>532.3pt</Left>
-            <Top>30.3pt</Top>
+            <Left>532.30pt</Left>
+            <Top>30.30pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -723,12 +773,12 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox41" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>13.52pt</Height>
-            <Width>229.59pt</Width>
-            <Value>={chairman_fio}</Value>
+            <Height>13.54pt</Height>
+            <Width>344.04pt</Width>
+            <Value>={chairman_fio} +", "+ {chair_position}</Value>
             <ZIndex>1</ZIndex>
-            <Left>148.8pt</Left>
-            <Top>117.4pt</Top>
+            <Left>148.80pt</Left>
+            <Top>117.40pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -875,16 +925,16 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>148pt</Left>
-        <Top>138.8pt</Top>
+        <Left>147.9pt</Left>
+        <Top>135.6pt</Top>
       </Table>
       <Textbox Name="Textbox1">
         <Height>16.54pt</Height>
         <Width>101.76pt</Width>
         <Value>Члены комисии:</Value>
         <ZIndex>1</ZIndex>
-        <Left>44.5pt</Left>
-        <Top>138.0pt</Top>
+        <Left>42.9pt</Left>
+        <Top>134.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -910,23 +960,49 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>254.5pt</Width>
+            <Width>122.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>254.5pt</Width>
+            <Width>244.0pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>224.9pt</Width>
           </TableColumn>
         </TableColumns>
-        <Details>
+        <Header>
           <TableRows>
             <TableRow>
-              <Height>20 pt</Height>
+              <Height>15.2pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox24">
+                    <Textbox Name="Textbox27">
+                      <Value>Члены комисии:</Value>
+                      <Style>
+                        <TextAlign>Right</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>12pt</FontSize>
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
                       <Value>
                       </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                      <Style>
+                        <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
                           <Left>None</Left>
@@ -934,6 +1010,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                           <Top>None</Top>
                           <Bottom>Solid</Bottom>
                         </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -942,10 +1019,10 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox26">
-                      <Value>=Fields!member_fio.Value </Value>
-                      <CanGrow>true</CanGrow>
+                    <Textbox Name="Textbox18">
+                      <Value>=First({chairman_fio},"Doc")</Value>
                       <Style>
+                        <TextAlign>Left</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
                           <Left>None</Left>
@@ -953,6 +1030,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                           <Top>None</Top>
                           <Bottom>None</Bottom>
                         </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
                         <FontSize>12pt</FontSize>
@@ -964,81 +1042,81 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
               </TableCells>
             </TableRow>
           </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>20pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>
+                      </Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
+                      <Value>
+                      </Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>14pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value>=Fields!member_fio.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                        <VerticalAlign>Bottom</VerticalAlign>
+                        <FontSize>12pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
         </Details>
-        <Left>302.9pt</Left>
-        <Top>274.2pt</Top>
+        <Left>135.7pt</Left>
+        <Top>261.9pt</Top>
       </Table>
-      <Textbox Name="Textbox27" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-        <Height>16.54pt</Height>
-        <Width>101.76pt</Width>
-        <Value>Члены комисии:</Value>
-        <ZIndex>1</ZIndex>
-        <Left>197.0pt</Left>
-        <Top>274.5pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <FontSize>12pt</FontSize>
-          <TextAlign>Right</TextAlign>
-        </Style>
-      </Textbox>
-      <List Name="List2">
-        <Height>21.12pt</Height>
-        <Width>669.29pt</Width>
-        <Left>154.10pt</Left>
-        <Top>250.80pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-        <DataSetName>Doc</DataSetName>
-        <ReportItems>
-          <Textbox Name="Textbox28" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>13.52pt</Height>
-            <Width>229.59pt</Width>
-            <Value>={chairman_fio}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>404.5pt</Left>
-            <Top>6.8pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>12pt</FontSize>
-            </Style>
-          </Textbox>
-          <Line Name="Line1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>0.00pt</Height>
-            <Width>252.92pt</Width>
-            <Style>
-              <BorderStyle>
-                <Default>Solid</Default>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-            </Style>
-            <Left>149pt</Left>
-            <Top>20.60pt</Top>
-          </Line>
-          <Textbox Name="Textbox29" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12.75pt</Height>
-            <Width>140.67pt</Width>
-            <Value>Председатель комисии:</Value>
-            <ZIndex>1</ZIndex>
-            <Left>3.9pt</Left>
-            <Top>7.2pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>12pt</FontSize>
-              <TextAlign>Right</TextAlign>
-            </Style>
-          </Textbox>
-        </ReportItems>
-      </List>
     </ReportItems>
     <Height>442.9pt</Height>
     <Columns>1</Columns>
@@ -1063,6 +1141,15 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_vodokanal23_copy;user id=test828;password=123789852;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
@@ -1078,13 +1165,4 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_vodokanal23_copy;user id=test828;password=123789852;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

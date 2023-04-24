@@ -1,6 +1,7 @@
 ﻿using System;
 using Gamma.ColumnConfig;
 using Gtk;
+using QS.Utilities.Numeric;
 using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
@@ -51,16 +52,19 @@ namespace Workwear.Views.Stock {
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<InspectionItem> ()
 					.AddColumn ("Сотрудник").AddReadOnlyTextRenderer(e => e.Employee.FullName)
-					.AddColumn("Табельный номер").AddTextRenderer(e => e.Employee.PersonnelNumber ?? String.Empty)
-					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(800)
+					.AddColumn("Номер\nкарточки").AddTextRenderer(e => e.EmployeeNumber)
+					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(1000)
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
-					.AddColumn ("Дата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  "до износа")
-					.AddColumn ("Установить износ").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
+					.AddColumn ("Дата\nвыдачи").AddReadOnlyTextRenderer(e => e.IssueDate?.ToShortDateString() ?? "")
+					.AddColumn ("% износа на\nдату выдачи").AddReadOnlyTextRenderer((e => ((int)(e.WearPercentBefore * 100))
+						.Clamp(0, 100) + "%"))
+					.AddColumn ("Исходная\nдата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  "до износа")
+					.AddColumn ("Установить\n% износа").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
 					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing()
 					.AddColumn ("Продлить").AddDateRenderer(e => e.WriteOffDateAfter).Editable()
-					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).Editable()
+					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
 					.Finish ();
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.ObservableItems, w => w.ItemsDataSource)

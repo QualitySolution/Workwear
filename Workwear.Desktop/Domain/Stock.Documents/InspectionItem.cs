@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using QS.Utilities.Numeric;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 
@@ -41,9 +42,12 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 		
 		public virtual EmployeeCard Employee { get => operationIssue.Employee; }
+		public virtual string EmployeeNumber { get => operationIssue.Employee?.CardNumber ?? operationIssue.Employee?.Id.ToString() ?? ""; }
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
-
+		public virtual decimal WearPercentBefore { get => OperationIssue.WearPercent;}
+		public virtual DateTime? IssueDate { get => OperationIssue.OperationTime;}
+		
 		[Display (Name = "Дата списания до оценки")]	
 		public virtual DateTime? WriteOffDateBefore {
 			get => OperationIssue.AutoWriteoffDate;
