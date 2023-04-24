@@ -22,8 +22,8 @@ namespace Workwear.Views.Sizes
 
 		private void ConfigureDlg()
 		{
-			ybuttonAddSize.Sensitive = !ViewModel.IsNew;
 			ybuttonRemoveSize.Sensitive = false;
+			ybuttonAddSize.Binding.AddBinding(ViewModel, v => v.CanAdd, w => w.Sensitive).InitializeFromSource();
 			ybuttonAddSize.Clicked += AddSize;
 			ybuttonRemoveSize.Clicked += RemoveSize;
 			entityname.Binding

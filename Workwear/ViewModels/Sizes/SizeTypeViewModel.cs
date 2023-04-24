@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,23 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Measurements;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Sizes
 {
 	public class SizeTypeViewModel : EntityDialogViewModelBase<SizeType>
 	{
+		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService;
 		public SizeTypeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			FeaturesService featuresService,
 			SizeService sizeService,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.sizeService = sizeService;
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
@@ -32,13 +37,17 @@ namespace Workwear.ViewModels.Sizes
 			}
 			else {
 				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
-				if (Entity.Id <= SizeService.MaxStandartSizeTypeId) IsStandartType = true;
+				if (Entity.Id <= SizeService.MaxStandartSizeTypeId) IsStandardType = true;
 			}
 		}
 
 		public bool IsNew { get; }
-		public bool IsStandartType { get; }
-		public bool CanEdit => IsNew || !IsStandartType;
+		public bool IsStandardType { get; }
+
+		#region для View
+		public bool CanAdd => featuresService.Available(WorkwearFeature.CustomSizes);
+		public bool CanEdit => (IsNew || !IsStandardType) && featuresService.Available(WorkwearFeature.CustomSizes);
+		#endregion
 		private GenericObservableList<Size> sizes;
 		public GenericObservableList<Size> Sizes {
 			get => sizes;

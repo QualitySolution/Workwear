@@ -125,6 +125,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
+				case WorkwearFeature.CustomSizes:
 					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
@@ -147,6 +148,8 @@ namespace Workwear.Tools.Features
 		HistoryLog,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
+		[Display(Name = "Пользовательские размеры")]
+		CustomSizes,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
