@@ -420,6 +420,12 @@ namespace Workwear.Domain.Operations
 		}
 
 		private bool CheckRecalculateCondition() {
+			if(FixedOperation) {
+				logger.Error(
+					$"Операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
+				return false;
+			}
+			
 			if(ProtectionTools == null) {
 				logger.Error(
 					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
