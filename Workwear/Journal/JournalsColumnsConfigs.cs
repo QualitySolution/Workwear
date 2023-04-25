@@ -138,8 +138,7 @@ namespace workwear.Journal
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
-						.AddSetter ((w, e) => w.Text = 
-						(e.FixedOperation ? "фиксировано " : "") + (e.AutoWriteoffDate.HasValue ? $"до {e.AutoWriteoffDate.Value:d}" : "до износа"))
+						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
 					.Finish ()
 			);

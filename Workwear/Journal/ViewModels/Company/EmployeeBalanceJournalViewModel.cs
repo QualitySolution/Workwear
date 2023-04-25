@@ -157,8 +157,7 @@ namespace workwear.Journal.ViewModels.Company
 	    public DateTime? StartUseDate { get; set; }
 	    public DateTime? ExpiryDate { get; set;}
 	    public DateTime? AutoWriteoffDate {get; set;}
-	    public decimal Percentage => FixedOperation ? WearPercent : (ExpiryDate != null ? 
-		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0);
+	    public decimal Percentage => ExpiryDate != null ? EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
