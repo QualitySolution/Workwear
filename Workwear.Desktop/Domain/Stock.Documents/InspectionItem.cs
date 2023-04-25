@@ -77,7 +77,6 @@ namespace Workwear.Domain.Stock.Documents {
 					if(value != null) {
 						Writeoff = false;
 					}
-					
 					OnPropertyChanged();
 				}
 			}
@@ -89,7 +88,7 @@ namespace Workwear.Domain.Stock.Documents {
 			set {
 				if(value != (NewOperationIssue.Issued == 0)) {
 					NewOperationIssue.Issued = value ? 0 : OperationIssue.Issued;
-					if(value) NewOperationIssue.AutoWriteoffDate = null;
+					if(value) ExpiryByNormAfter = null;
 					OnPropertyChanged();
 					OnPropertyChanged(nameof(ExpiryByNormAfter));
 				}
