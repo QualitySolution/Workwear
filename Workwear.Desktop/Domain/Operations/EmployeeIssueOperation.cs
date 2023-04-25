@@ -252,7 +252,7 @@ namespace Workwear.Domain.Operations
 			if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
 				return beginWearPercent;
 
-			return beginWearPercent + (decimal)addPercent;
+			return beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent;
 		}
 
 		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
