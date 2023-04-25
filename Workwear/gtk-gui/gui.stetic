@@ -5374,7 +5374,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1079 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1955 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>
@@ -5979,6 +5979,31 @@
         <property name="ShortLabel" translatable="yes">Места возникновения затрат</property>
         <signal name="Activated" handler="OnActionCostCenterActivated" />
       </action>
+      <action id="ActionUpdateChannel">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Канал обновлений</property>
+        <property name="ShortLabel" translatable="yes">Канал обновлений</property>
+      </action>
+      <action id="ActionChannelCurrent">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Текущий</property>
+        <property name="ShortLabel" translatable="yes">Текущий</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">UpdateChannel</property>
+        <signal name="Toggled" handler="OnActionChannelCurrentToggled" />
+      </action>
+      <action id="ActionChannelStable">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Стабильный</property>
+        <property name="ShortLabel" translatable="yes">Стабильный</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">UpdateChannel</property>
+        <signal name="Toggled" handler="OnActionChannelStableToggled" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6090,6 +6115,10 @@
                 <node type="Menuitem" action="ActionAdminGuide" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionHistory" />
+                <node type="Menu" action="ActionUpdateChannel">
+                  <node type="Menuitem" action="ActionChannelCurrent" />
+                  <node type="Menuitem" action="ActionChannelStable" />
+                </node>
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSite" />
