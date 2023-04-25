@@ -57,14 +57,14 @@ namespace Workwear.Views.Stock {
 					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(1000)
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
 					.AddColumn ("Дата\nвыдачи").AddReadOnlyTextRenderer(e => e.IssueDate?.ToShortDateString() ?? "")
+					.AddColumn ("Выдано до").AddReadOnlyTextRenderer(e => e.ExpiryByNormBefore?.ToShortDateString() ??  "до износа")
 					.AddColumn ("% износа на\nдату выдачи").AddReadOnlyTextRenderer((e => ((int)(e.WearPercentBefore * 100))
 						.Clamp(0, 100) + "%"))
-					.AddColumn ("Исходная\nдата списания").AddReadOnlyTextRenderer(e => e.WriteOffDateBefore?.ToShortDateString() ??  "до износа")
 					.AddColumn ("Установить\n% износа").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
 						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
 					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing()
-					.AddColumn ("Продлить").AddDateRenderer(e => e.WriteOffDateAfter).Editable()
+					.AddColumn ("Продлить").AddDateRenderer(e => e.ExpiryByNormAfter).Editable()
 					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
 					.Finish ();
 			ytreeItems.Binding

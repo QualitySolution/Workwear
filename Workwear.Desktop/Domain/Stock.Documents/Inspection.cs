@@ -96,7 +96,7 @@ namespace Workwear.Domain.Stock.Documents {
 			item.NewOperationIssue.UpdateIssueOperation(operation, Date);
 			item.NewOperationIssue.IssuedOperation = operation;
 			item.NewOperationIssue.Returned = operation.Issued;
-			item.WriteOffDateAfter = operation.AutoWriteoffDate;
+			item.ExpiryByNormAfter = operation.ExpiryByNorm;
 			item.WearPercentAfter = wearPercent; 
 			
 			ObservableItems.Add(item);

@@ -25,16 +25,16 @@ CONCAT_WS(" ",
     )as FIO,
 IF(wc.card_number IS NOT NULL, wc.card_number, wc.id) as personnel_number,
 opissue.operation_time as issue_operation_time, 
-opissue.auto_writeoff_date as writeoff_date_before, 
+IF(opissue.ExpiryByNorm IS NOT NULL, opissue.ExpiryByNorm, "до износа") as writeoff_date_before, 
 CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after,
 CONCAT(TRUNCATE(opissue.wear_percent * 100, 0), "%") as percent_before,
 IF(opinspect.issued = 0,
-  IF(opissue.auto_writeoff_date IS NOT NULL AND opissue.auto_writeoff_date &gt; opinspect.operation_time,
+  IF(opissue.ExpiryByNorm IS NOT NULL AND opissue.ExpiryByNorm &gt; opinspect.operation_time,
    	"списать",
     "списать досрочно"),     
-  IF(opinspect.auto_writeoff_date IS NULL,
+  IF(opinspect.ExpiryByNorm IS NULL,
    	"продлить до износа", 
-   	CONCAT("продлить до ",DATE_FORMAT(opinspect.auto_writeoff_date, "%d.%m.%Y"),"г.")))
+   	CONCAT("продлить до ",DATE_FORMAT(opinspect.ExpiryByNorm, "%d.%m.%Y"),"г.")))
 as writeoff_date_after,
 items.cause
 FROM stock_inspection_items as items

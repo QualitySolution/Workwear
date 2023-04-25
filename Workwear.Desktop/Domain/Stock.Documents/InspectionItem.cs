@@ -45,12 +45,16 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual string EmployeeNumber { get => operationIssue.Employee?.CardNumber ?? operationIssue.Employee?.Id.ToString() ?? ""; }
 		public virtual Nomenclature Nomenclature { get => operationIssue.Nomenclature; }
 		public virtual int Amount { get => operationIssue.Issued; }
+		
+		[Display (Name = "Износ на дату выдачи")]	
 		public virtual decimal WearPercentBefore { get => OperationIssue.WearPercent;}
+		
+		[Display (Name = "Дата выдачи")]
 		public virtual DateTime? IssueDate { get => OperationIssue.OperationTime;}
 		
-		[Display (Name = "Дата списания до оценки")]	
-		public virtual DateTime? WriteOffDateBefore {
-			get => OperationIssue.AutoWriteoffDate;
+		[Display (Name = "Выдано до даты")]	
+		public virtual DateTime? ExpiryByNormBefore {
+			get => OperationIssue.ExpiryByNorm;
 		}
 
 		[Display (Name = "Изос после оценки")]	
@@ -64,13 +68,16 @@ namespace Workwear.Domain.Stock.Documents {
 			}
 		}
 
-		[Display (Name = "Дата списания после оценки")]	
-		public virtual DateTime? WriteOffDateAfter {
-			get => NewOperationIssue.AutoWriteoffDate;
+		[Display (Name = "Продлить до")]	
+		public virtual DateTime? ExpiryByNormAfter {
+			get => NewOperationIssue.ExpiryByNorm;
 			set {
-				if(NewOperationIssue.AutoWriteoffDate != value) {
-					NewOperationIssue.AutoWriteoffDate = value;
-					if(value != null) Writeoff = false;
+				if(NewOperationIssue.ExpiryByNorm != value) {
+					NewOperationIssue.ExpiryByNorm = value;
+					if(value != null) {
+						Writeoff = false;
+					}
+					
 					OnPropertyChanged();
 				}
 			}
@@ -84,7 +91,7 @@ namespace Workwear.Domain.Stock.Documents {
 					NewOperationIssue.Issued = value ? 0 : OperationIssue.Issued;
 					if(value) NewOperationIssue.AutoWriteoffDate = null;
 					OnPropertyChanged();
-					OnPropertyChanged(nameof(WriteOffDateAfter));
+					OnPropertyChanged(nameof(ExpiryByNormAfter));
 				}
 			}
 		}

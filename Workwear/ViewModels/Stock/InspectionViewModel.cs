@@ -19,9 +19,11 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
@@ -33,13 +35,15 @@ namespace Workwear.ViewModels.Stock {
 			IUserService userService,
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
+			BaseParameters baseParameters,
 			OrganizationRepository organizationRepository,
 			EmployeeCard employee = null,
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
 			this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-			
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+				
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
 			if (employee != null)
@@ -66,6 +70,7 @@ namespace Workwear.ViewModels.Stock {
 		
 		private IInteractiveService interactive;
 		private OrganizationRepository organizationRepository;
+		private BaseParameters baseParameters;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 		public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
@@ -103,7 +108,6 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		public void AddItems() {
-			
 			var selectJournal = 
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
@@ -130,9 +134,13 @@ namespace Workwear.ViewModels.Stock {
 
 			foreach(var item in Entity.Items)
 				if(item.Id == 0) {
-					item.NewOperationIssue.StartOfUse = Entity.Date;
-					if(item.WriteOffDateAfter != null)
+					if(item.Writeoff == false)
+						item.NewOperationIssue.StartOfUse = Entity.Date;
+					
+					if(item.ExpiryByNormAfter != null && baseParameters.DefaultAutoWriteoff) {
 						item.NewOperationIssue.UseAutoWriteoff = true;
+						item.NewOperationIssue.AutoWriteoffDate = item.ExpiryByNormAfter;
+					}
 					else
 						item.NewOperationIssue.UseAutoWriteoff = false;
 					UoW.Save(item.NewOperationIssue);
