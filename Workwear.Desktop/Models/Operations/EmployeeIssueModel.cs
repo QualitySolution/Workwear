@@ -182,6 +182,8 @@ namespace Workwear.Models.Operations {
 			var operations = employeeIssueRepository.AllOperationsFor(employees, protectionTools);
 			foreach(var employeeGroup in operations.GroupBy(o => o.Employee)) {
 				foreach(var protectionToolsGroup in employeeGroup.GroupBy(o => o.ProtectionTools)) {
+					if(protectionToolsGroup.Key == null)
+						continue; //В пересчёте нет смысла без потребности
 					graphs[GetKey(employeeGroup.Key, protectionToolsGroup.Key)] = new IssueGraph(protectionToolsGroup.ToList());
 				}
 			}

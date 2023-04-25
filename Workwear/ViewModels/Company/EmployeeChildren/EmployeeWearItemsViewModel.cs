@@ -207,7 +207,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OpenLastIssue(EmployeeCardItem row)
 		{
-			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation.Id);
+			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation(DateTime.Today, BaseParameters).Id);
 			if (!referencedoc.Any() || referencedoc.First().DocumentType == null) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Не найдена ссылка на документ выдачи");
 				return;
@@ -217,7 +217,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
-			var operation = row.LastIssueOperation;
+			var operation = row.LastIssueOperation(DateTime.Today, BaseParameters);
 			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
 			if (!row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.IsSame(operation.NormItem))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {

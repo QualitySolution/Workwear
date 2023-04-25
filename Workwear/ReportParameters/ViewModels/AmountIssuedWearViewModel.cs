@@ -44,9 +44,12 @@ namespace workwear.ReportParameters.ViewModels {
 			foreach(var item in Subdivisions) {
 				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			}
-			
-			if(FeaturesService.Available(WorkwearFeature.Owners))
+
+			if(FeaturesService.Available(WorkwearFeature.Owners)) {
+				Owners = UoW.GetAll<Owner>().ToList();
 				VisibleOwners = UoW.GetAll<Owner>().Any();
+			}
+				
 			if(FeaturesService.Available(WorkwearFeature.CostCenter))
 				VisibleCostCenter = UoW.GetAll<CostCenter>().Any();
 		}
@@ -68,7 +71,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 					{"byEmployee", ByEmployee},
 					{"showCost", ShowCost},
-					{"showCostCenter", ShowCostCenter}
+					{"showCostCenter", ShowCostCenter},
+					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm}
 		};
 
 		public override string Identifier { 
@@ -153,6 +157,12 @@ namespace workwear.ReportParameters.ViewModels {
 			get => showCostCenter;
 			set => SetField(ref showCostCenter, value);
 		}
+		
+		private bool showOnlyWithoutNorm;
+		public virtual bool ShowOnlyWithoutNorm {
+        			get => showOnlyWithoutNorm;
+        			set => SetField(ref showOnlyWithoutNorm, value);
+        		}
 
 		#endregion
 
@@ -184,6 +194,7 @@ namespace workwear.ReportParameters.ViewModels {
 		#region Visible
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
+		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
 		#endregion
 
 		private string matchString;

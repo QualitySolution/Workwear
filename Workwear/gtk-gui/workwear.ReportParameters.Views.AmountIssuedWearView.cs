@@ -14,13 +14,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Label label1;
 
+		private global::Gamma.GtkWidgets.yLabel labelIssueType;
+
 		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker;
 
 		private global::Gamma.GtkWidgets.yEntry yentryMatch;
 
 		private global::Gamma.GtkWidgets.yEntry yentryNoMatch;
-
-		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
@@ -43,6 +43,8 @@ namespace workwear.ReportParameters.Views
 		private global::Gamma.GtkWidgets.yCheckButton checkShowCost;
 
 		private global::Gamma.GtkWidgets.yCheckButton checkShowCostCenter;
+
+		private global::Gamma.GtkWidgets.yCheckButton checkShowOnlyWithoutNorm;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckChild;
 
@@ -111,18 +113,29 @@ namespace workwear.ReportParameters.Views
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.labelIssueType = new global::Gamma.GtkWidgets.yLabel();
+			this.labelIssueType.Name = "labelIssueType";
+			this.labelIssueType.Xalign = 1F;
+			this.labelIssueType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
+			this.ytable1.Add(this.labelIssueType);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.labelIssueType]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.ydateperiodpicker = new global::Gamma.Widgets.yDatePeriodPicker();
 			this.ydateperiodpicker.Events = ((global::Gdk.EventMask)(256));
 			this.ydateperiodpicker.Name = "ydateperiodpicker";
 			this.ydateperiodpicker.StartDate = new global::System.DateTime(0);
 			this.ydateperiodpicker.EndDate = new global::System.DateTime(0);
 			this.ytable1.Add(this.ydateperiodpicker);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateperiodpicker]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.LeftAttach = ((uint)(1));
-			w4.RightAttach = ((uint)(2));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateperiodpicker]));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
+			w5.LeftAttach = ((uint)(1));
+			w5.RightAttach = ((uint)(2));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yentryMatch = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryMatch.CanFocus = true;
@@ -130,13 +143,13 @@ namespace workwear.ReportParameters.Views
 			this.yentryMatch.IsEditable = true;
 			this.yentryMatch.InvisibleChar = '•';
 			this.ytable1.Add(this.yentryMatch);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yentryMatch]));
-			w5.TopAttach = ((uint)(4));
-			w5.BottomAttach = ((uint)(5));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yentryMatch]));
+			w6.TopAttach = ((uint)(4));
+			w6.BottomAttach = ((uint)(5));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yentryNoMatch = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryNoMatch.CanFocus = true;
@@ -144,22 +157,11 @@ namespace workwear.ReportParameters.Views
 			this.yentryNoMatch.IsEditable = true;
 			this.yentryNoMatch.InvisibleChar = '•';
 			this.ytable1.Add(this.yentryNoMatch);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yentryNoMatch]));
-			w6.TopAttach = ((uint)(5));
-			w6.BottomAttach = ((uint)(6));
-			w6.LeftAttach = ((uint)(1));
-			w6.RightAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel1.Name = "ylabel1";
-			this.ylabel1.Xalign = 1F;
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
-			this.ytable1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
-			w7.TopAttach = ((uint)(2));
-			w7.BottomAttach = ((uint)(3));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yentryNoMatch]));
+			w7.TopAttach = ((uint)(5));
+			w7.BottomAttach = ((uint)(6));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -302,6 +304,19 @@ namespace workwear.ReportParameters.Views
 			w19.Expand = false;
 			w19.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.checkShowOnlyWithoutNorm = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkShowOnlyWithoutNorm.TooltipMarkup = "Отобразить в отчёте только выданное в ручную, например сверех нормы";
+			this.checkShowOnlyWithoutNorm.CanFocus = true;
+			this.checkShowOnlyWithoutNorm.Name = "checkShowOnlyWithoutNorm";
+			this.checkShowOnlyWithoutNorm.Label = global::Mono.Unix.Catalog.GetString("Только выданное без нормы");
+			this.checkShowOnlyWithoutNorm.DrawIndicator = true;
+			this.checkShowOnlyWithoutNorm.UseUnderline = true;
+			this.vbox2.Add(this.checkShowOnlyWithoutNorm);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowOnlyWithoutNorm]));
+			w20.Position = 7;
+			w20.Expand = false;
+			w20.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
 			this.ycheckChild = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckChild.TooltipMarkup = "Включать в отчет так же дочерние подразделения выбранных подразделений.";
 			this.ycheckChild.CanFocus = true;
@@ -310,10 +325,10 @@ namespace workwear.ReportParameters.Views
 			this.ycheckChild.DrawIndicator = true;
 			this.ycheckChild.UseUnderline = true;
 			this.vbox2.Add(this.ycheckChild);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
-			w20.Position = 7;
-			w20.Expand = false;
-			w20.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
+			w21.Position = 8;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.ycheckAll = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckAll.CanFocus = true;
@@ -322,10 +337,10 @@ namespace workwear.ReportParameters.Views
 			this.ycheckAll.DrawIndicator = true;
 			this.ycheckAll.UseUnderline = true;
 			this.vbox2.Add(this.ycheckAll);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckAll]));
-			w21.Position = 8;
-			w21.Expand = false;
-			w21.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckAll]));
+			w22.Position = 9;
+			w22.Expand = false;
+			w22.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -336,8 +351,8 @@ namespace workwear.ReportParameters.Views
 			this.ytreeSubdivisions.Name = "ytreeSubdivisions";
 			this.GtkScrolledWindow.Add(this.ytreeSubdivisions);
 			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w23.Position = 9;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
+			w24.Position = 10;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;
@@ -346,10 +361,10 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.UseUnderline = true;
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
-			w24.Position = 10;
-			w24.Expand = false;
-			w24.Fill = false;
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w25.Position = 11;
+			w25.Expand = false;
+			w25.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

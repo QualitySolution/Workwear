@@ -44,7 +44,7 @@
 |+
 |+
 
-|<<stock-documents.adoc#completion,Документ комплектации>>
+|<<stock-documents.adoc#complectation,Документ комплектации>>
 |-
 |+
 |+
@@ -66,6 +66,11 @@
 |+
 
 |<<regulations.adoc#norm-conditions,Условия нормы>>
+|-
+|+
+|+
+
+|<<stock.adoc#sizes,Пользовательские размеры>>
 |-
 |+
 |+
@@ -99,6 +104,16 @@
 |-
 |-
 |+
+
+|<<import.adoc#import-stock-incomes,Загрузка поступлений в формате XML(1C)>>
+|-
+|-
+|+
+
+|https://doc.qsolution.ru/api/v1/common.html[Доступ к API]
+|-
+|-
+|+ (при размещении на QS:Облако)
 
 |<<mobile-app.adoc#claims,Обращения сотрудников>>
 |-

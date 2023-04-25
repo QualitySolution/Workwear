@@ -208,11 +208,13 @@ public partial class MainWindow : Gtk.Window
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);

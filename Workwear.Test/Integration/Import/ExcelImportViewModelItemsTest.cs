@@ -20,6 +20,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Nhibernate;
 using Workwear.ViewModels.Import;
 
@@ -45,6 +46,7 @@ namespace Workwear.Test.Integration.Import
 		[Test(Description = "Проверяем загрузку норм выданного в формате выгруженном из Восток-Сервис.")]
 		public void ItemsLoad_VostokCase()
 		{
+			var baseParameters = Substitute.For<BaseParameters>();
 			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
 			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			NewSessionWithSameDB();
@@ -178,15 +180,15 @@ namespace Workwear.Test.Integration.Import
 					Assert.That(savedEmployee.FirstName, Is.EqualTo("Алексей"));
 					var wearitemSuit = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection5.Id);
 					Assert.That(wearitemSuit.Issued(new DateTime(2020, 7, 18)), Is.EqualTo(1));
-					Assert.That(wearitemSuit.LastIssued(new DateTime(2020, 7, 18)).First().date, Is.EqualTo(new DateTime(2020, 6, 18)));
+					Assert.That(wearitemSuit.LastIssued(new DateTime(2020, 7, 18), baseParameters).First().date, Is.EqualTo(new DateTime(2020, 6, 18)));
 					var wearitemGloves = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection2.Id);
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 4, 20)), Is.EqualTo(12));
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 5, 20)), Is.EqualTo(12));
 					Assert.That(wearitemGloves.Issued(new DateTime(2021, 6, 20)), Is.EqualTo(0));
-					Assert.That(wearitemGloves.LastIssued(new DateTime(2021, 6, 20)).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
+					Assert.That(wearitemGloves.LastIssued(new DateTime(2021, 6, 20), baseParameters).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
 					var wearitemPPE = savedEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == protection4.Id);
 					Assert.That(wearitemPPE.Issued(new DateTime(2021, 5, 18)), Is.EqualTo(5));
-					Assert.That(wearitemPPE.LastIssued(new DateTime(2021, 5, 18)).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
+					Assert.That(wearitemPPE.LastIssued(new DateTime(2021, 5, 18), baseParameters).First().date, Is.EqualTo(new DateTime(2021, 5, 18)));
 					
 					//Проверяем создание операций...
 					var operationsForBoots = issueRepository.GetOperationsForEmployee(employee, protection1);

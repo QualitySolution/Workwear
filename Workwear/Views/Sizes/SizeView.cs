@@ -42,9 +42,12 @@ namespace Workwear.Views.Sizes
 				.InitializeFromSource();
 			entityAlterName.Binding
 				.AddBinding(Entity, e => e.AlternativeName, w => w.Text)
+				.AddBinding(ViewModel, vm => vm.CanEdit, v => v.Sensitive)
 				.InitializeFromSource();
 
+			ybuttonAddSuitable.Binding.AddBinding(ViewModel, v => v.CanEditAnalogs, w => w.Sensitive).InitializeFromSource();
 			ybuttonAddSuitable.Clicked += AddAnalog;
+			ybuttonRemoveSuitable.Sensitive = false;
 			ybuttonRemoveSuitable.Clicked += RemoveAnalog;
 			ytreeviewSuitableSizes.Selection.Changed += SelectionOnChanged;
 		}
@@ -67,7 +70,7 @@ namespace Workwear.Views.Sizes
 			ViewModel.RemoveAnalog(analog);
 		}
 		void SelectionOnChanged(object sender, EventArgs e) =>
-			ybuttonRemoveSuitable.Sensitive = ytreeviewSuitableSizes.Selection.CountSelectedRows() > 0;
+			ybuttonRemoveSuitable.Sensitive = ytreeviewSuitableSizes.Selection.CountSelectedRows() > 0 && ViewModel.CanEditAnalogs;
 		private void ObservableSuitableSizesOnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) => 
 			ytreeviewSuitableSizes.YTreeModel.EmitModelChanged();
 	}

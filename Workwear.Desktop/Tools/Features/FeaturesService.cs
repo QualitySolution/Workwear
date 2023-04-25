@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -79,8 +79,6 @@ namespace Workwear.Tools.Features
 
 		public virtual bool Available(WorkwearFeature feature) 
 		{
-			if(feature == WorkwearFeature.Barcodes)
-				return true;
 			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
 				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
 
@@ -112,10 +110,12 @@ namespace Workwear.Tools.Features
 
 			switch(feature) {
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
+				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
+				case WorkwearFeature.Exchange1C:
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
@@ -123,6 +123,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
+				case WorkwearFeature.CustomSizes:
 					return ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
@@ -145,6 +146,8 @@ namespace Workwear.Tools.Features
 		HistoryLog,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
+		[Display(Name = "Пользовательские размеры")]
+		CustomSizes,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
@@ -165,6 +168,8 @@ namespace Workwear.Tools.Features
 		CostCenter,
 		[Display(Name = "Штрихкоды")]
 		Barcodes,
+		[Display(Name = "Обмен с 1С")]
+		Exchange1C,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]

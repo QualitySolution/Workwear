@@ -13,6 +13,7 @@ using QS.Services;
 using Workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Sizes;
 using Workwear.Measurements;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Sizes;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -25,12 +26,14 @@ namespace workwear.Journal.ViewModels.Stock
             IInteractiveService interactiveService, 
             INavigationManager navigationManager,
             ILifetimeScope autofacScope,
+            FeaturesService featuresService,
             IDeleteEntityService deleteEntityService = null, 
             ICurrentPermissionService currentPermissionService = null
             ) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
         {
 			UseSlider = true;
             JournalFilter = Filter = autofacScope.Resolve<SizeTypeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+            VisibleCreateAction = VisibleDeleteAction = featuresService.Available(WorkwearFeature.CustomSizes);
             OverrideDeleteAction();
 		}
 

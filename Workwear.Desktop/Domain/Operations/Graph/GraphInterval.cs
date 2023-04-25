@@ -29,5 +29,7 @@ namespace Workwear.Domain.Operations.Graph
 		/// Отображает какое количество выданного используется в течении интервала. То есть исключаем выданное для которого дата начала использования еще не наступила.
 		/// </summary>
 		public int Used => ActiveItems.Where(x => x.IssueOperation.StartOfUse <= StartDate).Sum(x => x.AmountAtEndOfDay(StartDate));
+
+		public int AmountAtEndOfDay(DateTime onDate, EmployeeIssueOperation excludeOperation = null) => ActiveIssues.Sum(x => x.AmountAtEndOfDay(onDate, excludeOperation));
 	}
 }

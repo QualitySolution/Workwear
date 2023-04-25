@@ -56,14 +56,14 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name).WrapWidth(700)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
-				.AddColumn("Послед. получение")
-					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null) //FIXME пока так определяем ручную операцию. Когда будут типы операций надо переделать.
-					.AddTextRenderer(node => node.LastIssuedText)
+				.AddColumn("Послед. получения")
+					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null)
+					.AddTextRenderer(node => MakeLastIssuedText(node), useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)
 				.AddColumn("След. получение")
 					.ToolTipText(node => node.NextIssueAnnotation)
-					.AddTextRenderer(node => String.Format("{0:d}", node.NextIssue))
+					.AddTextRenderer(node => $"{node.NextIssue:d}")
 					.AddSetter((w, node) => w.Foreground = node.NextIssueColor(ViewModel.BaseParameters))
 					.AddPixbufRenderer(node => String.IsNullOrEmpty(node.NextIssueAnnotation) ? null : infoIcon)
 				.AddColumn("Просрочка").AddTextRenderer(
@@ -78,6 +78,9 @@ namespace Workwear.Views.Company.EmployeeChildren
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;
 		}
+
+		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Select(x => x.date > DateTime.Today ? $"<span foreground=\"darkviolet\">{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 
 		#region Кнопки
@@ -136,7 +139,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
-				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation != null;
+				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
@@ -144,7 +147,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
 				itemRecalculateLastIssue.ID = selected;
-				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation != null;
+				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
 				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemRecalculateLastIssue);
 
