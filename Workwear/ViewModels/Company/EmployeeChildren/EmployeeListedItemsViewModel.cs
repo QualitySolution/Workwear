@@ -86,7 +86,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void InspectionWear() {
 			navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
-
 		#endregion
 
 	}

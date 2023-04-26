@@ -72,8 +72,6 @@ namespace workwear.Representations.Organization
 					.Select (() => expenseOperationAlias.OperationTime).WithAlias (() => resultAlias.IssuedDate)
 					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 					.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
-					.Select (() => expenseOperationAlias.AutoWriteoffDate).WithAlias (() => resultAlias.AutoWriteoffDate)
-					.Select (() => expenseOperationAlias.FixedOperation).WithAlias (() => resultAlias.FixedOperation)
 					.SelectSubQuery (subQueryRemove).WithAlias (() => resultAlias.Removed)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeBalanceVMNode> ())
@@ -115,14 +113,12 @@ namespace workwear.Representations.Organization
 		public DateTime IssuedDate { get; set;}
 		public DateTime? StartUseDate { get; set; }
 		public DateTime? ExpiryDate { get; set;}
-		public DateTime? AutoWriteoffDate { get; set;}
 		public decimal Percentage => ExpiryDate != null ? 
 				EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 		public int Added { get; set;}
 		public int Removed { get; set;}
 		public string BalanceText => $"{Added - Removed} {UnitsName}";
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
-		public bool FixedOperation { get; set; }
 	}
 }
 

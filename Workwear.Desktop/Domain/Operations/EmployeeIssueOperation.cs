@@ -196,7 +196,7 @@ namespace Workwear.Domain.Operations
 		}
 		
 		private bool fixedOperation;
-		[Display(Name = "Не пересчитывать износ и дату автосписания")]
+		[Display(Name = "Запрет пересчёта дат начала и окончания срока носки")]
 		public virtual bool FixedOperation {
 			get => fixedOperation;
 			set => SetField(ref fixedOperation, value);
