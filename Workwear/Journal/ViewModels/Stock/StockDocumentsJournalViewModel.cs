@@ -403,6 +403,7 @@ namespace workwear.Journal.ViewModels.Stock
 			foreach(StockDocumentType docType in Enum.GetValues(typeof(StockDocumentType))) {
 				switch (docType) {
 					case StockDocumentType.CollectiveExpense when !FeaturesService.Available(WorkwearFeature.CollectiveExpense):
+					case StockDocumentType.InspectionDoc when !FeaturesService.Available(WorkwearFeature.Inspection):
 					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
 						continue;

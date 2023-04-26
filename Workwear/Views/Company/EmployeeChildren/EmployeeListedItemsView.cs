@@ -21,6 +21,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				buttonReturnWear.Sensitive = ViewModel.SensetiveButtonReturn;
 				buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
 				buttonInspection.Sensitive = ViewModel.SensetiveButtonInspecton;
+				buttonInspection.Visible = ViewModel.VisibleButtonInspecton;
 				buttonGiveWear.Sensitive = ViewModel.SensetiveButtonGiveWear;
 			}
 		}

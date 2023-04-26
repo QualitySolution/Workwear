@@ -25,8 +25,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
         private EmployeeCard employee;
         public EmployeeCard Employee {
             get => employee;
-            set {
-	            if(SetField(ref employee, value))
+            set { if(SetField(ref employee, value))
 		            if(value != null) {
 			            SubdivisionSensitive = false;
 			            Subdivision = employee.Subdivision;
@@ -35,7 +34,6 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			            SubdivisionSensitive = true;
 			            Subdivision = null;
 		            }
-			            
             }
         }
         private Subdivision subdivision;
