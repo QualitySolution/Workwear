@@ -1854,6 +1854,7 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
   `date` DATE NOT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
+  `organization_id` INT UNSIGNED NULL DEFAULT NULL,
   `director_id` INT UNSIGNED NULL DEFAULT NULL,
   `chairman_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
@@ -1861,6 +1862,7 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
   INDEX `stock_inspection_fk_1_idx` (`user_id` ASC),
   INDEX `stock_inspection_fk_2_idx` (`director_id` ASC),
   INDEX `stock_inspection_fk_3_idx` (`chairman_id` ASC),
+  INDEX `stock_inspection_fk_4_idx` (`organization_id` ASC),
   CONSTRAINT `stock_inspection_fk_1`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
@@ -1875,7 +1877,12 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
     FOREIGN KEY (`chairman_id`)
     REFERENCES `leaders` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE),
+	CONSTRAINT `stock_inspection_fk_4`
+	FOREIGN KEY (`organization_id`)
+	REFERENCES `organization` (`id`)
+	ON DELETE RESTRICT
+      ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -1887,8 +1894,6 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_items` (
   `stock_inspection_id` INT UNSIGNED NOT NULL,
   `operation_issue_id` INT UNSIGNED NOT NULL,
   `new_operation_issue_id` INT UNSIGNED NOT NULL,
-  `writeoff_date_before` DATE NULL DEFAULT NULL,
-  `wear_percent_before` DECIMAL(3,2) NOT NULL DEFAULT 0.00,
   `cause` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `stock_inspection_detail_fk_1_idx` (`stock_inspection_id` ASC),
