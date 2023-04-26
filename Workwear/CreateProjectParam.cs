@@ -166,6 +166,7 @@ namespace workwear
 			containerBuilder.RegisterModule(new UpdaterDBAutofacModule());
 			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
+			containerBuilder.RegisterType<UpdateChannelService>().As<IUpdateChannelService>();
 			#endregion
 
 			#region Временные будут переопределены

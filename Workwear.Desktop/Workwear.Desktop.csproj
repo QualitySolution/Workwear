@@ -16,6 +16,7 @@
       <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj" />
       <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj" />
       <ProjectReference Include="..\..\QSProjects\QS.Report.Core\QS.Report.Core.csproj" />
+      <ProjectReference Include="..\..\QSProjects\QS.Updater.App\QS.Updater.App.csproj" />
       <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj" />
     </ItemGroup>
 
