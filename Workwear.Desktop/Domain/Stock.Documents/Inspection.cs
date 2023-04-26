@@ -112,7 +112,8 @@ namespace Workwear.Domain.Stock.Documents {
 				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
 				return;
 			}
-			ObservableMembers.Add(new InspectionMember(){Member = member, Document = this});
+			if(Members.All(x => x.Member != member))
+				ObservableMembers.Add(new InspectionMember(){Member = member, Document = this});
 		}
 		#endregion
 		

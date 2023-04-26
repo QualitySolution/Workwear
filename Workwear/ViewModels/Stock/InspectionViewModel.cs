@@ -98,10 +98,8 @@ namespace Workwear.ViewModels.Stock {
 		void MemberOnSelectResult(object sender, JournalSelectedEventArgs e)
 		{
 			var members = UoW.GetById<Leader>(e.SelectedObjects.Select(x => x.GetId()));
-			foreach(var member in members) {
-				if(!Entity.Members.Any(x => x.Member == member))
-					Entity.AddMember(member);
-			}
+			foreach(var member in members)
+				Entity.AddMember(member);
 		}
 
 		public void DeleteItem(InspectionItem item) {
@@ -124,8 +122,7 @@ namespace Workwear.ViewModels.Stock {
 		
 		private void LoadItems(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var selectedNodes = e.GetSelectedObjects<EmployeeBalanceJournalNode>();
-			var operations = 
-				UoW.GetById<EmployeeIssueOperation>(selectedNodes.Select(x => x.Id));
+			var operations = UoW.GetById<EmployeeIssueOperation>(selectedNodes.Select(x => x.Id));
 			foreach (var node in selectedNodes) 
 				Entity.AddItem(operations.FirstOrDefault(o => o.Id == node.Id), node.Percentage);
 			//CalculateTotal(null, null);
