@@ -1643,7 +1643,6 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
               </TableCells>
             </TableRow>
           </TableRows>
-          <RepeatOnNewPage>true</RepeatOnNewPage>
         </Header>
         <Details>
           <TableRows>
@@ -1717,6 +1716,8 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
         </Details>
         <Left>218.0pt</Left>
         <Top>329.4pt</Top>
+        <PageBreakAtStart>false</PageBreakAtStart>
+        <PageBreakAtEnd>false</PageBreakAtEnd>
       </Table>
       <Table Name="Table2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -2321,7 +2322,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>110.4pt</Height>
+    <Height>16.5pt</Height>
     <ReportItems>
       <Textbox Name="Textbox10">
         <Top>1pt</Top>

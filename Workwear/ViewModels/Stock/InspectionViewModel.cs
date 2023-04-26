@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using FluentNHibernate.Utils;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -98,7 +99,8 @@ namespace Workwear.ViewModels.Stock {
 		{
 			var members = UoW.GetById<Leader>(e.SelectedObjects.Select(x => x.GetId()));
 			foreach(var member in members) {
-				Entity.AddMember(member);
+				if(!Entity.Members.Any(x => x.Member == member))
+					Entity.AddMember(member);
 			}
 		}
 
