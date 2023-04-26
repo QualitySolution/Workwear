@@ -118,9 +118,17 @@ namespace Workwear.Domain.Stock.Documents {
 		#endregion
 		
 		#region Валидатор
-//todo Надо Сделать валидацию		
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			if(false) yield return new ValidationResult("Валидация не реализована");
+			if (Date < new DateTime(2008, 1, 1))
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
+					new[] { nameof(Date)});
+
+			foreach(var item in Items) {
+				if(!item.Writeoff && !item.ExpiryByNormAfter.HasValue)
+					yield return new ValidationResult ($"По строке {item.Nomenclature.Name} - {item.Employee.ShortName} " +
+					                                   $"не принято решение. Проставьте списание или дату продления.", 
+                		new[] { nameof(Items)});
+			}
 		}
 		#endregion
 	}
