@@ -19,6 +19,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
@@ -104,7 +105,7 @@ namespace Workwear.ViewModels.Stock {
 
 		public void DeleteItem(InspectionItem item) {
 			Entity.RemoveItem(item);
-			//CalculateTotal();
+			CalculateTotal();
 		}
 		
 		public void AddItems() {
@@ -125,7 +126,7 @@ namespace Workwear.ViewModels.Stock {
 			var operations = UoW.GetById<EmployeeIssueOperation>(selectedNodes.Select(x => x.Id));
 			foreach (var node in selectedNodes) 
 				Entity.AddItem(operations.FirstOrDefault(o => o.Id == node.Id), node.Percentage);
-			//CalculateTotal(null, null);
+			CalculateTotal();
 		}
 		
 		public override bool Save() {
@@ -161,8 +162,8 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		private void CalculateTotal() {
-			Total = "";
-			throw new System.NotImplementedException();
+			Total = $"Позиций в документе: {Entity.Items.Count}, " +
+			        $"Затронуто сотрудников: {Entity.Items.GroupBy(x => x.Employee).Count()}.";
 		}
 		
 		public void Print() {
