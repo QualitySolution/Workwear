@@ -43,13 +43,13 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField (ref chairman, value, () => Chairman); }
 		}
 		
-				private Organization organization;
-        		[Display (Name = "Председатель комисии")]
-        		public virtual Organization Organization {
-        			get { return organization; }
-        			set { SetField (ref organization, value, () => Organization); }
-        		}
-		
+		private Organization organization;
+		[Display(Name = "Председатель комиcсии")]
+		public virtual Organization Organization {
+			get { return organization; }
+			set { SetField(ref organization, value, () => Organization); }
+		}
+
 		private IList<Leader> members = new List<Leader>();
 		[Display(Name = "Члены комисии")]
 		public virtual IList<Leader> Members {

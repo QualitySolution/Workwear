@@ -25,12 +25,6 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 				.Table("stock_inspection_members")
 				.ParentKeyColumn("stock_inspection_id")
 				.ChildKeyColumn("member_id");
-			
-			//HasMany (x => x.Members)
-			//	.Inverse()
-			//	.KeyColumn ("member_id").Not.KeyNullable ()
-			//	.Cascade.AllDeleteOrphan ()
-			//	.LazyLoad ();
 
 			HasMany (x => x.Items)
 				.Inverse()
