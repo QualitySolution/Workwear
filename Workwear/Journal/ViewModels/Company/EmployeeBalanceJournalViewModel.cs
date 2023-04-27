@@ -49,7 +49,6 @@ namespace workwear.Journal.ViewModels.Company
         {
 	        EmployeeBalanceJournalNode resultAlias = null;
 			EmployeeIssueOperation expenseOperationAlias = null;
-			Subdivision subdivisionAlias= null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemTypesAlias = null;
 			MeasurementUnits unitsAlias = null;
@@ -64,7 +63,7 @@ namespace workwear.Journal.ViewModels.Company
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
 			if(Filter.Subdivision != null)
-				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
+				query.Where(() => employeeCardAlias.Subdivision.Id == Filter.Subdivision.Id);
 			if(!Filter.CheckShowAll)
 				query.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date);
 			
@@ -88,7 +87,6 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
-					.JoinAlias(() => employeeCardAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -116,7 +114,6 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
-					.JoinAlias(() => employeeCardAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
