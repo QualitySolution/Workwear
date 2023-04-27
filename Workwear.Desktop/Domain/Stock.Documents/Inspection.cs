@@ -50,9 +50,9 @@ namespace Workwear.Domain.Stock.Documents {
         			set { SetField (ref organization, value, () => Organization); }
         		}
 		
-		private IList<InspectionMember> members = new List<InspectionMember>();
+		private IList<Leader> members = new List<Leader>();
 		[Display(Name = "Члены комисии")]
-		public virtual IList<InspectionMember> Members {
+		public virtual IList<Leader> Members {
 			get { return members; }
 			set { SetField(ref members, value, () => Members); }
 		}
@@ -68,12 +68,12 @@ namespace Workwear.Domain.Stock.Documents {
 	        }
 		}
         
-        GenericObservableList<InspectionMember> observableMembers;
+        GenericObservableList<Leader> observableMembers;
         //FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual GenericObservableList<InspectionMember> ObservableMembers {
+        public virtual GenericObservableList<Leader> ObservableMembers {
 	        get {
 		        if(observableMembers == null)
-			        observableMembers = new GenericObservableList<InspectionMember>(Members);
+			        observableMembers = new GenericObservableList<Leader>(Members);
 		        return observableMembers;
 	        }
         }
@@ -102,7 +102,7 @@ namespace Workwear.Domain.Stock.Documents {
 			ObservableItems.Add(item);
 		}
 		
-		public virtual void RemoveMember(InspectionMember member) {
+		public virtual void RemoveMember(Leader member) {
 			ObservableMembers.Remove (member);
 		}
 		
@@ -112,8 +112,8 @@ namespace Workwear.Domain.Stock.Documents {
 				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
 				return;
 			}
-			if(Members.All(x => x.Member != member))
-				ObservableMembers.Add(new InspectionMember(){Member = member, Document = this});
+			if(!Members.Contains(member))//All(x => x != member))
+				ObservableMembers.Add(member);
 		}
 		#endregion
 		

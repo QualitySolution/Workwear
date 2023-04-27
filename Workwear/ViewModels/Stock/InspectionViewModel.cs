@@ -87,7 +87,7 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref total, value);
 		}
 
-		public void DeleteMember(InspectionMember member) {
+		public void DeleteMember(Leader member) {
 			Entity.RemoveMember(member);
 		}
 		public void AddMembers()

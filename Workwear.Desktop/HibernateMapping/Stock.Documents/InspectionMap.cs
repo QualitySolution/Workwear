@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.HibernateMapping.Stock.Documents {
@@ -20,11 +21,16 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			References (x => x.Chairman).Column ("chairman_id");
 			References (x => x.Organization).Column ("organization_id");
 			
-			HasMany (x => x.Members)
-				.Inverse()
-				.KeyColumn ("stock_inspection_id").Not.KeyNullable ()
-				.Cascade.AllDeleteOrphan ()
-				.LazyLoad ();
+			HasManyToMany<Leader>(x => x.Members)
+				.Table("stock_inspection_members")
+				.ParentKeyColumn("stock_inspection_id")
+				.ChildKeyColumn("member_id");
+			
+			//HasMany (x => x.Members)
+			//	.Inverse()
+			//	.KeyColumn ("member_id").Not.KeyNullable ()
+			//	.Cascade.AllDeleteOrphan ()
+			//	.LazyLoad ();
 
 			HasMany (x => x.Items)
 				.Inverse()

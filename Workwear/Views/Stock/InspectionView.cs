@@ -5,6 +5,7 @@ using QS.Utilities.Numeric;
 using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
@@ -42,9 +43,9 @@ namespace Workwear.Views.Stock {
 		}
 
 		private void ConfigureMembers() {
-			ytreeMembers.ColumnsConfig = FluentColumnsConfig<InspectionMember>.Create()
-				.AddColumn("ФИО").AddTextRenderer(l => l.Member.Title)
-				.AddColumn("Должность").AddTextRenderer(l => l.Member.Position)
+			ytreeMembers.ColumnsConfig = FluentColumnsConfig<Leader>.Create()
+				.AddColumn("ФИО").AddTextRenderer(l => l.Title)
+				.AddColumn("Должность").AddTextRenderer(l => l.Position)
 				.Finish();
 			ytreeMembers.ItemsDataSource = Entity.ObservableMembers;
 		}
@@ -73,7 +74,7 @@ namespace Workwear.Views.Stock {
 		}
 
 		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
-		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<InspectionMember>());
+		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
 		private void Members_Selection_Changed(object sender, EventArgs e){
 			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0;
 		}
