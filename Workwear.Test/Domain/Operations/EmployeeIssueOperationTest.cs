@@ -277,17 +277,17 @@ namespace Workwear.Test.Domain.Operations
 			Assert.That(result, Is.EqualTo(0.5m));
 		}
 
-		[Test(Description = "начальные 45% + 10%, проверяем что к начальным добавляется расчетный.")]
+		[Test(Description = "начальные 40% + 10%, проверяем что к начальным добавляется расчетный.")]
 		public void CalculatePercentWear_Writeoff_WearPercentTest_StartPercentPlus10()
 		{
 			var issue = new EmployeeIssueOperation();
-			issue.WearPercent = 0.45m;
+			issue.WearPercent = 0.40m;
 			issue.StartOfUse = new DateTime(2018, 1, 1);
-			issue.ExpiryByNorm = new DateTime(2018, 1, 11);
+			issue.ExpiryByNorm = new DateTime(2018, 1, 7);
 
 			var atDate = new DateTime(2018, 1, 2);
 			var result = issue.CalculatePercentWear(atDate);
-			Assert.That(result, Is.EqualTo(0.55m));
+			Assert.That(result, Is.EqualTo(0.50m));
 		}
 
 		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]
