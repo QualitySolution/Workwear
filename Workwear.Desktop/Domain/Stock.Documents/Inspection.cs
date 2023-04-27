@@ -106,14 +106,12 @@ namespace Workwear.Domain.Stock.Documents {
 			ObservableMembers.Remove (member);
 		}
 		
-		public virtual void AddMember(Leader member)
-		{
+		public virtual void AddMember(Leader member) {
 			if(Members.Any(p => DomainHelper.EqualDomainObjects(p, member))) {
 				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
 				return;
 			}
-			if(!Members.Contains(member))//All(x => x != member))
-				ObservableMembers.Add(member);
+			ObservableMembers.Add(member);
 		}
 		#endregion
 		
