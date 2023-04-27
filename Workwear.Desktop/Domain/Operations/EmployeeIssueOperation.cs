@@ -247,7 +247,9 @@ namespace Workwear.Domain.Operations
 		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
-
+			if(beginWearPercent >= 1)
+				return beginWearPercent;
+			
 			var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
 			if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
 				return beginWearPercent;

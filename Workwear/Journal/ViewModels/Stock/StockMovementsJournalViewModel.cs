@@ -228,7 +228,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => writeOffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
 					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.Select(() => inspectionItemAlias.Id).WithAlias(() => resultAlias.InspectionItemId)
-					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.InspectionId)
+					.Select(() => inspectionItemAlias.Document.Id).WithAlias(() => resultAlias.InspectionId)
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
