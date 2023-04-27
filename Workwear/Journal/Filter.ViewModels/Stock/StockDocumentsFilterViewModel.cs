@@ -32,6 +32,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get {
 				if(!FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					yield return Workwear.Domain.Stock.Documents.StockDocumentType.CollectiveExpense;
+				if(!FeaturesService.Available(WorkwearFeature.Inspection))
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.InspectionDoc;
+				if(!FeaturesService.Available(WorkwearFeature.Completion))
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.Completion;
 				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
 					yield return Workwear.Domain.Stock.Documents.StockDocumentType.TransferDoc;
 				if(!FeaturesService.Available(WorkwearFeature.Completion))

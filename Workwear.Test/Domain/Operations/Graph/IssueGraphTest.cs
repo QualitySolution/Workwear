@@ -270,5 +270,30 @@ namespace Workwear.Test.Domain.Operations.Graph
 			Assert.That(beforeLast.Reset, Is.True);
 		}
 		#endregion
+		
+		[Test(Description = "Проверяем обработку операций с выдачей и списанием в одной операции.")]
+		public void AmountAtDay_OperationIssuedAndRemove_Test()
+		{
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			operation1.OperationTime.Returns(new DateTime(2018, 1, 1, 9, 0, 0));
+			operation1.StartOfUse.Returns(new DateTime(2018, 1, 1, 14, 0, 0));
+			operation1.AutoWriteoffDate.Returns(new DateTime(2018,6, 1));
+			operation1.Issued.Returns(2);
+			
+			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			operation2.IssuedOperation.Returns(operation1);
+			operation2.OperationTime.Returns(new DateTime(2018, 4, 1, 9, 0, 0));
+			operation2.StartOfUse.Returns(new DateTime(2018, 4, 1, 9, 0, 0));
+			operation2.AutoWriteoffDate.Returns(new DateTime(2018,8, 1));
+			operation2.Issued.Returns(2);
+			operation2.Returned.Returns(2);
+
+			var list = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var graph = new IssueGraph(list);
+			
+			Assert.That(graph.AmountAtEndOfDay(new DateTime(2018, 3, 1)), Is.EqualTo(2));
+			Assert.That(graph.AmountAtEndOfDay(new DateTime(2018, 5, 1)), Is.EqualTo(2));
+			Assert.That(graph.AmountAtEndOfDay(new DateTime(2018, 7, 1)), Is.EqualTo(2));
+		}
 	}
 }

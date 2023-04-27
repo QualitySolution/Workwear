@@ -6,16 +6,18 @@ using QS.ViewModels;
 using workwear;
 using Workwear.Domain.Company;
 using workwear.Representations.Organization;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeListedItemsViewModel : ViewModelBase
 	{
-		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation)
+		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation, FeaturesService featuresService)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.featuresService = featuresService;
 		}
 
 		#region Хелперы
@@ -28,6 +30,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#region Показ
 		private bool isConfigured = false;
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly FeaturesService featuresService;
 		private readonly ITdiCompatibilityNavigation navigation;
 
 		public void OnShow()
@@ -55,6 +58,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public bool SensetiveButtonGiveWear => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonReturn => !employeeViewModel.UoW.IsNew;
 		public bool SensetiveButtonWriteoff => !employeeViewModel.UoW.IsNew;
+		public bool SensetiveButtonInspecton => !employeeViewModel.UoW.IsNew;
+		public bool VisibleButtonInspecton => featuresService.Available(WorkwearFeature.Inspection);
 
 		#endregion
 
@@ -78,6 +83,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
+		public void InspectionWear() {
+			navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+		}
 		#endregion
 
 	}

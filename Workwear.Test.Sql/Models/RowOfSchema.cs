@@ -35,12 +35,12 @@ namespace QS.DBScripts.Models {
 				case "Indexes":
 					Table = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")];
 					Name = (string)row[row.Table.Columns.IndexOf("INDEX_NAME")];
-					FullName = Name + Table;
+					FullName = $"{Table}.{Name}";
 					break;
 				case "IndexColumns":
 					Table = (string)row[row.Table.Columns.IndexOf("TABLE_NAME")];
-					Name = (string)row[row.Table.Columns.IndexOf("COLUMN_NAME")] +"."+ (string)row[row.Table.Columns.IndexOf("INDEX_NAME")];
-					FullName = Name + Table;
+					Name = (string)row[row.Table.Columns.IndexOf("INDEX_NAME")] +"."+ (string)row[row.Table.Columns.IndexOf("COLUMN_NAME")];
+					FullName = $"{Table}.{Name}";
 					break;
 
 			}

@@ -20,6 +20,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 				viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				buttonReturnWear.Sensitive = ViewModel.SensetiveButtonReturn;
 				buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
+				buttonInspection.Sensitive = ViewModel.SensetiveButtonInspecton;
+				buttonInspection.Visible = ViewModel.VisibleButtonInspecton;
 				buttonGiveWear.Sensitive = ViewModel.SensetiveButtonGiveWear;
 			}
 		}
@@ -47,5 +49,11 @@ namespace Workwear.Views.Company.EmployeeChildren
 			ViewModel.WriteOffWear();
 			buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
 		}
+		protected void OnButtonInspectionClicked(object sender, EventArgs e) {
+			buttonInspection.Sensitive = true;
+			ViewModel.InspectionWear();
+			buttonInspection.Sensitive = ViewModel.SensetiveButtonInspecton;
+		}
+		
 	}
 }

@@ -52,11 +52,15 @@ namespace Workwear
 				.AddClearDependence<IssuanceSheet>(x => x.HeadOfDivisionPerson)
 				.AddClearDependence<IssuanceSheet>(x => x.ResponsiblePerson)
 				.AddClearDependence<UserSettings>(x => x.DefaultResponsiblePerson)
-				.AddClearDependence<UserSettings>(x => x.DefaultLeader);
+				.AddClearDependence<UserSettings>(x => x.DefaultLeader)
+				.AddClearDependence<Inspection>(x => x.Director)
+				.AddClearDependence<Inspection>(x => x.Chairman)
+				.AddRemoveFromDependence<Inspection>(x => x.Members);
 
 			DeleteConfig.AddHibernateDeleteInfo<Organization>()
 				.AddClearDependence<IssuanceSheet>(x => x.Organization)
-				.AddClearDependence<UserSettings>(x => x.DefaultOrganization);
+				.AddClearDependence<UserSettings>(x => x.DefaultOrganization)
+				.AddClearDependence<Inspection>(x => x.Organization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
 				.AddRemoveFromDependence<Norm>(x => x.Posts)
@@ -207,6 +211,13 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			DeleteConfig.AddHibernateDeleteInfo<CompletionResultItem>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
+
+			DeleteConfig.AddHibernateDeleteInfo<Inspection>()
+				.AddDeleteDependence<InspectionItem>(x => x.Document);
+
+			DeleteConfig.AddHibernateDeleteInfo<InspectionItem>()
+				.AddDeleteCascadeDependence(x => x.NewOperationIssue);
+
 			#endregion
 			#region Statements
 
@@ -229,7 +240,9 @@ namespace Workwear
 				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
 				.AddDeleteCascadeDependence(x => x.EmployeeOperationIssueOnWriteOff)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
-				.AddClearDependence<EmployeeIssueOperation>(x => x.EmployeeOperationIssueOnWriteOff);
+				.AddClearDependence<EmployeeIssueOperation>(x => x.EmployeeOperationIssueOnWriteOff)
+				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
+				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionIssueOperation>()
 				.RequiredCascadeDeletion()
@@ -262,7 +275,8 @@ namespace Workwear
 				.AddClearDependence<CollectiveExpense>(x => x.CreatedbyUser)
 				.AddClearDependence<Income>(x => x.CreatedbyUser)
 				.AddClearDependence<Transfer>(x => x.CreatedbyUser)
-				.AddClearDependence<Completion>(x => x.CreatedbyUser);
+				.AddClearDependence<Completion>(x => x.CreatedbyUser)
+				.AddClearDependence<Inspection>(x => x.CreatedbyUser);
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 

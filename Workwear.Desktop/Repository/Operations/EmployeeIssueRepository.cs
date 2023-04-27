@@ -175,6 +175,7 @@ namespace Workwear.Repository.Operations
 			IncomeItem incomeItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
+			InspectionItem inspectionItemAlias = null;
 			
 			var result = RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -182,6 +183,7 @@ namespace Workwear.Repository.Operations
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => inspectionItemAlias, () => inspectionItemAlias.NewOperationIssue.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.Where(x => x.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
@@ -194,6 +196,8 @@ namespace Workwear.Repository.Operations
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
+					.Select(() => inspectionItemAlias.Id).WithAlias(() => docAlias.InspectionItemId)
+					.Select(() => inspectionItemAlias.Document.Id).WithAlias(() => docAlias.InspectionId)
 				)
 				.TransformUsing(Transformers.AliasToBean<OperationToDocumentReference>())
 				.List<OperationToDocumentReference>();

@@ -121,6 +121,7 @@ namespace Workwear.Tools.Features
 					return ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
+				case WorkwearFeature.Inspection:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
@@ -140,6 +141,8 @@ namespace Workwear.Tools.Features
 		CollectiveExpense,
 		[Display(Name = "Комплектация")]
 		Completion,
+		[Display(Name = "Переоценки")]
+		Inspection,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]
