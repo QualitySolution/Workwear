@@ -1129,7 +1129,7 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
   INDEX `stock_inspection_fk_1_idx` (`user_id` ASC),
   INDEX `stock_inspection_fk_2_idx` (`director_id` ASC),
   INDEX `stock_inspection_fk_3_idx` (`chairman_id` ASC),
-  INDEX `stock_inspection_fk_4_idx` (`organization_id` ASC),
+  INDEX `fk_stock_inspection_1_idx` (`organization_id` ASC),
   CONSTRAINT `stock_inspection_fk_1`
     FOREIGN KEY (`user_id`)
       REFERENCES `users` (`id`)
@@ -1144,11 +1144,11 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
     FOREIGN KEY (`chairman_id`)
       REFERENCES `leaders` (`id`)
       ON DELETE RESTRICT
-      ON UPDATE CASCADE),
-  CONSTRAINT `stock_inspection_fk_4`
-	FOREIGN KEY (`organization_id`)
-	  REFERENCES `organization` (`id`)
-	  ON DELETE RESTRICT
+      ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_inspection_1`
+    FOREIGN KEY (`organization_id`)
+      REFERENCES `organizations` (`id`)
+      ON DELETE NO ACTION
       ON UPDATE CASCADE)
   ENGINE = InnoDB;
 
