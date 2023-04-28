@@ -553,10 +553,6 @@
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
-      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QS.MachineConfig</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
       <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
       <Name>QS.Features.Gtk</Name>

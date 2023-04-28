@@ -126,10 +126,6 @@
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
-      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QS.MachineConfig</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Integration\" />
