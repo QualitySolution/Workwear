@@ -184,7 +184,7 @@ namespace workwear
 			#endregion
 		}
 		
-		static void AutofacClassConfig(ContainerBuilder builder)
+		static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
 		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
@@ -195,7 +195,7 @@ namespace workwear
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
-			builder.RegisterType<NhDataBaseInfo>().As<IDataBaseInfo>();
+			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 

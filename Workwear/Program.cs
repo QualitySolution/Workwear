@@ -96,6 +96,7 @@ namespace workwear
 			if (LoginResult == ResponseType.DeleteEvent || LoginResult == ResponseType.Cancel)
 				return;
 
+			bool isDemo = LoginDialog.ConnectedTo.IsDemo;
 			LoginDialog.Destroy ();
 			scopeLoginTime.Dispose();
 
@@ -106,7 +107,7 @@ namespace workwear
 			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
 			
 			CreateBaseConfig (); //Настройка базы
-			AppDIContainer = startupContainer.BeginLifetimeScope(AutofacClassConfig); //Создаем постоянный контейнер
+			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
 			unhandledExceptionHandler.UpdateDependencies(AppDIContainer);
 
 			//Настройка удаления
