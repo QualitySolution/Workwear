@@ -2,6 +2,7 @@ using System;
 using Autofac;
 using Gtk;
 using NLog;
+using QS.Configuration;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
@@ -50,24 +51,43 @@ namespace workwear
 			}
 			
 			ILifetimeScope scopeLoginTime = startupContainer.BeginLifetimeScope();
+			var configuration = scopeLoginTime.Resolve<IChangeableConfiguration>();
 			// Создаем окно входа
-			Login LoginDialog = new Login ();
+			Login LoginDialog = new Login (configuration);
 			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("Workwear.icon.logo.png");
-			LoginDialog.SetDefaultNames ("workwear");
-			LoginDialog.DefaultLogin = "demo";
-			LoginDialog.DefaultServer = "demo.qsolution.ru";
-			LoginDialog.DefaultConnection = "Демонстрационная база";
-            Login.ApplicationDemoServer = "demo.qsolution.ru";
-			LoginDialog.DemoMessage = "Для подключения к демонстрационному серверу используйте следующие настройки:\n" +
+			Login.ApplicationDemoServer = "demo.qsolution.ru";
+			Login.ApplicationDemoAccount = "demo";
+			LoginDialog.DemoMessage = "Для входа в демонстрационную базу используйте следующие данные:\n" +
 			"\n" +
-			"<b>Сервер:</b> demo.qsolution.ru\n" +
 			"<b>Пользователь:</b> demo\n" +
 			"<b>Пароль:</b> demo\n" +
 			"\n" +
 			"Для установки собственного сервера обратитесь к документации.";
 			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
-			Login.CreateDBHelpUrl = "http://doc.qsolution.ru/workwear/" + new ApplicationVersionInfo().Version.ToString(2) +"/install.html#InstallDBServer";
+			Login.CreateDBHelpUrl = "https://doc.qsolution.ru/workwear/" + new ApplicationVersionInfo().Version.ToString(2) +"/install.html#InstallDBServer";
 			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
+			Login.MakeDefaultConnections = () => new Connection[] {
+				new Connection(
+					ConnectionType.MySQL,
+					"Этот компьютер",
+					"workwear",
+					"localhost"
+				),
+				new Connection(
+					ConnectionType.SaaS,
+					"Демонстрационная(текущая)",
+					"current",
+					user: "demo",
+					account: "demo"
+				),
+				new Connection(
+					ConnectionType.SaaS,
+					"Демонстрационная(стабильная)",
+					"stable",
+					user: "demo",
+					account: "demo"
+				)
+			};
 
 			LoginDialog.UpdateFromGConf ();
 
@@ -98,11 +118,8 @@ namespace workwear
             MainTelemetry.Edition = applicationInfo.Modification;
             MainTelemetry.Version = applicationInfo.Version.ToString();
             MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-			var appConfig = QSMachineConfig.MachineConfig.ConfigSource.Configs["Application"];
-			if (appConfig != null)
-				MainTelemetry.DoNotTrack = appConfig.GetBoolean("DoNotTrack", false);
-
-			MainTelemetry.StartUpdateByTimer(600);
+            MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
+            MainTelemetry.StartUpdateByTimer(600);
 #else
 			MainTelemetry.DoNotTrack = true;
 #endif

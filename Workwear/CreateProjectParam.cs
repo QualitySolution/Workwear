@@ -129,6 +129,10 @@ namespace workwear
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
+			#region Настройка
+			containerBuilder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf().SingleInstance();
+			#endregion
+			
 			#region GtkUI
 			containerBuilder.RegisterType<GtkMessageDialogsInteractive>().As<IInteractiveMessage>();
 			containerBuilder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
@@ -327,7 +331,6 @@ namespace workwear
 			#endregion
 
 			#region Настройка
-			builder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf();
 			builder.RegisterType<CurrentUserSettings>().AsSelf();
 			#endregion
 
