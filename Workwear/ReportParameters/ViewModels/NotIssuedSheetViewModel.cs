@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -8,6 +8,7 @@ using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
 {
@@ -15,8 +16,10 @@ namespace workwear.ReportParameters.ViewModels
 	{
 		IUnitOfWork UoW;
 
-		public NotIssuedSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope) : base(rdlViewerViewModel)
+		public NotIssuedSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+
 			Title = "Справка по невыданному (Детально)";
 			Identifier = "NotIssuedSheet";
 
@@ -63,11 +66,13 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		#endregion
 		#region Свойства
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensetiveLoad => ReportDate != null;
 		#endregion
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		private readonly FeaturesService featuresService;
 		#endregion
 
 		public void Dispose()

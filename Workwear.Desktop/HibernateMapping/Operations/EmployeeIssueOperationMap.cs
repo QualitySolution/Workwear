@@ -27,6 +27,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.SignTimestamp).Column("sign_timestamp");
 			Map(x => x.OverrideBefore).Column("override_before");
 			Map(x => x.ManualOperation).Column("manual_operation");
+			Map(x => x.FixedOperation).Column("fixed_operation");
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id");

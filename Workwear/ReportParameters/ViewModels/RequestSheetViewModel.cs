@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -11,12 +11,17 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
 	{
-		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope) : base(rdlViewerViewModel)
+		private readonly FeaturesService featuresService;
+
+		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
 
@@ -110,6 +115,7 @@ namespace workwear.ReportParameters.ViewModels {
 				.List<SelectedProtectionTools>();
 		}
 
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensetiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
 		#endregion
 

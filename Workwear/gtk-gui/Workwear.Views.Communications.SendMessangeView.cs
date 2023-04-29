@@ -88,7 +88,7 @@ namespace Workwear.Views.Communications
 			this.ybuttonSend.UseUnderline = true;
 			this.ybuttonSend.Label = global::Mono.Unix.Catalog.GetString("Отправить");
 			global::Gtk.Image w6 = new global::Gtk.Image();
-			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_mail-send", global::Gtk.IconSize.Menu);
+			w6.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("workwear.icon.buttons.send.png");
 			this.ybuttonSend.Image = w6;
 			this.yhbox1.Add(this.ybuttonSend);
 			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonSend]));

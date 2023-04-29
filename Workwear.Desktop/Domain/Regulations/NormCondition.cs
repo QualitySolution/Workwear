@@ -63,19 +63,18 @@ namespace Workwear.Domain.Regulations
 			}
 		}
 
-		 public virtual DateRange CalculateCurrentPeriod(DateTime dateFrom) {
-		 	if (IssuanceStart is null || IssuanceEnd is null)
+		public virtual DateRange CalculateCurrentPeriod(DateTime dateFrom) {
+			if (IssuanceStart is null || IssuanceEnd is null)
 		 		throw new ArgumentException("В условиях нормы не заданы даты");
 		    
-		    var wantYear = dateFrom > DateTime.Today ? dateFrom : DateTime.Today;
-		    var end = new DateTime(wantYear.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
-		    if (end < wantYear)
+		    var end = new DateTime(dateFrom.Year, IssuanceEnd.Value.Month, IssuanceEnd.Value.Day);
+		    if (end < dateFrom)
 			    end = end.AddYears(1);
 		    var start = new DateTime(end.Year, IssuanceStart.Value.Month, IssuanceStart.Value.Day);
 		    if (start > end)
 			      start = start.AddYears(-1);
 		    return new DateRange(start, end);
-		 }
+		}
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

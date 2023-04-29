@@ -9,6 +9,7 @@ using Gtk;
 using MySql.Data.MySqlClient;
 using NLog;
 using QS.BusinessCommon.Domain;
+using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -26,6 +27,7 @@ using QS.Serial.ViewModels;
 using QS.Services;
 using QS.Tdi.Gtk;
 using QS.Tdi;
+using QS.Updater.App;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
@@ -37,29 +39,29 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
-using Workwear.Repository.Stock;
-using Workwear.Tools.Features;
-using Workwear.Tools;
-using workwear.Journal.ViewModels.Communications;
-using workwear.Journal.ViewModels.Company;
-using workwear.Journal.ViewModels.Regulations;
-using workwear.Journal.ViewModels.Statements;
-using workwear.Journal.ViewModels.Stock;
-using workwear.Journal.ViewModels.Tools;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
 using Workwear.Models.Import;
-using workwear.Models.WearLk;
-using workwear.ReportParameters.ViewModels;
-using workwear.ReportsDlg;
-using workwear.Tools;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
+using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Import;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Tools;
 using Workwear.ViewModels.User;
+using workwear.Journal.ViewModels.Communications;
+using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
+using workwear.Journal.ViewModels.Statements;
+using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Tools;
+using workwear.Models.WearLk;
+using workwear.ReportParameters.ViewModels;
+using workwear.ReportsDlg;
+using workwear.Tools;
 using workwear;
 
 public partial class MainWindow : Gtk.Window
@@ -187,6 +189,24 @@ public partial class MainWindow : Gtk.Window
 		}
 
 		HistoryMain.Enable(connectionBuilder);
+
+		//Настраиваем каналы обновлений
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var appInfo = releaseScope.Resolve<IApplicationInfo>();
+			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
+				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+				var channel = configuration[$"AppUpdater:Channel"];
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+					channel = UpdateChannel.Current.ToString();
+					configuration[$"AppUpdater:Channel"] = channel;
+				}
+				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+			}
+			else {
+				ActionUpdateChannel.Visible = false;
+			}
+		}
 	}
 
 	private void CreateDefaultWarehouse()
@@ -209,11 +229,12 @@ public partial class MainWindow : Gtk.Window
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionHistory.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
@@ -237,6 +258,13 @@ public partial class MainWindow : Gtk.Window
 			UseShellExecute = true
 		};
 		Process.Start (psi);
+	}
+
+	void SetChannel(UpdateChannel channel) {
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+			configuration[$"AppUpdater:Channel"] = channel.ToString();
+		}
 	}
 	#endregion
 
@@ -833,5 +861,15 @@ public partial class MainWindow : Gtk.Window
 
 	protected void OnActionCostCenterActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<CostCenterJournalViewModel>(null);
+	}
+
+	protected void OnActionChannelCurrentToggled(object sender, EventArgs e) {
+		if(ActionChannelCurrent.Active)
+			SetChannel(UpdateChannel.Current);
+	}
+
+	protected void OnActionChannelStableToggled(object sender, EventArgs e) {
+		if(ActionChannelStable.Active)
+			SetChannel(UpdateChannel.Stable);
 	}
 }

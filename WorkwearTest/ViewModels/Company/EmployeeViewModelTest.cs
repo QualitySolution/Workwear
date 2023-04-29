@@ -143,7 +143,7 @@ namespace WorkwearTest.ViewModels.Company {
 
 				var employeeItem = employee.WorkwearItems.First();
 				Assert.That(employeeItem.NextIssue, Is.EqualTo(new DateTime(2023, 11, 11)));
-				Assert.That(employeeItem.LastIssued(new DateTime(2023, 1, 1)).First().date, Is.EqualTo(new DateTime(2022, 11, 11)));
+				Assert.That(employeeItem.LastIssued(new DateTime(2023, 1, 1), baseParameters).First().date, Is.EqualTo(new DateTime(2022, 11, 11)));
 
 				//Запускаем Модель карточки сотрудника
 				var navigation = container.Resolve<NavigationManagerForTests>();
@@ -161,7 +161,7 @@ namespace WorkwearTest.ViewModels.Company {
 				//Проверяем что данные внутри карточки изменились.
 				var item = vmEmployeeCard.Entity.WorkwearItems.First();
 				Assert.That(item.NextIssue, Is.EqualTo(new DateTime(2023, 11, 21)));
-				Assert.That(item.LastIssued(new DateTime(2023, 1, 1)).First().date, Is.EqualTo(new DateTime(2022, 11, 21)));
+				Assert.That(item.LastIssued(new DateTime(2023, 1, 1), baseParameters).First().date, Is.EqualTo(new DateTime(2022, 11, 21)));
 				vmEmployeeCard.Close(false, CloseSource.AppQuit);
 			}
 		}

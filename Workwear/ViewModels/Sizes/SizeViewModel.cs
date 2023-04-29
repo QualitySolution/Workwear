@@ -12,20 +12,24 @@ using workwear;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Sizes
 {
 	public class SizeViewModel: EntityDialogViewModelBase<Size>
 	{
+		private readonly FeaturesService featuresService;
 		public SizeService SizeService { get; }
 		public SizeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			FeaturesService featuresService,
 			SizeService sizeService,
 			SizeType sizeType = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			SizeService = sizeService;
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
@@ -35,7 +39,7 @@ namespace Workwear.ViewModels.Sizes
 				IsNew = true;
 			}
 			else {
-				if (Entity.Id <= SizeService.MaxStandartSizeId) IsStandart = true;
+				if (Entity.Id <= SizeService.MaxStandartSizeId) IsStandard = true;
 			}
 			
 			Entity.ObservableSuitableSizes.ListContentChanged += ObservableSuitableSizesOnListContentChanged;
@@ -44,9 +48,13 @@ namespace Workwear.ViewModels.Sizes
 		private void ObservableSuitableSizesOnListContentChanged(object sender, EventArgs e) => OnPropertyChanged(nameof(AllSuitable));
 		public IList<Size> AllSuitable => Entity.SuitableSizes.Union(Entity.SizesWhereIsThisSizeAsSuitable).ToList();
 
-		public bool IsStandart { get; }
+		public bool IsStandard { get; }
 		public bool IsNew {get;}
-		public bool CanEdit => IsNew || !IsStandart;
+
+		#region Для View
+		public bool CanEdit => IsNew || !IsStandard;
+		public bool CanEditAnalogs => featuresService.Available(WorkwearFeature.CustomSizes);
+		#endregion
 
 		public void AddAnalog() {
 			var selectJournal = MainClass.MainWin.NavigationManager.

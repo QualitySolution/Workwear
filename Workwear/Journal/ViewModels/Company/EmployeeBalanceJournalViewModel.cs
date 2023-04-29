@@ -62,7 +62,11 @@ namespace workwear.Journal.ViewModels.Company
 
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
-
+			if(Filter.Subdivision != null)
+				query.Where(() => employeeCardAlias.Subdivision.Id == Filter.Subdivision.Id);
+			if(!Filter.CheckShowAll)
+				query.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date);
+			
 			var subQueryRemove = QueryOver.Of(() => removeOperationAlias)
 				.Where(() => removeOperationAlias.IssuedOperation.Id == expenseOperationAlias.Id)
 				.Select(Projections.Sum<EmployeeIssueOperation>(o => o.Returned));
@@ -83,7 +87,6 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
-					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -96,6 +99,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
 						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -110,7 +114,6 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
 						JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
-					.Where(e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > Filter.Date)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -123,6 +126,8 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
 						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
 						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
+						.Select(() => expenseOperationAlias.FixedOperation).WithAlias(() => resultAlias.FixedOperation)
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
@@ -148,8 +153,9 @@ namespace workwear.Journal.ViewModels.Company
 	    public DateTime IssuedDate { get; set;}
 	    public DateTime? StartUseDate { get; set; }
 	    public DateTime? ExpiryDate { get; set;}
-	    public decimal Percentage => 
-		    EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent);
+	    public DateTime? AutoWriteoffDate {get; set;}
+	    public decimal Percentage => ExpiryDate != null ? EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
+	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;

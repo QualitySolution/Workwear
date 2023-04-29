@@ -84,7 +84,7 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
-		public virtual EmployeeIssueOperation LastIssueOperation => LastIssued(DateTime.Today).FirstOrDefault().item?.IssueOperation;
+		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) => LastIssued(onDate, baseParameters).FirstOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -140,29 +140,28 @@ namespace Workwear.Domain.Company
 
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
-		public virtual IEnumerable<(DateTime date, int amount, int removed, GraphItem item)> LastIssued(DateTime onDate) {
+		public virtual (DateTime date, int amount, int removed, GraphItem item)[] LastIssued(DateTime onDate, BaseParameters baseParameters) {
 			if(!Graph.Intervals.Any())
-				yield break;
-			var currentInterval = Graph.IntervalOfDate(onDate);
-			if(currentInterval != null && currentInterval.ActiveIssues.Any()) {
-				foreach(var item in currentInterval.ActiveIssues) {
-					yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued,
-						item.IssueOperation.Issued - item.AmountAtEndOfDay(onDate), item);
+				return Array.Empty<(DateTime date, int amount, int removed, GraphItem item)>();
+			Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)> showed = new Dictionary<int, (DateTime date, int amount, int removed, GraphItem item)>();
+			
+			foreach(var interval in Graph.OrderedIntervalsReverse) {
+				if(interval.StartDate <= onDate 
+				   && showed.Count == 1 
+				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormItem?.Amount
+				   && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
+					break;
+				
+				foreach(var item in interval.ActiveIssues) {
+					if(showed.ContainsKey(item.IssueOperation.Id))
+						continue;
+					showed.Add(item.IssueOperation.Id, (item.IssueOperation.OperationTime, item.IssueOperation.Issued, item.WriteOffOperations.Sum(x => x.Returned), item));
 				}
+				if(interval.StartDate <= onDate && showed.Any())
+					break;
 			}
-			else {
-				HashSet<int> showed = new HashSet<int>();
-				foreach(var interval in Graph.OrderedIntervalsReverse) {
-					foreach(var item in interval.ActiveItems) {
-						if(showed.Contains(item.IssueOperation.Id))
-							continue;
-						showed.Add(item.IssueOperation.Id);
-						yield return (item.IssueOperation.OperationTime, item.IssueOperation.Issued, 0, item);
-					}
-					if(interval.StartDate <= onDate)
-						break;
-				}
-			}
+
+			return showed.Values.OrderBy(x => x.date).ToArray();
 		}
 		#endregion
 		#region Расчетное для View
@@ -191,9 +190,6 @@ namespace Workwear.Domain.Company
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
-
-		public virtual string LastIssuedText => String.Join("\n", LastIssued(DateTime.Today).Select(x => $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
-		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 		#endregion
 		public EmployeeCardItem () { }
 		public EmployeeCardItem (EmployeeCard employee, NormItem normItem)

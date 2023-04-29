@@ -18,21 +18,40 @@ namespace workwear.Journal.Filter.ViewModels.Company
         {
             var builder = new CommonEEVMBuilderFactory<EmployeeBalanceFilterViewModel>(
                 journalViewModel, this, UoW, navigation, autofacScope);
-            EmployeeEntry = builder.ForProperty(x => x.Employee)
-                .MakeByType()
-                .Finish();
+            EmployeeEntry = builder.ForProperty(x => x.Employee).MakeByType().Finish();
+            SubdivisionEntry = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
             Date = DateTime.Today;
         }
         private EmployeeCard employee;
         public EmployeeCard Employee {
             get => employee;
-            set => SetField(ref employee, value);
+            set { if(SetField(ref employee, value))
+		            if(value != null) {
+			            SubdivisionSensitive = false;
+			            Subdivision = employee.Subdivision;
+		            }
+		            else {
+			            SubdivisionSensitive = true;
+			            Subdivision = null;
+		            }
+            }
+        }
+        private Subdivision subdivision;
+        public Subdivision Subdivision {
+            get => subdivision;
+            set => SetField(ref subdivision, value);
         }
         private DateTime date;
         public DateTime Date {
             get => date;
             set => SetField(ref date, value);
+        } 
+        private bool checkShowAll;
+        public bool CheckShowAll {
+	        get => checkShowAll;
+	        set => SetField(ref checkShowAll, value);
         }
+
         private bool dateSensitive;
         public bool DateSensitive {
             get => dateSensitive;
@@ -43,6 +62,18 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => employeeSensitive;
             set => SetField(ref employeeSensitive, value);
         }
+        private bool subdivisionSensitive = true;
+        public bool SubdivisionSensitive {
+            get => subdivisionSensitive;
+            set => SetField(ref subdivisionSensitive, value);
+        }
+        private bool checkShowWriteoffVisible = true;
+        public bool CheckShowWriteoffVisible {
+	        get => checkShowWriteoffVisible;
+	        set => SetField(ref checkShowWriteoffVisible, value);
+        }
+        
         public EntityEntryViewModel<EmployeeCard> EmployeeEntry;
+        public EntityEntryViewModel<Subdivision> SubdivisionEntry;
     }
 }

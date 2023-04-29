@@ -129,6 +129,10 @@ namespace workwear
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
+			#region Настройка
+			containerBuilder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf().SingleInstance();
+			#endregion
+			
 			#region GtkUI
 			containerBuilder.RegisterType<GtkMessageDialogsInteractive>().As<IInteractiveMessage>();
 			containerBuilder.RegisterType<GtkQuestionDialogsInteractive>().As<IInteractiveQuestion>();
@@ -166,6 +170,7 @@ namespace workwear
 			containerBuilder.RegisterModule(new UpdaterDBAutofacModule());
 			containerBuilder.Register(c => ScriptsConfiguration.MakeUpdateConfiguration()).AsSelf();
 			containerBuilder.Register(c => ScriptsConfiguration.MakeCreationScript()).AsSelf();
+			containerBuilder.RegisterType<UpdateChannelService>().As<IUpdateChannelService>();
 			#endregion
 
 			#region Временные будут переопределены
@@ -179,7 +184,7 @@ namespace workwear
 			#endregion
 		}
 		
-		static void AutofacClassConfig(ContainerBuilder builder)
+		static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
 		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
@@ -190,7 +195,7 @@ namespace workwear
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
 			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
-			builder.RegisterType<NhDataBaseInfo>().As<IDataBaseInfo>();
+			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
@@ -326,7 +331,6 @@ namespace workwear
 			#endregion
 
 			#region Настройка
-			builder.Register(c => new IniFileConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "workwear.ini"))).As<IChangeableConfiguration>().AsSelf();
 			builder.RegisterType<CurrentUserSettings>().AsSelf();
 			#endregion
 

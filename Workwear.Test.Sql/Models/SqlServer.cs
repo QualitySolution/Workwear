@@ -41,19 +41,22 @@ namespace QS.DBScripts.Models
 			{
 				try
 				{
-					var connect = new MySqlConnection(conStr);
-					connect.Open();
-					connect.Close();
-					break;
+					using(var connect = new MySqlConnection(conStr)) {
+						connect.Open();
+						connect.Close();
+						break;	
+					}
 				} catch (Exception e)
 				{
 					Console.Write('.');
+					if(DateTime.Now > endTime) {
+						throw new TimeoutException($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.", e);
+					}
 				}
 
-				if (DateTime.Now > endTime)
-					Assert.Fail($"Не удалось подключится к серверу {Name} за {waitingConnection} секунд.");
-				Thread.Sleep(500);
+				Thread.Sleep(1000);
 			}
+			Console.WriteLine();
 		}
 		
 		public void Stop()

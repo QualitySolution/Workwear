@@ -659,8 +659,10 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "Проверяем базовый случай отображения последних выдач")]
 		public void LastIssued_IssuesExistCase()
 		{
+			var baseParameters = Substitute.For<BaseParameters>();
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation { //Старая выдача не отображаем
+					Id = 1,
 					OperationTime = new DateTime(2020, 1, 1),
 					StartOfUse = new DateTime(2020, 1, 1),
 					ExpiryByNorm = new DateTime(2020, 2, 1),
@@ -668,6 +670,7 @@ namespace Workwear.Test.Domain.Company
 					Issued = 1
 				},
 				new EmployeeIssueOperation { //Первая отображаемая
+					Id = 2,
 					OperationTime = new DateTime(2022, 1, 1),
 					StartOfUse = new DateTime(2022, 1, 1),
 					ExpiryByNorm = new DateTime(2023, 1, 1),
@@ -675,6 +678,7 @@ namespace Workwear.Test.Domain.Company
 					Issued = 1
 				},
 				new EmployeeIssueOperation { //Вторая отображаемая
+					Id = 3,
 					OperationTime = new DateTime(2022, 4, 1),
 					StartOfUse = new DateTime(2022, 4, 1),
 					ExpiryByNorm = new DateTime(2023, 4, 1),
@@ -686,37 +690,32 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем только первую, вторая еще как бы не выдана
-			Assert.That(item.LastIssued(new DateTime(2022, 3,1)).Count(), Is.EqualTo(1));
-			var issue = item.LastIssued(new DateTime(2022, 3, 1)).First();
-			Assert.That(issue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
-			Assert.That(issue.amount, Is.EqualTo(1));
-			Assert.That(issue.removed, Is.EqualTo(0));
-			
+
 			//Отображаем обе выдачи
-			Assert.That(item.LastIssued(new DateTime(2022, 6,1)).Count(), Is.EqualTo(2));
-			var issue1 = item.LastIssued(new DateTime(2022, 6, 1)).First(x => x.date == new DateTime(2022, 1, 1));
+			Assert.That(item.LastIssued(new DateTime(2022, 6,1), baseParameters).Count(), Is.EqualTo(2));
+			var issue1 = item.LastIssued(new DateTime(2022, 6, 1), baseParameters).First(x => x.date == new DateTime(2022, 1, 1));
 			Assert.That(issue1.amount, Is.EqualTo(1));
 			Assert.That(issue1.removed, Is.EqualTo(0));
-			var issue2 = item.LastIssued(new DateTime(2022, 6, 1)).First(x => x.date == new DateTime(2022, 4, 1));
+			var issue2 = item.LastIssued(new DateTime(2022, 6, 1), baseParameters).First(x => x.date == new DateTime(2022, 4, 1));
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
 			
 			//Только оставшуюся
-			Assert.That(item.LastIssued(new DateTime(2023, 2,1)).Count(), Is.EqualTo(1));
-			issue2 = item.LastIssued(new DateTime(2023, 2, 1)).First();
+			Assert.That(item.LastIssued(new DateTime(2023, 2,1), baseParameters).Count(), Is.EqualTo(1));
+			issue2 = item.LastIssued(new DateTime(2023, 2, 1), baseParameters).First();
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
 			
 			//Последнюю даже с учетом того что уже не числится
-			Assert.That(item.LastIssued(new DateTime(2024, 2,1)).Count(), Is.EqualTo(1));
-			issue2 = item.LastIssued(new DateTime(2024, 2, 1)).First();
+			Assert.That(item.LastIssued(new DateTime(2024, 2,1), baseParameters).Count(), Is.EqualTo(1));
+			issue2 = item.LastIssued(new DateTime(2024, 2, 1), baseParameters).First();
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
 		}
 		
 		[Test(Description = "Проверяем что в последних выдачах адекватно отображаем количество списанного")]
 		public void LastIssued_ShowRemoveCountCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
 			var issue = new EmployeeIssueOperation {
 				//Выдача
 				OperationTime = new DateTime(2022, 1, 1),
@@ -743,37 +742,40 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем полную выдачу
-			Assert.That(item.LastIssued(new DateTime(2022, 1,20)).Count(), Is.EqualTo(1));
-			var lastissue = item.LastIssued(new DateTime(2022, 1, 20)).First();
-			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
-			Assert.That(lastissue.amount, Is.EqualTo(10));
-			Assert.That(lastissue.removed, Is.EqualTo(0));
+			//Всегда показываем все списания!!
 			
-			//С первым списанием
-			Assert.That(item.LastIssued(new DateTime(2022, 2,10)).Count(), Is.EqualTo(1));
-			lastissue = item.LastIssued(new DateTime(2022, 2, 10)).First();
+			//До списаний
+			Assert.That(item.LastIssued(new DateTime(2022, 1,20), baseParameters).Count(), Is.EqualTo(1));
+			var lastissue = item.LastIssued(new DateTime(2022, 1, 20), baseParameters).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
-			Assert.That(lastissue.removed, Is.EqualTo(2));
+			Assert.That(lastissue.removed, Is.EqualTo(3));
+			
+			//После первого списания
+			Assert.That(item.LastIssued(new DateTime(2022, 2,10), baseParameters).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2022, 2, 10), baseParameters).First();
+			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
+			Assert.That(lastissue.amount, Is.EqualTo(10));
+			Assert.That(lastissue.removed, Is.EqualTo(3));
 			
 			//Со обоими списаниями
-			Assert.That(item.LastIssued(new DateTime(2022, 5,10)).Count(), Is.EqualTo(1));
-			lastissue = item.LastIssued(new DateTime(2022, 5, 10)).First();
+			Assert.That(item.LastIssued(new DateTime(2022, 5,10), baseParameters).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2022, 5, 10), baseParameters).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
 			Assert.That(lastissue.removed, Is.EqualTo(3));
 			
 			//После основного списания
-			Assert.That(item.LastIssued(new DateTime(2023, 5,10)).Count(), Is.EqualTo(1));
-			lastissue = item.LastIssued(new DateTime(2023, 5, 20)).First();
+			Assert.That(item.LastIssued(new DateTime(2023, 5,10), baseParameters).Count(), Is.EqualTo(1));
+			lastissue = item.LastIssued(new DateTime(2023, 5, 20), baseParameters).First();
 			Assert.That(lastissue.date, Is.EqualTo(new DateTime(2022, 1, 1)));
 			Assert.That(lastissue.amount, Is.EqualTo(10));
-			//Assert.That(lastissue.removed, Is.EqualTo(3)); Здесь не знаю как правильно, поэтому пока не проверяем, предположу то не надо усложнять вро уже списанное.
+			Assert.That(lastissue.removed, Is.EqualTo(3));
 		}
 
 		[Test(Description = "Проверяем что в последних выдачах не показываем полное списание, в дату самого списания тоже.")]
 		public void LastIssued_DontShowFullRemovedCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
 			var firstIssue = new EmployeeIssueOperation {
 				//Старая выдача не отображаем
 				OperationTime = new DateTime(2023, 1, 13),
@@ -803,8 +805,8 @@ namespace Workwear.Test.Domain.Company
 			};
 			//Отображаем только действующую выдачу.
 			var today = new DateTime(2023, 2, 13);
-			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(1));
-			var issue = item.LastIssued(today).First();
+			Assert.That(item.LastIssued(today, baseParameters).Count(), Is.EqualTo(1));
+			var issue = item.LastIssued(today, baseParameters).First();
 			Assert.That(issue.date, Is.EqualTo(new DateTime(2023, 2, 13)));
 			Assert.That(issue.amount, Is.EqualTo(1));
 			Assert.That(issue.removed, Is.EqualTo(0));
@@ -813,6 +815,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "Проверяем что не падаем если последняя и единственная выдача в будущем.")]
 		[Category("real case")]
 		public void LastIssued_InFutureCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
 			var firstIssue = new EmployeeIssueOperation {
 				OperationTime = new DateTime(2023, 1, 13),
 				StartOfUse = new DateTime(2023, 1, 13),
@@ -829,8 +832,8 @@ namespace Workwear.Test.Domain.Company
 			};
 			//Отображаем последнюю выдачу даже в будущем.
 			var today = new DateTime(2022, 2, 13);
-			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(1));
-			var issue = item.LastIssued(today).First();
+			Assert.That(item.LastIssued(today, baseParameters).Count(), Is.EqualTo(1));
+			var issue = item.LastIssued(today, baseParameters).First();
 			Assert.That(issue.date, Is.EqualTo(new DateTime(2023, 1, 13)));
 			Assert.That(issue.amount, Is.EqualTo(1));
 			Assert.That(issue.removed, Is.EqualTo(0));
@@ -839,6 +842,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "Проверяем что не падаем если последняя и единственная выдача в будущем.")]
 		[Category("real case")]
 		public void LastIssued_AllIssueInFutureCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
@@ -863,20 +867,329 @@ namespace Workwear.Test.Domain.Company
 			};
 			//Отображаем все последние выдачи даже в будущем.
 			var today = new DateTime(2022, 2, 13);
-			Assert.That(item.LastIssued(today).Count(), Is.EqualTo(2));
-			var issue = item.LastIssued(today).First(x => x.date == new DateTime(2023, 3, 13));
+			Assert.That(item.LastIssued(today, baseParameters).Count(), Is.EqualTo(2));
+			var issue = item.LastIssued(today, baseParameters).First(x => x.date == new DateTime(2023, 3, 13));
 			Assert.That(issue.amount, Is.EqualTo(1));
 			Assert.That(issue.removed, Is.EqualTo(0));
 			//Вторая 
-			var issue2 = item.LastIssued(today).First(x => x.date == new DateTime(2024, 1, 13));
+			var issue2 = item.LastIssued(today, baseParameters).First(x => x.date == new DateTime(2024, 1, 13));
 			Assert.That(issue2.amount, Is.EqualTo(1));
 			Assert.That(issue2.removed, Is.EqualTo(0));
+		}
+		
+		[Test(Description = "Проверяем что показываем все выдачи будущего сколько бы их не было.")]
+		public void LastIssued_AllInFutureCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2024, 3, 13),
+					AutoWriteoffDate = new DateTime(2024, 3, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2024, 1, 13),
+					StartOfUse = new DateTime(2024, 1, 13),
+					ExpiryByNorm = new DateTime(2025, 1, 13),
+					AutoWriteoffDate = new DateTime(2025, 1, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 3,
+					OperationTime = new DateTime(2024, 2, 13),
+					StartOfUse = new DateTime(2024, 2, 13),
+					ExpiryByNorm = new DateTime(2025, 2, 13),
+					AutoWriteoffDate = new DateTime(2025, 2, 13),
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 5,
+					OperationTime = new DateTime(2024, 6, 13),
+					StartOfUse = new DateTime(2024, 6, 13),
+					ExpiryByNorm = new DateTime(2025, 6, 13),
+					AutoWriteoffDate = new DateTime(2025, 6, 13),
+					Issued = 1
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем все последние выдачи даже в будущем.
+			var today = new DateTime(2022, 2, 13);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(4));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 2, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 6, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2024, 1, 13)));
+			
+			CollectionAssert.IsOrdered(dates);
+		}
+		
+		[Test(Description = "Долго обсуждали с Иваном, в результате решили что не стоит показывать прошлую выдачу. " +
+		                    "Если есть уже новая в будущем. Просьба Юли Борзенко, она путалась так как готовит коллективные выдачи будущим числом. " +
+		                    "А после таких выдач дата следующего получения все равно уже сдвинулась. " +
+		                    "Этот тест специально с дыркой, на дату расчета ничего не числится.")]
+		public void LastIssued_NotShowLastWithFutureCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 1;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormItem = normItem,
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 16),
+					StartOfUse = new DateTime(2023, 4, 16),
+					ExpiryByNorm = new DateTime(2023, 5, 16),
+					AutoWriteoffDate = new DateTime(2023, 5, 16),
+					NormItem = normItem,
+					Issued = 1
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Отображаем все последние выдачи даже в будущем.
+			var today = new DateTime(2023, 4, 14);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(1));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 16)));
+		}
+		
+		[Test(Description = "Долго обсуждали с Иваном, в результате решили что не стоит показывать прошлую выдачу. " +
+		                    "Если выдали уже новое на несколько дней раньше имеющегося, имеющееся не стоит показывать. " +
+		                    "Просьба Юли Борзенко, она путалась. " +
+		                    "Работать должно только при условии одной выдачи точного количества как по норме.")]
+		public void LastIssued_NotShowOverrideIssuedCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 2;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormItem = normItem,
+					Issued = 2
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					NormItem = normItem,
+					Issued = 2
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Только последнюю хотя предыдущая еще числится.
+			var today = new DateTime(2023, 4, 10);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(1));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
+		}
+		
+		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, " +
+		                    "только выдача была сделана раньше срока это не нормально поэтому предыдущая не должна скрываться.")]
+		public void LastIssued_NotShowOverrideIssued_AheadOfScheduleCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(5);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 2;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormItem = normItem,
+					Issued = 2
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					NormItem = normItem,
+					Issued = 2
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Только последнюю хотя предыдущая еще числится.
+			var today = new DateTime(2023, 4, 10);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(2));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+		}
+		
+		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только для частичной выдачи, не должны срабатывать.")]
+		public void LastIssued_NotShowOverrideIssued_PartIssueCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 2;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormItem = normItem,
+					Issued = 1
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					NormItem = normItem,
+					Issued = 1
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			
+			var today = new DateTime(2023, 4, 10);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(2));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+		}
+		
+		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только с перевыдачей выдачи, не должны срабатывать.")]
+		public void LastIssued_NotShowOverrideIssued_SuperIssueCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 2;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormItem = normItem,
+					Issued = 2
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					NormItem = normItem,
+					Issued = 3
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			
+			var today = new DateTime(2023, 4, 10);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(2));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+		}
+		
+		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только перевыдача большим чистом операций, не должны срабатывать.")]
+		public void LastIssued_NotShowOverrideIssued_MultiSuperIssueCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount = 2;
+			
+			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				new EmployeeIssueOperation {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					Issued = 2
+				},
+				new EmployeeIssueOperation {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					Issued = 2
+				},
+				new EmployeeIssueOperation {
+					Id = 4,
+					OperationTime = new DateTime(2023, 4, 13),
+					StartOfUse = new DateTime(2023, 4, 13),
+					ExpiryByNorm = new DateTime(2023, 5, 13),
+					AutoWriteoffDate = new DateTime(2023, 5, 13),
+					Issued = 2
+				},
+			});
+			
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+			//Только последнюю хотя предыдущая еще числится.
+			var today = new DateTime(2023, 4, 10);
+			var issues = item.LastIssued(today, baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(3));
+			var dates = issues.Select(x => x.date);
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 3, 13)));
+			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 13)));
 		}
 		#endregion
 		#region LastIssueOperation
 
-		[Test(Description = "Проверяем базовый случай отображения последнюю выдачу")]
+		[Test(Description = "Проверяем базовый случай отображения последней выдачи")]
 		public void LastIssueOperation_IssuesExistCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					//Первая отображаемая
@@ -899,20 +1212,22 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем только первую, вторая еще как бы не выдана
-			Assert.That(item.LastIssueOperation.OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
+			
+			//Последняя предполагаем что DateTime.Today всегда в будущем
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters).OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
 		}
 
-		[Test(Description = "Проверяем базовый случай отображения последнюю выдачу")]
+		[Test(Description = "Проверяем проверяем что не падаем если выдач не было")]
 		public void LastIssueOperation_NotExistCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			
 			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
 			});
 
 			var item = new EmployeeCardItem {
 				Graph = graph
 			};
-			//Отображаем только первую, вторая еще как бы не выдана
-			Assert.That(item.LastIssueOperation, Is.Null);
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters), Is.Null);
 		}
 		#endregion
 	}
