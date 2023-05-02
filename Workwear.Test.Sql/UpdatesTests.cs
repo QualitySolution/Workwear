@@ -29,11 +29,18 @@ namespace Workwear.Test.Sql
 				var configuration = TestsConfiguration.Configuration;
 				List<SqlServer> servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
 				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
+				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
+				
 				foreach (var server in servers) {
 					foreach (var dbSample in samples) {
 						if(!String.IsNullOrEmpty(dbSample.ForServerGroup) && !dbSample.ForServerGroup.Equals(server.Group))
 							continue;
-							
+						
+						if(!String.IsNullOrEmpty(server.UseBefore) 
+						   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
+						   && currentVersion >= useBeforeVersion)
+							continue;
+						
 						yield return new object[] { server, dbSample };
 					}
 				}
