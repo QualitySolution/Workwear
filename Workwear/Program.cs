@@ -68,12 +68,6 @@ namespace workwear
 			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 			Login.MakeDefaultConnections = () => new Connection[] {
 				new Connection(
-					ConnectionType.MySQL,
-					"Этот компьютер",
-					"workwear",
-					"localhost"
-				),
-				new Connection(
 					ConnectionType.SaaS,
 					"Демонстрационная(текущая)",
 					"current",
