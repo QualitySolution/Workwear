@@ -1,0 +1,1 @@
+ALTER TABLE `wear_cards` DROP INDEX `personnel_number_UNIQUE`;
