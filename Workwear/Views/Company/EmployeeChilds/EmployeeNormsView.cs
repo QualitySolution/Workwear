@@ -15,7 +15,7 @@ namespace workwear.Views.Company.EmployeeChilds
 			ytreeNorms.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<Norm>()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.AddColumn("№ ТОН").AddTextRenderer(node => node.DocumentNumberText)
-				.AddColumn("№ Приложения").AddNumericRenderer(node => node.AnnexNumberText)
+				.AddColumn("№ Приложения").AddTextRenderer(node => node.AnnexNumberText)
 				.AddColumn("№ Пункта").SetDataProperty(node => node.TONParagraph)
 				.AddColumn("Профессии").AddTextRenderer(node => node.ProfessionsText)
 				.Finish();
