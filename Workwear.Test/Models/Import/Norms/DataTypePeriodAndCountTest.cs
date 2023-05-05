@@ -40,6 +40,9 @@ namespace Workwear.Test.Models.Import.Norms
 		[TestCase("5 шт на год", 5, 1, NormPeriodType.Year, false, true)]
 		[TestCase("3 года", 1, 3, NormPeriodType.Year, false, true)]
 		[TestCase("12 пар\nдо износа", 12, 0, NormPeriodType.Wearout, false, true)]
+		//Сибур
+		[TestCase("1 пара на 9 месяцев", 1, 9, NormPeriodType.Month, false, true)]
+		[TestCase("2 на 18 мес.", 2, 18, NormPeriodType.Month, false, true)]
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
 			var result = DataTypePeriodAndCount.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
