@@ -82,6 +82,14 @@ namespace Workwear.ViewModels.Stock
 				.Fetch(SelectMode.Fetch, x => x.Employee.WorkwearItems)
 				.Future();
 
+			UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Employee.Vacations)
+				.Future();
+			
 			query.ToList();
 			performance.CheckPoint("query");
 			globalProgress.Add();
