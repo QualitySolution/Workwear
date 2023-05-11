@@ -11,7 +11,7 @@ namespace Workwear.Repository.Sizes
 {
     public class SizeRepository {
         public IList<Size> GetSize(IUnitOfWork uow, bool fetchSuitableSizes = false) {
-	        var query = uow.Session.QueryOver<Size>();
+	        var query = uow.Session.QueryOver<Size>().Future();
 	        if(fetchSuitableSizes) {
 		        uow.Session.QueryOver<Size>()
 			        .Fetch(SelectMode.Fetch, s => s.SizesWhereIsThisSizeAsSuitable)
@@ -20,7 +20,7 @@ namespace Workwear.Repository.Sizes
 			        .Fetch(SelectMode.Fetch, s => s.SuitableSizes)
 			        .Future();
 	        }
-	        return query.List();
+	        return query.ToList();
         }
 
         public IList<SizeType> GetSizeType(IUnitOfWork uow) => 
