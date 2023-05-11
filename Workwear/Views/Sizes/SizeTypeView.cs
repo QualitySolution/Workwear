@@ -65,7 +65,7 @@ namespace Workwear.Views.Sizes
 		private void RemoveSize(object sender, EventArgs e) =>
 			ViewModel.RemoveSize(ytreeviewSizes.GetSelectedObject<Size>());
 		private void SelectionOnChanged(object sender, EventArgs e) =>
-			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id > SizeService.MaxStandartSizeId;
+			ybuttonRemoveSize.Sensitive = ytreeviewSizes.GetSelectedObject<Size>()?.Id > SizeService.MaxStandardSizeId;
 		private void AddSize(object sender, EventArgs e) => ViewModel.AddSize();
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
@@ -66,6 +66,6 @@ namespace Workwear.Measurements
 		public void ClearSizes() => sizes = null;
 		public void ClearTypes() => types = null;
 
-		public const int MaxStandartSizeId = 1000, MaxStandartSizeTypeId = 100;
+		public const int MaxStandardSizeId = 1000, MaxStandardSizeTypeId = 100;
 	}
 }
