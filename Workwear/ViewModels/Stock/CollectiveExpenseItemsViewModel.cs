@@ -51,7 +51,9 @@ namespace Workwear.ViewModels.Stock
 			IProgressBarDisplayable globalProgress, 
 			StockRepository stockRepository,
 			IInteractiveMessage interactive,
-			BaseParameters baseParameters)
+			BaseParameters baseParameters,
+			PerformanceHelper performance
+			)
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -81,23 +83,23 @@ namespace Workwear.ViewModels.Stock
 				.Future();
 
 			query.ToList();
-			PerformanceHelper.AddTimePoint("query");
+			performance.CheckPoint("query");
 			globalProgress.Add();
 			Entity.PrepareItems(UoW);
-			PerformanceHelper.AddTimePoint("PrepareItems");
+			performance.CheckPoint("PrepareItems");
 			globalProgress.Add();
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
-			PerformanceHelper.AddTimePoint("FillWearReceivedInfo");
+			performance.CheckPoint("FillWearReceivedInfo");
 			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
 
-			PerformanceHelper.AddTimePoint("Sum");
+			performance.CheckPoint("Sum");
 			globalProgress.Add();
 			Owners = UoW.GetAll<Owner>().ToList();
-			PerformanceHelper.AddTimePoint("Owners");
+			performance.CheckPoint("Owners");
 			globalProgress.Close();
 		}
 
