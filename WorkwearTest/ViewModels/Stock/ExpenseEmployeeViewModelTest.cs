@@ -19,6 +19,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
@@ -54,7 +55,8 @@ namespace WorkwearTest.ViewModels.Stock
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
+			var sizeRepository = Substitute.For<SizeRepository>();
+			var sizeService = Substitute.For<SizeService>(sizeRepository);
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
 			
@@ -194,7 +196,8 @@ namespace WorkwearTest.ViewModels.Stock
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
+			var sizeRepository = Substitute.For<SizeRepository>();
+			var sizeService = Substitute.For<SizeService>(sizeRepository);
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
 			
@@ -353,7 +356,8 @@ namespace WorkwearTest.ViewModels.Stock
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
+			var sizeRepository = Substitute.For<SizeRepository>();
+			var sizeService = Substitute.For<SizeService>(sizeRepository);
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
 			
@@ -505,7 +509,8 @@ namespace WorkwearTest.ViewModels.Stock
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
+			var sizeRepository = Substitute.For<SizeRepository>();
+			var sizeService = Substitute.For<SizeService>(sizeRepository);
 			var deleteService = Substitute.For<IDeleteEntityService>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
 			

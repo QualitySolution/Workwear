@@ -19,6 +19,7 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
+using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Nhibernate;
@@ -160,7 +161,7 @@ namespace Workwear.Test.Integration.Import
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
 				var setting = new SettingsWorkwearItemsViewModel();
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService(new SizeRepository()));
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -301,7 +302,7 @@ namespace Workwear.Test.Integration.Import
 				var unitOfWorkProvider = new UnitOfWorkProvider();
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService(new SizeRepository()));
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -403,9 +404,8 @@ namespace Workwear.Test.Integration.Import
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
 				var setting = new SettingsWorkwearItemsViewModel();
 				var unitOfWorkProvider = new UnitOfWorkProvider();
-				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(unitOfWorkProvider));
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService(new SizeRepository()));
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
 					itemsLoad.ProgressStep = progressStep;
