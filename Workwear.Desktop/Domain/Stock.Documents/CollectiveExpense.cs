@@ -211,8 +211,8 @@ namespace Workwear.Domain.Stock.Documents
 			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
 			foreach(var docItem in Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
-				performance.CheckPoint(docItem.Title);
 			}
+			performance.CheckPoint("Fill EmployeeCardItem's");
 			performance.EndGroup();
 		}
 

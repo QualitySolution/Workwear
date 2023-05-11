@@ -506,7 +506,7 @@ namespace Workwear.Domain.Company
 		}
 
 		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems) {
-			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).ToArray();
+			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
 
 			var query = uow.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
@@ -537,7 +537,7 @@ namespace Workwear.Domain.Company
 				.Future();
 
 			uow.Session.QueryOver<NormItem>()
-				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).ToArray()))
+				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).Distinct().ToArray()))
 				.Future();
 
 			query.ToList();

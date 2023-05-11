@@ -70,36 +70,40 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(5);
-			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
+			globalProgress.Start(6);
+			//Запрашиваем все размеры чтобы были в кеше Uow.
+			sizeRepository.GetSize(UoW, fetchSuitableSizes: true);
+			performance.CheckPoint("Get all sizes");
+			globalProgress.Add();
+			
+			var items = UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.ChildFetch, x => x)
-				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.IssuanceSheetItem)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.List();
+			
+			performance.CheckPoint("Get rows info");
+			globalProgress.Add();
+
+			var employeeIds = items.Select(x => x.Employee.Id).Distinct().ToArray();
+			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
 				.Future();
 
-			UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.ChildFetch, x => x)
-				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.Employee)
-				.Fetch(SelectMode.Fetch, x => x.Employee.WorkwearItems)
-				.Future();
-
-			UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.ChildFetch, x => x)
-				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.Employee)
-				.Fetch(SelectMode.Fetch, x => x.Employee.Vacations)
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.Vacations)
 				.Future();
 			
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.Future();
 			query.ToList();
-			performance.CheckPoint("query");
-			globalProgress.Add();
-			//Запрашиваем все размеры чтобы были в кеше Uow.
-			sizeService.GetSize(UoW, fetchSuitableSizes: true);
-			performance.CheckPoint("Get all sizes");
+			
+			performance.CheckPoint("Get employees info");
 			globalProgress.Add();
 			Entity.PrepareItems(UoW, performance);
 			performance.CheckPoint("PrepareItems");
