@@ -10,7 +10,7 @@ using Workwear.Domain.Stock;
 namespace Workwear.Repository.Sizes
 {
     public class SizeRepository {
-        public static IList<Size> GetSize(IUnitOfWork uow, bool fetchSuitableSizes = false) {
+        public IList<Size> GetSize(IUnitOfWork uow, bool fetchSuitableSizes = false) {
 	        var query = uow.Session.QueryOver<Size>();
 	        if(fetchSuitableSizes) {
 		        uow.Session.QueryOver<Size>()
@@ -23,7 +23,7 @@ namespace Workwear.Repository.Sizes
 	        return query.List();
         }
 
-        public static IList<SizeType> GetSizeType(IUnitOfWork uow) => 
+        public IList<SizeType> GetSizeType(IUnitOfWork uow) => 
             uow.Session.QueryOver<SizeType>()
                 .OrderBy(x => x.Position).Asc
                 .List();

@@ -25,6 +25,7 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
+using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 
 namespace Workwear.ViewModels.Stock
@@ -37,6 +38,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly StockRepository stockRepository;
+		private readonly SizeRepository sizeRepository;
 		private readonly EmployeeIssueModel issueModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -48,8 +50,9 @@ namespace Workwear.ViewModels.Stock
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
 			EmployeeRepository employeeRepository,
-			IProgressBarDisplayable globalProgress, 
 			StockRepository stockRepository,
+			SizeRepository sizeRepository,
+			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
 			PerformanceHelper performance
@@ -62,6 +65,7 @@ namespace Workwear.ViewModels.Stock
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
+			this.sizeRepository = sizeRepository ?? throw new ArgumentNullException(nameof(sizeRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 

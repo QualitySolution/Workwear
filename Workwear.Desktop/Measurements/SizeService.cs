@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
@@ -11,8 +12,14 @@ namespace Workwear.Measurements
 	/// </summary>
 	public class SizeService
 	{
+		private readonly SizeRepository sizeRepository;
 		private IList<Size> sizes;
 		private IList<SizeType> types;
+
+		public SizeService(SizeRepository sizeRepository) {
+			this.sizeRepository = sizeRepository ?? throw new ArgumentNullException(nameof(sizeRepository));
+		}
+
 		public virtual List<Size> GetSize(
 			IUnitOfWork uow, 
 			SizeType sizeType = null, 
@@ -22,7 +29,7 @@ namespace Workwear.Measurements
 			)
 		{
 			if(sizes is null)
-				sizes = SizeRepository.GetSize(uow, fetchSuitableSizes);
+				sizes = sizeRepository.GetSize(uow, fetchSuitableSizes);
 			var filterSizes = (IEnumerable<Size>)sizes;
 			if (sizeType != null)
 				filterSizes = filterSizes.Where(x => x.SizeType.Id == sizeType.Id);
@@ -38,7 +45,7 @@ namespace Workwear.Measurements
 			bool onlyUseInEmployee = false)
 		{
 			if (types is null)
-				types = SizeRepository.GetSizeType(uow);
+				types = sizeRepository.GetSizeType(uow);
 			if (onlyUseInEmployee)
 				return types.Where(x => x.UseInEmployee).ToList();
 			return types.ToList();
@@ -60,9 +67,9 @@ namespace Workwear.Measurements
 				.Where(x => x.SizeType.CategorySizeType == categorySizeType).ToList();
 
 		public void RefreshSizes(IUnitOfWork uow) => 
-			sizes = SizeRepository.GetSize(uow);
+			sizes = sizeRepository.GetSize(uow);
 		public void RefreshSizesType(IUnitOfWork uow) => 
-			types = SizeRepository.GetSizeType(uow);
+			types = sizeRepository.GetSizeType(uow);
 		public void ClearSizes() => sizes = null;
 		public void ClearTypes() => types = null;
 
