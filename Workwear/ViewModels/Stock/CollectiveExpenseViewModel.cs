@@ -67,7 +67,7 @@ namespace Workwear.ViewModels.Stock
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
 
-			var performance = new PerformanceHelper("Диалог");
+			var performance = new PerformanceHelper("Диалог", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);

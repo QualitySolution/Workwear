@@ -66,7 +66,7 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(4);
+			globalProgress.Start(5);
 			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.Where(x => x.Document.Id == Entity.Id)
 				.Fetch(SelectMode.ChildFetch, x => x)
@@ -85,7 +85,11 @@ namespace Workwear.ViewModels.Stock
 			query.ToList();
 			performance.CheckPoint("query");
 			globalProgress.Add();
-			Entity.PrepareItems(UoW);
+			//Запрашиваем все размеры чтобы были в кеше Uow.
+			sizeService.GetSize(UoW, fetchSuitableSizes: true);
+			performance.CheckPoint("Get all sizes");
+			globalProgress.Add();
+			Entity.PrepareItems(UoW, performance);
 			performance.CheckPoint("PrepareItems");
 			globalProgress.Add();
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
