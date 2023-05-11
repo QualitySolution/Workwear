@@ -740,7 +740,7 @@ public partial class MainWindow
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1955;
+		this.DefaultWidth = 1036;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
