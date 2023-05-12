@@ -168,9 +168,9 @@ CASE
 	WHEN norms_item.period_type = 'Month' THEN 
 		CASE
         	WHEN norms_item.period_count &gt; 12 THEN
-            	CONCAT(norms_item.amount, ' на ', CAST(norms_item.amount * norms_item.period_count / 12 AS FLOAT), ' года')           
+            	CONCAT(norms_item.amount, ' на ', CAST(norms_item.amount * norms_item.period_count / 12 AS DOUBLE), ' года')           
             WHEN norms_item.period_count &lt;= 12 THEN
-            	CONCAT(CAST(norms_item.amount * 12 / norms_item.period_count AS FLOAT))       
+            	CONCAT(CAST(norms_item.amount * 12 / norms_item.period_count AS DOUBLE))       
         END
 END AS count_by_year
 FROM
