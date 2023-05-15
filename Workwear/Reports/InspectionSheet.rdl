@@ -13,7 +13,7 @@
   <BottomMargin>.15in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 n.name as nomenclature, 
@@ -24,8 +24,8 @@ CONCAT_WS(" ",
     CONCAT(LEFT(wc.patronymic_name, 1), ".")
     )as FIO,
 IF(wc.card_number IS NOT NULL, wc.card_number, wc.id) as personnel_number,
-opissue.operation_time as issue_operation_time, 
-IF(opissue.ExpiryByNorm IS NOT NULL, opissue.ExpiryByNorm, "до износа") as writeoff_date_before, 
+DATE_FORMAT(opissue.operation_time, "%d.%m.%Y") as issue_operation_time, 
+IF(opissue.ExpiryByNorm IS NOT NULL, DATE_FORMAT(opissue.ExpiryByNorm, "%d.%m.%Y"), "до износа") as writeoff_date_before, 
 CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after,
 CONCAT(TRUNCATE(opissue.wear_percent * 100, 0), "%") as percent_before,
 IF(opinspect.issued = 0,
@@ -50,7 +50,7 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature">
           <DataField>nomenclature</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -69,7 +69,7 @@ WHERE doc.id = @id</CommandText>
         </Field>
         <Field Name="issue_operation_time">
           <DataField>issue_operation_time</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="writeoff_date_before">
           <DataField>writeoff_date_before</DataField>
@@ -2137,7 +2137,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox182">
-                      <Value>=Format({issue_operation_time}, "dd/MM/yyyy")</Value>
+                      <Value>={issue_operation_time}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -2155,7 +2155,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox183">
-                      <Value>=Format({writeoff_date_before}, "dd/MM/yyyy")</Value>
+                      <Value>={writeoff_date_before}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
