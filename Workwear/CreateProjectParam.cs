@@ -120,7 +120,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
 			NotifyConfiguration.Enable();
-			BusinessLogicGlobalEventHandler.Init(new GtkQuestionDialogsInteractive());
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 		
