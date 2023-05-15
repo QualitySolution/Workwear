@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Autofac;
 using Dapper;
 using NSubstitute;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace Workwear.Test.Integration.Tools
 {
 	[TestFixture(TestOf = typeof(BusinessLogicGlobalEventHandler))]
 	[Category("Integrated")]
-	public class BuisnessLogicGlobalEventHandlerTest : InMemoryDBGlobalConfigTestFixtureBase
+	public class BusinessLogicGlobalEventHandlerTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
@@ -55,7 +56,14 @@ namespace Workwear.Test.Integration.Tools
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
-				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(baseParameters).As<BaseParameters>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+				
+				BusinessLogicGlobalEventHandler.Init(container);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -134,7 +142,15 @@ namespace Workwear.Test.Integration.Tools
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
-				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(baseParameters).As<BaseParameters>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+				
+				BusinessLogicGlobalEventHandler.Init(container);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
@@ -238,7 +254,14 @@ namespace Workwear.Test.Integration.Tools
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(baseParameters).As<BaseParameters>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+				
+				BusinessLogicGlobalEventHandler.Init(container);
 
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
@@ -344,7 +367,13 @@ namespace Workwear.Test.Integration.Tools
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку удаления сотрудника")) {
-				BusinessLogicGlobalEventHandler.Init(ask, UnitOfWorkFactory);
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+				
+				BusinessLogicGlobalEventHandler.Init(container);
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
