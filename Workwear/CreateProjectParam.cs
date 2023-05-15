@@ -202,7 +202,8 @@ namespace workwear
 			#region Ошибки
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var user = new UserService().GetCurrentUser(uow);
-				builder.Register(c => user).As<IUserInfo>();
+				if(user != null)
+					builder.Register(c => user).As<IUserInfo>();
 			}
 			#endregion
 			
