@@ -99,8 +99,17 @@ namespace Workwear.Test.Sql
 				}
 
 				var script = new MySqlScript(connection, sql);
-				//script.StatementExecuted += Script_StatementExecuted;
-				script.Execute();
+				string lastExecutedStatement = null;
+				script.StatementExecuted += (sender, args) => lastExecutedStatement = $"[{args.Line}:{args.Position}]{args.StatementText}";
+				try {
+					script.Execute();
+				}
+				catch(Exception ex) {
+					throw new Exception(
+						$"Ошибка выполнения скрипта обновления {updateScript.Source.VersionToShortString()} → {updateScript.Destination.VersionToShortString()}\n" +
+						$"Последнее выполненное выражение: {lastExecutedStatement}", ex);
+				}
+
 				var command = connection.CreateCommand();
 				command.CommandText = "UPDATE base_parameters SET str_value = @version WHERE name = 'version'";
 				command.Parameters.AddWithValue("version", updateScript.Destination.VersionToShortString());
