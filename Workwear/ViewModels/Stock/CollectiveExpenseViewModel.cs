@@ -67,7 +67,7 @@ namespace Workwear.ViewModels.Stock
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
 
-			PerformanceHelper.StartMeasurement("Диалог");
+			var performance = new PerformanceHelper("Диалог", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
@@ -77,22 +77,23 @@ namespace Workwear.ViewModels.Stock
 				.TargetField(x => x.Employee);
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 
-			PerformanceHelper.AddTimePoint("entryBuilder и changeMonitor");
+			performance.CheckPoint("entryBuilder и changeMonitor");
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 
-			PerformanceHelper.AddTimePoint("Warehouse");
-			PerformanceHelper.StartPointsGroup("CollectiveExpenseItemsViewModel");
-			var parameter = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
-			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameter);
-			PerformanceHelper.EndPointsGroup();
+			performance.CheckPoint("Warehouse");
+			performance.StartGroup("CollectiveExpenseItemsViewModel");
+			var parameterModel = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
+			var parameterPerformance = new TypedParameter(typeof(PerformanceHelper), performance);
+			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameterModel, parameterPerformance);
+			performance.EndGroup();
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
-			PerformanceHelper.AddTimePoint("Конец");
-			PerformanceHelper.Main.PrintAllPoints(logger);
+			performance.CheckPoint("Конец");
+			performance.PrintAllPoints(logger);
 		}
 
 		#region EntityViewModels

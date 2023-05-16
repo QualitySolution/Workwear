@@ -125,6 +125,10 @@ namespace Workwear.Sql
 				"Workwear.Sql.Scripts.2.7.sql");
 			configuration.AddUpdate(
 				new Version(2, 7),
+				new Version(2, 7, 1),
+				"Workwear.Sql.Scripts.2.7.1.sql");
+			configuration.AddUpdate(
+				new Version(2, 7, 1),
 				new Version(2, 8),
 				"Workwear.Sql.Scripts.2.8.sql");
 

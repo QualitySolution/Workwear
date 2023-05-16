@@ -35,6 +35,10 @@ namespace Workwear.Models.Import.Norms
 		protected override DataTypeNorm[] RequiredDataTypes => new[]
 			{ DataTypeNorm.Post, DataTypeNorm.ProtectionTools };
 
+		public override void Init(IUnitOfWork uow) {
+			dataParser.CreateDatatypes(uow);
+		}
+		
 		public bool CanSave { get; private set; }
 
 		public List<object> MakeToSave(IProgressBarDisplayable progress, IUnitOfWork uow)

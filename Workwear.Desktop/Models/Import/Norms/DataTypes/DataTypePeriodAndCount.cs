@@ -80,7 +80,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+) в (\d+) (месяц|месяца|месяцев)");
+			regexp = new Regex(@"(\d+).* (?:в|на) (\d+) (?:месяц|мес\.)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{

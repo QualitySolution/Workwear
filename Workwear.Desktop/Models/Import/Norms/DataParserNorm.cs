@@ -27,16 +27,19 @@ namespace Workwear.Models.Import.Norms
 			ProtectionToolsRepository protectionToolsRepository,
 			SizeService sizeService)
 		{
+			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
+			this.sizeService = sizeService;
+		}
+
+		public void CreateDatatypes(IUnitOfWork uow) {
 			SupportDataTypes.Add( new DataTypeProtectionTools());
 			SupportDataTypes.Add( new DataTypePeriodAndCount());//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypeSubdivision());
 			SupportDataTypes.Add( new DataTypePost());
-
-			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
-			this.sizeService = sizeService;
+			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
 		}
 
 		#region Обработка изменений
@@ -181,7 +184,7 @@ namespace Workwear.Models.Import.Norms
 			}
 			progress.Close();
 		}
-
+				
 		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions, bool withoutSubdivision)
 		{
 			foreach (var postName in combination.PostNames)

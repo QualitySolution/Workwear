@@ -25,6 +25,7 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
+using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 
 namespace Workwear.ViewModels.Stock
@@ -37,6 +38,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly StockRepository stockRepository;
+		private readonly SizeRepository sizeRepository;
 		private readonly EmployeeIssueModel issueModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -48,10 +50,13 @@ namespace Workwear.ViewModels.Stock
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
 			EmployeeRepository employeeRepository,
-			IProgressBarDisplayable globalProgress, 
 			StockRepository stockRepository,
+			SizeRepository sizeRepository,
+			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
-			BaseParameters baseParameters)
+			BaseParameters baseParameters,
+			PerformanceHelper performance
+			)
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -60,44 +65,61 @@ namespace Workwear.ViewModels.Stock
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
+			this.sizeRepository = sizeRepository ?? throw new ArgumentNullException(nameof(sizeRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(4);
-			var query = UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.ChildFetch, x => x)
-				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
-				.Future();
-
-			UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.ChildFetch, x => x)
-				.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.Employee)
-				.Fetch(SelectMode.Fetch, x => x.Employee.WorkwearItems)
-				.Future();
-
-			query.ToList();
-			PerformanceHelper.AddTimePoint("query");
+			globalProgress.Start(6);
+			//Запрашиваем все размеры чтобы были в кеше Uow.
+			sizeRepository.GetSize(UoW, fetchSuitableSizes: true);
+			performance.CheckPoint("Get all sizes");
 			globalProgress.Add();
-			Entity.PrepareItems(UoW);
-			PerformanceHelper.AddTimePoint("PrepareItems");
+			
+			var items = UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.Document.Id == Entity.Id)
+				.Fetch(SelectMode.Fetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.List();
+			
+			performance.CheckPoint("Get rows info");
+			globalProgress.Add();
+
+			var employeeIds = items.Select(x => x.Employee.Id).Distinct().ToArray();
+			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
+				.Future();
+
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.Vacations)
+				.Future();
+			
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.Future();
+			query.ToList();
+			
+			performance.CheckPoint("Get employees info");
+			globalProgress.Add();
+			Entity.PrepareItems(UoW, performance);
+			performance.CheckPoint("PrepareItems");
 			globalProgress.Add();
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
-			PerformanceHelper.AddTimePoint("FillWearReceivedInfo");
+			performance.CheckPoint("FillWearReceivedInfo");
 			globalProgress.Add();
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
 
-			PerformanceHelper.AddTimePoint("Sum");
+			performance.CheckPoint("Sum");
 			globalProgress.Add();
 			Owners = UoW.GetAll<Owner>().ToList();
-			PerformanceHelper.AddTimePoint("Owners");
+			performance.CheckPoint("Owners");
 			globalProgress.Close();
 		}
 

@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Sizes
 				IsNew = true;
 			}
 			else {
-				if (Entity.Id <= SizeService.MaxStandartSizeId) IsStandard = true;
+				if (Entity.Id <= SizeService.MaxStandardSizeId) IsStandard = true;
 			}
 			
 			Entity.ObservableSuitableSizes.ListContentChanged += ObservableSuitableSizesOnListContentChanged;

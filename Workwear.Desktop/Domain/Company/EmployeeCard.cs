@@ -464,6 +464,10 @@ namespace Workwear.Domain.Company
 			}
 		}
 
+		/// <summary>
+		/// Заполняет в сотруднике информацию по складским остаткам для строк карточки.
+		/// Очень желательно! Перед вызовом метода в Uow иметь подгруженными все размеры, иначе метод будет дергать размеры по одному.
+		/// </summary>
 		public virtual void FillWearInStockInfo(
 			IUnitOfWork uow, 
 			BaseParameters baseParameters, 
@@ -475,6 +479,10 @@ namespace Workwear.Domain.Company
 			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
 		}
 		
+		/// <summary>
+		/// Заполняет в сотрудниках(не обязательно в одном) информацию по складским остаткам для строк карточек.
+		/// Очень желательно! Перед вызовом метода в Uow иметь подгруженными все размеры, иначе метод будет дергать размеры по одному.
+		/// </summary>
 		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогресс бара. Метод выполняет 4 шага.</param>
 		public static void FillWearInStockInfo(IUnitOfWork uow,
 			Warehouse warehouse, 
@@ -498,7 +506,7 @@ namespace Workwear.Domain.Company
 		}
 
 		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems) {
-			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).ToArray();
+			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
 
 			var query = uow.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
@@ -529,7 +537,7 @@ namespace Workwear.Domain.Company
 				.Future();
 
 			uow.Session.QueryOver<NormItem>()
-				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).ToArray()))
+				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).Distinct().ToArray()))
 				.Future();
 
 			query.ToList();

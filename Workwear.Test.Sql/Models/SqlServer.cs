@@ -18,6 +18,8 @@ namespace QS.DBScripts.Models
 		public string CommandStop { get; set; }
 		public string Group { get; set; }
 		
+		public string UseBefore { get; set; }
+		
 		public string AddressAndPort => $"{Address}:{Port}";
 		
 		public MySqlConnectionStringBuilder ConnectionStringBuilder => new MySqlConnectionStringBuilder {

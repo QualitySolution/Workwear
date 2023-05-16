@@ -5374,7 +5374,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1955 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1036 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>

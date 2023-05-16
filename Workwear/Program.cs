@@ -10,6 +10,7 @@ using QS.Project.Versioning;
 using QSProjectsLib;
 using QSTelemetry;
 using Workwear;
+using Workwear.Tools;
 
 namespace workwear
 {
@@ -68,12 +69,6 @@ namespace workwear
 			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
 			Login.MakeDefaultConnections = () => new Connection[] {
 				new Connection(
-					ConnectionType.MySQL,
-					"Этот компьютер",
-					"workwear",
-					"localhost"
-				),
-				new Connection(
 					ConnectionType.SaaS,
 					"Демонстрационная(текущая)",
 					"current",
@@ -109,6 +104,7 @@ namespace workwear
 			CreateBaseConfig (); //Настройка базы
 			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
 			unhandledExceptionHandler.UpdateDependencies(AppDIContainer);
+			BusinessLogicGlobalEventHandler.Init(AppDIContainer);
 
 			//Настройка удаления
 			Configure.ConfigureDeletion();
