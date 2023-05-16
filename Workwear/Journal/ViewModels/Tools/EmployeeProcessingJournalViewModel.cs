@@ -353,7 +353,10 @@ namespace workwear.Journal.ViewModels.Tools
 			}
 
 			progressCreator.Close();
+			if (cancellation.IsCancellationRequested)
+				return;
 			progressCreator.Start(operations.Count + 3, text: "Пересчет даты последней выдачи");
+			cancellation = progressCreator.CancellationToken;
 			issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation, 
 				changeLog: (employee, changes) => {
 					if(changes.Length > 0) {
@@ -365,7 +368,8 @@ namespace workwear.Journal.ViewModels.Tools
 					else
 						Results[employee.Id] = "Без изменений";
 				});
-			
+			if (cancellation.IsCancellationRequested)
+				return;
 			progressCreator.Add(text: "Обновляем журнал");
 			Refresh();
 			progressCreator.Close();

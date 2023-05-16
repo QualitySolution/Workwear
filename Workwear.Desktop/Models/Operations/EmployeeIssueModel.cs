@@ -45,10 +45,14 @@ namespace Workwear.Models.Operations {
 			progress?.Add(text: "Получаем информацию о прошлых выдачах");
 			CheckAndPrepareGraphs(operations.Select(o => o.Employee).Distinct().ToArray(), operations.Select(o => o.ProtectionTools).Distinct().ToArray());
 			foreach(var employeeGroup in operations.GroupBy(x => x.Employee)) {
+				if (cancellation?.IsCancellationRequested == true)
+					return;
 				progress?.Update($"Обработка {employeeGroup.Key.ShortName}");
 				var changes = new List<string>();
 
 				foreach(var operation in employeeGroup.OrderBy(x => x.OperationTime)) {
+					if (cancellation?.IsCancellationRequested == true)
+						return;
 					progress?.Add();
 					if (operation.ProtectionTools == null)
 						continue;
