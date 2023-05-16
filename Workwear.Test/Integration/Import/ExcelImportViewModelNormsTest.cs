@@ -10,6 +10,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms;
 using Workwear.Repository.Regulations;
+using Workwear.Repository.Sizes;
 using Workwear.Tools.Nhibernate;
 using Workwear.ViewModels.Import;
 
@@ -44,7 +45,7 @@ namespace Workwear.Test.Integration.Import
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
 				var unitOfWorkProvider = new UnitOfWorkProvider();
-				var dataparser = new DataParserNorm(new NormRepository(), new ProtectionToolsRepository(), new SizeService());
+				var dataparser = new DataParserNorm(new NormRepository(), new ProtectionToolsRepository(), new SizeService(new SizeRepository()));
 				var model = new ImportModelNorm(dataparser);
 				using(var normsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
 					normsLoad.ProgressStep = progressStep;

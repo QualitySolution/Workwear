@@ -187,6 +187,12 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionCostCenter;
 
+	private global::Gtk.Action ActionUpdateChannel;
+
+	private global::Gtk.RadioAction ActionChannelCurrent;
+
+	private global::Gtk.RadioAction ActionChannelStable;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -506,6 +512,17 @@ public partial class MainWindow
 		this.ActionCostCenter = new global::Gtk.Action("ActionCostCenter", global::Mono.Unix.Catalog.GetString("Места возникновения затрат"), null, null);
 		this.ActionCostCenter.ShortLabel = global::Mono.Unix.Catalog.GetString("Места возникновения затрат");
 		w1.Add(this.ActionCostCenter, null);
+		this.ActionUpdateChannel = new global::Gtk.Action("ActionUpdateChannel", global::Mono.Unix.Catalog.GetString("Канал обновлений"), null, null);
+		this.ActionUpdateChannel.ShortLabel = global::Mono.Unix.Catalog.GetString("Канал обновлений");
+		w1.Add(this.ActionUpdateChannel, null);
+		this.ActionChannelCurrent = new global::Gtk.RadioAction("ActionChannelCurrent", global::Mono.Unix.Catalog.GetString("Текущий"), null, null, 0);
+		this.ActionChannelCurrent.Group = new global::GLib.SList(global::System.IntPtr.Zero);
+		this.ActionChannelCurrent.ShortLabel = global::Mono.Unix.Catalog.GetString("Текущий");
+		w1.Add(this.ActionChannelCurrent, null);
+		this.ActionChannelStable = new global::Gtk.RadioAction("ActionChannelStable", global::Mono.Unix.Catalog.GetString("Стабильный"), null, null, 0);
+		this.ActionChannelStable.Group = this.ActionChannelCurrent.Group;
+		this.ActionChannelStable.ShortLabel = global::Mono.Unix.Catalog.GetString("Стабильный");
+		w1.Add(this.ActionChannelStable, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -574,15 +591,17 @@ public partial class MainWindow
 				"nAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem" +
 				" name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action" +
 				"=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHi" +
-				"story\'/><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuit" +
-				"em name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' ac" +
-				"tion=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem nam" +
-				"e=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'Acti" +
-				"onOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuite" +
-				"m name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name" +
-				"=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><s" +
-				"eparator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></" +
-				"ui>");
+				"story\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem " +
+				"name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'Actio" +
+				"nChannelStable\' action=\'ActionChannelStable\'/></menu><menuitem name=\'ActionUpdat" +
+				"e\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Action" +
+				"Site\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu na" +
+				"me=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><me" +
+				"nuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'Ac" +
+				"tionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'Acti" +
+				"onYouTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><m" +
+				"enuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutActi" +
+				"on\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -721,7 +740,7 @@ public partial class MainWindow
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1079;
+		this.DefaultWidth = 1036;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -805,5 +824,7 @@ public partial class MainWindow
 		this.ActionOwner.Activated += new global::System.EventHandler(this.OnActionOwnerActivated);
 		this.ActionBarcodes.Activated += new global::System.EventHandler(this.BarcodeActivated);
 		this.ActionCostCenter.Activated += new global::System.EventHandler(this.OnActionCostCenterActivated);
+		this.ActionChannelCurrent.Toggled += new global::System.EventHandler(this.OnActionChannelCurrentToggled);
+		this.ActionChannelStable.Toggled += new global::System.EventHandler(this.OnActionChannelStableToggled);
 	}
 }

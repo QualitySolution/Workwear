@@ -176,6 +176,7 @@
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="ViewModels\Company\EmployeeViewModel.cs" />
     <Compile Include="ViewModels\Stock\WarehouseTransferViewModel.cs" />
     <Compile Include="Views\Stock\EmployeeIssueGraphView.cs" />
+    <Compile Include="Views\Stock\InspectionView.cs" />
     <Compile Include="Views\Stock\WarehouseView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WarehouseView.cs" />
     <Compile Include="ViewModels\Stock\WarehouseViewModel.cs" />
@@ -419,6 +421,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.CostCenterView.cs" />
     <Compile Include="Views\Stock\Widgets\IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.IssueWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.InspectionView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -549,10 +552,6 @@
     <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.MachineConfig\QS.MachineConfig.csproj">
-      <Project>{769710D2-BF98-4120-9E07-67BD740CFA1D}</Project>
-      <Name>QS.MachineConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
       <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
@@ -737,6 +736,9 @@
     <None Include="Reports\NotIssuedSheetSummary.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	  <None Include="Reports\InspectionSheet.rdl">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />

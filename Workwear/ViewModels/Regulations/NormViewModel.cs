@@ -237,7 +237,7 @@ namespace Workwear.ViewModels.Regulations
 						mes += String.Format("\n... и еще {0}", names.Count - 50);
 					mes += "\nОткрытые диалоги этих сотрудников будут закрыты. Норма будет сохранена.\nВы уверены что хотите выполнить замену?";
 					logger.Info("Ок");
-					if(!interactive.Question(mes))
+					if(!interactive.Question(mes) || !Validate()) //В этом месте проводим валидацию, так как дальше норма будет сохранена, не надо проводить замену если норму нельзя сохранить.
 						return;
 
 					SaveSensitive = CancelSensitive = false;
@@ -261,6 +261,7 @@ namespace Workwear.ViewModels.Regulations
 					}
 					logger.Info($"Заменены номенклатуры нормы в {operations.Count} операциях");
 					progressPage.ViewModel.Progress.Update("Сохранение нормы...");
+					UoW.Commit(); //Здесь комит нужен для того чтобы при пересчете графф строился уже по новой номенклатуре нормы.
 					Save();
 					progressPage.ViewModel.Progress.Add();
 					SaveSensitive = CancelSensitive = true;

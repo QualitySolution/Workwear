@@ -16,7 +16,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Код").AddTextRenderer(x => x.Id.ToString())
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.AddColumn("№ ТОН").AddTextRenderer(node => node.DocumentNumberText)
-				.AddColumn("№ Приложения").AddNumericRenderer(node => node.AnnexNumberText)
+				.AddColumn("№ Приложения").AddTextRenderer(node => node.AnnexNumberText)
 				.AddColumn("№ Пункта").AddTextRenderer(node => node.TONParagraph)
 				.AddColumn("Профессии").AddTextRenderer(node => node.ProfessionsText)
 				.Finish();

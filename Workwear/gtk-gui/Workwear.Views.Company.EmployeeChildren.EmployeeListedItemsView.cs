@@ -18,6 +18,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		private global::Gtk.Button buttonWriteOffWear;
 
+		private global::Gtk.Button buttonInspection;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -89,11 +91,26 @@ namespace Workwear.Views.Company.EmployeeChildren
 			w8.Position = 2;
 			w8.Expand = false;
 			w8.Fill = false;
+			// Container child hbox9.Gtk.Box+BoxChild
+			this.buttonInspection = new global::Gtk.Button();
+			this.buttonInspection.Sensitive = false;
+			this.buttonInspection.CanFocus = true;
+			this.buttonInspection.Name = "buttonInspection";
+			this.buttonInspection.UseUnderline = true;
+			this.buttonInspection.Label = global::Mono.Unix.Catalog.GetString("Переоценка");
+			global::Gtk.Image w9 = new global::Gtk.Image();
+			w9.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-find", global::Gtk.IconSize.Menu);
+			this.buttonInspection.Image = w9;
+			this.hbox9.Add(this.buttonInspection);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonInspection]));
+			w10.Position = 3;
+			w10.Expand = false;
+			w10.Fill = false;
 			this.vbox1.Add(this.hbox9);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox9]));
-			w9.Position = 1;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox9]));
+			w11.Position = 1;
+			w11.Expand = false;
+			w11.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
@@ -103,6 +120,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.buttonGiveWear.Clicked += new global::System.EventHandler(this.OnButtonGiveWearClicked);
 			this.buttonReturnWear.Clicked += new global::System.EventHandler(this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear.Clicked += new global::System.EventHandler(this.OnButtonWriteOffWearClicked);
+			this.buttonInspection.Clicked += new global::System.EventHandler(this.OnButtonInspectionClicked);
 		}
 	}
 }

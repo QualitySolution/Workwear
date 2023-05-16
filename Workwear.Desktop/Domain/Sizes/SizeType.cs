@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Measurements;
+using Workwear.Repository.Sizes;
 
 namespace Workwear.Domain.Sizes
 {
@@ -60,7 +61,7 @@ namespace Workwear.Domain.Sizes
             if (String.IsNullOrEmpty(Name))
                 yield return new ValidationResult ("Имя должно быть указано");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
-            var sizeService = new SizeService();
+            var sizeService = new SizeService(new SizeRepository());
             var doublePos = 
                 sizeService.GetSizeType(uow)
                     .FirstOrDefault(x => x.Position == Position && x.Id != Id);

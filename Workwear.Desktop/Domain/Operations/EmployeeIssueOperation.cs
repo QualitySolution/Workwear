@@ -195,6 +195,13 @@ namespace Workwear.Domain.Operations
 			set => SetField(ref manualOperation, value);
 		}
 		
+		private bool fixedOperation;
+		[Display(Name = "Запрет пересчёта дат начала и окончания срока носки")]
+		public virtual bool FixedOperation {
+			get => fixedOperation;
+			set => SetField(ref fixedOperation, value);
+		}
+		
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
 		[Display(Name = "Операции")]
 		public virtual IList<BarcodeOperation> BarcodeOperations {
@@ -237,15 +244,17 @@ namespace Workwear.Domain.Operations
 		#endregion
 
 		#region Статические методы
-		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent) {
+		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) {
 			if(startOfUse == null || expiryByNorm == null)
 				return 0;
-
+			if(beginWearPercent >= 1)
+				return beginWearPercent;
+			
 			var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
 			if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
 				return beginWearPercent;
 
-			return beginWearPercent + (decimal)addPercent;
+			return Math.Round(beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent, 2);
 		}
 
 		public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
@@ -386,6 +395,24 @@ namespace Workwear.Domain.Operations
 			WearSize = item.WearSize;
 			Height = item.Height;
 		}
+		
+		public virtual void UpdateIssueOperation(EmployeeIssueOperation issueOperation, DateTime date) {
+			Employee = issueOperation.Employee;
+			Nomenclature = issueOperation.Nomenclature;
+			operationTime = date;
+			Issued = issueOperation.issued;
+			Returned = issueOperation.returned;
+			WarehouseOperation = null;
+			BuhDocument = null;
+			NormItem = issueOperation.normItem;;
+			ExpiryByNorm = null;
+			AutoWriteoffDate = null;
+			protectionTools = issueOperation.protectionTools;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			ManualOperation = false;
+			OverrideBefore = false;
+		}
 		#endregion
 		#region Пересчет выдачи
 
@@ -395,6 +422,12 @@ namespace Workwear.Domain.Operations
 		}
 
 		private bool CheckRecalculateCondition() {
+			if(FixedOperation) {
+				logger.Error(
+					$"Операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
+				return false;
+			}
+			
 			if(ProtectionTools == null) {
 				logger.Error(
 					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +

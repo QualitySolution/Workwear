@@ -79,9 +79,6 @@ namespace Workwear.Tools.Features
 
 		public virtual bool Available(WorkwearFeature feature) 
 		{
-			if(ProductEdition == 0) //В демо редакции доступны все возможности кроме облачных
-				return (feature != WorkwearFeature.Communications && feature != WorkwearFeature.EmployeeLk);
-
 			if(feature.GetAttribute<IsCloudFeatureAttribute>() != null) {
 				if(!cloudClientService.CanConnect)
 					return false;
@@ -93,16 +90,16 @@ namespace Workwear.Tools.Features
 				switch(feature) {
 					case WorkwearFeature.Communications:
 					case WorkwearFeature.EmployeeLk:
-						if(ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3)
 							return false;
 						
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 				}
@@ -116,15 +113,16 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.Exchange1C:
-					return ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
+				case WorkwearFeature.Inspection:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
-					return ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
 				default:
 					return false;
 			}
@@ -138,6 +136,8 @@ namespace Workwear.Tools.Features
 		CollectiveExpense,
 		[Display(Name = "Комплектация")]
 		Completion,
+		[Display(Name = "Переоценки")]
+		Inspection,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Групповая обработка")]
