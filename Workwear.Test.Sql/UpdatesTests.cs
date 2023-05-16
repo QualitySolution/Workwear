@@ -27,20 +27,13 @@ namespace Workwear.Test.Sql
 		public static IEnumerable<object[]> DbSamples {
 			get {
 				var configuration = TestsConfiguration.Configuration;
-				List<SqlServer> servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
 				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
-				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
 				
-				foreach (var server in servers) {
+				foreach (var server in SqlServers) {
 					foreach (var dbSample in samples) {
 						if(!String.IsNullOrEmpty(dbSample.ForServerGroup) && !dbSample.ForServerGroup.Equals(server.Group))
 							continue;
-						
-						if(!String.IsNullOrEmpty(server.UseBefore) 
-						   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
-						   && currentVersion >= useBeforeVersion)
-							continue;
-						
+
 						yield return new object[] { server, dbSample };
 					}
 				}
@@ -118,7 +111,15 @@ namespace Workwear.Test.Sql
 		public static IEnumerable<SqlServer> SqlServers {
 			get {
 				var configuration = TestsConfiguration.Configuration;
-				return configuration.GetSection("SQLServers").Get<List<SqlServer>>();
+				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
+				var servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
+				foreach(var server in servers) {
+					if(!String.IsNullOrEmpty(server.UseBefore) 
+					   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
+					   && currentVersion >= useBeforeVersion)
+						continue;
+					yield return server;
+				}
 			}
 		}
 		
