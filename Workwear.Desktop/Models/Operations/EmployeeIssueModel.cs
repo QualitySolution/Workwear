@@ -50,6 +50,8 @@ namespace Workwear.Models.Operations {
 				var changes = new List<string>();
 
 				foreach(var operation in employeeGroup.OrderBy(x => x.OperationTime)) {
+					if (operation.ProtectionTools == null)
+						continue;
 					var oldExpiry = operation.ExpiryByNorm;
 					var graph = graphs[GetKey(employeeGroup.Key, operation.ProtectionTools)];
 					var cardItem = operation.Employee.WorkwearItems
