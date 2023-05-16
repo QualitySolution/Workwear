@@ -33,23 +33,23 @@ namespace Workwear.Models.Operations {
 		/// <param name="baseParameters">Для параметров учета</param>
 		/// <param name="interactive">Для вопросов при пересчете.</param>
 		/// <param name="uow">Используется для сохранения измененных строк сотрудника.</param>
-		/// <param name="progress">Прогрес бар, можно передать уже начатый. Количество шагов метода будет равно количеству операция + 3.</param>
+		/// <param name="progress">Прогрес бар, можно передать уже начатый. Количество шагов метода будет равно количеству операция + 2.</param>
 		/// <param name="cancellation">Токен отмены операции</param>
 		public void RecalculateDateOfIssue(IList<EmployeeIssueOperation> operations, BaseParameters baseParameters, IInteractiveQuestion interactive, IProgressBarDisplayable progress = null, CancellationToken? cancellation = null, IUnitOfWork uow = null, Action<EmployeeCard, string[]> changeLog = null) {
 			uow = uow ?? unitOfWorkProvider.UoW;
 			bool needClose = false;
 			if(progress != null && !progress.IsStarted) {
-				progress.Start(operations.Count() + 3);
+				progress.Start(operations.Count() + 2);
 				needClose = true;
 			}
 			progress?.Add(text: "Получаем информацию о прошлых выдачах");
 			CheckAndPrepareGraphs(operations.Select(o => o.Employee).Distinct().ToArray(), operations.Select(o => o.ProtectionTools).Distinct().ToArray());
-			progress?.Add();
 			foreach(var employeeGroup in operations.GroupBy(x => x.Employee)) {
 				progress?.Update($"Обработка {employeeGroup.Key.ShortName}");
 				var changes = new List<string>();
 
 				foreach(var operation in employeeGroup.OrderBy(x => x.OperationTime)) {
+					progress?.Add();
 					if (operation.ProtectionTools == null)
 						continue;
 					var oldExpiry = operation.ExpiryByNorm;
@@ -75,7 +75,6 @@ namespace Workwear.Models.Operations {
 							changes.Add($"Изменена дата следующей выдачи с {oldNextIssue:d} на {cardItem.NextIssue:d} для потребности [{cardItem.Title}]");
 						}
 					}
-					progress?.Add();
 				}
 				changeLog?.Invoke(employeeGroup.Key, changes.ToArray());
 			}

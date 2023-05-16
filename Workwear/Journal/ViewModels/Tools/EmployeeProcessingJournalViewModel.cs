@@ -336,21 +336,24 @@ namespace workwear.Journal.ViewModels.Tools
 		{
 			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
-			progressCreator.Start(nodes.Length + 6, text: "Загружаем сотрудников");
+			progressCreator.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
 			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
-			progressCreator.Add(text: $"Получаем последние выдачи");
+			progressCreator.Add(text: "Получаем последние выдачи");
 			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>();
 			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
 
-			progressCreator.Add(text: $"Проверка выданного");
+			progressCreator.Update("Проверка выданного");
 			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
 			foreach(var employee in employees) {
+				progressCreator.Add();
 				if(!operationsEmployeeIds.Contains(employee.Id)) 
 					Results[employee.Id] = "Нет выданного";
 			}
 
+			progressCreator.Close();
+			progressCreator.Start(operations.Count + 3, text: "Пересчет даты последней выдачи");
 			issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation, 
 				changeLog: (employee, changes) => {
 					if(changes.Length > 0) {
