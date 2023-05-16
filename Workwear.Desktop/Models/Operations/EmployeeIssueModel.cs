@@ -120,7 +120,8 @@ namespace Workwear.Models.Operations {
 				if(step % commitBatchSize == 0)
 					uow.Commit();
 			}
-			progress?.Add(text: "Готово");
+			if (progress != null && !(cancellation?.IsCancellationRequested ?? false))
+				progress.Add(text: "Готово");
 			if(needClose)
 				progress.Close();
 		}
