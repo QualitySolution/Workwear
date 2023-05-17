@@ -836,8 +836,8 @@
 Утверждена Постановлением Госкомстата России
 от 30.10.97 N 71а</Value>
         <ZIndex>1</ZIndex>
-        <Left>544.30pt</Left>
-        <Top>7.60pt</Top>
+        <Left>546.7pt</Left>
+        <Top>6.0pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -847,11 +847,11 @@
       </Textbox>
       <Textbox Name="Textbox49">
         <Height>12.78pt</Height>
-        <Width>807.01pt</Width>
+        <Width>516.76pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>61.0pt</Top>
+        <Left>136.80pt</Left>
+        <Top>61.80pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -870,7 +870,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>86.3pt</Width>
+            <Width>80.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -1026,7 +1026,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>649.7pt</Left>
+        <Left>654.5pt</Left>
         <Top>69.1pt</Top>
       </Table>
       <Table Name="Table3">
@@ -1036,13 +1036,15 @@
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>142.1pt</Width>
+            <Width>145.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>515.3pt</Width>
+            <Width>508.5pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1083,7 +1085,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>11.2pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -1815,7 +1817,7 @@
         <Left>70.2pt</Left>
         <Top>285.4pt</Top>
       </Table>
-      <Textbox Name="Textbox42" >
+      <Textbox Name="Textbox42">
         <Height>11.99pt</Height>
         <Width>275.43pt</Width>
         <Value>="Сотрудников в ведомости: " + Countdistinct({employee_id}, "Data")</Value>
@@ -1839,7 +1841,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.id as employee_id,
@@ -1876,7 +1878,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
