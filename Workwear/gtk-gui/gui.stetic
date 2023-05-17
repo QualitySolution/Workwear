@@ -13467,8 +13467,9 @@
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Выбрать другой размер</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-refresh Menu</property>
+                <property name="Label" translatable="yes">Выбрать варианты</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonShowAllSizeClicked" />
               </widget>
