@@ -51,7 +51,7 @@ namespace Workwear.Test.Models.Import.Norms
 		[TestCase("2 кмп на 2 г.", 2, 2, NormPeriodType.Year, false, true)]
 		[TestCase("дежурная", 1, 0, NormPeriodType.Duty, false, true)]
 		[TestCase("деж.", 1, 0, NormPeriodType.Duty, false, true)]
-		[TestCase("2 кмп", 2, 1, NormPeriodType.Month, false, true)]
+		[TestCase("2 кмп", 2, 1, NormPeriodType.Year, false, true)]
 		[TestCase("1пара в год", 1, 1, NormPeriodType.Year, false, true)]
 
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
