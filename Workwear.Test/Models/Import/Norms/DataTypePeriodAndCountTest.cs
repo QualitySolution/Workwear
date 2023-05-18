@@ -41,8 +41,19 @@ namespace Workwear.Test.Models.Import.Norms
 		[TestCase("3 года", 1, 3, NormPeriodType.Year, false, true)]
 		[TestCase("12 пар\nдо износа", 12, 0, NormPeriodType.Wearout, false, true)]
 		//Сибур
+		[TestCase("2 компл.", 2, 1, NormPeriodType.Year, false, true)]
+		[TestCase("2", 2, 1, NormPeriodType.Year, false, true)]
 		[TestCase("1 пара на 9 месяцев", 1, 9, NormPeriodType.Month, false, true)]
+		[TestCase("1 на 9 месяцев", 1, 9, NormPeriodType.Month, false, true)]
+		[TestCase("2 комплекта на 18 мес. ", 2, 18, NormPeriodType.Month, false, true)]
 		[TestCase("2 на 18 мес.", 2, 18, NormPeriodType.Month, false, true)]
+		[TestCase("2 комп на 2 г.", 2, 2, NormPeriodType.Year, false, true)] 
+		[TestCase("2 кмп на 2 г.", 2, 2, NormPeriodType.Year, false, true)]
+		[TestCase("дежурная", 1, 0, NormPeriodType.Duty, false, true)]
+		[TestCase("деж.", 1, 0, NormPeriodType.Duty, false, true)]
+		[TestCase("2 кмп", 2, 1, NormPeriodType.Month, false, true)]
+		[TestCase("1пара в год", 1, 1, NormPeriodType.Year, false, true)]
+
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
 			var result = DataTypePeriodAndCount.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
