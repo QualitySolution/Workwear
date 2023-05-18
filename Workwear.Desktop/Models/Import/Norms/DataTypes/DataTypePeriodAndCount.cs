@@ -6,6 +6,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePeriodAndCount : DataTypeNormBase {
 		public DataTypePeriodAndCount()
 		{
+			ColumnNameKeywords.Add("количество и период");
 			ColumnNameKeywords.Add("норма выдачи");
 			Data = DataTypeNorm.PeriodAndCount;
 		}
@@ -74,7 +75,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				periodType = NormPeriodType.Wearout;
 				return true;
 			}
-			if(value.ToLower().Contains("дежурны")) {
+			if(value.ToLower().Contains("дежурн") || value.ToLower().Contains("деж.")) {
 				amount = 1;
 				periodType = NormPeriodType.Duty;
 				return true;
