@@ -99,10 +99,10 @@ namespace Workwear.Views.Stock
 			var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
 			var item = new MenuItemId<WriteoffItem>("Открыть номенклатуру");
 			item.ID = selected;
-			if(selected == null)
-				item.Sensitive = false;
-			else
+			if(selected?.Nomenclature != null)
 				item.Activated += Item_Activated;
+			else
+				item.Sensitive = false;
 			menu.Add(item);
 			menu.ShowAll();
 			menu.Popup();
