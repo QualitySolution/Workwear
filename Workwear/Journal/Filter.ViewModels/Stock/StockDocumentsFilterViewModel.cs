@@ -78,7 +78,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 			FeaturesService = featuresService;
 
-			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			if(VisibleWarehouse) //Заполняем склад только если он видимый. Так как иначе пользователю не возможно будет увидеть документы не относящиеся к складу, так как он не сможет очистить поле.
+				warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 		}
 	}
