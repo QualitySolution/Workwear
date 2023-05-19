@@ -64,7 +64,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			Regex regexp;
 			Match match;
 			
-			if(value.ToLower().Contains("до износа")) {
+			if(value.ToLower().Contains("до износа") || value.ToLower().Contains("до замены")) {
 				regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?");
 				match = regexp.Match(value);
 				if (match.Success)
@@ -81,7 +81,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+).* (?:в|на) (\d+) (?:месяц|мес\.)");
+			regexp = new Regex(@"(\d+).*(?:в|на)\s*(\d+)\s*(?:месяц|мес\.)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{
@@ -128,7 +128,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Только количество подразумевая в 1 год.
-			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп)?( (в|на) год\.?)?$");
+			regexp = new Regex(@"^(\d+)\s*(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп\.?)?( (в|на) год\.?)?$");
 			match = regexp.Match(value);
 			if (match.Success)
 			{
