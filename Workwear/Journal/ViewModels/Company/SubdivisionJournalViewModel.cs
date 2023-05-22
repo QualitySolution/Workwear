@@ -27,8 +27,7 @@ namespace workwear.Journal.ViewModels.Company
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<SubdivisionFilterViewModel>(
+			JournalFilter = Filter = autofacScope.Resolve<SubdivisionFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 		protected override IQueryOver<Subdivision> ItemsQuery(IUnitOfWork uow)

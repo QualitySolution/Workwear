@@ -37,9 +37,8 @@ namespace workwear.Journal.ViewModels.Stock
 			ILifetimeScope autofacScope, 
 			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
-			AutofacScope = autofacScope;
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
-			JournalFilter = Filter = AutofacScope.Resolve<StockMovementsFilterViewModel>
+			JournalFilter = Filter = autofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockMovementsJournalNode>(unitOfWorkFactory);
