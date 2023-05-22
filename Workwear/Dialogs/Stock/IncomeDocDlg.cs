@@ -255,8 +255,8 @@ namespace workwear
 				return false;
 
 			logger.Info ("Валидация");
-			var valid = new QSValidator<Income> (UoWGeneric.Root);
-			if (valid.RunDlgIfNotValid ((Gtk.Window)Toplevel))
+			var valid = AutofacScope.Resolve<IValidator>();
+			if (!valid.Validate(Entity))
 				return false;
 
 			var ask = new GtkQuestionDialogsInteractive();
