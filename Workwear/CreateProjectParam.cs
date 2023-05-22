@@ -283,10 +283,6 @@ namespace workwear
 			builder.RegisterType<RdlViewerViewModel>().AsSelf();
 			#endregion
 
-			#region Журналы
-			builder.RegisterType<OneEntrySearchView>().Named<Gtk.Widget>("GtkJournalSearchView");
-			#endregion
-
 			#region ViewModels
 			builder.Register(x => new AutofacViewModelResolver(AppDIContainer)).As<IViewModelResolver>();
 			//Основной проект с Gtk, возможно надо будет убрать если все ViewModels передут.
