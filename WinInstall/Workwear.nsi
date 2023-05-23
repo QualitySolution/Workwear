@@ -3,10 +3,10 @@ Unicode true
 !define PRODUCT_VERSION "2.8"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
-!define PRODUCT_NAME "QS: Спецпошив Аутсорсинг"
-!define SHORTCUT_NAME "Спецпошив Аутсорсинг"
-!define MENU_DIR_NAME "Спецпошив Аутсорсинг"
-!define APP_DIR_NAME "Спецпошив Аутсорсинг"
+!define PRODUCT_NAME "QS: Спецаутсорсинг"
+!define SHORTCUT_NAME "Спецаутсорсинг"
+!define MENU_DIR_NAME "Спецаутсорсинг"
+!define APP_DIR_NAME "Спецаутсорсинг"
 !define UNINSTAL_KEY "workwear-sposhiv"
 !define SETUP_POSTFIX "-sposhiv"
 
@@ -195,23 +195,10 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство пользователя.lnk" "$INSTDIR\user-guide.pdf"
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство администратора.lnk" "$INSTDIR\admin-guide.pdf"
   
-  ; Удяляем файлы ненужные после версии 1.2.4.2
-  Delete $INSTDIR\gtk-databind-lib.dll
-
-  ; Удаляем файлы используемые до версии 2.0
-  Delete $INSTDIR\EncryptionProvider.dll
-  Delete $INSTDIR\Newtonsoft.Json.dll
-  Delete $INSTDIR\RdlReader.exe
-  Delete $INSTDIR\RdlViewer.dll
-  Delete $INSTDIR\zxing.dll
-  Delete $INSTDIR\ru-RU\RdlReader.resources.dll
-  Delete $INSTDIR\ru-RU\RdlViewer.resources.dll
-  
-  ; Удаляем файлы используемые до версии 2.3.2
-  Delete $INSTDIR\workwear_ru.pdf
-  
-  ; Удаляем файлы используемые до версии 2.5.1
-   Delete "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk"
+  ; Удяляем файлы до ребрендинга в Спецаутсорсинг
+  RMDir /r "$PROGRAMFILES\Спецпошив Аутсорсинг"
+  RMDir /r "$SMPROGRAMS\Спецпошив Аутсорсинг"
+  Delete "$DESKTOP\Спецпошив Аутсорсинг.lnk"
 
 SectionEnd
 
