@@ -38,6 +38,8 @@ if [ ! -f "gtk-sharp-2.12.21.msi" ]; then
 fi
 
 # Сборка документации
+if command -v asciidoctor-pdf.ruby3.2 2>/dev/null; then
+        BuildDoc=asciidoctor-pdf.ruby3.2 
 if command -v asciidoctor-pdf.ruby3.1 2>/dev/null; then
         BuildDoc=asciidoctor-pdf.ruby3.1 
 elif command -v asciidoctor-pdf.ruby2.7 2>/dev/null; then
