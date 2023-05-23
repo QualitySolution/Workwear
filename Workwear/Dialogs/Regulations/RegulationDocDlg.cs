@@ -2,6 +2,7 @@
 using Gamma.ColumnConfig;
 using QS.Dialog.Gtk;
 using QS.DomainModel.UoW;
+using QS.Validation;
 using QSOrmProject;
 using Workwear.Domain.Regulations;
 
@@ -51,8 +52,8 @@ namespace workwear.Dialogs.Regulations
 		public override bool Save()
 		{
 			logger.Info("Запись нормативного документа...");
-			var valid = new QS.Validation.QSValidator<RegulationDoc>(UoWGeneric.Root);
-			if (valid.RunDlgIfNotValid((Gtk.Window)this.Toplevel))
+			var validator = new ObjectValidator(new GtkValidationViewFactory());
+			if (!validator.Validate(Entity))
 				return false;
 
 			UoWGeneric.Save();

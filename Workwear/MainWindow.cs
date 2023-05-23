@@ -159,7 +159,7 @@ public partial class MainWindow : Gtk.Window
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
-		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>();
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
 		#region Проверки и исправления базы

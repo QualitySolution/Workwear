@@ -37,8 +37,7 @@ namespace workwear.Journal.ViewModels.Stock
 			ILifetimeScope autofacScope, 
 			FeaturesService featuresService) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<StockBalanceFilterViewModel>(
+			JournalFilter = Filter = autofacScope.Resolve<StockBalanceFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockBalanceJournalNode>(unitOfWorkFactory);

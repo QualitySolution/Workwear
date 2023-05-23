@@ -19,7 +19,6 @@ namespace workwear.Journal.ViewModels.Regulations
 		public NormConditionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
-			AutofacScope = autofacScope;
 			Title = "Условия нормы";
 		}
 

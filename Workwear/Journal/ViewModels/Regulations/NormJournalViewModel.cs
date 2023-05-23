@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -25,13 +26,14 @@ namespace workwear.Journal.ViewModels.Regulations
 {
 	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>
 	{
+		private readonly ILifetimeScope autofacScope;
 		public NormFilterViewModel Filter { get; private set; }
 
 		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null, bool useMultiSelect = false) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			UseSlider = false;
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
 			if(useMultiSelect)
 				UseMultiSelect();
@@ -150,7 +152,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			var progress = progressPage.ViewModel.Progress;
 
 			using(var localUow = UnitOfWorkFactory.CreateWithoutRoot("Обновление потребностей из журнала норм")) {
-				var employeeRepository = AutofacScope.Resolve<EmployeeRepository>(new TypedParameter(typeof(IUnitOfWork), localUow));
+				var employeeRepository = autofacScope.Resolve<EmployeeRepository>(new TypedParameter(typeof(IUnitOfWork), localUow));
 				progress.Start(2, text: "Загружаем нормы");
 				var norms = localUow.GetById<Norm>(nodes.GetIds()).ToArray();
 				progress.Add(text: "Загружаем сотрудников");

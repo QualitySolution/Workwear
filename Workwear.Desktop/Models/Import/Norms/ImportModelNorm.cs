@@ -121,13 +121,14 @@ namespace Workwear.Models.Import.Norms
         private IEnumerable<Subdivision> SavedSubdivisions => UsedRows
 	        .Where(x => !x.Skipped)
 	        .Select(x => x.NormItem.Norm)
-	        .Distinct()
+	        .Distinct() 
 	        .SelectMany(x => x.Posts)
 	        .Distinct()
 	        .Select(x => x.Subdivision)
+	        .Where(x => x != null)
 	        .SelectMany(x => x.AllParents.Union(new []{x}))
 	        .Where(x => x?.Id == 0)
-	        .Distinct();
+	        .Distinct(); 
 
         private IEnumerable<ProtectionTools> SavedProtectionTools => UsedRows
 	        .Where(x => !x.Skipped)

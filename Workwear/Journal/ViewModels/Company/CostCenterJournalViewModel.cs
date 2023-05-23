@@ -15,13 +15,11 @@ namespace workwear.Journal.ViewModels.Company {
 	{
 		public CostCenterJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			INavigationManager navigationManager, 
-			ILifetimeScope autofacScope,
+			INavigationManager navigationManager,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
-			AutofacScope = autofacScope;
 		}
 		protected override IQueryOver<CostCenter> ItemsQuery(IUnitOfWork uow)
 		{

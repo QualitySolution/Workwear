@@ -262,6 +262,8 @@ namespace Workwear.Domain.Stock.Documents
 					throw new NotImplementedException();
 			}
 		}
+		
+		public virtual bool CanSetOwner => WarehouseOperation != null;
 		#endregion
 	}
 	public enum WriteoffFrom {

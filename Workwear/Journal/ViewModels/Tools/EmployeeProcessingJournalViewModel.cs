@@ -40,6 +40,7 @@ namespace workwear.Journal.ViewModels.Tools
 		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
 
 		private readonly IInteractiveService interactive;
+		private readonly ILifetimeScope autofacScope;
 		private readonly NormRepository normRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
@@ -64,14 +65,11 @@ namespace workwear.Journal.ViewModels.Tools
 			Title = "Корректировка сотрудников";
 			unitOfWorkProvider.UoW = UoW;
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
-			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
-			progressCreator.UserCanCancel = true;
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
 			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
@@ -341,7 +339,7 @@ namespace workwear.Journal.ViewModels.Tools
 			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
 			progressCreator.Add(text: "Получаем последние выдачи");
-			var employeeIssueRepository = AutofacScope.Resolve<EmployeeIssueRepository>();
+			var employeeIssueRepository = autofacScope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(IUnitOfWork), UoW));
 			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
 
 			progressCreator.Update("Проверка выданного");

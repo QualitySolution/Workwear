@@ -45,12 +45,11 @@ namespace workwear.Journal.ViewModels.Stock
 			: base(unitOfWorkFactory, interactiveService, navigation)
 		{
 			Title = "Журнал документов";
-			AutofacScope = autofacScope;
 			CurrentPermissionService = currentPermissionService;
 			DeleteEntityService = deleteEntityService;
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			JournalFilter = Filter = AutofacScope.Resolve<StockDocumentsFilterViewModel>(
+			JournalFilter = Filter = autofacScope.Resolve<StockDocumentsFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);

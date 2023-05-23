@@ -55,11 +55,11 @@ namespace QS.DBScripts.Models {
 		private DataRow Row { get; }
 
 		private static readonly Dictionary<string, string[]> skippedFields = new Dictionary<string, string[]>() {
-			{"Tables", new string[] {"CREATE_TIME", "TABLE_SCHEMA", "UPDATE_TIME","AVG_ROW_LENGTH","TABLE_ROWS","AUTO_INCREMENT","INDEX_LENGTH","DATA_LENGTH", "TABLE_COLLATION", "DATA_FREE"}},
+			{"Tables", new string[] {"CREATE_TIME", "TABLE_SCHEMA", "UPDATE_TIME","AVG_ROW_LENGTH","TABLE_ROWS","AUTO_INCREMENT","INDEX_LENGTH","DATA_LENGTH", "DATA_FREE"}},
 			{"Foreign Keys", new string[] {"TABLE_SCHEMA", "CONSTRAINT_SCHEMA", "REFERENCED_TABLE_SCHEMA" }},
 			{"Indexes", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA",}},
 			{"IndexColumns", new string[] {"CONSTRAINT_SCHEMA", "INDEX_SCHEMA" }},
-			{"Columns", new string[] {"TABLE_SCHEMA", "COLLATION_NAME" }}
+			{"Columns", new string[] {"TABLE_SCHEMA"}}
 		};
 
 		public bool IsDiff(RowOfSchema another, Log log) {

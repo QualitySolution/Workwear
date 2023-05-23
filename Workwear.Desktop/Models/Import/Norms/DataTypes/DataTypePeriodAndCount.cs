@@ -6,6 +6,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePeriodAndCount : DataTypeNormBase {
 		public DataTypePeriodAndCount()
 		{
+			ColumnNameKeywords.Add("количество и период");
 			ColumnNameKeywords.Add("норма выдачи");
 			Data = DataTypeNorm.PeriodAndCount;
 		}
@@ -63,7 +64,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			Regex regexp;
 			Match match;
 			
-			if(value.ToLower().Contains("до износа")) {
+			if(value.ToLower().Contains("до износа") || value.ToLower().Contains("до замены")) {
 				regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?");
 				match = regexp.Match(value);
 				if (match.Success)
@@ -74,13 +75,13 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				periodType = NormPeriodType.Wearout;
 				return true;
 			}
-			if(value.ToLower().Contains("дежурны")) {
+			if(value.ToLower().Contains("дежурн") || value.ToLower().Contains("деж.")) {
 				amount = 1;
 				periodType = NormPeriodType.Duty;
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+).* (?:в|на) (\d+) (?:месяц|мес\.)");
+			regexp = new Regex(@"(\d+).*(?:в|на)\s*(\d+)\s*(?:месяц|мес\.)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{
@@ -90,7 +91,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Указано и количество выдачи и количество лет
-			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет)");
+			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет|г(\.| |\())");
 			match = regexp.Match(value);
 			if (match.Success)
 			{
@@ -127,7 +128,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Только количество подразумевая в 1 год.
-			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?( на год\.?)?$");
+			regexp = new Regex(@"^(\d+)\s*(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп\.?)?( (в|на) год\.?)?$");
 			match = regexp.Match(value);
 			if (match.Success)
 			{

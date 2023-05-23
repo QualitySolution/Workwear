@@ -71,10 +71,10 @@ namespace Workwear.Views.Stock
 						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
 					.AddColumn("Собственники")
 						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
-						.AddComboRenderer(x => x.Owner)
+					.AddComboRenderer(x => x.Owner)
 						.SetDisplayFunc(x => x.Name)
 						.FillItems(ViewModel.Owners, "Нет")
-						.Editing()
+						.AddSetter((c, n) => c.Editable = n.CanSetOwner)
 					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)
@@ -99,10 +99,10 @@ namespace Workwear.Views.Stock
 			var selected = ytreeItems.GetSelectedObject<WriteoffItem>();
 			var item = new MenuItemId<WriteoffItem>("Открыть номенклатуру");
 			item.ID = selected;
-			if(selected == null)
-				item.Sensitive = false;
-			else
+			if(selected?.Nomenclature != null)
 				item.Activated += Item_Activated;
+			else
+				item.Sensitive = false;
 			menu.Add(item);
 			menu.ShowAll();
 			menu.Popup();

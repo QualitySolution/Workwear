@@ -39,9 +39,8 @@ namespace workwear.Journal.ViewModels.Company
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
-
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			
+			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.norm = norm;
 

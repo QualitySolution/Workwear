@@ -32,8 +32,7 @@ namespace workwear.Journal.ViewModels.Company {
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope
+			JournalFilter = Filter = autofacScope
 				.Resolve<PostFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			if(featuresService.Available(WorkwearFeature.CostCenter)) {

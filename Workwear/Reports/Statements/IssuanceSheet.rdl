@@ -17,7 +17,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>352.7pt</Height>
+    <Height>365.4pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -29,6 +29,7 @@
           </BorderStyle>
           <BorderColor />
           <BorderWidth />
+          <PaddingBottom>0pt</PaddingBottom>
         </Style>
         <TableColumns>
           <TableColumn>
@@ -41,7 +42,7 @@
             <Width>62.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>141.5pt</Width>
+            <Width>212.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.0pt</Width>
@@ -50,16 +51,16 @@
             <Width>35.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>80.7pt</Width>
+            <Width>39.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.4pt</Width>
+            <Width>33.8pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>72.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>43.9pt</Width>
+            <Width>44.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>73.9pt</Width>
@@ -347,7 +348,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>Наименование</Value>
+                      <Value>Наиме- нова- ние</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -364,7 +365,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Количество</Value>
+                      <Value>Коли- чест- во</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -627,7 +628,7 @@
         <Details>
           <TableRows>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>16pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -655,6 +656,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <PaddingBottom >10pt</PaddingBottom>
                       </Style>
                       <CanGrow>true</CanGrow>
                       <HideDuplicates>Data</HideDuplicates>
@@ -687,6 +689,9 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>10pt</FontSize>
+                        <PaddingBottom>10pt</PaddingBottom>
+                        <PaddingTop>0pt</PaddingTop>
                       </Style>
                       <CanGrow>true</CanGrow>
                     </Textbox>
@@ -812,6 +817,7 @@
         </Details>
         <Left>0.8pt</Left>
         <Top>172.5pt</Top>
+        <DetailDataElementOutput>Output</DetailDataElementOutput>
       </Table>
       <Textbox Name="Textbox50">
         <Height>20.21pt</Height>
@@ -831,13 +837,13 @@
       </Textbox>
       <Textbox Name="Textbox55">
         <Height>36.14pt</Height>
-        <Width>260.42pt</Width>
+        <Width>264.17pt</Width>
         <Value>Типовая межотраслевая форма N МБ-7
 Утверждена Постановлением Госкомстата России
 от 30.10.97 N 71а</Value>
         <ZIndex>1</ZIndex>
-        <Left>544.30pt</Left>
-        <Top>7.60pt</Top>
+        <Left>543.50pt</Left>
+        <Top>6.00pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -846,12 +852,12 @@
         </Style>
       </Textbox>
       <Textbox Name="Textbox49">
-        <Height>12.78pt</Height>
-        <Width>807.01pt</Width>
+        <Height>15.77pt</Height>
+        <Width>473.22pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>61.0pt</Top>
+        <Left>144.00pt</Left>
+        <Top>61.80pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -870,7 +876,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>86.3pt</Width>
+            <Width>79.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -1026,7 +1032,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>649.7pt</Left>
+        <Left>654.5pt</Left>
         <Top>69.1pt</Top>
       </Table>
       <Table Name="Table3">
@@ -1036,13 +1042,15 @@
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>142.1pt</Width>
+            <Width>145.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>515.3pt</Width>
+            <Width>473.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1083,7 +1091,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>11.2pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -1132,16 +1140,16 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>94.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>73.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>85.2pt</Width>
+            <Width>118.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>78.6pt</Width>
+            <Width>73.8pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -1162,6 +1170,7 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1179,6 +1188,7 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1196,6 +1206,7 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1204,7 +1215,7 @@
                   <ReportItems>
                     <Textbox Name="Textbox74">
                       <Value>Вид
-деятельности</Value>
+ деятельности</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1213,6 +1224,7 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1295,7 +1307,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>499.1pt</Left>
+        <Left>447.9pt</Left>
         <Top>126.0pt</Top>
       </Table>
       <Table Name="Table5">
@@ -1308,22 +1320,22 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>174.4pt</Width>
+            <Width>188.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>191.3pt</Width>
+            <Width>192.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>12.2pt</Width>
+            <Width>20.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>109.9pt</Width>
+            <Width>95.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>12.0pt</Width>
+            <Width>39.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>195.6pt</Width>
+            <Width>225.1pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1812,16 +1824,16 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>70.2pt</Left>
-        <Top>285.4pt</Top>
+        <Left>47.5pt</Left>
+        <Top>293.4pt</Top>
       </Table>
-      <Textbox Name="Textbox42" >
+      <Textbox Name="Textbox42">
         <Height>11.99pt</Height>
         <Width>275.43pt</Width>
         <Value>="Сотрудников в ведомости: " + Countdistinct({employee_id}, "Data")</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.3pt</Left>
-        <Top>266.8pt</Top>
+        <Left>0.0pt</Left>
+        <Top>274.8pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -1839,7 +1851,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.id as employee_id,
@@ -1876,7 +1888,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>

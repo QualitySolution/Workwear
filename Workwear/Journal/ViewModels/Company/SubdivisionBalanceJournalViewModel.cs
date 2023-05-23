@@ -32,8 +32,7 @@ namespace workwear.Journal.ViewModels.Company
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
-	        AutofacScope = autofacScope;
-	        JournalFilter = Filter = AutofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
+	        JournalFilter = Filter = autofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
 		        new TypedParameter(typeof(JournalViewModelBase), this));
 	        Filter.Subdivision = subdivision;
 	        Title = subdivision != null 
