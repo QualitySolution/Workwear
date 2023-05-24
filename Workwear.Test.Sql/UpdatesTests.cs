@@ -51,7 +51,7 @@ namespace Workwear.Test.Sql
 		public void ApplyUpdatesTest(SqlServer server, DbSample sample) {
 			var updateConfiguration = ScriptsConfiguration.MakeUpdateConfiguration();
 			//Проверяем нужно ли обновлять 
-			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion).Any())
+			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion, false).Any())
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 
 			//Загружаем образец базы на SQL сервер.
@@ -66,7 +66,7 @@ namespace Workwear.Test.Sql
 			var connectionString = builder.GetConnectionString(true);
 			using(var connection = new MySqlConnection(connectionString)) {
 				connection.Open();
-				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion)) {
+				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion, false)) {
 					TestContext.Progress.WriteLine(
 						$"Выполняем скрипт {hop.Source.VersionToShortString()} → {hop.Destination.VersionToShortString()}");
 					RunOneUpdate(connection, hop);
