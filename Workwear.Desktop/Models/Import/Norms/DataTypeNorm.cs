@@ -8,6 +8,8 @@ namespace Workwear.Models.Import.Norms
 		Unknown,
 		[Display(Name = "Подразделение")]
 		Subdivision,
+		[Display(Name = "Отдел")]
+		Department,
 		[Display(Name = "Должность")]
 		Post,
 		[Display(Name = "Номенклатура нормы")]
