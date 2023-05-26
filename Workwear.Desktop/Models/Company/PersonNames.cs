@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Workwear.Domain.Company;
 
 namespace Workwear.Models.Company
@@ -956,6 +958,14 @@ namespace Workwear.Models.Company
 			if(FemaleNames.Contains(name))
 				return Sex.F;
 			return Sex.None;
+		}
+
+		/// <summary>
+		/// Записываем в файл не найденные имена. Внимание не добавляйте запись ненайденных имен в сам метод определения,
+		/// так как он вызывается при вводе данных пользователем.
+		/// </summary>
+		public void WriteToFileNotFoundNames(string name) {
+			File.AppendAllText( Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "workwear", "NotFoundNames.txt"), name + Environment.NewLine);
 		}
 	}
 }
