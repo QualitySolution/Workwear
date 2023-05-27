@@ -84,8 +84,6 @@ namespace Workwear.Views.Regulations
 
 		private global::Gtk.Label label2;
 
-		private global::Gtk.Label label11;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -137,7 +135,7 @@ namespace Workwear.Views.Regulations
 			this.tabs = new global::Gamma.GtkWidgets.yNotebook();
 			this.tabs.CanFocus = true;
 			this.tabs.Name = "tabs";
-			this.tabs.CurrentPage = 1;
+			this.tabs.CurrentPage = 2;
 			// Container child tabs.Gtk.Notebook+NotebookChild
 			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
 			this.table1.Name = "table1";
@@ -513,18 +511,9 @@ namespace Workwear.Views.Regulations
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Должности");
 			this.tabs.SetTabLabel(this.vbox2, this.label2);
 			this.label2.ShowAll();
-			// Notebook tab
-			global::Gtk.Label w44 = new global::Gtk.Label();
-			w44.Visible = true;
-			this.tabs.Add(w44);
-			this.label11 = new global::Gtk.Label();
-			this.label11.Name = "label11";
-			this.label11.LabelProp = global::Mono.Unix.Catalog.GetString("Использующие сотрудники");
-			this.tabs.SetTabLabel(w44, this.label11);
-			this.label11.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w45.Position = 1;
+			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w44.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

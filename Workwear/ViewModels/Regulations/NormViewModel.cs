@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -21,6 +22,7 @@ using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
@@ -49,6 +51,7 @@ namespace Workwear.ViewModels.Regulations
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
+			ILifetimeScope autofacScope,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -62,6 +65,8 @@ namespace Workwear.ViewModels.Regulations
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+			
+			employeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(new TypedParameter(typeof(NormViewModel), this));
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
@@ -77,6 +82,10 @@ namespace Workwear.ViewModels.Regulations
 			norm.CopyNorm(Entity);
 		}
 
+		#region Дочерние ViewModels
+		public NormEmployeesViewModel employeesViewModel { get; }
+		#endregion
+		
 		#region Sensetive
 
 		private bool saveSensitive = true;
@@ -105,6 +114,17 @@ namespace Workwear.ViewModels.Regulations
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
 		}
+
+		private int currentTab = 1;
+		public virtual int CurrentTab {
+			get => currentTab;
+			set {
+				SetField(ref currentTab, value);
+				if(currentTab == 3)
+					employeesViewModel.OnShow();
+			}
+		}
+
 		#endregion
 
 		#region Действия View
