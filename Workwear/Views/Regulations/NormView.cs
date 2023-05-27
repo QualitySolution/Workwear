@@ -41,8 +41,9 @@ namespace Workwear.Views.Regulations
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
-				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(300)
-				.AddColumn("Подразделение").AddTextRenderer(p => p.Subdivision != null ? p.Subdivision.Name : null).WrapWidth(300)
+				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(700)
+				.AddColumn("Подразделение").AddReadOnlyTextRenderer(p => p.Subdivision?.Name).WrapWidth(700)
+				.AddColumn("Отдел").AddReadOnlyTextRenderer(p => p.Department?.Name).WrapWidth(700)
 				.Finish ();
 			ytreeProfessions.Selection.Mode = Gtk.SelectionMode.Multiple;
 			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
