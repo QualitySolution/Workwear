@@ -11,6 +11,7 @@ namespace Workwear.Models.Import.Norms
 		public readonly string[] PostNames;
 		public readonly string PostValue;
 		public readonly string SubdivisionName;
+		public readonly string DepartmentName;
 
 		public readonly List<Post> Posts = new List<Post>();
 		public readonly List<Norm> Norms = new List<Norm>();
@@ -19,12 +20,13 @@ namespace Workwear.Models.Import.Norms
 
 		public readonly HashSet<ProtectionTools> WillAddedProtectionTools = new HashSet<ProtectionTools>();
 
-		public SubdivisionPostCombination(string postNames, string subdivisionName)
+		public SubdivisionPostCombination(string postNames, string subdivisionName, string departmentName = null)
 		{
 			PostValue = postNames ?? throw new ArgumentNullException(nameof(postNames));
 			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(x => x.Trim()).ToArray();
 			SubdivisionName = subdivisionName;
+			DepartmentName = departmentName;
 		}
 	}
 }

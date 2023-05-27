@@ -15,6 +15,8 @@ namespace Workwear.Models.Import.Norms
 		NotChangedNormItems,
 		[Display(Name = "Новых подразделений")]
 		NewSubdivisions,
+		[Display(Name = "Новых отделов")]
+		NewDepartments,
 		[Display(Name = "Новых должностей")]
 		NewPosts,
 		[Display(Name = "Новых номенклатур нормы")]

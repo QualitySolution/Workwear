@@ -38,6 +38,7 @@ namespace Workwear.Models.Import.Norms
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypeSubdivision());
+			SupportDataTypes.Add( new DataTypeDepartment());
 			SupportDataTypes.Add( new DataTypePost());
 			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
 		}
@@ -66,10 +67,12 @@ namespace Workwear.Models.Import.Norms
 			var postColumn = model.GetColumnForDataType(DataTypeNorm.Post);
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeNorm.Subdivision);
 			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
+			var departmentColumn = model.GetColumnForDataType(DataTypeNorm.Department);
 
 			foreach(var row in list) {
 				var postValue = row.CellStringValue(postColumn);
 				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
+				var departmentName = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
 
 				if(String.IsNullOrWhiteSpace(postValue)) {
 					row.ProgramSkipped = true;
@@ -77,9 +80,9 @@ namespace Workwear.Models.Import.Norms
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionName == subdivisionName);
+				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionName == subdivisionName && x.DepartmentName == departmentName);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(postValue, subdivisionName);
+					pair = new SubdivisionPostCombination(postValue, subdivisionName, departmentName);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;
@@ -99,9 +102,15 @@ namespace Workwear.Models.Import.Norms
 				.List();
 			progress.Add();
 
-			//Заполняем и создаем отсутствующие должности
+			var departmentNames = MatchPairs.Select(x => x.DepartmentName).Distinct().ToArray();
+			var departments = uow.Session.QueryOver<Department>()
+				.Where(x => x.Name.IsIn(departmentNames))
+				.List();
+			progress.Add();
+			
+			//Заполняем и создаем отсутствующие должности 
 			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions, subdivisionColumn == null);
+				SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null);
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -184,42 +193,65 @@ namespace Workwear.Models.Import.Norms
 			}
 			progress.Close();
 		}
-				
-		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions, bool withoutSubdivision)
-		{
-			foreach (var postName in combination.PostNames)
-			{
-				var post = UsedPosts.FirstOrDefault(x =>
-							String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-							&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
-				if(post == null) {
-					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-						&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
 
+		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
+			IList<Subdivision> subdivisions,
+			IList<Department> departments, bool withoutSubdivision) {
+			foreach(var postName in combination.PostNames) {
+				var post = UsedPosts.FirstOrDefault(x =>
+					String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
+					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName,
+						StringComparison.CurrentCultureIgnoreCase))
+					&& (x.Department == null ||
+					    String.Equals(x.Department?.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
+				if(post == null) {
+					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase) 
+					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name,
+							combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase))
+					&& (x.Department == null || String.Equals(x.Department?.Name,
+							combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
 					if(post == null) {
-						post = new Post { 
+						post = new Post {
 							Name = postName,
-							Comments = "Создана при импорте норм из Excel", 
+							Comments = "Создана при импорте норм из Excel",
 						};
+
+						Subdivision subdivision = null;
+						Department department = null;
+
 						if(!String.IsNullOrEmpty(combination.SubdivisionName)) {
-							var subdivision = UsedSubdivisions.FirstOrDefault(x =>
+							subdivision = UsedSubdivisions.FirstOrDefault(x =>
 								String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 
 							if(subdivision == null) {
 								subdivision = subdivisions.FirstOrDefault(x =>
-										String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+									String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
 
-								if(subdivision == null) {
+								if(subdivision == null)
 									subdivision = new Subdivision { Name = combination.SubdivisionName };
-								}
 								UsedSubdivisions.Add(subdivision);
 							}
-							post.Subdivision = subdivision;
 						}
+
+						if(!String.IsNullOrEmpty(combination.DepartmentName)) {
+							department = UsedDepartments.FirstOrDefault(x => x.Subdivision == subdivision &&
+								String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
+							if(department == null) {
+								department = departments.FirstOrDefault(x => x.Subdivision == subdivision 
+									&& String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
+
+								if(department == null)
+									department = new Department { Name = combination.DepartmentName, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
+								UsedDepartments.Add(department);
+							}
+						}
+
+						post.Subdivision = subdivision;
+						post.Department = department;
+						UsedPosts.Add(post);
 					}
-					UsedPosts.Add(post);
+					combination.Posts.Add(post);
 				}
-				combination.Posts.Add(post);
 			}
 		}
 
@@ -229,9 +261,9 @@ namespace Workwear.Models.Import.Norms
 		public readonly List<SubdivisionPostCombination> MatchPairs = new List<SubdivisionPostCombination>();
 		
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
+		public readonly List<Department> UsedDepartments = new List<Department>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
-		
 		public readonly List<string> UndefinedProtectionNames = new List<string>();
 		#endregion
 
