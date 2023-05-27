@@ -71,18 +71,18 @@ namespace Workwear.Models.Import.Norms
 
 			foreach(var row in list) {
 				var postValue = row.CellStringValue(postColumn);
-				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
+				var subdivisionValue = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
 				var departmentName = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
 
 				if(String.IsNullOrWhiteSpace(postValue)) {
 					row.ProgramSkipped = true;
-					row.ProgramSkippedReason = "Должность отсутствует. Не возможности отличить к какой норме относится строка.";
+					row.ProgramSkippedReason = "Должность отсутствует. Нет возможности отличить к какой норме относится строка.";
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionName == subdivisionName && x.DepartmentName == departmentName);
+				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionValue == subdivisionValue && x.DepartmentName == departmentName);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(postValue, subdivisionName, departmentName);
+					pair = new SubdivisionPostCombination(postValue, subdivisionValue, departmentName);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;
@@ -93,16 +93,22 @@ namespace Workwear.Models.Import.Norms
 			var posts = uow.Session.QueryOver<Post>()
 				.Where(x => x.Name.IsIn(allPostNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
 				.List();
 			progress.Add();
 
-			var subdivisionNames = MatchPairs.Select(x => x.SubdivisionName).Distinct().ToArray();
+			var subdivisionNames = MatchPairs
+				.Where(x => x.SubdivisionNames != null)
+				.SelectMany(x => x.SubdivisionNames)
+				.Distinct().ToArray();
 			var subdivisions = uow.Session.QueryOver<Subdivision>()
 				.Where(x => x.Name.IsIn(subdivisionNames))
 				.List();
 			progress.Add();
 
-			var departmentNames = MatchPairs.Select(x => x.DepartmentName).Distinct().ToArray();
+			var departmentNames = MatchPairs
+				.Where(x => !String.IsNullOrWhiteSpace(x.DepartmentName))
+				.Select(x => x.DepartmentName).Distinct().ToArray();
 			var departments = uow.Session.QueryOver<Department>()
 				.Where(x => x.Name.IsIn(departmentNames))
 				.List();
@@ -110,7 +116,7 @@ namespace Workwear.Models.Import.Norms
 			
 			//Заполняем и создаем отсутствующие должности 
 			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null);
+				SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null);
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -196,62 +202,49 @@ namespace Workwear.Models.Import.Norms
 
 		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
 			IList<Subdivision> subdivisions,
-			IList<Department> departments, bool withoutSubdivision) {
-			foreach(var postName in combination.PostNames) {
-				var post = UsedPosts.FirstOrDefault(x =>
-					String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName,
-						StringComparison.CurrentCultureIgnoreCase))
-					&& (x.Department == null ||
-					    String.Equals(x.Department?.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
+			IList<Department> departments,
+			bool withoutSubdivision,
+			bool withoutDepartment) {
+			foreach(var postName in combination.AllPostNames) {
+				var post = UsedPosts.Concat(posts).FirstOrDefault(x =>
+					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
+					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
+					&& (withoutDepartment || String.Equals(x.Department?.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
+
 				if(post == null) {
-					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase) 
-					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name,
-							combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase))
-					&& (x.Department == null || String.Equals(x.Department?.Name,
-							combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
-					if(post == null) {
-						post = new Post {
-							Name = postName,
-							Comments = "Создана при импорте норм из Excel",
-						};
+					post = new Post {
+						Name = postName.post,
+						Comments = "Создана при импорте норм из Excel",
+					};
 
-						Subdivision subdivision = null;
-						Department department = null;
+					Subdivision subdivision = null;
+					Department department = null;
 
-						if(!String.IsNullOrEmpty(combination.SubdivisionName)) {
-							subdivision = UsedSubdivisions.FirstOrDefault(x =>
-								String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+					if(!String.IsNullOrEmpty(postName.subdivision)) {
+						subdivision = UsedSubdivisions.Concat(subdivisions).FirstOrDefault(x =>
+							String.Equals(x.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase));
 
-							if(subdivision == null) {
-								subdivision = subdivisions.FirstOrDefault(x =>
-									String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
-
-								if(subdivision == null)
-									subdivision = new Subdivision { Name = combination.SubdivisionName };
-								UsedSubdivisions.Add(subdivision);
-							}
+						if(subdivision == null) {
+							subdivision = new Subdivision { Name = postName.subdivision };
+							UsedSubdivisions.Add(subdivision);
 						}
-
-						if(!String.IsNullOrEmpty(combination.DepartmentName)) {
-							department = UsedDepartments.FirstOrDefault(x => x.Subdivision == subdivision &&
-								String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
-							if(department == null) {
-								department = departments.FirstOrDefault(x => x.Subdivision == subdivision 
-									&& String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
-
-								if(department == null)
-									department = new Department { Name = combination.DepartmentName, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
-								UsedDepartments.Add(department);
-							}
-						}
-
-						post.Subdivision = subdivision;
-						post.Department = department;
-						UsedPosts.Add(post);
 					}
-					combination.Posts.Add(post);
+
+					if(!String.IsNullOrEmpty(combination.DepartmentName)) {
+						department = UsedDepartments.Concat(departments).FirstOrDefault(x => x.Subdivision == subdivision &&
+							String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
+
+						if(department == null) {
+							department = new Department { Name = combination.DepartmentName, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
+							UsedDepartments.Add(department);
+						}
+					}
+
+					post.Subdivision = subdivision;
+					post.Department = department;
+					UsedPosts.Add(post);
 				}
+				combination.Posts.Add(post);
 			}
 		}
 

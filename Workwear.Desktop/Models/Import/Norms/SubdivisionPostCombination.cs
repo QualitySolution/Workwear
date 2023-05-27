@@ -10,7 +10,8 @@ namespace Workwear.Models.Import.Norms
 	{
 		public readonly string[] PostNames;
 		public readonly string PostValue;
-		public readonly string SubdivisionName;
+		public readonly string SubdivisionValue;
+		public readonly string[] SubdivisionNames;
 		public readonly string DepartmentName;
 
 		public readonly List<Post> Posts = new List<Post>();
@@ -20,13 +21,28 @@ namespace Workwear.Models.Import.Norms
 
 		public readonly HashSet<ProtectionTools> WillAddedProtectionTools = new HashSet<ProtectionTools>();
 
-		public SubdivisionPostCombination(string postNames, string subdivisionName, string departmentName = null)
+		public SubdivisionPostCombination(string postValue, string subdivisionValue, string departmentName)
 		{
-			PostValue = postNames ?? throw new ArgumentNullException(nameof(postNames));
+			PostValue = postValue ?? throw new ArgumentNullException(nameof(postValue));
 			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(x => x.Trim()).ToArray();
-			SubdivisionName = subdivisionName;
+			SubdivisionValue = subdivisionValue;
+			if(!String.IsNullOrWhiteSpace(SubdivisionValue))
+				SubdivisionNames = SubdivisionValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(x => x.Trim()).ToArray();
 			DepartmentName = departmentName;
+		}
+
+		public IEnumerable<(string subdivision, string post)> AllPostNames {
+			get {
+				if (SubdivisionNames == null || SubdivisionNames.Length == 0)
+					foreach (var postName in PostNames)
+						yield return (null, postName);
+				else
+					foreach (var subdivisionName in SubdivisionNames)
+					foreach (var postName in PostNames)
+						yield return (subdivisionName, postName);
+			}
 		}
 	}
 }
