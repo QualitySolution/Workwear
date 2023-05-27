@@ -24,6 +24,7 @@ using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Regulations.NormChildren;
 
 namespace WorkwearTest.ViewModels.Regulations {
 	
@@ -61,7 +62,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => featuresService).AsSelf();
-			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>();
+			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => monitor).As<IChangeMonitor<NormItem>>();
 			builder.Register(x => validator).As<IValidator>();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
@@ -70,6 +71,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 			builder.RegisterType<ModalProgressCreator>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormViewModel>().AsSelf();
+			builder.RegisterType<NormEmployeesViewModel>().AsSelf();
 			builder.RegisterType<ProgressWindowViewModel>().AsSelf().WithProperty(x => x.Progress, progress);
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			var container = builder.Build();
