@@ -234,14 +234,14 @@ namespace Workwear.Models.Import.Norms
 						}
 
 						if(!String.IsNullOrEmpty(combination.DepartmentName)) {
-							department = UsedDepartments.FirstOrDefault(x =>
+							department = UsedDepartments.FirstOrDefault(x => x.Subdivision == subdivision &&
 								String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
-							if(department == null || department.Subdivision != subdivision) {
-								department = departments.FirstOrDefault(x =>
-									String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
+							if(department == null) {
+								department = departments.FirstOrDefault(x => x.Subdivision == subdivision 
+									&& String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
 
-								if(department == null || department.Subdivision != subdivision)
-									department = new Department() { Name = combination.DepartmentName, Subdivision = subdivision };
+								if(department == null)
+									department = new Department { Name = combination.DepartmentName, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
 								UsedDepartments.Add(department);
 							}
 						}
