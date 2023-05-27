@@ -23,9 +23,9 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return new ChangeState(ChangeType.NotChanged);
 			}
 			
-			return new ChangeState(row.NormItem.Norm.Posts.Any(p => p.Department?.Id == 0)
-				? ChangeType.NewEntity
-				: ChangeType.NotChanged);
+			var newDepartments = row.SubdivisionPostCombination.Posts.Select(x => x.Department).Distinct()
+				.Where(x => x?.Id == 0).Select(x => x.Name).ToArray();
+			return new ChangeState(newDepartments.Any() ? ChangeType.NewEntity : ChangeType.NotChanged, willCreatedValues: newDepartments);
 		}
 	}
 }
