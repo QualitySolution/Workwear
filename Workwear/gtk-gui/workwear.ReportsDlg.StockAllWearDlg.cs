@@ -12,7 +12,7 @@ namespace workwear.ReportsDlg
 
 		private global::Gtk.Label label1;
 
-		private global::Gtk.Button buttonRun;
+		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
 		{
@@ -49,7 +49,7 @@ namespace workwear.ReportsDlg
 			w3.Position = 0;
 			w3.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.buttonRun = new global::Gtk.Button();
+			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.Sensitive = false;
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";

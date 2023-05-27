@@ -13,11 +13,9 @@ using QSOrmProject;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company.EmployeeChildren;
-using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 
-namespace Workwear.Views.Company
-{
+namespace Workwear.Views.Company {
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger ();

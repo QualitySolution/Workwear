@@ -184,7 +184,8 @@ namespace workwear
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(),
-				typeof(UpdateProcessView)
+				typeof(UpdateProcessView),
+				typeof(ProgressWindowView)
 			)).As<IGtkViewResolver>();
 			#endregion
 		}

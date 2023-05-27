@@ -422,6 +422,9 @@
     <Compile Include="Views\Stock\Widgets\IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.InspectionView.cs" />
+    <Compile Include="Views\Regulations\NormChildren\NormEmployeesView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormEmployeesView.cs" />
+    <Compile Include="ViewModels\Regulations\NormChildren\NormEmployeesViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -659,6 +662,8 @@
     <Folder Include="Views\Sizes\" />
     <Folder Include="Journal\Filter.Views\Sizes\" />
     <Folder Include="Models\WearLk\" />
+    <Folder Include="Views\Regulations\NormChildren\" />
+    <Folder Include="ViewModels\Regulations\NormChildren\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

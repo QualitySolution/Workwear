@@ -2,7 +2,9 @@ using System;
 using Gamma.ColumnConfig;
 using Gtk;
 using QS.Utilities.Text;
+using QS.Utilities;
 using QS.Views.Dialog;
+using QS.Views.Resolve;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -14,21 +16,21 @@ namespace Workwear.Views.Regulations
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
-		public NormView(NormViewModel viewModel) : base(viewModel)
+		public NormView(NormViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
 			this.Build();
-			ConfigureDlg();
+			ConfigureDlg(viewResolver);
 			CommonButtonSubscription();
 		}
 
-		private void ConfigureDlg()
+		private void ConfigureDlg(IGtkViewResolver viewResolver)
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
 			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
 			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
-			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не учавствовав в расчёте минимальной ширины окна
+			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не участвовал в расчёте минимальной ширины окна
 			ycomboAnnex.WidthRequest = 1;  
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
 			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
@@ -41,8 +43,9 @@ namespace Workwear.Views.Regulations
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
-				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(300)
-				.AddColumn("Подразделение").AddTextRenderer(p => p.Subdivision != null ? p.Subdivision.Name : null).WrapWidth(300)
+				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(700)
+				.AddColumn("Подразделение").AddReadOnlyTextRenderer(p => p.Subdivision?.Name).WrapWidth(700)
+				.AddColumn("Отдел").AddReadOnlyTextRenderer(p => p.Department?.Name).WrapWidth(700)
 				.Finish ();
 			ytreeProfessions.Selection.Mode = Gtk.SelectionMode.Multiple;
 			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
@@ -69,6 +72,9 @@ namespace Workwear.Views.Regulations
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.SelectedItem, w => w.SelectedRow);
+			
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.employeesViewModel), "Сотрудники");
+			tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
