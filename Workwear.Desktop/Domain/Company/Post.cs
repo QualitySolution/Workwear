@@ -70,6 +70,7 @@ namespace Workwear.Domain.Company
 
 		#endregion
 
+		public virtual string Title => Name + (Subdivision != null ? $" ⟨{Subdivision.Name}⟩" : "");
 		public Post ()
 		{
 		}
