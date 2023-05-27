@@ -19,6 +19,7 @@ namespace Workwear.Views.Regulations.NormChildren {
 				.Finish();
 			tvEmployees.Selection.Mode = Gtk.SelectionMode.Multiple;
 			tvEmployees.Binding.AddBinding(ViewModel, vm => vm.Employees, w => w.ItemsDataSource).InitializeFromSource();
+			tvEmployees.Selection.Changed += (sender, e) => buttonRemove.Sensitive = tvEmployees.Selection.CountSelectedRows() > 0;
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e) {

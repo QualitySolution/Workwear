@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
+using QS.Dialog;
+using QS.Navigation;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Company;
 
 namespace Workwear.ViewModels.Regulations.NormChildren {
 	public class NormEmployeesViewModel : ViewModelBase {
 		private readonly NormViewModel parent;
+		private readonly INavigationManager navigation;
+		private readonly IInteractiveQuestion interactive;
+		private readonly ModalProgressCreator progressCreator;
 
-		public NormEmployeesViewModel(NormViewModel parent) {
+		public NormEmployeesViewModel(NormViewModel parent, INavigationManager navigation, IInteractiveQuestion interactive, ModalProgressCreator progressCreator) {
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
+			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 		}
 
 		public IList<EmployeeNode> Employees { get; private set; }
@@ -25,11 +35,49 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 		
 		#region Действия View
 		public void Add() {
+			if(parent.UoW.HasChanges) {
+				if(!interactive.Question("Для добавления нормы сотрудникам необходимо сохранить изменения в норме. Сохранить?") || !parent.Save())
+					return;
+			}
 
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(parent, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
+		}
+		
+		void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var selectedIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+			progressCreator.Start(selectedIds.Length + 2, text: "Загрузка сотрудников");
+			var newEmployees = parent.UoW.GetById<EmployeeCard>(selectedIds);
+			foreach(var employee in newEmployees) {
+				progressCreator.Add(text: $"Добавление нормы для {employee.ShortName}");
+				employee.AddUsedNorm(parent.Entity);
+			}
+			progressCreator.Add(text: "Сохранение изменений");
+			parent.UoW.Commit();
+			progressCreator.Add(text: "Обновление списка сотрудников");
+			UpdateNodes();
+			progressCreator.Close();
 		}
 
-		public void Remove(EmployeeNode[] employee) {
+		public void Remove(EmployeeNode[] employees) {
+			if(parent.UoW.HasChanges) {
+				if(!interactive.Question("Для удаления нормы у сотрудников необходимо сохранить изменения нормы. Сохранить?") || !parent.Save())
+					return;
+			}
 
+			progressCreator.Start(employees.Length + 2, text: "Загрузка сотрудников");
+			var newEmployees = parent.UoW.GetById<EmployeeCard>(employees.Select(x => x.Id).ToArray());
+			foreach(var employee in newEmployees) {
+				progressCreator.Add(text: $"Удаление нормы у {employee.ShortName}");
+				employee.RemoveUsedNorm(parent.Entity);
+			}
+
+			progressCreator.Add(text: "Сохранение изменений");
+			parent.UoW.Commit();
+			progressCreator.Add(text: "Обновление списка сотрудников");
+			UpdateNodes();
+			progressCreator.Close(); 
 		}
 		#endregion
 
