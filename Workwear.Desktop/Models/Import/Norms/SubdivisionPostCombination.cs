@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
 	public class SubdivisionPostCombination
 	{
+		private readonly SettingsNormsViewModel settings;
 		public readonly string[] PostNames;
 		public readonly string PostValue;
 		public readonly string SubdivisionValue;
@@ -22,18 +24,17 @@ namespace Workwear.Models.Import.Norms
 
 		public readonly HashSet<ProtectionTools> WillAddedProtectionTools = new HashSet<ProtectionTools>();
 
-		public SubdivisionPostCombination(string postValue, string subdivisionValue, string departmentValue)
+		public SubdivisionPostCombination(SettingsNormsViewModel settings, string postValue, string subdivisionValue, string departmentValue)
 		{
+			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 			PostValue = postValue ?? throw new ArgumentNullException(nameof(postValue));
-			PostNames = PostValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(x => x.Trim()).ToArray();
+			PostNames = SplitValue(PostValue);
 			SubdivisionValue = subdivisionValue;
+			DepartmentValue = departmentValue;
 			if(!String.IsNullOrWhiteSpace(SubdivisionValue))
-				SubdivisionNames = SubdivisionValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
-					.Select(x => x.Trim()).ToArray();
+				SubdivisionNames = SplitValue(SubdivisionValue);
 			if (!String.IsNullOrWhiteSpace(departmentValue))
-				DepartmentNames = departmentValue.Split(new[] { ',', ';', '\\', '/' }, StringSplitOptions.RemoveEmptyEntries)
-					.Select(x => x.Trim()).ToArray();
+				DepartmentNames = SplitValue(DepartmentValue);
 		}
 
 		public IEnumerable<(string subdivision, string department, string post)> AllPostNames {
@@ -47,5 +48,18 @@ namespace Workwear.Models.Import.Norms
 							yield return (subdivisionName, departmentName, postName);
 			}
 		}
+
+		#region private
+		/// <summary>
+		/// Разбивает строку на части через разделители.
+		/// </summary>
+		string[] SplitValue(string value) {
+			if(String.IsNullOrEmpty(settings.ListSeparator))
+				return new []{value};
+			
+			return value.Split(settings.ListSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim()).ToArray();
+		}
+		#endregion
 	}
 }

@@ -82,7 +82,7 @@ namespace Workwear.Models.Import.Norms
 
 				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionValue == subdivisionValue && x.DepartmentValue == departmentValue);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(postValue, subdivisionValue, departmentValue);
+					pair = new SubdivisionPostCombination(model.SettingsNormsViewModel, postValue, subdivisionValue, departmentValue);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;

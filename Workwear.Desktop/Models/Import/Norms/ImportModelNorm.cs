@@ -7,15 +7,18 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
 	public class ImportModelNorm : ImportModelBase<DataTypeNorm, SheetRowNorm>, IImportModel
 	{
+		public SettingsNormsViewModel SettingsNormsViewModel { get; }
 		private readonly DataParserNorm dataParser;
 
-		public ImportModelNorm(DataParserNorm dataParser) : base(dataParser, typeof(CountersNorm))
-		{
+		public ImportModelNorm(DataParserNorm dataParser, SettingsNormsViewModel settingsNormsViewModel) 
+			: base(dataParser, typeof(CountersNorm), settingsNormsViewModel) {
+			SettingsNormsViewModel = settingsNormsViewModel ?? throw new ArgumentNullException(nameof(settingsNormsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 		}
 
