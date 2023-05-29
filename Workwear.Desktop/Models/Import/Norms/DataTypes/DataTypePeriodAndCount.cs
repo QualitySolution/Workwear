@@ -81,13 +81,13 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+).*(?:в|на)\s*(\d+)\s*(?:месяц|мес\.)");
+			regexp = new Regex(@"(\d+).*(?:в|на)\s*(\d*)\s*(?:месяц|мес\.)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{
 				periodType = NormPeriodType.Month;
 				amount = int.Parse(match.Groups[1].Value);
-				periods = int.Parse(match.Groups[2].Value);
+				periods = String.IsNullOrEmpty(match.Groups[2].Value) ? 1 : int.Parse(match.Groups[2].Value);
 				return true;
 			}
 			//Указано и количество выдачи и количество лет
