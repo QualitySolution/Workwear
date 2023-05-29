@@ -28,13 +28,11 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 		
 		#region Helpers
 		private ChangeState GetChangeState(SheetRowEmployee row, string value) {
-			if(String.Equals(row.EditingEmployee.Department?.Name, value, StringComparison.CurrentCultureIgnoreCase)) {
+			if(String.IsNullOrEmpty(value) || IsSameDepartment(row.EditingEmployee.Department, value, row.EditingEmployee.Subdivision)) {
 				return new ChangeState(ChangeType.NotChanged);
 			}
-			var department = dataParserEmployee.UsedDepartment.FirstOrDefault(x =>
-				String.Equals(x.Name, value, StringComparison.CurrentCultureIgnoreCase)
-				&& (row.EditingEmployee.Subdivision == null && x.Subdivision == null || 
-				    DomainHelper.EqualDomainObjects(x.Subdivision, row.EditingEmployee.Subdivision)));
+
+			var department = dataParserEmployee.UsedDepartment.FirstOrDefault(x => IsSameDepartment(x, value, row.EditingEmployee.Subdivision));
 			if(department == null) {
 				department = new Department {
 					Name = value,
@@ -43,10 +41,30 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 				};
 				dataParserEmployee.UsedDepartment.Add(department);
 			}
+
+			var oldValue = row.EditingEmployee.Department;
 			row.EditingEmployee.Department = department;
 			if(department.Id == 0)
-				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { "Отдел:" + department.Name });
-			return new ChangeState(ChangeType.ChangeValue, oldValue: row.EditingEmployee.Department?.Name);
+				return new ChangeState(ChangeType.NewEntity, oldValue: FullTitle(oldValue), willCreatedValues: new[] { FullTitle(department) });
+			return new ChangeState(ChangeType.ChangeValue, oldValue: FullTitle(oldValue), newValue: FullTitle(department));
+		}
+		
+		private string FullTitle(Department department) {
+			if(department == null)
+				return null;
+			var title = department.Name;
+			if (department.Subdivision != null)
+				title += "\nв подразделении: " + department.Subdivision.Name;
+			return title;
+		}
+		
+		private bool IsSameDepartment(Department department, string departmentName, Subdivision departmentSubdivision) {
+			if(department == null)
+				return false;
+
+			return String.Equals(department.Name, departmentName, StringComparison.CurrentCultureIgnoreCase)
+			       && (department.Subdivision == null && departmentSubdivision == null ||
+			           DomainHelper.EqualDomainObjects(department.Subdivision, departmentSubdivision));
 		}
 		#endregion
 	}

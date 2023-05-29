@@ -7,15 +7,17 @@ namespace Workwear.Models.Import
 	{
 		public ChangeType ChangeType;
 		public string OldValue;
+		public string NewValue;
 		public string InterpretedValue;
 		public string Warning;
 		public string Error;
 		public string[] WillCreatedValues;
 
-		public ChangeState(ChangeType changeType, string oldValue = null, string interpretedValue = null, string error = null, string warning = null, string[] willCreatedValues = null)
+		public ChangeState(ChangeType changeType, string oldValue = null, string newValue = null, string interpretedValue = null, string error = null, string warning = null, string[] willCreatedValues = null)
 		{
 			ChangeType = changeType;
 			OldValue = oldValue;
+			NewValue = newValue;
 			InterpretedValue = interpretedValue;
 			Warning = warning;
 			Error = error;
