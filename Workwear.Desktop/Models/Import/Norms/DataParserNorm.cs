@@ -41,6 +41,7 @@ namespace Workwear.Models.Import.Norms
 			SupportDataTypes.Add( new DataTypeDepartment());
 			SupportDataTypes.Add( new DataTypePost());
 			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
+			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeNorm.Name, n => n.Name, new []{"название"}));
 		}
 
 		#region Обработка изменений
