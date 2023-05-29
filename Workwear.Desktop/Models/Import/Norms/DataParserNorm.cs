@@ -72,7 +72,7 @@ namespace Workwear.Models.Import.Norms
 			foreach(var row in list) {
 				var postValue = row.CellStringValue(postColumn);
 				var subdivisionValue = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
-				var departmentName = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
+				var departmentValue = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
 
 				if(String.IsNullOrWhiteSpace(postValue)) {
 					row.ProgramSkipped = true;
@@ -80,9 +80,9 @@ namespace Workwear.Models.Import.Norms
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionValue == subdivisionValue && x.DepartmentName == departmentName);
+				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionValue == subdivisionValue && x.DepartmentValue == departmentValue);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(postValue, subdivisionValue, departmentName);
+					pair = new SubdivisionPostCombination(postValue, subdivisionValue, departmentValue);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;
@@ -107,14 +107,15 @@ namespace Workwear.Models.Import.Norms
 			progress.Add();
 
 			var departmentNames = MatchPairs
-				.Where(x => !String.IsNullOrWhiteSpace(x.DepartmentName))
-				.Select(x => x.DepartmentName).Distinct().ToArray();
+				.Where(x => x.DepartmentNames != null)
+				.SelectMany(x => x.DepartmentNames)
+				.Distinct().ToArray();
 			var departments = uow.Session.QueryOver<Department>()
 				.Where(x => x.Name.IsIn(departmentNames))
 				.List();
 			progress.Add();
 			
-			//Заполняем и создаем отсутствующие должности 
+			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs)
 				SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null);
 			progress.Add();
@@ -209,7 +210,7 @@ namespace Workwear.Models.Import.Norms
 				var post = UsedPosts.Concat(posts).FirstOrDefault(x =>
 					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
 					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
-					&& (withoutDepartment || String.Equals(x.Department?.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase)));
+					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)));
 
 				if(post == null) {
 					post = new Post {
@@ -230,12 +231,12 @@ namespace Workwear.Models.Import.Norms
 						}
 					}
 
-					if(!String.IsNullOrEmpty(combination.DepartmentName)) {
+					if(!String.IsNullOrEmpty(postName.department)) {
 						department = UsedDepartments.Concat(departments).FirstOrDefault(x => x.Subdivision == subdivision &&
-							String.Equals(x.Name, combination.DepartmentName, StringComparison.CurrentCultureIgnoreCase));
+							String.Equals(x.Name, postName.department, StringComparison.CurrentCultureIgnoreCase));
 
 						if(department == null) {
-							department = new Department { Name = combination.DepartmentName, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
+							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
 							UsedDepartments.Add(department);
 						}
 					}
