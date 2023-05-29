@@ -7,10 +7,12 @@ using Workwear.Domain.Company;
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypePost : DataTypeEmployeeBase {
 		private readonly DataParserEmployee dataParserEmployee;
+		private readonly IImportModel model;
 
-		public DataTypePost(DataParserEmployee dataParserEmployee)
+		public DataTypePost(DataParserEmployee dataParserEmployee, IImportModel model)
 		{
 			this.dataParserEmployee = dataParserEmployee ?? throw new ArgumentNullException(nameof(dataParserEmployee));
+			this.model = model ?? throw new ArgumentNullException(nameof(model));
 			ColumnNameKeywords.Add("должность");
 			ColumnNameKeywords.Add("профессия");
 			Data = DataTypeEmployee.Post;
@@ -34,7 +36,7 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 				post = new Post { 
 					Name = value, 
 					Subdivision = row.EditingEmployee.Subdivision,
-					Comments = "Создана при импорте сотрудников из Excel"
+					Comments = "Создана при импорте сотрудников из файла " + model.FileName,
 				};
 				dataParserEmployee.UsedPosts.Add(post);
 			}

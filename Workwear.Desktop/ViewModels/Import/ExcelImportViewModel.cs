@@ -203,6 +203,8 @@ namespace Workwear.ViewModels.Import
 					else
 						wb = new XSSFWorkbook(fs);
 				}
+
+				ImportModel.FileName = Path.GetFileName(FileName);
 			}
 			catch(IOException ex) when(ex.HResult == -2147024864) {
 				interactiveMessage.ShowMessage(ImportanceLevel.Error, 

@@ -7,10 +7,12 @@ using Workwear.Domain.Company;
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeDepartment : DataTypeEmployeeBase {
 		private readonly DataParserEmployee dataParserEmployee;
+		private readonly IImportModel model;
 
-		public DataTypeDepartment(DataParserEmployee dataParserEmployee)
+		public DataTypeDepartment(DataParserEmployee dataParserEmployee, IImportModel model)
 		{
 			this.dataParserEmployee = dataParserEmployee ?? throw new ArgumentNullException(nameof(dataParserEmployee));
+			this.model = model ?? throw new ArgumentNullException(nameof(model));
 			ColumnNameKeywords.AddRange(new [] {
 				"отдел",
 				"бригада",
@@ -37,7 +39,7 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 				department = new Department {
 					Name = value,
 					Subdivision = row.EditingEmployee.Subdivision,
-					Comments = "Создан при импорте сотрудников из Excel"
+					Comments = "Создан при импорте сотрудников из файла " + model.FileName
 				};
 				dataParserEmployee.UsedDepartment.Add(department);
 			}

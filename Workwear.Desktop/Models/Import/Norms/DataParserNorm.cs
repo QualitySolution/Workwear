@@ -117,7 +117,7 @@ namespace Workwear.Models.Import.Norms
 			
 			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null);
+				SetOrMakePost(pair, posts, subdivisions, departments, model, subdivisionColumn == null, departmentColumn == null);
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -136,7 +136,7 @@ namespace Workwear.Models.Import.Norms
 					continue;
 
 				var norm = new Norm {
-					Comment = "Импортирована из Excel"
+					Comment = "Импортирована из файла " + model.FileName,
 				};
 				foreach(var post in pair.Posts) {
 					norm.AddPost(post);
@@ -204,6 +204,7 @@ namespace Workwear.Models.Import.Norms
 		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
 			IList<Subdivision> subdivisions,
 			IList<Department> departments,
+			ImportModelNorm model,
 			bool withoutSubdivision,
 			bool withoutDepartment) {
 			foreach(var postName in combination.AllPostNames) {
@@ -215,7 +216,7 @@ namespace Workwear.Models.Import.Norms
 				if(post == null) {
 					post = new Post {
 						Name = postName.post,
-						Comments = "Создана при импорте норм из Excel",
+						Comments = "Создана при импорте норм из файла " + model.FileName,
 					};
 
 					Subdivision subdivision = null;
@@ -236,7 +237,7 @@ namespace Workwear.Models.Import.Norms
 							String.Equals(x.Name, postName.department, StringComparison.CurrentCultureIgnoreCase));
 
 						if(department == null) {
-							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из Excel"};
+							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из файла " + model.FileName};
 							UsedDepartments.Add(department);
 						}
 					}
