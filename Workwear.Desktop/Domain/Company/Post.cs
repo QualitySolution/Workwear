@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Regulations;
@@ -70,7 +71,16 @@ namespace Workwear.Domain.Company
 
 		#endregion
 
-		public virtual string Title => Name + (Subdivision != null ? $" ⟨{Subdivision.Name}⟩" : "");
+		public virtual string Title {
+			get {
+				var list = (new [] { Subdivision?.Name, Department?.Name }).Where(x => x != null).ToList();
+				if(list.Any())
+					return Name + " [" + String.Join("›", list) + "]";
+				else
+					return Name;
+			}
+		}
+
 		public Post ()
 		{
 		}
