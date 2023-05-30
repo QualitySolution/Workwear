@@ -12,12 +12,16 @@ namespace Workwear.ViewModels.Import
 		{
 			this.parameters = parameters;
 			listSeparator = parameters?.Dynamic.Import_ListSeparator(typeof(string)) ?? ",;\\/";
+			wearoutToName = parameters?.Dynamic.Import_WearoutToName(typeof(bool)) ?? false;
 		}
 
 		private bool wearoutToName;
 		public virtual bool WearoutToName {
 			get => wearoutToName;
-			set => SetField(ref wearoutToName, value);
+			set {
+				if(SetField(ref wearoutToName, value) && parameters != null)
+					parameters.Dynamic.Import_WearoutToName = value;
+			}
 		}
 
 		#region Списки
