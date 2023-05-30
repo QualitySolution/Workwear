@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -21972,7 +21972,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Import.SettingsNormsView" design-size="405 300">
+  <widget class="Gtk.Bin" id="Workwear.Views.Import.SettingsNormsView" design-size="405 220">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -21989,10 +21989,28 @@
           <placeholder />
         </child>
         <child>
-          <placeholder />
-        </child>
-        <child>
-          <placeholder />
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkWearoutToName">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Переносить "до износа" в имя номеклатуры</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="TopAttach">1</property>
+            <property name="BottomAttach">2</property>
+            <property name="RightAttach">2</property>
+            <property name="AutoSize">False</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
         </child>
         <child>
           <widget class="Gamma.GtkWidgets.yEntry" id="entrySeparator">
@@ -22018,6 +22036,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
             <property name="MemberName" />
+            <property name="Xalign">1</property>
             <property name="LabelProp" translatable="yes">Символы разделители для списков:</property>
           </widget>
           <packing>

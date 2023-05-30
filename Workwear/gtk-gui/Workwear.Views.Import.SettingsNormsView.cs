@@ -6,6 +6,8 @@ namespace Workwear.Views.Import
 	{
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkWearoutToName;
+
 		private global::Gamma.GtkWidgets.yEntry entrySeparator;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
@@ -24,6 +26,20 @@ namespace Workwear.Views.Import
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.checkWearoutToName = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkWearoutToName.CanFocus = true;
+			this.checkWearoutToName.Name = "checkWearoutToName";
+			this.checkWearoutToName.Label = global::Mono.Unix.Catalog.GetString("Переносить \"до износа\" в имя номеклатуры");
+			this.checkWearoutToName.DrawIndicator = true;
+			this.checkWearoutToName.UseUnderline = true;
+			this.ytable1.Add(this.checkWearoutToName);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.checkWearoutToName]));
+			w1.TopAttach = ((uint)(1));
+			w1.BottomAttach = ((uint)(2));
+			w1.RightAttach = ((uint)(2));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.entrySeparator = new global::Gamma.GtkWidgets.yEntry();
 			this.entrySeparator.TooltipMarkup = "Символов разделителей может быть несколько.";
 			this.entrySeparator.CanFocus = true;
@@ -31,18 +47,19 @@ namespace Workwear.Views.Import
 			this.entrySeparator.IsEditable = true;
 			this.entrySeparator.InvisibleChar = '●';
 			this.ytable1.Add(this.entrySeparator);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entrySeparator]));
-			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entrySeparator]));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Символы разделители для списков:");
 			this.ytable1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

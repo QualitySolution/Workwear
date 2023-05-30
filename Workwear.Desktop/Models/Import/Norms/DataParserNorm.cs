@@ -11,6 +11,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Repository.Regulations;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms.DataTypes;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
@@ -32,9 +33,9 @@ namespace Workwear.Models.Import.Norms
 			this.sizeService = sizeService;
 		}
 
-		public void CreateDatatypes(IUnitOfWork uow) {
+		public void CreateDatatypes(IUnitOfWork uow, SettingsNormsViewModel settings) {
 			SupportDataTypes.Add( new DataTypeProtectionTools());
-			SupportDataTypes.Add( new DataTypePeriodAndCount());//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
+			SupportDataTypes.Add( new DataTypePeriodAndCount(settings));//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypeSubdivision());
@@ -70,6 +71,7 @@ namespace Workwear.Models.Import.Norms
 			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
 			var departmentColumn = model.GetColumnForDataType(DataTypeNorm.Department);
 			var nameColumn = model.GetColumnForDataType(DataTypeNorm.Name);
+			var periodAndCountColumn = model.GetColumnForDataType(DataTypeNorm.PeriodAndCount);
 
 			foreach(var row in list) {
 				var postValue = postColumn != null ? row.CellStringValue(postColumn) : null;
@@ -160,6 +162,8 @@ namespace Workwear.Models.Import.Norms
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			progress.Add();
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn)).Where(x => x != null).Distinct().ToArray();
+			if(model.SettingsNormsViewModel.WearoutToName)
+				protectionNames = protectionNames.Union( protectionNames.Select(x => x + " (до износа)")).ToArray();
 			progress.Add();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			progress.Add();
@@ -176,6 +180,9 @@ namespace Workwear.Models.Import.Norms
 					row.ProgramSkippedReason = "Номенклатура нормы пустая. Не определить какую стоку нормы создавать.";
 					continue;
 				}
+
+				if(model.SettingsNormsViewModel.WearoutToName && (row.CellStringValue(periodAndCountColumn)?.ToLower().Contains("до износа") ?? false))
+					protectionName += " (до износа)";
 
 				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 				if(protection == null) {

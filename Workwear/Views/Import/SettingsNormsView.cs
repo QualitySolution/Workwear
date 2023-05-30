@@ -8,6 +8,8 @@ namespace Workwear.Views.Import {
 			this.Build();
 
 			entrySeparator.Binding.AddBinding(ViewModel, v => v.ListSeparator, w => w.Text).InitializeFromSource();
+
+			checkWearoutToName.Binding.AddBinding(ViewModel, v => v.WearoutToName, w => w.Active).InitializeFromSource();
 		}
 	}
 }

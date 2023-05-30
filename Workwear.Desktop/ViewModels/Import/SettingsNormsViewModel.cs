@@ -14,6 +14,12 @@ namespace Workwear.ViewModels.Import
 			listSeparator = parameters?.Dynamic.Import_ListSeparator(typeof(string)) ?? ",;\\/";
 		}
 
+		private bool wearoutToName;
+		public virtual bool WearoutToName {
+			get => wearoutToName;
+			set => SetField(ref wearoutToName, value);
+		}
+
 		#region Списки
 		private string listSeparator;
 		public virtual string ListSeparator {

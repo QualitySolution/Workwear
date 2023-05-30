@@ -40,7 +40,7 @@ namespace Workwear.Models.Import.Norms
 			{ DataTypeNorm.ProtectionTools };
 
 		public override void Init(IUnitOfWork uow) {
-			dataParser.CreateDatatypes(uow);
+			dataParser.CreateDatatypes(uow, SettingsNormsViewModel);
 		}
 		
 		public bool CanSave { get; private set; }
