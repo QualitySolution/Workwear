@@ -1,7 +1,9 @@
 using System;
+using NSubstitute;
 using NUnit.Framework;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Import.Norms.DataTypes;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Test.Models.Import.Norms
 {
@@ -62,7 +64,9 @@ namespace Workwear.Test.Models.Import.Norms
 		
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
-			var result = DataTypePeriodAndCount.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
+			var settings = Substitute.For<SettingsNormsViewModel>();
+			var dataType = new DataTypePeriodAndCount(settings);
+			var result = dataType.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
 			Assert.AreEqual(expectedResult, result);
 			if(expectedResult)
 			{
