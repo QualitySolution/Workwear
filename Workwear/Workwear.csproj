@@ -425,6 +425,8 @@
     <Compile Include="Views\Regulations\NormChildren\NormEmployeesView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormEmployeesView.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormEmployeesViewModel.cs" />
+    <Compile Include="Views\Import\SettingsNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Import.SettingsNormsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

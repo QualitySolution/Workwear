@@ -10,7 +10,6 @@ using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using Workwear.Measurements;
 using Workwear.Models.Company;
-using Workwear.Models.Import;
 using Workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Import;
@@ -36,8 +35,8 @@ namespace Workwear.Models.Import.Employees
 			this.sizeService = sizeService;
 		}
 
-		#region Размеры
-		public void CreateDatatypes(IUnitOfWork uow, SettingsMatchEmployeesViewModel settings) {
+		#region Типы данных
+		public void CreateDatatypes(IUnitOfWork uow, IImportModel model, SettingsMatchEmployeesViewModel settings) {
 			SupportDataTypes.Add(new DataTypeNameWithInitials());
 			SupportDataTypes.Add(new DataTypeFio(personNames));
 			SupportDataTypes.Add(new DataTypeSimpleString(
@@ -99,8 +98,8 @@ namespace Workwear.Models.Import.Employees
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSubdivision(this, settings));
-			SupportDataTypes.Add(new DataTypeDepartment(this));
-			SupportDataTypes.Add(new DataTypePost(this));
+			SupportDataTypes.Add(new DataTypeDepartment(this, model));
+			SupportDataTypes.Add(new DataTypePost(this, model));
 
 			var sizeTypes = sizeService.GetSizeType(uow, true);
 			foreach (var sizeType in sizeTypes)
@@ -121,7 +120,8 @@ namespace Workwear.Models.Import.Employees
 
 		#region Обработка изменений
 		public void FindChanges(
-			IUnitOfWork uow, 
+			IUnitOfWork uow,
+			ImportModelEmployee model,
 			IEnumerable<SheetRowEmployee> list, 
 			ExcelValueTarget[] meaningfulColumns, 
 			IProgressBarDisplayable progress)
@@ -136,7 +136,7 @@ namespace Workwear.Models.Import.Employees
 
 				if(employee == null) {
 					employee = new EmployeeCard {
-						Comment = "Импортирован из Excel",
+						Comment = "Импортирован из файла " + model.FileName,
 						CreatedbyUser = userService?.GetCurrentUser(uow)
 					};
 					row.Employees.Add(employee);

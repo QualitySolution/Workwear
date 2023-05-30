@@ -45,6 +45,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
+			Department departmentAlias = null;
 			Norm normAlias = null;
 			NormItem normItemAlias = null;
 			RegulationDoc regulationDocAlias = null;
@@ -69,10 +70,12 @@ namespace workwear.Journal.ViewModels.Regulations
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => postAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name,
+					() => departmentAlias.Name,
 					() => normAlias.Id
 					));
 			if (Filter.Post != null)
@@ -95,10 +98,12 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
 				   .SelectSubQuery(employeesWorkedSubquery).WithAlias(() => resultAlias.UsagesWorked)
 				   .Select(Projections.SqlFunction(
-					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( CONCAT_WS(' ', ?1, CONCAT('[', ?2 ,']')) SEPARATOR ?3)"),
+					   new SQLFunctionTemplate(NHibernateUtil.String,
+						"GROUP_CONCAT( CONCAT( ?1, IF(?2 IS NULL AND ?3 IS NULL, '', CONCAT(' [', CONCAT_WS('›', ?2, ?3), ']'))) SEPARATOR ?4)"),
 					   NHibernateUtil.String,
 					   Projections.Property(() => postAlias.Name),
 					   Projections.Property(() => subdivisionAlias.Name),
+					   Projections.Property(() => departmentAlias.Name),
 					   Projections.Constant("\n"))
 				   ).WithAlias(() => resultAlias.Posts)
 				)

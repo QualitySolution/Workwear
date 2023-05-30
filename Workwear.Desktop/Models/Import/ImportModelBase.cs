@@ -17,13 +17,8 @@ namespace Workwear.Models.Import
 		where TSheetRow : SheetRowBase<TSheetRow>
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-		public Type DataTypeEnum => typeof(TDataTypeEnum);
 		
-		//FIXME Временное решение до 2.8
-		public virtual IEnumerable<object> HidedDataTypeEnumItems {
-			get;
-		}
+		public string FileName { get; set; }
 
 		#region Типы данных
 		public virtual bool CanMatch => HasRequiredDataTypes(ImportedDataTypes.Select(x => x.DataType.Data).OfType<TDataTypeEnum>());

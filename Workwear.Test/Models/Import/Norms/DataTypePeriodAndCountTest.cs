@@ -58,6 +58,7 @@ namespace Workwear.Test.Models.Import.Norms
 		[TestCase("4       пары", 4, 1, NormPeriodType.Year, false, true)]
 		[TestCase("2 кмп на 18", 2, 18, NormPeriodType.Month, false, false)] //Здесь по-моему не очевидно что значит 18
 		[TestCase("До замены", 1, 0, NormPeriodType.Wearout, false, true)]
+		[TestCase("1 пара на месяц", 1, 1, NormPeriodType.Month, false, true)]
 		
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{

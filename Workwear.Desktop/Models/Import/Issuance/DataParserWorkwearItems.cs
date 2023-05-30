@@ -227,7 +227,7 @@ namespace Workwear.Models.Import.Issuance
 							nomenclature = new Nomenclature {
 								Name = nomenclatureName,
 								Type = row.WorkwearItem.ProtectionTools.Type,
-								Comment = "Создана при импорте выдачи из Excel",
+								Comment = "Создана при импорте выдач из файла " + importModel.FileName,
 							};
 							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name);
 							row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);

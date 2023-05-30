@@ -7,15 +7,18 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
 	public class ImportModelNorm : ImportModelBase<DataTypeNorm, SheetRowNorm>, IImportModel
 	{
+		public SettingsNormsViewModel SettingsNormsViewModel { get; }
 		private readonly DataParserNorm dataParser;
 
-		public ImportModelNorm(DataParserNorm dataParser) : base(dataParser, typeof(CountersNorm))
-		{
+		public ImportModelNorm(DataParserNorm dataParser, SettingsNormsViewModel settingsNormsViewModel) 
+			: base(dataParser, typeof(CountersNorm), settingsNormsViewModel) {
+			SettingsNormsViewModel = settingsNormsViewModel ?? throw new ArgumentNullException(nameof(settingsNormsViewModel));
 			this.dataParser = dataParser ?? throw new ArgumentNullException(nameof(dataParser));
 		}
 
@@ -48,6 +51,7 @@ namespace Workwear.Models.Import.Norms
 
 			List<object> toSave = new List<object>();
 			toSave.AddRange(SavedSubdivisions);
+			toSave.AddRange(SavedDepartments);
 			toSave.AddRange(SavedPosts);
 			toSave.AddRange(SavedItemsTypes);
 			toSave.AddRange(SavedProtectionTools);
@@ -70,6 +74,7 @@ namespace Workwear.Models.Import.Norms
 			          || CountersViewModel.GetCount(CountersNorm.NewNorms) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewPosts) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewSubdivisions) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewDepartments) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewProtectionTools) > 0;
 		}
 
@@ -97,6 +102,7 @@ namespace Workwear.Models.Import.Norms
 
 	        CountersViewModel.SetCount(CountersNorm.NewPosts, SavedPosts.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewSubdivisions, SavedSubdivisions.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewDepartments, SavedDepartments.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewProtectionTools, SavedProtectionTools.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewItemTypes, SavedItemsTypes.Count());
 	        CountersViewModel.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
@@ -127,6 +133,16 @@ namespace Workwear.Models.Import.Norms
 	        .Select(x => x.Subdivision)
 	        .Where(x => x != null)
 	        .SelectMany(x => x.AllParents.Union(new []{x}))
+	        .Where(x => x?.Id == 0)
+	        .Distinct(); 
+	        
+        private IEnumerable<Department> SavedDepartments => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.Norm)
+	        .Distinct() 
+	        .SelectMany(x => x.Posts)
+	        .Distinct()
+	        .Select(x => x.Department)
 	        .Where(x => x?.Id == 0)
 	        .Distinct(); 
 

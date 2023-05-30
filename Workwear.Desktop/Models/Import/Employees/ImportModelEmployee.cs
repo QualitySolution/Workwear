@@ -26,7 +26,7 @@ namespace Workwear.Models.Import.Employees
 
 		public override void Init(IUnitOfWork uow)
 		{
-			dataParser.CreateDatatypes(uow, matchSettingsViewModel);
+			dataParser.CreateDatatypes(uow, this, matchSettingsViewModel);
 		}
 
 		#region Параметры
@@ -78,6 +78,7 @@ namespace Workwear.Models.Import.Employees
 			dataParser.FillExistEntities(uow, UsedRows, this, progress);
 			dataParser.FindChanges(
 				uow, 
+				this,
 				UsedRows, 
 				ImportedDataTypes.ToArray(), 
 				progress);
