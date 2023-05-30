@@ -167,7 +167,7 @@ namespace workwear.Journal
 					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
 					.AddColumn("№ Пункта").AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
-					.AddColumn("Должности[Подразделения]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.Finish()
 			);
 
