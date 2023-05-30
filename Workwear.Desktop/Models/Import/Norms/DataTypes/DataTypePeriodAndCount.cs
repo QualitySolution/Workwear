@@ -5,9 +5,9 @@ using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePeriodAndCount : DataTypeNormBase {
-		private readonly SettingsNormsViewModel settings;
+		private readonly IImportNormSettings settings;
 
-		public DataTypePeriodAndCount(SettingsNormsViewModel settings)
+		public DataTypePeriodAndCount(IImportNormSettings settings)
 		{
 			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 			ColumnNameKeywords.Add("количество и период");

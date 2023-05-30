@@ -4,7 +4,7 @@ using Workwear.Models.Import;
 
 namespace Workwear.ViewModels.Import
 {
-	public class SettingsNormsViewModel : ViewModelBase
+	public class SettingsNormsViewModel : ViewModelBase, IImportNormSettings
 	{
 		private readonly ParametersService parameters;
 		/// <param name="parameters"> не является обязательным специально для тестов, можно передать null.</param>

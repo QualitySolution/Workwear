@@ -64,7 +64,7 @@ namespace Workwear.Test.Models.Import.Norms
 		
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
-			var settings = Substitute.For<SettingsNormsViewModel>();
+			var settings = Substitute.For<IImportNormSettings>();
 			var dataType = new DataTypePeriodAndCount(settings);
 			var result = dataType.TryParsePeriodAndCount(inputString, out int actualAmount, out int actualCount, out NormPeriodType actualPeriod, out string warning);
 			Assert.AreEqual(expectedResult, result);
