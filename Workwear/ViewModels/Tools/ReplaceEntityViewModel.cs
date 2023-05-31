@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.Bindings.Collections.Generic;
+using System.Linq;
 using Autofac;
 using QS.Deletion;
 using QS.Dialog;
@@ -9,13 +11,14 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Tools
 {
 	public class ReplaceEntityViewModel : UowDialogViewModelBase
 	{
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
+		
 		private readonly ReplaceEntity replaceEntity;
 		private readonly IGuiDispatcher guiDispatcher;
 
@@ -28,11 +31,8 @@ namespace Workwear.ViewModels.Tools
 			var entryBuilder = new CommonEEVMBuilderFactory(this, UoW, navigation) {
 				AutofacScope = autofacScope
 			};
-
-			SourceEntryViewModel = entryBuilder.ForEntity<ProtectionTools>().MakeByType().Finish();
+			
 			TargetEntryViewModel = entryBuilder.ForEntity<ProtectionTools>().MakeByType().Finish();
-
-			SourceEntryViewModel.Changed += SourceEntryViewModel_Changed;
 			TargetEntryViewModel.Changed += TargetEntryViewModel_Changed;
 		}
 
@@ -41,6 +41,8 @@ namespace Workwear.ViewModels.Tools
 			get => replaceEntity.Progress;
 			set => replaceEntity.Progress = value;
 		}
+		
+		public IProgressBarDisplayable ProgressTotal { get; set; }
 
 		private bool removeSource;
 		public virtual bool RemoveSource {
@@ -48,25 +50,17 @@ namespace Workwear.ViewModels.Tools
 			set => SetField(ref removeSource, value);
 		}
 
-		private int? totalLinks;
-		[PropertyChangedAlso(nameof(TotalLinksText))]
-		[PropertyChangedAlso(nameof(SensitiveReplaceButton))]
-		public virtual int? TotalLinks {
-			get => totalLinks;
-			set => SetField(ref totalLinks, value);
-		}
-
-		public string TotalLinksText => TotalLinks.HasValue ? $"Найдено {TotalLinks} ссылок" : null;
+		public GenericObservableList<ReplaceEntityItem> SourceList = new GenericObservableList<ReplaceEntityItem>();
 		#endregion
 
 		#region Entry
-		public EntityEntryViewModel<ProtectionTools> SourceEntryViewModel;
 		public EntityEntryViewModel<ProtectionTools> TargetEntryViewModel;
 		#endregion
 
 		#region Sensetive
-		public bool SensitiveReplaceButton => !InProgress && SourceEntryViewModel.Entity != null && TargetEntryViewModel.Entity != null && TotalLinks > 0 
-		                                      && !TargetEntryViewModel.Entity.IsSame(SourceEntryViewModel.Entity);
+		public bool SensitiveReplaceButton => !InProgress && SourceList.Any() && TargetEntryViewModel.Entity != null 
+		                                      && SourceList.Sum(x => x.TotalLinks) > 0
+		                                      && SourceList.All(x => !TargetEntryViewModel.Entity.IsSame(x.Entity)) ;
 		#endregion
 
 		#region Internal
@@ -79,40 +73,83 @@ namespace Workwear.ViewModels.Tools
 		#endregion
 
 		#region Events
-		void SourceEntryViewModel_Changed(object sender, EventArgs e)
-		{
-			guiDispatcher.RunInGuiTread(delegate {
-				//Вызываем через очередь главного потока, чтобы успел закрыться журнал.
-				//И пользователь видел прогресс в процессе поиска.
-				InProgress = true;
-				TotalLinks = SourceEntryViewModel.Entity != null ? replaceEntity.CalculateTotalLinks(UoW, SourceEntryViewModel.Entity) : (int?)null;
-				InProgress = false;
-			});
-		}
-
 		void TargetEntryViewModel_Changed(object sender, EventArgs e)
 		{
 			OnPropertyChanged(nameof(SensitiveReplaceButton));
 		}
 		#endregion
 
+		#region Действия View
+		public void AddSourceItems()
+		{
+			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			page.ViewModel.OnSelectResult += Protection_OnSelectResult;
+		}
+		
+		void Protection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var ids = e.SelectedObjects.Select(x => x.GetId());
+			var protections = UoW.GetById<ProtectionTools>(ids)
+				.Where(p => SourceList.All(x => x.Entity.Id != p.Id)).ToList();
+			
+			guiDispatcher.RunInGuiTread(delegate {
+				//Вызываем через очередь главного потока, чтобы успел закрыться журнал.
+				//И пользователь видел прогресс в процессе поиска.
+				InProgress = true;
+				ProgressTotal.Start(protections.Count);
+				foreach(var protection in protections) {
+					ProgressTotal.Add(text: protection.Name);
+					var item = new ReplaceEntityItem {
+						Entity = protection,
+						TotalLinks = replaceEntity.CalculateTotalLinks(UoW, protection)
+					};
+					SourceList.Add(item);
+				}
+				ProgressTotal.Close();
+				InProgress = false;
+			});
+		}
+		
+		public void RemoveSourceItem(ReplaceEntityItem[] items)
+		{
+			foreach(var item in items)
+				SourceList.Remove(item);
+		}
+		
 		public void RunReplace()
 		{
 			InProgress = true;
-			var result = replaceEntity.ReplaceEverywhere(UoW, SourceEntryViewModel.Entity, TargetEntryViewModel.Entity);
-			Progress.Start(RemoveSource ? 2:1, text: "Завершение транзакции");
-			UoW.Commit();
-			if(RemoveSource) {
-				Progress.Add(text: "Удаление исходного объекта");
-				UoW.Delete(SourceEntryViewModel.Entity);
+			ProgressTotal.Start(SourceList.Count * 2 + (RemoveSource ? 2:1));
+			int count = 0;
+			foreach(var item in SourceList) {
+				ProgressTotal.Add(text: item.Title);
+				count += replaceEntity.ReplaceEverywhere(UoW, item.Entity, TargetEntryViewModel.Entity);
+				ProgressTotal.Add();
 				UoW.Commit();
 			}
-			Progress.Add();
-			logger.Info("Заменено {0} ссылок.", result);
-			SourceEntryViewModel.CleanEntity();
+			
+			if(RemoveSource) {
+				ProgressTotal.Add(text: "Удаление исходных объектов");
+				foreach(var item in SourceList) {
+					UoW.Delete(item.Entity);
+				}
+				UoW.Commit();
+			}
+			ProgressTotal.Add();
+			logger.Info("Заменено {0} ссылок.", count);
+			SourceList.Clear();
 			TargetEntryViewModel.CleanEntity();
 			InProgress = false;
-			Progress.Close();
+			ProgressTotal.Close();
 		}
+		#endregion
 	}
+	
+	public class ReplaceEntityItem
+	{
+		public string Title => Entity.Name;
+		public ProtectionTools Entity { get; set; }
+		public int TotalLinks {get; set;}
+	} 
 }
