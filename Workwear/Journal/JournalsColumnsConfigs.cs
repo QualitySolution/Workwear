@@ -342,7 +342,7 @@ namespace workwear.Journal
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Результат").AddTextRenderer(node => node.Result)
-					.AddSetter((c, x) => c.Foreground = x.Result == "ОК" ? "green" : "red")
+					.AddSetter((c, x) => c.Foreground = x.ResultColor)
 					.AddColumn("Нормы").AddTextRenderer(node => node.Norms)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)

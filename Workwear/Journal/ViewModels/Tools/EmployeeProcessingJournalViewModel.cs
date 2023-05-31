@@ -9,8 +9,6 @@ using NHibernate.Criterion;
 using NHibernate.Transform;
 using NLog.Targets;
 using QS.Dialog;
-using QS.Dialog.ViewModels;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
@@ -19,10 +17,8 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
-using QS.Utilities.Text;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using Workwear.Models.Operations;
@@ -40,7 +36,6 @@ namespace workwear.Journal.ViewModels.Tools
 		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
 
 		private readonly IInteractiveService interactive;
-		private readonly ILifetimeScope autofacScope;
 		private readonly NormRepository normRepository;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BaseParameters baseParameters;
@@ -69,7 +64,6 @@ namespace workwear.Journal.ViewModels.Tools
 			Title = "Корректировка сотрудников";
 			unitOfWorkProvider.UoW = UoW;
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -87,8 +81,10 @@ namespace workwear.Journal.ViewModels.Tools
 
 			(DataLoader as ThreadDataLoader<EmployeeProcessingJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
 				foreach(EmployeeProcessingJournalNode item in items) {
-					if(Results.ContainsKey(item.Id))
-						item.Result = Results[item.Id];
+					if(Results.ContainsKey(item.Id)) {
+						item.Result = Results[item.Id].text;
+						item.ResultColor = Results[item.Id].color;
+					}
 				}
 			};
 		}
@@ -217,7 +213,7 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Add(logAction);
 		}
 
-		private Dictionary<int, string> Results = new Dictionary<int, string>();
+		private Dictionary<int, (string text, string color)> Results = new Dictionary<int, (string text, string color)>();
 
 		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
@@ -235,7 +231,7 @@ namespace workwear.Journal.ViewModels.Tools
 				}
 				progressCreator.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
-					Results[employee.Id] = "Отсутствует должность";
+					Results[employee.Id] = ("Отсутствует должность", "red");
 					continue;
 				}
 				var norm = norms.FirstOrDefault(x => x.IsActive && x.Posts.Contains(employee.Post));
@@ -244,12 +240,12 @@ namespace workwear.Journal.ViewModels.Tools
 					employee.UsedNorms.Clear();
 					employee.AddUsedNorm(norm);
 					UoW.Save(employee);
-					Results[employee.Id] = "ОК";
+					Results[employee.Id] = ("ОК", "green");
 					if(step % 10 == 0)
 						UoW.Commit();
 				}
 				else {
-					Results[employee.Id] = "Подходящая норма не найдена";
+					Results[employee.Id] = ("Подходящая норма не найдена", "red");
 				}
 			}
 
@@ -280,7 +276,7 @@ namespace workwear.Journal.ViewModels.Tools
 				}
 				progressCreator.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
-					Results[employee.Id] = "Отсутствует должность";
+					Results[employee.Id] = ("Отсутствует должность", "red");
 					continue;
 				}
 
@@ -293,13 +289,12 @@ namespace workwear.Journal.ViewModels.Tools
 					employee.UsedNorms.Clear();
 					employee.AddUsedNorms(normsForEmployee);
 					UoW.Save(employee);
-					Results[employee.Id] = $"ОК({normsForEmployee.Count})";
+					Results[employee.Id] = ($"ОК({normsForEmployee.Count})", "green");
 					if(step % 10 == 0)
 						UoW.Commit();
 				}
 				else
-					Results[employee.Id] = "Подходящая норма не найдена";
-			}
+					Results[employee.Id] = ("Подходящая норма не найдена", "red"); }
 
 			if(!cancellation.IsCancellationRequested) {
 				progressCreator.Add(text: "Завершаем транзакцию");
@@ -327,12 +322,12 @@ namespace workwear.Journal.ViewModels.Tools
 					employee.UsedNorms.Clear();
 					employee.WorkwearItems.Clear();
 					UoW.Save(employee);
-					Results[employee.Id] = $"Удалено {normCount} норм";
+					Results[employee.Id] = ($"Удалено {normCount} норм", "green");
 					if(step % 10 == 0)
 						UoW.Commit();
 				}
 				else {
-					Results[employee.Id] = "Нормы не установлены";
+					Results[employee.Id] = ("Нормы не установлены", "red");
 				}
 			}
 
@@ -357,12 +352,12 @@ namespace workwear.Journal.ViewModels.Tools
 			issueModel.UpdateNextIssueAll(employees, progressCreator, cancellation, 10,
 				(employee, changes) => {
 					if(changes.Length > 0) {
-						Results[employee.Id] = NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк");
+						Results[employee.Id] = (NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"), "green");
 						foreach(var message in changes)
 							loggerProcessing.Info(message);
 					}
 					else
-						Results[employee.Id] = "Без изменений";
+						Results[employee.Id] = ("Без изменений", "gray");
 				});
 			if(cancellation.IsCancellationRequested)
 				return;
@@ -389,7 +384,7 @@ namespace workwear.Journal.ViewModels.Tools
 			foreach(var employee in employees) {
 				progressCreator.Add();
 				if(!operationsEmployeeIds.Contains(employee.Id)) 
-					Results[employee.Id] = "Нет выданного";
+					Results[employee.Id] = ("Нет выданного", "red");
 			}
 
 			progressCreator.Close();
@@ -401,12 +396,12 @@ namespace workwear.Journal.ViewModels.Tools
 				changeLog: (employee, changes) => {
 					if(changes.Length > 0) {
 						Results[employee.Id] =
-							NumberToTextRus.FormatCase(changes.Length, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат");
+							(NumberToTextRus.FormatCase(changes.Length, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"), "green");
 						foreach(var message in changes)
 							loggerProcessing.Info(message);
 					}
 					else
-						Results[employee.Id] = "Без изменений";
+						Results[employee.Id] = ("Без изменений", "gray");
 				});
 			if (cancellation.IsCancellationRequested)
 				return;
@@ -476,5 +471,6 @@ namespace workwear.Journal.ViewModels.Tools
 		public string Norms { get; set; }
 
 		public string Result { get; set; }
+		public string ResultColor { get; set; }
 	}
 }
