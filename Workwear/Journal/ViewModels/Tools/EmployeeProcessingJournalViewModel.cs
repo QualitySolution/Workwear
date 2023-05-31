@@ -171,21 +171,21 @@ namespace workwear.Journal.ViewModels.Tools
 			var updateOnlyFirstNorm = new JournalAction("Только первую норму для должности",
 				selected => selected.Any(),
 				selected => true,
-				selected => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+				selected => CatchExceptionAndCloseProgress(UpdateNorms, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 			);
 			updateStatusAction.ChildActionsList.Add(updateOnlyFirstNorm);
 
 			var updateAllNorms = new JournalAction("Все нормы для должности",
 				selected => selected.Any(),
 				selected => true,
-				selected => UpdateAllNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+				selected => CatchExceptionAndCloseProgress(UpdateAllNorms, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 			);
 			updateStatusAction.ChildActionsList.Add(updateAllNorms);
 			
 			var removeAllNorms = new JournalAction("Удалить все нормы",
 				selected => selected.Any(),
 				selected => true,
-				selected => RemoveAllNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+				selected => CatchExceptionAndCloseProgress(RemoveAllNorms, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 			);
 			updateStatusAction.ChildActionsList.Add(removeAllNorms);
 
@@ -198,14 +198,14 @@ namespace workwear.Journal.ViewModels.Tools
 			var updateNextIssueAction = new JournalAction("Даты следующего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateNextIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					(selected) => CatchExceptionAndCloseProgress(UpdateNextIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateNextIssueAction);
 
 			var updateLastIssueAction = new JournalAction("Сроки носки у полученного",
 					(selected) => selected.Any(),
 					(selected) => true,
-					(selected) => UpdateLastIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					(selected) => CatchExceptionAndCloseProgress(UpdateLastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
 
@@ -389,6 +389,21 @@ namespace workwear.Journal.ViewModels.Tools
 			DataLoader.DynamicLoadingEnabled = false;
 			Refresh();
 		}
+		#endregion
+
+		#region Помощьники
+
+		private void CatchExceptionAndCloseProgress(Action<EmployeeProcessingJournalNode[]> action, EmployeeProcessingJournalNode[] arg) {
+			try {
+				action(arg);
+			}
+			catch(Exception e) {
+				if (progressCreator.IsStarted)
+					progressCreator.Close();
+				throw e;
+			}
+		}
+
 		#endregion
 	}
 
