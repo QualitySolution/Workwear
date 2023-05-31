@@ -69,6 +69,9 @@ namespace workwear.Journal.ViewModels.Tools
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			progressCreator.UserCanCancel = true;
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
@@ -154,13 +157,13 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Add(editAction);
 			RowActivatedAction = editAction;
 
-			var updateStatusAction = new JournalAction("Установить по должности",
+			var updateStatusAction = new JournalAction("Установить нормы",
 				(selected) => selected.Any(),
 				(selected) => true
 			);
 			NodeActionsList.Add(updateStatusAction);
 
-			var updateOnlyFirstNorm = new JournalAction("Только первую норму",
+			var updateOnlyFirstNorm = new JournalAction("Только первую норму для должности",
 				selected => selected.Any(),
 				selected => true,
 				selected => UpdateNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
@@ -173,26 +176,33 @@ namespace workwear.Journal.ViewModels.Tools
 				selected => UpdateAllNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 			);
 			updateStatusAction.ChildActionsList.Add(updateAllNorms);
+			
+			var removeAllNorms = new JournalAction("Удалить все нормы",
+				selected => selected.Any(),
+				selected => true,
+				selected => RemoveAllNorms(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+			);
+			updateStatusAction.ChildActionsList.Add(removeAllNorms);
 
-			var RecalculateAction = new JournalAction("Пересчитать",
+			var recalculateAction = new JournalAction("Пересчитать",
 					(selected) => selected.Any(),
 					(selected) => true
 					);
-			NodeActionsList.Add(RecalculateAction);
+			NodeActionsList.Add(recalculateAction);
 
-			var UpdateNextIssueAction = new JournalAction("Даты следующего получения",
+			var updateNextIssueAction = new JournalAction("Даты следующего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => UpdateNextIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
-			RecalculateAction.ChildActionsList.Add(UpdateNextIssueAction);
+			recalculateAction.ChildActionsList.Add(updateNextIssueAction);
 
-			var UpdateLastIssueAction = new JournalAction("Сроки носки у полученного",
+			var updateLastIssueAction = new JournalAction("Сроки носки у полученного",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => UpdateLastIssue(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
-			RecalculateAction.ChildActionsList.Add(UpdateLastIssueAction);
+			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
 
 			var logAction = new JournalAction("Лог выполнения",
 					(selected) => File.Exists(logFile),
@@ -206,23 +216,19 @@ namespace workwear.Journal.ViewModels.Tools
 
 		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-			progressPage.PageClosed += ProgressPageOnPageClosed;
-			var progress = progressPage.ViewModel.Progress;
-
-			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			progressCreator.Start(nodes.Length + 3, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
-			progress.Add(text: "Загружаем нормы");
+			progressCreator.Add(text: "Загружаем нормы");
 			var norms = normRepository.GetNormsForPost(UoW, employees.Select(x => x.Post).Where(x => x != null).Distinct().ToArray());
 
 			int step = 0;
 
 			foreach(var employee in employees) {
-				if(cancelUpdate) {
-					cancelUpdate = false;
+				if(cancellation.IsCancellationRequested) {
 					break;
 				}
-				progress.Add(text: $"Обработка {employee.ShortName}");
+				progressCreator.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
 					Results[employee.Id] = "Отсутствует должность";
 					continue;
@@ -241,20 +247,21 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[employee.Id] = "Подходящая норма не найдена";
 				}
 			}
-			progress.Add(text: "Готово");
-			UoW.Commit();
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			Refresh();
+
+			if(!cancellation.IsCancellationRequested) {
+				progressCreator.Add(text: "Готово");
+				UoW.Commit();
+				progressCreator.Add(text: "Обновляем журнал");
+				Refresh();
+				progressCreator.Close();
+			}
 		}
 
 		private void UpdateAllNorms(EmployeeProcessingJournalNode[] nodes) {
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
-			progressPage.PageClosed += ProgressPageOnPageClosed;
-			var progress = progressPage.ViewModel.Progress;
-
-			progress.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			progressCreator.Start(nodes.Length + 3, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
-			progress.Add(text: "Загружаем нормы");
+			progressCreator.Add(text: "Загружаем нормы");
 			var norms = normRepository.GetNormsForPost(UoW, employees.Select(x => x.Post)
 				.Where(x => x != null)
 				.Distinct()
@@ -263,11 +270,10 @@ namespace workwear.Journal.ViewModels.Tools
 			var step = 0;
 
 			foreach(var employee in employees) {
-				if(cancelUpdate) {
-					cancelUpdate = false;
+				if(cancellation.IsCancellationRequested) {
 					break;
 				}
-				progress.Add(text: $"Обработка {employee.ShortName}");
+				progressCreator.Add(text: $"Обработка {employee.ShortName}");
 				if(employee.Post == null) {
 					Results[employee.Id] = "Отсутствует должность";
 					continue;
@@ -290,16 +296,17 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[employee.Id] = "Подходящая норма не найдена";
 			}
 
-			progress.Add(text: "Готово");
-			UoW.Commit();
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
-			Refresh();
+			if(!cancellation.IsCancellationRequested) {
+				progressCreator.Add(text: "Готово");
+				UoW.Commit();
+				progressCreator.Add(text: "Обновляем журнал");
+				Refresh();
+				progressCreator.Close();
+			}
 		}
 
-		private bool cancelUpdate;
-		private void ProgressPageOnPageClosed(object sender, PageClosedEventArgs e) {
-			if(e.CloseSource == CloseSource.ClosePage) 
-				cancelUpdate = true;
+		private void RemoveAllNorms(EmployeeProcessingJournalNode[] nodes) {
+			
 		}
 
 		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
@@ -415,7 +422,6 @@ namespace workwear.Journal.ViewModels.Tools
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 
 		public DateTime? DismissDate { get; set; }
-		public string Title => PersonHelper.PersonNameWithInitials(LastName, FirstName, Patronymic);
 
 		public string Norms { get; set; }
 
