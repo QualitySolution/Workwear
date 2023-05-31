@@ -8,7 +8,11 @@ namespace workwear.Journal.Filter.Views.Company
 
 		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
+		private global::QS.Views.Control.EntityEntry entryDepartment;
+
 		private global::Gtk.Label label1;
+
+		private global::Gtk.Label label2;
 
 		protected virtual void Build()
 		{
@@ -33,14 +37,36 @@ namespace workwear.Journal.Filter.Views.Company
 			w1.RightAttach = ((uint)(2));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.entryDepartment = new global::QS.Views.Control.EntityEntry();
+			this.entryDepartment.Events = ((global::Gdk.EventMask)(256));
+			this.entryDepartment.Name = "entryDepartment";
+			this.ytable1.Add(this.entryDepartment);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryDepartment]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.ytable1.Add(this.label1);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.label2 = new global::Gtk.Label();
+			this.label2.Name = "label2";
+			this.label2.Xalign = 1F;
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Отдел:");
+			this.ytable1.Add(this.label2);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label2]));
+			w4.TopAttach = ((uint)(1));
+			w4.BottomAttach = ((uint)(2));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{
