@@ -42,6 +42,7 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly IInteractiveService interactive;
 		private readonly ILifetimeScope autofacScope;
 		private readonly NormRepository normRepository;
+		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly IDataBaseInfo dataBaseInfo;
 		private readonly EmployeeIssueModel issueModel;
@@ -54,7 +55,10 @@ namespace workwear.Journal.ViewModels.Tools
 
 		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
-			NormRepository normRepository, BaseParameters baseParameters, IDataBaseInfo dataBaseInfo,
+			NormRepository normRepository,
+			EmployeeIssueRepository employeeIssueRepository,
+			BaseParameters baseParameters,
+			IDataBaseInfo dataBaseInfo,
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
 			UnitOfWorkProvider unitOfWorkProvider,
@@ -67,6 +71,7 @@ namespace workwear.Journal.ViewModels.Tools
 			this.interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.dataBaseInfo = dataBaseInfo ?? throw new ArgumentNullException(nameof(dataBaseInfo));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
@@ -346,7 +351,6 @@ namespace workwear.Journal.ViewModels.Tools
 			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
 			progressCreator.Add(text: "Получаем последние выдачи");
-			var employeeIssueRepository = autofacScope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(IUnitOfWork), UoW));
 			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
 
 			progressCreator.Update("Проверка выданного");
