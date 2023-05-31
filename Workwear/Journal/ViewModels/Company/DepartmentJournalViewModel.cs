@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using Autofac;
+using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -8,16 +9,16 @@ using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
+using Workwear.Journal.Filter.ViewModels.Company;
 
-namespace workwear.Journal.ViewModels.Company
-{
+namespace workwear.Journal.ViewModels.Company {
 
-	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode>
-	{
-		private int? ParentSubdivisionId { get; }
+	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode> {
+		private DepartmentFilterViewModel Filter;
 		public DepartmentJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
-			IInteractiveService interactiveService, 
+			IInteractiveService interactiveService,
+			ILifetimeScope autofacScope,
 			INavigationManager navigationManager, 
 			int? parentSubdivisionId = null,
 			IDeleteEntityService deleteEntityService = null, 
@@ -25,7 +26,10 @@ namespace workwear.Journal.ViewModels.Company
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
-			ParentSubdivisionId = parentSubdivisionId;
+			JournalFilter = Filter = autofacScope
+				.Resolve<DepartmentFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			if(parentSubdivisionId.HasValue)
+				Filter.Subdivision = UoW.GetById<Subdivision>(parentSubdivisionId.Value);
 		}
 
 		protected override IQueryOver<Department> ItemsQuery(IUnitOfWork uow)
@@ -38,8 +42,8 @@ namespace workwear.Journal.ViewModels.Company
 
 			var query = uow.Session.QueryOver(() => departmentAlias)
 				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias);
-			if (ParentSubdivisionId != null)
-				query.Where(() => subdivisionAlias.Id == ParentSubdivisionId);
+			if (Filter.Subdivision != null)
+				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
 			
 			query.Where(GetSearchCriterion(
 					() => departmentAlias.Name,

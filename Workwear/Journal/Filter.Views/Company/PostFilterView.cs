@@ -9,6 +9,7 @@ namespace workwear.Journal.Filter.Views.Company
 		{
 			this.Build();
 			entitySubdivision.ViewModel = viewModel.EntrySubdivision;
+			entryDepartment.ViewModel = ViewModel.EntryDepartment;
 		}
 	}
 }

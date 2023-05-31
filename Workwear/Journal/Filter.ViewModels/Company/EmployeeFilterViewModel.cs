@@ -6,6 +6,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.Filter.ViewModels.Company
 {
@@ -22,7 +23,11 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		private Subdivision subdivision;
 		public virtual Subdivision Subdivision {
 			get => subdivision;
-			set => SetField(ref subdivision, value);
+			set {
+				SetField(ref subdivision, value);
+				if(Department != null && Department.Subdivision != Subdivision)
+					Department = null;
+			}
 		}
 
 		private Department department;
@@ -31,7 +36,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			set {
 				if(SetField(ref department, value))
 					if(!DomainHelper.EqualDomainObjects(Subdivision, department?.Subdivision))
-						Subdivision = null;
+						Subdivision = department?.Subdivision;
 			}
 		}
 
@@ -57,6 +62,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			DepartmentEntry = builder.ForProperty(x => x.Department)
 				.MakeByType()
 				.Finish();
+			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(journal, navigation, SubdivisionEntry);
 		}
 	}
 }

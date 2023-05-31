@@ -93,6 +93,9 @@ namespace workwear.Journal.ViewModels.Company {
 
 			if(Filter.Subdivision != null)
 				query.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
+			
+			if(Filter.Department != null)
+				query.Where(() => departmentAlias.Id == Filter.Department.Id);
 
 			query.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
