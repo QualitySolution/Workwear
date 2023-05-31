@@ -190,7 +190,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ProtectionToolsJournalViewModel>(
 				() => FluentColumnsConfig<ProtectionToolsJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(900).SearchHighlight()
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.Finish()
 			);
