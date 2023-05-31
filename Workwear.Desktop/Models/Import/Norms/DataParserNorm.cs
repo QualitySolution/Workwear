@@ -11,6 +11,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Repository.Regulations;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms.DataTypes;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
@@ -32,9 +33,9 @@ namespace Workwear.Models.Import.Norms
 			this.sizeService = sizeService;
 		}
 
-		public void CreateDatatypes(IUnitOfWork uow) {
+		public void CreateDatatypes(IUnitOfWork uow, SettingsNormsViewModel settings) {
 			SupportDataTypes.Add( new DataTypeProtectionTools());
-			SupportDataTypes.Add( new DataTypePeriodAndCount());//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
+			SupportDataTypes.Add( new DataTypePeriodAndCount(settings));//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypeSubdivision());
@@ -69,28 +70,36 @@ namespace Workwear.Models.Import.Norms
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeNorm.Subdivision);
 			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
 			var departmentColumn = model.GetColumnForDataType(DataTypeNorm.Department);
+			var nameColumn = model.GetColumnForDataType(DataTypeNorm.Name);
+			var periodAndCountColumn = model.GetColumnForDataType(DataTypeNorm.PeriodAndCount);
 
 			foreach(var row in list) {
-				var postValue = row.CellStringValue(postColumn);
+				var postValue = postColumn != null ? row.CellStringValue(postColumn) : null;
 				var subdivisionValue = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
 				var departmentValue = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
+				var nameValue = nameColumn != null ? row.CellStringValue(nameColumn) : null;
 
-				if(String.IsNullOrWhiteSpace(postValue)) {
+				if(String.IsNullOrWhiteSpace(postValue) && String.IsNullOrWhiteSpace(nameValue)) {
 					row.ProgramSkipped = true;
-					row.ProgramSkippedReason = "Должность отсутствует. Нет возможности отличить к какой норме относится строка.";
+					row.ProgramSkippedReason = "Должность и названия нормы отсутствуют. Нет возможности отличить к какой норме относится строка.";
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionValue == subdivisionValue && x.DepartmentValue == departmentValue);
+				var pair = MatchPairs.FirstOrDefault(x => x.NameValue == nameValue 
+				                                          && x.PostValue == postValue 
+				                                          && x.SubdivisionValue == subdivisionValue 
+				                                          && x.DepartmentValue == departmentValue);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(model.SettingsNormsViewModel, postValue, subdivisionValue, departmentValue);
+					pair = new SubdivisionPostCombination(model.SettingsNormsViewModel, nameValue, postValue, subdivisionValue, departmentValue);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;
 			}
 			progress.Add();
 
-			var allPostNames = MatchPairs.SelectMany(x => x.PostNames).Distinct().ToArray();
+			var allPostNames = MatchPairs
+				.Where(x => x.PostNames != null)
+				.SelectMany(x => x.PostNames).Distinct().ToArray();
 			var posts = uow.Session.QueryOver<Post>()
 				.Where(x => x.Name.IsIn(allPostNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
@@ -117,8 +126,10 @@ namespace Workwear.Models.Import.Norms
 			progress.Add();
 			
 			//Заполняем и создаем отсутствующие должности
-			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions, departments, model, subdivisionColumn == null, departmentColumn == null);
+			foreach(var pair in MatchPairs) {
+				if(pair.AllPostNames.Any())
+					SetOrMakePost(pair, posts, subdivisions, departments, model, subdivisionColumn == null, departmentColumn == null);
+			}
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -137,6 +148,7 @@ namespace Workwear.Models.Import.Norms
 					continue;
 
 				var norm = new Norm {
+					Name = pair.NameValue,
 					Comment = "Импортирована из файла " + model.FileName,
 				};
 				foreach(var post in pair.Posts) {
@@ -150,6 +162,8 @@ namespace Workwear.Models.Import.Norms
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			progress.Add();
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn)).Where(x => x != null).Distinct().ToArray();
+			if(model.SettingsNormsViewModel.WearoutToName)
+				protectionNames = protectionNames.Union( protectionNames.Select(x => x + " (до износа)")).ToArray();
 			progress.Add();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			progress.Add();
@@ -166,6 +180,9 @@ namespace Workwear.Models.Import.Norms
 					row.ProgramSkippedReason = "Номенклатура нормы пустая. Не определить какую стоку нормы создавать.";
 					continue;
 				}
+
+				if(model.SettingsNormsViewModel.WearoutToName && (row.CellStringValue(periodAndCountColumn)?.ToLower().Contains("до износа") ?? false))
+					protectionName += " (до износа)";
 
 				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 				if(protection == null) {

@@ -24,8 +24,10 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			if(String.IsNullOrWhiteSpace(value)) {
 				return new ChangeState(ChangeType.NotChanged);
 			}
-			
-			return new ChangeState(row.NormItem.ProtectionTools.Id == 0 ? ChangeType.NewEntity : ChangeType.NotChanged);
+
+			if(row.NormItem.ProtectionTools.Id == 0)
+				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { row.NormItem.ProtectionTools.Name });
+			return new ChangeState(ChangeType.NotChanged, interpretedValue: row.NormItem.ProtectionTools.Name);
 		}
 		#endregion
 	}

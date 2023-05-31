@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Workwear.Domain.Regulations;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePeriodAndCount : DataTypeNormBase {
-		public DataTypePeriodAndCount()
+		private readonly IImportNormSettings settings;
+
+		public DataTypePeriodAndCount(IImportNormSettings settings)
 		{
+			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 			ColumnNameKeywords.Add("количество и период");
 			ColumnNameKeywords.Add("норма выдачи");
 			Data = DataTypeNorm.PeriodAndCount;
@@ -55,7 +59,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			item.PeriodCount = periods;
 			item.NormPeriod = periodType;
 		}
-		internal static bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType, out string warning)
+		internal bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType, out string warning)
 		{
 			amount = 0;
 			periods = 0;
@@ -71,8 +75,14 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 					amount = int.Parse(match.Groups[1].Value);
 				else 
 					amount = 1;
-				periods = 0;
-				periodType = NormPeriodType.Wearout;
+				if(settings.WearoutToName) {
+					periods = 1;
+					periodType = NormPeriodType.Year;
+				}
+				else {
+					periods = 0;
+					periodType = NormPeriodType.Wearout;
+				}
 				return true;
 			}
 			if(value.ToLower().Contains("дежурн") || value.ToLower().Contains("деж.")) {

@@ -4,7 +4,7 @@ using Workwear.Models.Import;
 
 namespace Workwear.ViewModels.Import
 {
-	public class SettingsNormsViewModel : ViewModelBase
+	public class SettingsNormsViewModel : ViewModelBase, IImportNormSettings
 	{
 		private readonly ParametersService parameters;
 		/// <param name="parameters"> не является обязательным специально для тестов, можно передать null.</param>
@@ -12,6 +12,16 @@ namespace Workwear.ViewModels.Import
 		{
 			this.parameters = parameters;
 			listSeparator = parameters?.Dynamic.Import_ListSeparator(typeof(string)) ?? ",;\\/";
+			wearoutToName = parameters?.Dynamic.Import_WearoutToName(typeof(bool)) ?? false;
+		}
+
+		private bool wearoutToName;
+		public virtual bool WearoutToName {
+			get => wearoutToName;
+			set {
+				if(SetField(ref wearoutToName, value) && parameters != null)
+					parameters.Dynamic.Import_WearoutToName = value;
+			}
 		}
 
 		#region Списки

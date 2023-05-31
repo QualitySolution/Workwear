@@ -30,16 +30,17 @@ namespace Workwear.Models.Import.Norms
 		#endregion
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeNorm> dataTypes) {
-			return base.HasRequiredDataTypes(dataTypes) 
+			return base.HasRequiredDataTypes(dataTypes)
+			       && (dataTypes.Contains(DataTypeNorm.Post) || dataTypes.Contains(DataTypeNorm.Name))
 			       && (dataTypes.Contains(DataTypeNorm.PeriodAndCount)
 			       || (dataTypes.Contains(DataTypeNorm.Period) && dataTypes.Contains(DataTypeNorm.Amount)));
 		}
 
 		protected override DataTypeNorm[] RequiredDataTypes => new[]
-			{ DataTypeNorm.Post, DataTypeNorm.ProtectionTools };
+			{ DataTypeNorm.ProtectionTools };
 
 		public override void Init(IUnitOfWork uow) {
-			dataParser.CreateDatatypes(uow);
+			dataParser.CreateDatatypes(uow, SettingsNormsViewModel);
 		}
 		
 		public bool CanSave { get; private set; }
