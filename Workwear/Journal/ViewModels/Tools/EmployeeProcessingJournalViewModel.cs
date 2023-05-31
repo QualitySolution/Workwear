@@ -302,7 +302,7 @@ namespace workwear.Journal.ViewModels.Tools
 			}
 
 			if(!cancellation.IsCancellationRequested) {
-				progressCreator.Add(text: "Готово");
+				progressCreator.Add(text: "Завершаем транзакцию");
 				UoW.Commit();
 				progressCreator.Add(text: "Обновляем журнал");
 				Refresh();
@@ -311,7 +311,38 @@ namespace workwear.Journal.ViewModels.Tools
 		}
 
 		private void RemoveAllNorms(EmployeeProcessingJournalNode[] nodes) {
-			
+			progressCreator.Start(nodes.Length + 2, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
+			var step = 0;
+
+			foreach(var employee in employees) {
+				if(cancellation.IsCancellationRequested) {
+					break;
+				}
+				progressCreator.Add(text: $"Обработка {employee.ShortName}");
+				if(employee.UsedNorms.Any()) {
+					var normCount = employee.UsedNorms.Count;
+					step++;
+					employee.UsedNorms.Clear();
+					employee.WorkwearItems.Clear();
+					UoW.Save(employee);
+					Results[employee.Id] = $"Удалено {normCount} норм";
+					if(step % 10 == 0)
+						UoW.Commit();
+				}
+				else {
+					Results[employee.Id] = "Нормы не установлены";
+				}
+			}
+
+			if(!cancellation.IsCancellationRequested) {
+				progressCreator.Add(text: "Завершаем транзакцию");
+				UoW.Commit();
+				progressCreator.Add(text: "Обновляем журнал");
+				Refresh();
+				progressCreator.Close();
+			}
 		}
 
 		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
