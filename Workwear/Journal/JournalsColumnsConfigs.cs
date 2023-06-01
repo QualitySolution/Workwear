@@ -108,12 +108,12 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
 				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
-					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
-					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
-					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
-					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
+					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).WrapWidth(700).SearchHighlight()
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).WrapWidth(700).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
+					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
 					.Finish()
 			);
 
