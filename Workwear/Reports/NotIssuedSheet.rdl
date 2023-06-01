@@ -856,6 +856,8 @@ WHERE
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
+HAVING 
+    (@exclude_zero_stock = false OR in_stock &gt; 0)
 ORDER BY
     employee,
     protection_tools_name;</CommandText>
@@ -874,6 +876,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_zero_stock">
+            <Value>={?exclude_zero_stock}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -981,6 +986,15 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySQL.NET</DataProvider>
+        <ConnectString>database=workwear_osmbt_copy;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
@@ -1037,14 +1051,18 @@ ORDER BY
       <Prompt>
       </Prompt>
     </ReportParameter>
+    <ReportParameter Name="exclude_zero_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>False</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>
+      </Prompt>
+    </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_osmbt_copy;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
