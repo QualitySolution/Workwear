@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `objects` (
   PRIMARY KEY (`id`),
   INDEX `fk_objects_1_idx` (`warehouse_id` ASC),
   INDEX `fk_objects_2_idx` (`parent_object_id` ASC),
+  INDEX `index_objects_code` (`code` ASC),
   CONSTRAINT `fk_objects_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -199,6 +200,12 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
   UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
   UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC),
+  INDEX `index_wear_cards_personal_number` (`personnel_number` ASC),
+  INDEX `index_wear_cards_last_name` (`last_name` ASC),
+  INDEX `index_wear_cards_first_name` (`first_name` ASC),
+  INDEX `index_wear_cards_patronymic_name` (`patronymic_name` ASC),
+  INDEX `index_wear_cards_dismiss_date` (`dismiss_date` ASC),
+  INDEX `index_wear_cards_phone_number` (`phone_number` ASC),
   CONSTRAINT `fk_wear_cards_object`
     FOREIGN KEY (`object_id`)
     REFERENCES `objects` (`id`)
@@ -331,6 +338,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
+  INDEX `index_nomenclature_number` (`number` ASC),
   CONSTRAINT `fk_nomenclature_type`
     FOREIGN KEY (`type_id`)
     REFERENCES `item_types` (`id`)
@@ -434,6 +442,7 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
   INDEX `fk_stock_income_user_idx` (`user_id` ASC),
   INDEX `fk_stock_income_object_idx` (`object_id` ASC),
   INDEX `fk_stock_income_1_idx` (`warehouse_id` ASC),
+  INDEX `index_stock_income_date` (`date` ASC),
   CONSTRAINT `fk_stock_income_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -503,6 +512,8 @@ CREATE TABLE IF NOT EXISTS `operation_warehouse` (
   INDEX `fk_operation_warehouse_4_idx` (`size_id` ASC),
   INDEX `fk_operation_warehouse_5_idx` (`height_id` ASC),
   INDEX `fk_operation_warehouse_6_idx` (`owner_id` ASC),
+  INDEX `index_operation_warehouse_time` (`operation_time` ASC),
+  INDEX `index_operation_warehouse_wear_percent` (`wear_percent` ASC),
   CONSTRAINT `fk_operation_warehouse_1`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
@@ -910,6 +921,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_user_idx` (`user_id` ASC),
+  INDEX `index_stock_write_off_date` (`date` ASC),
   CONSTRAINT `fk_stock_write_off_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
@@ -940,6 +952,8 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   INDEX `fk_stock_expense_object_id_idx` (`object_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `fk_stock_expense_2_idx` (`write_off_doc` ASC),
+  INDEX `index_stock_expense_date` (`date` ASC),
+  INDEX `index_stock_expense_operation` (`operation` ASC),
   CONSTRAINT `fk_stock_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1193,6 +1207,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards_item` (
   INDEX `fk_wear_cards_item_1_idx` (`wear_card_id` ASC),
   INDEX `fk_wear_cards_item_3_idx` (`norm_item_id` ASC),
   INDEX `fk_wear_cards_item_2_idx` (`protection_tools_id` ASC),
+  INDEX `index_wear_cards_item_next_issue` (`next_issue` ASC),
   CONSTRAINT `fk_wear_cards_item_1`
     FOREIGN KEY (`wear_card_id`)
     REFERENCES `wear_cards` (`id`)
@@ -1321,6 +1336,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
+  INDEX `index_stock_collective_expense_date` (`date` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1355,6 +1371,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   INDEX `fk_issuance_sheet_5_idx` (`stock_expense_id` ASC),
   INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
   INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC),
+  INDEX `index_issuance_sheet_date` (`date` ASC),
   CONSTRAINT `fk_issuance_sheet_1`
     FOREIGN KEY (`organization_id`)
     REFERENCES `organizations` (`id`)
@@ -1543,10 +1560,10 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
   `comment` TEXT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_stock_transfer_1_idx` (`warehouse_from_id` ASC),
   INDEX `fk_stock_transfer_2_idx` (`warehouse_to_id` ASC),
   INDEX `fk_stock_transfer_3_idx` (`user_id` ASC),
+  INDEX `index_stock_inspection_date` (`date` ASC),
   CONSTRAINT `fk_stock_transfer_1`
     FOREIGN KEY (`warehouse_from_id`)
     REFERENCES `warehouse` (`id`)
@@ -1666,6 +1683,7 @@ CREATE TABLE IF NOT EXISTS `stock_completion` (
   INDEX `fk_stock_completion_user_id_idx` (`user_id` ASC),
   INDEX `fk_stock_completion_warehouse_receipt_idx` (`warehouse_receipt_id` ASC),
   INDEX `fk_stock_completion_warehouse_expense_idx` (`warehouse_expense_id` ASC),
+  INDEX `index_stock_completion_date` (`date` ASC),
   CONSTRAINT `fk_stock_completion_user_id`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
@@ -1827,6 +1845,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
+  UNIQUE INDEX `index_uniq` (`barcode_id` ASC, `employee_issue_operation_id` ASC, `warehouse_operation_id` ASC),
   CONSTRAINT `fk_operation_barcodes_1`
     FOREIGN KEY (`barcode_id`)
     REFERENCES `barcodes` (`id`)
@@ -1862,6 +1881,7 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
   INDEX `stock_inspection_fk_2_idx` (`director_id` ASC),
   INDEX `stock_inspection_fk_3_idx` (`chairman_id` ASC),
   INDEX `fk_stock_inspection_1_idx` (`organization_id` ASC),
+  INDEX `index_stock_inspection_date` (`date` ASC),
   CONSTRAINT `stock_inspection_fk_1`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
@@ -1997,7 +2017,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.1');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

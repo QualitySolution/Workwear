@@ -25,7 +25,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return new ChangeState(ChangeType.NotChanged);
 			}
 			
-			var newPosts = row.SubdivisionPostCombination.Posts.Where(p => p.Id == 0).Select(x => x.Name).ToArray();
+			var newPosts = row.SubdivisionPostCombination.Posts.Where(p => p.Id == 0).Select(x => x.Title).ToArray();
 			var state = newPosts.Any() ? ChangeType.NewEntity : ChangeType.NotChanged;
 			return new ChangeState(state, willCreatedValues: newPosts);
 		}

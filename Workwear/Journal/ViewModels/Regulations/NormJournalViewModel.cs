@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -25,13 +26,14 @@ namespace workwear.Journal.ViewModels.Regulations
 {
 	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>
 	{
+		private readonly ILifetimeScope autofacScope;
 		public NormFilterViewModel Filter { get; private set; }
 
 		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null, bool useMultiSelect = false) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			UseSlider = false;
-			AutofacScope = autofacScope;
-			JournalFilter = Filter = AutofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
 			if(useMultiSelect)
 				UseMultiSelect();
@@ -43,6 +45,7 @@ namespace workwear.Journal.ViewModels.Regulations
 
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
+			Department departmentAlias = null;
 			Norm normAlias = null;
 			NormItem normItemAlias = null;
 			RegulationDoc regulationDocAlias = null;
@@ -67,10 +70,12 @@ namespace workwear.Journal.ViewModels.Regulations
 				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => postAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => normAlias.Name,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name,
+					() => departmentAlias.Name,
 					() => normAlias.Id
 					));
 			if (Filter.Post != null)
@@ -93,10 +98,12 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
 				   .SelectSubQuery(employeesWorkedSubquery).WithAlias(() => resultAlias.UsagesWorked)
 				   .Select(Projections.SqlFunction(
-					   new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT( CONCAT_WS(' ', ?1, CONCAT('[', ?2 ,']')) SEPARATOR ?3)"),
+					   new SQLFunctionTemplate(NHibernateUtil.String,
+						"GROUP_CONCAT( CONCAT( ?1, IF(?2 IS NULL AND ?3 IS NULL, '', CONCAT(' [', CONCAT_WS('›', ?2, ?3), ']'))) SEPARATOR ?4)"),
 					   NHibernateUtil.String,
 					   Projections.Property(() => postAlias.Name),
 					   Projections.Property(() => subdivisionAlias.Name),
+					   Projections.Property(() => departmentAlias.Name),
 					   Projections.Constant("\n"))
 				   ).WithAlias(() => resultAlias.Posts)
 				)
@@ -150,7 +157,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			var progress = progressPage.ViewModel.Progress;
 
 			using(var localUow = UnitOfWorkFactory.CreateWithoutRoot("Обновление потребностей из журнала норм")) {
-				var employeeRepository = AutofacScope.Resolve<EmployeeRepository>(new TypedParameter(typeof(IUnitOfWork), localUow));
+				var employeeRepository = autofacScope.Resolve<EmployeeRepository>(new TypedParameter(typeof(IUnitOfWork), localUow));
 				progress.Start(2, text: "Загружаем нормы");
 				var norms = localUow.GetById<Norm>(nodes.GetIds()).ToArray();
 				progress.Add(text: "Загружаем сотрудников");

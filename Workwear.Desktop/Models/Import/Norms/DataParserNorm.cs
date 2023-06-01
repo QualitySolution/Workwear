@@ -11,6 +11,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Repository.Regulations;
 using Workwear.Measurements;
 using Workwear.Models.Import.Norms.DataTypes;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms
 {
@@ -32,14 +33,16 @@ namespace Workwear.Models.Import.Norms
 			this.sizeService = sizeService;
 		}
 
-		public void CreateDatatypes(IUnitOfWork uow) {
+		public void CreateDatatypes(IUnitOfWork uow, SettingsNormsViewModel settings) {
 			SupportDataTypes.Add( new DataTypeProtectionTools());
-			SupportDataTypes.Add( new DataTypePeriodAndCount());//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
+			SupportDataTypes.Add( new DataTypePeriodAndCount(settings));//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
 			SupportDataTypes.Add( new DataTypeAmount());
 			SupportDataTypes.Add( new DataTypePeriod());
 			SupportDataTypes.Add( new DataTypeSubdivision());
+			SupportDataTypes.Add( new DataTypeDepartment());
 			SupportDataTypes.Add( new DataTypePost());
 			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
+			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeNorm.Name, n => n.Name, new []{"название"}));
 		}
 
 		#region Обработка изменений
@@ -66,42 +69,67 @@ namespace Workwear.Models.Import.Norms
 			var postColumn = model.GetColumnForDataType(DataTypeNorm.Post);
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeNorm.Subdivision);
 			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
+			var departmentColumn = model.GetColumnForDataType(DataTypeNorm.Department);
+			var nameColumn = model.GetColumnForDataType(DataTypeNorm.Name);
+			var periodAndCountColumn = model.GetColumnForDataType(DataTypeNorm.PeriodAndCount);
 
 			foreach(var row in list) {
-				var postValue = row.CellStringValue(postColumn);
-				var subdivisionName = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
+				var postValue = postColumn != null ? row.CellStringValue(postColumn) : null;
+				var subdivisionValue = subdivisionColumn != null ? row.CellStringValue(subdivisionColumn) : null;
+				var departmentValue = departmentColumn != null ? row.CellStringValue(departmentColumn) : null;
+				var nameValue = nameColumn != null ? row.CellStringValue(nameColumn) : null;
 
-				if(String.IsNullOrWhiteSpace(postValue)) {
+				if(String.IsNullOrWhiteSpace(postValue) && String.IsNullOrWhiteSpace(nameValue)) {
 					row.ProgramSkipped = true;
-					row.ProgramSkippedReason = "Должность отсутствует. Не возможности отличить к какой норме относится строка.";
+					row.ProgramSkippedReason = "Должность и названия нормы отсутствуют. Нет возможности отличить к какой норме относится строка.";
 					continue;
 				}
 
-				var pair = MatchPairs.FirstOrDefault(x => x.PostValue == postValue && x.SubdivisionName == subdivisionName);
+				var pair = MatchPairs.FirstOrDefault(x => x.NameValue == nameValue 
+				                                          && x.PostValue == postValue 
+				                                          && x.SubdivisionValue == subdivisionValue 
+				                                          && x.DepartmentValue == departmentValue);
 				if(pair == null) {
-					pair = new SubdivisionPostCombination(postValue, subdivisionName);
+					pair = new SubdivisionPostCombination(model.SettingsNormsViewModel, nameValue, postValue, subdivisionValue, departmentValue);
 					MatchPairs.Add(pair);
 				}
 				row.SubdivisionPostCombination = pair;
 			}
 			progress.Add();
 
-			var allPostNames = MatchPairs.SelectMany(x => x.PostNames).Distinct().ToArray();
+			var allPostNames = MatchPairs
+				.Where(x => x.PostNames != null)
+				.SelectMany(x => x.PostNames).Distinct().ToArray();
 			var posts = uow.Session.QueryOver<Post>()
 				.Where(x => x.Name.IsIn(allPostNames))
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
 				.List();
 			progress.Add();
 
-			var subdivisionNames = MatchPairs.Select(x => x.SubdivisionName).Distinct().ToArray();
+			var subdivisionNames = MatchPairs
+				.Where(x => x.SubdivisionNames != null)
+				.SelectMany(x => x.SubdivisionNames)
+				.Distinct().ToArray();
 			var subdivisions = uow.Session.QueryOver<Subdivision>()
 				.Where(x => x.Name.IsIn(subdivisionNames))
 				.List();
 			progress.Add();
 
+			var departmentNames = MatchPairs
+				.Where(x => x.DepartmentNames != null)
+				.SelectMany(x => x.DepartmentNames)
+				.Distinct().ToArray();
+			var departments = uow.Session.QueryOver<Department>()
+				.Where(x => x.Name.IsIn(departmentNames))
+				.List();
+			progress.Add();
+			
 			//Заполняем и создаем отсутствующие должности
-			foreach(var pair in MatchPairs)
-				SetOrMakePost(pair, posts, subdivisions, subdivisionColumn == null);
+			foreach(var pair in MatchPairs) {
+				if(pair.AllPostNames.Any())
+					SetOrMakePost(pair, posts, subdivisions, departments, model, subdivisionColumn == null, departmentColumn == null);
+			}
 			progress.Add();
 
 			//Заполняем существующие нормы
@@ -120,7 +148,8 @@ namespace Workwear.Models.Import.Norms
 					continue;
 
 				var norm = new Norm {
-					Comment = "Импортирована из Excel"
+					Name = pair.NameValue,
+					Comment = "Импортирована из файла " + model.FileName,
 				};
 				foreach(var post in pair.Posts) {
 					norm.AddPost(post);
@@ -133,6 +162,8 @@ namespace Workwear.Models.Import.Norms
 			var nomenclatureTypes = new NomenclatureTypes(uow, sizeService, true);
 			progress.Add();
 			var protectionNames = list.Select(x => x.CellStringValue(protectionToolsColumn)).Where(x => x != null).Distinct().ToArray();
+			if(model.SettingsNormsViewModel.WearoutToName)
+				protectionNames = protectionNames.Union( protectionNames.Select(x => x + " (до износа)")).ToArray();
 			progress.Add();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			progress.Add();
@@ -149,6 +180,9 @@ namespace Workwear.Models.Import.Norms
 					row.ProgramSkippedReason = "Номенклатура нормы пустая. Не определить какую стоку нормы создавать.";
 					continue;
 				}
+
+				if(model.SettingsNormsViewModel.WearoutToName && (row.CellStringValue(periodAndCountColumn)?.ToLower().Contains("до износа") ?? false))
+					protectionName += " (до износа)";
 
 				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
 				if(protection == null) {
@@ -184,39 +218,50 @@ namespace Workwear.Models.Import.Norms
 			}
 			progress.Close();
 		}
-				
-		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts, IList<Subdivision> subdivisions, bool withoutSubdivision)
-		{
-			foreach (var postName in combination.PostNames)
-			{
-				var post = UsedPosts.FirstOrDefault(x =>
-							String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-							&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
+
+		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
+			IList<Subdivision> subdivisions,
+			IList<Department> departments,
+			ImportModelNorm model,
+			bool withoutSubdivision,
+			bool withoutDepartment) {
+			foreach(var postName in combination.AllPostNames) {
+				var post = UsedPosts.Concat(posts).FirstOrDefault(x =>
+					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
+					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
+					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)));
+
 				if(post == null) {
-					post = posts.FirstOrDefault(x => String.Equals(x.Name, postName, StringComparison.CurrentCultureIgnoreCase)
-						&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase)));
+					post = new Post {
+						Name = postName.post,
+						Comments = "Создана при импорте норм из файла " + model.FileName,
+					};
 
-					if(post == null) {
-						post = new Post { 
-							Name = postName,
-							Comments = "Создана при импорте норм из Excel", 
-						};
-						if(!String.IsNullOrEmpty(combination.SubdivisionName)) {
-							var subdivision = UsedSubdivisions.FirstOrDefault(x =>
-								String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+					Subdivision subdivision = null;
+					Department department = null;
 
-							if(subdivision == null) {
-								subdivision = subdivisions.FirstOrDefault(x =>
-										String.Equals(x.Name, combination.SubdivisionName, StringComparison.CurrentCultureIgnoreCase));
+					if(!String.IsNullOrEmpty(postName.subdivision)) {
+						subdivision = UsedSubdivisions.Concat(subdivisions).FirstOrDefault(x =>
+							String.Equals(x.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase));
 
-								if(subdivision == null) {
-									subdivision = new Subdivision { Name = combination.SubdivisionName };
-								}
-								UsedSubdivisions.Add(subdivision);
-							}
-							post.Subdivision = subdivision;
+						if(subdivision == null) {
+							subdivision = new Subdivision { Name = postName.subdivision };
+							UsedSubdivisions.Add(subdivision);
 						}
 					}
+
+					if(!String.IsNullOrEmpty(postName.department)) {
+						department = UsedDepartments.Concat(departments).FirstOrDefault(x => x.Subdivision == subdivision &&
+							String.Equals(x.Name, postName.department, StringComparison.CurrentCultureIgnoreCase));
+
+						if(department == null) {
+							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из файла " + model.FileName};
+							UsedDepartments.Add(department);
+						}
+					}
+
+					post.Subdivision = subdivision;
+					post.Department = department;
 					UsedPosts.Add(post);
 				}
 				combination.Posts.Add(post);
@@ -229,9 +274,9 @@ namespace Workwear.Models.Import.Norms
 		public readonly List<SubdivisionPostCombination> MatchPairs = new List<SubdivisionPostCombination>();
 		
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
+		public readonly List<Department> UsedDepartments = new List<Department>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
-		
 		public readonly List<string> UndefinedProtectionNames = new List<string>();
 		#endregion
 

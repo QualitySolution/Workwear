@@ -85,8 +85,9 @@ namespace workwear.Journal.ViewModels.Statements
 		}
 	}
 
-	public class IssuanceSheetJournalNode : JournalEntityNodeBase<IssuanceSheet>
+	public class IssuanceSheetJournalNode
 	{
+		public int Id { get; set; }
 		public DateTime Date { get; set; }
 		public string Organigation { get; set; }
 		public string SubdivisionCode { get; set; }

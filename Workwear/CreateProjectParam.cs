@@ -22,11 +22,14 @@ using QS.Features;
 using QS.HistoryLog.ViewModels;
 using QS.HistoryLog.Views;
 using QS.HistoryLog;
+using QS.Journal.GtkUI;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
+using QS.Project.Journal;
+using QS.Project.Search;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services.GtkUI;
 using QS.Project.Services;
@@ -140,6 +143,10 @@ namespace workwear
 			containerBuilder.RegisterType<GtkRunOperationService>().As<IRunOperationService>();
 			#endregion GtkUI
 
+			#region View
+			containerBuilder.RegisterType<GtkViewFactory>().As<IGtkViewFactory>();
+			#endregion
+
 			#region Versioning
 			containerBuilder.RegisterType<ApplicationVersionInfo>().As<IApplicationInfo>();
 			#endregion
@@ -176,7 +183,7 @@ namespace workwear
 			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
 			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
-			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(
+			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(),
 				typeof(UpdateProcessView),
 				typeof(ProgressWindowView)
 			)).As<IGtkViewResolver>();
@@ -232,7 +239,7 @@ namespace workwear
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();
 			builder.RegisterType<TdiNavigationManager>().AsSelf().As<INavigationManager>().As<ITdiCompatibilityNavigation>().SingleInstance();
 			builder.RegisterType<BasedOnNameTDIResolver>().As<ITDIWidgetResolver>();
-			builder.Register(cc => new ClassNamesBaseGtkViewResolver(
+			builder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(), 
 				typeof(RdlViewerView), 
 				typeof(OrganizationView), 
 				typeof(DeletionView),
@@ -241,6 +248,10 @@ namespace workwear
 				typeof(SerialNumberView),
 				typeof(HistoryView)
 			)).As<IGtkViewResolver>();
+			builder.RegisterDecorator<IGtkViewResolver>((c, p, i) => 
+				 new RegisteredGtkViewResolver(c.Resolve<IGtkViewFactory>(), i)
+				.RegisterView<JournalViewModelBase, JournalView>()
+				.RegisterView<SearchViewModel, OneEntrySearchView>());
 			#endregion
 
 			#region Прогрес бар
@@ -271,10 +282,6 @@ namespace workwear
 
 			#region Rdl
 			builder.RegisterType<RdlViewerViewModel>().AsSelf();
-			#endregion
-
-			#region Журналы
-			builder.RegisterType<OneEntrySearchView>().Named<Gtk.Widget>("GtkJournalSearchView");
 			#endregion
 
 			#region ViewModels

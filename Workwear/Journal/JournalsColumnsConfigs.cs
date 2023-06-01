@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
@@ -109,12 +108,13 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
 				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).SearchHighlight()
-					.AddColumn("Отдел").AddTextRenderer(node => node.Department).SearchHighlight()
-					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
-					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).SearchHighlight()
-					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
+					.AddColumn("Сотрудников").AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
+					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).WrapWidth(700).SearchHighlight()
+					.AddColumn("Отдел").AddTextRenderer(node => node.Department).WrapWidth(700).SearchHighlight()
+					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
+					.AddColumn("МВЗ").Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
 					.Finish()
 			);
 
@@ -136,7 +136,7 @@ namespace workwear.Journal
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
-					.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
+					.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
@@ -168,7 +168,7 @@ namespace workwear.Journal
 					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
 					.AddColumn("№ Пункта").AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
-					.AddColumn("Должности[Подразделения]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.Finish()
 			);
 
@@ -191,7 +191,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ProtectionToolsJournalViewModel>(
 				() => FluentColumnsConfig<ProtectionToolsJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(900).SearchHighlight()
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.Finish()
 			);
@@ -343,7 +343,7 @@ namespace workwear.Journal
 					.AddColumn("Табельный №").AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(node => node.FIO)
 					.AddColumn("Результат").AddTextRenderer(node => node.Result)
-					.AddSetter((c, x) => c.Foreground = x.Result == "ОК" ? "green" : "red")
+					.AddSetter((c, x) => c.Foreground = x.ResultColor)
 					.AddColumn("Нормы").AddTextRenderer(node => node.Norms)
 					.AddColumn("Должность").AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)

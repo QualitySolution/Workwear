@@ -8,7 +8,7 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Table table1;
 
-		private global::Gtk.Button buttonRun;
+		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
 		{
@@ -29,7 +29,7 @@ namespace workwear.ReportParameters.Views
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
 			w1.Position = 0;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.buttonRun = new global::Gtk.Button();
+			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;

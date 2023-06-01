@@ -27,7 +27,7 @@ namespace Workwear.Models.Import.Norms.DataTypes{
 				return new ChangeState(ChangeType.NotChanged);
 			}
 
-			var con = conditions.FirstOrDefault(c => c.Name == value);
+			var con = conditions.FirstOrDefault(c => String.Equals(c.Name, value, StringComparison.CurrentCultureIgnoreCase));
 			if(con != null) {
 				row.AddSetValueAction(ValueSetOrder, () => row.NormItem.NormCondition = con);
 				return new ChangeState(ChangeType.ChangeValue);

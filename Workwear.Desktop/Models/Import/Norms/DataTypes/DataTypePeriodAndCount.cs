@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Workwear.Domain.Regulations;
+using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePeriodAndCount : DataTypeNormBase {
-		public DataTypePeriodAndCount()
+		private readonly IImportNormSettings settings;
+
+		public DataTypePeriodAndCount(IImportNormSettings settings)
 		{
+			this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+			ColumnNameKeywords.Add("количество и период");
 			ColumnNameKeywords.Add("норма выдачи");
 			Data = DataTypeNorm.PeriodAndCount;
 		}
@@ -54,7 +59,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			item.PeriodCount = periods;
 			item.NormPeriod = periodType;
 		}
-		internal static bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType, out string warning)
+		internal bool TryParsePeriodAndCount(string value, out int amount, out int periods, out NormPeriodType periodType, out string warning)
 		{
 			amount = 0;
 			periods = 0;
@@ -63,34 +68,40 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 			Regex regexp;
 			Match match;
 			
-			if(value.ToLower().Contains("до износа")) {
+			if(value.ToLower().Contains("до износа") || value.ToLower().Contains("до замены")) {
 				regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?");
 				match = regexp.Match(value);
 				if (match.Success)
 					amount = int.Parse(match.Groups[1].Value);
 				else 
 					amount = 1;
-				periods = 0;
-				periodType = NormPeriodType.Wearout;
+				if(settings.WearoutToName) {
+					periods = 1;
+					periodType = NormPeriodType.Year;
+				}
+				else {
+					periods = 0;
+					periodType = NormPeriodType.Wearout;
+				}
 				return true;
 			}
-			if(value.ToLower().Contains("дежурны")) {
+			if(value.ToLower().Contains("дежурн") || value.ToLower().Contains("деж.")) {
 				amount = 1;
 				periodType = NormPeriodType.Duty;
 				return true;
 			}
 			//Количество в месяцев
-			regexp = new Regex(@"(\d+).* (?:в|на) (\d+) (?:месяц|мес\.)");
+			regexp = new Regex(@"(\d+).*(?:в|на)\s*(\d*)\s*(?:месяц|мес\.)");
 			match = regexp.Match(value);
 			if(match.Success)
 			{
 				periodType = NormPeriodType.Month;
 				amount = int.Parse(match.Groups[1].Value);
-				periods = int.Parse(match.Groups[2].Value);
+				periods = String.IsNullOrEmpty(match.Groups[2].Value) ? 1 : int.Parse(match.Groups[2].Value);
 				return true;
 			}
 			//Указано и количество выдачи и количество лет
-			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет)");
+			regexp = new Regex(@"(\d+).* (\d+)([,\.]5)? *(год|года|лет|г(\.| |\())");
 			match = regexp.Match(value);
 			if (match.Success)
 			{
@@ -127,7 +138,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Только количество подразумевая в 1 год.
-			regexp = new Regex(@"^(\d+) ?(пар|пара|пары|шт\.?|комплект.?)?( на год\.?)?$");
+			regexp = new Regex(@"^(\d+)\s*(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп\.?)?( (в|на) год\.?)?$");
 			match = regexp.Match(value);
 			if (match.Success)
 			{

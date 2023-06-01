@@ -8,6 +8,8 @@ namespace Workwear.Models.Import.Norms
 		Unknown,
 		[Display(Name = "Подразделение")]
 		Subdivision,
+		[Display(Name = "Отдел")]
+		Department,
 		[Display(Name = "Должность")]
 		Post,
 		[Display(Name = "Номенклатура нормы")]
@@ -20,6 +22,8 @@ namespace Workwear.Models.Import.Norms
 		[Display(Name = "Период")]
 		Period,
 		[Display(Name = "Условия нормы")]
-		Condition
+		Condition,
+		[Display(Name = "Название нормы")]
+		Name,
 	}
 }

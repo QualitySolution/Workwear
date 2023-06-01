@@ -13,6 +13,7 @@ namespace Workwear.Models.Import
 	{
 		void Init(IUnitOfWork uow);
 		string ImportName { get; }
+		string FileName { get; set; }
 		string DataColumnsRecommendations { get; }
 
 		CountersViewModel CountersViewModel { get; }

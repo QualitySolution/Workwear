@@ -192,6 +192,8 @@ namespace Workwear.Models.Import
 					result.Add($"Предупреждение: {change.Warning}");
 				if(change.OldValue != null)
 					result.Add($"Старое значение: {change.OldValue}");
+				if(change.NewValue != null)
+					result.Add($"Новое значение: {change.NewValue}");
 				if(change.InterpretedValue != null)
 					result.Add($"Обработанное значение: {change.InterpretedValue}");
 				if(change.WillCreatedValues.Any())

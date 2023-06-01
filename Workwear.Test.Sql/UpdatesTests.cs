@@ -27,20 +27,13 @@ namespace Workwear.Test.Sql
 		public static IEnumerable<object[]> DbSamples {
 			get {
 				var configuration = TestsConfiguration.Configuration;
-				List<SqlServer> servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
 				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
-				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
 				
-				foreach (var server in servers) {
+				foreach (var server in SqlServers) {
 					foreach (var dbSample in samples) {
 						if(!String.IsNullOrEmpty(dbSample.ForServerGroup) && !dbSample.ForServerGroup.Equals(server.Group))
 							continue;
-						
-						if(!String.IsNullOrEmpty(server.UseBefore) 
-						   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
-						   && currentVersion >= useBeforeVersion)
-							continue;
-						
+
 						yield return new object[] { server, dbSample };
 					}
 				}
@@ -58,7 +51,7 @@ namespace Workwear.Test.Sql
 		public void ApplyUpdatesTest(SqlServer server, DbSample sample) {
 			var updateConfiguration = ScriptsConfiguration.MakeUpdateConfiguration();
 			//Проверяем нужно ли обновлять 
-			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion).Any())
+			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion, false).Any())
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 
 			//Загружаем образец базы на SQL сервер.
@@ -73,7 +66,7 @@ namespace Workwear.Test.Sql
 			var connectionString = builder.GetConnectionString(true);
 			using(var connection = new MySqlConnection(connectionString)) {
 				connection.Open();
-				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion)) {
+				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion, false)) {
 					TestContext.Progress.WriteLine(
 						$"Выполняем скрипт {hop.Source.VersionToShortString()} → {hop.Destination.VersionToShortString()}");
 					RunOneUpdate(connection, hop);
@@ -106,8 +99,17 @@ namespace Workwear.Test.Sql
 				}
 
 				var script = new MySqlScript(connection, sql);
-				//script.StatementExecuted += Script_StatementExecuted;
-				script.Execute();
+				string lastExecutedStatement = null;
+				script.StatementExecuted += (sender, args) => lastExecutedStatement = $"[{args.Line}:{args.Position}]{args.StatementText}";
+				try {
+					script.Execute();
+				}
+				catch(Exception ex) {
+					throw new Exception(
+						$"Ошибка выполнения скрипта обновления {updateScript.Source.VersionToShortString()} → {updateScript.Destination.VersionToShortString()}\n" +
+						$"Последнее выполненное выражение: {lastExecutedStatement}", ex);
+				}
+
 				var command = connection.CreateCommand();
 				command.CommandText = "UPDATE base_parameters SET str_value = @version WHERE name = 'version'";
 				command.Parameters.AddWithValue("version", updateScript.Destination.VersionToShortString());
@@ -118,7 +120,15 @@ namespace Workwear.Test.Sql
 		public static IEnumerable<SqlServer> SqlServers {
 			get {
 				var configuration = TestsConfiguration.Configuration;
-				return configuration.GetSection("SQLServers").Get<List<SqlServer>>();
+				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
+				var servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
+				foreach(var server in servers) {
+					if(!String.IsNullOrEmpty(server.UseBefore) 
+					   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
+					   && currentVersion >= useBeforeVersion)
+						continue;
+					yield return server;
+				}
 			}
 		}
 		

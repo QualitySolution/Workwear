@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
@@ -422,6 +423,13 @@
     <Compile Include="Views\Stock\Widgets\IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.IssueWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.InspectionView.cs" />
+    <Compile Include="Views\Regulations\NormChildren\NormEmployeesView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormEmployeesView.cs" />
+    <Compile Include="ViewModels\Regulations\NormChildren\NormEmployeesViewModel.cs" />
+    <Compile Include="Views\Import\SettingsNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Import.SettingsNormsView.cs" />
+    <Compile Include="Journal\Filter.Views\Company\DepartmentFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Company.DepartmentFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -628,7 +636,6 @@
     <Folder Include="Journal\ViewModels\Company\" />
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />
-    <Folder Include="Journal\Filter.ViewModels\Company\" />
     <Folder Include="Views\Company\EmployeeChildren\" />
     <Folder Include="ViewModels\Company\EmployeeChildren\" />
     <Folder Include="Journal\ViewModels\Regulations\" />
@@ -659,6 +666,8 @@
     <Folder Include="Views\Sizes\" />
     <Folder Include="Journal\Filter.Views\Sizes\" />
     <Folder Include="Models\WearLk\" />
+    <Folder Include="Views\Regulations\NormChildren\" />
+    <Folder Include="ViewModels\Regulations\NormChildren\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

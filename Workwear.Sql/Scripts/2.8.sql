@@ -824,6 +824,8 @@ UPDATE operation_warehouse SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Коллективная выдача
+ALTER TABLE `stock_collective_expense_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE stock_collective_expense_detail SET size_id = (SELECT DISTINCT sizes.id 
         FROM stock_collective_expense_detail items
         LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id

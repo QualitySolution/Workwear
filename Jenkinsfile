@@ -29,7 +29,8 @@ node {
    }
    stage('Test dotnet')
    {
-   	sh 'rm -rf Workwear/Workwear.Test/TestResults'
+      sh 'rm -rf Workwear/Workwear.Test/TestResults'
+      sh 'rm -rf Workwear/Workwear.Test.Sql/TestResults' //Удаляем старые результаты тестов здесь, чтобы не оставались когда sql тесты не запускаются.
    	try {  
    	  sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear/Workwear.Test/Workwear.Test.csproj'
       } catch (e) {}
@@ -64,7 +65,6 @@ node {
    }
    if (params.SQLTests) {
       stage('SQLTests'){
-         sh 'rm -rf Workwear/Workwear.Test.Sql/TestResults'
          try {  
             sh 'dotnet test --logger trx Workwear/Workwear.Test.Sql/Workwear.Test.Sql.csproj '
          } catch (e) {}

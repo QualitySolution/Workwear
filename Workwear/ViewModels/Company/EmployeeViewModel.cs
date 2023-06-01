@@ -285,7 +285,6 @@ namespace Workwear.ViewModels.Company
 				if(sex != Sex.None)
 					Entity.Sex = sex;
 			}
-			Console.WriteLine();
 		}
 		private void CheckSizeChanged() {
 			Entity.FillWearInStockInfo(UoW, baseParameters, Entity?.Subdivision?.Warehouse, DateTime.Now);
@@ -454,23 +453,49 @@ namespace Workwear.ViewModels.Company
 
 		Subdivision lastSubdivision;
 		Post lastPost;
+		bool skipSubdivisionChange = false;
 
 		void PostChangedCheck(object sender, PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question(
+			if( e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question(
 				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
-			if(e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question(
+			if(!skipSubdivisionChange && e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question(
 				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
 				Entity.ChangeOfPositionDate = DateTime.Today;
 			}
-			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null && Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
-				if(Entity.Id == 0 && !Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
-					interactive.ShowMessage(ImportanceLevel.Error, "Норма не установлена, так как не все данные сотрудника заполнены корректно.");
-					return;
-				} 
-				Entity.NormFromPost(UoW, NormRepository);
+			
+			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null) {
+				if(Entity.Post.Subdivision != null && Entity.Post.Subdivision != Entity.Subdivision && 
+				   Entity.Post.Department != null && Entity.Post.Department != Entity.Department) {
+					if(interactive.Question("Подразделение и отдел в должности отличается от указанных в сотруднике. Установить их в сотрудника из должности?")) {
+						skipSubdivisionChange = true;
+						Entity.Subdivision = Entity.Post.Subdivision;
+						Entity.Department = Entity.Post.Department;
+						skipSubdivisionChange = false;
+					}
+				}
+				else if (Entity.Post.Subdivision != null && Entity.Post.Subdivision != Entity.Subdivision) {
+					if(interactive.Question("Подразделение в должности отличается от указанных в сотруднике. Установить его в сотрудника из должности?")) {
+						skipSubdivisionChange = true;
+						Entity.Subdivision = Entity.Post.Subdivision;
+						skipSubdivisionChange = false;
+					}
+				}
+				else if(Entity.Post.Department != null && Entity.Post.Department != Entity.Department) {
+					if(interactive.Question("Отдел в должности отличается от указанных в сотрудника. Установить его в сотрудника из должности?")) {
+						Entity.Department = Entity.Post.Department;
+					}
+				}
+				
+				if(Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
+					if(Entity.Id == 0 && !Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+						interactive.ShowMessage(ImportanceLevel.Error, "Норма не установлена, так как не все данные сотрудника заполнены корректно.");
+						return;
+					} 
+					Entity.NormFromPost(UoW, NormRepository);
+				}
 			}
 		}
 		#endregion
