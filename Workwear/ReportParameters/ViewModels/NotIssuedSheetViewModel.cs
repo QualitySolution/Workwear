@@ -33,7 +33,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
-					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
+					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", excludeInVacation },
