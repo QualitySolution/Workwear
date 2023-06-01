@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using NPOI.SS.Formula.Functions;
 using QS.Dialog;
@@ -75,12 +76,14 @@ namespace workwear.Journal.ViewModels.Company {
 			Subdivision subdivisionAlias = null;
 			Profession professionAlias = null;
 			CostCenter costCenterAlias = null;
+			EmployeeCard employeeAlias = null;
 			 
 			var query = uow.Session.QueryOver<Post>(() => postAlias)
 				.Left.JoinAlias(x => x.Subdivision, () => subdivisionAlias)
 				.Left.JoinAlias(x => x.Profession, () => professionAlias)
 				.Left.JoinAlias(x => x.Department, () => departmentAlias)
 				.Left.JoinAlias(x => x.CostCenter, () => costCenterAlias)
+				.JoinEntityAlias(() => employeeAlias, () => employeeAlias.Post.Id == postAlias.Id, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => postAlias.Name,
 					() => postAlias.Comments,
@@ -98,7 +101,7 @@ namespace workwear.Journal.ViewModels.Company {
 				query.Where(() => departmentAlias.Id == Filter.Department.Id);
 
 			query.SelectList((list) => list
-					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
+					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
 					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
@@ -106,6 +109,7 @@ namespace workwear.Journal.ViewModels.Company {
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.Select(() => costCenterAlias.Code).WithAlias(() => resultAlias.CostCenterCode)
 					.Select(() => costCenterAlias.Name).WithAlias(() => resultAlias.CostCenterName)
+					.SelectCount(() => employeeAlias.Id).WithAlias(() => resultAlias.Employees)
 				)
 				.OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<PostJournalNode>());
@@ -130,6 +134,7 @@ namespace workwear.Journal.ViewModels.Company {
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public int Employees { get; set; }
 		public string Subdivision { get; set; }
 		public string Department { get; set; }
 		public string Profession { get; set; }

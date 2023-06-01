@@ -109,6 +109,7 @@ namespace workwear.Journal
 				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
 					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
+					.AddColumn("Сотрудников").AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
 					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).WrapWidth(700).SearchHighlight()
 					.AddColumn("Отдел").AddTextRenderer(node => node.Department).WrapWidth(700).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
