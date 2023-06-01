@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Workwear.Domain.Regulations;
 
 namespace Workwear.Models.Import.Norms.DataTypes {
 	public class DataTypePost : DataTypeNormBase {

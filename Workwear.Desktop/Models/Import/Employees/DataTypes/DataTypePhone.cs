@@ -1,6 +1,5 @@
 ﻿using System;
 using QS.Utilities.Numeric;
-using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypePhone : DataTypeSimpleString {

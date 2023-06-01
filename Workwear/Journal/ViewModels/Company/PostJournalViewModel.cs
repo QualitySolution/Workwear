@@ -5,7 +5,6 @@ using NHibernate;
 using NHibernate.Linq;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;

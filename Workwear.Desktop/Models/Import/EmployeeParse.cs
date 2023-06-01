@@ -2,7 +2,6 @@
 using System.Linq;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
-using Workwear.Models.Import;
 
 namespace Workwear.Models.Import
 {

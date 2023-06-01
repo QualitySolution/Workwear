@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
-using FluentNHibernate.Utils;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -19,12 +17,9 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
-using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.ViewModels.Company;
 

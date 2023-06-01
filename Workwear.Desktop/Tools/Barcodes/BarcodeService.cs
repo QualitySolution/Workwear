@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QS.BaseParameters;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;

@@ -4,7 +4,6 @@ using System.Reflection;
 using Gtk;
 using QS.Dialog.GtkUI;
 using QSWidgetLib;
-using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
