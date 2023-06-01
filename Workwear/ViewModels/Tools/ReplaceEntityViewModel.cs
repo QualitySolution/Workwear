@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -20,12 +20,21 @@ namespace Workwear.ViewModels.Tools
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		
 		private readonly ReplaceEntity replaceEntity;
+		private readonly IInteractiveMessage interactive;
 		private readonly IGuiDispatcher guiDispatcher;
 
-		public ReplaceEntityViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, ILifetimeScope autofacScope, ReplaceEntity replaceEntity, IGuiDispatcher guiDispatcher, IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
+		public ReplaceEntityViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			ReplaceEntity replaceEntity,
+			IInteractiveMessage interactive,
+			IGuiDispatcher guiDispatcher,
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
 			Title = "Замена ссылок на объекты";
 			this.replaceEntity = replaceEntity ?? throw new ArgumentNullException(nameof(replaceEntity));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 
 			var entryBuilder = new CommonEEVMBuilderFactory(this, UoW, navigation) {
@@ -34,6 +43,7 @@ namespace Workwear.ViewModels.Tools
 			
 			TargetEntryViewModel = entryBuilder.ForEntity<ProtectionTools>().MakeByType().Finish();
 			TargetEntryViewModel.Changed += TargetEntryViewModel_Changed;
+			SourceList.ListChanged += list => OnPropertyChanged(nameof(SensitiveReplaceButton));
 		}
 
 		#region View Properties
@@ -75,6 +85,10 @@ namespace Workwear.ViewModels.Tools
 		#region Events
 		void TargetEntryViewModel_Changed(object sender, EventArgs e)
 		{
+			if(SourceList.Any(x => x.Entity.Id == TargetEntryViewModel.Entity?.Id)) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Выбранный целевой объект уже добавлен в список исходных объектов. Он не может быть добавлен в качестве целевого.");
+				TargetEntryViewModel.CleanEntity();
+			}
 			OnPropertyChanged(nameof(SensitiveReplaceButton));
 		}
 		#endregion
@@ -91,7 +105,9 @@ namespace Workwear.ViewModels.Tools
 		{
 			var ids = e.SelectedObjects.Select(x => x.GetId());
 			var protections = UoW.GetById<ProtectionTools>(ids)
-				.Where(p => SourceList.All(x => x.Entity.Id != p.Id)).ToList();
+				.Where(p => 
+					SourceList.All(x => x.Entity.Id != p.Id)
+					&& p.Id != TargetEntryViewModel.Entity?.Id).ToList();
 			
 			guiDispatcher.RunInGuiTread(delegate {
 				//Вызываем через очередь главного потока, чтобы успел закрыться журнал.
