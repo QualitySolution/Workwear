@@ -70,7 +70,7 @@ namespace Workwear.ViewModels.Stock
 			var performance = new PerformanceHelper("Диалог", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			changeMonitor.SubscribeAllChange(
 					x => DomainHelper.EqualDomainObjects(x.Document, Entity))

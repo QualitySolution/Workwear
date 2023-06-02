@@ -57,7 +57,7 @@ namespace workwear
 			progressBar = AutofacScope.Resolve<IProgressBarDisplayable>();
 			
 			Entity.Date = DateTime.Today;
-			Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+			Entity.CreatedbyUser = userService.GetCurrentUser();
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = new StockRepository()
 					.GetDefaultWarehouse(UoW,featuresService, AutofacScope.Resolve<IUserService>().CurrentUserId);

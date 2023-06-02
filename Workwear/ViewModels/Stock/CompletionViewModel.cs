@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Stock
 			SizeService = sizeService;
 			
 			if(UoW.IsNew) 
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse

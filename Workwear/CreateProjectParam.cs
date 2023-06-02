@@ -54,6 +54,7 @@ using QS.ViewModels.Resolve;
 using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
+using QSProjectsLib;
 using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
@@ -81,8 +82,10 @@ using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
+using Workwear.Repository.User;
 using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Import;
+using Connection = QS.Project.DB.Connection;
 
 namespace workwear
 {
@@ -205,11 +208,15 @@ namespace workwear
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
-			#region Ошибки
+			#region Пользователь
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var user = new UserService().GetCurrentUser(uow);
-				if(user != null)
+				var user = uow.GetById<UserBase>(QSMain.User.Id);
+				if(user != null) {
 					builder.Register(c => user).As<IUserInfo>();
+					builder.Register(c => new UserService(user)).As<IUserService>();
+					//FIXME Временно для старых диалогов
+					ServicesConfig.UserService = new UserService(user);
+				}
 			}
 			#endregion
 			
@@ -223,8 +230,7 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-			builder.RegisterType<UserService>().As<IUserService>();
-			builder.RegisterType<ObjectValidator>().As<IValidator>();
+            builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
 			builder.RegisterType<BarcodeService>().AsSelf();

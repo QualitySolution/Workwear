@@ -42,7 +42,7 @@ namespace Workwear.ViewModels.Stock {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 				
 			if(UoW.IsNew)
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			if (employee != null)
 				Employee = UoW.GetById<EmployeeCard>(employee.Id);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {

@@ -390,7 +390,7 @@ namespace Workwear.ViewModels.Stock
 			if(Employee == null)
 				return;
 			Expense = new Expense();
-			Expense.CreatedbyUser = userService.GetCurrentUser(uow);
+			Expense.CreatedbyUser = userService.GetCurrentUser();
 			Expense.Operation = ExpenseOperations.Employee;
 			Expense.Employee = Employee;
 			Expense.Warehouse = Warehouse;

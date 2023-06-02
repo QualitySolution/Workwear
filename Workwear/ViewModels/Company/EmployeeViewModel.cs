@@ -107,7 +107,7 @@ namespace Workwear.ViewModels.Company
 			Entity.PropertyChanged += PostChangedCheck;
 
 			if(UoW.IsNew) {
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание карточки для нового сотрудника");
 			}
 			else {
