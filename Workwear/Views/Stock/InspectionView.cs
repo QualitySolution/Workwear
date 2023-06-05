@@ -53,9 +53,9 @@ namespace Workwear.Views.Stock {
 		private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<InspectionItem> ()
-					.AddColumn ("Сотрудник").AddReadOnlyTextRenderer(e => e.Employee.FullName)
+					.AddColumn ("Сотрудник").Resizable().AddReadOnlyTextRenderer(e => e.Employee.FullName)
 					.AddColumn("Номер\nкарточки").AddTextRenderer(e => e.EmployeeNumber)
-					.AddColumn ("Номенклатура").AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(1000)
+					.AddColumn ("Номенклатура").Resizable().AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(1000)
 					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
 					.AddColumn ("Дата\nвыдачи").AddReadOnlyTextRenderer(e => e.IssueDate?.ToShortDateString() ?? "")
 					.AddColumn ("Выдано до").AddReadOnlyTextRenderer(e => e.ExpiryByNormBefore?.ToShortDateString() ??  "до износа")

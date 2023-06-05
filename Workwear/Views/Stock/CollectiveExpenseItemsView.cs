@@ -49,9 +49,9 @@ namespace Workwear.Views.Stock
 		{
 			ytreeItems.ColumnsConfig = ColumnsConfigFactory.Create<CollectiveExpenseItem>()
 				.AddColumn("Сотрудник").AddTextRenderer(x => x.Employee.ShortName)
-				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенклатура нормы").Resizable().AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 					.WrapWidth(700)
-				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
+				.AddColumn("Номенклатура").Resizable().AddComboRenderer(x => x.StockBalanceSetter)
 					.WrapWidth(700)
 					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))

@@ -62,9 +62,9 @@ namespace Workwear.Views.Stock
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png");
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseItem>()
-				.AddColumn("Номенклатура нормы").AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
+				.AddColumn("Номенклатура нормы").Resizable().AddTextRenderer(node => node.ProtectionTools != null ? node.ProtectionTools.Name : "")
 					.WrapWidth(700)
-				.AddColumn("Номенклатура").AddComboRenderer(x => x.StockBalanceSetter)
+				.AddColumn("Номенклатура").Resizable().AddComboRenderer(x => x.StockBalanceSetter)
 					.WrapWidth(700)
 					.SetDisplayFunc(x => x.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
@@ -93,7 +93,7 @@ namespace Workwear.Views.Stock
 				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
 				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
 				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
-				.AddColumn("Бухгалтерский документ").AddTextRenderer(e => e.BuhDocument).Editable()
+				.AddColumn("Бухгалтерский документ").Resizable().AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
 						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
