@@ -203,7 +203,7 @@ namespace Workwear.ViewModels.Import
 				}
 
 				if(document.OpenAfterSave is false) {
-					income.CreatedbyUser = userService.GetCurrentUser(UoW);
+					income.CreatedbyUser = userService.GetCurrentUser();
 					income.UpdateOperations(UoW, interactiveService);
 					UoW.Save(income);
 				}

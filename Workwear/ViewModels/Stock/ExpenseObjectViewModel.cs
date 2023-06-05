@@ -57,7 +57,7 @@ namespace Workwear.ViewModels.Stock
 
 			if(UoW.IsNew) {
 				Entity.Operation = ExpenseOperations.Object;
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			if(Entity.Operation != ExpenseOperations.Object)
 				throw new InvalidOperationException("Диалог предназначен только для операций выдачи на подразделение.");

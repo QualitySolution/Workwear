@@ -11,7 +11,6 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Measurements;
-using Workwear.Models.Import;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;

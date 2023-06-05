@@ -1,12 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
-using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Stock.Documents
 {

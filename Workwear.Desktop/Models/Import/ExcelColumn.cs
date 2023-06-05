@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
 using QS.DomainModel.Entity;
 
 namespace Workwear.Models.Import

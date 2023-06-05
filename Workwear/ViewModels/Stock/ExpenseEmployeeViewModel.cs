@@ -72,7 +72,7 @@ namespace Workwear.ViewModels.Stock {
 			this.issueRepository.RepoUow = UoW;
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Operation = ExpenseOperations.Employee;
 			}
 			if(Entity.Operation != ExpenseOperations.Employee)

@@ -1,6 +1,5 @@
 ﻿using QS.BaseParameters;
 using QS.ViewModels;
-using Workwear.Models.Import;
 
 namespace Workwear.ViewModels.Import
 {

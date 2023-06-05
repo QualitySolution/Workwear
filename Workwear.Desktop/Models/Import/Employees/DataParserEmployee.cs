@@ -137,7 +137,7 @@ namespace Workwear.Models.Import.Employees
 				if(employee == null) {
 					employee = new EmployeeCard {
 						Comment = "Импортирован из файла " + model.FileName,
-						CreatedbyUser = userService?.GetCurrentUser(uow)
+						CreatedbyUser = userService?.GetCurrentUser()
 					};
 					row.Employees.Add(employee);
 				}

@@ -44,7 +44,7 @@ namespace Workwear.ViewModels.Stock
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(UoW.IsNew)
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 
 			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope

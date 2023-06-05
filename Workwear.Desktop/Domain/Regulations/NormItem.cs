@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using QS.Utilities;
-using Workwear.Domain.Regulations;
 
 namespace Workwear.Domain.Regulations
 {

@@ -8,7 +8,6 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using QS.Utilities;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;

@@ -1,5 +1,4 @@
-﻿using Autofac;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;

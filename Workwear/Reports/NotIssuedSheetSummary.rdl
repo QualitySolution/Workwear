@@ -467,7 +467,7 @@
                             <BorderWidth />
                             <TextAlign>Right</TextAlign>
                           </Style>
-                          <Value>Всего по номеклатуре:</Value>
+                          <Value>По номенклатуре:</Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>2</ColSpan>
@@ -533,9 +533,9 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <TextAlign >Center</TextAlign>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value>=Sum(Iif(Fields!in_stock.IsMissing, 0, {in_stock}))</Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
