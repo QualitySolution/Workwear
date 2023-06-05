@@ -95,6 +95,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 			Post postAlias = null;
 			Subdivision subdivisionAlias = null;
+			Department departmentAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 
@@ -116,11 +117,15 @@ namespace workwear.Journal.ViewModels.Tools
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
+					() => normAlias.Name,
+					() => normAlias.Id,
 					() => postAlias.Name,
-					() => subdivisionAlias.Name
+					() => subdivisionAlias.Name,
+					() => departmentAlias.Name
  					))
 				.JoinAlias(() => employeeAlias.Post, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => employeeAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Left.JoinAlias(() => employeeAlias.UsedNorms, () => normAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
@@ -132,6 +137,7 @@ namespace workwear.Journal.ViewModels.Tools
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.Select(normProjection).WithAlias(() => resultAlias.Norms)
  					)
 				.OrderBy(() => employeeAlias.LastName).Asc
@@ -463,11 +469,13 @@ namespace workwear.Journal.ViewModels.Tools
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
-
+		[SearchHighlight]
+		public string Department { get; set; }
+		
 		public bool Dismiss { get { return DismissDate.HasValue; } }
-
 		public DateTime? DismissDate { get; set; }
-
+		
+		[SearchHighlight]
 		public string Norms { get; set; }
 
 		public string Result { get; set; }
