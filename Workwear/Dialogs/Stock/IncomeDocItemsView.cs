@@ -88,8 +88,8 @@ namespace workwear
 		public IncomeDocItemsView() {
 			this.Build();
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
-				.AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
-				.AddColumn("Сертификат").AddTextRenderer(e => e.Certificate).Editable()
+				.AddColumn ("Наименование").Resizable().AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
+				.AddColumn("Сертификат").Resizable().AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
@@ -100,7 +100,7 @@ namespace workwear
 					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
 					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
-				.AddColumn("Собственники")
+				.AddColumn("Собственники").Resizable()
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
