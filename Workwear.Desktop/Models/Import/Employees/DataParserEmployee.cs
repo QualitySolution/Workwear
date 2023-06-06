@@ -4,6 +4,7 @@ using System.Linq;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using QS.Project.Versioning.Product;
 using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
@@ -12,6 +13,7 @@ using Workwear.Measurements;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees
@@ -22,15 +24,18 @@ namespace Workwear.Models.Import.Employees
 		private readonly IUserService userService;
 		private readonly SizeService sizeService;
 		private readonly PhoneFormatter phoneFormatter;
+		private readonly FeaturesService featuresService;
 
 		public DataParserEmployee(
 			PersonNames personNames,
 			SizeService sizeService,
 			PhoneFormatter phoneFormatter, 
-			IUserService userService = null)
+			FeaturesService featuresService,
+			IUserService userService = null) 
 		{
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.userService = userService;
 			this.sizeService = sizeService;
 		}
@@ -39,15 +44,17 @@ namespace Workwear.Models.Import.Employees
 		public void CreateDatatypes(IUnitOfWork uow, IImportModel model, SettingsMatchEmployeesViewModel settings) {
 			SupportDataTypes.Add(new DataTypeNameWithInitials());
 			SupportDataTypes.Add(new DataTypeFio(personNames));
-			SupportDataTypes.Add(new DataTypeSimpleString(
-				DataTypeEmployee.CardKey,
-				x => x.CardKey,
-				new []{
-					"CARD_KEY",
-					"card",
-					"uid"
-				}
-			));
+			if(featuresService.Available(WorkwearFeature.IdentityCards))
+				SupportDataTypes.Add(item: new DataTypeSimpleString(
+							DataTypeEmployee.CardKey,
+							x => x.CardKey,
+							new[] {
+								"CARD_KEY",
+								"card",
+								"uid"
+							}
+						)
+					);
 			SupportDataTypes.Add(new DataTypeFirstName(personNames));
 			SupportDataTypes.Add(new DataTypeSimpleString(
 				DataTypeEmployee.LastName,
