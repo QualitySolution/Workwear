@@ -34,13 +34,13 @@ namespace Workwear.Views.Company {
 
 		private void ConfigureDlg()
 		{
-
 			SizeBuild();
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
+			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();

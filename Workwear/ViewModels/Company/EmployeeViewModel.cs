@@ -124,6 +124,7 @@ namespace Workwear.ViewModels.Company
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
+			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCenterViewModel>(parameter);
 			//Панели
 			EmployeePhotoViewModel = AutofacScope.Resolve<EmployeePhotoViewModel>(parameter);
 
@@ -300,6 +301,7 @@ namespace Workwear.ViewModels.Company
 		public EmployeeListedItemsViewModel ListedItemsViewModel;  //4
 		public EmployeeMovementsViewModel MovementsViewModel;      //5
 		public EmployeeVacationsViewModel VacationsViewModel;       //6
+		public EmployeeCostCenterViewModel CostCenterViewModel;       //
 
 		private int lastTab;
 		private int currentTab;

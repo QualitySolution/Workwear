@@ -36,6 +36,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.datepicker.Date = new global::System.DateTime(0);
 			this.datepicker.IsEditable = true;
 			this.datepicker.AutoSeparation = false;
+			this.datepicker.HideButtonClearDate = false;
 			this.ytable2.Add(this.datepicker);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable2[this.datepicker]));
 			w1.TopAttach = ((uint)(1));

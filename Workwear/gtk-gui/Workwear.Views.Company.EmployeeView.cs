@@ -152,6 +152,10 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label label30;
 
+		private global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView employeecostcentrview1;
+
+		private global::Gtk.Label label32;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -242,7 +246,7 @@ namespace Workwear.Views.Company
 			this.notebook1 = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 1;
+			this.notebook1.CurrentPage = 7;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -262,6 +266,7 @@ namespace Workwear.Views.Company
 			this.dateBirth.Date = new global::System.DateTime(0);
 			this.dateBirth.IsEditable = true;
 			this.dateBirth.AutoSeparation = true;
+			this.dateBirth.HideButtonClearDate = false;
 			this.table1.Add(this.dateBirth);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.dateBirth]));
 			w11.TopAttach = ((uint)(4));
@@ -281,6 +286,7 @@ namespace Workwear.Views.Company
 			this.dateChangePosition.Date = new global::System.DateTime(0);
 			this.dateChangePosition.IsEditable = true;
 			this.dateChangePosition.AutoSeparation = true;
+			this.dateChangePosition.HideButtonClearDate = false;
 			this.table1.Add(this.dateChangePosition);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.dateChangePosition]));
 			w12.TopAttach = ((uint)(2));
@@ -298,6 +304,7 @@ namespace Workwear.Views.Company
 			this.dateDismiss.Date = new global::System.DateTime(0);
 			this.dateDismiss.IsEditable = true;
 			this.dateDismiss.AutoSeparation = true;
+			this.dateDismiss.HideButtonClearDate = false;
 			this.table1.Add(this.dateDismiss);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.dateDismiss]));
 			w13.TopAttach = ((uint)(3));
@@ -315,6 +322,7 @@ namespace Workwear.Views.Company
 			this.dateHire.Date = new global::System.DateTime(0);
 			this.dateHire.IsEditable = true;
 			this.dateHire.AutoSeparation = true;
+			this.dateHire.HideButtonClearDate = false;
 			this.table1.Add(this.dateHire);
 			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.dateHire]));
 			w14.TopAttach = ((uint)(1));
@@ -957,9 +965,22 @@ namespace Workwear.Views.Company
 			this.label30.LabelProp = global::Mono.Unix.Catalog.GetString("Отпуска");
 			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label30);
 			this.label30.ShowAll();
+			// Container child notebook1.Gtk.Notebook+NotebookChild
+			this.employeecostcentrview1 = new global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView();
+			this.employeecostcentrview1.Events = ((global::Gdk.EventMask)(256));
+			this.employeecostcentrview1.Name = "employeecostcentrview1";
+			this.notebook1.Add(this.employeecostcentrview1);
+			global::Gtk.Notebook.NotebookChild w75 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeecostcentrview1]));
+			w75.Position = 7;
+			// Notebook tab
+			this.label32 = new global::Gtk.Label();
+			this.label32.Name = "label32";
+			this.label32.LabelProp = global::Mono.Unix.Catalog.GetString("Затраты");
+			this.notebook1.SetTabLabel(this.employeecostcentrview1, this.label32);
+			this.label32.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
-			global::Gtk.Box.BoxChild w75 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
-			w75.Position = 1;
+			global::Gtk.Box.BoxChild w76 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
+			w76.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
