@@ -21,6 +21,12 @@ namespace Workwear.ViewModels.Import
 			get => convertPersonnelNumber;
 			set => SetField(ref convertPersonnelNumber, value);
 		}
+		
+		private bool dontCreateNewEmployees;
+		public virtual bool DontCreateNewEmployees {
+			get => dontCreateNewEmployees;
+			set => SetField(ref dontCreateNewEmployees, value);
+		}
 
 		#region Уровни подразделение
 		private bool subdivisionLevelEnable;

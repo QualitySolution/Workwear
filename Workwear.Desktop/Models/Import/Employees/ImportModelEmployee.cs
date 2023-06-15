@@ -41,6 +41,8 @@ namespace Workwear.Models.Import.Employees
 		                                            "являются Фамилия и Имя или ФИО.";
 
 		#endregion
+		
+		public SettingsMatchEmployeesViewModel Settings => matchSettingsViewModel;
 
 		protected override bool HasRequiredDataTypes(IEnumerable<DataTypeEmployee> dataTypes) => 
 			dataTypes.Contains(DataTypeEmployee.Fio) 

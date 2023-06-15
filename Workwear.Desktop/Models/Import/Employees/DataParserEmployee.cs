@@ -143,11 +143,18 @@ namespace Workwear.Models.Import.Employees
 				var employee = row.Employees.FirstOrDefault();
 
 				if(employee == null) {
-					employee = new EmployeeCard {
-						Comment = "Импортирован из файла " + model.FileName,
-						CreatedbyUser = userService?.GetCurrentUser()
-					};
-					row.Employees.Add(employee);
+					if(model.Settings.DontCreateNewEmployees) {
+						row.ProgramSkipped = true;
+						row.ProgramSkippedReason = "Не создаем новых сотрудников";
+						continue;
+					}
+					else {
+						employee = new EmployeeCard {
+							Comment = "Импортирован из файла " + model.FileName,
+							CreatedbyUser = userService?.GetCurrentUser()
+						};
+						row.Employees.Add(employee);	
+					}
 				}
 
 				foreach(var column in meaningfulColumns.OrderBy(x => x.DataType.ValueSetOrder)) {
