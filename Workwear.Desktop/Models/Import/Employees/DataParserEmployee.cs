@@ -234,36 +234,50 @@ namespace Workwear.Models.Import.Employees
 			SettingsMatchEmployeesViewModel settings, 
 			IProgressBarDisplayable progress)
 		{
-			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
+			progress.Start(4, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = model.GetColumnForDataType(DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn))
-							.Where(x => !String.IsNullOrWhiteSpace(x))
-							.Distinct().ToArray();
+			var withPersonalNumbers = new Dictionary<string, SheetRowEmployee>();
+			var withoutPersonalNumbers = new List<SheetRowEmployee>();
+
+			//Сортируем строки по наличию табельного номера
+			foreach(var row in list) {
+				var number = EmployeeParse.GetPersonalNumber(settings, row, numberColumn);
+				if(String.IsNullOrWhiteSpace(number)) {
+					withoutPersonalNumbers.Add(row);
+				}
+				else {
+					if(withPersonalNumbers.ContainsKey(number)) {
+						row.ProgramSkipped = true;
+						row.ProgramSkippedReason = "Дубликат табельного номера";
+					}
+					else {
+						withPersonalNumbers.Add(number, row);
+					}
+				}
+			}
 			
+			progress.Add(); //Получаем из базы существующих сотрудников с табельными номерами
+			var numbers = withPersonalNumbers.Keys.ToArray();
 			var query = uow.Session.QueryOver<EmployeeCard>();
 			var exists = query
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
 				.List();
-
-			progress.Add();
+			
+			progress.Add(); // Заполняем существующими сотрудниками строки
 			foreach(var employee in exists) {
-				var found = list.Where(x => 
-					EmployeeParse.GetPersonalNumber(settings, x, numberColumn) == employee.PersonnelNumber).ToArray();
-				found.First().Employees.Add(employee);
+				withPersonalNumbers[employee.PersonnelNumber].Employees.Add(employee);
 			}
-
-			//Пропускаем дубликаты Табельных номеров в файле
-			progress.Add();
-			var groups = list.GroupBy(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn));
-			foreach(var group in groups) {
-				if(String.IsNullOrWhiteSpace(group.Key)) {
-					//Если табельного номера нет проверяем по FIO
-					MatchByName(uow, group, model, progress);
+			
+			progress.Add(); //Удаляем уволенных, если есть действующие
+			foreach(var row in list) {
+				if(row.Employees.Count > 1 && row.Employees.Any(x => x.DismissDate == null)) {
+					row.Employees.RemoveAll(x => x.DismissDate != null);
 				}
-
-				foreach(var item in group.Skip(1)) {
-					item.ProgramSkipped = true;
-				}
+			}
+			
+			progress.Add(); //Обрабатываем строки без табельных номеров
+			if(withoutPersonalNumbers.Any()) {
+				MatchByName(uow, withoutPersonalNumbers, model, progress);
 			}
 			progress.Close();
 		}
