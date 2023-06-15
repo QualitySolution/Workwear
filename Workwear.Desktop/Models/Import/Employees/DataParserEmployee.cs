@@ -77,6 +77,10 @@ namespace Workwear.Models.Import.Employees
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSex());
+			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeEmployee.CardNumber, e => e.CardNumber, new []{
+				"CardNumber",
+				"Номер карточки"
+			}));
 			SupportDataTypes.Add(new DataTypePersonalNumber(settings));
 			SupportDataTypes.Add(new DataTypePhone(phoneFormatter));
 			SupportDataTypes.Add(new DataTypeSimpleDate(
