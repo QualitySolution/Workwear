@@ -62,7 +62,8 @@ namespace Workwear.Models.Import.Employees
 				new []{
 					"LAST_NAME",
 					"фамилия",
-					"LAST NAME"
+					"LAST NAME",
+					"surname"
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSimpleString(
