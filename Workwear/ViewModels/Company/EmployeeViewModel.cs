@@ -241,6 +241,9 @@ namespace Workwear.ViewModels.Company
 
 		public bool SyncLkPassword()
 		{
+			if(!lkUserManagerService.CanConnect)
+				return true;
+		
 			try {
 				if(String.IsNullOrWhiteSpace(LkPassword) || String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
 					if(Entity.LkRegistered) {

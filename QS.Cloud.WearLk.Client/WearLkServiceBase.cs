@@ -29,6 +29,8 @@ namespace QS.Cloud.WearLk.Client
 			}
 		}
 		
+		public bool CanConnect => !String.IsNullOrEmpty(sessionId);
+		
 		public virtual void Dispose()
 		{
 			channel?.ShutdownAsync().Wait();
