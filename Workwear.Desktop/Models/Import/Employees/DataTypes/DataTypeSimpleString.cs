@@ -13,9 +13,10 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 		private readonly PropertyInfo property;
 		private int maxLenght;
 
-		public DataTypeSimpleString(DataTypeEmployee data, Expression<Func<EmployeeCard, string>> propertyName, string[] names) : base(data) {
+		public DataTypeSimpleString(DataTypeEmployee data, Expression<Func<EmployeeCard, string>> propertyName, string[] names = null) : base(data) {
 			this.property = PropertyUtil.GetPropertyInfo(propertyName) ?? throw new ArgumentNullException(nameof(propertyName));
-			ColumnNameKeywords.AddRange(names.Select(x => x.ToLower()));
+			if (names != null) 
+				ColumnNameKeywords.AddRange(names.Select(x => x.ToLower()));
 			
 			var att = property.GetCustomAttributes(typeof(StringLengthAttribute), true);
 			if(att.Length == 0)

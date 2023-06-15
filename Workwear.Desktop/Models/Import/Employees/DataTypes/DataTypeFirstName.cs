@@ -8,12 +8,9 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 		private readonly PersonNames personNames;
 
 		public DataTypeFirstName(PersonNames personNames) : base(
-			DataTypeEmployee.FirstName, x => x.FirstName, new []{					
-				"first_name",
-				"имя",
-				"first name"
-          }) {
+			DataTypeEmployee.FirstName, x => x.FirstName) {
 			this.personNames = personNames;
+			ColumnNameRegExp = @"^(имя|first(_| )name|name)";
 		}
 
 		protected override ChangeState GetChangeState(SheetRowEmployee row, string value, string original) {

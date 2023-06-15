@@ -59,7 +59,7 @@ namespace Workwear.Views.Stock
 		private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
-					.AddColumn ("Наименование").AddReadOnlyTextRenderer(e => e.Nomenclature?.Name)
+					.AddColumn ("Наименование").Resizable().AddReadOnlyTextRenderer(e => e.Nomenclature?.Name)
 					.WrapWidth(700)
 					.AddColumn("Размер").MinWidth(60)
 						.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)

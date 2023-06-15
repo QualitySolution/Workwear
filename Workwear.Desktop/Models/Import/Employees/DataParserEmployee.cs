@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -12,6 +13,7 @@ using Workwear.Measurements;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees
@@ -22,15 +24,20 @@ namespace Workwear.Models.Import.Employees
 		private readonly IUserService userService;
 		private readonly SizeService sizeService;
 		private readonly PhoneFormatter phoneFormatter;
+		private readonly FeaturesService featuresService;
+		
+		private HashSet<string> cardNumbers = new HashSet<string>();
 
 		public DataParserEmployee(
 			PersonNames personNames,
 			SizeService sizeService,
 			PhoneFormatter phoneFormatter, 
-			IUserService userService = null)
+			FeaturesService featuresService,
+			IUserService userService = null) 
 		{
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
 			this.phoneFormatter = phoneFormatter ?? throw new ArgumentException(nameof(phoneFormatter));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.userService = userService;
 			this.sizeService = sizeService;
 		}
@@ -39,15 +46,17 @@ namespace Workwear.Models.Import.Employees
 		public void CreateDatatypes(IUnitOfWork uow, IImportModel model, SettingsMatchEmployeesViewModel settings) {
 			SupportDataTypes.Add(new DataTypeNameWithInitials());
 			SupportDataTypes.Add(new DataTypeFio(personNames));
-			SupportDataTypes.Add(new DataTypeSimpleString(
-				DataTypeEmployee.CardKey,
-				x => x.CardKey,
-				new []{
-					"CARD_KEY",
-					"card",
-					"uid"
-				}
-			));
+			if(featuresService.Available(WorkwearFeature.IdentityCards))
+				SupportDataTypes.Add(item: new DataTypeSimpleString(
+							DataTypeEmployee.CardKey,
+							x => x.CardKey,
+							new[] {
+								"CARD_KEY",
+								"card",
+								"uid"
+							}
+						)
+					);
 			SupportDataTypes.Add(new DataTypeFirstName(personNames));
 			SupportDataTypes.Add(new DataTypeSimpleString(
 				DataTypeEmployee.LastName,
@@ -55,7 +64,8 @@ namespace Workwear.Models.Import.Employees
 				new []{
 					"LAST_NAME",
 					"фамилия",
-					"LAST NAME"
+					"LAST NAME",
+					"surname"
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSimpleString(
@@ -69,6 +79,7 @@ namespace Workwear.Models.Import.Employees
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSex());
+			SupportDataTypes.Add(new DataTypeCardNumber(cardNumbers, model.CountersViewModel));
 			SupportDataTypes.Add(new DataTypePersonalNumber(settings));
 			SupportDataTypes.Add(new DataTypePhone(phoneFormatter));
 			SupportDataTypes.Add(new DataTypeSimpleDate(
@@ -135,11 +146,18 @@ namespace Workwear.Models.Import.Employees
 				var employee = row.Employees.FirstOrDefault();
 
 				if(employee == null) {
-					employee = new EmployeeCard {
-						Comment = "Импортирован из файла " + model.FileName,
-						CreatedbyUser = userService?.GetCurrentUser()
-					};
-					row.Employees.Add(employee);
+					if(model.Settings.DontCreateNewEmployees) {
+						row.ProgramSkipped = true;
+						row.ProgramSkippedReason = "Не создаем новых сотрудников";
+						continue;
+					}
+					else {
+						employee = new EmployeeCard {
+							Comment = "Импортирован из файла " + model.FileName,
+							CreatedbyUser = userService?.GetCurrentUser()
+						};
+						row.Employees.Add(employee);	
+					}
 				}
 
 				foreach(var column in meaningfulColumns.OrderBy(x => x.DataType.ValueSetOrder)) {
@@ -226,36 +244,53 @@ namespace Workwear.Models.Import.Employees
 			SettingsMatchEmployeesViewModel settings, 
 			IProgressBarDisplayable progress)
 		{
-			progress.Start(2, text: "Сопоставление с существующими сотрудниками");
+			progress.Start(4, text: "Сопоставление с существующими сотрудниками");
 			var numberColumn = model.GetColumnForDataType(DataTypeEmployee.PersonnelNumber);
-			var numbers = list.Select(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn))
-							.Where(x => !String.IsNullOrWhiteSpace(x))
-							.Distinct().ToArray();
+			var withPersonalNumbers = new Dictionary<string, SheetRowEmployee>();
+			var withoutPersonalNumbers = new List<SheetRowEmployee>();
+
+			//Сортируем строки по наличию табельного номера
+			foreach(var row in list) {
+				var number = EmployeeParse.GetPersonalNumber(settings, row, numberColumn);
+				if(String.IsNullOrWhiteSpace(number)) {
+					withoutPersonalNumbers.Add(row);
+				}
+				else {
+					if(withPersonalNumbers.ContainsKey(number)) {
+						row.ProgramSkipped = true;
+						row.ProgramSkippedReason = "Дубликат табельного номера";
+					}
+					else {
+						withPersonalNumbers.Add(number, row);
+					}
+				}
+			}
 			
+			progress.Add(); //Получаем из базы существующих сотрудников с табельными номерами
+			var numbers = withPersonalNumbers.Keys.ToArray();
 			var query = uow.Session.QueryOver<EmployeeCard>();
 			var exists = query
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
+				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
+				.Fetch(SelectMode.Fetch, x => x.Post)
 				.List();
-
-			progress.Add();
+			
+			progress.Add(); // Заполняем существующими сотрудниками строки
 			foreach(var employee in exists) {
-				var found = list.Where(x => 
-					EmployeeParse.GetPersonalNumber(settings, x, numberColumn) == employee.PersonnelNumber).ToArray();
-				found.First().Employees.Add(employee);
+				withPersonalNumbers[employee.PersonnelNumber].Employees.Add(employee);
 			}
-
-			//Пропускаем дубликаты Табельных номеров в файле
-			progress.Add();
-			var groups = list.GroupBy(x => EmployeeParse.GetPersonalNumber(settings, x, numberColumn));
-			foreach(var group in groups) {
-				if(String.IsNullOrWhiteSpace(group.Key)) {
-					//Если табельного номера нет проверяем по FIO
-					MatchByName(uow, group, model, progress);
+			
+			progress.Add(); //Удаляем уволенных, если есть действующие
+			foreach(var row in list) {
+				if(row.Employees.Count > 1 && row.Employees.Any(x => x.DismissDate == null)) {
+					row.Employees.RemoveAll(x => x.DismissDate != null);
 				}
-
-				foreach(var item in group.Skip(1)) {
-					item.ProgramSkipped = true;
-				}
+			}
+			
+			progress.Add(); //Обрабатываем строки без табельных номеров
+			if(withoutPersonalNumbers.Any()) {
+				MatchByName(uow, withoutPersonalNumbers, model, progress);
 			}
 			progress.Close();
 		}
@@ -291,6 +326,15 @@ namespace Workwear.Models.Import.Employees
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
+			}
+			progress.Add(text: "Загружаем номера карточек");
+			var cardNumberColumn = model.GetColumnForDataType(DataTypeEmployee.CardNumber);
+			if(cardNumberColumn != null) {
+				var exist = uow.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.CardNumber != null && x.CardNumber != String.Empty)
+					.Select(x => x.CardNumber)
+					.List<string>();
+				cardNumbers.UnionWith(exist);	
 			}
 			progress.Close();
 		}

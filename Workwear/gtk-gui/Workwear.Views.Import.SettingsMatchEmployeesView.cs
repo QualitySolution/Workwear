@@ -8,6 +8,8 @@ namespace Workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yCheckButton checkConvertPersonnelNumber;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkDontCreateEmployees;
+
 		private global::Gtk.Frame frame1;
 
 		private global::Gtk.Alignment GtkAlignment;
@@ -22,7 +24,7 @@ namespace Workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
-		private global::Gtk.Label GtkLabel1;
+		private global::Gtk.Label GtkLabel2;
 
 		protected virtual void Build()
 		{
@@ -33,7 +35,7 @@ namespace Workwear.Views.Import
 			// Container child Workwear.Views.Import.SettingsMatchEmployeesView.Gtk.Container+ContainerChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(2));
+			this.ytable1.NRows = ((uint)(3));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -47,6 +49,19 @@ namespace Workwear.Views.Import
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.checkConvertPersonnelNumber]));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.checkDontCreateEmployees = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkDontCreateEmployees.CanFocus = true;
+			this.checkDontCreateEmployees.Name = "checkDontCreateEmployees";
+			this.checkDontCreateEmployees.Label = global::Mono.Unix.Catalog.GetString("Не создавать сотрудников (только обновление)");
+			this.checkDontCreateEmployees.DrawIndicator = true;
+			this.checkDontCreateEmployees.UseUnderline = true;
+			this.ytable1.Add(this.checkDontCreateEmployees);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.checkDontCreateEmployees]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.frame1 = new global::Gtk.Frame();
 			this.frame1.Name = "frame1";
@@ -70,10 +85,10 @@ namespace Workwear.Views.Import
 			this.checkSubdivisionLevelEnable.DrawIndicator = true;
 			this.checkSubdivisionLevelEnable.UseUnderline = true;
 			this.ytable2.Add(this.checkSubdivisionLevelEnable);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkSubdivisionLevelEnable]));
-			w2.RightAttach = ((uint)(2));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkSubdivisionLevelEnable]));
+			w3.RightAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.checkSubdivisionLevelReverse = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkSubdivisionLevelReverse.TooltipMarkup = "В колонке уровни подразделения идут в обратном порядке, то есть от младшего к ста" +
@@ -84,12 +99,12 @@ namespace Workwear.Views.Import
 			this.checkSubdivisionLevelReverse.DrawIndicator = true;
 			this.checkSubdivisionLevelReverse.UseUnderline = true;
 			this.ytable2.Add(this.checkSubdivisionLevelReverse);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkSubdivisionLevelReverse]));
-			w3.TopAttach = ((uint)(2));
-			w3.BottomAttach = ((uint)(3));
-			w3.RightAttach = ((uint)(2));
-			w3.XOptions = ((global::Gtk.AttachOptions)(0));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkSubdivisionLevelReverse]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.RightAttach = ((uint)(2));
+			w4.XOptions = ((global::Gtk.AttachOptions)(0));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.entrySubdivisionLevelSeparator = new global::Gamma.GtkWidgets.yEntry();
 			this.entrySubdivisionLevelSeparator.CanFocus = true;
@@ -98,37 +113,37 @@ namespace Workwear.Views.Import
 			this.entrySubdivisionLevelSeparator.WidthChars = 3;
 			this.entrySubdivisionLevelSeparator.InvisibleChar = '●';
 			this.ytable2.Add(this.entrySubdivisionLevelSeparator);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entrySubdivisionLevelSeparator]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.LeftAttach = ((uint)(1));
-			w4.RightAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entrySubdivisionLevelSeparator]));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
+			w5.LeftAttach = ((uint)(1));
+			w5.RightAttach = ((uint)(2));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Разделитель уровней:");
 			this.ytable2.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.GtkAlignment.Add(this.ytable2);
 			this.frame1.Add(this.GtkAlignment);
-			this.GtkLabel1 = new global::Gtk.Label();
-			this.GtkLabel1.Name = "GtkLabel1";
-			this.GtkLabel1.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Подразделения</b>");
-			this.GtkLabel1.UseMarkup = true;
-			this.frame1.LabelWidget = this.GtkLabel1;
+			this.GtkLabel2 = new global::Gtk.Label();
+			this.GtkLabel2.Name = "GtkLabel2";
+			this.GtkLabel2.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Подразделения</b>");
+			this.GtkLabel2.UseMarkup = true;
+			this.frame1.LabelWidget = this.GtkLabel2;
 			this.ytable1.Add(this.frame1);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.frame1]));
-			w8.TopAttach = ((uint)(1));
-			w8.BottomAttach = ((uint)(2));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.frame1]));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(3));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{
