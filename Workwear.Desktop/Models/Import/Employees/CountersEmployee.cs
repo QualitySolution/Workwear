@@ -20,5 +20,9 @@ namespace Workwear.Models.Import.Employees
 		SkipRows,
 		[Display(Name = "Несколько соответствий")]
 		MultiMatch,
+		[Display(Name = "Дубликатов номеров карточек")]
+		DuplicateCardNumbers,
+		[Display(Name = "Дубликатов табельных номеров")]
+		DuplicatePersonnelNumbers,
 	}
 }

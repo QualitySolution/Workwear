@@ -79,6 +79,7 @@ namespace Workwear.Views.Import {
 			eventboxLegendaChanged.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfChanged));
 			eventboxLegendaNotFound.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfNotFound));
 			eventboxLegendaAmbiguous.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfAmbiguous));
+			eventboxLegendaDublicate.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfDuplicate));
 			eventboxLegendaError.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfError));
 			eventboxLegendaSkipRows.ModifyBg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfSkipped));
 			labelLegendaWarning.ModifyFg(StateType.Normal, ColorUtil.Create(ExcelImportViewModel.ColorOfWarning));

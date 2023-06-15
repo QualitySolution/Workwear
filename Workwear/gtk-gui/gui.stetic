@@ -15231,7 +15231,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Import.ExcelImportView" design-size="1188 362">
+  <widget class="Gtk.Bin" id="Workwear.Views.Import.ExcelImportView" design-size="1852 592">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -15636,7 +15636,7 @@
                             <child>
                               <widget class="Gtk.Table" id="table2">
                                 <property name="MemberName" />
-                                <property name="NRows">8</property>
+                                <property name="NRows">9</property>
                                 <property name="RowSpacing">6</property>
                                 <property name="ColumnSpacing">6</property>
                                 <child>
@@ -15689,6 +15689,31 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <widget class="Gtk.EventBox" id="eventboxLegendaDublicate">
+                                    <property name="MemberName" />
+                                    <property name="Tooltip" translatable="yes">При сопоставлении данных из файла с данными в базе, найденно несколько вариантов подходящих значений. Программа не может однозначно понять какой из объектов необходимо обновлять.</property>
+                                    <child>
+                                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabel8">
+                                        <property name="MemberName" />
+                                        <property name="LabelProp" translatable="yes">Дубликат</property>
+                                      </widget>
+                                    </child>
+                                  </widget>
+                                  <packing>
+                                    <property name="TopAttach">4</property>
+                                    <property name="BottomAttach">5</property>
+                                    <property name="AutoSize">True</property>
+                                    <property name="XOptions">Fill</property>
+                                    <property name="YOptions">Fill</property>
+                                    <property name="XExpand">False</property>
+                                    <property name="XFill">True</property>
+                                    <property name="XShrink">False</property>
+                                    <property name="YExpand">False</property>
+                                    <property name="YFill">True</property>
+                                    <property name="YShrink">False</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <widget class="Gtk.EventBox" id="eventboxLegendaError">
                                     <property name="MemberName" />
                                     <child>
@@ -15699,8 +15724,8 @@
                                     </child>
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">4</property>
-                                    <property name="BottomAttach">5</property>
+                                    <property name="TopAttach">5</property>
+                                    <property name="BottomAttach">6</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>
@@ -15769,8 +15794,8 @@
                                     </child>
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">5</property>
-                                    <property name="BottomAttach">6</property>
+                                    <property name="TopAttach">6</property>
+                                    <property name="BottomAttach">7</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>
@@ -15787,8 +15812,8 @@
                                     <property name="MemberName" />
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">6</property>
-                                    <property name="BottomAttach">7</property>
+                                    <property name="TopAttach">7</property>
+                                    <property name="BottomAttach">8</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>
@@ -15806,8 +15831,8 @@
                                     <property name="LabelProp" translatable="yes">Предупреждение</property>
                                   </widget>
                                   <packing>
-                                    <property name="TopAttach">7</property>
-                                    <property name="BottomAttach">8</property>
+                                    <property name="TopAttach">8</property>
+                                    <property name="BottomAttach">9</property>
                                     <property name="AutoSize">True</property>
                                     <property name="XOptions">Fill</property>
                                     <property name="YOptions">Fill</property>

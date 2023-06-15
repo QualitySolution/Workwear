@@ -78,6 +78,10 @@ namespace Workwear.Views.Import
 
 		private global::Gamma.GtkWidgets.yLabel labelCountChangedEmployees;
 
+		private global::Gtk.EventBox eventboxLegendaDublicate;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel8;
+
 		private global::Gtk.EventBox eventboxLegendaError;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
@@ -381,7 +385,7 @@ namespace Workwear.Views.Import
 			this.GtkAlignment2.Name = "GtkAlignment2";
 			this.GtkAlignment2.LeftPadding = ((uint)(12));
 			// Container child GtkAlignment2.Gtk.Container+ContainerChild
-			this.table2 = new global::Gtk.Table(((uint)(8)), ((uint)(1)), false);
+			this.table2 = new global::Gtk.Table(((uint)(9)), ((uint)(1)), false);
 			this.table2.Name = "table2";
 			this.table2.RowSpacing = ((uint)(6));
 			this.table2.ColumnSpacing = ((uint)(6));
@@ -417,6 +421,23 @@ namespace Workwear.Views.Import
 			w30.XOptions = ((global::Gtk.AttachOptions)(4));
 			w30.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
+			this.eventboxLegendaDublicate = new global::Gtk.EventBox();
+			this.eventboxLegendaDublicate.TooltipMarkup = "При сопоставлении данных из файла с данными в базе, найденно несколько вариантов " +
+				"подходящих значений. Программа не может однозначно понять какой из объектов необ" +
+				"ходимо обновлять.";
+			this.eventboxLegendaDublicate.Name = "eventboxLegendaDublicate";
+			// Container child eventboxLegendaDublicate.Gtk.Container+ContainerChild
+			this.ylabel8 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel8.Name = "ylabel8";
+			this.ylabel8.LabelProp = global::Mono.Unix.Catalog.GetString("Дубликат");
+			this.eventboxLegendaDublicate.Add(this.ylabel8);
+			this.table2.Add(this.eventboxLegendaDublicate);
+			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaDublicate]));
+			w32.TopAttach = ((uint)(4));
+			w32.BottomAttach = ((uint)(5));
+			w32.XOptions = ((global::Gtk.AttachOptions)(4));
+			w32.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
 			this.eventboxLegendaError = new global::Gtk.EventBox();
 			this.eventboxLegendaError.Name = "eventboxLegendaError";
 			// Container child eventboxLegendaError.Gtk.Container+ContainerChild
@@ -425,11 +446,11 @@ namespace Workwear.Views.Import
 			this.ylabel6.LabelProp = global::Mono.Unix.Catalog.GetString("Неверный формат");
 			this.eventboxLegendaError.Add(this.ylabel6);
 			this.table2.Add(this.eventboxLegendaError);
-			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaError]));
-			w32.TopAttach = ((uint)(4));
-			w32.BottomAttach = ((uint)(5));
-			w32.XOptions = ((global::Gtk.AttachOptions)(4));
-			w32.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w34 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaError]));
+			w34.TopAttach = ((uint)(5));
+			w34.BottomAttach = ((uint)(6));
+			w34.XOptions = ((global::Gtk.AttachOptions)(4));
+			w34.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.eventboxLegendaNew = new global::Gamma.GtkWidgets.yEventBox();
 			this.eventboxLegendaNew.Name = "eventboxLegendaNew";
@@ -439,9 +460,9 @@ namespace Workwear.Views.Import
 			this.labelNew.LabelProp = global::Mono.Unix.Catalog.GetString("Новые");
 			this.eventboxLegendaNew.Add(this.labelNew);
 			this.table2.Add(this.eventboxLegendaNew);
-			global::Gtk.Table.TableChild w34 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaNew]));
-			w34.XOptions = ((global::Gtk.AttachOptions)(4));
-			w34.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w36 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaNew]));
+			w36.XOptions = ((global::Gtk.AttachOptions)(4));
+			w36.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.eventboxLegendaNotFound = new global::Gamma.GtkWidgets.yEventBox();
 			this.eventboxLegendaNotFound.Name = "eventboxLegendaNotFound";
@@ -451,11 +472,11 @@ namespace Workwear.Views.Import
 			this.labelLegendNotFound.LabelProp = global::Mono.Unix.Catalog.GetString("Не найдено");
 			this.eventboxLegendaNotFound.Add(this.labelLegendNotFound);
 			this.table2.Add(this.eventboxLegendaNotFound);
-			global::Gtk.Table.TableChild w36 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaNotFound]));
-			w36.TopAttach = ((uint)(2));
-			w36.BottomAttach = ((uint)(3));
-			w36.XOptions = ((global::Gtk.AttachOptions)(4));
-			w36.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w38 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaNotFound]));
+			w38.TopAttach = ((uint)(2));
+			w38.BottomAttach = ((uint)(3));
+			w38.XOptions = ((global::Gtk.AttachOptions)(4));
+			w38.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.eventboxLegendaSkipRows = new global::Gamma.GtkWidgets.yEventBox();
 			this.eventboxLegendaSkipRows.Name = "eventboxLegendaSkipRows";
@@ -465,30 +486,30 @@ namespace Workwear.Views.Import
 			this.labelCountSkipRows.LabelProp = global::Mono.Unix.Catalog.GetString("Пропущенные");
 			this.eventboxLegendaSkipRows.Add(this.labelCountSkipRows);
 			this.table2.Add(this.eventboxLegendaSkipRows);
-			global::Gtk.Table.TableChild w38 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaSkipRows]));
-			w38.TopAttach = ((uint)(5));
-			w38.BottomAttach = ((uint)(6));
-			w38.XOptions = ((global::Gtk.AttachOptions)(4));
-			w38.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w40 = ((global::Gtk.Table.TableChild)(this.table2[this.eventboxLegendaSkipRows]));
+			w40.TopAttach = ((uint)(6));
+			w40.BottomAttach = ((uint)(7));
+			w40.XOptions = ((global::Gtk.AttachOptions)(4));
+			w40.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.hseparator1 = new global::Gtk.HSeparator();
 			this.hseparator1.Name = "hseparator1";
 			this.table2.Add(this.hseparator1);
-			global::Gtk.Table.TableChild w39 = ((global::Gtk.Table.TableChild)(this.table2[this.hseparator1]));
-			w39.TopAttach = ((uint)(6));
-			w39.BottomAttach = ((uint)(7));
-			w39.XOptions = ((global::Gtk.AttachOptions)(4));
-			w39.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w41 = ((global::Gtk.Table.TableChild)(this.table2[this.hseparator1]));
+			w41.TopAttach = ((uint)(7));
+			w41.BottomAttach = ((uint)(8));
+			w41.XOptions = ((global::Gtk.AttachOptions)(4));
+			w41.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.labelLegendaWarning = new global::Gamma.GtkWidgets.yLabel();
 			this.labelLegendaWarning.Name = "labelLegendaWarning";
 			this.labelLegendaWarning.LabelProp = global::Mono.Unix.Catalog.GetString("Предупреждение");
 			this.table2.Add(this.labelLegendaWarning);
-			global::Gtk.Table.TableChild w40 = ((global::Gtk.Table.TableChild)(this.table2[this.labelLegendaWarning]));
-			w40.TopAttach = ((uint)(7));
-			w40.BottomAttach = ((uint)(8));
-			w40.XOptions = ((global::Gtk.AttachOptions)(4));
-			w40.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w42 = ((global::Gtk.Table.TableChild)(this.table2[this.labelLegendaWarning]));
+			w42.TopAttach = ((uint)(8));
+			w42.BottomAttach = ((uint)(9));
+			w42.XOptions = ((global::Gtk.AttachOptions)(4));
+			w42.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.GtkAlignment2.Add(this.table2);
 			this.frame2.Add(this.GtkAlignment2);
 			this.GtkLabel8 = new global::Gtk.Label();
@@ -497,19 +518,19 @@ namespace Workwear.Views.Import
 			this.GtkLabel8.UseMarkup = true;
 			this.frame2.LabelWidget = this.GtkLabel8;
 			this.vbox5.Add(this.frame2);
-			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.frame2]));
-			w43.Position = 0;
-			w43.Expand = false;
-			w43.Fill = false;
+			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.frame2]));
+			w45.Position = 0;
+			w45.Expand = false;
+			w45.Fill = false;
 			this.hbox2.Add(this.vbox5);
-			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.vbox5]));
-			w44.PackType = ((global::Gtk.PackType)(1));
-			w44.Position = 1;
-			w44.Expand = false;
-			w44.Fill = false;
+			global::Gtk.Box.BoxChild w46 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.vbox5]));
+			w46.PackType = ((global::Gtk.PackType)(1));
+			w46.Position = 1;
+			w46.Expand = false;
+			w46.Fill = false;
 			this.notebookSteps.Add(this.hbox2);
-			global::Gtk.Notebook.NotebookChild w45 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox2]));
-			w45.Position = 2;
+			global::Gtk.Notebook.NotebookChild w47 = ((global::Gtk.Notebook.NotebookChild)(this.notebookSteps[this.hbox2]));
+			w47.Position = 2;
 			// Notebook tab
 			this.label4 = new global::Gtk.Label();
 			this.label4.Name = "label4";
@@ -517,17 +538,17 @@ namespace Workwear.Views.Import
 			this.notebookSteps.SetTabLabel(this.hbox2, this.label4);
 			this.label4.ShowAll();
 			this.vbox1.Add(this.notebookSteps);
-			global::Gtk.Box.BoxChild w46 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
-			w46.Position = 0;
-			w46.Expand = false;
+			global::Gtk.Box.BoxChild w48 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.notebookSteps]));
+			w48.Position = 0;
+			w48.Expand = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.progressTotal = new global::QS.Widgets.ProgressWidget();
 			this.progressTotal.Name = "progressTotal";
 			this.vbox1.Add(this.progressTotal);
-			global::Gtk.Box.BoxChild w47 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.progressTotal]));
-			w47.Position = 1;
-			w47.Expand = false;
-			w47.Fill = false;
+			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.progressTotal]));
+			w49.Position = 1;
+			w49.Expand = false;
+			w49.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -538,8 +559,8 @@ namespace Workwear.Views.Import
 			this.treeviewRows.Name = "treeviewRows";
 			this.GtkScrolledWindow.Add(this.treeviewRows);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w49.Position = 2;
+			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w51.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hboxRowActions = new global::Gamma.GtkWidgets.yHBox();
 			this.hboxRowActions.Name = "hboxRowActions";
@@ -551,15 +572,15 @@ namespace Workwear.Views.Import
 			this.buttonIgnore.UseUnderline = true;
 			this.buttonIgnore.Label = global::Mono.Unix.Catalog.GetString("Не загружать");
 			this.hboxRowActions.Add(this.buttonIgnore);
-			global::Gtk.Box.BoxChild w50 = ((global::Gtk.Box.BoxChild)(this.hboxRowActions[this.buttonIgnore]));
-			w50.Position = 0;
-			w50.Expand = false;
-			w50.Fill = false;
+			global::Gtk.Box.BoxChild w52 = ((global::Gtk.Box.BoxChild)(this.hboxRowActions[this.buttonIgnore]));
+			w52.Position = 0;
+			w52.Expand = false;
+			w52.Fill = false;
 			this.vbox1.Add(this.hboxRowActions);
-			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hboxRowActions]));
-			w51.Position = 3;
-			w51.Expand = false;
-			w51.Fill = false;
+			global::Gtk.Box.BoxChild w53 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hboxRowActions]));
+			w53.Position = 3;
+			w53.Expand = false;
+			w53.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

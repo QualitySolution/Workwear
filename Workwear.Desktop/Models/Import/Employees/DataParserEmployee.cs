@@ -25,6 +25,8 @@ namespace Workwear.Models.Import.Employees
 		private readonly SizeService sizeService;
 		private readonly PhoneFormatter phoneFormatter;
 		private readonly FeaturesService featuresService;
+		
+		private HashSet<string> cardNumbers = new HashSet<string>();
 
 		public DataParserEmployee(
 			PersonNames personNames,
@@ -77,10 +79,7 @@ namespace Workwear.Models.Import.Employees
 				}
 			));
 			SupportDataTypes.Add(new DataTypeSex());
-			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeEmployee.CardNumber, e => e.CardNumber, new []{
-				"CardNumber",
-				"Номер карточки"
-			}));
+			SupportDataTypes.Add(new DataTypeCardNumber(cardNumbers, model.CountersViewModel));
 			SupportDataTypes.Add(new DataTypePersonalNumber(settings));
 			SupportDataTypes.Add(new DataTypePhone(phoneFormatter));
 			SupportDataTypes.Add(new DataTypeSimpleDate(
@@ -327,6 +326,15 @@ namespace Workwear.Models.Import.Employees
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
+			}
+			progress.Add(text: "Загружаем номера карточек");
+			var cardNumberColumn = model.GetColumnForDataType(DataTypeEmployee.CardNumber);
+			if(cardNumberColumn != null) {
+				var exist = uow.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.CardNumber != null && x.CardNumber != String.Empty)
+					.Select(x => x.CardNumber)
+					.List<string>();
+				cardNumbers.UnionWith(exist);	
 			}
 			progress.Close();
 		}
