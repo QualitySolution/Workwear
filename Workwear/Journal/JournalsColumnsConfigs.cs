@@ -132,7 +132,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник")
 					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
 					.AddColumn ("Наименование")
-					.AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
+					.AddTextRenderer(e => e.ItemName).WrapWidth(1000)
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)

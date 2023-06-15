@@ -14,6 +14,7 @@ using QS.Project.Journal.DataLoader;
 using QS.Utilities;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Company;
@@ -52,6 +53,7 @@ namespace workwear.Journal.ViewModels.Company
 			ItemsType itemTypesAlias = null;
 			MeasurementUnits unitsAlias = null;
 			EmployeeIssueOperation removeOperationAlias = null;
+			ProtectionTools protectionToolsAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
@@ -83,8 +85,8 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
-						JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
@@ -102,6 +104,8 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+						.Select(() => expenseOperationAlias.ManualOperation).WithAlias(() => resultAlias.ManualOperation)
+						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 			else {
 				query
@@ -110,8 +114,8 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias,
-						JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
@@ -130,6 +134,8 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+						.Select(() => expenseOperationAlias.ManualOperation).WithAlias(() => resultAlias.ManualOperation)
+						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 				query = query.OrderBy(() => employeeCardAlias.LastName).Asc
 					.ThenBy(() => employeeCardAlias.FirstName).Asc
@@ -143,7 +149,10 @@ namespace workwear.Journal.ViewModels.Company
     public class EmployeeBalanceJournalNode
     {
 	    public int Id { get; set; }
+	    public bool ManualOperation { get; set; }
 	    public string NomenclatureName { get; set;}
+	    public string ProtectionToolsName { get; set; }
+	    public string ItemName => ManualOperation ? ProtectionToolsName : NomenclatureName;
 	    public string UnitsName { get; set;}
 	    public string WearSize { get; set; }
 	    public string Height { get; set; }
@@ -156,7 +165,7 @@ namespace workwear.Journal.ViewModels.Company
 	    public decimal Percentage => ExpiryDate != null ? EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
-	    public string BalanceText => $"{Balance} {UnitsName}";
+	    public string BalanceText => $"{Balance} {UnitsName}"; //Пока не уверен, стоит ли единицу измерения получать для ручной операции
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 	    public string EmployeeName => String.Join(" ", LastName, FirstName, Patronymic);
 	    public string LastName { get; set; }
