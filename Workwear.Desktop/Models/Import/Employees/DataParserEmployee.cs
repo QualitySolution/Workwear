@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using QS.Project.Versioning.Product;
 using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
@@ -261,6 +261,9 @@ namespace Workwear.Models.Import.Employees
 			var query = uow.Session.QueryOver<EmployeeCard>();
 			var exists = query
 				.Where(x => x.PersonnelNumber.IsIn(numbers))
+				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
+				.Fetch(SelectMode.Fetch, x => x.Post)
 				.List();
 			
 			progress.Add(); // Заполняем существующими сотрудниками строки
