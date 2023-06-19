@@ -169,7 +169,7 @@ namespace Workwear.Domain.Stock.Documents
 				Height = issuedOperation.Height,
 				IssuedEmployeeOnOperation = issuedOperation,
 				Cost = issuedOperation.CalculateDepreciationCost(Date),
-				WearPercent = issuedOperation.CalculatePercentWear(Date),
+				WearPercent = issuedOperation.CalculatePercentWear(Date)
 			};
 
 			ObservableItems.Add(newItem);

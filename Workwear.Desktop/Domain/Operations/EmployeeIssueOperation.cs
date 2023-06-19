@@ -236,7 +236,7 @@ namespace Workwear.Domain.Operations
 			CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
 
 		public virtual decimal CalculateDepreciationCost(DateTime atDate) => 
-			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation.Cost);
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation?.Cost ?? 0m);
 
 		public virtual bool IsTouchDates(DateTime start, DateTime end) =>
 			(OperationTime <= end || StartOfUse <= end)

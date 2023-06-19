@@ -33,7 +33,7 @@ using Workwear.ViewModels.Stock;
 
 namespace workwear
 {
-	public partial class IncomeDocDlg : EntityDialogBase<Income>
+	public partial class  IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();

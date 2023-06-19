@@ -88,18 +88,17 @@ namespace workwear
 		public IncomeDocItemsView() {
 			this.Build();
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
-				.AddColumn ("Наименование").Resizable().AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
+				.AddColumn ("Наименование").Resizable().AddTextRenderer (e => e.ItemName).WrapWidth(700)
 				.AddColumn("Сертификат").Resizable().AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.SizeType != null 
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.WearSizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.WearSizeType != null 
 					                                  && incomeDoc.Operation == IncomeOperations.Enter)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
-					                                  && incomeDoc.Operation == IncomeOperations.Enter)
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.HeightType,onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.HeightType != null)
 				.AddColumn("Собственники").Resizable()
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
@@ -112,7 +111,7 @@ namespace workwear
 					.AddTextRenderer (e => "%", expand: false)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
 					.Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
-					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+					.AddTextRenderer (e => e.Units.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost)
 					.Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)

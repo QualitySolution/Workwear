@@ -14,6 +14,7 @@ using QSOrmProject.RepresentationModel;
 using QSProjectsLib;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 
@@ -38,8 +39,11 @@ namespace workwear.Representations.Organization
 			EmployeeBalanceVMNode resultAlias = null;
 			EmployeeIssueOperation expenseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
-			ItemsType itemTypesAlias = null;
-			MeasurementUnits unitsAlias = null;
+			ItemsType nomenclatureItemTypesAlias = null;
+			MeasurementUnits nomenclatureUnitsAlias = null;
+			ProtectionTools protectionToolsAlias = null;
+			ItemsType protectionToolsItemTypesAlias = null;
+			MeasurementUnits protectionToolsUnitsAlias  = null;
 			EmployeeIssueOperation removeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Size sizeAlias = null;
@@ -53,17 +57,22 @@ namespace workwear.Representations.Organization
 				.Select (Projections.Sum<EmployeeIssueOperation> (o => o.Returned));
 
 			var expenseList = query
-				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias)
+				.JoinAlias (() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(()=> expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-				.JoinAlias (() => nomenclatureAlias.Type, () => itemTypesAlias)
-				.JoinAlias (() => itemTypesAlias.Units, () => unitsAlias)
+				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
 				.JoinAlias (() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 				.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
 					.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select (() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
-					.Select (() => unitsAlias.Name).WithAlias (() => resultAlias.UnitsName)
+					.Select (() => nomenclatureUnitsAlias.Name).WithAlias (() => resultAlias.NomenclatureUnitsName)
+					.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
+					.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
 					.Select (() => sizeAlias.Name).WithAlias (() => resultAlias.WearSize)
 					.Select (() => heightAlias.Name).WithAlias (() => resultAlias.Height)
 					.Select (() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
@@ -80,7 +89,7 @@ namespace workwear.Representations.Organization
 			SetItemsSource (expenseList.ToList ());
 		}
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
-			.AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName).WrapWidth(700)
+			.AddColumn ("Наименование").AddTextRenderer (e => e.ItemName).WrapWidth(700)
 			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
@@ -105,7 +114,11 @@ namespace workwear.Representations.Organization
 		public int Id { get; set; }
 		[UseForSearch]
 		public string NomenclatureName { get; set;}
-		public string UnitsName { get; set;}
+		public string ProtectionToolsName { get; set; }
+		public string ItemName => NomenclatureName ?? ProtectionToolsName;
+		public string NomenclatureUnitsName { get; set;}
+		public string ProtectionToolsUnitsName { get; set;}
+		public string UnitsName => NomenclatureUnitsName ?? ProtectionToolsUnitsName;
 		public string WearSize { get; set; }
 		public string Height { get; set; }
 		public decimal AvgCost { get; set;}
