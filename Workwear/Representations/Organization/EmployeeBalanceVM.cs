@@ -90,6 +90,7 @@ namespace workwear.Representations.Organization
 		}
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.ItemName).WrapWidth(700)
+			.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
 			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)

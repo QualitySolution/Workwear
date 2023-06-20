@@ -33,7 +33,7 @@ using Workwear.ViewModels.Stock;
 
 namespace workwear
 {
-	public partial class  IncomeDocDlg : EntityDialogBase<Income>
+	public partial class IncomeDocDlg : EntityDialogBase<Income>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
@@ -244,6 +244,11 @@ namespace workwear
 		public override bool Save() {
 			logger.Info ("Запись документа...");
 			
+			logger.Info ("Валидация");
+			var valid = AutofacScope.Resolve<IValidator>();
+			if (!valid.Validate(Entity))
+				return false;
+			
 			logger.Info ("Проверка на дубли");
 			string duplicateMessage = "";
 			foreach(var duplicate in Entity.Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
@@ -252,11 +257,6 @@ namespace workwear
 				                    + $", общим количеством {duplicate.Sum(x=>x.Amount)} \n";
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactiveService.Question($"В документе есть повторяющиеся складские позиции:\n{duplicateMessage}\n Сохранить документ?"))
-				return false;
-
-			logger.Info ("Валидация");
-			var valid = AutofacScope.Resolve<IValidator>();
-			if (!valid.Validate(Entity))
 				return false;
 
 			var ask = new GtkQuestionDialogsInteractive();

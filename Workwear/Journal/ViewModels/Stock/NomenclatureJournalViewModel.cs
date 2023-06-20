@@ -110,7 +110,6 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
-		public int ProtectionToolsId { get; set; }
 		public bool Archival { get; set; }
 		public bool UseBarcode { get; set; }
 		public decimal SaleCost { get; set; }

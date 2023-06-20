@@ -164,7 +164,7 @@ namespace workwear
 					                           !(heightType is null) && SizeService.GetSize(UoW, heightType).Any();
 				else
 					buttonAddSizes.Sensitive = false;
-				buttonSetNomenclature.Sensitive = obj.Nomenclature == null;
+				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation.Nomenclature == null;
 			}
 			else
 				buttonAddSizes.Sensitive = false;

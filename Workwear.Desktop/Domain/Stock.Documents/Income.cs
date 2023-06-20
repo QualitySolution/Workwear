@@ -130,6 +130,13 @@ namespace Workwear.Domain.Stock.Documents
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
 							new[] { nameof(Items) });
 				}
+			if(Operation == IncomeOperations.Return)
+				foreach (var item in items) {
+					if(item.Nomenclature == null)
+						yield return new ValidationResult(
+							$"Во всех строках должна быть выбрана номенклатура.", 
+							new[] { nameof(Items) });
+				}
 		}
 
 		#endregion
@@ -169,7 +176,7 @@ namespace Workwear.Domain.Stock.Documents
 				Height = issuedOperation.Height,
 				IssuedEmployeeOnOperation = issuedOperation,
 				Cost = issuedOperation.CalculateDepreciationCost(Date),
-				WearPercent = issuedOperation.CalculatePercentWear(Date)
+				WearPercent = issuedOperation.CalculatePercentWear(Date),
 			};
 
 			ObservableItems.Add(newItem);
