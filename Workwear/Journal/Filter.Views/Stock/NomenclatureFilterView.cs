@@ -11,10 +11,10 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.Build();
 
 			entityItemsType.ViewModel = viewModel.EntryItemsType;
+			entityProtectionTools.ViewModel = viewModel.EntryProtectionTools;
 			yShowArchival.Binding
 				.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active)
 				.InitializeFromSource();
-			
 			ycheckbuttonOnlyWithRating.Binding.AddSource(ViewModel)
 				.AddBinding(wm => wm.OnlyWithRating, w => w.Active)
 				.AddBinding(v => v.OnlyWithRatingVisible, w => w.Visible)

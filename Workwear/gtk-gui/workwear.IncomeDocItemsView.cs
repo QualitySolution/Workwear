@@ -24,6 +24,8 @@ namespace workwear
 
 		private global::Gtk.Button buttonAddSizes;
 
+		private global::Gtk.Button buttonSetNomenclature;
+
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
@@ -131,28 +133,45 @@ namespace workwear
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.buttonSetNomenclature = new global::Gtk.Button();
+			this.buttonSetNomenclature.Sensitive = false;
+			this.buttonSetNomenclature.CanFocus = true;
+			this.buttonSetNomenclature.Name = "buttonSetNomenclature";
+			this.buttonSetNomenclature.UseUnderline = true;
+			this.buttonSetNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выбрать номенклатуру");
+			global::Gtk.Image w13 = new global::Gtk.Image();
+			w13.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
+			this.buttonSetNomenclature.Image = w13;
+			this.hbox1.Add(this.buttonSetNomenclature);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonSetNomenclature]));
+			w14.Position = 3;
+			w14.Expand = false;
+			w14.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox1.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w13.Position = 3;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
+			w15.Position = 4;
 			this.vbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-			w14.Position = 2;
-			w14.Expand = false;
-			w14.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
+			w16.Position = 2;
+			w16.Expand = false;
+			w16.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
+			this.buttonSetNomenclature.Hide();
 			this.Hide();
 			this.buttonFillBuhDoc.Clicked += new global::System.EventHandler(this.OnButtonFillBuhDocClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 			this.buttonAddSizes.Clicked += new global::System.EventHandler(this.OnButtonAddSizesClicked);
+			this.buttonSetNomenclature.Clicked += new global::System.EventHandler(this.OnButtonSetNomenclatureClicked);
 		}
 	}
 }
