@@ -229,6 +229,8 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Тип выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 						.AddTextRenderer(n => n.IssueTypeText)
+					.AddColumn("Тип размера").AddReadOnlyTextRenderer(x => x.TypeOfSize)
+					.AddColumn("Тип роста").AddReadOnlyTextRenderer(x => x.TypeOfHeight)
 					.Finish()
 			);
 
