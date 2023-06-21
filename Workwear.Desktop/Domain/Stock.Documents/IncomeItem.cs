@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using QS.BusinessCommon.Domain;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -35,17 +36,26 @@ namespace Workwear.Domain.Stock.Documents
 			get => nomenclature;
 			set { SetField (ref nomenclature, value, () => Nomenclature); }
 		}
-
+		
+		[Display (Name = "Наименование")]
+		public virtual string ItemName {
+			get => nomenclature?.Name ?? IssuedEmployeeOnOperation?.ProtectionTools.Name;
+		}
+		
 		[Display(Name = "Тип Роста")]
 		public virtual SizeType HeightType {
-			get => nomenclature.Type.HeightType;
+			get => nomenclature?.Type.HeightType;
 		}
 		
 		[Display(Name = "Тип размера одежды")]
 		public virtual SizeType WearSizeType {
-			get => nomenclature.Type.SizeType;
+			get => nomenclature?.Type.SizeType;
 		}
-
+		
+		[Display(Name = "Единица измерения")]
+		public virtual MeasurementUnits Units {
+			get => nomenclature?.Type.Units ?? IssuedEmployeeOnOperation?.ProtectionTools?.Type.Units;
+		}
 		private int amount;
 		[Display (Name = "Количество")]
 		[PropertyChangedAlso("Total")]

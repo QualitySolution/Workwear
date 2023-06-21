@@ -10,6 +10,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
@@ -44,6 +45,7 @@ namespace workwear.Journal.ViewModels.Stock
 			NomenclatureJournalNode resultAlias = null;
 			ItemsType itemsTypeAlias = null;
 			Nomenclature nomenclatureAlias = null;
+			ProtectionTools protectionToolsAlias = null;
 
 			var query = uow.Session.QueryOver<Nomenclature>(() => nomenclatureAlias);
 			if(Filter.ItemType != null)
@@ -52,6 +54,9 @@ namespace workwear.Journal.ViewModels.Stock
 				query.Where(x => !x.Archival);
 			if(Filter.OnlyWithRating)
 				query.Where(x => x.Rating != null);
+			if(Filter.ProtectionTools != null)
+				query.Left.JoinAlias(n => n.ProtectionTools, () => protectionToolsAlias)
+					.Where(() => protectionToolsAlias.Id == Filter.ProtectionTools.Id);
 
 			return query
 				.Left.JoinAlias(n => n.Type, () => itemsTypeAlias)
