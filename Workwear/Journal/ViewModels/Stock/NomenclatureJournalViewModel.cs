@@ -59,15 +59,14 @@ namespace workwear.Journal.ViewModels.Stock
 					() => nomenclatureAlias.Id,
 					() => nomenclatureAlias.Name,
 					() => nomenclatureAlias.Number,
-					() => itemsTypeAlias.Name,
-					() => nomenclatureAlias.Archival
-					))
+					() => itemsTypeAlias.Name
+				))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
-					.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
+				 	.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
 					.Select(x => x.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
 					.Select(x => x.SaleCost).WithAlias(() => resultAlias.SaleCost)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
