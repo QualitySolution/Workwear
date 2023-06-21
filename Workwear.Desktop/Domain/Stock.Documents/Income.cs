@@ -134,7 +134,7 @@ namespace Workwear.Domain.Stock.Documents
 				foreach (var item in items) {
 					if(item.Nomenclature == null)
 						yield return new ValidationResult(
-							$"Во всех строках должна быть выбрана номенклатура.", 
+							$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.", 
 							new[] { nameof(Items) });
 				}
 		}

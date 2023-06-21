@@ -153,7 +153,7 @@ namespace workwear
 		}
 		#endregion
 		private void YtreeItems_Selection_Changed(object sender, EventArgs e) {
-			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			buttonDel.Sensitive = buttonSetNomenclature.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 			if(ytreeItems.GetSelectedObject<IncomeItem>() != null) {
 				var obj = ytreeItems.GetSelectedObject<IncomeItem>();
 				var sizeType = obj.Nomenclature?.Type?.SizeType;
@@ -164,7 +164,7 @@ namespace workwear
 					                           !(heightType is null) && SizeService.GetSize(UoW, heightType).Any();
 				else
 					buttonAddSizes.Sensitive = false;
-				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation.Nomenclature == null;
+				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation?.Nomenclature == null; 
 			}
 			else
 				buttonAddSizes.Sensitive = false;
@@ -256,7 +256,7 @@ namespace workwear
 			var selectJournal = MainClass.MainWin.NavigationManager
 				.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
 
-			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation.ProtectionTools; 
+			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools; 
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
 			selectJournal.ViewModel.OnSelectResult += (s, je) =>  SetNomenclatureSelected(item,je.SelectedObjects.First().GetId());
 		}

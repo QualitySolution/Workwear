@@ -137,6 +137,8 @@ namespace workwear
 			DisableFeatures();
 
 			ybuttonReadInFile.Clicked += OnReadFileClicked;
+			
+			Entity.ObservableItems.ListContentChanged += (o, a) => ycomboOperation.Sensitive = !Entity.Items.Any();
 		}
 
 		private void OnReadFileClicked(object sender, EventArgs e) {
