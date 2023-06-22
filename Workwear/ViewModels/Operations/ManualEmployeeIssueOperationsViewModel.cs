@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Autofac;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -18,6 +21,7 @@ using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Measurements;
 using Workwear.Repository.Operations;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Operations 
@@ -25,18 +29,24 @@ namespace Workwear.ViewModels.Operations
 	public class ManualEmployeeIssueOperationsViewModel : UowDialogViewModelBase 
 	{
 		private readonly SizeService sizeService;
+		private readonly BarcodeService barcodeService;
+		private readonly IInteractiveQuestion interactive;
 		private readonly ProtectionTools protectionTools;
 		public ManualEmployeeIssueOperationsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			EmployeeIssueRepository repository,
 			SizeService sizeService,
+			BarcodeService barcodeService,
 			ILifetimeScope autofacScope,
+			IInteractiveQuestion interactive,
 			EmployeeCardItem cardItem = null,
 			EmployeeIssueOperation selectOperation = null,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, "Редактирование ручных операций") 
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(cardItem != null) {
 				Title = cardItem.ProtectionTools.Name;
 				protectionTools = cardItem.ProtectionTools;
@@ -129,11 +139,15 @@ namespace Workwear.ViewModels.Operations
 		public int Issued {
 			get => issued;
 			set {
-				if(SetField(ref issued, value))
+				if(SetField(ref issued, value)) {
+					
 					if(SelectOperation != null) {
 						SelectOperation.Issued = value;
 						RecalculateDatesOfSelectedOperation();
 					}
+					OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+					OnPropertyChanged(nameof(SensitiveBarcodesPrint));
+				}
 			}
 		}
 
@@ -152,6 +166,8 @@ namespace Workwear.ViewModels.Operations
 				OnPropertyChanged(nameof(VisibleBarcodes));
 				OnPropertyChanged(nameof(Sizes));
 				OnPropertyChanged(nameof(Heights));
+				OnPropertyChanged(nameof(BarcodesText));
+				OnPropertyChanged(nameof(BarcodesColor));
 			}
 		}
 
@@ -196,9 +212,53 @@ namespace Workwear.ViewModels.Operations
 		public bool VisibleBarcodes => (Nomenclature?.UseBarcode ?? false) || (SelectOperation?.BarcodeOperations.Any() ?? false);
 		public bool CanEditOperation => SelectOperation != null;
 		public bool CanAddOperation => EmployeeCardItem != null;
+		public bool SensitiveCreateBarcodes => (Nomenclature?.UseBarcode ?? false) && (SelectOperation?.BarcodeOperations.Count ?? 0) != Issued;
+		public bool SensitiveBarcodesPrint => Issued > 0 && ((Nomenclature?.UseBarcode ?? false) || (SelectOperation?.BarcodeOperations.Count ?? 0) > 0);
 
 		public event Action<ProtectionTools> SaveChanged;
 
+		#endregion
+		
+		#region Штрих коды
+
+		private bool NeedCreateBarcodes => (SelectOperation?.BarcodeOperations.Count ?? 0) == 0;
+		public string ButtonCreateOrRemoveBarcodesTitle => 
+			(Nomenclature?.UseBarcode ?? false) && (SelectOperation?.BarcodeOperations.Count ?? 0) > Issued
+				? "Обновить штрихкоды" : "Создать штрихкоды";
+		public string BarcodesText => NeedCreateBarcodes ? "необходимо создать" 
+			: String.Join("\n", SelectOperation.BarcodeOperations.Select(x => x.Barcode.Title));
+
+		public string BarcodesColor => NeedCreateBarcodes ? "red" : null;
+		public void ReleaseBarcodes() {
+			if(SelectOperation.Id == 0)
+				UoW.Save(SelectOperation);
+			
+			barcodeService.CreateOrRemove(UoW, new []{SelectOperation});
+			UoW.Commit();
+			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			OnPropertyChanged(nameof(BarcodesText));
+			OnPropertyChanged(nameof(BarcodesColor));
+		}
+
+		public void PrintBarcodes() {
+			if(SensitiveCreateBarcodes) {
+				if(interactive.Question("Количество созданных штрих кодов отличается от необходимого. Обновить штрихкоды?"))
+					ReleaseBarcodes();
+				else
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = "Штрихкоды",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> {
+					{"operations", new int[] {SelectOperation.Id}}
+				}
+			};
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}
 		#endregion
 
 		#region private

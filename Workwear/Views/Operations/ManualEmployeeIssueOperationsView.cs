@@ -66,10 +66,24 @@ namespace Workwear.Views.Operations
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
 
+			#region Штрихкоды
 			ylabelBarcodeTitle.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
-			labelBarcodes.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
+			labelBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.BarcodesText, w => w.Text)
+				.AddBinding(v => v.BarcodesColor, w => w.ForegroundColor)
+				.InitializeFromSource();
 			hboxBarcodeButtons.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
-			
+			buttonPrintBarcodes.Binding.AddBinding(ViewModel, v => v.SensitiveBarcodesPrint, w => w.Sensitive).InitializeFromSource();
+			buttonPrintBarcodes.Clicked += (sender, args) => ViewModel.PrintBarcodes();
+			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
+				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonCreateOrDeleteBarcodes.Clicked += (sender, args) => ViewModel.ReleaseBarcodes();
+			#endregion
+
+			#region Кнопки журнала
 			ybuttonDelete.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.CanEditOperation, w => w.Sensitive)
@@ -79,6 +93,7 @@ namespace Workwear.Views.Operations
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.CanAddOperation, w => w.Sensitive)
 				.InitializeFromSource();
+			#endregion
 		}
 		private void ButtonDeleteOnClicked(object sender, EventArgs e) => ViewModel.DeleteOnClicked(
 			ytreeviewOperations.GetSelectedObject<EmployeeIssueOperation>());
