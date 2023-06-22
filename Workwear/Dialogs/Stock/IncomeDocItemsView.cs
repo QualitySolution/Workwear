@@ -73,8 +73,10 @@ namespace workwear
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
-			if(e.PropertyName == nameof(IncomeDoc.Operation))
+			if(e.PropertyName == nameof(IncomeDoc.Operation)) {
 				buttonAddSizes.Visible = IncomeDoc.Operation == IncomeOperations.Enter;
+                buttonSetNomenclature.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+			}
 
 			if (e.PropertyName != IncomeDoc.GetPropertyName(x => x.Operation)) return;
 			var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
@@ -88,18 +90,17 @@ namespace workwear
 		public IncomeDocItemsView() {
 			this.Build();
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<IncomeItem> ()
-				.AddColumn ("Наименование").Resizable().AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(700)
+				.AddColumn ("Наименование").Resizable().AddTextRenderer (e => e.ItemName).WrapWidth(700)
+					.AddSetter((w, item) => w.Foreground = item.Nomenclature != null ? "black" : "red")
 				.AddColumn("Сертификат").Resizable().AddTextRenderer(e => e.Certificate).Editable()
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.SizeType != null 
-					                                  && incomeDoc.Operation == IncomeOperations.Enter)
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.WearSizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.WearSizeType != null && (n.IssuedEmployeeOnOperation?.WearSize == null))
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.Nomenclature.Type.HeightType,onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature.Type.HeightType != null 
-					                                  && incomeDoc.Operation == IncomeOperations.Enter)
+					.DynamicFillListFunc(x => SizeService.GetSize(UoW, x.HeightType,onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.HeightType != null && (n.IssuedEmployeeOnOperation?.Height == null))
 				.AddColumn("Собственники").Resizable()
 					.Visible(featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
@@ -112,7 +113,7 @@ namespace workwear
 					.AddTextRenderer (e => "%", expand: false)
 				.AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
 					.Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
-					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
+					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn ("Стоимость").AddNumericRenderer (e => e.Cost)
 					.Editing (new Adjustment(0,0,100000000,100,1000,0)).Digits (2).WidthChars(12)
 				.AddColumn("Сумма").AddNumericRenderer(x => x.Total).Digits(2)
@@ -123,6 +124,7 @@ namespace workwear
 				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
 					.AddTextRenderer(e => e.BuhDocument).Editable()
 				.Finish ();
+			
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
 		}
@@ -151,7 +153,7 @@ namespace workwear
 		}
 		#endregion
 		private void YtreeItems_Selection_Changed(object sender, EventArgs e) {
-			buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
+			buttonDel.Sensitive = buttonSetNomenclature.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 			if(ytreeItems.GetSelectedObject<IncomeItem>() != null) {
 				var obj = ytreeItems.GetSelectedObject<IncomeItem>();
 				var sizeType = obj.Nomenclature?.Type?.SizeType;
@@ -162,6 +164,7 @@ namespace workwear
 					                           !(heightType is null) && SizeService.GetSize(UoW, heightType).Any();
 				else
 					buttonAddSizes.Sensitive = false;
+				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation?.Nomenclature == null; 
 			}
 			else
 				buttonAddSizes.Sensitive = false;
@@ -246,6 +249,20 @@ namespace workwear
 				}
 				dlg.Destroy();
 			}
+		}
+
+		private void OnButtonSetNomenclatureClicked(object sender, EventArgs e) {
+			var item = ytreeItems.GetSelectedObject<IncomeItem>();
+			var selectJournal = MainClass.MainWin.NavigationManager
+				.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
+
+			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools; 
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.ViewModel.OnSelectResult += (s, je) =>  SetNomenclatureSelected(item,je.SelectedObjects.First().GetId());
+		}
+
+		private void SetNomenclatureSelected(IncomeItem item, int selectedId) {
+			item.Nomenclature = UoW.GetById<Nomenclature>(selectedId);
 		}
 
 		private void OnButtonAddSizesClicked(object sender, EventArgs e) {

@@ -132,7 +132,8 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник")
 					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
 					.AddColumn ("Наименование")
-					.AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
+					.AddTextRenderer(e => e.ItemName).WrapWidth(1000)
+					.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
 					.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
@@ -229,6 +230,8 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Тип выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 						.AddTextRenderer(n => n.IssueTypeText)
+					.AddColumn("Тип размера").AddReadOnlyTextRenderer(x => x.TypeOfSize)
+					.AddColumn("Тип роста").AddReadOnlyTextRenderer(x => x.TypeOfHeight)
 					.Finish()
 			);
 

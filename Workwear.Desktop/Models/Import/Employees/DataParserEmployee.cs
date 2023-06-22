@@ -259,6 +259,8 @@ namespace Workwear.Models.Import.Employees
 					if(withPersonalNumbers.ContainsKey(number)) {
 						row.ProgramSkipped = true;
 						row.ProgramSkippedReason = "Дубликат табельного номера";
+						row.AddColumnChange(numberColumn, new ChangeState(ChangeType.Duplicate, error: row.ProgramSkippedReason));
+						model.CountersViewModel.AddCount(CountersEmployee.DuplicatePersonnelNumbers);
 					}
 					else {
 						withPersonalNumbers.Add(number, row);

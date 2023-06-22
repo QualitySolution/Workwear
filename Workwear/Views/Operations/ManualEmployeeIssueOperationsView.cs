@@ -2,6 +2,7 @@
 using Gamma.GtkWidgets;
 using QS.Views.Dialog;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using Workwear.ViewModels.Operations;
 
 namespace Workwear.Views.Operations 
@@ -34,7 +35,25 @@ namespace Workwear.Views.Operations
 				.AddBinding(wm => wm.DateTime, w => w.Date)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
-			
+
+			entityNomenclature.ViewModel = ViewModel.NomenclatureEntryViewModel;
+
+			labelSize.Binding.AddBinding(ViewModel, v => v.VisibleSize, w => w.Visible).InitializeFromSource();
+			comboSize.SetRenderTextFunc<Size>(x => x.Name);
+			comboSize.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Sizes, w => w.ItemsList)
+				.AddBinding(v => v.Size, w => w.SelectedItem)
+				.AddBinding(v => v.VisibleSize, w => w.Visible)
+				.InitializeFromSource();
+
+			labelHeight.Binding.AddBinding(ViewModel, v => v.VisibleHeight, w => w.Visible).InitializeFromSource();
+			comboHeight.SetRenderTextFunc<Size>(x => x.Name);
+			comboHeight.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Heights, w => w.ItemsList)
+				.AddBinding(v => v.Height, w => w.SelectedItem)
+				.AddBinding(v => v.VisibleHeight, w => w.Visible)
+				.InitializeFromSource();
+
 			yspinbuttonAmmount.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.Issued, w => w.ValueAsInt)
@@ -46,6 +65,10 @@ namespace Workwear.Views.Operations
 				.AddBinding(wm => wm.OverrideBefore, w => w.Active)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
+
+			ylabelBarcodeTitle.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
+			labelBarcodes.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
+			hboxBarcodeButtons.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
 			
 			ybuttonDelete.Binding
 				.AddSource(ViewModel)
