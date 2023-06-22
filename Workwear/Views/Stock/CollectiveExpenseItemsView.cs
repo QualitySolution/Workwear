@@ -84,7 +84,7 @@ namespace Workwear.Views.Stock
 		void MakeMenu() {
 			var delMenu = new Menu();
 			var item = new yMenuItem("Удалить строку");
-			item.Activated += (sender, e) => ViewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			item.Activated += (sender, e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			delMenu.Add(item);
 			item = new yMenuItem("Удалить все строки сотрудника");
 			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
@@ -120,12 +120,12 @@ namespace Workwear.Views.Stock
 			item = new yMenuItem("В выделенной строке");
 			item.Activated += (sender, e) => ViewModel.ChangeStockPosition(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			changeMenu.Add(item);
-			item = new yMenuItem("Аналгичные в документе");
+			item = new yMenuItem("Аналогичные в документе");
 			item.Activated += (sender, e) => ViewModel.ChangeManyStockPositions(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			changeMenu.Add(item);
 			buttonChange.Menu = changeMenu;
 			buttonChange.TooltipText = "Заменить в строке выдаваемую позицию. Можно проставить любую номенклатуру подходящую по номенклатуре" +
-			                           " нормы из имеющихся в наличии на складе, независимо от размера, роста и других критерииев.";
+			                           " нормы из имеющихся в наличии на складе, независимо от размера, роста и других критериев.";
 			changeMenu.ShowAll();
 		}
 
