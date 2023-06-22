@@ -171,17 +171,7 @@ namespace Workwear.Views.Stock
 		{
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
 		}
-
 		#endregion
-
-		#region Кнопки
-
-		private void OnButtonDelClicked(object sender, EventArgs e)
-		{
-			viewModel.Delete(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
-		}
-		#endregion
-
 		#region События
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
