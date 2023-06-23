@@ -142,9 +142,6 @@ namespace Workwear.Views.Stock
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
-			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
-			this.buttonChange.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
 		}
 	}
 }

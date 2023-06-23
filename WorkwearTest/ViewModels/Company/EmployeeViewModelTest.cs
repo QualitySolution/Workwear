@@ -27,6 +27,7 @@ using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Sizes;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Company.EmployeeChildren;
@@ -65,7 +66,6 @@ namespace WorkwearTest.ViewModels.Company {
 			var validator = new ValidatorForTests();
 
 			var builder = new ContainerBuilder();
-			//builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeListedItemsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeMovementsViewModel>().AsSelf();
@@ -80,12 +80,13 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
+			builder.Register(x => Substitute.For<BarcodeService>(baseParameters)).AsSelf();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => commonMessages).As<CommonMessages>();
 			builder.Register(x => deleteEntityService).As<IDeleteEntityService>();
 			builder.Register(x => featureService).As<FeaturesService>();
-			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>();
+			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => lkUserManagerService).As<LkUserManagerService>();
 			builder.Register(x => openStockDocumentsModel).As<OpenStockDocumentsModel>();
 			builder.Register(x => progress).As<IProgressBarDisplayable>();

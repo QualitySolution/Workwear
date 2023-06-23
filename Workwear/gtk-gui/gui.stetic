@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -13651,7 +13651,6 @@
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
-                <signal name="Clicked" handler="OnButtonDelClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -13674,7 +13673,6 @@
                 <property name="Yalign">0</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
-                <signal name="Clicked" handler="OnButtonDelClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -13694,7 +13692,6 @@
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
-                <signal name="Clicked" handler="OnButtonDelClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>

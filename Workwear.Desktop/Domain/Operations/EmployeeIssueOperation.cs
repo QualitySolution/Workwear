@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -530,5 +530,10 @@ namespace Workwear.Domain.Operations
 		}
 
 		#endregion
+
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if((Nomenclature?.UseBarcode ?? false) && BarcodeOperations.Count != Issued)
+				yield return new ValidationResult("Количество созданных штрихкодов должно соответствовать количеству выданного.");
+		}
 	}
 }
