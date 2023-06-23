@@ -6,10 +6,10 @@
   <PageHeight>30mm</PageHeight>
   <PageWidth>80mm</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>2mm</TopMargin>
+  <TopMargin>1mm</TopMargin>
   <LeftMargin>2mm</LeftMargin>
   <RightMargin>2mm</RightMargin>
-  <BottomMargin>2mm</BottomMargin>
+  <BottomMargin>1mm</BottomMargin>
   <PageHeader>
     <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
@@ -19,18 +19,18 @@
     <Height>91.9pt</Height>
     <ReportItems>
       <List Name="List1">
-        <Height>81.43pt</Height>
+        <Height>79.93pt</Height>
         <Width>215.67pt</Width>
         <Left>0.00pt</Left>
         <Top>0.00pt</Top>
         <ReportItems>
           <Textbox Name="Textbox1">
-            <Height>15.77pt</Height>
+            <Height>16.52pt</Height>
             <Width>214.14pt</Width>
             <Value>={employee}</Value>
             <ZIndex>4</ZIndex>
             <Left>0.80pt</Left>
-            <Top>63.60pt</Top>
+            <Top>62.80pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -65,7 +65,7 @@
               <BackgroundColor>White</BackgroundColor>
             </Style>
             <Left>2.4pt</Left>
-            <Top>0.0pt</Top>
+            <Top>0.8pt</Top>
             <Height>19.38pt</Height>
             <Width>211.06pt</Width>
             <ZIndex>1</ZIndex>
@@ -115,12 +115,12 @@
             <ZIndex>0</ZIndex>
           </CustomReportItem>
           <Textbox Name="Textbox2">
-            <Height>39.01pt</Height>
+            <Height>37.51pt</Height>
             <Width>134.71pt</Width>
             <Value>={subdivision}</Value>
             <ZIndex>2</ZIndex>
-            <Left>0.0pt</Left>
-            <Top>16.4pt</Top>
+            <Left>0.00pt</Left>
+            <Top>16.40pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
