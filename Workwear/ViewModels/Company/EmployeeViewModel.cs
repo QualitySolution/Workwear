@@ -382,7 +382,7 @@ namespace Workwear.ViewModels.Company
 					                        $"Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {
 						//Здесь сохраняем удаляем телефон через отдельный uow чтобы избежать ошибки базы по уникальному значению поля.
 						using(var uow2 = UnitOfWorkFactory.CreateForRoot<EmployeeCard>(employeeSamePhone.Id)) {
-							if(uow2.Root.LkRegistered)
+							if(uow2.Root.LkRegistered && lkUserManagerService.CanConnect)
 								lkUserManagerService.RemovePhone(uow2.Root.PhoneNumber);
 							uow2.Root.PhoneNumber = null;
 							uow2.Root.LkRegistered = false;
