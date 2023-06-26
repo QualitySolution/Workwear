@@ -59,6 +59,12 @@ namespace Workwear.HibernateMapping.Company
 				.KeyColumn("wear_card_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan().Inverse()
 				.LazyLoad();
+			
+			HasMany(x => x.CostCenters).Table("wear_cards_cost_allocation")
+				.KeyColumn("wear_card_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
+				.LazyLoad();
 		}
 	}
 }

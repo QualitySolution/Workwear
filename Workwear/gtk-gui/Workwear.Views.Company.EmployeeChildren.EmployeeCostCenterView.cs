@@ -82,6 +82,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
+			this.buttonDelete.Clicked += new global::System.EventHandler(this.OnButtonDeleteClicked);
 		}
 	}
 }

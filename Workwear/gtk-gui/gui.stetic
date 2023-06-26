@@ -1706,7 +1706,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">7</property>
+            <property name="CurrentPage">4</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.HBox" id="hbox1">
@@ -2786,6 +2786,24 @@
               </packing>
             </child>
             <child>
+              <widget class="Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView" id="employeecostcentrview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label32">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes"> МВЗ </property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.VBox" id="vbox5">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
@@ -2801,7 +2819,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">4</property>
+                <property name="Position">5</property>
               </packing>
             </child>
             <child>
@@ -2829,7 +2847,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">5</property>
+                <property name="Position">6</property>
               </packing>
             </child>
             <child>
@@ -2847,31 +2865,13 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">6</property>
+                <property name="Position">7</property>
               </packing>
             </child>
             <child>
               <widget class="Gtk.Label" id="label30">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Отпуска</property>
-              </widget>
-              <packing>
-                <property name="type">tab</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView" id="employeecostcentrview1">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-              </widget>
-              <packing>
-                <property name="Position">7</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label32">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Затраты</property>
               </widget>
               <packing>
                 <property name="type">tab</property>
@@ -22314,6 +22314,7 @@
                 <property name="Icon">stock:gtk-add Menu</property>
                 <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonAddClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -22330,6 +22331,7 @@
                 <property name="Icon">stock:gtk-delete Menu</property>
                 <property name="Label" translatable="yes">Удалить</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonDeleteClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>
