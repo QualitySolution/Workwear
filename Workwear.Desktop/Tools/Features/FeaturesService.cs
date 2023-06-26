@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using QS.Cloud.Client;
+using QS.Dialog;
+using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Versioning.Product;
 using QS.Serial;
@@ -23,6 +25,8 @@ namespace Workwear.Tools.Features
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
 		private readonly CloudClientService cloudClientService;
+		private readonly IInteractiveMessage interactive;
+		private readonly IErrorReporter errorReporter;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; }
@@ -30,22 +34,43 @@ namespace Workwear.Tools.Features
 
 		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
+
+		private bool failCloudConnection;
 		private HashSet<string> availableCloudFeatures;
 		private HashSet<string> AvailableCloudFeatures {
 			get {
 				if(availableCloudFeatures == null) {
-					availableCloudFeatures = new HashSet<string>(
-						cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString())
-						.Select(x => x.Name));
+					try {
+						availableCloudFeatures = new HashSet<string>(
+							cloudClientService.GetAvailableFeatures(dataBaseInfo.BaseGuid.Value.ToString())
+								.Select(x => x.Name));
+						failCloudConnection = false;
+					}
+					catch(Exception e) {
+						if(failCloudConnection == false) {
+							interactive.ShowMessage(ImportanceLevel.Error, "Облачный сервис не доступен. Функции связанные с облачным сервисом будут временно отключены, до возобновления связи.");
+							failCloudConnection = true;
+						}
+
+						errorReporter.SendReport(e, ErrorType.Known);
+						return new HashSet<string>();
+					}
 				}
 				return availableCloudFeatures;
 			}
 		}
 
-		public FeaturesService(ISerialNumberService serialNumberService, SerialNumberEncoder serialNumberEncoder, CloudClientService cloudClientService = null, IDataBaseInfo dataBaseInfo = null)
+		public FeaturesService(ISerialNumberService serialNumberService,
+			SerialNumberEncoder serialNumberEncoder,
+			CloudClientService cloudClientService,
+			IInteractiveMessage interactive,
+			IErrorReporter errorReporter,
+			IDataBaseInfo dataBaseInfo = null)
 		{
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;

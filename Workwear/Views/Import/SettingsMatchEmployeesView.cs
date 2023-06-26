@@ -12,6 +12,10 @@ namespace Workwear.Views.Import
 				.AddBinding(ViewModel, v => v.ConvertPersonnelNumber, w => w.Active)
 				.InitializeFromSource();
 
+			checkDontCreateEmployees.Binding
+				.AddBinding(ViewModel, v => v.DontCreateNewEmployees, w => w.Active)
+				.InitializeFromSource();
+
 			checkSubdivisionLevelEnable.Binding
 				.AddBinding(ViewModel, v => v.SubdivisionLevelEnable, w => w.Active)
 				.InitializeFromSource();

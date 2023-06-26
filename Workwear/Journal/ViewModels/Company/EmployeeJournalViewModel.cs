@@ -80,9 +80,8 @@ namespace workwear.Journal.ViewModels.Company
 			}
 
 			return employees
-				.Where(GetSearchCriterion(
+				.Where(MakeSearchCriterion<EmployeeCard>().By(
 					() => employeeAlias.Id,
-					() => employeeAlias.CardNumber,
 					() => employeeAlias.PersonnelNumber,
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
@@ -91,7 +90,11 @@ namespace workwear.Journal.ViewModels.Company
 					() => subdivisionAlias.Name,
 					() => departmentAlias.Name,
 					() => employeeAlias.Comment
- 					))
+ 					)
+					.WithLikeMode(MatchMode.Exact)
+					.By(() => employeeAlias.CardNumber)
+					.Finish()
+				)
 
 				.JoinAlias(() => employeeAlias.Post, () => postAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)

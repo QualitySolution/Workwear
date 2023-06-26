@@ -130,6 +130,13 @@ namespace Workwear.Domain.Stock.Documents
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
 							new[] { nameof(Items) });
 				}
+			if(Operation == IncomeOperations.Return)
+				foreach (var item in items) {
+					if(item.Nomenclature == null)
+						yield return new ValidationResult(
+							$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.", 
+							new[] { nameof(Items) });
+				}
 		}
 
 		#endregion
