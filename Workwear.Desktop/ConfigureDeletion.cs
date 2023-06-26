@@ -35,6 +35,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
+				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)

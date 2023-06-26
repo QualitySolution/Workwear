@@ -26,6 +26,8 @@ namespace Workwear.Domain.Company {
 		
 		public virtual int Id { get; set; }
 
+		public virtual string Title => $"МВЗ сотрудника {Employee.ShortName} - {CostCenter.Name}";
+		
 		private EmployeeCard employee;
 		[Display(Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
