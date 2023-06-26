@@ -2,7 +2,6 @@
 using System.Linq;
 using Gamma.Binding.Converters;
 using Gtk;
-using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;

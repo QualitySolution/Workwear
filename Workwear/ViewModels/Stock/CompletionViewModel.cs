@@ -22,7 +22,6 @@ using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
-using Workwear.Views.Stock;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -50,7 +49,7 @@ namespace Workwear.ViewModels.Stock
 			SizeService = sizeService;
 			
 			if(UoW.IsNew) 
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
-using Workwear.Models.Company;
 
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeNameWithInitials : DataTypeEmployeeBase {

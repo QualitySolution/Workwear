@@ -14,7 +14,6 @@ using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
@@ -26,8 +25,6 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
-using Workwear.Repository.Regulations;
-using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
 

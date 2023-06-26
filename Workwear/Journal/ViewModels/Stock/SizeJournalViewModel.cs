@@ -1,6 +1,5 @@
 using System.Linq;
 using Autofac;
-using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;

@@ -2,7 +2,6 @@ using System;
 using Gtk;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
-using Gdk;
 using QS.Views.Dialog;
 using Workwear.ViewModels.Stock.Widgets;
 

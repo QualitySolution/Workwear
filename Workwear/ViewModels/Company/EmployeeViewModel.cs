@@ -107,7 +107,7 @@ namespace Workwear.ViewModels.Company
 			Entity.PropertyChanged += PostChangedCheck;
 
 			if(UoW.IsNew) {
-				Entity.CreatedbyUser = userService.GetCurrentUser(UoW);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание карточки для нового сотрудника");
 			}
 			else {
@@ -241,6 +241,9 @@ namespace Workwear.ViewModels.Company
 
 		public bool SyncLkPassword()
 		{
+			if(!lkUserManagerService.CanConnect)
+				return true;
+		
 			try {
 				if(String.IsNullOrWhiteSpace(LkPassword) || String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
 					if(Entity.LkRegistered) {

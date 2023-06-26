@@ -18,6 +18,8 @@ namespace Workwear.Models.Import.Employees
 		Patronymic,
 		[Display(Name = "Пол")]
 		Sex,
+		[Display(Name = "Номер карточки")]
+		CardNumber,
 		[Display(Name = "Табельный номер")]
 		PersonnelNumber,
 		[Display(Name = "UID карты")]

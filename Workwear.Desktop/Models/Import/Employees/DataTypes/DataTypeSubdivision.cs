@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Testing.Values;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Import;

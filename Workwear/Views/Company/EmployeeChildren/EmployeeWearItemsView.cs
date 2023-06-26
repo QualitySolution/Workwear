@@ -53,7 +53,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("ТОН").AddTextRenderer(node => node.TonText)
 				.AddColumn("Тип выдачи").Visible(ViewModel.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					.AddTextRenderer(x => x.ProtectionTools.Type.IssueType.GetEnumTitle())
-				.AddColumn("Наименование").AddTextRenderer(node => node.ProtectionTools.Name).WrapWidth(700)
+				.AddColumn("Наименование").Resizable().AddTextRenderer(node => node.ProtectionTools.Name).WrapWidth(700)
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
 				.AddColumn("Послед. получения")

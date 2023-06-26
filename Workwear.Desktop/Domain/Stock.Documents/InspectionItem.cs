@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
-using QS.Utilities.Numeric;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 

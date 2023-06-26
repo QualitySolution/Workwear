@@ -59,8 +59,9 @@ namespace Workwear.Views.Stock
 		private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
-					.AddColumn ("Наименование").AddReadOnlyTextRenderer(e => e.Nomenclature?.Name)
-					.WrapWidth(700)
+					.AddColumn ("Наименование").Resizable().AddReadOnlyTextRenderer(e => e.Nomenclature?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Name)
+						.AddSetter((w, item) => w.Foreground = item.Nomenclature != null ? "black" : "blue")
+						.WrapWidth(700)
 					.AddColumn("Размер").MinWidth(60)
 						.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
@@ -80,7 +81,7 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(e => "%", expand: false)
 					.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
-						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name)
+						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
 					.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
 						.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employee)
 					.Finish ();

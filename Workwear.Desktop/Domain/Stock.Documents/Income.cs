@@ -8,7 +8,6 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using QS.Utilities;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -129,6 +128,13 @@ namespace Workwear.Domain.Stock.Documents
 					if(item.IssuedSubdivisionOnOperation == null || item.IssuedSubdivisionOnOperation.Subdivision != Subdivision)
 						yield return new ValidationResult(
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
+							new[] { nameof(Items) });
+				}
+			if(Operation == IncomeOperations.Return)
+				foreach (var item in items) {
+					if(item.Nomenclature == null)
+						yield return new ValidationResult(
+							$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.", 
 							new[] { nameof(Items) });
 				}
 		}

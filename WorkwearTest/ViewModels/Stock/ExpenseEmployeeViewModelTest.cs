@@ -83,7 +83,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var user = new UserBase();
 				uow.Save(user);
-				userService.GetCurrentUser(Arg.Any<IUnitOfWork>()).Returns(user);
+				userService.GetCurrentUser().Returns(user);
 
 				var itemType = new ItemsType {
 					Name = "Тип"
@@ -225,7 +225,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var user = new UserBase();
 				uow.Save(user);
-				userService.GetCurrentUser(Arg.Any<IUnitOfWork>()).Returns(user);
+				userService.GetCurrentUser().Returns(user);
 
 				var itemType = new ItemsType {
 					Name = "Тип"
@@ -385,7 +385,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var user = new UserBase();
 				uow.Save(user);
-				userService.GetCurrentUser(Arg.Any<IUnitOfWork>()).Returns(user);
+				userService.GetCurrentUser().Returns(user);
 
 				var itemType = new ItemsType {
 					Name = "Тип"
@@ -536,7 +536,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var user = new UserBase();
 				uow.Save(user);
-				userService.GetCurrentUser(Arg.Any<IUnitOfWork>()).Returns(user);
+				userService.GetCurrentUser().Returns(user);
 
 				var itemType = new ItemsType {
 					Name = "Тип"

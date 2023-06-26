@@ -6,10 +6,10 @@
   <PageHeight>30mm</PageHeight>
   <PageWidth>80mm</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>2mm</TopMargin>
+  <TopMargin>1mm</TopMargin>
   <LeftMargin>2mm</LeftMargin>
   <RightMargin>2mm</RightMargin>
-  <BottomMargin>2mm</BottomMargin>
+  <BottomMargin>1mm</BottomMargin>
   <PageHeader>
     <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
@@ -19,18 +19,18 @@
     <Height>91.9pt</Height>
     <ReportItems>
       <List Name="List1">
-        <Height>81.43pt</Height>
+        <Height>79.93pt</Height>
         <Width>215.67pt</Width>
-        <Left>0.0pt</Left>
-        <Top>0.0pt</Top>
+        <Left>0.00pt</Left>
+        <Top>0.00pt</Top>
         <ReportItems>
           <Textbox Name="Textbox1">
-            <Height>12.77pt</Height>
-            <Width>213.39pt</Width>
+            <Height>16.52pt</Height>
+            <Width>214.14pt</Width>
             <Value>={employee}</Value>
-            <ZIndex>4</ZIndex>
+            <ZIndex>0</ZIndex>
             <Left>0.8pt</Left>
-            <Top>61.2pt</Top>
+            <Top>62.0pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -38,6 +38,7 @@
               <FontSize>8pt</FontSize>
               <TextAlign>Center</TextAlign>
               <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
             </Style>
           </Textbox>
           <Textbox Name="Textbox5" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -50,7 +51,7 @@
                 <Right>None</Right>
                 <Top>None</Top>
               </BorderStyle>
-              <PaddingRight>2pt</PaddingRight>
+              <PaddingRight>0pt</PaddingRight>
               <TextAlign>Center</TextAlign>
               <BorderColor>
                 <Default>Bisque</Default>
@@ -60,23 +61,24 @@
                 <Bottom>Bisque</Bottom>
               </BorderColor>
               <BorderWidth />
-              <FontSize>7pt</FontSize>
+              <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
               <BackgroundColor>White</BackgroundColor>
+              <PaddingBottom>4pt</PaddingBottom>
             </Style>
-            <Left>2.4pt</Left>
-            <Top>0.0pt</Top>
-            <Height>19.38pt</Height>
-            <Width>211.06pt</Width>
-            <ZIndex>1</ZIndex>
+            <Left>0.80pt</Left>
+            <Top>0.80pt</Top>
+            <Height>14.88pt</Height>
+            <Width>214.06pt</Width>
+            <ZIndex>10</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox8">
             <Height>10.50pt</Height>
             <Width>67.93pt</Width>
             <Value>=Format({operation_time}, "d")</Value>
-            <ZIndex>3</ZIndex>
+            <ZIndex>0</ZIndex>
             <Left>3.9pt</Left>
-            <Top>48pt</Top>
+            <Top>51.2pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -89,7 +91,7 @@
           <CustomReportItem Name="CustomReportItem1">
             <Type>BarCode EAN-13</Type>
             <Height>64.04pt</Height>
-            <Width>83.66pt</Width>
+            <Width>82.91pt</Width>
             <CustomProperties>
               <CustomProperty>
                 <Name>NumberSystem</Name>
@@ -105,7 +107,7 @@
               </CustomProperty>
             </CustomProperties>
             <Left>129.5pt</Left>
-            <Top>1.8pt</Top>
+            <Top>2.4pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -114,28 +116,28 @@
             <ZIndex>0</ZIndex>
           </CustomReportItem>
           <Textbox Name="Textbox2">
-            <Height>39.01pt</Height>
+            <Height>36.01pt</Height>
             <Width>134.71pt</Width>
             <Value>={subdivision}</Value>
-            <ZIndex>2</ZIndex>
-            <Left>0.0pt</Left>
-            <Top>16.4pt</Top>
+            <ZIndex>0</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>18.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
-              <FontSize>7pt</FontSize>
+              <FontSize>=Iif(Len({subdivision}) &gt; 100, "6pt", "7pt")</FontSize>
               <TextAlign>Center</TextAlign>
               <VerticalAlign>Middle</VerticalAlign>
             </Style>
           </Textbox>
           <Textbox Name="Textbox3">
             <Height>11.25pt</Height>
-            <Width>53.52pt</Width>
+            <Width>54.27pt</Width>
             <Value>={personnel_number}</Value>
-            <ZIndex>3</ZIndex>
-            <Left>75.00pt</Left>
-            <Top>48.00pt</Top>
+            <ZIndex>0</ZIndex>
+            <Left>74.20pt</Left>
+            <Top>51.20pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -145,6 +147,17 @@
             </Style>
           </Textbox>
         </ReportItems>
+        <Style>
+          <BorderStyle>
+            <Default>Double</Default>
+            <Left>Double</Left>
+            <Right>Double</Right>
+            <Top>Double</Top>
+            <Bottom>Double</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
       </List>
     </ReportItems>
     <Columns>1</Columns>
@@ -245,7 +258,7 @@ WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
       </Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>

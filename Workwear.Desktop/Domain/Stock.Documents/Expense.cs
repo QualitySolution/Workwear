@@ -10,7 +10,6 @@ using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Users;
-using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;

@@ -298,9 +298,17 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(Sum));
 		}
 
-		public void Delete(CollectiveExpenseItem item)
+		public void DeleteItem(CollectiveExpenseItem deleteItem)
 		{
-			DeleteItem(item);
+			if(deleteItem.Id > 0) {
+				UoW.Delete(deleteItem);
+			}
+			if(deleteItem.IssuanceSheetItem != null) {
+				if(deleteItem.IssuanceSheetItem.Id > 0)
+					UoW.Delete(deleteItem);
+				Entity.IssuanceSheet.Items.Remove(deleteItem.IssuanceSheetItem);
+			}
+			Entity.RemoveItem(deleteItem);
 			OnPropertyChanged(nameof(Sum));
 		}
 
@@ -310,8 +318,6 @@ namespace Workwear.ViewModels.Stock
 			foreach(var deleteItem in  toDelete) {
 				DeleteItem(deleteItem);
 			}
-
-			OnPropertyChanged(nameof(Sum));
 		}
 		#endregion
 		#region Расчет для View
@@ -373,18 +379,6 @@ namespace Workwear.ViewModels.Stock
 		{
 			if(nameof(Entity.Warehouse) == e.PropertyName) 
 				OnPropertyChanged(nameof(SensitiveAddButton));
-		}
-		private void DeleteItem(CollectiveExpenseItem deleteItem)
-		{
-			if(deleteItem.Id > 0) {
-				UoW.Delete(deleteItem);
-			}
-			if(deleteItem.IssuanceSheetItem != null) {
-				if(deleteItem.IssuanceSheetItem.Id > 0)
-					UoW.Delete(deleteItem);
-				Entity.IssuanceSheet.Items.Remove(deleteItem.IssuanceSheetItem);
-			}
-			Entity.RemoveItem(deleteItem);
 		}
 	}
 }

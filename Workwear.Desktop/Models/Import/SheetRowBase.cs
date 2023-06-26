@@ -130,6 +130,7 @@ namespace Workwear.Models.Import
 					case ChangeType.ChangeValue : return ExcelImportViewModel.ColorOfChanged;
 					case ChangeType.NotFound: return ExcelImportViewModel.ColorOfNotFound;
 					case ChangeType.Ambiguous: return ExcelImportViewModel.ColorOfAmbiguous;
+					case ChangeType.Duplicate: return ExcelImportViewModel.ColorOfDuplicate;
 					case ChangeType.ParseError: return ExcelImportViewModel.ColorOfError;
 					case ChangeType.NotChanged: break;
 					default:

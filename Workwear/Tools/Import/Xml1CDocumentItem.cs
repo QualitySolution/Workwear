@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using Workwear.Domain.Sizes;

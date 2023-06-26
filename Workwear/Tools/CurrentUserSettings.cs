@@ -11,17 +11,11 @@ namespace workwear.Tools
 
 		public CurrentUserSettings(IUserService userService, UserRepository userRepository)
 		{
-			manager.CreateUserSettings = uow => new UserSettings(userService.GetCurrentUser(uow));
+			manager.CreateUserSettings = uow => new UserSettings(userService.GetCurrentUser());
 			manager.LoadUserSettings = userRepository.GetCurrentUserSettings;
 		}
 
-		public UserSettings Settings
-		{
-			get
-			{
-				return manager.Settings;
-			}
-		}
+		public UserSettings Settings => manager.Settings;
 
 		public void SaveSettings()
 		{

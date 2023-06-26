@@ -97,7 +97,7 @@ public partial class MainWindow : Gtk.Window
 		}
 
 		var userService = AutofacScope.Resolve<IUserService>();
-		var user = userService.GetCurrentUser(UoW);
+		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 
@@ -154,7 +154,7 @@ public partial class MainWindow : Gtk.Window
 
 		ReadUserSettings();
 
-		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(UoW, AutofacScope);
+		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 

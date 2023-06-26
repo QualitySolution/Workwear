@@ -5,7 +5,6 @@ using NHibernate;
 using NHibernate.Linq;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -85,6 +84,7 @@ namespace workwear.Journal.ViewModels.Company {
 				.Left.JoinAlias(x => x.CostCenter, () => costCenterAlias)
 				.JoinEntityAlias(() => employeeAlias, () => employeeAlias.Post.Id == postAlias.Id, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
+					() => postAlias.Id,
 					() => postAlias.Name,
 					() => postAlias.Comments,
 					() => departmentAlias.Name,
