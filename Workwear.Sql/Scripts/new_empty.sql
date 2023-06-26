@@ -1958,6 +1958,17 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `wear_cards_cost_allocation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`wear_card_id` INT UNSIGNED NOT NULL,
+	`cost_center_id` INT UNSIGNED NOT NULL,
+	`percent` DECIMAL(3,2) NOT NULL DEFAULT 1.00,
+	PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- function count_issue
