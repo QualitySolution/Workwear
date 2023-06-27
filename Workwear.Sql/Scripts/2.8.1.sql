@@ -47,12 +47,3 @@ ALTER TABLE `operation_barcodes`
 
 ALTER TABLE `stock_inspection`
     ADD INDEX `index_stock_inspection_date` (`date` ASC);
-
-CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`wear_card_id` INT UNSIGNED NOT NULL,
-	`cost_center_id` INT UNSIGNED NOT NULL,
-	`percent` DECIMAL(3,2) NOT NULL DEFAULT 1.00,
-	PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-DEFAULT CHARACTER SET = utf8mb4;
