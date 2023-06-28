@@ -737,179 +737,167 @@ height_type_id=
 -- Ведомости
 
 UPDATE issuance_sheet_items SET size_id = (SELECT DISTINCT sizes.id 
-        FROM issuance_sheet_items items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE issuance_sheet_items.id = items.id
-        AND sizes.name = issuance_sheet_items.size 
+    FROM sizes
+    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = issuance_sheet_items.size 
+        AND (issuance_sheet_items.nomenclature_id = nomenclature.id OR issuance_sheet_items.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE issuance_sheet_items SET height_id = (SELECT DISTINCT sizes.id 
-        FROM issuance_sheet_items items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE issuance_sheet_items.id = items.id
-        AND sizes.name = issuance_sheet_items.growth
+UPDATE issuance_sheet_items SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+    JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = issuance_sheet_items.growth
+        AND (issuance_sheet_items.nomenclature_id = nomenclature.id OR issuance_sheet_items.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
 -- Операции выдачи сотруднику
-UPDATE operation_issued_by_employee SET size_id = (SELECT DISTINCT sizes.id 
-        FROM operation_issued_by_employee items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE operation_issued_by_employee.id = items.id
-        AND sizes.name = operation_issued_by_employee.size
+UPDATE operation_issued_by_employee SET size_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = operation_issued_by_employee.size
+        AND (operation_issued_by_employee.nomenclature_id = nomenclature.id OR operation_issued_by_employee.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE operation_issued_by_employee SET height_id = (SELECT DISTINCT sizes.id 
-        FROM operation_issued_by_employee items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE operation_issued_by_employee.id = items.id
-        AND sizes.name = operation_issued_by_employee.growth
+UPDATE operation_issued_by_employee SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+    JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = operation_issued_by_employee.growth
+        AND (operation_issued_by_employee.nomenclature_id = nomenclature.id OR operation_issued_by_employee.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
 -- Операции выдачи на подразделения
-UPDATE operation_issued_in_subdivision SET size_id = (SELECT sizes.id 
-        FROM operation_issued_in_subdivision items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE operation_issued_in_subdivision.id = items.id
-        AND sizes.name = operation_issued_in_subdivision.size
+UPDATE operation_issued_in_subdivision SET size_id = (SELECT sizes.id
+  FROM sizes
+   JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+   LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+  WHERE sizes.name = operation_issued_in_subdivision.size
+    AND operation_issued_in_subdivision.nomenclature_id = nomenclature.id
 )
 WHERE size IS NOT NULL;
 
-UPDATE operation_issued_in_subdivision SET height_id = (SELECT DISTINCT sizes.id 
-        FROM operation_issued_in_subdivision items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE operation_issued_in_subdivision.id = items.id
-        AND sizes.name = operation_issued_in_subdivision.growth
+UPDATE operation_issued_in_subdivision SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+     JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+     LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    WHERE sizes.name = operation_issued_in_subdivision.growth
+      AND operation_issued_in_subdivision.nomenclature_id = nomenclature.id
 )
 WHERE growth IS NOT NULL;
 
 -- Складские операции
-UPDATE operation_warehouse SET size_id = (SELECT sizes.id 
-        FROM operation_warehouse items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE operation_warehouse.id = items.id
-        AND sizes.name = operation_warehouse.size
+UPDATE operation_warehouse SET size_id = (SELECT sizes.id
+  FROM sizes
+   JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+   LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+  WHERE sizes.name = operation_warehouse.size
+    AND operation_warehouse.nomenclature_id = nomenclature.id
 )
 WHERE size IS NOT NULL;
 
-UPDATE operation_warehouse SET height_id = (SELECT DISTINCT sizes.id 
-        FROM operation_warehouse items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE operation_warehouse.id = items.id
-        AND sizes.name = operation_warehouse.growth
+UPDATE operation_warehouse SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+     JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+     LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    WHERE sizes.name = operation_warehouse.growth
+      AND operation_warehouse.nomenclature_id = nomenclature.id
 )
 WHERE growth IS NOT NULL;
 
 -- Коллективная выдача
 ALTER TABLE `stock_collective_expense_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-UPDATE stock_collective_expense_detail SET size_id = (SELECT DISTINCT sizes.id 
-        FROM stock_collective_expense_detail items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE stock_collective_expense_detail.id = items.id
-        AND sizes.name = stock_collective_expense_detail.size
+UPDATE stock_collective_expense_detail SET size_id = (SELECT DISTINCT sizes.id
+  FROM sizes
+       JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+       LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+       LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+  WHERE sizes.name = stock_collective_expense_detail.size
+    AND (stock_collective_expense_detail.nomenclature_id = nomenclature.id OR stock_collective_expense_detail.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE stock_collective_expense_detail SET height_id = (SELECT DISTINCT sizes.id 
-        FROM stock_collective_expense_detail items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE stock_collective_expense_detail.id = items.id
-        AND sizes.name = stock_collective_expense_detail.growth
+UPDATE stock_collective_expense_detail SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+     JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+     LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+     LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = stock_collective_expense_detail.growth
+      AND (stock_collective_expense_detail.nomenclature_id = nomenclature.id OR stock_collective_expense_detail.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
 -- Документ выдачи 
-UPDATE stock_expense_detail SET size_id = (SELECT DISTINCT sizes.id 
-        FROM stock_expense_detail items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE stock_expense_detail.id = items.id
-        AND sizes.name = stock_expense_detail.size
+UPDATE stock_expense_detail SET size_id = (SELECT DISTINCT sizes.id
+   FROM sizes
+    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+   WHERE sizes.name = stock_expense_detail.size
+     AND (stock_expense_detail.nomenclature_id = nomenclature.id OR stock_expense_detail.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE stock_expense_detail SET height_id = (SELECT DISTINCT sizes.id 
-        FROM stock_expense_detail items
-        LEFT JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        LEFT JOIN protection_tools ON items.protection_tools_id = protection_tools.id
-        JOIN item_types ON item_types.id = protection_tools.item_types_id OR item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE stock_expense_detail.id = items.id
-        AND sizes.name = stock_expense_detail.growth
+UPDATE stock_expense_detail SET height_id = (SELECT DISTINCT sizes.id
+     FROM sizes
+      JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+      LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+      LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+     WHERE sizes.name = stock_expense_detail.growth
+       AND (stock_expense_detail.nomenclature_id = nomenclature.id OR stock_expense_detail.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
 -- Документ поступления
-UPDATE stock_income_detail SET size_id = (SELECT sizes.id 
-        FROM stock_income_detail items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE stock_income_detail.id = items.id
-        AND sizes.name = stock_income_detail.size
+UPDATE stock_income_detail SET size_id = (SELECT sizes.id
+  FROM sizes
+   JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+   LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+   LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+  WHERE sizes.name = stock_income_detail.size
+    AND (stock_income_detail.nomenclature_id = nomenclature.id OR stock_income_detail.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE stock_income_detail SET height_id = (SELECT DISTINCT sizes.id 
-        FROM stock_income_detail items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE stock_income_detail.id = items.id
-        AND sizes.name = stock_income_detail.growth
+UPDATE stock_income_detail SET height_id = (SELECT DISTINCT sizes.id
+    FROM sizes
+     JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+     LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+     LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+    WHERE sizes.name = stock_income_detail.growth
+      AND (stock_income_detail.nomenclature_id = nomenclature.id OR stock_income_detail.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
 -- Документ списания
-UPDATE stock_write_off_detail SET size_id = (SELECT sizes.id 
-        FROM stock_write_off_detail items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.size_type_id = sizes.size_type_id
-        WHERE stock_write_off_detail.id = items.id
-        AND sizes.name = stock_write_off_detail.size
+UPDATE stock_write_off_detail SET size_id = (SELECT sizes.id
+     FROM sizes
+      JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+      LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+      LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+     WHERE sizes.name = stock_write_off_detail.size
+       AND (stock_write_off_detail.nomenclature_id = nomenclature.id OR stock_write_off_detail.protection_tools_id = protection_tools.id)
 )
 WHERE size IS NOT NULL;
 
-UPDATE stock_write_off_detail SET height_id = (SELECT DISTINCT sizes.id 
-        FROM stock_write_off_detail items
-        JOIN nomenclature ON items.nomenclature_id = nomenclature.id
-        JOIN item_types ON item_types.id = nomenclature.type_id
-        JOIN sizes ON item_types.height_type_id = sizes.size_type_id
-        WHERE stock_write_off_detail.id = items.id
-        AND sizes.name = stock_write_off_detail.growth
+UPDATE stock_write_off_detail SET height_id = (SELECT DISTINCT sizes.id
+   FROM sizes
+    JOIN item_types ON item_types.height_type_id = sizes.size_type_id
+    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+   WHERE sizes.name = stock_write_off_detail.growth
+     AND (stock_write_off_detail.nomenclature_id = nomenclature.id OR stock_write_off_detail.protection_tools_id = protection_tools.id)
 )
 WHERE growth IS NOT NULL;
 
