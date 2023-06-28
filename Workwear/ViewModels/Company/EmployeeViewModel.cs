@@ -411,9 +411,6 @@ namespace Workwear.ViewModels.Company
 		}
 		IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
 		{
-			if(!String.IsNullOrEmpty(CostCenterViewModel.Validate()))
-				yield return new ValidationResult(CostCenterViewModel.Validate(), new[] { nameof(Entity.CostCenters) });
-			
 			if (String.IsNullOrEmpty(LkPassword)) yield break;
 			if(String.IsNullOrEmpty(Entity.PhoneNumber))
 				yield return new ValidationResult(

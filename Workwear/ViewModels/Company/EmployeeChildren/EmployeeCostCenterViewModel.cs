@@ -48,12 +48,5 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			Entity.ObservableCostCenters.Remove(deleteItem);
 		}
 		#endregion
-
-		public string Validate() {
-			decimal sumPercent = Entity.CostCenters.Sum(x => x.Percent);
-			if(sumPercent != 1)
-				return "Сумма по МВЗ в должна быть равна 100";
-			else return null;
-		}
 	}
 }

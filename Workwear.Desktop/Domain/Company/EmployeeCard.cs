@@ -336,6 +336,11 @@ namespace Workwear.Domain.Company
 						$"Номер карточки {CardNumber} должен быть уникальным",
 						new[] { this.GetPropertyName(o => o.CardNumber) });
 			}
+			
+			if(NHibernateUtil.IsInitialized(CostCenters) && CostCenters.Sum(x => x.Percent) != 1m)
+				yield return new ValidationResult(
+				"Сумма по МВЗ в должна быть равна 100%", 
+				new[] { nameof(CostCenters) });
 		}
 
 		#endregion
