@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using NHibernate.Classic;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
-using QS.Project.Services;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
@@ -15,16 +11,14 @@ using workwear.Journal.ViewModels.Company;
 namespace Workwear.ViewModels.Company.EmployeeChildren {
 	public class EmployeeCostCentersViewModel : ViewModelBase{
 		
-		private readonly IDeleteEntityService deleteService;
-		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly INavigationManager navigation;
 		private readonly EmployeeViewModel employeeViewModel;
 		
 		public EmployeeCard Entity => employeeViewModel.Entity;
 		private IUnitOfWork UoW => employeeViewModel.UoW;
 		
-		public EmployeeCostCentersViewModel(IDeleteEntityService deleteService, ITdiCompatibilityNavigation navigation, EmployeeViewModel employeeViewModel)
+		public EmployeeCostCentersViewModel(INavigationManager navigation, EmployeeViewModel employeeViewModel)
 		{
-			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 		}
