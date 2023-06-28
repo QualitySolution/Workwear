@@ -6,10 +6,9 @@ using QS.Utilities.Numeric;
 
 namespace Workwear.Domain.Company {
 	[Appellative(Gender = GrammaticalGender.Masculine,
-		NominativePlural = "места возникновения затрат",
-		Nominative = "место возникновения затрат",
-		Genitive = "мест возникновения затрат",
-		Accusative = "место возникновения затрат"
+		NominativePlural = "МВЗ сотрудника",
+		Nominative = "МВЗ сотрудника",
+		Genitive = "МВЗ сотрудника"
 	)]
 	
 	[HistoryTrace]
