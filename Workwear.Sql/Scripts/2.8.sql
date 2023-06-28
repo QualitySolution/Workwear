@@ -864,9 +864,8 @@ UPDATE stock_income_detail SET size_id = (SELECT sizes.id
   FROM sizes
    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-   LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
   WHERE sizes.name = stock_income_detail.size
-    AND (stock_income_detail.nomenclature_id = nomenclature.id OR stock_income_detail.protection_tools_id = protection_tools.id)
+    AND stock_income_detail.nomenclature_id = nomenclature.id
 )
 WHERE size IS NOT NULL;
 
@@ -874,9 +873,8 @@ UPDATE stock_income_detail SET height_id = (SELECT DISTINCT sizes.id
     FROM sizes
      JOIN item_types ON item_types.height_type_id = sizes.size_type_id
      LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-     LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
     WHERE sizes.name = stock_income_detail.growth
-      AND (stock_income_detail.nomenclature_id = nomenclature.id OR stock_income_detail.protection_tools_id = protection_tools.id)
+      AND stock_income_detail.nomenclature_id = nomenclature.id
 )
 WHERE growth IS NOT NULL;
 
@@ -885,9 +883,8 @@ UPDATE stock_write_off_detail SET size_id = (SELECT sizes.id
      FROM sizes
       JOIN item_types ON item_types.size_type_id = sizes.size_type_id
       LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-      LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
      WHERE sizes.name = stock_write_off_detail.size
-       AND (stock_write_off_detail.nomenclature_id = nomenclature.id OR stock_write_off_detail.protection_tools_id = protection_tools.id)
+       AND stock_write_off_detail.nomenclature_id = nomenclature.id
 )
 WHERE size IS NOT NULL;
 
@@ -895,9 +892,8 @@ UPDATE stock_write_off_detail SET height_id = (SELECT DISTINCT sizes.id
    FROM sizes
     JOIN item_types ON item_types.height_type_id = sizes.size_type_id
     LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
    WHERE sizes.name = stock_write_off_detail.growth
-     AND (stock_write_off_detail.nomenclature_id = nomenclature.id OR stock_write_off_detail.protection_tools_id = protection_tools.id)
+     AND stock_write_off_detail.nomenclature_id = nomenclature.id
 )
 WHERE growth IS NOT NULL;
 
