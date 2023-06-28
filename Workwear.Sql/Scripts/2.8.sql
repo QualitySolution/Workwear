@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `sizes` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1000
-DEFAULT CHARACTER SET = utf8mb4
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 COMMENT = 'до 1000 id пользователь не может редактировать данные.';
 
 CREATE TABLE IF NOT EXISTS `size_suitable` (
@@ -497,6 +497,7 @@ INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (357, 356);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (357, 358);
 
 -- Выносим данные из полей карточек сотрудника
+ALTER TABLE `wear_cards` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 INSERT INTO wear_cards_sizes (employee_id, size_type_id, size_id)
 SELECT wear_cards.id, 1, sizes.id 
@@ -735,6 +736,7 @@ height_type_id=
 
 -- Переносим размеры со старых полей на новые
 -- Ведомости
+ALTER TABLE `issuance_sheet_items` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 UPDATE issuance_sheet_items SET size_id = (SELECT DISTINCT sizes.id 
     FROM sizes
@@ -757,6 +759,8 @@ UPDATE issuance_sheet_items SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Операции выдачи сотруднику
+ALTER TABLE `operation_issued_by_employee` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE operation_issued_by_employee SET size_id = (SELECT DISTINCT sizes.id
     FROM sizes
     JOIN item_types ON item_types.size_type_id = sizes.size_type_id
@@ -778,6 +782,8 @@ UPDATE operation_issued_by_employee SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Операции выдачи на подразделения
+ALTER TABLE `operation_issued_in_subdivision` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE operation_issued_in_subdivision SET size_id = (SELECT sizes.id
   FROM sizes
    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
@@ -797,6 +803,8 @@ UPDATE operation_issued_in_subdivision SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Складские операции
+ALTER TABLE `operation_warehouse` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE operation_warehouse SET size_id = (SELECT sizes.id
   FROM sizes
    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
@@ -839,6 +847,8 @@ UPDATE stock_collective_expense_detail SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Документ выдачи 
+ALTER TABLE `stock_expense_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE stock_expense_detail SET size_id = (SELECT DISTINCT sizes.id
    FROM sizes
     JOIN item_types ON item_types.size_type_id = sizes.size_type_id
@@ -860,6 +870,8 @@ UPDATE stock_expense_detail SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Документ поступления
+ALTER TABLE `stock_income_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE stock_income_detail SET size_id = (SELECT sizes.id
   FROM sizes
    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
@@ -879,6 +891,8 @@ UPDATE stock_income_detail SET height_id = (SELECT DISTINCT sizes.id
 WHERE growth IS NOT NULL;
 
 -- Документ списания
+ALTER TABLE `stock_write_off_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 UPDATE stock_write_off_detail SET size_id = (SELECT sizes.id
      FROM sizes
       JOIN item_types ON item_types.size_type_id = sizes.size_type_id
