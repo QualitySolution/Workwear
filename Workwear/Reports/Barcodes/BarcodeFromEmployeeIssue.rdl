@@ -28,9 +28,9 @@
             <Height>16.52pt</Height>
             <Width>214.14pt</Width>
             <Value>={employee}</Value>
-            <ZIndex>4</ZIndex>
-            <Left>0.80pt</Left>
-            <Top>62.80pt</Top>
+            <ZIndex>0</ZIndex>
+            <Left>0.8pt</Left>
+            <Top>62.0pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -38,7 +38,7 @@
               <FontSize>8pt</FontSize>
               <TextAlign>Center</TextAlign>
               <BackgroundColor>White</BackgroundColor>
-              <VerticalAlign >Middle</VerticalAlign>
+              <VerticalAlign>Middle</VerticalAlign>
             </Style>
           </Textbox>
           <Textbox Name="Textbox5" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -51,7 +51,7 @@
                 <Right>None</Right>
                 <Top>None</Top>
               </BorderStyle>
-              <PaddingRight>2pt</PaddingRight>
+              <PaddingRight>0pt</PaddingRight>
               <TextAlign>Center</TextAlign>
               <BorderColor>
                 <Default>Bisque</Default>
@@ -61,21 +61,22 @@
                 <Bottom>Bisque</Bottom>
               </BorderColor>
               <BorderWidth />
-              <FontSize>7pt</FontSize>
+              <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
               <BackgroundColor>White</BackgroundColor>
+              <PaddingBottom>4pt</PaddingBottom>
             </Style>
-            <Left>2.4pt</Left>
-            <Top>0.8pt</Top>
-            <Height>19.38pt</Height>
-            <Width>211.06pt</Width>
-            <ZIndex>1</ZIndex>
+            <Left>0.80pt</Left>
+            <Top>0.80pt</Top>
+            <Height>14.88pt</Height>
+            <Width>214.06pt</Width>
+            <ZIndex>10</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox8">
             <Height>10.50pt</Height>
             <Width>67.93pt</Width>
             <Value>=Format({operation_time}, "d")</Value>
-            <ZIndex>3</ZIndex>
+            <ZIndex>0</ZIndex>
             <Left>3.9pt</Left>
             <Top>51.2pt</Top>
             <Style>
@@ -105,8 +106,8 @@
                 <Value>={product_code}</Value>
               </CustomProperty>
             </CustomProperties>
-            <Left>129.50pt</Left>
-            <Top>1.80pt</Top>
+            <Left>129.5pt</Left>
+            <Top>2.4pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -115,17 +116,17 @@
             <ZIndex>0</ZIndex>
           </CustomReportItem>
           <Textbox Name="Textbox2">
-            <Height>37.51pt</Height>
+            <Height>36.01pt</Height>
             <Width>134.71pt</Width>
             <Value>={subdivision}</Value>
-            <ZIndex>2</ZIndex>
+            <ZIndex>0</ZIndex>
             <Left>0.00pt</Left>
-            <Top>16.40pt</Top>
+            <Top>18.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
-              <FontSize>7pt</FontSize>
+              <FontSize>=Iif(Len({subdivision}) &gt; 100, "6pt", "7pt")</FontSize>
               <TextAlign>Center</TextAlign>
               <VerticalAlign>Middle</VerticalAlign>
             </Style>
@@ -134,7 +135,7 @@
             <Height>11.25pt</Height>
             <Width>54.27pt</Width>
             <Value>={personnel_number}</Value>
-            <ZIndex>3</ZIndex>
+            <ZIndex>0</ZIndex>
             <Left>74.20pt</Left>
             <Top>51.20pt</Top>
             <Style>
@@ -146,7 +147,7 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Style >
+        <Style>
           <BorderStyle>
             <Default>Double</Default>
             <Left>Double</Left>
