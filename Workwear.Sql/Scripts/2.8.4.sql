@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
 		REFERENCES `wear_cards` (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
