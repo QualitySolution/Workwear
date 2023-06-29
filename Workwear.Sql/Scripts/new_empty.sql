@@ -231,6 +231,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
     REFERENCES `departments` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 ENGINE = InnoDB;
 
 
@@ -487,6 +488,7 @@ CREATE TABLE IF NOT EXISTS `sizes` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 COMMENT = 'до 1000 id пользователь не может редактировать данные.';
 
 
@@ -544,7 +546,8 @@ CREATE TABLE IF NOT EXISTS `operation_warehouse` (
     REFERENCES `owners` (`id`)
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -757,7 +760,8 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
     REFERENCES `sizes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -843,7 +847,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_in_subdivision` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -907,7 +911,7 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1056,7 +1060,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1125,7 +1129,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1470,7 +1474,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1545,7 +1549,8 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `sizes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
