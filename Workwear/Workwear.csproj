@@ -168,6 +168,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
@@ -430,6 +431,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Import.SettingsNormsView.cs" />
     <Compile Include="Journal\Filter.Views\Company\DepartmentFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Company.DepartmentFilterView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmployeeCostCenterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

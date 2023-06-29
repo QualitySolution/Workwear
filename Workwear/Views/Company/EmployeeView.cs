@@ -34,19 +34,19 @@ namespace Workwear.Views.Company {
 
 		private void ConfigureDlg()
 		{
-
 			SizeBuild();
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
+			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
 
-			notebook1.GetNthPage(4).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
+			notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
 
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
@@ -165,9 +165,9 @@ namespace Workwear.Views.Company {
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
-				notebook1.GetNthPage(4).Visible = ViewModel.VisibleListedItem;
+				notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
 			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
-				notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
+				notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
 		#region Sizes

@@ -172,8 +172,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
-			ObservableItems.Remove (item);
-			Items.Remove(item);
+			ObservableItems.Remove(item);
 		}
 
 		public virtual void CleanupItems()

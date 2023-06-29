@@ -244,6 +244,30 @@ namespace Workwear.Domain.Company
 			observableVacations ??
 			(observableVacations = new GenericObservableList<EmployeeVacation>(Vacations));
 		#endregion
+		
+		#region CostCenters
+		private IList<EmployeeCostCenter> сostCenters = new List<EmployeeCostCenter>();
+		[Display(Name = "Места возникновения затрат")]
+		public virtual IList<EmployeeCostCenter> CostCenters {
+			get => сostCenters;
+			set => SetField(ref сostCenters, value);
+		}
+
+		private GenericObservableList<EmployeeCostCenter> observableCostCenters;
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<EmployeeCostCenter> ObservableCostCenters =>
+			observableCostCenters ??
+			(observableCostCenters = new GenericObservableList<EmployeeCostCenter>(CostCenters));
+		
+		public virtual void AddCostCenter(EmployeeCostCenter employeeCostCenter) {
+			if(CostCenters.Any(x => x.CostCenter.Id == employeeCostCenter.CostCenter.Id)) {
+				logger.Warn($"МВЗ {employeeCostCenter.CostCenter.Title} уже добавлен. Пропускаем...");
+				return;
+			}
+			ObservableCostCenters.Add(employeeCostCenter);
+		}
+		#endregion
+		
 		#region Расчетные
 		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 		public virtual string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();
@@ -312,6 +336,11 @@ namespace Workwear.Domain.Company
 						$"Номер карточки {CardNumber} должен быть уникальным",
 						new[] { this.GetPropertyName(o => o.CardNumber) });
 			}
+			
+			if(NHibernateUtil.IsInitialized(CostCenters) && CostCenters.Sum(x => x.Percent) != 1m)
+				yield return new ValidationResult(
+				"Сумма по МВЗ в должна быть равна 100%", 
+				new[] { nameof(CostCenters) });
 		}
 
 		#endregion

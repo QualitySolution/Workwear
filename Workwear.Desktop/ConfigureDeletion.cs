@@ -26,6 +26,7 @@ namespace Workwear
 			#endregion
 			#region Организация
 			DeleteConfig.AddHibernateDeleteInfo<CostCenter>()
+				.AddDeleteDependence<EmployeeCostCenter>(x => x.CostCenter)
 				.AddClearDependence<Post>(x => x.CostCenter);
 			
 			DeleteConfig.AddHibernateDeleteInfo<Department>()
@@ -34,6 +35,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
+				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
@@ -46,6 +48,8 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeVacation>();
+			
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeCostCenter>();
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader>()
 				.AddClearDependence<EmployeeCard>(x => x.Leader)
