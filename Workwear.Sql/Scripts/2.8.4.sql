@@ -43,3 +43,13 @@ ALTER TABLE `operation_issued_in_subdivision`
             REFERENCES `operation_warehouse` (`id`)
             ON DELETE RESTRICT
             ON UPDATE CASCADE;
+
+ALTER TABLE `stock_income_detail`
+    DROP FOREIGN KEY `fk_stock_income_detail_1`;
+
+ALTER TABLE `stock_income_detail`
+    ADD CONSTRAINT `fk_stock_income_detail_1`
+        FOREIGN KEY (`employee_issue_operation_id`)
+            REFERENCES `operation_issued_by_employee` (`id`)
+            ON DELETE NO ACTION
+            ON UPDATE CASCADE;
