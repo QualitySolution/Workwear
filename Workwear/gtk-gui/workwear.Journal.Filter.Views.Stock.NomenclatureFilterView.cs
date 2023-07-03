@@ -90,7 +90,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
-			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нонрмы:");
+			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нормы:");
 			this.table1.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel2]));
 			w6.TopAttach = ((uint)(1));
