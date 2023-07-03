@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -16,12 +17,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		
 		public EmployeeCard Entity => employeeViewModel.Entity;
 		private IUnitOfWork UoW => employeeViewModel.UoW;
+		private bool isConfigured = false;
 		
 		public EmployeeCostCentersViewModel(INavigationManager navigation, EmployeeViewModel employeeViewModel)
 		{
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 		}
+
+		public void OnShow() {
+			if(!isConfigured) {
+				isConfigured = true;
+				OnPropertyChanged(nameof(ObservableCostCenters));
+			}
+		}
+
+		#region  Свойства View
+		public GenericObservableList<EmployeeCostCenter> ObservableCostCenters => Entity.ObservableCostCenters;
+		#endregion
 
 		#region Методы
 		public void AddItem() {
