@@ -656,7 +656,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <PaddingBottom >10pt</PaddingBottom>
+                        <PaddingBottom>10pt</PaddingBottom>
                       </Style>
                       <CanGrow>true</CanGrow>
                       <HideDuplicates>Data</HideDuplicates>
@@ -823,7 +823,7 @@
         <Height>20.21pt</Height>
         <Width>808.39pt</Width>
         <Value>= "Ведомость № " + {?id}</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>0.0pt</Left>
         <Top>42.8pt</Top>
         <Style>
@@ -855,7 +855,7 @@
         <Height>15.77pt</Height>
         <Width>473.22pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>144.00pt</Left>
         <Top>61.80pt</Top>
         <Style>
@@ -921,6 +921,7 @@
                         <BorderColor />
                         <BorderWidth />
                       </Style>
+                      <ZIndex >0</ZIndex>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1127,7 +1128,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.0pt</Left>
+        <Left>0.8pt</Left>
         <Top>95.3pt</Top>
       </Table>
       <Table Name="Table4">
