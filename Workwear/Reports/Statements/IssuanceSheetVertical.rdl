@@ -857,7 +857,7 @@
         <Height>17.94pt</Height>
         <Width>575.71pt</Width>
         <Value>= "Ведомость № " + {?id}</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>0.00pt</Left>
         <Top>41.00pt</Top>
         <Style>
@@ -875,7 +875,7 @@
         <Value>Типовая межотраслевая форма N МБ-7
 Утверждена Постановлением Госкомстата России
 от 30.10.97 N 71а</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>315.4pt</Left>
         <Top>6.3pt</Top>
         <Style>
@@ -889,9 +889,9 @@
         <Height>14.28pt</Height>
         <Width>548.71pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
-        <ZIndex>1</ZIndex>
-        <Left>14.3pt</Left>
-        <Top>60.8pt</Top>
+        <ZIndex>0</ZIndex>
+        <Left>14.30pt</Left>
+        <Top>60.80pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -910,7 +910,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>86.3pt</Width>
+            <Width>82.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -1066,7 +1066,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>422.9pt</Left>
+        <Left>421.3pt</Left>
         <Top>78.2pt</Top>
       </Table>
       <Table Name="Table3">
@@ -1076,13 +1076,15 @@
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
             <Width>83.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>345.1pt</Width>
+            <Width>337.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1865,7 +1867,7 @@
         <Left>0.8pt</Left>
         <Top>286.2pt</Top>
       </Table>
-      <Textbox Name="Textbox42" >
+      <Textbox Name="Textbox42">
         <Height>11.99pt</Height>
         <Width>275.43pt</Width>
         <Value>="Сотрудников в ведомости: " + Countdistinct({employee_id}, "Data")</Value>
@@ -1889,7 +1891,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.id as employee_id,
@@ -1925,7 +1927,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
@@ -2065,21 +2067,21 @@ WHERE
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>4</Value>
+          <Value>218</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
