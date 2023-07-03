@@ -152,6 +152,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
+		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
@@ -333,6 +334,7 @@ namespace Workwear.ViewModels.Company
 						WearItemsViewModel.OnShow();;
 					break;
 				case 4: 
+						CostCenterViewModel.OnShow();
 					break;
 				case 5: ListedItemsViewModel.OnShow();
 					break;

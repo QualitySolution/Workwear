@@ -29,7 +29,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 					.AddTextRenderer (e => "%", expand:false)
 				.AddColumn("") //Заглушка, чтобы не расширялось
 				.Finish();
-			ytreeCostCenter.ItemsDataSource = ViewModel.Entity.ObservableCostCenters;
+			ytreeCostCenter.Binding.AddBinding(ViewModel, v => v.ObservableCostCenters, w => w.ItemsDataSource);
 		}
 		
 		protected void OnButtonAddClicked(object sender, EventArgs e) {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -14932,7 +14932,7 @@
           <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
             <property name="MemberName" />
             <property name="Xalign">1</property>
-            <property name="LabelProp" translatable="yes">Номенклатура нонрмы:</property>
+            <property name="LabelProp" translatable="yes">Номенклатура нормы:</property>
           </widget>
           <packing>
             <property name="TopAttach">1</property>
