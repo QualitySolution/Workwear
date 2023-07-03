@@ -335,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
-  `sale_cost` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL,
+  `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
