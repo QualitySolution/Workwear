@@ -34,6 +34,8 @@ ALTER TABLE `stock_income_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8m
 ALTER TABLE `stock_write_off_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ALTER TABLE `wear_cards` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
+ALTER TABLE `nomenclature` CHANGE `sale_cost` `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL;
+
 ALTER TABLE `operation_issued_in_subdivision`
     DROP FOREIGN KEY `fk_operation_issued_in_subdivision_4`;
 
