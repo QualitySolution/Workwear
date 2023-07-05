@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -170,14 +170,14 @@ namespace Workwear.Views.Company {
 		#region Sizes
 		private void SizeBuild() {
 			var sizes = ViewModel.SizeService
-				.GetSize(ViewModel.UoW, null, true, fetchSuitableSizes: true);
+				.GetSize(ViewModel.UoW, onlyUseInEmployee: true).ToList();
 			var excludeSizes = Entity.Sizes
 				.Where(s => s.Size.ShowInEmployee == false)
 				.Select(x => x.Size);
 			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не пропадали при пересохранении
 			sizes.AddRange(excludeSizes);
 			var sizeTypes = 
-				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
+				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).ToList();
 			
 			for (var index = 1; index < sizeTypes.Count + 1; index++) {
 				var sizeType = sizeTypes[index - 1];
@@ -207,7 +207,7 @@ namespace Workwear.Views.Company {
 		private void SetSizes(object sender, EventArgs eventArgs) {
 			var list = (SpecialListComboBox)sender;
 			var sizeType = list.ItemsList.OfType<Size>().First().SizeType;
-			viewModel.SetSizes((Size)list.SelectedItem, sizeType);
+			ViewModel.SetSizes((Size)list.SelectedItem, sizeType);
 		}
 		#endregion
 		#region ButtonEvent

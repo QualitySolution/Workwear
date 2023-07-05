@@ -7,6 +7,7 @@ using System.Text;
 using Autofac;
 using Gamma.Utilities;
 using Grpc.Core;
+using NHibernate;
 using NLog;
 using QS.Cloud.WearLk.Client;
 using QS.Dialog;
@@ -78,8 +79,20 @@ namespace Workwear.ViewModels.Company
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
-			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 			SizeService = sizeService;
+			SizeService.RefreshSizes(UoW);
+			//Подгружаем данные для ускорения открытия диалога
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.FetchLazyProperties, x => x)//Нужна чтобы не пытаться запрашивать фотку отдельным запросом.
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
+				.Fetch(SelectMode.Fetch, x => x.Post)
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.SingleOrDefault();
+			
+			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
 			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
