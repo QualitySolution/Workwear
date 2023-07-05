@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
