@@ -22,14 +22,12 @@ namespace Workwear.Views.Company {
 
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye-crossed.png");
-		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
 			this.Build ();
 			ConfigureDlg ();
 			CommonButtonSubscription();
-			this.viewModel = viewModel;
 		}
 
 		private void ConfigureDlg()
