@@ -38,7 +38,6 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly StockRepository stockRepository;
-		private readonly SizeRepository sizeRepository;
 		private readonly EmployeeIssueModel issueModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
@@ -51,7 +50,6 @@ namespace Workwear.ViewModels.Stock
 			EmployeeIssueModel issueModel,
 			EmployeeRepository employeeRepository,
 			StockRepository stockRepository,
-			SizeRepository sizeRepository,
 			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
@@ -65,14 +63,13 @@ namespace Workwear.ViewModels.Stock
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
-			this.sizeRepository = sizeRepository ?? throw new ArgumentNullException(nameof(sizeRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
 			globalProgress.Start(6);
 			//Запрашиваем все размеры чтобы были в кеше Uow.
-			sizeRepository.GetSize(UoW, fetchSuitableSizes: true);
+			SizeService.RefreshSizes(UoW);
 			performance.CheckPoint("Get all sizes");
 			globalProgress.Add();
 			
