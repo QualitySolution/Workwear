@@ -11,8 +11,8 @@ using QS.ViewModels.Dialog;
 using workwear;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Sizes
 {

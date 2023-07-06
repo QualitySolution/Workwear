@@ -19,12 +19,12 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 using workwear.Tools.IdentityCards;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {

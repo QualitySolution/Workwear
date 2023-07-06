@@ -6,7 +6,7 @@ using Gtk;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Sizes;
 
 namespace Workwear.Views.Sizes

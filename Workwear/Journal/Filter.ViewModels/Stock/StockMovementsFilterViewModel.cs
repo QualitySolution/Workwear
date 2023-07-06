@@ -11,8 +11,8 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
-using Workwear.Measurements;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Sizes;
 
 namespace workwear.Journal.Filter.ViewModels.Stock
 {

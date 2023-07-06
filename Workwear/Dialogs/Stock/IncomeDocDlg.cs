@@ -23,11 +23,11 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 using Workwear.Models.Import;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 

@@ -3,7 +3,7 @@ using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.Models.Import.Employees.DataTypes {
 	public class DataTypeEmployeeSize : DataTypeEmployeeBase {

@@ -20,13 +20,13 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using Workwear.Measurements;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
 using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {

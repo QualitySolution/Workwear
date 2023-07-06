@@ -2,10 +2,10 @@ using System;
 using NLog;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.ViewModels.Stock;
 using Gtk;
 using Gamma.Binding.Converters;
+using Workwear.Domain.Sizes;
 
 namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>

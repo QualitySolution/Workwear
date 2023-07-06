@@ -10,10 +10,10 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Issuance

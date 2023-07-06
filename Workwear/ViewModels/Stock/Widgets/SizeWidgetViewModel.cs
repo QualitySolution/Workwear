@@ -7,7 +7,7 @@ using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock.Widgets
 {

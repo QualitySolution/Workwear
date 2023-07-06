@@ -5,7 +5,7 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.Domain.Sizes
 {

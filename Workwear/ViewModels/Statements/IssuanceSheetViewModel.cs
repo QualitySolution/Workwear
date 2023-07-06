@@ -23,9 +23,9 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace Workwear.ViewModels.Statements
 {

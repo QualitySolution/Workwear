@@ -55,7 +55,6 @@ using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
-using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
 using workwear.Dialogs.Regulations;
@@ -84,6 +83,7 @@ using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Repository.User;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
 

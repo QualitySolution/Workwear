@@ -17,7 +17,6 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
@@ -25,6 +24,7 @@ using Workwear.Repository.User;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock

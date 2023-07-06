@@ -18,10 +18,10 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
-using Workwear.Measurements;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Barcodes;
 using QS.Dialog;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {

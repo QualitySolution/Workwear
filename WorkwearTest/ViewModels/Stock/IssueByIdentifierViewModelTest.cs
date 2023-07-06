@@ -13,13 +13,13 @@ using QS.Validation;
 using QS.ViewModels.Resolve;
 using RglibInterop;
 using Workwear.Domain.Company;
-using Workwear.Measurements;
 using Workwear.Repository.Company;
 using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 using workwear.Tools.IdentityCards;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock

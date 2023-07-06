@@ -9,8 +9,8 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Repository.Regulations;
-using Workwear.Measurements;
 using Workwear.Models.Import.Norms.DataTypes;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Norms

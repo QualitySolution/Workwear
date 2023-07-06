@@ -4,7 +4,7 @@ using NHibernate;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
 
-namespace Workwear.Measurements
+namespace Workwear.Tools.Sizes
 {
 	/// <summary>
 	/// Предоставляет доступ информации о размерах

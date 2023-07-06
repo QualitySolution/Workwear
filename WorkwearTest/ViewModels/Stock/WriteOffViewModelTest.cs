@@ -22,11 +22,11 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
-using Workwear.Measurements;
 using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Sizes;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock

@@ -9,9 +9,9 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {

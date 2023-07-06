@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 
 namespace workwear.ReportParameters.ViewModels
 {
