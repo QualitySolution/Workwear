@@ -8,7 +8,7 @@ namespace Workwear.Tools
 {
 	public class  BaseParameters : ParametersService
 	{
-		public BaseParameters(DbConnection connection) : base(connection) { }
+		public BaseParameters(Func<DbConnection> connectionFactory) : base(connectionFactory) { }
 		/// <summary>
 		/// Используется только для тестов!!!
 		/// </summary>

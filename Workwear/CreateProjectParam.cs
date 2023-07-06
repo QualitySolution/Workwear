@@ -202,8 +202,8 @@ namespace workwear
 			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
 			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
-			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
+			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf().SingleInstance();
+			builder.Register(c => QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
 			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
@@ -339,7 +339,7 @@ namespace workwear
 			#endregion
 
 			#region Разделение версий
-			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
+			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf().SingleInstance();
 			builder.RegisterModule<FeaturesAutofacModule>();
 			#endregion
 
