@@ -81,7 +81,6 @@ using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
-using Workwear.Repository.User;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
@@ -233,6 +232,7 @@ namespace workwear
             builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
+			builder.Register(x => NotifyConfiguration.Instance).As<IEntityChangeWatcher>().ExternallyOwned();
 			builder.RegisterType<BarcodeService>().AsSelf();
 			#endregion
 
@@ -266,7 +266,7 @@ namespace workwear
 			#endregion
 
 			#region Размеры
-			builder.RegisterType<SizeService>().AsSelf();
+			builder.RegisterType<SizeService>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
 			#endregion
 
