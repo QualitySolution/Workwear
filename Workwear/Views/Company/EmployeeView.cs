@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -25,14 +25,20 @@ namespace Workwear.Views.Company {
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
+			ViewModel.Performance.CheckPoint("Старт конструктора View");
 			this.Build ();
+			ViewModel.Performance.CheckPoint("Build");
 			ConfigureDlg ();
+			ViewModel.Performance.CheckPoint("ConfigureDlg");
 			CommonButtonSubscription();
+			ViewModel.Performance.CheckPoint("Конец конструктора View");
+			ViewModel.Performance.PrintAllPoints(logger);
 		}
 
 		private void ConfigureDlg()
 		{
 			SizeBuild();
+			ViewModel.Performance.CheckPoint("SizeBuild");
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -41,10 +47,12 @@ namespace Workwear.Views.Company {
 			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
+			ViewModel.Performance.CheckPoint("Дочерние модели");
 			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
 
+			ViewModel.Performance.CheckPoint("Скрыли вкладки");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
@@ -70,11 +78,13 @@ namespace Workwear.Views.Company {
 				.InitializeFromSource();
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoCardNumber, w => w.Active).InitializeFromSource();
 			labelUser.Binding.AddBinding(ViewModel, vm => vm.CreatedByUser, w => w.LabelProp).InitializeFromSource();
-
+			ViewModel.Performance.CheckPoint("Текстовые виджеты");
+			
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
+			ViewModel.Performance.CheckPoint("Виджеты сущьностей");
 
 			entitySubdivision.ViewModel.Changed += ChangedSubdivision;
 
@@ -87,7 +97,8 @@ namespace Workwear.Views.Company {
 
 			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
-
+			ViewModel.Performance.CheckPoint("Телефоны");
+			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			buttonShowPassword.Binding.AddFuncBinding(ViewModel, v => v.ShowLkPassword ? crossedEyeIcon : eyeIcon, w => w.Image).InitializeFromSource();
@@ -97,6 +108,7 @@ namespace Workwear.Views.Company {
 				.AddBinding(ViewModel, v => v.ShowLkPassword, w => w.Visibility)
 				.InitializeFromSource();
 
+			ViewModel.Performance.CheckPoint("Пароль");
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
@@ -109,6 +121,7 @@ namespace Workwear.Views.Company {
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+			ViewModel.Performance.CheckPoint("End Config");
 		}
 		
 

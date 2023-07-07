@@ -24,7 +24,6 @@ using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
-using Workwear.Repository.Sizes;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
@@ -63,8 +62,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => Substitute.For<FeaturesService>()).As<FeaturesService>();
 			builder.Register(x => validator).As<IValidator>();
 			builder.Register(x => Substitute.For<IViewModelResolver>()).As<IViewModelResolver>();
-			builder.Register(x => Substitute.For<SizeRepository>()).As<SizeRepository>();
-			builder.Register(x => Substitute.For<SizeService>(x.Resolve<SizeRepository>())).As<SizeService>();
+			builder.Register(x => Substitute.For<SizeService>()).As<SizeService>();
 			builder.Register(x => Substitute.For<IDeleteEntityService>()).As<IDeleteEntityService>();
 			builder.Register(x => Substitute.For<IInteractiveService>()).As<IInteractiveService>().As<IInteractiveQuestion>().As<IInteractiveMessage>();
 			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();

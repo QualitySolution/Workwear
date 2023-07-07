@@ -19,6 +19,7 @@ using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -80,7 +81,10 @@ namespace Workwear.ViewModels.Company
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			SizeService = sizeService;
+			Performance = new PerformanceHelper("Диалог сотрудника", logger);
+			
 			SizeService.RefreshSizes(UoW);
+			Performance.CheckPoint("Загрузили размеры");
 			//Подгружаем данные для ускорения открытия диалога
 			UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.Id == Entity.Id)
@@ -91,6 +95,7 @@ namespace Workwear.ViewModels.Company
 				.Fetch(SelectMode.Fetch, x => x.Post)
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.SingleOrDefault();
+			Performance.CheckPoint("Загрузили основную информацию о сотруднике");
 			
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -146,7 +151,10 @@ namespace Workwear.ViewModels.Company
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 
 			Validations.Add(new ValidationRequest(this));
+			Performance.CheckPoint("Конец конструктора ViewModel");
 		}
+
+		public readonly PerformanceHelper Performance;
 
 		#region Контролы
 

@@ -24,7 +24,6 @@ using workwear.Models.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
-using Workwear.Repository.Sizes;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
@@ -60,8 +59,7 @@ namespace WorkwearTest.ViewModels.Company {
 			var tdiCompatibilityNavigation = Substitute.For<ITdiCompatibilityNavigation>();
 			var openStockDocumentsModel = Substitute.For<OpenStockDocumentsModel>(tdiCompatibilityNavigation);
 			var progress = Substitute.For<IProgressBarDisplayable>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
+			var sizeService = Substitute.For<SizeService>();
 			var userService = Substitute.For<IUserService>();
 			var validator = new ValidatorForTests();
 
