@@ -10,7 +10,6 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
 using Workwear.Tools;
 
 namespace Workwear.Test.Domain.Company
