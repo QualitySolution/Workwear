@@ -15,6 +15,7 @@ using QS.Project.Journal.DataLoader;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
 
@@ -53,8 +54,16 @@ namespace workwear.Journal.ViewModels.Stock
 			Filter.PropertyChanged += (sender, e) => 
 				TabName = "Остатки по складу " + 
 				          (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
+			this.FeaturesService = featuresService;
+//Заменить			
+			OnSelectResult += SetAmount;
+		}
 
-			FeaturesService = featuresService;
+		private void SetAmount(object sender, JournalSelectedEventArgs e) {
+			e.GetSelectedObjects<StockBalanceJournalNode>().ToList().ForEach(x => x.Amount =
+				Filter.AddAmount == AddedAmount.One ? 1 :
+				Filter.AddAmount == AddedAmount.Zero ? 0 :
+				x.Amount);
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)

@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.Views;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.Views.Stock
@@ -15,6 +16,10 @@ namespace workwear.Journal.Filter.Views.Stock
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			ydateDate.Binding.AddBinding(viewModel, v=> v.Date, w => w.Date).InitializeFromSource();
+			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
+			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChoiseAmount, w => w.Visible).InitializeFromSource();
+			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.AddAmount, w => w.SelectedItem).InitializeFromSource();
+			labelAmount.Binding.AddBinding(viewModel, v => v.CanChoiseAmount, w => w.Visible).InitializeFromSource();
 		}
 	}
 }

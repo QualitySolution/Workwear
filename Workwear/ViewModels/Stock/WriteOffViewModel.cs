@@ -89,6 +89,7 @@ namespace Workwear.ViewModels.Stock
                 selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
             }
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
         }
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {

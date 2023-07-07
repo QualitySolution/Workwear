@@ -49,7 +49,14 @@ namespace Workwear.Domain.Users
 			get => maximizeOnStart;
 			set => SetField(ref maximizeOnStart, value);
 		}
-
+		
+		private AddedAmount defaultAddedAmount = AddedAmount.All;
+		[Display(Name = "Режим добаления колличества")]
+		public virtual AddedAmount DefaultAddedAmount {
+			get => defaultAddedAmount;
+			set { SetField(ref defaultAddedAmount, value, () => DefaultAddedAmount); }
+		}
+		
 		private Warehouse defaultWarehouse;
 		[Display(Name = "Склад по умолчанию")]
 		public virtual Warehouse DefaultWarehouse {
@@ -98,4 +105,13 @@ namespace Workwear.Domain.Users
 		Icons,
 		Text,
 	}
+	
+	public enum AddedAmount {
+		[Display(Name = "Всё")]
+		All,
+		[Display(Name = " 1 ")]
+		One,
+		[Display(Name = " 0 ")]
+		Zero
+	} 
 }
