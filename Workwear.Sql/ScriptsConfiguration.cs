@@ -1,6 +1,7 @@
 using System;
 using System.Data.Common;
 using System.Reflection;
+using MySqlConnector;
 using QS.DBScripts.Models;
 using QS.Updater.DB;
 
@@ -155,7 +156,7 @@ namespace Workwear.Sql
 				cmd.ExecuteNonQuery();
 			}
 			//При отсутствии индекса будет ошибка. Мы на это рассчитываем.
-			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) { }
+			catch(MySqlException ex) when(ex.Number == 1091) { }
 		}
 		
 		private static void DropForeignKeyIfExist(DbConnection connection, string tableName, string indexName)
@@ -167,7 +168,7 @@ namespace Workwear.Sql
 				cmd.ExecuteNonQuery();
 			}
 			//При отсутствии индекса будет ошибка. Мы на это рассчитываем.
-			catch(MySql.Data.MySqlClient.MySqlException ex) when(ex.Number == 1091) {}
+			catch(MySqlException ex) when(ex.Number == 1091) {}
 		}
 	}
 }
