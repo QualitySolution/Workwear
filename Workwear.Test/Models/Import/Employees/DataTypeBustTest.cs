@@ -3,9 +3,8 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
 using Workwear.Models.Import.Employees.DataTypes;
-using Workwear.Repository.Sizes;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.Test.Models.Import.Employees {
 	[TestFixture(TestOf = typeof(DataTypeBust))]
@@ -23,8 +22,7 @@ namespace Workwear.Test.Models.Import.Employees {
 				Name = "Размер одежды",
 				UseInEmployee = true
 			};
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
+			var sizeService = Substitute.For<SizeService>();
 			var sizes = GetSizes(sizeType);
 			sizeService.GetSize(Arg.Any<IUnitOfWork>(), sizeType)
 				.Returns(sizes);

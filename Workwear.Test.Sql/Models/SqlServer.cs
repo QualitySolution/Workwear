@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using MySql.Data.MySqlClient;
-using NUnit.Framework;
 
 namespace QS.DBScripts.Models
 {
