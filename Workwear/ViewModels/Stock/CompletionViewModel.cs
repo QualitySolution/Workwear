@@ -139,13 +139,14 @@ namespace Workwear.ViewModels.Stock
 			}
 
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.CanChoiseAmount = true;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
 		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
+				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.AddAmount);
 			}
 		}
 		public void AddResultItems() {

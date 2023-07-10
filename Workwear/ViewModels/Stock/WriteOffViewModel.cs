@@ -95,7 +95,7 @@ namespace Workwear.ViewModels.Stock
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
             var selectVM = sender as StockBalanceJournalViewModel;
             foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
-                Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
+                Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.AddAmount);
             CalculateTotal(null, null);
         }
 

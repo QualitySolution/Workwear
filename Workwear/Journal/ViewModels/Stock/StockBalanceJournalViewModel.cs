@@ -55,15 +55,8 @@ namespace workwear.Journal.ViewModels.Stock
 				TabName = "Остатки по складу " + 
 				          (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 			this.FeaturesService = featuresService;
-//Заменить			
-			OnSelectResult += SetAmount;
-		}
+			OnSelectResult += SetAddAmount;
 
-		private void SetAmount(object sender, JournalSelectedEventArgs e) {
-			e.GetSelectedObjects<StockBalanceJournalNode>().ToList().ForEach(x => x.Amount =
-				Filter.AddAmount == AddedAmount.One ? 1 :
-				Filter.AddAmount == AddedAmount.Zero ? 0 :
-				x.Amount);
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
@@ -213,6 +206,14 @@ namespace workwear.Journal.ViewModels.Stock
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		
+		private void SetAddAmount(object sender, JournalSelectedEventArgs e) {
+			if(Filter.CanChoiseAmount)
+				e.GetSelectedObjects<StockBalanceJournalNode>().ToList().ForEach(x => x.AddAmount =
+					Filter.AddAmount == AddedAmount.One ? 1 :
+					Filter.AddAmount == AddedAmount.Zero ? 0 :
+					x.Amount);
+		}
 	}
 
 	public class StockBalanceJournalNode
@@ -227,6 +228,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public int HeightId { get; set; }
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
+		/// <summary>
+		/// Нужно включить CanChoiseAmount = true в фильтре
+		/// </summary>
+		public int AddAmount { get; set; }
 		public int OwnerId { get; set; }
 		public string OwnerName { get; set; }
 		public string BalanceText => Amount > 0 ? 

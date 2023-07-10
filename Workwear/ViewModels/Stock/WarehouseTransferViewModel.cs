@@ -90,6 +90,7 @@ namespace Workwear.ViewModels.Stock
 		public void AddItems() {
 			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.Filter.CanChoiseAmount = true;
 			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
 			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
@@ -97,7 +98,7 @@ namespace Workwear.ViewModels.Stock
 
 		private void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			foreach(var stockBalance in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				Entity.AddItem(stockBalance.GetStockPosition(UoW), stockBalance.Amount);
+				Entity.AddItem(stockBalance.GetStockPosition(UoW), stockBalance.AddAmount);
 			}
 		}
 		public void RemoveItems(IEnumerable<TransferItem> items) {
