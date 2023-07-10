@@ -1,4 +1,5 @@
 ﻿using QS.Views;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.Filter.Views.Company
@@ -22,6 +23,16 @@ namespace workwear.Journal.Filter.Views.Company
 				.AddBinding(ViewModel, vm => vm.SubdivisionSensitive, w=> w.Sensitive)
 				.InitializeFromSource();
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
+			yenumcomboboxAmount.Binding.
+				AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
+				.InitializeFromSource();
+			yenumcomboboxAmount.Binding
+				.AddBinding(ViewModel, v => v.AddAmount, w => w.SelectedItem)
+				.InitializeFromSource();
+			labelAmount.Binding
+				.AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
+				.InitializeFromSource();
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -14,6 +15,7 @@ using QS.Project.Journal.DataLoader;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
@@ -40,6 +42,7 @@ namespace workwear.Journal.ViewModels.Company
 		        : "Остатки по подразделениям";
 	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
 	        SelectionMode = JournalSelectionMode.Multiple;
+	        OnSelectResult += SetAddAmount;
         }
 
         #region Query
@@ -109,6 +112,16 @@ namespace workwear.Journal.ViewModels.Company
 			return expense.TransformUsing(Transformers.AliasToBean<SubdivisionBalanceJournalNode>());
         }
         #endregion
+        
+        #region Методы
+        private void SetAddAmount(object sender, JournalSelectedEventArgs e) {
+	        if(Filter.CanChoiseAmount)
+		        e.GetSelectedObjects<SubdivisionBalanceJournalNode>().ToList().ForEach(x => x.AddAmount =
+			        Filter.AddAmount == AddedAmount.One ? 1 :
+			        Filter.AddAmount == AddedAmount.Zero ? 0 :
+			        x.Balance);
+        }
+        #endregion
     }
 
     public class SubdivisionBalanceJournalNode
@@ -125,7 +138,9 @@ namespace workwear.Journal.ViewModels.Company
 			    : (ExpiryDate.Value - DateTime.Today).TotalDays / (ExpiryDate.Value - IssuedDate).TotalDays;
 
 	    public int Balance { get; set;}
-	    public string BalanceText => $"{Balance} {UnitsName}";
+	    public string BalanceText => $"{Balance} {UnitsName}";		
+	    /// <summary> Нужно включить CanChoiseAmount = true в фильтре, чтобы пользователь мог переключать </summary>
+	    public int AddAmount { get; set; }
 	    public string SubdivisionName { get; set; }
     }
 }

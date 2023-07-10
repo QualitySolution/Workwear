@@ -10,7 +10,13 @@ namespace workwear.Journal.Filter.Views.Company
 
 		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
+		private global::Gtk.HBox hbox4;
+
+		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxAmount;
+
 		private global::Gtk.Label label1;
+
+		private global::Gamma.GtkWidgets.yLabel labelAmount;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel1;
 
@@ -23,7 +29,7 @@ namespace workwear.Journal.Filter.Views.Company
 			// Container child workwear.Journal.Filter.Views.Company.SubdivisionBalanceFilterView.Gtk.Container+ContainerChild
 			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable2.Name = "ytable2";
-			this.ytable2.NRows = ((uint)(3));
+			this.ytable2.NRows = ((uint)(4));
 			this.ytable2.NColumns = ((uint)(3));
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
@@ -54,24 +60,58 @@ namespace workwear.Journal.Filter.Views.Company
 			w2.RightAttach = ((uint)(2));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
+			this.hbox4 = new global::Gtk.HBox();
+			this.hbox4.Name = "hbox4";
+			this.hbox4.Spacing = 6;
+			// Container child hbox4.Gtk.Box+BoxChild
+			this.yenumcomboboxAmount = new global::Gamma.Widgets.yEnumComboBox();
+			this.yenumcomboboxAmount.Name = "yenumcomboboxAmount";
+			this.yenumcomboboxAmount.ShowSpecialStateAll = false;
+			this.yenumcomboboxAmount.ShowSpecialStateNot = false;
+			this.yenumcomboboxAmount.UseShortTitle = false;
+			this.yenumcomboboxAmount.DefaultFirst = false;
+			this.hbox4.Add(this.yenumcomboboxAmount);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.yenumcomboboxAmount]));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
+			this.ytable2.Add(this.hbox4);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.hbox4]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.LeftAttach = ((uint)(1));
+			w4.RightAttach = ((uint)(2));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.ytable2.Add(this.label1);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable2[this.label1]));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.label1]));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.labelAmount = new global::Gamma.GtkWidgets.yLabel();
+			this.labelAmount.Name = "labelAmount";
+			this.labelAmount.Xalign = 1F;
+			this.labelAmount.LabelProp = global::Mono.Unix.Catalog.GetString("В количестве:");
+			this.ytable2.Add(this.labelAmount);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelAmount]));
+			w6.TopAttach = ((uint)(2));
+			w6.BottomAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Дата");
 			this.ytable2.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel1]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable2);
 			if ((this.Child != null))
 			{

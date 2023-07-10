@@ -1,4 +1,5 @@
 ﻿using QS.Views;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.Filter.Views.Company
@@ -29,6 +30,16 @@ namespace workwear.Journal.Filter.Views.Company
 				.InitializeFromSource();
 			ylabelCheckbuttonShowAll.Binding
 				.AddBinding(ViewModel, vm => vm.CheckShowWriteoffVisible, w=> w.Visible)
+				.InitializeFromSource();
+			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
+			yenumcomboboxAmount.Binding.
+				AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
+				.InitializeFromSource();
+			yenumcomboboxAmount.Binding
+				.AddBinding(ViewModel, v => v.AddAmount, w => w.SelectedItem)
+				.InitializeFromSource();
+			labelAmount.Binding
+				.AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
 				.InitializeFromSource();
 
 			yentryEmployee.ViewModel = ViewModel.EmployeeEntry;

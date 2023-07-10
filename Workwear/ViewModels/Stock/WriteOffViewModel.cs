@@ -110,6 +110,7 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.SubdivisionSensitive =  Employee == null;
             selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
+            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
@@ -118,7 +119,7 @@ namespace Workwear.ViewModels.Stock
                 UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>()
                 .Select(x => x.Id));
             foreach (var operation in operations) 
-                Entity.AddItem(operation, 0);
+                Entity.AddItem(operation, e.GetSelectedObjects<EmployeeBalanceJournalNode>().First(x => x.Id == operation.Id).AddAmount);
             CalculateTotal(null, null);
         }
 
@@ -131,6 +132,7 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
+            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
         }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
@@ -138,7 +140,7 @@ namespace Workwear.ViewModels.Stock
                 UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>()
                     .Select(x => x.Id));
             foreach (var operation in operations) 
-                Entity.AddItem(operation, 0);
+	            Entity.AddItem(operation, e.GetSelectedObjects<SubdivisionBalanceJournalNode>().First(x => x.Id == operation.Id).AddAmount);
             CalculateTotal(null, null);
         }
         public void DeleteItem(WriteoffItem item) {
