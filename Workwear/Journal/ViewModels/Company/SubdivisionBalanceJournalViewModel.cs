@@ -31,7 +31,7 @@ namespace workwear.Journal.ViewModels.Company
             ILifetimeScope autofacScope,
             Subdivision subdivision = null) : base(unitOfWorkFactory, interactiveService, navigation)
         {
-	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
+	        var dataLoader = new ThreadDataLoader<SubdivisionBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
 	        JournalFilter = Filter = autofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
