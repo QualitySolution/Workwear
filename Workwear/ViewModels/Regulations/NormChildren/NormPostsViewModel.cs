@@ -1,5 +1,6 @@
 using System;
 using System.Data.Bindings.Collections.Generic;
+using NHibernate;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -37,6 +38,16 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 		public void OnShow() {
 			if(!showed) {
 				showed = true;
+				//Запрашиваем вложенные сущности для ускорения загрузка.
+				Post postAlias = null;
+				UoW.Session.QueryOver<Norm>()
+					.Where(x => x.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.JoinOnly, x => x.Posts)
+					.JoinAlias(x => x.Posts, () => postAlias)
+					.Fetch(SelectMode.Fetch, () => postAlias.Subdivision)
+					.Fetch(SelectMode.Fetch, () => postAlias.Department)
+					.List();
 				OnPropertyChanged(nameof(Posts));
 			}
 		}

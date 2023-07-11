@@ -28,7 +28,7 @@ namespace Workwear.Views.Regulations
 
 			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
 			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
-			yentryRegulationDoc.ItemsList = ViewModel.UoW.GetAll<RegulationDoc>();
+			yentryRegulationDoc.ItemsList = ViewModel.RegulationDocs;
 			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не участвовал в расчёте минимальной ширины окна
 			ycomboAnnex.WidthRequest = 1;  
 			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
