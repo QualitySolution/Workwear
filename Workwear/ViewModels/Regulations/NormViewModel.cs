@@ -65,8 +65,10 @@ namespace Workwear.ViewModels.Regulations
 			NormConditions = UoW.GetAll<NormCondition>().ToList();
 			NormConditions.Insert(0, null);
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
-			
-			employeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(new TypedParameter(typeof(NormViewModel), this));
+
+			var thisViewModel = new TypedParameter(typeof(NormViewModel), this);
+			PostsViewModel = autofacScope.Resolve<NormPostsViewModel>(thisViewModel);
+			EmployeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(thisViewModel);
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));

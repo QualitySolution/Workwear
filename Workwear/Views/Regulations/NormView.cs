@@ -6,7 +6,6 @@ using QS.Utilities;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
-using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
 
@@ -42,15 +41,6 @@ namespace Workwear.Views.Regulations
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
-			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create ()
-				.AddColumn("Должность").AddTextRenderer (p => p.Name).WrapWidth(700)
-				.AddColumn("Подразделение").AddReadOnlyTextRenderer(p => p.Subdivision?.Name).WrapWidth(700)
-				.AddColumn("Отдел").AddReadOnlyTextRenderer(p => p.Department?.Name).WrapWidth(700)
-				.Finish ();
-			ytreeProfessions.Selection.Mode = Gtk.SelectionMode.Multiple;
-			ytreeProfessions.ItemsDataSource = Entity.ObservablePosts;
-			ytreeProfessions.Selection.Changed += YtreeProfessions_Selection_Changed;
-
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create()
 				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("Количество")
@@ -73,7 +63,8 @@ namespace Workwear.Views.Regulations
 			ytreeItems.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.SelectedItem, w => w.SelectedRow);
 			
-			tabs.AppendPage(viewResolver.Resolve(ViewModel.employeesViewModel), "Сотрудники");
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.PostsViewModel), "Должности");
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.EmployeesViewModel), "Сотрудники");
 			tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
@@ -84,29 +75,6 @@ namespace Workwear.Views.Regulations
 		{
 			buttonRemoveItem.Sensitive = buttonReplaceNomeclature.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 		}
-
-		#region Профессии
-		void YtreeProfessions_Selection_Changed (object sender, EventArgs e)
-		{
-			buttonRemoveProfession.Sensitive = ytreeProfessions.Selection.CountSelectedRows () > 0;
-		}
-
-		protected void OnButtonAddProfessionClicked(object sender, EventArgs e)
-		{
-			ViewModel.AddProfession();
-		}
-
-		protected void OnButtonRemoveProfessionClicked (object sender, EventArgs e)
-		{
-			ViewModel.RemoveProfession(ytreeProfessions.GetSelectedObjects<Post> ());
-		}
-
-		protected void OnButtonNewProfessionClicked(object sender, EventArgs e)
-		{
-			ViewModel.NewProfession();
-		}
-
-		#endregion
 
 		#region Строки
 		protected void OnButtonAddItemClicked (object sender, EventArgs e)
