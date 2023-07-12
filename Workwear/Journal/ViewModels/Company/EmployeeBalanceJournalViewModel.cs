@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -18,7 +17,6 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
