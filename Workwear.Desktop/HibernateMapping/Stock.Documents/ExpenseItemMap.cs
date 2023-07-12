@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.HibernateMapping.Stock.Documents
@@ -23,10 +23,11 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.SubdivisionIssueOperation).Column("subdivision_issue_operation_id").Cascade.All();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable().Cascade.All();
 			References(x => x.ProtectionTools).Column("protection_tools_id");
-			HasOne(x => x.IssuanceSheetItem)
-				.PropertyRef(x => x.ExpenseItem);
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
+			
+			HasOne(x => x.IssuanceSheetItem)
+				.PropertyRef(x => x.ExpenseItem);
 		}
 	}
 }

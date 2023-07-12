@@ -48,7 +48,8 @@ namespace Workwear.ViewModels.Stock
 			IDeleteEntityService deleteService,
 			EmployeeIssueRepository employeeRepository,
 			BaseParameters baseParameters,
-			BarcodeService barcodeService)
+			BarcodeService barcodeService,
+			IList<Owner> owners)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -57,14 +58,16 @@ namespace Workwear.ViewModels.Stock
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			employeeRepository.RepoUow = UoW;
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			Owners = owners;
+			
+			SizeService.RefreshSizes(UoW); //Инициализация размеров
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			Entity.FillCanWriteoffInfo(employeeRepository);
-			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region Хелперы

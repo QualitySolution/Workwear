@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using NHibernate;
+using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -12,6 +14,7 @@ using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -70,11 +73,55 @@ namespace Workwear.ViewModels.Stock {
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
 			this.issueRepository.RepoUow = UoW;
+
+			var performance = new PerformanceHelper("Диалог", logger);
+			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Operation = ExpenseOperations.Employee;
 			}
+			else {
+				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
+				var expenceQuery = UoW.Session.QueryOver<Expense>()
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
+					.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+					.Fetch(SelectMode.Fetch, x => x.Employee)
+					.Fetch(SelectMode.Fetch, x => x.Warehouse)
+					.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
+					.Fetch(SelectMode.Fetch, x => x.WriteOffDoc)
+					.Where(x => x.Id == Entity.Id)
+					.Future();
+				
+				ExpenseItem expenseItemAlias = null;
+				
+				var itemsQuery = UoW.Session.QueryOver<Expense>()
+					.Where(x => x.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Left.JoinAlias(x => x.Items, () => expenseItemAlias)
+					.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature)
+					.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature.Type)
+					.Fetch(SelectMode.Fetch, () => expenseItemAlias.ProtectionTools)
+					.Fetch(SelectMode.Fetch, () => expenseItemAlias.EmployeeIssueOperation)
+					.Fetch(SelectMode.Fetch, () => expenseItemAlias.WarehouseOperation)
+					.Future();
+
+				if(featuresService.Available(WorkwearFeature.Barcodes))
+					UoW.Session.QueryOver<ExpenseItem>()
+						.Where(x => x.ExpenseDoc.Id == Entity.Id)
+						.Fetch(SelectMode.ChildFetch, x => x)
+						.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+						.JoinQueryOver(x => x.EmployeeIssueOperation, JoinType.LeftOuterJoin)
+						.Fetch(SelectMode.ChildFetch, x => x)
+						.JoinQueryOver(x => x.BarcodeOperations, JoinType.LeftOuterJoin)
+						.Fetch(SelectMode.Fetch, x => x)
+						.Future();
+
+				expenceQuery.SingleOrDefault();
+			}
+			
+			
 			if(Entity.Operation != ExpenseOperations.Employee)
 				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
@@ -85,8 +132,11 @@ namespace Workwear.ViewModels.Stock {
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			if(employee != null)
-				FillUnderreceived();
+			if(employee != null) {
+				performance.StartGroup("FillUnderreceived");
+				FillUnderreceived(performance);
+				performance.EndGroup();
+			}
 
 			if(Entity.WriteOffDoc != null)
 				FillAktNumber();
@@ -99,14 +149,17 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-									
+
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
-			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter);
+			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
+			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
 
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			performance.CheckPoint("Завершено создание модели");
+			performance.PrintAllPoints(logger);
 		}
 
 		#region EntityViewModels
@@ -124,7 +177,7 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Заполение документа
-		private void FillUnderreceived()
+		private void FillUnderreceived(PerformanceHelper performance)
 		{
 			Entity.ObservableItems.Clear();
 
@@ -132,11 +185,14 @@ namespace Workwear.ViewModels.Stock {
 				return;
 
 			Entity.Employee.FillWearReceivedInfo(issueRepository);
+			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
 
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item, baseParameters);
 			}
+			performance.CheckPoint("Заполняем строки документа");
 		}
 
 		private void UpdateAmounts() {
@@ -270,11 +326,13 @@ namespace Workwear.ViewModels.Stock {
 			switch(e.PropertyName) {
 				case nameof(Entity.Date):
 					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
-					UpdateAmounts();
+						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					FillUnderreceived();
+					var performance = new PerformanceHelper("Обновление строк документа", logger);
+					FillUnderreceived(performance);
 					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+					performance.PrintAllPoints(logger);
 					break;
 				case nameof(Entity.IssuanceSheet):
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
