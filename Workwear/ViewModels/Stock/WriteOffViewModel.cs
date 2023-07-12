@@ -13,6 +13,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -89,14 +90,16 @@ namespace Workwear.ViewModels.Stock
                 selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
             }
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
+            selectJournal.ViewModel.Filter.CanChooseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
         }
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
-            var selectVM = sender as StockBalanceJournalViewModel;
-            foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
-                Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.AddAmount);
-            CalculateTotal(null, null);
+	        var selectVM = sender as StockBalanceJournalViewModel;
+	        var addedAmount = selectVM.Filter.AddAmount;
+	        foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
+		        Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, 
+					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
+	        CalculateTotal(null, null);
         }
 
         public void AddFromEmployee() {
@@ -110,16 +113,18 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.SubdivisionSensitive =  Employee == null;
             selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
+            selectJournal.ViewModel.Filter.CanChooseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
         {
-            var operations = 
-                UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>()
-                .Select(x => x.Id));
-            foreach (var operation in operations) 
-                Entity.AddItem(operation, e.GetSelectedObjects<EmployeeBalanceJournalNode>().First(x => x.Id == operation.Id).AddAmount);
+            var operations = UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
+            var addedAmount = ((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount;
+            var balance = e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+
+            foreach (var operation in operations)
+	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
+            
             CalculateTotal(null, null);
         }
 
@@ -132,15 +137,17 @@ namespace Workwear.ViewModels.Stock
             selectJournal.ViewModel.Filter.DateSensitive = false;
             selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
             selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChoiseAmount = true;
+            selectJournal.ViewModel.Filter.CanChooseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
         }
         private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
-            var operations = 
-                UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>()
-                    .Select(x => x.Id));
-            foreach (var operation in operations) 
-	            Entity.AddItem(operation, e.GetSelectedObjects<SubdivisionBalanceJournalNode>().First(x => x.Id == operation.Id).AddAmount);
+            
+	        var operations = UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>().Select(x => x.Id));
+	        var addedAmount = ((SubdivisionBalanceJournalViewModel)sender).Filter.AddAmount;
+	        var balance = e.GetSelectedObjects<SubdivisionBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+
+	        foreach (var operation in operations)
+		        Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
             CalculateTotal(null, null);
         }
         public void DeleteItem(WriteoffItem item) {

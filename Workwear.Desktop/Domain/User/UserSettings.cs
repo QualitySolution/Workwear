@@ -51,7 +51,7 @@ namespace Workwear.Domain.Users
 		}
 		
 		private AddedAmount defaultAddedAmount = AddedAmount.All;
-		[Display(Name = "Режим добаления колличества")]
+		[Display(Name = "Режим добаления количества")]
 		public virtual AddedAmount DefaultAddedAmount {
 			get => defaultAddedAmount;
 			set { SetField(ref defaultAddedAmount, value, () => DefaultAddedAmount); }

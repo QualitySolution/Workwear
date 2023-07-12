@@ -44,7 +44,6 @@ namespace workwear.Journal.ViewModels.Company
 		        : "Остатки по сотрудникам";
 	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
 	        SelectionMode = JournalSelectionMode.Multiple;
-	        OnSelectResult += SetAddAmount;
         }
 
         #region Query
@@ -153,17 +152,7 @@ namespace workwear.Journal.ViewModels.Company
 			return query.TransformUsing(Transformers.AliasToBean<EmployeeBalanceJournalNode>());
         }
         #endregion
-        
-        #region Методы
-        private void SetAddAmount(object sender, JournalSelectedEventArgs e) {
-	        if(Filter.CanChoiseAmount)
-		        e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToList().ForEach(x => x.AddAmount =
-			        Filter.AddAmount == AddedAmount.One ? 1 :
-			        Filter.AddAmount == AddedAmount.Zero ? 0 :
-			        x.Balance);
-        }
-        #endregion
-    }
+	}
 
     public class EmployeeBalanceJournalNode
     {
@@ -186,8 +175,6 @@ namespace workwear.Journal.ViewModels.Company
 	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
-	    /// <summary> Нужно включить CanChoiseAmount = true в фильтре, чтобы пользователь мог изменить </summary>
-	    public int AddAmount { get; set; }
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 	    public string EmployeeName => String.Join(" ", LastName, FirstName, Patronymic);
 	    public string LastName { get; set; }

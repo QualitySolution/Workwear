@@ -26,6 +26,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
                 .MakeByType()
                 .Finish();
             Date = DateTime.Today;
+            addAmount = currentUserSettings.Settings.DefaultAddedAmount;
         }
         private DateTime date;
         public DateTime Date {
@@ -47,10 +48,10 @@ namespace workwear.Journal.Filter.ViewModels.Company
             get => subdivisionSensitive;
             set => SetField(ref subdivisionSensitive, value);
         }
-        private bool canChoiseAmount = false;
-        public bool CanChoiseAmount {
-	        get => canChoiseAmount;
-	        set => SetField(ref canChoiseAmount, value);
+        private bool canChooseAmount = false;
+        public bool CanChooseAmount {
+	        get => canChooseAmount;
+	        set => SetField(ref canChooseAmount, value);
         }
         private AddedAmount addAmount; 
         public virtual AddedAmount AddAmount {

@@ -25,6 +25,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
             EmployeeEntry = builder.ForProperty(x => x.Employee).MakeByType().Finish();
             SubdivisionEntry = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
             Date = DateTime.Today;
+            addAmount = currentUserSettings.Settings.DefaultAddedAmount;
         }
         private EmployeeCard employee;
         public EmployeeCard Employee {
@@ -76,10 +77,10 @@ namespace workwear.Journal.Filter.ViewModels.Company
 	        get => checkShowWriteoffVisible;
 	        set => SetField(ref checkShowWriteoffVisible, value);
         }
-        private bool canChoiseAmount = false;
-        public bool CanChoiseAmount {
-	        get => canChoiseAmount;
-	        set => SetField(ref canChoiseAmount, value);
+        private bool canChooseAmount = false;
+        public bool CanChooseAmount {
+	        get => canChooseAmount;
+	        set => SetField(ref canChooseAmount, value);
         }
         private AddedAmount addAmount; 
         public virtual AddedAmount AddAmount {

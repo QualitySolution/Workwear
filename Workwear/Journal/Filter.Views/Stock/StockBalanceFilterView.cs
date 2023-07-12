@@ -17,9 +17,9 @@ namespace workwear.Journal.Filter.Views.Stock
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			ydateDate.Binding.AddBinding(viewModel, v=> v.Date, w => w.Date).InitializeFromSource();
 			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
-			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChoiseAmount, w => w.Visible).InitializeFromSource();
+			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.AddAmount, w => w.SelectedItem).InitializeFromSource();
-			labelAmount.Binding.AddBinding(viewModel, v => v.CanChoiseAmount, w => w.Visible).InitializeFromSource();
+			labelAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();
 		}
 	}
 }

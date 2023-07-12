@@ -33,13 +33,13 @@ namespace workwear.Journal.Filter.Views.Company
 				.InitializeFromSource();
 			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
 			yenumcomboboxAmount.Binding.
-				AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
+				AddBinding(ViewModel, v => v.CanChooseAmount, w => w.Visible)
 				.InitializeFromSource();
 			yenumcomboboxAmount.Binding
 				.AddBinding(ViewModel, v => v.AddAmount, w => w.SelectedItem)
 				.InitializeFromSource();
 			labelAmount.Binding
-				.AddBinding(ViewModel, v => v.CanChoiseAmount, w => w.Visible)
+				.AddBinding(ViewModel, v => v.CanChooseAmount, w => w.Visible)
 				.InitializeFromSource();
 
 			yentryEmployee.ViewModel = ViewModel.EmployeeEntry;

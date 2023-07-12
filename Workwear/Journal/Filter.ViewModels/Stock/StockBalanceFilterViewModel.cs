@@ -70,10 +70,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region Visible
 
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
-		private bool canChoiseAmount = false;
-		public bool CanChoiseAmount {
-			get => canChoiseAmount;
-			set => SetField(ref canChoiseAmount, value);
+		private bool canChooseAmount = false;
+		public bool CanChooseAmount {
+			get => canChooseAmount;
+			set => SetField(ref canChooseAmount, value);
 		}
 		#endregion
 
