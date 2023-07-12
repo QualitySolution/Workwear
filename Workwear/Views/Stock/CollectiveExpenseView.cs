@@ -32,6 +32,8 @@ namespace Workwear.Views.Stock
 
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 
+			entityInCharge.ViewModel = ViewModel.EmployeeCardEntryViewModel;
+
 			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
 
 			IssuanceSheetSensetive();

@@ -37,6 +37,13 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
+		private EmployeeCard inCharge = null;
+		[Display(Name = "Ответственный за передачу СИЗ")]
+		public virtual EmployeeCard InCharge {
+			get { return inCharge; }
+			set { SetField(ref inCharge, value, () => InCharge); }
+		}
+
 		private IList<CollectiveExpenseItem> items = new List<CollectiveExpenseItem>();
 
 		[Display (Name = "Строки документа")]
