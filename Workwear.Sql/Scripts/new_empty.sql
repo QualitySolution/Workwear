@@ -1335,12 +1335,14 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
+  `in_charge_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_collective_expense_date` (`date` ASC),
+  INDEX `fk_in_charge_id_idx` (`in_charge_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1350,7 +1352,12 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_collective_expense_3`
+	FOREIGN KEY (`in_charge_id`)
+	REFERENCES `wear_cards` (`id`)
+	ON DELETE RESTRICT
+  	ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4;
@@ -1366,6 +1373,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `responsible_person_id` INT UNSIGNED NULL DEFAULT NULL,
   `head_of_division_person_id` INT UNSIGNED NULL DEFAULT NULL,
+  `in_charge_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_expense_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1375,6 +1383,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   INDEX `fk_issuance_sheet_5_idx` (`stock_expense_id` ASC),
   INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
   INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC),
+  INDEX `fk_issuance_sheet_8_idx` (`in_charge_id` ASC),
   INDEX `index_issuance_sheet_date` (`date` ASC),
   CONSTRAINT `fk_issuance_sheet_1`
     FOREIGN KEY (`organization_id`)
@@ -1405,7 +1414,12 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     FOREIGN KEY (`stock_collective_expense_id`)
     REFERENCES `stock_collective_expense` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_8`
+	FOREIGN KEY (`in_charge_id`)
+	REFERENCES `wear_cards` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
