@@ -63,7 +63,6 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
-			SizeService.RefreshSizes(UoW); //Инициализация размеров
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Entity.PropertyChanged += EntityOnPropertyChanged;

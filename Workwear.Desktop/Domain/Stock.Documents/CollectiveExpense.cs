@@ -198,23 +198,6 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
 		}
 
-		public virtual void PrepareItems(IUnitOfWork uow, PerformanceHelper performance)
-		{
-			performance.StartGroup(nameof(PrepareItems));
-			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			performance.CheckPoint(nameof(cardItems));
-			var excludeOperations = Items.Select(x => x.WarehouseOperation);
-			performance.CheckPoint(nameof(excludeOperations));
-			
-			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems, excludeOperations);
-			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
-			foreach(var docItem in Items) {
-				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
-			}
-			performance.CheckPoint("Fill EmployeeCardItem's");
-			performance.EndGroup();
-		}
-
 		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress, IList<int> itemIds = null)
 		{
 			var groups = itemIds is null ? 

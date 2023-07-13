@@ -312,7 +312,7 @@ namespace workwear
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
-			builder.RegisterType<EmployeeIssueModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 
 			#region Repository

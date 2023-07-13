@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using NHibernate;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -72,6 +73,16 @@ namespace Workwear.ViewModels.Stock
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
+			else {
+				UoW.Session.QueryOver<CollectiveExpense>()
+					.Where(x => x.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+					.Fetch(SelectMode.Fetch, x => x.Warehouse)
+					.SingleOrDefault();
+			}
+			performance.CheckPoint("Предзагрузка данных документа");
+			
 			changeMonitor.SubscribeAllChange(
 					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
 				.TargetField(x => x.Employee);

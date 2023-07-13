@@ -24,7 +24,6 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
-using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 
@@ -67,43 +66,47 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 
 			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(6);
+			globalProgress.Start(7);
 			//Запрашиваем все размеры чтобы были в кеше Uow.
 			SizeService.RefreshSizes(UoW);
 			performance.CheckPoint("Get all sizes");
 			globalProgress.Add();
+			var allOwners = UoW.Session.QueryOver<Owner>().Future();
 			
-			var items = UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.Fetch, x => x)
-				.Fetch(SelectMode.Fetch, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+			CollectiveExpenseItem collectiveExpenseItemAlias = null;
+			UoW.Session.QueryOver<CollectiveExpense>()
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
+				.Where(x => x.Id == Entity.Id)
+				.JoinAlias(x => x.Items, () => collectiveExpenseItemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.WarehouseOperation)
 				.List();
 			
 			performance.CheckPoint("Get rows info");
 			globalProgress.Add();
 
-			var employeeIds = items.Select(x => x.Employee.Id).Distinct().ToArray();
-			var query = UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
-				.Future();
-
-			UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.Vacations)
-				.Future();
-			
-			UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.Sizes)
-				.Future();
-			query.ToList();
-			
+			var employeeIds = Entity.Items.Select(x => x.Employee.Id).Distinct().ToArray();
+			issueModel.PreloadEmployeeInfo(employeeIds);
 			performance.CheckPoint("Get employees info");
 			globalProgress.Add();
-			Entity.PrepareItems(UoW, performance);
-			performance.CheckPoint("PrepareItems");
+			
+			issueModel.PreloadWearItems(employeeIds);
+			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
+			globalProgress.Add();
+			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
+			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
+			performance.CheckPoint(nameof(excludeOperations) + "+" + nameof(cardItems));
+			
+			EmployeeCard.FillWearInStockInfo(UoW, Warehouse, Entity.Date, cardItems, excludeOperations);
+			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
+			globalProgress.Add();
+			foreach(var docItem in Entity.Items) {
+				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
+			}
+			performance.CheckPoint("Fill EmployeeCardItem's");
+			
 			globalProgress.Add();
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
 			performance.CheckPoint("FillWearReceivedInfo");
@@ -114,9 +117,7 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(Sum));
 
 			performance.CheckPoint("Sum");
-			globalProgress.Add();
-			Owners = UoW.GetAll<Owner>().ToList();
-			performance.CheckPoint("Owners");
+			Owners = allOwners.ToList();
 			globalProgress.Close();
 		}
 

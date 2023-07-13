@@ -25,11 +25,13 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 
@@ -37,6 +39,7 @@ namespace Workwear.ViewModels.Stock {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
 		private ILifetimeScope autofacScope;
+		private readonly SizeService sizeService;
 		private readonly UserRepository userRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
@@ -45,14 +48,17 @@ namespace Workwear.ViewModels.Stock {
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
 		private readonly IProgressBarDisplayable progress;
+		private readonly EmployeeIssueModel issueModel;
 		private readonly EmployeeIssueRepository issueRepository;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
-			IUnitOfWorkFactory unitOfWorkFactory, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
 			IValidator validator,
 			IUserService userService,
+			SizeService sizeService,
 			UserRepository userRepository,
 			IInteractiveService interactive,
 			StockRepository stockRepository,
@@ -60,22 +66,27 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			IProgressBarDisplayable progress,
+			EmployeeIssueModel issueModel,
 			EmployeeIssueRepository issueRepository,
 			EmployeeCard employee = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
 			this.issueRepository.RepoUow = UoW;
 
 			var performance = new PerformanceHelper("Диалог", logger);
 			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
+			this.sizeService.RefreshSizes(UoW); //Загружаем размеры
+			performance.CheckPoint("Загружены размеры");
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -83,50 +94,18 @@ namespace Workwear.ViewModels.Stock {
 			}
 			else {
 				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
-				var expenceQuery = UoW.Session.QueryOver<Expense>()
-					.Fetch(SelectMode.ChildFetch, x => x)
-					.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
-					.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
-					.Fetch(SelectMode.Fetch, x => x.Employee)
-					.Fetch(SelectMode.Fetch, x => x.Warehouse)
-					.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
-					.Fetch(SelectMode.Fetch, x => x.WriteOffDoc)
-					.Where(x => x.Id == Entity.Id)
-					.Future();
-				
-				ExpenseItem expenseItemAlias = null;
-				
-				var itemsQuery = UoW.Session.QueryOver<Expense>()
-					.Where(x => x.Id == Entity.Id)
-					.Fetch(SelectMode.ChildFetch, x => x)
-					.Left.JoinAlias(x => x.Items, () => expenseItemAlias)
-					.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature)
-					.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature.Type)
-					.Fetch(SelectMode.Fetch, () => expenseItemAlias.ProtectionTools)
-					.Fetch(SelectMode.Fetch, () => expenseItemAlias.EmployeeIssueOperation)
-					.Fetch(SelectMode.Fetch, () => expenseItemAlias.WarehouseOperation)
-					.Future();
-
-				if(featuresService.Available(WorkwearFeature.Barcodes))
-					UoW.Session.QueryOver<ExpenseItem>()
-						.Where(x => x.ExpenseDoc.Id == Entity.Id)
-						.Fetch(SelectMode.ChildFetch, x => x)
-						.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
-						.JoinQueryOver(x => x.EmployeeIssueOperation, JoinType.LeftOuterJoin)
-						.Fetch(SelectMode.ChildFetch, x => x)
-						.JoinQueryOver(x => x.BarcodeOperations, JoinType.LeftOuterJoin)
-						.Fetch(SelectMode.Fetch, x => x)
-						.Future();
-
-				expenceQuery.SingleOrDefault();
+				PreloadingDoc();
 			}
-			
-			
+
 			if(Entity.Operation != ExpenseOperations.Employee)
 				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
-				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
+				Entity.Employee = UoW.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.Id == employee.Id)
+					.Fetch(SelectMode.Fetch, x => x.Subdivision)
+					.Fetch(SelectMode.Fetch, x => x.Subdivision.Warehouse)
+					.SingleOrDefault();
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			}
 
@@ -163,8 +142,8 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		#region EntityViewModels
-		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
-		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
 
 		#region Свойства для View
@@ -177,6 +156,46 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Заполение документа
+
+		private void PreloadingDoc() {
+			var expenseQuery = UoW.Session.QueryOver<Expense>()
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Warehouse)
+				.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
+				.Fetch(SelectMode.Fetch, x => x.WriteOffDoc)
+				.Where(x => x.Id == Entity.Id)
+				.Future();
+				
+			ExpenseItem expenseItemAlias = null;
+				
+			UoW.Session.QueryOver<Expense>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => expenseItemAlias)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.EmployeeIssueOperation)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.WarehouseOperation)
+				.Future();
+
+			if(featuresService.Available(WorkwearFeature.Barcodes))
+				UoW.Session.QueryOver<ExpenseItem>()
+					.Where(x => x.ExpenseDoc.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+					.JoinQueryOver(x => x.EmployeeIssueOperation, JoinType.LeftOuterJoin)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.JoinQueryOver(x => x.BarcodeOperations, JoinType.LeftOuterJoin)
+					.Fetch(SelectMode.Fetch, x => x)
+					.Future();
+
+			expenseQuery.SingleOrDefault();
+		}
+
 		private void FillUnderreceived(PerformanceHelper performance)
 		{
 			Entity.ObservableItems.Clear();
@@ -184,7 +203,11 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Employee == null)
 				return;
 
-			Entity.Employee.FillWearReceivedInfo(issueRepository);
+			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
+			performance.CheckPoint("Предварительная загрузка сотрудника");
+			issueModel.PreloadWearItems(Entity.Employee.Id);
+			performance.CheckPoint("Предварительная загрузка потребностей");
+			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
