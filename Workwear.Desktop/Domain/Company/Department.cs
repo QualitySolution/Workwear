@@ -27,6 +27,14 @@ namespace Workwear.Domain.Company
 			get => name;
 			set => SetField(ref name, value);
 		}
+		
+		private string code;
+		[Display(Name = "Код отдела")]
+		[StringLength(20)]
+		public virtual string Code {
+			get => code;
+			set => SetField(ref code, value);
+		}
 
 		private Subdivision subdivision;
 		[Display(Name = "Подразделение")]

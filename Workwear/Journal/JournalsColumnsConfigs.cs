@@ -58,7 +58,8 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<DepartmentJournalViewModel>(
 				() => FluentColumnsConfig<DepartmentJournalNode>.Create()
-					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("ID").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(x => x.Comments)
@@ -107,7 +108,8 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<PostJournalViewModel>(
 				(jwm) => FluentColumnsConfig<PostJournalNode>.Create()
-					.AddColumn("Код").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("ID").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
 					.AddColumn("Сотрудников").AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
 					.AddColumn("Профессия").AddTextRenderer(node => node.Profession).WrapWidth(700).SearchHighlight()
