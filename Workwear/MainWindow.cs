@@ -272,28 +272,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
-		DialogViewModelBase after = null;
-		if(cnbOpenInWindow.Active) {
-			IPage replaced;
-			if(NavigationManager.CurrentPage?.ViewModel is EmployeeViewModel)
-				replaced = NavigationManager.CurrentPage;
-			else {
-				replaced = NavigationManager.IndependentPages.Reverse().FirstOrDefault(x => x.ViewModel is EmployeeViewModel);
-			}
-
-			if(replaced != null) {
-				IPage last = null;
-				foreach(var page in NavigationManager.TopLevelPages) {
-					if(page == replaced) {
-						after = last?.ViewModel;
-						break;
-					}
-					last = page;
-				}
-				NavigationManager.AskClosePage(replaced);
-			}
-		}
-		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(after, EntityUoWBuilder.ForOpen(id));
+		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(id));
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
