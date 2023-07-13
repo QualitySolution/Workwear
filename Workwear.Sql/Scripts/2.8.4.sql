@@ -55,3 +55,10 @@ ALTER TABLE `stock_income_detail`
             REFERENCES `operation_issued_by_employee` (`id`)
             ON DELETE NO ACTION
             ON UPDATE CASCADE;
+
+ALTER TABLE `user_settings` 
+    ADD `default_stock_balance_amount` 
+        ENUM('All','One','Zero') 
+    	NOT NULL 
+    	DEFAULT 'All' 
+    AFTER `maximize_on_start`;

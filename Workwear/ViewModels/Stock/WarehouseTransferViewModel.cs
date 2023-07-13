@@ -14,6 +14,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -90,15 +91,17 @@ namespace Workwear.ViewModels.Stock
 		public void AddItems() {
 			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectPage.ViewModel.Filter.CanChooseAmount = true;
 			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
 			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 
 		private void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			foreach(var stockBalance in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				Entity.AddItem(stockBalance.GetStockPosition(UoW), stockBalance.Amount);
-			}
+			var addedAmount = ((StockBalanceJournalViewModel)sender).Filter.AddAmount;
+				foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
+					Entity.AddItem(node.GetStockPosition(UoW), 
+						addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
 		}
 		public void RemoveItems(IEnumerable<TransferItem> items) {
 			foreach(var item in items) {

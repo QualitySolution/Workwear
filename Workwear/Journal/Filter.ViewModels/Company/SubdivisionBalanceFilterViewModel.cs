@@ -5,23 +5,28 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Users;
+using workwear.Tools;
 
 namespace workwear.Journal.Filter.ViewModels.Company
 {
     public class SubdivisionBalanceFilterViewModel : JournalFilterViewModelBase<SubdivisionBalanceFilterViewModel>
     {
+	    private readonly CurrentUserSettings currentUserSettings;
+	    
         public SubdivisionBalanceFilterViewModel(
             JournalViewModelBase journalViewModel,
             INavigationManager navigation, 
-            ILifetimeScope autofacScope, 
-            IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+            ILifetimeScope autofacScope, CurrentUserSettings currentUserSettings, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
         {
-            var builder = new CommonEEVMBuilderFactory<SubdivisionBalanceFilterViewModel>(
+	        this.currentUserSettings = currentUserSettings;
+	        var builder = new CommonEEVMBuilderFactory<SubdivisionBalanceFilterViewModel>(
                 journalViewModel, this, UoW, navigation, autofacScope);
             SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
                 .MakeByType()
                 .Finish();
             Date = DateTime.Today;
+            addAmount = currentUserSettings.Settings.DefaultAddedAmount;
         }
         private DateTime date;
         public DateTime Date {
@@ -42,6 +47,22 @@ namespace workwear.Journal.Filter.ViewModels.Company
         public bool SubdivisionSensitive {
             get => subdivisionSensitive;
             set => SetField(ref subdivisionSensitive, value);
+        }
+        private bool canChooseAmount = false;
+        public bool CanChooseAmount {
+	        get => canChooseAmount;
+	        set => SetField(ref canChooseAmount, value);
+        }
+        private AddedAmount addAmount; 
+        public virtual AddedAmount AddAmount {
+	        get => addAmount;
+	        set {
+		        if(addAmount != value) {
+			        currentUserSettings.Settings.DefaultAddedAmount = value;
+			        currentUserSettings.SaveSettings();
+			        SetField(ref addAmount, value);
+		        }
+	        }
         }
         public EntityEntryViewModel<Subdivision> SubdivisionEntry;
     }

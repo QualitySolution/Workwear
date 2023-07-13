@@ -127,7 +127,7 @@ namespace workwear.Journal.ViewModels.Company
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-						.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+						.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.NomenclatureUnitsName)
 						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
 						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
 						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
@@ -150,7 +150,7 @@ namespace workwear.Journal.ViewModels.Company
 			return query.TransformUsing(Transformers.AliasToBean<EmployeeBalanceJournalNode>());
         }
         #endregion
-    }
+	}
 
     public class EmployeeBalanceJournalNode
     {

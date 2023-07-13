@@ -7,8 +7,10 @@ using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
+using workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -16,6 +18,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 {
 	public class StockBalanceFilterViewModel : JournalFilterViewModelBase<StockBalanceFilterViewModel>
 	{
+		private readonly CurrentUserSettings currentUserSettings;
+		
 		#region Ограничения
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
@@ -47,6 +51,18 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => date;
 			set => SetField(ref date, value);
 		}
+
+		private AddedAmount addAmount; 
+		public virtual AddedAmount AddAmount {
+			get => addAmount;
+			set {
+				if(addAmount != value) {
+					currentUserSettings.Settings.DefaultAddedAmount = value;
+					currentUserSettings.SaveSettings();
+					SetField(ref addAmount, value);
+				}
+			}
+		}
 		#endregion
 
 		public readonly FeaturesService FeaturesService;
@@ -54,7 +70,11 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region Visible
 
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
-
+		private bool canChooseAmount = false;
+		public bool CanChooseAmount {
+			get => canChooseAmount;
+			set => SetField(ref canChooseAmount, value);
+		}
 		#endregion
 
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
@@ -65,20 +85,20 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
-			FeaturesService featuresService): base(journal, unitOfWorkFactory)
+			FeaturesService featuresService,CurrentUserSettings currentUserSettings): base(journal, unitOfWorkFactory)
 		{
 			FeaturesService = featuresService;
+			this.currentUserSettings = currentUserSettings;
 			date = DateTime.Today;
 
 			var builder = new CommonEEVMBuilderFactory<StockBalanceFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
 			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-
+			addAmount = currentUserSettings.Settings.DefaultAddedAmount;
+			
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 		}
-
-
 	}
 }

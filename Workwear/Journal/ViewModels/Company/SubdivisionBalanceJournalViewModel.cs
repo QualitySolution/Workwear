@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
@@ -14,6 +15,7 @@ using QS.Project.Journal.DataLoader;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
@@ -29,7 +31,7 @@ namespace workwear.Journal.ViewModels.Company
             ILifetimeScope autofacScope,
             Subdivision subdivision = null) : base(unitOfWorkFactory, interactiveService, navigation)
         {
-	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
+	        var dataLoader = new ThreadDataLoader<SubdivisionBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
 	        JournalFilter = Filter = autofacScope.Resolve<SubdivisionBalanceFilterViewModel>(
@@ -125,7 +127,7 @@ namespace workwear.Journal.ViewModels.Company
 			    : (ExpiryDate.Value - DateTime.Today).TotalDays / (ExpiryDate.Value - IssuedDate).TotalDays;
 
 	    public int Balance { get; set;}
-	    public string BalanceText => $"{Balance} {UnitsName}";
+	    public string BalanceText => $"{Balance} {UnitsName}";		
 	    public string SubdivisionName { get; set; }
     }
 }

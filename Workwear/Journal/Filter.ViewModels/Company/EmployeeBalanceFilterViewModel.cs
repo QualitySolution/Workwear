@@ -5,22 +5,27 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Users;
+using workwear.Tools;
 
 namespace workwear.Journal.Filter.ViewModels.Company
 {
     public class EmployeeBalanceFilterViewModel : JournalFilterViewModelBase<EmployeeBalanceFilterViewModel>
     {
+	    private readonly CurrentUserSettings currentUserSettings;
+	    
         public EmployeeBalanceFilterViewModel(
             JournalViewModelBase journalViewModel,
             INavigationManager navigation, 
-            ILifetimeScope autofacScope, 
-            IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+            ILifetimeScope autofacScope, CurrentUserSettings currentUserSettings, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
         {
-            var builder = new CommonEEVMBuilderFactory<EmployeeBalanceFilterViewModel>(
+	        this.currentUserSettings = currentUserSettings;
+	        var builder = new CommonEEVMBuilderFactory<EmployeeBalanceFilterViewModel>(
                 journalViewModel, this, UoW, navigation, autofacScope);
             EmployeeEntry = builder.ForProperty(x => x.Employee).MakeByType().Finish();
             SubdivisionEntry = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
             Date = DateTime.Today;
+            addAmount = currentUserSettings.Settings.DefaultAddedAmount;
         }
         private EmployeeCard employee;
         public EmployeeCard Employee {
@@ -71,6 +76,22 @@ namespace workwear.Journal.Filter.ViewModels.Company
         public bool CheckShowWriteoffVisible {
 	        get => checkShowWriteoffVisible;
 	        set => SetField(ref checkShowWriteoffVisible, value);
+        }
+        private bool canChooseAmount = false;
+        public bool CanChooseAmount {
+	        get => canChooseAmount;
+	        set => SetField(ref canChooseAmount, value);
+        }
+        private AddedAmount addAmount; 
+        public virtual AddedAmount AddAmount {
+	        get => addAmount;
+	        set {
+		        if(addAmount != value) {
+			        currentUserSettings.Settings.DefaultAddedAmount = value;
+			        currentUserSettings.SaveSettings();
+			        SetField(ref addAmount, value);
+		        }
+	        }
         }
         
         public EntityEntryViewModel<EmployeeCard> EmployeeEntry;
