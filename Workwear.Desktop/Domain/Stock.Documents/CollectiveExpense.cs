@@ -249,6 +249,7 @@ namespace Workwear.Domain.Stock.Documents
 				Organization = userSettings?.DefaultOrganization,
 				HeadOfDivisionPerson = userSettings?.DefaultLeader,
 				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
+				InCharge = this?.InCharge,
 			};
 			UpdateIssuanceSheet();
 		}

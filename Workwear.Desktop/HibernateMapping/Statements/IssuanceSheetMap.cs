@@ -22,6 +22,7 @@ namespace Workwear.HibernateMapping.Statements
 			References(x => x.CollectiveExpense).Column("stock_collective_expense_id");
 			References(x => x.ResponsiblePerson).Column("responsible_person_id");
 			References(x => x.HeadOfDivisionPerson).Column("head_of_division_person_id");
+			References(x => x.InCharge).Column("in_charge_id");
 
 			HasMany(x => x.Items)
 				.Inverse()
