@@ -505,7 +505,7 @@ namespace Workwear.Domain.Company
 			bool onlyUnderreceived = false, Action progressStep = null)
 		{
 			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters, onTime) : WorkwearItems;
-			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
+			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null, progressStep);
 		}
 		
 		/// <summary>

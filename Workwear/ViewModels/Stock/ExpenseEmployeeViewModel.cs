@@ -47,7 +47,8 @@ namespace Workwear.ViewModels.Stock {
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
-		private readonly IProgressBarDisplayable progress;
+		private readonly IProgressBarDisplayable globalProgress;
+		private readonly ModalProgressCreator modalProgressCreator;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly EmployeeIssueRepository issueRepository;
 
@@ -61,11 +62,12 @@ namespace Workwear.ViewModels.Stock {
 			SizeService sizeService,
 			UserRepository userRepository,
 			IInteractiveService interactive,
+			IProgressBarDisplayable globalProgress,
+			ModalProgressCreator modalProgressCreator,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
-			IProgressBarDisplayable progress,
 			EmployeeIssueModel issueModel,
 			EmployeeIssueRepository issueRepository,
 			EmployeeCard employee = null
@@ -78,15 +80,15 @@ namespace Workwear.ViewModels.Stock {
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
+			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
+			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
-			this.issueRepository.RepoUow = UoW;
 
-			var performance = new PerformanceHelper("Диалог", logger);
+			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
 			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
 			this.sizeService.RefreshSizes(UoW); //Загружаем размеры
-			performance.CheckPoint("Загружены размеры");
+			performance.CheckPoint("Предварительная загрузка документа");
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -96,6 +98,7 @@ namespace Workwear.ViewModels.Stock {
 				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
 				PreloadingDoc();
 			}
+			performance.CheckPoint("Заполняем сотрудника");
 
 			if(Entity.Operation != ExpenseOperations.Employee)
 				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
@@ -108,6 +111,7 @@ namespace Workwear.ViewModels.Stock {
 					.SingleOrDefault();
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			}
+			performance.CheckPoint("Заполняем склад");
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -129,6 +133,7 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
 
+			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
@@ -137,8 +142,7 @@ namespace Workwear.ViewModels.Stock {
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
-			performance.CheckPoint("Завершено создание модели");
-			performance.PrintAllPoints(logger);
+			performance.End();
 		}
 
 		#region EntityViewModels
@@ -203,19 +207,19 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Employee == null)
 				return;
 
-			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
 			performance.CheckPoint("Предварительная загрузка сотрудника");
-			issueModel.PreloadWearItems(Entity.Employee.Id);
+			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
 			performance.CheckPoint("Предварительная загрузка потребностей");
-			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
+			issueModel.PreloadWearItems(Entity.Employee.Id);
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
-			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
 			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
+			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
+			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item, baseParameters);
 			}
-			performance.CheckPoint("Заполняем строки документа");
 		}
 
 		private void UpdateAmounts() {
@@ -237,9 +241,9 @@ namespace Workwear.ViewModels.Stock {
 		
 		public override bool Save()
 		{
-			progress.Start(7);
+			globalProgress.Start(7);
 			if(!Validate()) {
-				progress.Close();
+				globalProgress.Close();
 				return false;
 			}
 			if(Entity.Id == 0)
@@ -247,6 +251,7 @@ namespace Workwear.ViewModels.Stock {
 
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
+				globalProgress.Close();
 				return false;
 			}
 
@@ -257,10 +262,10 @@ namespace Workwear.ViewModels.Stock {
 			// 3 - Обрабатываем и сохраняем доп документы.
 			
 			logger.Info("Обработка строк документа выдачи...");
-			progress.Add();
+			globalProgress.Add();
 			Entity.CleanupItems();
 			Entity.CleanupItemsWriteOff();
-			progress.Add();
+			globalProgress.Add();
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
@@ -270,33 +275,33 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info("Предварительная запись списания...");
 				UoW.Save(Entity.WriteOffDoc);
 			}
-			progress.Add();
+			globalProgress.Add();
 			Entity.CleanupIssuanceSheetItems();
 			if(Entity.IssuanceSheet != null) {
 				logger.Info("Предварительная запись ведомости...");
 				UoW.Save(Entity.IssuanceSheet);
 			}
-			progress.Add();
+			globalProgress.Add();
 			logger.Info("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
 			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
 			
-			progress.Add();
+			globalProgress.Add();
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-			progress.Add();
+			globalProgress.Add();
 			Entity.UpdateIssuedWriteOffOperation();
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			progress.Add();
+			globalProgress.Add();
 			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
 			UoWGeneric.Commit();
 			logger.Info("Ok");
-			progress.Close();
+			globalProgress.Close();
 			return true;
 		}
 
@@ -352,10 +357,10 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					var performance = new PerformanceHelper("Обновление строк документа", logger);
+					var performance = new ProgressPerformanceHelper(globalProgress, 5,"Обновление строк документа", logger);
 					FillUnderreceived(performance);
 					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
-					performance.PrintAllPoints(logger);
+					performance.End();
 					break;
 				case nameof(Entity.IssuanceSheet):
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
