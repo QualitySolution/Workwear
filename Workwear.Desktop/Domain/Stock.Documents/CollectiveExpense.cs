@@ -37,11 +37,11 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
-		private EmployeeCard inCharge = null;
+		private EmployeeCard transferAgent = null;
 		[Display(Name = "Ответственный за передачу СИЗ")]
-		public virtual EmployeeCard InCharge {
-			get { return inCharge; }
-			set { SetField(ref inCharge, value, () => InCharge); }
+		public virtual EmployeeCard TransferAgent {
+			get { return transferAgent; }
+			set { SetField(ref transferAgent, value, () => TransferAgent); }
 		}
 
 		private IList<CollectiveExpenseItem> items = new List<CollectiveExpenseItem>();
@@ -249,7 +249,7 @@ namespace Workwear.Domain.Stock.Documents
 				Organization = userSettings?.DefaultOrganization,
 				HeadOfDivisionPerson = userSettings?.DefaultLeader,
 				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
-				InCharge = this?.InCharge,
+				TransferAgent = this.TransferAgent,
 			};
 			UpdateIssuanceSheet();
 		}

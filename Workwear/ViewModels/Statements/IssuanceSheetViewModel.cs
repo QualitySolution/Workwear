@@ -32,7 +32,7 @@ namespace Workwear.ViewModels.Statements
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
-		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
@@ -56,7 +56,7 @@ namespace Workwear.ViewModels.Statements
 
 			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
 			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision).MakeByType().Finish();
-			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.InCharge).MakeByType().Finish();
+			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
 			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson).MakeByType().Finish();
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson).MakeByType().Finish();
 			
@@ -173,7 +173,7 @@ namespace Workwear.ViewModels.Statements
 		#region Sensetive
 
 		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null;
-		public bool CanEditInCharge => Entity.CollectiveExpense == null || Entity.InCharge == null;
+		public bool CanEditTransferAgent => Entity.CollectiveExpense == null || Entity.TransferAgent == null;
 
 		#endregion
 

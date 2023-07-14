@@ -83,7 +83,7 @@ namespace Workwear.ViewModels.Stock
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.InCharge).MakeByType().Finish();
+			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
 			
 			performance.CheckPoint("Warehouse");
 			performance.StartGroup("CollectiveExpenseItemsViewModel");
@@ -100,7 +100,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
-		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		#endregion
 
 		public override bool Save()

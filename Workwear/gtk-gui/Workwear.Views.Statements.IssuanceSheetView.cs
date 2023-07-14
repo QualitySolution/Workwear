@@ -28,7 +28,7 @@ namespace Workwear.Views.Statements
 
 		private global::QS.Views.Control.EntityEntry entityentrySubdivision;
 
-		private global::QS.Views.Control.EntityEntry entityInCharge;
+		private global::QS.Views.Control.EntityEntry entityTransferAgent;
 
 		private global::Gtk.Label label1;
 
@@ -147,6 +147,7 @@ namespace Workwear.Views.Statements
 			w8.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(4)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -209,11 +210,11 @@ namespace Workwear.Views.Statements
 			w13.RightAttach = ((uint)(2));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.entityInCharge = new global::QS.Views.Control.EntityEntry();
-			this.entityInCharge.Events = ((global::Gdk.EventMask)(256));
-			this.entityInCharge.Name = "entityInCharge";
-			this.table1.Add(this.entityInCharge);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.entityInCharge]));
+			this.entityTransferAgent = new global::QS.Views.Control.EntityEntry();
+			this.entityTransferAgent.Events = ((global::Gdk.EventMask)(256));
+			this.entityTransferAgent.Name = "entityTransferAgent";
+			this.table1.Add(this.entityTransferAgent);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.entityTransferAgent]));
 			w14.LeftAttach = ((uint)(3));
 			w14.RightAttach = ((uint)(4));
 			w14.YOptions = ((global::Gtk.AttachOptions)(4));

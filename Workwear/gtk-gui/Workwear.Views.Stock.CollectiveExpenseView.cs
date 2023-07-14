@@ -18,7 +18,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Table table2;
 
-		private global::QS.Views.Control.EntityEntry entityInCharge;
+		private global::QS.Views.Control.EntityEntry entityTransferAgent;
 
 		private global::QS.Views.Control.EntityEntry entityWarehouseExpense;
 
@@ -124,11 +124,11 @@ namespace Workwear.Views.Stock
 			this.table2.RowSpacing = ((uint)(6));
 			this.table2.ColumnSpacing = ((uint)(6));
 			// Container child table2.Gtk.Table+TableChild
-			this.entityInCharge = new global::QS.Views.Control.EntityEntry();
-			this.entityInCharge.Events = ((global::Gdk.EventMask)(256));
-			this.entityInCharge.Name = "entityInCharge";
-			this.table2.Add(this.entityInCharge);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2[this.entityInCharge]));
+			this.entityTransferAgent = new global::QS.Views.Control.EntityEntry();
+			this.entityTransferAgent.Events = ((global::Gdk.EventMask)(256));
+			this.entityTransferAgent.Name = "entityTransferAgent";
+			this.table2.Add(this.entityTransferAgent);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2[this.entityTransferAgent]));
 			w7.TopAttach = ((uint)(1));
 			w7.BottomAttach = ((uint)(2));
 			w7.LeftAttach = ((uint)(1));

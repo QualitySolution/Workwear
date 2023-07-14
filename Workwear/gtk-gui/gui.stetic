@@ -4172,7 +4172,7 @@
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
                 <child>
-                  <widget class="QS.Views.Control.EntityEntry" id="entityInCharge">
+                  <widget class="QS.Views.Control.EntityEntry" id="entityTransferAgent">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
                   </widget>
@@ -10208,7 +10208,7 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.Views.Control.EntityEntry" id="entityInCharge">
+              <widget class="QS.Views.Control.EntityEntry" id="entityTransferAgent">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>

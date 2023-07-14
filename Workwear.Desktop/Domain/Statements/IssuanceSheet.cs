@@ -62,11 +62,11 @@ namespace Workwear.Domain.Statements
 			set => SetField(ref collectiveExpense, value);
 		}
 
-		private EmployeeCard inCharge;
+		private EmployeeCard transferAgent;
 		[Display(Name = "Ответственный за передачу СИЗ")]
-		public virtual EmployeeCard InCharge {
-			get => inCharge;
-			set => SetField(ref inCharge, value);
+		public virtual EmployeeCard TransferAgent {
+			get => transferAgent;
+			set => SetField(ref transferAgent, value);
 		}
 		
 		#region Подписи

@@ -59,19 +59,19 @@ ALTER TABLE `stock_income_detail`
 -- Добавляем добавляем ответственного в колективную выдачу и ведомость--
 
 ALTER TABLE `issuance_sheet` 
-    ADD COLUMN `in_charge_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `head_of_division_person_id`,
-	ADD INDEX `fk_issuance_sheet_8_idx` (`in_charge_id` ASC),
+    ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `head_of_division_person_id`,
+	ADD INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
 	ADD CONSTRAINT `fk_issuance_sheet_8`
-		FOREIGN KEY (`in_charge_id`)
+		FOREIGN KEY (`transfer_agent_id`)
 			REFERENCES `wear_cards` (`id`)
 			ON DELETE NO ACTION
     		ON UPDATE CASCADE;
 
 ALTER TABLE `stock_collective_expense`
-	ADD COLUMN `in_charge_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
-	ADD INDEX `fk_stock_collective_expense_3_idx` (`in_charge_id` ASC),
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
+	ADD INDEX `fk_stock_collective_expense_3_idx` (`transfer_agent_id` ASC),
 	ADD CONSTRAINT `fk_stock_collective_expense_3`
-		FOREIGN KEY (`in_charge_id`)
+		FOREIGN KEY (`transfer_agent_id`)
 			REFERENCES `wear_cards` (`id`)
 			ON DELETE RESTRICT
     		ON UPDATE CASCADE;
