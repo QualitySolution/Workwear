@@ -24,9 +24,9 @@ using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
-using workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock

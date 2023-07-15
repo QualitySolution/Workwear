@@ -27,10 +27,10 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
-using workwear.Tools;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 

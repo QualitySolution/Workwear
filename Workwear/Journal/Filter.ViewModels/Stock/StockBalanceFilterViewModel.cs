@@ -10,8 +10,8 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
-using workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.Filter.ViewModels.Stock

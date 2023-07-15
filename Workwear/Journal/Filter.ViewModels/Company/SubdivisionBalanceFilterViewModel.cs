@@ -6,7 +6,7 @@ using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Users;
-using workwear.Tools;
+using Workwear.Tools.User;
 
 namespace workwear.Journal.Filter.ViewModels.Company
 {

@@ -31,7 +31,6 @@ using QS.Updater.App;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
@@ -61,8 +60,8 @@ using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
-using workwear.Tools;
 using workwear;
+using Workwear.Tools.User;
 
 public partial class MainWindow : Gtk.Window
 {

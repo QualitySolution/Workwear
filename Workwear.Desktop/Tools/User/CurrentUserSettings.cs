@@ -4,7 +4,7 @@ using QS.DomainModel.UoW;
 using QS.Services;
 using Workwear.Domain.Users;
 
-namespace workwear.Tools
+namespace Workwear.Tools.User
 {
 	public class CurrentUserSettings : IDisposable
 	{

@@ -25,9 +25,9 @@ using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
-using workwear.Tools;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock
