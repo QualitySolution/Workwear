@@ -23,8 +23,7 @@ namespace Workwear.ViewModels.User
 		public EntityEntryViewModel<Leader> LeaderFromEntryViewModel;
 		public EntityEntryViewModel<Organization> OrganizationFromEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonFromEntryViewModel;
-
-		public ILifetimeScope AutofacScope;
+		
 		private readonly FeaturesService featuresService;
 
 		public UserSettingsViewModel
@@ -32,7 +31,6 @@ namespace Workwear.ViewModels.User
 			 INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService, IValidator validator = null) 
 		: base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<UserSettings>(this, Entity, UoW, navigation, autofacScope);
 

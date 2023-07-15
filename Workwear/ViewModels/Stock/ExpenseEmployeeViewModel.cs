@@ -27,7 +27,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
-using Workwear.Repository.User;
+using workwear.Tools;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Stock {
 	{
 		private ILifetimeScope autofacScope;
 		private readonly SizeService sizeService;
-		private readonly UserRepository userRepository;
+		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
 		private IInteractiveService interactive;
@@ -57,8 +57,8 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope, 
 			IValidator validator,
 			IUserService userService,
+			CurrentUserSettings currentUserSettings,
 			SizeService sizeService,
-			UserRepository userRepository,
 			IInteractiveService interactive,
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator modalProgressCreator,
@@ -72,7 +72,7 @@ namespace Workwear.ViewModels.Stock {
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
-			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -294,8 +294,8 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateEmployeeWearItems();
 			performance.CheckPoint("Завершение транзакции...");
 			UoWGeneric.Commit();
-			logger.Info("Ok");
 			performance.End();
+			logger.Info($"Документ сохранен за {performance.TotalTime.TotalSeconds} сек.");
 			return true;
 		}
 
@@ -311,8 +311,7 @@ namespace Workwear.ViewModels.Stock {
 
 		public void CreateIssuanceSheet()
 		{
-			var userSettings = userRepository.GetCurrentUserSettings(UoW);
-			Entity.CreateIssuanceSheet(userSettings);
+			Entity.CreateIssuanceSheet(currentUserSettings.Settings);
 		}
 
 		public void PrintIssuanceSheet(IssuedSheetPrint doc)
@@ -351,7 +350,7 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					var performance = new ProgressPerformanceHelper(globalProgress, 5,"Обновление строк документа", logger);
+					var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
 					FillUnderreceived(performance);
 					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
 					performance.End();

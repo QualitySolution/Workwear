@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
@@ -9,6 +10,7 @@ namespace Workwear.Domain.Users
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "настройки пользователей",
 		Nominative = "настройки пользователя")]
+	[HistoryTrace]
 	public class UserSettings: PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
@@ -51,7 +53,7 @@ namespace Workwear.Domain.Users
 		}
 		
 		private AddedAmount defaultAddedAmount = AddedAmount.All;
-		[Display(Name = "Режим добаления количества")]
+		[Display(Name = "Режим добавления количества")]
 		public virtual AddedAmount DefaultAddedAmount {
 			get => defaultAddedAmount;
 			set { SetField(ref defaultAddedAmount, value, () => DefaultAddedAmount); }

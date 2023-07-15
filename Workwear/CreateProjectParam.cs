@@ -120,7 +120,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
-			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
@@ -344,7 +343,7 @@ namespace workwear
 			#endregion
 
 			#region Настройка
-			builder.RegisterType<CurrentUserSettings>().AsSelf();
+			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Работа со считывателями
