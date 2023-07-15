@@ -26,7 +26,6 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
-using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.User;
 using Workwear.Tools;
@@ -50,7 +49,6 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IProgressBarDisplayable globalProgress;
 		private readonly ModalProgressCreator modalProgressCreator;
 		private readonly EmployeeIssueModel issueModel;
-		private readonly EmployeeIssueRepository issueRepository;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -69,7 +67,6 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
-			EmployeeIssueRepository issueRepository,
 			EmployeeCard employee = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
@@ -83,7 +80,6 @@ namespace Workwear.ViewModels.Stock {
 			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
 			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
 			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
@@ -241,9 +237,9 @@ namespace Workwear.ViewModels.Stock {
 		
 		public override bool Save()
 		{
-			globalProgress.Start(7);
+			logger.Info("Проверка документа...");
 			if(!Validate()) {
-				globalProgress.Close();
+				logger.Warn("Документ не корректен, сохранение отменено.");
 				return false;
 			}
 			if(Entity.Id == 0)
@@ -251,7 +247,7 @@ namespace Workwear.ViewModels.Stock {
 
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
-				globalProgress.Close();
+				logger.Warn("Необходимо обновить штрихкоды.");
 				return false;
 			}
 
@@ -260,12 +256,11 @@ namespace Workwear.ViewModels.Stock {
 			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
 			// 2 - Сохраняем основной документ, без закрытия транзакции.
 			// 3 - Обрабатываем и сохраняем доп документы.
-			
-			logger.Info("Обработка строк документа выдачи...");
-			globalProgress.Add();
+
+			var performance = new ProgressPerformanceHelper(modalProgressCreator, 8, "Очистка строк документа выдачи...", logger, true);
 			Entity.CleanupItems();
 			Entity.CleanupItemsWriteOff();
-			globalProgress.Add();
+			performance.CheckPoint("Запись документа списания...");
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
@@ -275,33 +270,32 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info("Предварительная запись списания...");
 				UoW.Save(Entity.WriteOffDoc);
 			}
-			globalProgress.Add();
+			performance.CheckPoint("Предварительная запись ведомости...");
 			Entity.CleanupIssuanceSheetItems();
 			if(Entity.IssuanceSheet != null) {
 				logger.Info("Предварительная запись ведомости...");
 				UoW.Save(Entity.IssuanceSheet);
 			}
-			globalProgress.Add();
-			logger.Info("Запись документа выдачи...");
+			performance.CheckPoint("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
 			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
 			
-			globalProgress.Add();
+			performance.CheckPoint("Запись ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-			globalProgress.Add();
+			performance.CheckPoint("Запись документа списания...");
 			Entity.UpdateIssuedWriteOffOperation();
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			globalProgress.Add();
-			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
+			performance.CheckPoint("Обновляем записи в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
+			performance.CheckPoint("Завершение транзакции...");
 			UoWGeneric.Commit();
 			logger.Info("Ok");
-			globalProgress.Close();
+			performance.End();
 			return true;
 		}
 
