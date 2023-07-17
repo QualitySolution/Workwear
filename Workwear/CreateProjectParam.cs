@@ -198,7 +198,7 @@ namespace workwear
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
-			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
+			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf().SingleInstance();
 			builder.Register(c => QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
 			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
