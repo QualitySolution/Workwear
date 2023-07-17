@@ -93,7 +93,7 @@
       </source>
     </icon-set>
   </icon-factory>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ItemTypeView" design-size="483 582">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ItemTypeView" design-size="483 584">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -334,7 +334,7 @@
                   <widget class="Gtk.Label" id="label">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Код:</property>
+                    <property name="LabelProp" translatable="yes">ИД:</property>
                   </widget>
                   <packing>
                     <property name="AutoSize">True</property>
@@ -11203,7 +11203,7 @@
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">ИД:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -18816,7 +18816,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Sizes.SizeView" design-size="417 337">
+  <widget class="Gtk.Bin" id="Workwear.Views.Sizes.SizeView" design-size="419 352">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -18968,7 +18968,7 @@
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">ИД:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -19192,7 +19192,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Sizes.SizeTypeView" design-size="300 300">
+  <widget class="Gtk.Bin" id="Workwear.Views.Sizes.SizeTypeView" design-size="300 304">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -19298,7 +19298,7 @@
               <widget class="Gtk.Label" id="label9">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">ИД:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
@@ -21769,7 +21769,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Код:</property>
+                <property name="LabelProp" translatable="yes">ИД:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>
