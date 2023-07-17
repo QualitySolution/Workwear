@@ -94,12 +94,7 @@ public partial class MainWindow : Gtk.Window
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			checker.RunUpdate();
 		}
-
-		var userService = AutofacScope.Resolve<IUserService>();
-		var user = userService.GetCurrentUser();
-		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
-		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-
+		
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
@@ -116,6 +111,11 @@ public partial class MainWindow : Gtk.Window
 			WinUser.Destroy();
 			return;
 		}
+		
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser();
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 
 		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
