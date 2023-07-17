@@ -9,7 +9,8 @@ namespace Workwear.Domain.Users
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "настройки пользователей",
-		Nominative = "настройки пользователя")]
+		Nominative = "настройки пользователя",
+		Genitive = "настроек пользователя")]
 	[HistoryTrace]
 	public class UserSettings: PropertyChangedBase, IDomainObject
 	{

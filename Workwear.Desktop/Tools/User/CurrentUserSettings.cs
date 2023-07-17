@@ -65,7 +65,7 @@ namespace Workwear.Tools.User
 		#endregion
 		public void Dispose() {
 			changeWatcher?.UnsubscribeAll(this);
-			uow.Dispose();
+			uow?.Dispose();
 		}
 	}
 }
