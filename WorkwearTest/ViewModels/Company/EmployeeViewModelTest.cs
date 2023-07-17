@@ -20,6 +20,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Models.Company;
+using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
@@ -75,6 +76,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeWearItemsViewModel>().AsSelf();
 			builder.RegisterType<ManualEmployeeIssueOperationsViewModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();

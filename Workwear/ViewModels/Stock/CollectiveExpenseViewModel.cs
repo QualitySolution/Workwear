@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using NHibernate;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -25,9 +26,9 @@ using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
-using Workwear.Repository.User;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock
@@ -35,7 +36,7 @@ namespace Workwear.ViewModels.Stock
 	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
 	{
 		private ILifetimeScope autofacScope;
-		private readonly UserRepository userRepository;
+		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
 		private IInteractiveQuestion interactive;
@@ -51,7 +52,7 @@ namespace Workwear.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			IValidator validator,
 			IUserService userService,
-			UserRepository userRepository,
+			CurrentUserSettings currentUserSettings,
 			IInteractiveQuestion interactive,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
@@ -61,7 +62,7 @@ namespace Workwear.ViewModels.Stock
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -73,6 +74,16 @@ namespace Workwear.ViewModels.Stock
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
+			else {
+				UoW.Session.QueryOver<CollectiveExpense>()
+					.Where(x => x.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+					.Fetch(SelectMode.Fetch, x => x.Warehouse)
+					.SingleOrDefault();
+			}
+			performance.CheckPoint("Предзагрузка данных документа");
+			
 			changeMonitor.SubscribeAllChange(
 					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
 				.TargetField(x => x.Employee);
@@ -146,8 +157,7 @@ namespace Workwear.ViewModels.Stock
 
 		public void CreateIssuanceSheet()
 		{
-			var userSettings = userRepository.GetCurrentUserSettings(UoW);
-			Entity.CreateIssuanceSheet(userSettings);
+			Entity.CreateIssuanceSheet(currentUserSettings.Settings);
 		}
 
 		public void PrintIssuanceSheet(IssuedSheetPrint doc)

@@ -75,3 +75,11 @@ ALTER TABLE `stock_collective_expense`
 			REFERENCES `wear_cards` (`id`)
 			ON DELETE RESTRICT
     		ON UPDATE CASCADE;
+
+-- Добавляем новую настройку пользователя
+ALTER TABLE `user_settings` 
+    ADD `default_stock_balance_amount` 
+        ENUM('All','One','Zero') 
+    	NOT NULL 
+    	DEFAULT 'All' 
+    AFTER `maximize_on_start`;

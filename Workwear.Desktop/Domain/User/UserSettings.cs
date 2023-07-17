@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
@@ -8,7 +9,9 @@ namespace Workwear.Domain.Users
 {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "настройки пользователей",
-		Nominative = "настройки пользователя")]
+		Nominative = "настройки пользователя",
+		Genitive = "настроек пользователя")]
+	[HistoryTrace]
 	public class UserSettings: PropertyChangedBase, IDomainObject
 	{
 		#region Свойства
@@ -49,7 +52,14 @@ namespace Workwear.Domain.Users
 			get => maximizeOnStart;
 			set => SetField(ref maximizeOnStart, value);
 		}
-
+		
+		private AddedAmount defaultAddedAmount = AddedAmount.All;
+		[Display(Name = "Режим добавления количества")]
+		public virtual AddedAmount DefaultAddedAmount {
+			get => defaultAddedAmount;
+			set { SetField(ref defaultAddedAmount, value, () => DefaultAddedAmount); }
+		}
+		
 		private Warehouse defaultWarehouse;
 		[Display(Name = "Склад по умолчанию")]
 		public virtual Warehouse DefaultWarehouse {
@@ -98,4 +108,13 @@ namespace Workwear.Domain.Users
 		Icons,
 		Text,
 	}
+	
+	public enum AddedAmount {
+		[Display(Name = "Всё")]
+		All,
+		[Display(Name = " 1 ")]
+		One,
+		[Display(Name = " 0 ")]
+		Zero
+	} 
 }

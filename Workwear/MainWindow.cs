@@ -31,7 +31,6 @@ using QS.Updater.App;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
@@ -61,8 +60,8 @@ using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
-using workwear.Tools;
 using workwear;
+using Workwear.Tools.User;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -95,12 +94,7 @@ public partial class MainWindow : Gtk.Window
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			checker.RunUpdate();
 		}
-
-		var userService = AutofacScope.Resolve<IUserService>();
-		var user = userService.GetCurrentUser();
-		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
-		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-
+		
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
@@ -117,6 +111,11 @@ public partial class MainWindow : Gtk.Window
 			WinUser.Destroy();
 			return;
 		}
+		
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser();
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 
 		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +

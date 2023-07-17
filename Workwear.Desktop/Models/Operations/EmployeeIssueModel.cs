@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -24,6 +27,10 @@ namespace Workwear.Models.Operations {
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.unitOfWorkProvider = unitOfWorkProvider;
 		}
+
+		#region Helpers
+		private IUnitOfWork UoW => unitOfWorkProvider?.UoW;
+		#endregion
 
 		#region public
 		/// <summary>
@@ -205,7 +212,7 @@ namespace Workwear.Models.Operations {
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
 		#endregion
 
-		#region Employees
+		#region Заполение данных в сотрудников
 		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null) {
 			if(!employees.Any())
 				return;
@@ -215,6 +222,73 @@ namespace Workwear.Models.Operations {
 			foreach(var employee in employees) {
 				employee.FillWearReceivedInfo(operations.Where(x => x.Employee.IsSame(employee)).ToList());
 			}
+		}
+		
+		public void PreloadWearItems(params int[] employeeIds) {
+			//Загружаем строки
+			EmployeeCardItem employeeCardItemAlias = null;
+			var employees = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.JoinAlias(x => x.WorkwearItems, () => employeeCardItemAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
+				.Fetch(SelectMode.Fetch, () => employeeCardItemAlias.ActiveNormItem)
+				.Fetch(SelectMode.Fetch, () => employeeCardItemAlias.ActiveNormItem.NormCondition)
+				.List();
+			
+			//Загружаем СИЗы
+			var protectionToolsIds = employees
+				.SelectMany(e => e.WorkwearItems)
+				.Select(x => x.ProtectionTools.Id)
+				.Distinct().ToArray();
+
+			var query = UoW.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.Fetch, p => p.Type)
+				.Fetch(SelectMode.Fetch, p => p.Type.Units)
+				.Future();
+
+			UoW.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.Fetch(SelectMode.Fetch, p => p.Analogs)
+				.Future();
+
+			UoW.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
+				.Future();
+
+			ProtectionTools protectionToolsAnalogAlias = null;
+
+			UoW.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.JoinAlias(p => p.Analogs, () => protectionToolsAnalogAlias, NHibernate.SqlCommand.JoinType.InnerJoin)
+				.Fetch(SelectMode.ChildFetch, () => protectionToolsAnalogAlias)
+				.Fetch(SelectMode.Fetch, () => protectionToolsAnalogAlias.Nomenclatures)
+				.Future();
+
+			query.ToList();
+		}
+
+		public void PreloadEmployeeInfo(params int[] employeeIds) {
+			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Future();
+			
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.Vacations)
+				.Future();
+			
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.Future();
+			query.ToList();
 		}
 		#endregion
 	}

@@ -160,7 +160,6 @@
     <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WriteOffView.cs" />
     <Compile Include="Representations\ObjectBalanceVM.cs" />
-    <Compile Include="Tools\CurrentUserSettings.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
