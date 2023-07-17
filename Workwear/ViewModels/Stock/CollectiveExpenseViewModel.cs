@@ -21,6 +21,7 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear;
+using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -93,7 +94,8 @@ namespace Workwear.ViewModels.Stock
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-
+			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
+			
 			performance.CheckPoint("Warehouse");
 			performance.StartGroup("CollectiveExpenseItemsViewModel");
 			var parameterModel = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
@@ -109,6 +111,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		#endregion
 
 		public override bool Save()

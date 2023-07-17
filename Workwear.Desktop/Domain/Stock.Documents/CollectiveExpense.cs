@@ -37,6 +37,13 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
+		private EmployeeCard transferAgent = null;
+		[Display(Name = "Ответственный за передачу СИЗ")]
+		public virtual EmployeeCard TransferAgent {
+			get { return transferAgent; }
+			set { SetField(ref transferAgent, value, () => TransferAgent); }
+		}
+
 		private IList<CollectiveExpenseItem> items = new List<CollectiveExpenseItem>();
 
 		[Display (Name = "Строки документа")]
@@ -225,6 +232,7 @@ namespace Workwear.Domain.Stock.Documents
 				Organization = userSettings?.DefaultOrganization,
 				HeadOfDivisionPerson = userSettings?.DefaultLeader,
 				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
+				TransferAgent = this.TransferAgent,
 			};
 			UpdateIssuanceSheet();
 		}
@@ -235,6 +243,7 @@ namespace Workwear.Domain.Stock.Documents
 				return;
 
 			IssuanceSheet.Date = Date;
+			IssuanceSheet.TransferAgent = TransferAgent;
 			IssuanceSheet.Subdivision = Items.GroupBy(x => x.Employee.Subdivision)
 											 .Where(x => x.Key != null)
 				                             .OrderByDescending(x => x.Count())

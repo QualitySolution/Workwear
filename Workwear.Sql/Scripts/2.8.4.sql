@@ -56,6 +56,27 @@ ALTER TABLE `stock_income_detail`
             ON DELETE NO ACTION
             ON UPDATE CASCADE;
 
+-- Добавляем добавляем ответственного в колективную выдачу и ведомость--
+
+ALTER TABLE `issuance_sheet` 
+    ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `head_of_division_person_id`,
+	ADD INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
+	ADD CONSTRAINT `fk_issuance_sheet_8`
+		FOREIGN KEY (`transfer_agent_id`)
+			REFERENCES `wear_cards` (`id`)
+			ON DELETE NO ACTION
+    		ON UPDATE CASCADE;
+
+ALTER TABLE `stock_collective_expense`
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
+	ADD INDEX `fk_stock_collective_expense_3_idx` (`transfer_agent_id` ASC),
+	ADD CONSTRAINT `fk_stock_collective_expense_3`
+		FOREIGN KEY (`transfer_agent_id`)
+			REFERENCES `wear_cards` (`id`)
+			ON DELETE RESTRICT
+    		ON UPDATE CASCADE;
+
+-- Добавляем новую настройку пользователя
 ALTER TABLE `user_settings` 
     ADD `default_stock_balance_amount` 
         ENUM('All','One','Zero') 
