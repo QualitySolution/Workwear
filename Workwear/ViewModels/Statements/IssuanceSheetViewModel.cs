@@ -173,7 +173,7 @@ namespace Workwear.ViewModels.Statements
 		#region Sensetive
 
 		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null;
-		public bool CanEditTransferAgent => Entity.CollectiveExpense == null || Entity.TransferAgent == null;
+		public bool CanEditTransferAgent => Entity.CollectiveExpense == null;
 
 		#endregion
 

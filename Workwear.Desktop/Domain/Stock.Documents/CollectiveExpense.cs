@@ -260,6 +260,7 @@ namespace Workwear.Domain.Stock.Documents
 				return;
 
 			IssuanceSheet.Date = Date;
+			IssuanceSheet.TransferAgent = TransferAgent;
 			IssuanceSheet.Subdivision = Items.GroupBy(x => x.Employee.Subdivision)
 											 .Where(x => x.Key != null)
 				                             .OrderByDescending(x => x.Count())
