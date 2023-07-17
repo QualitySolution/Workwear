@@ -214,7 +214,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<IssuanceSheetJournalViewModel>(
 				() => FluentColumnsConfig<IssuanceSheetJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Дата").AddTextRenderer(node => node.Date.ToShortDateString())
 					.AddColumn("Документ").AddTextRenderer(node => node.Document).SearchHighlight()
 					.AddColumn("Организация").AddTextRenderer(node => node.Organigation).SearchHighlight()
@@ -242,8 +242,8 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<NomenclatureJournalViewModel>(
 				(jvm) => FluentColumnsConfig<NomenclatureJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Номер").AddTextRenderer(node => node.Number).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name + (node.Archival? "(архивная)": String.Empty)).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Тип").AddTextRenderer(node => node.ItemType)
 					.AddColumn("Стоимость продажи").Visible(false).Visible(jvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(node => node.SaleCostText)
@@ -271,7 +271,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Тип документа").AddTextRenderer(node => node.DocTypeString)
 					.AddColumn("Дата").AddTextRenderer(node => node.DateString).XAlign(0.5f)
 					.AddColumn("Ведомость").AddTextRenderer(node => $"{node.IssueSheetId}").SearchHighlight().XAlign(0.5f)
