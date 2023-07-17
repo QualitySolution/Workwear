@@ -11,6 +11,7 @@ namespace Workwear.Views.Regulations.NormChildren {
 			this.Build();
 
 			ytreeProfessions.ColumnsConfig = FluentColumnsConfig<Post>.Create()
+				.AddColumn("ИД").AddTextRenderer(p => p.Id.ToString())
 				.AddColumn("Должность").AddTextRenderer(p => p.Name).WrapWidth(700)
 				.AddColumn("Подразделение").AddReadOnlyTextRenderer(p => p.Subdivision?.Name).WrapWidth(700)
 				.AddColumn("Отдел").AddReadOnlyTextRenderer(p => p.Department?.Name).WrapWidth(700)

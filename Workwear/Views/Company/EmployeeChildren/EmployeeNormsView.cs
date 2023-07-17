@@ -13,7 +13,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.Build();
 
 			ytreeNorms.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<Norm>()
-				.AddColumn("Код").AddTextRenderer(x => x.Id.ToString())
+				.AddColumn("ИД").AddTextRenderer(x => x.Id.ToString())
 				.AddColumn("Название").Resizable().AddTextRenderer(x => x.Name).WrapWidth(1000)
 				.AddColumn("№ ТОН").AddTextRenderer(node => node.DocumentNumberText)
 				.AddColumn("№ Приложения").AddTextRenderer(node => node.AnnexNumberText)

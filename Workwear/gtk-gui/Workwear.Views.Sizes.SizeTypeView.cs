@@ -123,7 +123,7 @@ namespace Workwear.Views.Sizes
 			this.label9 = new global::Gtk.Label();
 			this.label9.Name = "label9";
 			this.label9.Xalign = 1F;
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("ИД:");
 			this.table2.Add(this.label9);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2[this.label9]));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));

@@ -83,3 +83,17 @@ ALTER TABLE `user_settings`
     	NOT NULL 
     	DEFAULT 'All' 
     AFTER `maximize_on_start`;
+
+ALTER TABLE `departments` 
+    ADD `code` 
+        VARCHAR(20) 
+    	NULL 
+    	DEFAULT NULL 
+    	AFTER `name`;
+
+ALTER TABLE `posts`
+	ADD `code`
+		VARCHAR(20)
+		NULL 
+    	DEFAULT NULL 
+    	AFTER `name`;
