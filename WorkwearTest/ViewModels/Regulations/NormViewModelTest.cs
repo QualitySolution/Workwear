@@ -72,6 +72,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormViewModel>().AsSelf();
 			builder.RegisterType<NormEmployeesViewModel>().AsSelf();
+			builder.RegisterType<NormPostsViewModel>().AsSelf();
 			builder.RegisterType<ProgressWindowViewModel>().AsSelf().WithProperty(x => x.Progress, progress);
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			var container = builder.Build();
