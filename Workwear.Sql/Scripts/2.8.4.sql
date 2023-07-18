@@ -58,42 +58,40 @@ ALTER TABLE `stock_income_detail`
 
 -- Добавляем добавляем ответственного в колективную выдачу и ведомость--
 
-ALTER TABLE `issuance_sheet` 
-    ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `head_of_division_person_id`,
-	ADD INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
+ALTER TABLE `issuance_sheet`
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `stock_collective_expense_id`,
+ADD INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC);
+
+ALTER TABLE `stock_collective_expense`
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
+ADD INDEX `fk_transfer_agent_id_idx` (`transfer_agent_id` ASC);
+
+ALTER TABLE `issuance_sheet`
 	ADD CONSTRAINT `fk_issuance_sheet_8`
 		FOREIGN KEY (`transfer_agent_id`)
 			REFERENCES `wear_cards` (`id`)
 			ON DELETE NO ACTION
-    		ON UPDATE CASCADE;
+			ON UPDATE CASCADE;
 
 ALTER TABLE `stock_collective_expense`
-	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
-	ADD INDEX `fk_stock_collective_expense_3_idx` (`transfer_agent_id` ASC),
 	ADD CONSTRAINT `fk_stock_collective_expense_3`
 		FOREIGN KEY (`transfer_agent_id`)
 			REFERENCES `wear_cards` (`id`)
 			ON DELETE RESTRICT
-    		ON UPDATE CASCADE;
+			ON UPDATE CASCADE;
+
+
+-- Добавляем пользовательские коды
+ALTER TABLE `posts`
+	ADD COLUMN `code` VARCHAR(20) NULL DEFAULT NULL AFTER `name`;
+
+ALTER TABLE `departments`
+	ADD COLUMN `code` VARCHAR(20) NULL DEFAULT NULL AFTER `name`;
+
+-- Правка максимальной стоимости номенклатуры
+ALTER TABLE `nomenclature`
+	CHANGE COLUMN `sale_cost` `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL ;
 
 -- Добавляем новую настройку пользователя
-ALTER TABLE `user_settings` 
-    ADD `default_stock_balance_amount` 
-        ENUM('All','One','Zero') 
-    	NOT NULL 
-    	DEFAULT 'All' 
-    AFTER `maximize_on_start`;
-
-ALTER TABLE `departments` 
-    ADD `code` 
-        VARCHAR(20) 
-    	NULL 
-    	DEFAULT NULL 
-    	AFTER `name`;
-
-ALTER TABLE `posts`
-	ADD `code`
-		VARCHAR(20)
-		NULL 
-    	DEFAULT NULL 
-    	AFTER `name`;
+ALTER TABLE `user_settings`
+	ADD COLUMN `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All' AFTER `maximize_on_start`;
