@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -15,7 +14,6 @@ using QS.Project.Journal.DataLoader;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
 
@@ -187,7 +185,7 @@ namespace workwear.Journal.ViewModels.Stock
 			base.CreateNodeActions();
 
 			var updateStatusAction = new JournalAction("Показать движения",
-					(selected) => selected.Any() && Filter.Warehouse != null,
+					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
