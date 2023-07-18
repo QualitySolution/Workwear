@@ -1199,6 +1199,30 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `wear_cards_cost_allocation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `wear_card_id` INT(10) UNSIGNED NOT NULL,
+  `cost_center_id` INT(10) UNSIGNED NOT NULL,
+  `percent` DECIMAL(3,2) NOT NULL DEFAULT 1.00,
+  PRIMARY KEY (`id`),
+  INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
+  INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
+  CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
+    FOREIGN KEY (`cost_center_id`)
+    REFERENCES `cost_center` (`id`)
+    ON UPDATE CASCADE,
+  CONSTRAINT `wear_cards_cost_allocation_ibfk_2`
+    FOREIGN KEY (`wear_card_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
 -- Table `wear_cards_item`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wear_cards_item` (
@@ -1253,7 +1277,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1,
-  `default_added_amount` ENUM('All','One','Zero') NOT NULL DEFAULT 'All',
+  `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All',
   `default_warehouse_id` INT UNSIGNED NULL,
   `default_organization_id` INT UNSIGNED NULL,
   `default_responsible_person_id` INT UNSIGNED NULL,
@@ -1338,7 +1362,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
-  `transfer_agent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `transfer_agent_id` INT(10) UNSIGNED NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1357,10 +1381,10 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     ON DELETE SET NULL
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_collective_expense_3`
-	FOREIGN KEY (`transfer_agent_id`)
-	REFERENCES `wear_cards` (`id`)
-	ON DELETE RESTRICT
-  	ON UPDATE CASCADE)
+    FOREIGN KEY (`transfer_agent_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4;
@@ -1376,9 +1400,9 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `responsible_person_id` INT UNSIGNED NULL DEFAULT NULL,
   `head_of_division_person_id` INT UNSIGNED NULL DEFAULT NULL,
-  `transfer_agent_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_expense_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_id` INT UNSIGNED NULL DEFAULT NULL,
+  `transfer_agent_id` INT(10) UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issuance_sheet_1_idx` (`organization_id` ASC),
   INDEX `fk_issuance_sheet_3_idx` (`responsible_person_id` ASC),
@@ -1386,8 +1410,8 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   INDEX `fk_issuance_sheet_5_idx` (`stock_expense_id` ASC),
   INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
   INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC),
-  INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
   INDEX `index_issuance_sheet_date` (`date` ASC),
+  INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
   CONSTRAINT `fk_issuance_sheet_1`
     FOREIGN KEY (`organization_id`)
     REFERENCES `organizations` (`id`)
@@ -1419,10 +1443,10 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_8`
-	FOREIGN KEY (`transfer_agent_id`)
-	REFERENCES `wear_cards` (`id`)
-	ON DELETE NO ACTION
-	ON UPDATE CASCADE)
+    FOREIGN KEY (`transfer_agent_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -1827,7 +1851,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
+  `creation_date` DATE NOT NULL DEFAULT CURRENT_DATE(),
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1980,28 +2004,6 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
--- -----------------------------------------------------
--- Table `wear_cards_cost_allocation`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	`wear_card_id` INT UNSIGNED NOT NULL,
-	`cost_center_id` INT UNSIGNED NOT NULL,
-	`percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
-	PRIMARY KEY (`id`),
-	INDEX `wear_cards_cost_allocation_fk1_idx` (`cost_center_id` ASC),
-	INDEX `wear_cards_cost_allocation_fk2_idx` (`wear_card_id` ASC),
-	CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
-		FOREIGN KEY (`cost_center_id`)
-		REFERENCES `cost_center` (`id`)
-		ON DELETE RESTRICT
-		ON UPDATE CASCADE,
-	CONSTRAINT `wear_cards_cost_allocation_ibfk_2`
-		FOREIGN KEY (`wear_card_id`)
-		REFERENCES `wear_cards` (`id`)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE)
-ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- function count_issue
