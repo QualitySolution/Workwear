@@ -714,7 +714,7 @@
                 CONCAT(LEFT(wear_cards.first_name, 1), '.')),
             IF(wear_cards.patronymic_name = '',
                 NULL,
-                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ') AS employees,
+                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500) AS employees,
     wear_cards.sex,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
@@ -875,7 +875,7 @@ ORDER BY
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev26;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=;user=;password=;port=3306;server=</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
