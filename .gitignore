@@ -13,6 +13,7 @@ base/*.mwb.bak
 *.usertasks
 *~
 .vs/
+.vscode/
 *.sln.DotSettings.user
 .idea/
 
