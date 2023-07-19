@@ -244,6 +244,30 @@ namespace Workwear.Domain.Company
 			observableVacations ??
 			(observableVacations = new GenericObservableList<EmployeeVacation>(Vacations));
 		#endregion
+		
+		#region CostCenters
+		private IList<EmployeeCostCenter> сostCenters = new List<EmployeeCostCenter>();
+		[Display(Name = "Места возникновения затрат")]
+		public virtual IList<EmployeeCostCenter> CostCenters {
+			get => сostCenters;
+			set => SetField(ref сostCenters, value);
+		}
+
+		private GenericObservableList<EmployeeCostCenter> observableCostCenters;
+		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
+		public virtual GenericObservableList<EmployeeCostCenter> ObservableCostCenters =>
+			observableCostCenters ??
+			(observableCostCenters = new GenericObservableList<EmployeeCostCenter>(CostCenters));
+		
+		public virtual void AddCostCenter(EmployeeCostCenter employeeCostCenter) {
+			if(CostCenters.Any(x => x.CostCenter.Id == employeeCostCenter.CostCenter.Id)) {
+				logger.Warn($"МВЗ {employeeCostCenter.CostCenter.Title} уже добавлен. Пропускаем...");
+				return;
+			}
+			ObservableCostCenters.Add(employeeCostCenter);
+		}
+		#endregion
+		
 		#region Расчетные
 		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 		public virtual string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();
@@ -312,6 +336,11 @@ namespace Workwear.Domain.Company
 						$"Номер карточки {CardNumber} должен быть уникальным",
 						new[] { this.GetPropertyName(o => o.CardNumber) });
 			}
+			
+			if(NHibernateUtil.IsInitialized(CostCenters) && CostCenters.Sum(x => x.Percent) != 1m)
+				yield return new ValidationResult(
+				"Сумма по МВЗ в должна быть равна 100%", 
+				new[] { nameof(CostCenters) });
 		}
 
 		#endregion
@@ -476,14 +505,14 @@ namespace Workwear.Domain.Company
 			bool onlyUnderreceived = false, Action progressStep = null)
 		{
 			var actualItems = onlyUnderreceived ? GetUnderreceivedItems(baseParameters, onTime) : WorkwearItems;
-			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null);
+			FillWearInStockInfo(uow, warehouse, onTime, actualItems, null, progressStep);
 		}
 		
 		/// <summary>
 		/// Заполняет в сотрудниках(не обязательно в одном) информацию по складским остаткам для строк карточек.
 		/// Очень желательно! Перед вызовом метода в Uow иметь подгруженными все размеры, иначе метод будет дергать размеры по одному.
 		/// </summary>
-		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогресс бара. Метод выполняет 4 шага.</param>
+		/// <param name="progressStep">Каждый шаг выполняет действие продвижение прогресс бара. Метод выполняет 3 шага.</param>
 		public static void FillWearInStockInfo(IUnitOfWork uow,
 			Warehouse warehouse, 
 			DateTime onTime, 
@@ -491,8 +520,6 @@ namespace Workwear.Domain.Company
 			IEnumerable<WarehouseOperation> excludeOperations,
 			Action progressStep = null)
 		{
-			progressStep?.Invoke();
-			FetchEntitiesInWearItems(uow, items);
 			progressStep?.Invoke();
 			var allNomenclatures = 
 				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
@@ -505,43 +532,7 @@ namespace Workwear.Domain.Company
 			}
 		}
 
-		public static void FetchEntitiesInWearItems(IUnitOfWork uow, IEnumerable<EmployeeCardItem> cardItems) {
-			var protectionToolsIds = cardItems.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
 
-			var query = uow.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.Fetch, p => p.Type)
-				.Fetch(SelectMode.Fetch, p => p.Type.Units)
-				.Future();
-
-			uow.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Analogs)
-				.Future();
-
-			uow.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
-				.Future();
-
-			ProtectionTools protectionToolsAnalogAlias = null;
-
-			uow.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.JoinAlias(p => p.Analogs, () => protectionToolsAnalogAlias, NHibernate.SqlCommand.JoinType.InnerJoin)
-				.Fetch(SelectMode.ChildFetch, analogs => analogs)
-				.Fetch(SelectMode.Fetch, () => protectionToolsAnalogAlias.Nomenclatures)
-				.Future();
-
-			uow.Session.QueryOver<NormItem>()
-				.Where(n => n.Id.IsIn(cardItems.Select(x => x.ActiveNormItem.Id).Distinct().ToArray()))
-				.Future();
-
-			query.ToList();
-		}
 		#endregion
 		#region Функции работы с отпусками
 		public virtual void AddVacation(EmployeeVacation vacation) {

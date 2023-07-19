@@ -23,9 +23,8 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.ViewModels.Company;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace Workwear.ViewModels.Statements
 {
@@ -33,6 +32,7 @@ namespace Workwear.ViewModels.Statements
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
+		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
 		public ILifetimeScope AutofacScope;
@@ -54,26 +54,12 @@ namespace Workwear.ViewModels.Statements
 				AutofacScope = AutofacScope
 			};
 
-			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
-													 .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
-													 .UseViewModelDialog<OrganizationViewModel>()
-													 .Finish();
-
-			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
-													 .UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
-													 .UseViewModelDialog<SubdivisionViewModel>()
-										 			 .Finish();
-
-			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson)
-													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
-													.UseViewModelDialog<LeadersViewModel>()
-													.Finish();
-
-			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson)
-													.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
-													.UseViewModelDialog<LeadersViewModel>()
-													.Finish();
-
+			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
+			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision).MakeByType().Finish();
+			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
+			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson).MakeByType().Finish();
+			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson).MakeByType().Finish();
+			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
@@ -187,6 +173,7 @@ namespace Workwear.ViewModels.Statements
 		#region Sensetive
 
 		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null;
+		public bool CanEditTransferAgent => Entity.CollectiveExpense == null;
 
 		#endregion
 

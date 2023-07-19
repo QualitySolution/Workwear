@@ -9,11 +9,11 @@ using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
-using Workwear.Measurements;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees.DataTypes;
 using Workwear.Repository.Company;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Models.Import.Employees

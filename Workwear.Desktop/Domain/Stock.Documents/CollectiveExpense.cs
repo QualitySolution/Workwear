@@ -37,6 +37,13 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
 
+		private EmployeeCard transferAgent = null;
+		[Display(Name = "Ответственный за передачу СИЗ")]
+		public virtual EmployeeCard TransferAgent {
+			get { return transferAgent; }
+			set { SetField(ref transferAgent, value, () => TransferAgent); }
+		}
+
 		private IList<CollectiveExpenseItem> items = new List<CollectiveExpenseItem>();
 
 		[Display (Name = "Строки документа")]
@@ -172,8 +179,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
-			ObservableItems.Remove (item);
-			Items.Remove(item);
+			ObservableItems.Remove(item);
 		}
 
 		public virtual void CleanupItems()
@@ -197,23 +203,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
-		}
-
-		public virtual void PrepareItems(IUnitOfWork uow, PerformanceHelper performance)
-		{
-			performance.StartGroup(nameof(PrepareItems));
-			var cardItems = Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			performance.CheckPoint(nameof(cardItems));
-			var excludeOperations = Items.Select(x => x.WarehouseOperation);
-			performance.CheckPoint(nameof(excludeOperations));
-			
-			EmployeeCard.FillWearInStockInfo(uow, Warehouse, Date, cardItems, excludeOperations);
-			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
-			foreach(var docItem in Items) {
-				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
-			}
-			performance.CheckPoint("Fill EmployeeCardItem's");
-			performance.EndGroup();
 		}
 
 		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress, IList<int> itemIds = null)
@@ -243,6 +232,7 @@ namespace Workwear.Domain.Stock.Documents
 				Organization = userSettings?.DefaultOrganization,
 				HeadOfDivisionPerson = userSettings?.DefaultLeader,
 				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
+				TransferAgent = this.TransferAgent,
 			};
 			UpdateIssuanceSheet();
 		}
@@ -253,6 +243,7 @@ namespace Workwear.Domain.Stock.Documents
 				return;
 
 			IssuanceSheet.Date = Date;
+			IssuanceSheet.TransferAgent = TransferAgent;
 			IssuanceSheet.Subdivision = Items.GroupBy(x => x.Employee.Subdivision)
 											 .Where(x => x.Key != null)
 				                             .OrderByDescending(x => x.Count())

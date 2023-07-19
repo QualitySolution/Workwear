@@ -19,9 +19,9 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Operations 

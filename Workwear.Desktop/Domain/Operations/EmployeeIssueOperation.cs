@@ -492,7 +492,7 @@ namespace Workwear.Domain.Operations
 			if(StartOfUse == null)
 				StartOfUse = OperationTime;
 			
-			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value);
+			ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, WearPercent);
 			
 			if(Issued > NormItem.Amount && NormItem.Amount > 0)
 			{

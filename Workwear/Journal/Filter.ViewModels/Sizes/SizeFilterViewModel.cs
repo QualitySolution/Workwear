@@ -1,7 +1,7 @@
 ﻿using QS.DomainModel.UoW;
 using QS.Project.Journal;
 using Workwear.Domain.Sizes;
-using Workwear.Measurements;
+using Workwear.Tools.Sizes;
 
 namespace workwear.Journal.Filter.ViewModels.Sizes
 {

@@ -16,11 +16,12 @@ using QS.ViewModels.Dialog;
 using workwear;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
@@ -139,15 +140,18 @@ namespace Workwear.ViewModels.Stock
 			}
 
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.CanChooseAmount = true;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
 		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
-			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
-			}
+			var addedAmount = selectVM.Filter.AddAmount;
+			foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
+				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse,
+					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
 		}
+
 		public void AddResultItems() {
 			var selectJournal = MainClass.MainWin.NavigationManager.
 				OpenViewModel<NomenclatureJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave);

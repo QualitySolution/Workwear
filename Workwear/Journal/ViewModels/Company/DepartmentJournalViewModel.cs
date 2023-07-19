@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using FluentNHibernate.Utils;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -47,11 +48,13 @@ namespace workwear.Journal.ViewModels.Company {
 			
 			query.Where(GetSearchCriterion(
 					() => departmentAlias.Name,
+					() => departmentAlias.Code,
 					() => subdivisionAlias.Name
 					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 				).OrderBy(x => x.Name).Asc
@@ -64,6 +67,7 @@ namespace workwear.Journal.ViewModels.Company {
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public string Code { get; set; }
 		public string Subdivision { get; set; }
 		public string Comments { get; set; }
 	}

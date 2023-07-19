@@ -31,7 +31,6 @@ using QS.Updater.App;
 using QS.Updater;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QS.ViewModels.Dialog;
 using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
@@ -61,8 +60,8 @@ using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
-using workwear.Tools;
 using workwear;
+using Workwear.Tools.User;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -95,12 +94,7 @@ public partial class MainWindow : Gtk.Window
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			checker.RunUpdate();
 		}
-
-		var userService = AutofacScope.Resolve<IUserService>();
-		var user = userService.GetCurrentUser();
-		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
-		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-
+		
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
@@ -117,6 +111,11 @@ public partial class MainWindow : Gtk.Window
 			WinUser.Destroy();
 			return;
 		}
+		
+		var userService = AutofacScope.Resolve<IUserService>();
+		var user = userService.GetCurrentUser();
+		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
+		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 
 		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
@@ -277,28 +276,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
-		DialogViewModelBase after = null;
-		if(cnbOpenInWindow.Active) {
-			IPage replaced;
-			if(NavigationManager.CurrentPage?.ViewModel is EmployeeViewModel)
-				replaced = NavigationManager.CurrentPage;
-			else {
-				replaced = NavigationManager.IndependentPages.Reverse().FirstOrDefault(x => x.ViewModel is EmployeeViewModel);
-			}
-
-			if(replaced != null) {
-				IPage last = null;
-				foreach(var page in NavigationManager.TopLevelPages) {
-					if(page == replaced) {
-						after = last?.ViewModel;
-						break;
-					}
-					last = page;
-				}
-				NavigationManager.AskClosePage(replaced);
-			}
-		}
-		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(after, EntityUoWBuilder.ForOpen(id));
+		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(id));
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)

@@ -11,10 +11,10 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 
 namespace Workwear.ViewModels.Regulations
 {

@@ -7,6 +7,7 @@ using System.Text;
 using Autofac;
 using Gamma.Utilities;
 using Grpc.Core;
+using NHibernate;
 using NLog;
 using QS.Cloud.WearLk.Client;
 using QS.Dialog;
@@ -18,18 +19,19 @@ using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Company;
-using Workwear.Measurements;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company.EmployeeChildren;
 using Workwear.ViewModels.IdentityCards;
 
@@ -78,8 +80,24 @@ namespace Workwear.ViewModels.Company
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
-			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 			SizeService = sizeService;
+			Performance = new PerformanceHelper("Диалог сотрудника", logger);
+			
+			SizeService.RefreshSizes(UoW);
+			Performance.CheckPoint("Загрузили размеры");
+			//Подгружаем данные для ускорения открытия диалога
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.FetchLazyProperties, x => x)//Нужна чтобы не пытаться запрашивать фотку отдельным запросом.
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Fetch(SelectMode.Fetch, x => x.Department)
+				.Fetch(SelectMode.Fetch, x => x.Post)
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.SingleOrDefault();
+			Performance.CheckPoint("Загрузили основную информацию о сотруднике");
+			
+			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
 			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
@@ -121,6 +139,7 @@ namespace Workwear.ViewModels.Company
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
 			NormsViewModel = AutofacScope.Resolve<EmployeeNormsViewModel>(parameter);
 			WearItemsViewModel = AutofacScope.Resolve<EmployeeWearItemsViewModel>(parameter);
+			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
@@ -132,7 +151,10 @@ namespace Workwear.ViewModels.Company
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 
 			Validations.Add(new ValidationRequest(this));
+			Performance.CheckPoint("Конец конструктора ViewModel");
 		}
+
+		public readonly PerformanceHelper Performance;
 
 		#region Контролы
 
@@ -151,6 +173,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleHistory => !UoW.IsNew;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
+		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
@@ -300,9 +323,11 @@ namespace Workwear.ViewModels.Company
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
 		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
-		public EmployeeListedItemsViewModel ListedItemsViewModel;  //4
-		public EmployeeMovementsViewModel MovementsViewModel;      //5
-		public EmployeeVacationsViewModel VacationsViewModel;       //6
+		public EmployeeCostCentersViewModel CostCenterViewModel;	//4
+		public EmployeeListedItemsViewModel ListedItemsViewModel;	//5
+		public EmployeeMovementsViewModel MovementsViewModel;       //6
+		public EmployeeVacationsViewModel VacationsViewModel;       //7
+
 
 		private int lastTab;
 		private int currentTab;
@@ -329,11 +354,14 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
-				case 4: ListedItemsViewModel.OnShow();
+				case 4: 
+						CostCenterViewModel.OnShow();
 					break;
-				case 5: MovementsViewModel.OnShow();
+				case 5: ListedItemsViewModel.OnShow();
 					break;
-				case 6:
+				case 6: MovementsViewModel.OnShow();
+					break;
+				case 7:
 					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {

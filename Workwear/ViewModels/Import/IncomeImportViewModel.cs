@@ -16,11 +16,11 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Measurements;
 using Workwear.Models.Import;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Import 

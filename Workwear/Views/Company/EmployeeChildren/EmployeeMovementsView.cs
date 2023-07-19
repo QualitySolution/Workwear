@@ -84,8 +84,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
 				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)
-				.AddColumn("Номенклатура").AddTextRenderer(e => e.NomenclatureName)
-				.AddColumn("Номенклатура нормы").AddTextRenderer(e => e.ProtectionTools)
+				.AddColumn("Номенклатура").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
+				.AddColumn("Номенклатура нормы").Resizable().AddTextRenderer(e => e.ProtectionTools).WrapWidth(1000)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercentText)
 				.AddColumn("Стоимость").AddTextRenderer(e => e.CostText)
 				.AddColumn("Получено").AddTextRenderer(e => e.AmountReceivedText)

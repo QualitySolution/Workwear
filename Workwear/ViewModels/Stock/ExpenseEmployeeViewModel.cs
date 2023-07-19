@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using NHibernate;
+using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -12,6 +14,7 @@ using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -22,11 +25,12 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Repository.Operations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
-using Workwear.Repository.User;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 
@@ -34,59 +38,84 @@ namespace Workwear.ViewModels.Stock {
 	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
 	{
 		private ILifetimeScope autofacScope;
-		private readonly UserRepository userRepository;
+		private readonly SizeService sizeService;
+		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
 		private IInteractiveService interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
-		private readonly IProgressBarDisplayable progress;
-		private readonly EmployeeIssueRepository issueRepository;
+		private readonly IProgressBarDisplayable globalProgress;
+		private readonly ModalProgressCreator modalProgressCreator;
+		private readonly EmployeeIssueModel issueModel;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
-			IUnitOfWorkFactory unitOfWorkFactory, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
 			IValidator validator,
 			IUserService userService,
-			UserRepository userRepository,
+			CurrentUserSettings currentUserSettings,
+			SizeService sizeService,
 			IInteractiveService interactive,
+			IProgressBarDisplayable globalProgress,
+			ModalProgressCreator modalProgressCreator,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
-			IProgressBarDisplayable progress,
-			EmployeeIssueRepository issueRepository,
+			EmployeeIssueModel issueModel,
 			EmployeeCard employee = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
-			this.issueRepository = issueRepository ?? throw new ArgumentNullException(nameof(issueRepository));
-			this.issueRepository.RepoUow = UoW;
+			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
+			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+
+			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
+			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
+			this.sizeService.RefreshSizes(UoW); //Загружаем размеры
+			performance.CheckPoint("Предварительная загрузка документа");
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Operation = ExpenseOperations.Employee;
 			}
+			else {
+				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
+				PreloadingDoc();
+			}
+			performance.CheckPoint("Заполняем сотрудника");
+
 			if(Entity.Operation != ExpenseOperations.Employee)
 				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
-				Entity.Employee = UoW.GetById<EmployeeCard>(employee.Id);
+				Entity.Employee = UoW.Session.QueryOver<EmployeeCard>()
+					.Where(x => x.Id == employee.Id)
+					.Fetch(SelectMode.Fetch, x => x.Subdivision)
+					.Fetch(SelectMode.Fetch, x => x.Subdivision.Warehouse)
+					.SingleOrDefault();
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			}
+			performance.CheckPoint("Заполняем склад");
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			if(employee != null)
-				FillUnderreceived();
+			if(employee != null) {
+				performance.StartGroup("FillUnderreceived");
+				FillUnderreceived(performance);
+				performance.EndGroup();
+			}
 
 			if(Entity.WriteOffDoc != null)
 				FillAktNumber();
@@ -99,19 +128,22 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-									
+
+			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
-			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter);
+			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
+			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
 
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			performance.End();
 		}
 
 		#region EntityViewModels
-		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
-		public EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		#endregion
 
 		#region Свойства для View
@@ -124,16 +156,63 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Заполение документа
-		private void FillUnderreceived()
+
+		private void PreloadingDoc() {
+			var expenseQuery = UoW.Session.QueryOver<Expense>()
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Warehouse)
+				.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
+				.Fetch(SelectMode.Fetch, x => x.WriteOffDoc)
+				.Where(x => x.Id == Entity.Id)
+				.Future();
+				
+			ExpenseItem expenseItemAlias = null;
+				
+			UoW.Session.QueryOver<Expense>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => expenseItemAlias)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.EmployeeIssueOperation)
+				.Fetch(SelectMode.Fetch, () => expenseItemAlias.WarehouseOperation)
+				.Future();
+
+			if(featuresService.Available(WorkwearFeature.Barcodes))
+				UoW.Session.QueryOver<ExpenseItem>()
+					.Where(x => x.ExpenseDoc.Id == Entity.Id)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.Fetch(SelectMode.Skip, x => x.IssuanceSheetItem)
+					.JoinQueryOver(x => x.EmployeeIssueOperation, JoinType.LeftOuterJoin)
+					.Fetch(SelectMode.ChildFetch, x => x)
+					.JoinQueryOver(x => x.BarcodeOperations, JoinType.LeftOuterJoin)
+					.Fetch(SelectMode.Fetch, x => x)
+					.Future();
+
+			expenseQuery.SingleOrDefault();
+		}
+
+		private void FillUnderreceived(PerformanceHelper performance)
 		{
 			Entity.ObservableItems.Clear();
 
 			if(Entity.Employee == null)
 				return;
 
-			Entity.Employee.FillWearReceivedInfo(issueRepository);
+			performance.CheckPoint("Предварительная загрузка сотрудника");
+			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
+			performance.CheckPoint("Предварительная загрузка потребностей");
+			issueModel.PreloadWearItems(Entity.Employee.Id);
+			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
+			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
+			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
 			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
 
+			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {
 				Entity.AddItem(item, baseParameters);
 			}
@@ -158,9 +237,9 @@ namespace Workwear.ViewModels.Stock {
 		
 		public override bool Save()
 		{
-			progress.Start(7);
+			logger.Info("Проверка документа...");
 			if(!Validate()) {
-				progress.Close();
+				logger.Warn("Документ не корректен, сохранение отменено.");
 				return false;
 			}
 			if(Entity.Id == 0)
@@ -168,6 +247,7 @@ namespace Workwear.ViewModels.Stock {
 
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
+				logger.Warn("Необходимо обновить штрихкоды.");
 				return false;
 			}
 
@@ -176,12 +256,11 @@ namespace Workwear.ViewModels.Stock {
 			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
 			// 2 - Сохраняем основной документ, без закрытия транзакции.
 			// 3 - Обрабатываем и сохраняем доп документы.
-			
-			logger.Info("Обработка строк документа выдачи...");
-			progress.Add();
+
+			var performance = new ProgressPerformanceHelper(modalProgressCreator, 8, "Очистка строк документа выдачи...", logger, true);
 			Entity.CleanupItems();
 			Entity.CleanupItemsWriteOff();
-			progress.Add();
+			performance.CheckPoint("Запись документа списания...");
 			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
 				Entity.WriteOffDoc = new Writeoff();
 				Entity.WriteOffDoc.Date = Entity.Date;
@@ -191,33 +270,32 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info("Предварительная запись списания...");
 				UoW.Save(Entity.WriteOffDoc);
 			}
-			progress.Add();
+			performance.CheckPoint("Предварительная запись ведомости...");
 			Entity.CleanupIssuanceSheetItems();
 			if(Entity.IssuanceSheet != null) {
 				logger.Info("Предварительная запись ведомости...");
 				UoW.Save(Entity.IssuanceSheet);
 			}
-			progress.Add();
-			logger.Info("Запись документа выдачи...");
+			performance.CheckPoint("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
 			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
 			
-			progress.Add();
+			performance.CheckPoint("Запись ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
-			progress.Add();
+			performance.CheckPoint("Запись документа списания...");
 			Entity.UpdateIssuedWriteOffOperation();
 			if(Entity.WriteOffDoc != null)
 				UoW.Save(Entity.WriteOffDoc);
 
-			progress.Add();
-			logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
+			performance.CheckPoint("Обновляем записи в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
+			performance.CheckPoint("Завершение транзакции...");
 			UoWGeneric.Commit();
-			logger.Info("Ok");
-			progress.Close();
+			performance.End();
+			logger.Info($"Документ сохранен за {performance.TotalTime.TotalSeconds} сек.");
 			return true;
 		}
 
@@ -233,8 +311,7 @@ namespace Workwear.ViewModels.Stock {
 
 		public void CreateIssuanceSheet()
 		{
-			var userSettings = userRepository.GetCurrentUserSettings(UoW);
-			Entity.CreateIssuanceSheet(userSettings);
+			Entity.CreateIssuanceSheet(currentUserSettings.Settings);
 		}
 
 		public void PrintIssuanceSheet(IssuedSheetPrint doc)
@@ -270,11 +347,13 @@ namespace Workwear.ViewModels.Stock {
 			switch(e.PropertyName) {
 				case nameof(Entity.Date):
 					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
-					UpdateAmounts();
+						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					FillUnderreceived();
+					var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
+					FillUnderreceived(performance);
 					OnPropertyChanged(nameof(IssuanceSheetCreateSensitive));
+					performance.End();
 					break;
 				case nameof(Entity.IssuanceSheet):
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));

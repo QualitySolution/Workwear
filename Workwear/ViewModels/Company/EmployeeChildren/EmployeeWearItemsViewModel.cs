@@ -8,11 +8,13 @@ using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Utilities.Debug;
 using QS.ViewModels;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.ViewModels.Operations;
@@ -28,6 +30,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly EmployeeIssueModel issueModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
@@ -38,6 +41,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
 			EmployeeViewModel employeeViewModel,
+			EmployeeIssueModel issueModel,
 			EmployeeIssueRepository employeeIssueRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
@@ -48,6 +52,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -74,15 +79,22 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (isConfigured) return;
 			isConfigured = true;
-			var start = DateTime.Now;
-			progress.Start(2+4);
+			var performance = new PerformanceHelper(logger: logger);
+			progress.Start(3+3);
+			issueModel.PreloadWearItems(Entity.Id);
+			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
+			progress.Add();
 			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
+			performance.CheckPoint(nameof(Entity.FillWearInStockInfo));
 			progress.Add();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
 			progress.Add();
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
 			progress.Close();
-			logger.Debug($"Время заполнения таблицы «Спецодежда по нормам»: {(DateTime.Now - start).TotalSeconds} сек." );
+			performance.CheckPoint("Обновление таблицы");
+			performance.PrintAllPoints(logger);
+			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
 		#endregion

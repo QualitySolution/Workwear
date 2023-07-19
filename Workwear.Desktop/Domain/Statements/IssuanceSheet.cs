@@ -62,6 +62,13 @@ namespace Workwear.Domain.Statements
 			set => SetField(ref collectiveExpense, value);
 		}
 
+		private EmployeeCard transferAgent;
+		[Display(Name = "Ответственный за передачу СИЗ")]
+		public virtual EmployeeCard TransferAgent {
+			get => transferAgent;
+			set => SetField(ref transferAgent, value);
+		}
+		
 		#region Подписи
 
 		private Leader responsiblePerson;
