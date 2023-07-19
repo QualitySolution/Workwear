@@ -68,7 +68,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => validator).As<IValidator>();
 			builder.RegisterType<BarcodeService>().AsSelf();
-			builder.RegisterType<EmployeeIssueModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
@@ -195,7 +195,12 @@ namespace WorkwearTest.ViewModels.Stock
 			
 			var userService = Substitute.For<IUserService>();
 			var currentUserSettings = Substitute.For<CurrentUserSettings>();
-			var container = MakeContainer(userService, currentUserSettings).Build();
+			var interactive = Substitute.For<IInteractiveService>();
+			//Отвечаем да на вопрос, надо ли пересчитывать количество при изменении даты.
+			interactive.Question(Arg.Any<string>()).Returns(true);
+			var builder = MakeContainer(userService, currentUserSettings);
+			builder.Register(x => interactive).AsSelf();
+			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
