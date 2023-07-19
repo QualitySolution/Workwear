@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
 	`cost_center_id` INT UNSIGNED NOT NULL,
 	`percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
 	PRIMARY KEY (`id`),
-	INDEX `wear_cards_cost_allocation_fk1_idx` (`cost_center_id` ASC),
-	INDEX `wear_cards_cost_allocation_fk2_idx` (`wear_card_id` ASC),
+	INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
+	INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
 	CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
 		FOREIGN KEY (`cost_center_id`)
 		REFERENCES `cost_center` (`id`)

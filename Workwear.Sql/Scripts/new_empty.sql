@@ -1205,13 +1205,14 @@ CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wear_card_id` INT(10) UNSIGNED NOT NULL,
   `cost_center_id` INT(10) UNSIGNED NOT NULL,
-  `percent` DECIMAL(3,2) NOT NULL DEFAULT 1.00,
+  `percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
   PRIMARY KEY (`id`),
   INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
   INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
   CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
     FOREIGN KEY (`cost_center_id`)
     REFERENCES `cost_center` (`id`)
+    ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `wear_cards_cost_allocation_ibfk_2`
     FOREIGN KEY (`wear_card_id`)
@@ -1851,7 +1852,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `creation_date` DATE NOT NULL DEFAULT CURRENT_DATE(),
+  `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
