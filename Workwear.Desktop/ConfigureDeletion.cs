@@ -43,7 +43,9 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee)
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
-				.AddClearDependence<Leader>(x => x.Employee);
+				.AddClearDependence<Leader>(x => x.Employee)
+				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
+				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
 
