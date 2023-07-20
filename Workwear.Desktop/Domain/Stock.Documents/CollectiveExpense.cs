@@ -222,17 +222,16 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 		#region Ведомость
-		public virtual void CreateIssuanceSheet(UserSettings userSettings)
+		public virtual void CreateIssuanceSheet(Organization defaultOrganization, Leader defaultLeader, Leader defaultResponsiblePerson)
 		{
 			if(IssuanceSheet != null)
 				return;
 
 			IssuanceSheet = new IssuanceSheet {
 				CollectiveExpense = this,
-				Organization = userSettings?.DefaultOrganization,
-				HeadOfDivisionPerson = userSettings?.DefaultLeader,
-				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
-				TransferAgent = this.TransferAgent,
+				Organization = defaultOrganization,
+				HeadOfDivisionPerson = defaultLeader,
+				ResponsiblePerson = defaultResponsiblePerson,
 			};
 			UpdateIssuanceSheet();
 		}

@@ -26,6 +26,11 @@ namespace Workwear.Tools.User
 		}
 
 		private UserSettings userSettings;
+		/// <summary>
+		/// Настройки текущего пользователя.
+		/// Если настройки содержать объекты доменной модели, такие как склад и организация по умолчанию.
+		/// Не используйте их напрямую для сохранения в своих документах, подгружайте их в своих uow сессиях.
+		/// </summary>
 		public virtual UserSettings Settings {
 			get {
 				if(userSettings == null) {
