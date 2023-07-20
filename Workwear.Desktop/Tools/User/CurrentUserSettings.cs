@@ -16,7 +16,8 @@ namespace Workwear.Tools.User
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.changeWatcher = changeWatcher;
 			uow = unitOfWorkFactory.CreateWithoutRoot();
-			changeWatcher?.BatchSubscribe(SettingChanged).IfEntity<UserSettings>().AndWhere(x => x.User.Id == userService.CurrentUserId);
+			changeWatcher?.BatchSubscribe(SettingChanged).ExcludeUow(uow)
+				.IfEntity<UserSettings>().AndWhere(x => x.User.Id == userService.CurrentUserId);
 		}
 		
 		/// <summary>
@@ -43,14 +44,10 @@ namespace Workwear.Tools.User
 			}
 		}
 
-		private bool selfSave = false;
-		
 		public void SaveSettings()
 		{
-			selfSave = true;
 			uow.Save(userSettings);
 			uow.Commit();
-			selfSave = false;
 		}
 
 		private void TryLoadSettings() {
@@ -63,8 +60,6 @@ namespace Workwear.Tools.User
 		
 		#region Обновление
 		private void SettingChanged(EntityChangeEvent[] changeevents) {
-			if(selfSave)
-				return;
 			uow.Session.Refresh(userSettings);
 		}
 		#endregion
