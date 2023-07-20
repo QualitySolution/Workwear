@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Bindings.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using FluentNHibernate.Conventions;
 using Gamma.Utilities;
 using NHibernate;
-using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -338,7 +336,7 @@ namespace Workwear.Domain.Company
 						new[] { this.GetPropertyName(o => o.CardNumber) });
 			}
 			
-			if(NHibernateUtil.IsInitialized(CostCenters) && !CostCenters.IsEmpty() && CostCenters.Sum(x => x.Percent) != 1m)
+			if(NHibernateUtil.IsInitialized(CostCenters) && CostCenters.Any() && CostCenters.Sum(x => x.Percent) != 1m)
 				yield return new ValidationResult(
 				"Сумма по МВЗ в должна быть равна 100%", 
 				new[] { nameof(CostCenters) });
