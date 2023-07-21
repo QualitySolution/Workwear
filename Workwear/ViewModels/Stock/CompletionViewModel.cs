@@ -74,7 +74,9 @@ namespace Workwear.ViewModels.Stock
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			lastWarehouse = Entity.SourceWarehouse;
+			Entity.ObservableResultItems.ListContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmounfText));
+			Entity.ObservableSourceItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmounfText));
+            lastWarehouse = Entity.SourceWarehouse;
 
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
@@ -82,7 +84,9 @@ namespace Workwear.ViewModels.Stock
 		#region View
 		public bool SensetiveDellSourceItemButton => SelectedSourceItem != null;
 		public bool SensetiveDellResultItemButton => SelectedResultItem != null;
-		public bool SensetiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null; 
+		public bool SensetiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
+		public string ResultAmounfText => $"В сумме: {Entity.ObservableResultItems.Sum(x=>x.Amount)}";
+		public string SourceAmounfText => $"В сумме: {Entity.ObservableSourceItems.Sum(x=>x.Amount)}";
 		
 		private CompletionResultItem selectedResultItem;
 		public virtual CompletionResultItem SelectedResultItem {
