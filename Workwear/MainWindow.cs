@@ -163,7 +163,7 @@ public partial class MainWindow : Gtk.Window
 
 		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
-		if(UoW.GetAll<Warehouse>().Count() == 0)
+		if(!UoW.GetAll<Warehouse>().Any())
 			CreateDefaultWarehouse();
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			//Если у базы еще нет Guid создаем его.

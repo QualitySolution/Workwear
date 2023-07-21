@@ -193,13 +193,13 @@ namespace Workwear.Views.Company {
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				
 				var label = new yLabel {LabelProp = sizeType.Name + ":"};
-				 label.Xalign = 1;
+				label.Xalign = 1;
 				 
-				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
+				if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
-				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
-				 list.SetRenderTextFunc<Size>(x => x.Name);
-				 list.ShowSpecialStateNot = true;
+				var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				list.SetRenderTextFunc<Size>(x => x.Name);
+				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;

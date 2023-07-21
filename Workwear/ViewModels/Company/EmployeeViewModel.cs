@@ -313,10 +313,6 @@ namespace Workwear.ViewModels.Company
 					Entity.Sex = sex;
 			}
 		}
-		private void CheckSizeChanged() {
-			Entity.FillWearInStockInfo(UoW, baseParameters, Entity?.Subdivision?.Warehouse, DateTime.Now);
-			//Обновляем подобранную номенклатуру
-		}
 		#endregion
 
 		#region Вкладки
@@ -543,8 +539,9 @@ namespace Workwear.ViewModels.Company
 			};
 		}
 		#endregion
+
+		#region Размеры
 		public void SetSizes(Size size, SizeType sizeType) {
-			CheckSizeChanged();
 			var employeeSize = Entity.ObservableSizes.FirstOrDefault(x => x.SizeType == sizeType);
 			if (size is null) {
 				if(employeeSize != null)
@@ -561,7 +558,13 @@ namespace Workwear.ViewModels.Company
 						employeeSize.Size = size;
 				}
 			}
+
+			if(WearItemsViewModel.IsConfigured) {
+				//Если вкладка со списком спецодежды уже открыта, то обновляем предложения номенклатуры.
+				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			}
 		}
+		#endregion
 	}
 	public class DepartmentJournalViewModelSelector : IEntitySelector {
 		private INavigationManager NavigationManager { get; }

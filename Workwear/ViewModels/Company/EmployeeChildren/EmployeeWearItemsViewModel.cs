@@ -73,12 +73,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#endregion
 
 		#region Показ
-		private bool isConfigured = false;
+		public bool IsConfigured {get; private set; }
 
 		public void OnShow()
 		{
-			if (isConfigured) return;
-			isConfigured = true;
+			if (IsConfigured) return;
+			IsConfigured = true;
 			var performance = new PerformanceHelper(logger: logger);
 			progress.Start(3+3);
 			issueModel.PreloadWearItems(Entity.Id);
@@ -110,7 +110,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#region Внутренне
 		void HandleEntityChangeEvent(EntityChangeEvent[] changeEvents)
 		{
-			if(!isConfigured)
+			if(!IsConfigured)
 				return;
 			bool isMySession = changeEvents.First().Session == UoW.Session;
 			//Не чего не делаем если это наше собственное изменение.
