@@ -79,21 +79,15 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (IsConfigured) return;
 			IsConfigured = true;
-			var performance = new PerformanceHelper(logger: logger);
-			progress.Start(3+3);
+			var performance = new ProgressPerformanceHelper(progress, 4+3, nameof(issueModel.PreloadWearItems), logger: logger);
 			issueModel.PreloadWearItems(Entity.Id);
-			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
-			progress.Add();
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
 			performance.CheckPoint(nameof(Entity.FillWearInStockInfo));
-			progress.Add();
-			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
 			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
-			progress.Add();
-			OnPropertyChanged(nameof(ObservableWorkwearItems));
-			progress.Close();
+			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			performance.CheckPoint("Обновление таблицы");
-			performance.PrintAllPoints(logger);
+			OnPropertyChanged(nameof(ObservableWorkwearItems));
+			performance.End();
 			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
