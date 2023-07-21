@@ -21,14 +21,12 @@ namespace Workwear.Tools.Sizes
 			
 			uow.Session.QueryOver<Size>()
 				.Fetch(SelectMode.ChildFetch, x => x)
-				//Здесь ChildFetch так как размеры уже подгружены запросом выше. Незачем получать какие либо поля кроме id размера.
-				.Fetch(SelectMode.ChildFetch, s => s.SuitableSizes)
+				.Fetch(SelectMode.Fetch, s => s.SuitableSizes)
 				.Future();
 			
 			uow.Session.QueryOver<Size>()
 				.Fetch(SelectMode.ChildFetch, x => x)
-				//Здесь ChildFetch так как размеры уже подгружены запросом выше. Незачем получать какие либо поля кроме id размера.
-				.Fetch(SelectMode.ChildFetch, s => s.SizesWhereIsThisSizeAsSuitable)
+				.Fetch(SelectMode.Fetch, s => s.SizesWhereIsThisSizeAsSuitable)
 				.Future();
 			
 			var queryTypes = uow.Session.QueryOver<SizeType>()
