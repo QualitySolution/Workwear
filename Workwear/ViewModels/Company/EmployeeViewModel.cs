@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -63,6 +63,7 @@ namespace Workwear.ViewModels.Company
 			ILifetimeScope autofacScope,
 			PersonNames personNames,
 			IInteractiveService interactive,
+			IProgressBarDisplayable globalProgress,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
 			NormRepository normRepository,
@@ -81,10 +82,10 @@ namespace Workwear.ViewModels.Company
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			SizeService = sizeService;
-			Performance = new PerformanceHelper("Диалог сотрудника", logger);
+			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			
 			SizeService.RefreshSizes(UoW);
-			Performance.CheckPoint("Загрузили размеры");
+			Performance.CheckPoint("Загрузка основной информации о сотруднике");
 			//Подгружаем данные для ускорения открытия диалога
 			UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.Id == Entity.Id)
@@ -95,7 +96,7 @@ namespace Workwear.ViewModels.Company
 				.Fetch(SelectMode.Fetch, x => x.Post)
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.SingleOrDefault();
-			Performance.CheckPoint("Загрузили основную информацию о сотруднике");
+			Performance.CheckPoint("Создание диалога");
 			
 			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
 
@@ -151,10 +152,10 @@ namespace Workwear.ViewModels.Company
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 
 			Validations.Add(new ValidationRequest(this));
-			Performance.CheckPoint("Конец конструктора ViewModel");
+			Performance.CheckPoint("Создание View");
 		}
 
-		public readonly PerformanceHelper Performance;
+		public readonly ProgressPerformanceHelper Performance;
 
 		#region Контролы
 
