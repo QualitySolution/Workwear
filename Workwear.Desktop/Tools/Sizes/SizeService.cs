@@ -17,12 +17,18 @@ namespace Workwear.Tools.Sizes
 		private IList<SizeType> types;
 
 		public void RefreshSizes(IUnitOfWork uow) {
-			var querySizes = uow.Session.QueryOver<Size>()
-				.Fetch(SelectMode.Fetch, s => s.SuitableSizes)
+			var querySizes = uow.Session.QueryOver<Size>().Future();
+			
+			uow.Session.QueryOver<Size>()
+				.Fetch(SelectMode.ChildFetch, x => x)
+				//Здесь ChildFetch так как размеры уже подгружены запросом выше. Незачем получать какие либо поля кроме id размера.
+				.Fetch(SelectMode.ChildFetch, s => s.SuitableSizes)
 				.Future();
 			
 			uow.Session.QueryOver<Size>()
-				.Fetch(SelectMode.Fetch, s => s.SizesWhereIsThisSizeAsSuitable)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				//Здесь ChildFetch так как размеры уже подгружены запросом выше. Незачем получать какие либо поля кроме id размера.
+				.Fetch(SelectMode.ChildFetch, s => s.SizesWhereIsThisSizeAsSuitable)
 				.Future();
 			
 			var queryTypes = uow.Session.QueryOver<SizeType>()
