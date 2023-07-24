@@ -16,6 +16,10 @@ namespace Workwear.Views.Regulations.NormChildren
 
 		private global::Gtk.Button buttonRemove;
 
+		private global::Gamma.Widgets.yEnumComboBox comboSort;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel1;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -71,11 +75,34 @@ namespace Workwear.Views.Regulations.NormChildren
 			w6.Position = 1;
 			w6.Expand = false;
 			w6.Fill = false;
-			this.vbox3.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox6]));
-			w7.Position = 1;
+			// Container child hbox6.Gtk.Box+BoxChild
+			this.comboSort = new global::Gamma.Widgets.yEnumComboBox();
+			this.comboSort.Name = "comboSort";
+			this.comboSort.ShowSpecialStateAll = false;
+			this.comboSort.ShowSpecialStateNot = false;
+			this.comboSort.UseShortTitle = false;
+			this.comboSort.DefaultFirst = false;
+			this.hbox6.Add(this.comboSort);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.comboSort]));
+			w7.PackType = ((global::Gtk.PackType)(1));
+			w7.Position = 2;
 			w7.Expand = false;
 			w7.Fill = false;
+			// Container child hbox6.Gtk.Box+BoxChild
+			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Сортировать по:");
+			this.hbox6.Add(this.ylabel1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.ylabel1]));
+			w8.PackType = ((global::Gtk.PackType)(1));
+			w8.Position = 3;
+			w8.Expand = false;
+			w8.Fill = false;
+			this.vbox3.Add(this.hbox6);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox6]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
 			this.Add(this.vbox3);
 			if ((this.Child != null))
 			{
