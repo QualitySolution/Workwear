@@ -38,12 +38,14 @@ namespace Workwear.Views.Regulations
 			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
-			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
-			.AddColumn("Номер").AddTextRenderer(n => n.Number)
-			.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
-			.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
-			.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
-			.Finish();
+				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
+				.AddColumn("Тип").AddTextRenderer(p => p.TypeName).WrapWidth(500)
+				.AddColumn("Номер").AddTextRenderer(n => n.Number)
+				.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
+				.AddColumn("Цена").AddReadOnlyTextRenderer(n => n.SaleCost?.ToString("C"))
+				.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+				.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
 
