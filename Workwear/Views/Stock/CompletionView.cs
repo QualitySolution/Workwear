@@ -29,13 +29,13 @@ namespace Workwear.Views.Stock {
 			ytreeExpenseItems.Selection.Changed += ytreeExpenseItems_Selection_Changed;
 			ytreeReceiptItems.Selection.Changed += ytreeReceiptItems_Selection_Changed;
 			buttonDelExpenseNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.SensetiveDellSourceItemButton, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensitiveDellSourceItemButton, b => b.Sensitive)
 				.InitializeFromSource();
 			buttonDelReceiptNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.SensetiveDellResultItemButton, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensitiveDellResultItemButton, b => b.Sensitive)
 				.InitializeFromSource(); 
 			buttonAddSizesReceiptNomenclature.Binding
-				.AddBinding(ViewModel, vm => vm.SensetiveAddSizesResultButton, b => b.Sensitive)
+				.AddBinding(ViewModel, vm => vm.SensitiveAddSizesResultButton, b => b.Sensitive)
 				.InitializeFromSource();
 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
@@ -76,7 +76,7 @@ namespace Workwear.Views.Stock {
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish();
 			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
-			 ylabelAmountSource.Binding.AddBinding(ViewModel, vm => vm.SourceAmounfText, w => w.LabelProp).InitializeFromSource();
+			 ylabelAmountSource.Binding.AddBinding(ViewModel, vm => vm.SourceAmountText, w => w.LabelProp).InitializeFromSource();
 			 #endregion
 			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
@@ -102,7 +102,7 @@ namespace Workwear.Views.Stock {
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish();
 			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
-			 ylabelAmountResult.Binding.AddBinding(ViewModel, vm => vm.ResultAmounfText, w => w.LabelProp).InitializeFromSource();
+			 ylabelAmountResult.Binding.AddBinding(ViewModel, vm => vm.ResultAmountText, w => w.LabelProp).InitializeFromSource();
 			 #endregion
 		}
 		

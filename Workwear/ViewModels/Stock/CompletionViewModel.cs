@@ -74,35 +74,35 @@ namespace Workwear.ViewModels.Stock
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.ObservableResultItems.ListContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmounfText));
-			Entity.ObservableSourceItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmounfText));
+			Entity.ObservableResultItems.ListContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmountText));
+			Entity.ObservableSourceItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmountText));
             lastWarehouse = Entity.SourceWarehouse;
 
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region View
-		public bool SensetiveDellSourceItemButton => SelectedSourceItem != null;
-		public bool SensetiveDellResultItemButton => SelectedResultItem != null;
-		public bool SensetiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
-		public string ResultAmounfText => $"В сумме: {Entity.ObservableResultItems.Sum(x=>x.Amount)}";
-		public string SourceAmounfText => $"В сумме: {Entity.ObservableSourceItems.Sum(x=>x.Amount)}";
+		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
+		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
+		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
+		public string ResultAmountText => $"Общее количество: {Entity.ObservableResultItems.Sum(x=>x.Amount)}";
+		public string SourceAmountText => $"Общее количество: {Entity.ObservableSourceItems.Sum(x=>x.Amount)}";
 		
 		private CompletionResultItem selectedResultItem;
 		public virtual CompletionResultItem SelectedResultItem {
 			get => selectedResultItem;
 			set {
 				selectedResultItem = value;	
-				OnPropertyChanged(nameof(SensetiveAddSizesResultButton));
-				OnPropertyChanged(nameof(SensetiveDellResultItemButton));
+				OnPropertyChanged(nameof(SensitiveAddSizesResultButton));
+				OnPropertyChanged(nameof(SensitiveDellResultItemButton));
 			}
 		}
-		private CompletionSourceItem selectedSourseItem;
+		private CompletionSourceItem selectedSourceItem;
 		public virtual CompletionSourceItem SelectedSourceItem {
-			get => selectedSourseItem;
+			get => selectedSourceItem;
 			set {
-				selectedSourseItem = value;
-				OnPropertyChanged(nameof(SensetiveDellSourceItemButton));
+				selectedSourceItem = value;
+				OnPropertyChanged(nameof(SensitiveDellSourceItemButton));
 			}
 		}
 
@@ -116,8 +116,8 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region EntityViewModels
-		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
-		public EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
