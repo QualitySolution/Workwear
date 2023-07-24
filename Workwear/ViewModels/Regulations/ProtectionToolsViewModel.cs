@@ -16,6 +16,7 @@ using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -135,6 +136,9 @@ namespace Workwear.ViewModels.Regulations
 			Entity.AddNomeclature(nomenclature);
 		}
 
+		public void OpenNomenclature(Nomenclature nomenclature) {
+			NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
 		#endregion
 		#endregion
 	}
