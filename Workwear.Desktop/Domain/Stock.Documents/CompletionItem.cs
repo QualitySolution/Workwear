@@ -27,6 +27,7 @@ namespace Workwear.Domain.Stock.Documents
             set {
                 if (WarehouseOperation == null) return;
                 WarehouseOperation.Amount = value;
+                OnPropertyChanged();
             }
         }
         private WarehouseOperation warehouseOperation;

@@ -42,7 +42,7 @@ namespace Workwear.Views.Regulations
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create()
-				.AddColumn("ИД").AddTextRenderer(p => p.Id.ToString())
+				.AddColumn("ИД").AddTextRenderer(p => p.ProtectionTools.Id.ToString())
 				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("Количество")
 				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, 1000000, 1, 10, 10))

@@ -155,9 +155,11 @@ namespace Workwear.ViewModels.Stock
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
 		}
 
-		public void CreateIssuanceSheet()
-		{
-			Entity.CreateIssuanceSheet(currentUserSettings.Settings);
+		public void CreateIssuanceSheet() {
+			var defaultOrganization = UoW.GetInSession(currentUserSettings.Settings.DefaultOrganization);
+			var defaultLeader = UoW.GetInSession(currentUserSettings.Settings.DefaultLeader);
+			var defaultResponsiblePerson = UoW.GetInSession(currentUserSettings.Settings.DefaultResponsiblePerson);
+			Entity.CreateIssuanceSheet(defaultOrganization, defaultLeader, defaultResponsiblePerson);
 		}
 
 		public void PrintIssuanceSheet(IssuedSheetPrint doc)

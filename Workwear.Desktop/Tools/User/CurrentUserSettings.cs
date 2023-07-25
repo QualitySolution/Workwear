@@ -16,7 +16,8 @@ namespace Workwear.Tools.User
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.changeWatcher = changeWatcher;
 			uow = unitOfWorkFactory.CreateWithoutRoot();
-			changeWatcher?.BatchSubscribe(SettingChanged).IfEntity<UserSettings>().AndWhere(x => x.User.Id == userService.CurrentUserId);
+			changeWatcher?.BatchSubscribe(SettingChanged).ExcludeUow(uow)
+				.IfEntity<UserSettings>().AndWhere(x => x.User.Id == userService.CurrentUserId);
 		}
 		
 		/// <summary>
@@ -26,6 +27,11 @@ namespace Workwear.Tools.User
 		}
 
 		private UserSettings userSettings;
+		/// <summary>
+		/// Настройки текущего пользователя.
+		/// Если настройки содержать объекты доменной модели, такие как склад и организация по умолчанию.
+		/// Не используйте их напрямую для сохранения в своих документах, подгружайте их в своих uow сессиях.
+		/// </summary>
 		public virtual UserSettings Settings {
 			get {
 				if(userSettings == null) {
@@ -38,14 +44,10 @@ namespace Workwear.Tools.User
 			}
 		}
 
-		private bool selfSave = false;
-		
 		public void SaveSettings()
 		{
-			selfSave = true;
 			uow.Save(userSettings);
 			uow.Commit();
-			selfSave = false;
 		}
 
 		private void TryLoadSettings() {
@@ -58,8 +60,6 @@ namespace Workwear.Tools.User
 		
 		#region Обновление
 		private void SettingChanged(EntityChangeEvent[] changeevents) {
-			if(selfSave)
-				return;
 			uow.Session.Refresh(userSettings);
 		}
 		#endregion

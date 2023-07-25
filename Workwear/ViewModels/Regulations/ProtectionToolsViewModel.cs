@@ -15,6 +15,8 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -22,10 +24,18 @@ namespace Workwear.ViewModels.Regulations
 	{
 		private readonly ILifetimeScope autofacScope;
 		private readonly IInteractiveService interactiveService;
+		private readonly FeaturesService featuresService;
 
-		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigation, ILifetimeScope autofacScope, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
+			FeaturesService featuresService,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
@@ -45,6 +55,10 @@ namespace Workwear.ViewModels.Regulations
 					break;
 			}
 		}
+		#endregion
+
+		#region Visible
+		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		#endregion
 
 		#region EntityViewModels
@@ -122,6 +136,9 @@ namespace Workwear.ViewModels.Regulations
 			Entity.AddNomeclature(nomenclature);
 		}
 
+		public void OpenNomenclature(Nomenclature nomenclature) {
+			NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(nomenclature.Id));
+		}
 		#endregion
 		#endregion
 	}
