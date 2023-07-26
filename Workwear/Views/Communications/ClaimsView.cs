@@ -36,6 +36,18 @@ namespace Workwear.Views.Communications
 			ytreeClaimMessages.Binding
 				.AddBinding(ViewModel, vm => vm.MessagesSelectClaims, w => w.ItemsDataSource)
 				.InitializeFromSource();
+			
+			labelClaimTitle.Binding.AddBinding(ViewModel, v => v.ClaimTitle, w => w.LabelProp).InitializeFromSource();
+			labelProtectionToolsName.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ProtectionToolsTitle, w => w.LabelProp)
+				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)
+				.InitializeFromSource();
+			labelTitleProtectionTools.Binding.AddBinding(ViewModel, v => v.VisibleProtectionTools, w => w.Visible).InitializeFromSource();
+			buttonOpenProtectionTools.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)
+				.AddBinding(v => v.SensitiveOpenProtectionTools, w => w.Sensitive)
+				.InitializeFromSource();
+			
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Buffer.Text)
 				.InitializeFromSource();

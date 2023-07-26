@@ -8,6 +8,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Regulations;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
 
@@ -50,10 +51,19 @@ namespace Workwear.ViewModels.Communications
 		private Claim selectClaim;
 		[PropertyChangedAlso(nameof(SensitiveCloseClaim))]
 		[PropertyChangedAlso(nameof(SensitiveSend))]
+		[PropertyChangedAlso(nameof(ClaimTitle))]
+		[PropertyChangedAlso(nameof(VisibleProtectionTools))]
 		public Claim SelectClaim {
 			get => selectClaim;
-			set { SetField(ref selectClaim, value);
-				RefreshMessage(); }
+			set {
+				if(SetField(ref selectClaim, value)) {
+					RefreshMessage();
+					if(SelectClaim != null && SelectClaim.ProtectionToolsId > 0)
+						ProtectionTools = UoW.GetById<ProtectionTools>((int)SelectClaim.ProtectionToolsId);
+					else
+						ProtectionTools = null;
+				}
+			}
 		}
 
 		private IList<ClaimMessage> messagesSelectClaims;
@@ -77,7 +87,20 @@ namespace Workwear.ViewModels.Communications
 			get => textMessage;
 			set => SetField(ref textMessage, value);
 		}
+		
+		private ProtectionTools protectionTools;
+		[PropertyChangedAlso(nameof(SensitiveOpenProtectionTools))]
+		[PropertyChangedAlso(nameof(ProtectionToolsTitle))]
+		public ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
+		
+		public string ClaimTitle => SelectClaim?.Title;
+		public string ProtectionToolsTitle => ProtectionTools?.Name ?? "Неизвестная номенклатура нормы";
 
+		public bool VisibleProtectionTools => (SelectClaim?.ProtectionToolsId ?? 0) > 0;
+		public bool SensitiveOpenProtectionTools => ProtectionTools != null;
 		public bool SensitiveSend => SelectClaim != null && !String.IsNullOrWhiteSpace(TextMessage);
 		public bool SensitiveCloseClaim => SelectClaim != null && SelectClaim.ClaimState != ClaimState.Closed;
 
