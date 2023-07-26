@@ -857,7 +857,7 @@
         <Height>17.94pt</Height>
         <Width>575.71pt</Width>
         <Value>= "Ведомость № " + {?id}</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>0.00pt</Left>
         <Top>41.00pt</Top>
         <Style>
@@ -875,7 +875,7 @@
         <Value>Типовая межотраслевая форма N МБ-7
 Утверждена Постановлением Госкомстата России
 от 30.10.97 N 71а</Value>
-        <ZIndex>1</ZIndex>
+        <ZIndex>0</ZIndex>
         <Left>315.4pt</Left>
         <Top>6.3pt</Top>
         <Style>
@@ -889,9 +889,9 @@
         <Height>14.28pt</Height>
         <Width>548.71pt</Width>
         <Value>Учета выдачи спецодежды, спецобуви и предохранительных приспособлений</Value>
-        <ZIndex>1</ZIndex>
-        <Left>14.3pt</Left>
-        <Top>60.8pt</Top>
+        <ZIndex>0</ZIndex>
+        <Left>14.30pt</Left>
+        <Top>60.80pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -910,7 +910,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>86.3pt</Width>
+            <Width>82.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -1066,7 +1066,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>422.9pt</Left>
+        <Left>421.3pt</Left>
         <Top>78.2pt</Top>
       </Table>
       <Table Name="Table3">
@@ -1076,13 +1076,15 @@
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
             <Width>83.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>345.1pt</Width>
+            <Width>337.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1479,9 +1481,106 @@
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox67">
+                    <Textbox Name="Textbox80">
                       <Value>
                       </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox82">
+                      <Value>(должность)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox84">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox86">
+                      <Value>(подпись)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox88">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox90">
+                      <Value>(расшифровка подписи)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>14.0pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox67">
+                      <Value>Ответственный за передачу</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1496,16 +1595,17 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox85">
-                      <Value>(должность)</Value>
+                      <Value>={transfer_agent_post}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize>8pt</FontSize>
+                        <FontSize>10pt</FontSize>
                         <TextAlign>Center</TextAlign>
                       </Style>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1527,7 +1627,8 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox117">
-                      <Value>(подпись)</Value>
+                      <Value>
+                      </Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -1558,8 +1659,106 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox101">
-                      <Value>(расшифровка подписи)</Value>
+                      <Value>={transfer_agent_fio}</Value>
                       <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>10pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox92">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox94">
+                      <Value>(должность)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox96">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox98">
+                      <Value>(подпись)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox100">
+                      <Value>
+                      </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox102">
+                      <Value>(расшифровка подписи)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
                         </BorderStyle>
@@ -1865,7 +2064,7 @@
         <Left>0.8pt</Left>
         <Top>286.2pt</Top>
       </Table>
-      <Textbox Name="Textbox42" >
+      <Textbox Name="Textbox42">
         <Height>11.99pt</Height>
         <Width>275.43pt</Width>
         <Value>="Сотрудников в ведомости: " + Countdistinct({employee_id}, "Data")</Value>
@@ -1889,7 +2088,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     wear_cards.id as employee_id,
@@ -1925,7 +2124,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
@@ -2010,13 +2209,17 @@ WHERE
             IF(head_of_division.patronymic = '',
                 '',
                 CONCAT(LEFT(head_of_division.patronymic, 1), '.'))) as head_of_division_name,
-    head_of_division.position as head_of_division_post
+    head_of_division.position as head_of_division_post,
+    CONCAT_WS(" ", transfer_agent.last_name,transfer_agent.first_name, transfer_agent.patronymic_name) as transfer_agent_fio,
+    transfer_agent_post.name AS transfer_agent_post
 FROM
     issuance_sheet
     LEFT JOIN organizations ON organizations.id = issuance_sheet.organization_id
     LEFT JOIN objects ON objects.id = issuance_sheet.subdivision_id
     LEFT JOIN leaders as responsible_person ON responsible_person.id = issuance_sheet.responsible_person_id
     LEFT JOIN leaders as head_of_division ON head_of_division.id = issuance_sheet.head_of_division_person_id
+    LEFT JOIN wear_cards as transfer_agent on transfer_agent.id = issuance_sheet.transfer_agent_id
+    LEFT JOIN posts as transfer_agent_post on transfer_agent_post.id = transfer_agent.post_id
 WHERE
     issuance_sheet.id = @id</CommandText>
         <QueryParameters>
@@ -2062,6 +2265,14 @@ WHERE
           <DataField>head_of_division_post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="transfer_agent_fio">
+          <DataField>transfer_agent_fio</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="transfer_agent_post">
+          <DataField>transfer_agent_post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -2069,7 +2280,7 @@ WHERE
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -2079,7 +2290,7 @@ WHERE
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>4</Value>
+          <Value>14</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

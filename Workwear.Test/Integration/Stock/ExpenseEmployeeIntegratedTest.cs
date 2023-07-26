@@ -417,7 +417,7 @@ namespace Workwear.Test.Integration.Stock
 				};
 				var expenseItem = expense.AddItem(position1, 1);
 
-				expense.CreateIssuanceSheet(null);
+				expense.CreateIssuanceSheet(null, null, null);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);

@@ -156,12 +156,13 @@ namespace Workwear.Domain.Regulations
 		/// <summary>
 		/// Рассчитывает дату износа по норме.
 		/// </summary>
-		public virtual DateTime? CalculateExpireDate(DateTime issueDate)
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate, decimal wearPercent = 0.0m)
 		{
 			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
 				return null;
 			//TODO Некорректно считаем смены
-			return issueDate.AddMonths(PeriodInMonths);
+			var maxWriteofDate = issueDate.AddMonths(PeriodInMonths);
+			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
 		}
 
 		public virtual string Title{

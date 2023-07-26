@@ -20,6 +20,9 @@ namespace Workwear.Views.Regulations.NormChildren {
 			tvEmployees.Selection.Mode = Gtk.SelectionMode.Multiple;
 			tvEmployees.Binding.AddBinding(ViewModel, vm => vm.Employees, w => w.ItemsDataSource).InitializeFromSource();
 			tvEmployees.Selection.Changed += (sender, e) => buttonRemove.Sensitive = tvEmployees.Selection.CountSelectedRows() > 0;
+
+			comboSort.ItemsEnum = typeof(NormEmployeeSortType);
+			comboSort.Binding.AddBinding(ViewModel, v => v.SortBy, w => w.SelectedItem).InitializeFromSource();
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e) {

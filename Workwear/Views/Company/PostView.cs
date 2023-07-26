@@ -18,6 +18,7 @@ namespace Workwear.Views.Company
 		void ConfigureDlg()
 		{
 			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
+			entryCode.Binding.AddBinding(Entity, e=> e.Code, w=> w.Text).InitializeFromSource();
 			entityProfession.ViewModel = ViewModel.EntryProfession;
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivision;
 			entityDepartment.ViewModel = ViewModel.EntryDepartment;

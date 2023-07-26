@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Utilities.Debug;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -140,11 +141,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private void UpdateMovements()
 		{
 			logger.Info("Обновляем историю выдачи...");
-
+			var performance = new PerformanceHelper(logger: logger);
 			var prepareMovements = new List<EmployeeMovementItem>();
 
-			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query.Fetch(SelectMode.Fetch, x => x.Nomenclature));
+			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+			);
+			performance.CheckPoint("Получение операций");
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());
+			performance.CheckPoint("Получение ссылок на документы");
 			foreach(var operation in list) {
 				var item = new EmployeeMovementItem();
 				item.Operation = operation;
@@ -154,7 +163,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 			Movements = prepareMovements;
 
-			logger.Info("Ок");
+			performance.CheckPoint("Подготовка данных");
+			performance.PrintAllPoints(logger);
+			logger.Info($"Обновили за {performance.TotalTime.TotalSeconds} сек.");
 		}
 
 		void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

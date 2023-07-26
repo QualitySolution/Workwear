@@ -93,6 +93,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 CREATE TABLE IF NOT EXISTS `departments` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(254) NOT NULL,
+  `code` VARCHAR(20) NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL,
   PRIMARY KEY (`id`),
@@ -133,6 +134,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(180) NOT NULL,
+  `code` VARCHAR(20) NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `profession_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -231,6 +233,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
     REFERENCES `departments` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 ENGINE = InnoDB;
 
 
@@ -334,7 +337,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
-  `sale_cost` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL,
+  `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
@@ -487,6 +490,7 @@ CREATE TABLE IF NOT EXISTS `sizes` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 COMMENT = 'до 1000 id пользователь не может редактировать данные.';
 
 
@@ -544,7 +548,8 @@ CREATE TABLE IF NOT EXISTS `operation_warehouse` (
     REFERENCES `owners` (`id`)
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -757,7 +762,8 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
     REFERENCES `sizes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -843,7 +849,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_in_subdivision` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -907,7 +913,7 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1056,7 +1062,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1125,7 +1131,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1193,6 +1199,31 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `wear_cards_cost_allocation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `wear_card_id` INT(10) UNSIGNED NOT NULL,
+  `cost_center_id` INT(10) UNSIGNED NOT NULL,
+  `percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
+  PRIMARY KEY (`id`),
+  INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
+  INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
+  CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
+    FOREIGN KEY (`cost_center_id`)
+    REFERENCES `cost_center` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `wear_cards_cost_allocation_ibfk_2`
+    FOREIGN KEY (`wear_card_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
 -- Table `wear_cards_item`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wear_cards_item` (
@@ -1247,6 +1278,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1,
+  `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All',
   `default_warehouse_id` INT UNSIGNED NULL,
   `default_organization_id` INT UNSIGNED NULL,
   `default_responsible_person_id` INT UNSIGNED NULL,
@@ -1331,12 +1363,14 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
+  `transfer_agent_id` INT(10) UNSIGNED NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_collective_expense_date` (`date` ASC),
+  INDEX `fk_transfer_agent_id_idx` (`transfer_agent_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1346,6 +1380,11 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_collective_expense_3`
+    FOREIGN KEY (`transfer_agent_id`)
+    REFERENCES `wear_cards` (`id`)
+    ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -1364,6 +1403,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `head_of_division_person_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_expense_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_id` INT UNSIGNED NULL DEFAULT NULL,
+  `transfer_agent_id` INT(10) UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_issuance_sheet_1_idx` (`organization_id` ASC),
   INDEX `fk_issuance_sheet_3_idx` (`responsible_person_id` ASC),
@@ -1372,6 +1412,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   INDEX `fk_issuance_sheet_2_idx` (`subdivision_id` ASC),
   INDEX `fk_issuance_sheet_7_idx` (`stock_collective_expense_id` ASC),
   INDEX `index_issuance_sheet_date` (`date` ASC),
+  INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC),
   CONSTRAINT `fk_issuance_sheet_1`
     FOREIGN KEY (`organization_id`)
     REFERENCES `organizations` (`id`)
@@ -1400,6 +1441,11 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   CONSTRAINT `fk_issuance_sheet_7`
     FOREIGN KEY (`stock_collective_expense_id`)
     REFERENCES `stock_collective_expense` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_8`
+    FOREIGN KEY (`transfer_agent_id`)
+    REFERENCES `wear_cards` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -1470,7 +1516,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense_detail` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1545,7 +1591,8 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `sizes` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -2017,7 +2064,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.1');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.4');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

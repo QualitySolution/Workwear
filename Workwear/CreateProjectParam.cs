@@ -55,14 +55,12 @@ using QS.ViewModels;
 using QS.Views.Resolve;
 using QSOrmProject;
 using QSProjectsLib;
-using Workwear.Measurements;
 using Workwear.Sql;
 using Workwear.Tools;
 using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Domain.Users;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
@@ -77,13 +75,13 @@ using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
 using workwear.Tools.Navigation;
 using Workwear.Tools.Nhibernate;
-using workwear.Tools;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
-using Workwear.Repository.User;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
 
@@ -121,7 +119,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
-			OrmMain.AddObjectDescription<UserSettings>();
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
@@ -201,9 +198,9 @@ namespace workwear
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
 			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
-			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf();
-			builder.Register(c => QSProjectsLib.QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
+			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf();
+			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf().SingleInstance();
+			builder.Register(c => QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
 			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
@@ -233,6 +230,7 @@ namespace workwear
             builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
+			builder.Register(x => NotifyConfiguration.Instance).As<IEntityChangeWatcher>().ExternallyOwned();
 			builder.RegisterType<BarcodeService>().AsSelf();
 			#endregion
 
@@ -266,7 +264,7 @@ namespace workwear
 			#endregion
 
 			#region Размеры
-			builder.RegisterType<SizeService>().AsSelf();
+			builder.RegisterType<SizeService>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
 			#endregion
 
@@ -312,7 +310,7 @@ namespace workwear
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
-			builder.RegisterType<EmployeeIssueModel>().AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 
 			#region Repository
@@ -339,12 +337,12 @@ namespace workwear
 			#endregion
 
 			#region Разделение версий
-			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf();
+			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf().SingleInstance();
 			builder.RegisterModule<FeaturesAutofacModule>();
 			#endregion
 
 			#region Настройка
-			builder.RegisterType<CurrentUserSettings>().AsSelf();
+			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Работа со считывателями

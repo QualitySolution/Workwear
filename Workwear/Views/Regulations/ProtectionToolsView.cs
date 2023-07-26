@@ -2,9 +2,12 @@
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
+using Gtk;
 using QS.Views.Dialog;
+using QSWidgetLib;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.Views.Regulations
@@ -38,16 +41,35 @@ namespace Workwear.Views.Regulations
 			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
-			.AddColumn("Тип").AddTextRenderer(p => p.TypeName)
-			.AddColumn("Номер").AddTextRenderer(n => n.Number)
-			.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
-			.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
-			.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
-			.Finish();
+				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
+				.AddColumn("Тип").AddTextRenderer(p => p.TypeName).WrapWidth(500)
+				.AddColumn("Номер").AddTextRenderer(n => n.Number)
+				.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
+				.AddColumn("Цена").Visible(ViewModel.VisibleSaleCost)
+					.AddReadOnlyTextRenderer(n => n.SaleCost?.ToString("C"))
+				.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+				.Finish();
 			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
+			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
 			buttonCreateNomenclature.Binding.AddBinding(ViewModel, v => v.SensitiveCreateNomenclature, w => w.Sensitive).InitializeFromSource();
+		}
+
+		private void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if (args.Event.Button != 3) return;
+			var menu = new Menu();
+			var selected = ytreeItems.GetSelectedObject<Nomenclature>();
+			
+			var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номенклатуру");
+			itemNomenclature.Sensitive = selected != null;
+			itemNomenclature.Activated += (sender, eventArgs) => ViewModel.OpenNomenclature(selected);
+			menu.Add(itemNomenclature);
+			
+			menu.ShowAll();
+			menu.Popup();
+
 		}
 
 		#region Аналоги

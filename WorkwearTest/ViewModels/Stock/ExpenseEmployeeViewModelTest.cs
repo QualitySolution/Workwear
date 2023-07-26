@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.Dialog.Testing;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -12,19 +13,20 @@ using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Services;
 using QS.Testing.DB;
+using QS.Validation;
 using QS.Validation.Testing;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.Measurements;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
-using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
-using Workwear.Repository.User;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock
@@ -40,6 +42,44 @@ namespace WorkwearTest.ViewModels.Stock
 			InitialiseUowFactory();
 		}
 
+		#region Helpers
+		ContainerBuilder MakeContainer(IUserService userService, CurrentUserSettings currentUserSettings) {
+			var navigation = Substitute.For<INavigationManager>();
+			var validator = new ValidatorForTests();
+			var interactive = Substitute.For<IInteractiveService>();
+			var commonMessages = Substitute.For<CommonMessages>(interactive);
+			var featuresService = Substitute.For<FeaturesService>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			var sizeService = Substitute.For<SizeService>();
+			var deleteService = Substitute.For<IDeleteEntityService>();
+			var progress = Substitute.For<IProgressBarDisplayable>();
+
+			var builder = new ContainerBuilder();
+			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+			builder.Register(x => baseParameters).As<BaseParameters>();
+			builder.Register(x => commonMessages).AsSelf();
+			builder.Register(x => currentUserSettings).AsSelf();
+			builder.Register(x => deleteService).As<IDeleteEntityService>();
+			builder.Register(x => featuresService).As<FeaturesService>();
+			builder.Register(x => interactive).As<IInteractiveQuestion>().As<IInteractiveService>();
+			builder.Register(x => navigation).As<INavigationManager>();
+			builder.Register(x => progress).As<IProgressBarDisplayable>();
+			builder.Register(x => sizeService).As<SizeService>();
+			builder.Register(x => userService).As<IUserService>();
+			builder.Register(x => validator).As<IValidator>();
+			builder.RegisterType<BarcodeService>().AsSelf();
+			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
+			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
+			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
+			builder.RegisterType<StockRepository>().AsSelf();
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
+			
+			return builder;
+		}
+		#endregion
+
 		[Test(Description = "Проверяем проверяем что можем пере-сохранить документ с одновременным списанием.")]
 		[Category("Integrated")]
 		public void CreateAndResaveDocWithWriteoff()
@@ -47,37 +87,11 @@ namespace WorkwearTest.ViewModels.Stock
 			NewSessionWithSameDB();
 			NotifyConfiguration.Enable();
 			
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
-			var userRepository = Substitute.For<UserRepository>(userService);
-			var interactive = Substitute.For<IInteractiveService>();
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
-			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
-			var deleteService = Substitute.For<IDeleteEntityService>();
-			var progress = Substitute.For<IProgressBarDisplayable>();
-			
-			var stockRepository = new StockRepository();
-
-			var builder = new ContainerBuilder();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
-			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<BarcodeService>().AsSelf();
-			builder.Register(x => featuresService).As<FeaturesService>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => sizeService).As<SizeService>();
-			builder.Register(x => deleteService).As<IDeleteEntityService>();
-			builder.Register(x => baseParameters).As<BaseParameters>();
-			builder.Register(x => interactive).As<IInteractiveQuestion>();
-			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
-			var container = builder.Build();
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
+			var container = MakeContainer(userService, currentUserSettings).Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var issueRepository = new EmployeeIssueRepository(uow);
-				
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
@@ -123,23 +137,11 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Commit();
 				
 				//Создаем предыдущую выдачу которая должна быть списана.
-				using (var vmCreateLastIssue = new ExpenseEmployeeViewModel(
-					       EntityUoWBuilder.ForCreate(),
-					       UnitOfWorkFactory,
-					       navigation,
-					       container.BeginLifetimeScope(),
-					       validator,
-					       userService,
-					       userRepository,
-					       interactive,
-					       stockRepository,
-					       commonMessages,
-					       featuresService,
-					       baseParameters,
-					       progress,
-					       issueRepository
-				))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmCreateLastIssue = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+						);
+					
 					vmCreateLastIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateLastIssue.Entity.Warehouse = vmCreateLastIssue.UoW.GetById<Warehouse>(warehouse.Id);
 					vmCreateLastIssue.Entity.Employee = vmCreateLastIssue.UoW.GetById<EmployeeCard>(employee.Id);
@@ -154,8 +156,11 @@ namespace WorkwearTest.ViewModels.Stock
 
 				//Создаем выдачу в место выданного ранее.
 				int expenseIdForResave;
-				using (var vmCreate = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForCreate(), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters, progress, new EmployeeIssueRepository(), employee))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmCreate = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()),
+						new TypedParameter(typeof(EmployeeCard), employee)
+					);
 					vmCreate.Entity.Date = new DateTime(2022, 04, 12);
 					vmCreate.Entity.Warehouse = vmCreate.UoW.GetById<Warehouse>(warehouse.Id);
 
@@ -171,8 +176,10 @@ namespace WorkwearTest.ViewModels.Stock
 				}
 				
 				//Пересохраняем для проверки что это работает
-				using (var vmResave = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForOpen(expenseIdForResave), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters, progress, new EmployeeIssueRepository()))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmResave = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForOpen(expenseIdForResave))
+					);
 					Assert.That(vmResave.Save(), Is.True);
 				}
 			}
@@ -186,40 +193,17 @@ namespace WorkwearTest.ViewModels.Stock
 			NewSessionWithSameDB();
 			NotifyConfiguration.Enable();
 			
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
-			var userRepository = Substitute.For<UserRepository>(userService);
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
 			var interactive = Substitute.For<IInteractiveService>();
-			//Отвечаем на вопрос об обновлении количества в документе "да"
-			interactive.Question(Arg.Any<string>()).Returns(true); 
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
-			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
-			var deleteService = Substitute.For<IDeleteEntityService>();
-			var progress = Substitute.For<IProgressBarDisplayable>();
-			
-			var stockRepository = new StockRepository();
-
-			var builder = new ContainerBuilder();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
-			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<BarcodeService>().AsSelf();
-			builder.Register(x => featuresService).As<FeaturesService>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => sizeService).As<SizeService>();
-			builder.Register(x => deleteService).As<IDeleteEntityService>();
-			builder.Register(x => baseParameters).As<BaseParameters>();
-			builder.Register(x => interactive).As<IInteractiveQuestion>();
-			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
+			//Отвечаем да на вопрос, надо ли пересчитывать количество при изменении даты.
+			interactive.Question(Arg.Any<string>()).Returns(true);
+			var builder = MakeContainer(userService, currentUserSettings);
+			builder.Register(x => interactive).AsSelf();
 			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
-				var issueRepository = new EmployeeIssueRepository(uow);
-				
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
@@ -324,8 +308,11 @@ namespace WorkwearTest.ViewModels.Stock
 
 				//Создаем выдачу чтобы выдать вторую номенклатуру программа не должна предлагать к выдаче первую.
 				//Так как по первой сотрудник обеспечен полностью хоть выдача и происходила частями.
-				using (var vmCreate = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForCreate(), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters, progress, issueRepository, employee))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmCreate = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()),
+						new TypedParameter(typeof(EmployeeCard), employee)
+					);
 					vmCreate.Entity.Date = new DateTime(2020, 04, 12);
 					vmCreate.Entity.Warehouse = vmCreate.UoW.GetById<Warehouse>(warehouse.Id);
 
@@ -348,38 +335,15 @@ namespace WorkwearTest.ViewModels.Stock
 			NewSessionWithSameDB();
 			NotifyConfiguration.Enable();
 			
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
-			var userRepository = Substitute.For<UserRepository>(userService);
-			var interactive = Substitute.For<IInteractiveService>();
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
-			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
-			var deleteService = Substitute.For<IDeleteEntityService>();
-			var progress = Substitute.For<IProgressBarDisplayable>();
-			
-			var stockRepository = new StockRepository();
-
-			var builder = new ContainerBuilder();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
-			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<BarcodeService>().AsSelf();
-			builder.Register(x => featuresService).As<FeaturesService>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => sizeService).As<SizeService>();
-			builder.Register(x => deleteService).As<IDeleteEntityService>();
-			builder.Register(x => baseParameters).As<BaseParameters>();
-			builder.Register(x => interactive).As<IInteractiveQuestion>();
-			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
-			var container = builder.Build();
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
+			currentUserSettings.Settings.DefaultOrganization.Returns(null as Organization);
+			currentUserSettings.Settings.DefaultLeader.Returns(null as Leader);
+			currentUserSettings.Settings.DefaultResponsiblePerson.Returns(null as Leader);
+			var container = MakeContainer(userService, currentUserSettings).Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
-				var issueRepository = new EmployeeIssueRepository(uow);
-				
 				var warehouse = new Warehouse();
 				uow.Save(warehouse);
 
@@ -437,23 +401,10 @@ namespace WorkwearTest.ViewModels.Stock
 				
 				int expenseIdForResave;
 				//Диалог создания документа выдачи.
-				using (var vmCreateIssue = new ExpenseEmployeeViewModel(
-					       EntityUoWBuilder.ForCreate(),
-					       UnitOfWorkFactory,
-					       navigation,
-					       container.BeginLifetimeScope(),
-					       validator,
-					       userService,
-					       userRepository,
-					       interactive,
-					       stockRepository,
-					       commonMessages,
-					       featuresService,
-					       baseParameters,
-					       progress,
-					       issueRepository
-					       ))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+					);
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
 					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
@@ -473,8 +424,11 @@ namespace WorkwearTest.ViewModels.Stock
 				}
 
 				//За одно проверяем возможность пере-сохранения с добавление и удалением строки.
-
-				using (var vmResaveCreate = new ExpenseEmployeeViewModel(EntityUoWBuilder.ForOpen(expenseIdForResave), UnitOfWorkFactory, navigation, container.BeginLifetimeScope(), validator, userService, userRepository, interactive, stockRepository, commonMessages, featuresService, baseParameters, progress, new EmployeeIssueRepository())) {
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmResaveCreate = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForOpen(expenseIdForResave))
+					);
+					
 					var expense = vmResaveCreate.Entity;
 					Assert.That(expense.IssuanceSheet, Is.Not.Null);
 					var itemsheet1 = expense.IssuanceSheet.Items.First(x => x.ExpenseItem.ProtectionTools.IsSame(protectionTools));
@@ -501,33 +455,12 @@ namespace WorkwearTest.ViewModels.Stock
 			NewSessionWithSameDB();
 			NotifyConfiguration.Enable();
 			
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
-			var userRepository = Substitute.For<UserRepository>(userService);
-			var interactive = Substitute.For<IInteractiveService>();
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
-			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
-			var deleteService = Substitute.For<IDeleteEntityService>();
-			var progress = Substitute.For<IProgressBarDisplayable>();
-			
-			var stockRepository = new StockRepository();
-
-			var builder = new ContainerBuilder();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
-			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<BarcodeService>().AsSelf();
-			builder.Register(x => featuresService).As<FeaturesService>();
-			builder.Register(x => navigation).As<INavigationManager>();
-			builder.Register(x => sizeService).As<SizeService>();
-			builder.Register(x => deleteService).As<IDeleteEntityService>();
-			builder.Register(x => baseParameters).As<BaseParameters>();
-			builder.Register(x => interactive).As<IInteractiveQuestion>();
-			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
-			var container = builder.Build();
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
+			currentUserSettings.Settings.DefaultOrganization.Returns(null as Organization);
+			currentUserSettings.Settings.DefaultLeader.Returns(null as Leader);
+			currentUserSettings.Settings.DefaultResponsiblePerson.Returns(null as Leader);
+			var container = MakeContainer(userService, currentUserSettings).Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot())
 			{
@@ -587,23 +520,11 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Commit();
 				
 				//Диалог создания документа выдачи.
-				using (var vmCreateIssue = new ExpenseEmployeeViewModel(
-					       EntityUoWBuilder.ForCreate(),
-					       UnitOfWorkFactory,
-					       navigation,
-					       container.BeginLifetimeScope(),
-					       validator,
-					       userService,
-					       userRepository,
-					       interactive,
-					       stockRepository,
-					       commonMessages,
-					       featuresService,
-					       baseParameters,
-					       progress,
-					       new EmployeeIssueRepository()
-					       ))
-				{
+				using (var scope = container.BeginLifetimeScope()) {
+					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+					);
+
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
 					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);

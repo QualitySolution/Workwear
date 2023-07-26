@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Workwear.Measurements
+namespace Workwear.Domain.Sizes
 {
 	public enum ClothesSex {
 		[Display(Name = "Универсальный")]

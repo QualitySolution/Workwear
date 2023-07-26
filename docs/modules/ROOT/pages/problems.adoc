@@ -46,13 +46,13 @@ image::problems_encoding-MariaDB-1.png[]
 
 image::problems_encoding-MariaDB-2.png[]
 
-Добавляем параметр *character-set-server=utf8* в раздел конфигурационного файла *mysqld*.
+Добавляем параметр *character-set-server=utf8mb4* в раздел конфигурационного файла *mysqld*.
 
 image::problems_encoding-MariaDB-3.png[]
 
 Сохраняем отредактированный файл.
 
-Теперь нам нужно перезапустить службу MySQL сервера, например через остнастку *Управление компьютером.*
+Теперь нам нужно перезапустить службу MySQL сервера, например через оснастку *Управление компьютером.*
 
 image::problems_encoding-MariaDB-4.png[]
 
@@ -68,13 +68,13 @@ image::problems_encoding-MariaDB-4.png[]
 image::problems_encoding-MySQL-1.png[]
 
 Находим в открывшемся конфигурационном файле строчку character-set-server.
-Исправляем эту строку на следующую *character-set-server=utf8* , то есть убираем #, и дописываем после = необходимую нам кодировку.
+Исправляем эту строку на следующую *character-set-server=utf8mb4* , то есть убираем #, и дописываем после = необходимую нам кодировку.
 
 image::problems_encoding-MySQL-2.png[]
 
 Сохраняем отредактированный файл.
 
-Теперь нам нужно перезапустить службу MySQL, например через остнастку *Управление компьютером.*.
+Теперь нам нужно перезапустить службу MySQL, например через оснастку *Управление компьютером.*.
 
 image::problems_encoding-MySQL-3.png[]
 

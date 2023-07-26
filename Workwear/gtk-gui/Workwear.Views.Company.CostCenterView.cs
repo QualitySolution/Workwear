@@ -121,7 +121,7 @@ namespace Workwear.Views.Company
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("ИД:");
 			this.table1.Add(this.ylabel1);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));

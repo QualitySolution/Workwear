@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -53,8 +52,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Filter.PropertyChanged += (sender, e) => 
 				TabName = "Остатки по складу " + 
 				          (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
-
-			FeaturesService = featuresService;
+			this.FeaturesService = featuresService;
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)
@@ -187,7 +185,7 @@ namespace workwear.Journal.ViewModels.Stock
 			base.CreateNodeActions();
 
 			var updateStatusAction = new JournalAction("Показать движения",
-					(selected) => selected.Any() && Filter.Warehouse != null,
+					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);

@@ -22,32 +22,36 @@ namespace Workwear.Views.Company {
 
 		private readonly Image eyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye.png");
 		private readonly Image crossedEyeIcon = new Image(Assembly.GetExecutingAssembly(), "Workwear.icon.buttons.eye-crossed.png");
-		private readonly EmployeeViewModel viewModel;
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
+			ViewModel.Performance.CheckPoint("Build");
 			this.Build ();
+			ViewModel.Performance.StartGroup("ConfigureDlg");
 			ConfigureDlg ();
+			ViewModel.Performance.EndGroup();
 			CommonButtonSubscription();
-			this.viewModel = viewModel;
+			ViewModel.Performance.End();
 		}
 
 		private void ConfigureDlg()
 		{
-
+			ViewModel.Performance.CheckPoint("SizeBuild");
 			SizeBuild();
+			ViewModel.Performance.CheckPoint("Дочерние модели");
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
-			
+			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
-
-			notebook1.GetNthPage(4).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
-
+			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;
+			notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
+			notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
+			
+			ViewModel.Performance.CheckPoint("Виджеты");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
@@ -90,7 +94,8 @@ namespace Workwear.Views.Company {
 
 			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
-
+			ViewModel.Performance.CheckPoint("Телефоны");
+			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			buttonShowPassword.Binding.AddFuncBinding(ViewModel, v => v.ShowLkPassword ? crossedEyeIcon : eyeIcon, w => w.Image).InitializeFromSource();
@@ -100,6 +105,7 @@ namespace Workwear.Views.Company {
 				.AddBinding(ViewModel, v => v.ShowLkPassword, w => w.Visibility)
 				.InitializeFromSource();
 
+			ViewModel.Performance.CheckPoint("Пароль");
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
 			//Это порядок только внутри таблицы! А не всего диалога.
@@ -165,35 +171,35 @@ namespace Workwear.Views.Company {
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
-				notebook1.GetNthPage(4).Visible = ViewModel.VisibleListedItem;
+				notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
 			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
-				notebook1.GetNthPage(5).Visible = ViewModel.VisibleHistory;
+				notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
 		#region Sizes
 		private void SizeBuild() {
 			var sizes = ViewModel.SizeService
-				.GetSize(ViewModel.UoW, null, true, fetchSuitableSizes: true);
+				.GetSize(ViewModel.UoW, onlyUseInEmployee: true).ToList();
 			var excludeSizes = Entity.Sizes
 				.Where(s => s.Size.ShowInEmployee == false)
 				.Select(x => x.Size);
 			//добавляем исключенные размеры если они уже привязаны к сотруднику, чтобы они не пропадали при пересохранении
 			sizes.AddRange(excludeSizes);
 			var sizeTypes = 
-				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).OrderBy(x => x.Position).ToList();
+				ViewModel.SizeService.GetSizeType(ViewModel.UoW, true).ToList();
 			
 			for (var index = 1; index < sizeTypes.Count + 1; index++) {
 				var sizeType = sizeTypes[index - 1];
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				
 				var label = new yLabel {LabelProp = sizeType.Name + ":"};
-				 label.Xalign = 1;
+				label.Xalign = 1;
 				 
-				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
+				if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
-				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
-				 list.SetRenderTextFunc<Size>(x => x.Name);
-				 list.ShowSpecialStateNot = true;
+				var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				list.SetRenderTextFunc<Size>(x => x.Name);
+				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;
@@ -210,7 +216,7 @@ namespace Workwear.Views.Company {
 		private void SetSizes(object sender, EventArgs eventArgs) {
 			var list = (SpecialListComboBox)sender;
 			var sizeType = list.ItemsList.OfType<Size>().First().SizeType;
-			viewModel.SetSizes((Size)list.SelectedItem, sizeType);
+			ViewModel.SetSizes((Size)list.SelectedItem, sizeType);
 		}
 		#endregion
 		#region ButtonEvent

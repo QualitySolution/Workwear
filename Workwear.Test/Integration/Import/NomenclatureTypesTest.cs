@@ -2,9 +2,8 @@
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.UoW;
 using QS.Testing.DB;
-using Workwear.Measurements;
 using Workwear.Models.Import;
-using Workwear.Repository.Sizes;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.Test.Integration.Import {
 	[TestFixture(TestOf = typeof(NomenclatureTypes))]
@@ -36,7 +35,7 @@ namespace Workwear.Test.Integration.Import {
 		[TestCase("Изделия трикотажные перчаточные ", "Перчатки")]
 		[TestCase("Фильтра для полумасок/для зачисток/Фильтра ФГ-5М марки А2", "Имущество")] //Тут возможно надо будет сменить категорию на СИЗОД, данных кейс просто фиксирует что номенклатура попадает в какой то тип.
 		public void ParseNomenclatureName_Cases(string nomenclatureName, string typeName) {
-			var nomenclatureTypes = new NomenclatureTypes(Uow, new SizeService(new SizeRepository()), false);
+			var nomenclatureTypes = new NomenclatureTypes(Uow, new SizeService(), false);
 			var type = nomenclatureTypes.ParseNomenclatureName(nomenclatureName);
 			Assert.That(type, Is.Not.Null);
 			Assert.That(type.Name, Is.EqualTo(typeName));

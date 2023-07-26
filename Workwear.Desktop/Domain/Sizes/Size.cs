@@ -6,8 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using System.Data.Bindings.Collections.Generic;
-using Workwear.Measurements;
-using Workwear.Repository.Sizes;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.Domain.Sizes
 {
@@ -84,7 +83,7 @@ namespace Workwear.Domain.Sizes
             if(SuitableSizes.Contains(this))
                 yield return new ValidationResult ("Размер не может быть своим аналогом");
             var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
-            var sizeService = new SizeService(new SizeRepository());
+            var sizeService = new SizeService();
             var doubleSize = 
                     sizeService
                         .GetSize(uow, SizeType)

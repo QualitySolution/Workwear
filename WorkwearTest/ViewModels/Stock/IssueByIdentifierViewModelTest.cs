@@ -13,13 +13,12 @@ using QS.Validation;
 using QS.ViewModels.Resolve;
 using RglibInterop;
 using Workwear.Domain.Company;
-using Workwear.Measurements;
 using Workwear.Repository.Company;
-using Workwear.Repository.Sizes;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 using workwear.Tools.IdentityCards;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
 namespace WorkwearTest.ViewModels.Stock
@@ -42,8 +41,7 @@ namespace WorkwearTest.ViewModels.Stock
 			var baseParameters = Substitute.For<BaseParameters>();
 			var interactive = Substitute.For<IInteractiveQuestion>();
 			var configuration = Substitute.For<IChangeableConfiguration>();
-			var sizeRepository = Substitute.For<SizeRepository>();
-			var sizeService = Substitute.For<SizeService>(sizeRepository);
+			var sizeService = Substitute.For<SizeService>();
 			var device = Substitute.For<DeviceInfo>(new RG_ENDPOINT_INFO(), new RG_DEVICE_INFO_SHORT());
 			var cardReaderService = Substitute.For<ICardReaderService>();
 			cardReaderService.Devices.Returns(new List<DeviceInfo> { device });
