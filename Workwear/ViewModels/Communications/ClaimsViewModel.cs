@@ -6,11 +6,13 @@ using QS.Cloud.WearLk.Manage;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Communications 
 {
@@ -133,8 +135,7 @@ namespace Workwear.ViewModels.Communications
 			TextMessage = String.Empty;
 			RefreshClaims();
 		}
-		#endregion
-		
+
 		private void RefreshMessage() {
 			if(SelectClaim != null)
 				MessagesSelectClaims = claimsManager.GetMessages(SelectClaim.Id);
@@ -147,5 +148,10 @@ namespace Workwear.ViewModels.Communications
 			OnPropertyChanged(nameof(Claims));
 			return newClaims.Count > 0;
 		}
+		
+		public void OpenProtectionTools() {
+			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(ProtectionTools.Id));
+		}
+		#endregion
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.Cloud.WearLk.Manage;
@@ -47,6 +47,7 @@ namespace Workwear.Views.Communications
 				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)
 				.AddBinding(v => v.SensitiveOpenProtectionTools, w => w.Sensitive)
 				.InitializeFromSource();
+			buttonOpenProtectionTools.Clicked += (sender, args) => ViewModel.OpenProtectionTools();
 			
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Buffer.Text)
