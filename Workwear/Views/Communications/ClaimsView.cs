@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.Cloud.WearLk.Manage;
@@ -26,9 +26,9 @@ namespace Workwear.Views.Communications
 				.AddBinding(vm => vm.SelectClaim, w=> w.SelectedRow)
 				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
-				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss"))
-				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
-				.AddColumn("Текст").AddTextRenderer(c => c.Text)
+				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss")).YAlign(0)
+				.AddColumn("Автор").AddTextRenderer(c => c.SenderName).YAlign(0)
+				.AddColumn("Текст").AddTextRenderer(c => c.Text).WrapWidth(800)
 				.RowCells()
 				.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = x.UserRead ? 400 : 600)
 				.Finish();
