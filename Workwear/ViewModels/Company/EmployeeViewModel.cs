@@ -77,6 +77,7 @@ namespace Workwear.ViewModels.Company
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			employeeRepository.RepoUow = UoW;
 			NormRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -401,7 +402,7 @@ namespace Workwear.ViewModels.Company
 			}
 			//Проверка номера телефона на уникальность для базы
 			if(!String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
-				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(UoW, Entity.PhoneNumber);
+				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(Entity.PhoneNumber);
 				if(employeeSamePhone != null && !employeeSamePhone.IsSame(Entity)) {
 					if(interactive.Question($"Телефон {Entity.PhoneNumber} уже привязан к сотруднику {employeeSamePhone.ShortName}. " +
 					                        $"Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {

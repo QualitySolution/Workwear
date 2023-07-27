@@ -38,6 +38,9 @@ namespace Workwear.Views.Communications
 				.InitializeFromSource();
 			
 			labelClaimTitle.Binding.AddBinding(ViewModel, v => v.ClaimTitle, w => w.LabelProp).InitializeFromSource();
+			labelEmployee.Binding.AddBinding(ViewModel, v => v.EmployeeName, w => w.LabelProp).InitializeFromSource();
+			buttonOpenEmployee.Binding.AddBinding(ViewModel, v => v.SensitiveOpenEmployee, w => w.Sensitive).InitializeFromSource();
+			buttonOpenEmployee.Clicked += (sender, args) => ViewModel.OpenEmployee();
 			labelProtectionToolsName.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.ProtectionToolsTitle, w => w.LabelProp)
 				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)

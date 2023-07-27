@@ -9,9 +9,11 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Communications 
@@ -60,6 +62,11 @@ namespace Workwear.ViewModels.Communications
 			set {
 				if(SetField(ref selectClaim, value)) {
 					RefreshMessage();
+					if(SelectClaim != null)
+						Employee = employeeRepository.GetEmployeeByPhone(SelectClaim.UserPhone);
+					else
+						Employee = null;
+					
 					if(SelectClaim != null && SelectClaim.ProtectionToolsId > 0)
 						ProtectionTools = UoW.GetById<ProtectionTools>((int)SelectClaim.ProtectionToolsId);
 					else
@@ -90,6 +97,14 @@ namespace Workwear.ViewModels.Communications
 			set => SetField(ref textMessage, value);
 		}
 		
+		private EmployeeCard employee;
+		[PropertyChangedAlso(nameof(SensitiveOpenEmployee))]
+		[PropertyChangedAlso(nameof(EmployeeName))]
+		public EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
+		
 		private ProtectionTools protectionTools;
 		[PropertyChangedAlso(nameof(SensitiveOpenProtectionTools))]
 		[PropertyChangedAlso(nameof(ProtectionToolsTitle))]
@@ -99,9 +114,11 @@ namespace Workwear.ViewModels.Communications
 		}
 		
 		public string ClaimTitle => SelectClaim?.Title;
+		public string EmployeeName => Employee?.FullName ?? $"Неизвестный сотрудник {SelectClaim?.UserPhone}";
 		public string ProtectionToolsTitle => ProtectionTools?.Name ?? "Неизвестная номенклатура нормы";
 
 		public bool VisibleProtectionTools => (SelectClaim?.ProtectionToolsId ?? 0) > 0;
+		public bool SensitiveOpenEmployee => Employee != null;
 		public bool SensitiveOpenProtectionTools => ProtectionTools != null;
 		public bool SensitiveSend => SelectClaim != null && !String.IsNullOrWhiteSpace(TextMessage);
 		public bool SensitiveCloseClaim => SelectClaim != null && SelectClaim.ClaimState != ClaimState.Closed;
@@ -147,6 +164,10 @@ namespace Workwear.ViewModels.Communications
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
 			OnPropertyChanged(nameof(Claims));
 			return newClaims.Count > 0;
+		}
+		
+		public void OpenEmployee() {
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Employee.Id));
 		}
 		
 		public void OpenProtectionTools() {
