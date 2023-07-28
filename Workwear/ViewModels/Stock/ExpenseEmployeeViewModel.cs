@@ -114,7 +114,8 @@ namespace Workwear.ViewModels.Stock {
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			this.stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
 				performance.StartGroup("FillUnderreceived");
 				FillUnderreceived(performance);
@@ -214,7 +215,7 @@ namespace Workwear.ViewModels.Stock {
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
 			performance.CheckPoint(nameof(issueModel.FillWearInStockInfo));
-			issueModel.FillWearInStockInfo(Entity.Employee.WorkwearItems, stockBalanceModel, Entity.Date);
+			issueModel.FillWearInStockInfo(Entity.Employee.WorkwearItems, stockBalanceModel);
 
 			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {
@@ -352,7 +353,11 @@ namespace Workwear.ViewModels.Stock {
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch(e.PropertyName) {
+				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					break;
 				case nameof(Entity.Date):
+					stockBalanceModel.OnDate = Entity.Date;
 					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
 						UpdateAmounts();
 					break;

@@ -405,7 +405,9 @@ namespace Workwear.ViewModels.Stock
 			Expense.Warehouse = Warehouse;
 			Expense.ObservableItems.Clear();
 
-			issueModel.FillWearInStockInfo(Employee.WorkwearItems, stockBalanceModel, Expense.Date);
+			stockBalanceModel.Warehouse = Warehouse;
+			stockBalanceModel.OnDate = Expense.Date;
+			issueModel.FillWearInStockInfo(Employee.WorkwearItems, stockBalanceModel);
 			foreach(var item in Employee.WorkwearItems) {
 				Expense.AddItem(item, BaseParameters);
 			}

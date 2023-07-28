@@ -94,9 +94,10 @@ namespace Workwear.ViewModels.Stock
 			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
 			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
-			stockBalanceModel.Warehouse = Warehouse;
+			stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.OnDate = Entity.Date;
 			stockBalanceModel.ExcludeOperations = excludeOperations;
-			issueModel.FillWearInStockInfo(cardItems, stockBalanceModel, Entity.Date);
+			issueModel.FillWearInStockInfo(cardItems, stockBalanceModel);
 			
 			performance.CheckPoint("Fill EmployeeCardItem's");
 			foreach(var docItem in Entity.Items) {
@@ -123,11 +124,6 @@ namespace Workwear.ViewModels.Stock
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 				$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 				$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
-
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
-		}
 
 		private CollectiveExpenseItem selectedItem;
 		[PropertyChangedAlso(nameof(SensitiveButtonDel))]
@@ -366,10 +362,16 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(Sum));
 		}
 
-		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(nameof(Entity.Warehouse) == e.PropertyName) 
-				OnPropertyChanged(nameof(SensitiveAddButton));
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					OnPropertyChanged(nameof(SensitiveAddButton));
+					break;
+				case nameof(Entity.Date):
+					stockBalanceModel.OnDate = Entity.Date;
+					break;
+			}
 		}
 	}
 }

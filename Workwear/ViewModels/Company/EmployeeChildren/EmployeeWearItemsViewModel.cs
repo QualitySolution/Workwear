@@ -146,7 +146,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			//Так как склад подбора мог поменяться при смене подразделения.
 			if(e.PropertyName == nameof(Entity.Subdivision) && Entity.Subdivision?.Warehouse != stockBalanceModel.Warehouse) {
 				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-				stockBalanceModel.Update();
+				stockBalanceModel.Refresh();
 			}
 		}
 		
