@@ -51,7 +51,6 @@ namespace Workwear.ViewModels.Stock
 			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
 			StockRepository stockRepository,
-			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
 			PerformanceHelper performance
@@ -67,13 +66,11 @@ namespace Workwear.ViewModels.Stock
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-
-			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(7);
+			
 			//Запрашиваем все размеры чтобы были в кеше Uow.
+			performance.CheckPoint("Запрашиваем все размеры чтобы были в кеше Uow.");
 			SizeService.RefreshSizes(UoW);
-			performance.CheckPoint("Get all sizes");
-			globalProgress.Add();
+			performance.CheckPoint("Загружаем строки документа");
 			var allOwners = UoW.Session.QueryOver<Owner>().Future();
 			
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
@@ -87,42 +84,34 @@ namespace Workwear.ViewModels.Stock
 				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.WarehouseOperation)
 				.List();
 			
-			performance.CheckPoint("Get rows info");
-			globalProgress.Add();
-
+			performance.CheckPoint("Загружаем информацию о сотрудниках");
 			var employeeIds = Entity.Items.Select(x => x.Employee.Id).Distinct().ToArray();
 			issueModel.PreloadEmployeeInfo(employeeIds);
-			performance.CheckPoint("Get employees info");
-			globalProgress.Add();
 			
-			issueModel.PreloadWearItems(employeeIds);
 			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
-			globalProgress.Add();
+			issueModel.PreloadWearItems(employeeIds);
+			
+			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
 			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
-			performance.CheckPoint(nameof(excludeOperations) + "+" + nameof(cardItems));
 			stockBalanceModel.Warehouse = Warehouse;
 			stockBalanceModel.ExcludeOperations = excludeOperations;
 			issueModel.FillWearInStockInfo(cardItems, stockBalanceModel, Entity.Date);
-			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
-			globalProgress.Add();
+			
+			performance.CheckPoint("Fill EmployeeCardItem's");
 			foreach(var docItem in Entity.Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
-			performance.CheckPoint("Fill EmployeeCardItem's");
 			
-			globalProgress.Add();
+			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
-			performance.CheckPoint("FillWearReceivedInfo");
-			globalProgress.Add();
 
+			performance.CheckPoint("Sum");
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			OnPropertyChanged(nameof(Sum));
-
-			performance.CheckPoint("Sum");
+			
 			Owners = allOwners.ToList();
-			globalProgress.Close();
 		}
 
 		#region Хелперы
