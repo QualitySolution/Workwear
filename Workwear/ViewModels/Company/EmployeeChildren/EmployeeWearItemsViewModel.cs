@@ -86,7 +86,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			issueModel.PreloadWearItems(Entity.Id);
 			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
 			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-			issueModel.FillWearInStockInfo(Entity.WorkwearItems, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
 			performance.EndGroup();
 			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
@@ -183,7 +183,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
-			issueModel.FillWearInStockInfo(Entity.WorkwearItems, stockBalanceModel);
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
 			Entity.UpdateNextIssueAll();
 		}
 
@@ -267,7 +267,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			foreach(var item in Entity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
-			issueModel.FillWearInStockInfo(Entity.WorkwearItems, stockBalanceModel);
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 		}
 
