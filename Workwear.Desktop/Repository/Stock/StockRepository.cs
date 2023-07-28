@@ -42,7 +42,7 @@ namespace Workwear.Repository.Stock
 		public virtual IList<StockBalanceDTO> StockBalances(
 			IUnitOfWork uow, 
 			Warehouse warehouse, 
-			IList<Nomenclature> nomenclatures, 
+			IEnumerable<Nomenclature> nomenclatures, 
 			DateTime onDate, 
 			IEnumerable<WarehouseOperation> excludeOperations = null)
 		{
@@ -57,6 +57,7 @@ namespace Workwear.Repository.Stock
 
 			var nextDay = onDate.AddDays(1);
 			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
+			var nomenclaturesDic = nomenclatures.ToDictionary(n => n.Id, n => n);
 
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
@@ -114,7 +115,7 @@ namespace Workwear.Repository.Stock
 
 			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias);
 			queryStock.Where(Restrictions.Not(Restrictions.Eq(projection, 0)));
-			queryStock.Where(() => warehouseOperationAlias.Nomenclature.IsIn(nomenclatures.ToArray()));
+			queryStock.Where(() => warehouseOperationAlias.Nomenclature.Id.IsIn(nomenclaturesDic.Keys));
 
 			var result = queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
@@ -133,8 +134,7 @@ namespace Workwear.Repository.Stock
 				.List<StockBalanceDTO>();
 
 			//Проставляем номенклатуру.
-			result.ToList().ForEach(item => 
-				item.Nomenclature = nomenclatures.First(n => n.Id == item.NomenclatureId));
+			result.ToList().ForEach(item => item.Nomenclature = nomenclaturesDic[item.NomenclatureId]);
 			return result;
 		}
 	}
