@@ -71,7 +71,7 @@ namespace Workwear.ViewModels.Stock
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.issueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
-			this.stockBalanceModel = stockBalanceModel;
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -407,7 +407,7 @@ namespace Workwear.ViewModels.Stock
 
 			stockBalanceModel.Warehouse = Warehouse;
 			stockBalanceModel.OnDate = Expense.Date;
-			issueModel.FillWearInStockInfo(Employee.WorkwearItems, stockBalanceModel);
+			issueModel.FillWearInStockInfo(Employee, stockBalanceModel);
 			foreach(var item in Employee.WorkwearItems) {
 				Expense.AddItem(item, BaseParameters);
 			}

@@ -36,7 +36,6 @@ namespace Workwear.ViewModels.Stock
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly StockRepository stockRepository;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		public SizeService SizeService { get; }
@@ -50,7 +49,6 @@ namespace Workwear.ViewModels.Stock
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
-			StockRepository stockRepository,
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
 			PerformanceHelper performance
@@ -63,7 +61,6 @@ namespace Workwear.ViewModels.Stock
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			
@@ -92,12 +89,12 @@ namespace Workwear.ViewModels.Stock
 			issueModel.PreloadWearItems(employeeIds);
 			
 			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
-			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
+			var employees = Entity.Items.Select(x => x.Employee).Distinct();
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			stockBalanceModel.ExcludeOperations = excludeOperations;
-			issueModel.FillWearInStockInfo(cardItems, stockBalanceModel);
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
 			performance.CheckPoint("Fill EmployeeCardItem's");
 			foreach(var docItem in Entity.Items) {
@@ -107,11 +104,9 @@ namespace Workwear.ViewModels.Stock
 			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
 
-			performance.CheckPoint("Sum");
+			performance.CheckPoint("Finish");
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			OnPropertyChanged(nameof(Sum));
-			
 			Owners = allOwners.ToList();
 		}
 
@@ -199,9 +194,7 @@ namespace Workwear.ViewModels.Stock
 			issueModel.FillWearReceivedInfo(employees.ToArray());
 			
 			progressPage?.ViewModel.Progress.Add(text:"Загружаем складские остатки");
-			foreach(var employee in employees) {
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			progressPage?.ViewModel.Progress.Add();
 			if(progressPage != null)
 				navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
@@ -227,7 +220,7 @@ namespace Workwear.ViewModels.Stock
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date)>0 ? 1 : 0,
 						1,
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date),
-						stockRepository.StockBalances(UoW,Entity.Warehouse,item.ProtectionTools.Nomenclatures,Entity.Date)
+						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
 								.Sum(x =>x.Amount)));
 			}
 

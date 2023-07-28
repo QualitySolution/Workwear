@@ -215,7 +215,7 @@ namespace Workwear.ViewModels.Stock {
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
 			performance.CheckPoint(nameof(issueModel.FillWearInStockInfo));
-			issueModel.FillWearInStockInfo(Entity.Employee.WorkwearItems, stockBalanceModel);
+			issueModel.FillWearInStockInfo(Entity.Employee, stockBalanceModel);
 
 			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {

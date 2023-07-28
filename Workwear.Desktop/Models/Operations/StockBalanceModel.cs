@@ -87,6 +87,7 @@ namespace Workwear.Models.Operations {
 		
 		#region Получение данных
 		public IEnumerable<StockBalance> Balances => stockBalances;
+		public IEnumerable<StockBalance> ForNomenclature(params Nomenclature[] nomenclatures) => stockBalances.Where(x => nomenclatures.Contains(x.Position.Nomenclature));
 		#endregion
 	}
 
