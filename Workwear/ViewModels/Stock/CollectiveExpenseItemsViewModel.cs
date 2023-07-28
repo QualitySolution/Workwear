@@ -24,7 +24,6 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
-using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock

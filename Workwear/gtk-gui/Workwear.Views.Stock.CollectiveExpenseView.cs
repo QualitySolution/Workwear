@@ -133,7 +133,6 @@ namespace Workwear.Views.Stock
 			w7.BottomAttach = ((uint)(2));
 			w7.LeftAttach = ((uint)(1));
 			w7.RightAttach = ((uint)(2));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.entityWarehouseExpense = new global::QS.Views.Control.EntityEntry();
@@ -215,7 +214,7 @@ namespace Workwear.Views.Stock
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
 			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Ответствеый за передачу СИЗ");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Ответствеый за передачу СИЗ:");
 			this.label7.UseMarkup = true;
 			this.table2.Add(this.label7);
 			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table2[this.label7]));
