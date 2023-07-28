@@ -172,7 +172,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(employeeCardItem.BestChoiceInStock.Any()) {
 				var position = employeeCardItem.BestChoiceInStock.FirstOrDefault();
 				if(position.Amount >= needPositionAmount) 
-					return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);//Частичных выдач не делаем
+					return AddItem(employeeCardItem, position.Position, needPositionAmount);//Частичных выдач не делаем
 			}
 			return AddItem(employeeCardItem); 
 		}

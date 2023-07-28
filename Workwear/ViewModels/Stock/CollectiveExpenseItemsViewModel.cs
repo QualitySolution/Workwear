@@ -38,6 +38,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly EmployeeRepository employeeRepository;
 		private readonly StockRepository stockRepository;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
@@ -47,6 +48,7 @@ namespace Workwear.ViewModels.Stock
 			INavigationManager navigation,
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
+			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
 			StockRepository stockRepository,
 			IProgressBarDisplayable globalProgress, 
@@ -60,6 +62,7 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
@@ -98,9 +101,10 @@ namespace Workwear.ViewModels.Stock
 			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
 			performance.CheckPoint(nameof(excludeOperations) + "+" + nameof(cardItems));
-			
-			EmployeeCard.FillWearInStockInfo(UoW, Warehouse, Entity.Date, cardItems, excludeOperations);
-			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
+			stockBalanceModel.Warehouse = Warehouse;
+			stockBalanceModel.ExcludeOperations = excludeOperations;
+			issueModel.FillWearInStockInfo(cardItems, stockBalanceModel, Entity.Date);
+			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
 			globalProgress.Add();
 			foreach(var docItem in Entity.Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));

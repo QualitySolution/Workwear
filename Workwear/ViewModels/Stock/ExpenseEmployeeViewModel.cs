@@ -48,6 +48,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly BaseParameters baseParameters;
 		private readonly IProgressBarDisplayable globalProgress;
 		private readonly ModalProgressCreator modalProgressCreator;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
@@ -62,6 +63,7 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactive,
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator modalProgressCreator,
+			StockBalanceModel stockBalanceModel,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
@@ -79,6 +81,7 @@ namespace Workwear.ViewModels.Stock {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
 			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
@@ -111,6 +114,7 @@ namespace Workwear.ViewModels.Stock {
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			this.stockBalanceModel.Warehouse = Entity.Warehouse;
 			if(employee != null) {
 				performance.StartGroup("FillUnderreceived");
 				FillUnderreceived(performance);
@@ -209,8 +213,8 @@ namespace Workwear.ViewModels.Stock {
 			issueModel.PreloadWearItems(Entity.Employee.Id);
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
-			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
-			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			performance.CheckPoint(nameof(issueModel.FillWearInStockInfo));
+			issueModel.FillWearInStockInfo(Entity.Employee.WorkwearItems, stockBalanceModel, Entity.Date);
 
 			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {

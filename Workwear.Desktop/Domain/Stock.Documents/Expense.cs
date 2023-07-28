@@ -189,7 +189,7 @@ namespace Workwear.Domain.Stock.Documents
 
 			ExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
+				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().Position);
 			else { 
 				newItem = new ExpenseItem() {
 					ExpenseDoc = this,

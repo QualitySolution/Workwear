@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using NHibernate;
 using NHibernate.Criterion;
-using NHibernate.SqlCommand;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -12,7 +11,9 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Models.Operations {
@@ -289,6 +290,33 @@ namespace Workwear.Models.Operations {
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.Future();
 			query.ToList();
+		}
+		
+		/// <summary>
+		/// Заполняет в сотрудниках(не обязательно в одном) информацию по складским остаткам для строк карточек.
+		/// Очень желательно! Перед вызовом метода в Uow иметь подгруженными все размеры, иначе метод будет дергать размеры по одному.
+		/// </summary>
+		/// <param name="progressStep">Метод вызывается перед каждым шагом, передавая название шага. Метод выполняет 4 шага.</param>
+		public void FillWearInStockInfo(
+			IEnumerable<EmployeeCardItem> items,
+			StockBalanceModel stockBalanceModel,
+			DateTime? onDate = null,
+			Action<string> progressStep = null)
+		{
+			progressStep?.Invoke("Получаем список номенклатур");
+			var allNomenclatures = 
+				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+			progressStep?.Invoke("Получаем складские остатки");
+			stockBalanceModel.Update(allNomenclatures, onDate);
+			progressStep?.Invoke("Запрашиваем собственников");
+			var ownersIds = stockBalanceModel.Balances.Where(x => x.Position.Owner != null).Select(x => x.Position.Owner.Id).Distinct().ToArray();
+			if(ownersIds.Any())
+				UoW.GetById<EmployeeCard>(ownersIds);
+			
+			progressStep?.Invoke("Заполняем строки карточек");
+			foreach(var item in items) {
+				item.StockBalanceModel = stockBalanceModel;
+			}
 		}
 		#endregion
 	}

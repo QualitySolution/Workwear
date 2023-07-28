@@ -26,8 +26,8 @@ namespace Workwear.Repository.Stock
 		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService, int idUser)
 		{
 			if(!featureService.Available(WorkwearFeature.Warehouses)) {
-				var warehous = uow.Session.Query<Warehouse>().FirstOrDefault();
-				return warehous;
+				var warehouse = uow.Session.Query<Warehouse>().FirstOrDefault();
+				return warehouse;
 			}
 
 			UserSettings settings = uow.Session.QueryOver<UserSettings>()
@@ -43,7 +43,7 @@ namespace Workwear.Repository.Stock
 			IUnitOfWork uow, 
 			Warehouse warehouse, 
 			IList<Nomenclature> nomenclatures, 
-			DateTime onTime, 
+			DateTime onDate, 
 			IEnumerable<WarehouseOperation> excludeOperations = null)
 		{
 			StockBalanceDTO resultAlias = null;
@@ -55,6 +55,7 @@ namespace Workwear.Repository.Stock
 			Size heightAlias = null;
 			Owner ownerAlias = null;
 
+			var nextDay = onDate.AddDays(1);
 			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 
 			// null == null => null              null <=> null => true
@@ -67,7 +68,7 @@ namespace Workwear.Repository.Stock
 				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
 								 || (warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime <= onTime);
+				.Where(e => e.OperationTime < nextDay);
 
 			if(warehouse == null)
 				expenseQuery.Where(x => x.ExpenseWarehouse != null);
@@ -90,7 +91,7 @@ namespace Workwear.Repository.Stock
 				             && (warehouseIncomeOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
 								 || (warehouseIncomeOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
 				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < onTime);
+				.Where(e => e.OperationTime < nextDay);
 
 			if(warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);

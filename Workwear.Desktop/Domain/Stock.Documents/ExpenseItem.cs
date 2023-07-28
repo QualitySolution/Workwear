@@ -11,7 +11,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
-using Workwear.Repository.Stock;
+using Workwear.Models.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
@@ -174,23 +174,12 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 
-		private StockBalanceDTO stockBalanceSetter;
-		public virtual StockBalanceDTO StockBalanceSetter {
-			get => stockBalanceSetter ?? 
-			       new StockBalanceDTO {
-				       Nomenclature = Nomenclature, 
-				       Height = Height, 
-				       WearSize = WearSize, 
-				       WearPercent = WearPercent, 
-				       Owner = Owner
-			       };
+		private StockBalance stockBalanceSetter;
+		public virtual StockBalance StockBalanceSetter {
+			get => stockBalanceSetter ?? (Nomenclature != null ? new StockBalance(StockPosition, 0) : null);
 			set {
 				stockBalanceSetter = value;
-				Nomenclature = value.Nomenclature;
-				WearSize = value.WearSize;
-				Height = value.Height;
-				WearPercent = value.WearPercent;
-				Owner = value.Owner;
+				StockPosition = value.Position;
 			}
 		}
 		#endregion
