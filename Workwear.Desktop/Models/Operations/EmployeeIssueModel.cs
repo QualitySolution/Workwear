@@ -276,6 +276,7 @@ namespace Workwear.Models.Operations {
 
 		public void PreloadEmployeeInfo(params int[] employeeIds) {
 			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
 				.Future();
 			
 			UoW.Session.QueryOver<EmployeeCard>()
