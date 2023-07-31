@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using NLog;
 using NUnit.Framework;
 using QS.DBScripts.Controllers;
@@ -63,7 +63,7 @@ namespace Workwear.Test.Sql
 			//Выполняем обновление
 			var builder = server.ConnectionStringBuilder;
 			builder.Database = sample.DbName;
-			var connectionString = builder.GetConnectionString(true);
+			var connectionString = builder.ConnectionString;
 			using(var connection = new MySqlConnection(connectionString)) {
 				connection.Open();
 				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion, false)) {
@@ -75,7 +75,7 @@ namespace Workwear.Test.Sql
 				//Сравнение обновлённой базы и новой
 				var builderCurrentDd = server.ConnectionStringBuilder;
 				builderCurrentDd.Database = currentDdName;
-				var connectionStringCurrentDd = builderCurrentDd.GetConnectionString(true);
+				var connectionStringCurrentDd = builderCurrentDd.ConnectionString;
 				using(var connectionCurrentDd = new MySqlConnection(connectionStringCurrentDd)) {
 					connectionCurrentDd.Open();
 					ComparisonSchema(connectionCurrentDd, connection);
