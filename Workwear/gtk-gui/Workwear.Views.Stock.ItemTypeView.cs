@@ -241,7 +241,7 @@ namespace Workwear.Views.Stock
 			this.label = new global::Gtk.Label();
 			this.label.Name = "label";
 			this.label.Xalign = 1F;
-			this.label.LabelProp = global::Mono.Unix.Catalog.GetString("Код:");
+			this.label.LabelProp = global::Mono.Unix.Catalog.GetString("ИД:");
 			this.table1.Add(this.label);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.label]));
 			w15.XOptions = ((global::Gtk.AttachOptions)(4));

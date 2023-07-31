@@ -10,18 +10,17 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Tools;
+using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 
@@ -62,15 +61,36 @@ namespace Workwear.ViewModels.Regulations
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 
-			NormConditions = UoW.GetAll<NormCondition>().ToList();
-			NormConditions.Insert(0, null);
-			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+			var performance = new PerformanceHelper(logger: logger);
+			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
+				.Future();
+
+			UoW.Session.QueryOver<NormItem>()
+				.Where(x => x.Norm.Id == Entity.Id)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
+				.Future();
+
+			var regulationQuery = UoW.Session.QueryOver<RegulationDoc>()
+				.Fetch(SelectMode.Fetch, x => x.Annexess)
+				.Future();
 			
-			employeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(new TypedParameter(typeof(NormViewModel), this));
+			NormConditions = normConditionQuery.ToList();
+			NormConditions.Insert(0, null);
+			RegulationDocs = regulationQuery.ToList();
+			performance.CheckPoint("Запрос основных данных");
+			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+
+			var thisViewModel = new TypedParameter(typeof(NormViewModel), this);
+			PostsViewModel = autofacScope.Resolve<NormPostsViewModel>(thisViewModel);
+			EmployeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(thisViewModel);
+			performance.CheckPoint("Создание дочерних вию моделей");
 			
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
 			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
+			performance.CheckPoint("Конец");
+			performance.PrintAllPoints(logger);
 		}
 
 		/// <summary>
@@ -83,7 +103,8 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		#region Дочерние ViewModels
-		public NormEmployeesViewModel employeesViewModel { get; }
+		public NormEmployeesViewModel EmployeesViewModel { get; }
+		public NormPostsViewModel PostsViewModel { get; }
 		#endregion
 		
 		#region Sensetive
@@ -108,6 +129,7 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Свойства
 		public List<NormCondition> NormConditions { get; set; }
+		public List<RegulationDoc> RegulationDocs { get; set; }
 		
 		private NormItem selectedItem;
 		public virtual NormItem SelectedItem {
@@ -120,53 +142,17 @@ namespace Workwear.ViewModels.Regulations
 			get => currentTab;
 			set {
 				SetField(ref currentTab, value);
+				if(currentTab == 2)
+					PostsViewModel.OnShow();
 				if(currentTab == 3)
-					employeesViewModel.OnShow();
+					EmployeesViewModel.OnShow();
 			}
 		}
 
 		#endregion
 
 		#region Действия View
-		#region Профессии
-
-		public void NewProfession()
-		{
-			var page = NavigationManager.OpenViewModel<PostViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate(), OpenPageOptions.AsSlave);
-			page.PageClosed += NewPost_PageClosed;
-		}
-
-		void NewPost_PageClosed(object sender, PageClosedEventArgs e)
-		{
-			if(e.CloseSource == CloseSource.Save) {
-				var page = sender as IPage<PostViewModel>;
-				var post = UoW.GetById<Post>(page.ViewModel.Entity.Id);
-				Entity.AddPost(post);
-			}
-		}
-
-		public void AddProfession()
-		{
-			var page = NavigationManager.OpenViewModel<PostJournalViewModel>(this, OpenPageOptions.AsSlave);
-			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			page.ViewModel.OnSelectResult += Post_OnSelectResult;
-		}
-
-		void Post_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
-		{
-			foreach(var postNode in e.SelectedObjects) {
-				var post = UoW.GetById<Post>(postNode.GetId());
-				Entity.AddPost(post);
-			}
-		}
-
-		public void RemoveProfession(Post[] professions)
-		{
-			foreach(var prof in professions) {
-				Entity.RemovePost(prof);
-			}
-		}
-		#endregion
+		
 		#region Строки нормы
 		public void AddItem()
 		{

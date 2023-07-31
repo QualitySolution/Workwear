@@ -25,20 +25,20 @@ namespace Workwear.Views.Company {
 
 		public EmployeeView(EmployeeViewModel viewModel) : base(viewModel)
 		{
-			ViewModel.Performance.CheckPoint("Старт конструктора View");
-			this.Build ();
 			ViewModel.Performance.CheckPoint("Build");
+			this.Build ();
+			ViewModel.Performance.StartGroup("ConfigureDlg");
 			ConfigureDlg ();
-			ViewModel.Performance.CheckPoint("ConfigureDlg");
+			ViewModel.Performance.EndGroup();
 			CommonButtonSubscription();
-			ViewModel.Performance.CheckPoint("Конец конструктора View");
-			ViewModel.Performance.PrintAllPoints(logger);
+			ViewModel.Performance.End();
 		}
 
 		private void ConfigureDlg()
 		{
-			SizeBuild();
 			ViewModel.Performance.CheckPoint("SizeBuild");
+			SizeBuild();
+			ViewModel.Performance.CheckPoint("Дочерние модели");
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
@@ -47,12 +47,11 @@ namespace Workwear.Views.Company {
 			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
-			ViewModel.Performance.CheckPoint("Дочерние модели");
 			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
-
-			ViewModel.Performance.CheckPoint("Скрыли вкладки");
+			
+			ViewModel.Performance.CheckPoint("Виджеты");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
@@ -74,17 +73,15 @@ namespace Workwear.Views.Company {
 
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.CardNumber, w => w.Text)
-				.AddBinding(vm => vm.SensetiveCardNumber, w => w.Sensitive)
+				.AddBinding(vm => vm.SensitiveCardNumber, w => w.Sensitive)
 				.InitializeFromSource();
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoCardNumber, w => w.Active).InitializeFromSource();
 			labelUser.Binding.AddBinding(ViewModel, vm => vm.CreatedByUser, w => w.LabelProp).InitializeFromSource();
-			ViewModel.Performance.CheckPoint("Текстовые виджеты");
-			
+
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
 			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
-			ViewModel.Performance.CheckPoint("Виджеты сущьностей");
 
 			entitySubdivision.ViewModel.Changed += ChangedSubdivision;
 
@@ -121,7 +118,6 @@ namespace Workwear.Views.Company {
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-			ViewModel.Performance.CheckPoint("End Config");
 		}
 		
 
@@ -197,13 +193,13 @@ namespace Workwear.Views.Company {
 				var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.Id == sizeType.Id);
 				
 				var label = new yLabel {LabelProp = sizeType.Name + ":"};
-				 label.Xalign = 1;
+				label.Xalign = 1;
 				 
-				 if(sizes.All(x => x.SizeType.Id != sizeType.Id))
+				if(sizes.All(x => x.SizeType.Id != sizeType.Id))
 					 continue;
-				 var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
-				 list.SetRenderTextFunc<Size>(x => x.Name);
-				 list.ShowSpecialStateNot = true;
+				var list = new SpecialListComboBox {ItemsList = sizes.Where(x => x.SizeType.Id == sizeType.Id)};
+				list.SetRenderTextFunc<Size>(x => x.Name);
+				list.ShowSpecialStateNot = true;
 				list.SelectedItemStrictTyped = true;
 				if (employeeSize != null)
 					list.SelectedItem = employeeSize.Size;

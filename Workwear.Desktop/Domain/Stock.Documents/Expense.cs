@@ -189,7 +189,7 @@ namespace Workwear.Domain.Stock.Documents
 
 			ExpenseItem newItem;
 			if(employeeCardItem.BestChoiceInStock.Any())
-				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().StockPosition);
+				newItem = AddItem(employeeCardItem.BestChoiceInStock.First().Position);
 			else { 
 				newItem = new ExpenseItem() {
 					ExpenseDoc = this,
@@ -251,16 +251,16 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Ведомость
-		public virtual void CreateIssuanceSheet(UserSettings userSettings)
+		public virtual void CreateIssuanceSheet(Organization defaultOrganization, Leader defaultLeader, Leader defaultResponsiblePerson)
 		{
 			if(IssuanceSheet != null)
 				return;
 
 			IssuanceSheet = new IssuanceSheet {
 				Expense = this,
-				Organization = userSettings?.DefaultOrganization,
-				HeadOfDivisionPerson = userSettings?.DefaultLeader,
-				ResponsiblePerson = userSettings?.DefaultResponsiblePerson,
+				Organization = defaultOrganization,
+				HeadOfDivisionPerson = defaultLeader,
+				ResponsiblePerson = defaultResponsiblePerson,
 			};
 			UpdateIssuanceSheet();
 		}

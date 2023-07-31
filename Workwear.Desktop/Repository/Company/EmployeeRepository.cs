@@ -87,9 +87,9 @@ namespace Workwear.Repository.Company
 				.SingleOrDefault();
 		}
 
-		public virtual EmployeeCard GetEmployeeByPhone(IUnitOfWork uow, string phone)
+		public virtual EmployeeCard GetEmployeeByPhone(string phone)
 		{
-			return uow.Session.QueryOver<EmployeeCard>()
+			return RepoUow.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.PhoneNumber == phone)
 				.Take(1)
 				.SingleOrDefault();

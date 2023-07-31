@@ -17,11 +17,15 @@ namespace Workwear.Tools.Sizes
 		private IList<SizeType> types;
 
 		public void RefreshSizes(IUnitOfWork uow) {
-			var querySizes = uow.Session.QueryOver<Size>()
+			var querySizes = uow.Session.QueryOver<Size>().Future();
+			
+			uow.Session.QueryOver<Size>()
+				.Fetch(SelectMode.ChildFetch, x => x)
 				.Fetch(SelectMode.Fetch, s => s.SuitableSizes)
 				.Future();
 			
 			uow.Session.QueryOver<Size>()
+				.Fetch(SelectMode.ChildFetch, x => x)
 				.Fetch(SelectMode.Fetch, s => s.SizesWhereIsThisSizeAsSuitable)
 				.Future();
 			

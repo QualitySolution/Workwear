@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
 	`cost_center_id` INT UNSIGNED NOT NULL,
 	`percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
 	PRIMARY KEY (`id`),
-	INDEX `wear_cards_cost_allocation_fk1_idx` (`cost_center_id` ASC),
-	INDEX `wear_cards_cost_allocation_fk2_idx` (`wear_card_id` ASC),
+	INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
+	INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
 	CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
 		FOREIGN KEY (`cost_center_id`)
 		REFERENCES `cost_center` (`id`)
@@ -55,3 +55,43 @@ ALTER TABLE `stock_income_detail`
             REFERENCES `operation_issued_by_employee` (`id`)
             ON DELETE NO ACTION
             ON UPDATE CASCADE;
+
+-- Добавляем добавляем ответственного в колективную выдачу и ведомость--
+
+ALTER TABLE `issuance_sheet`
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `stock_collective_expense_id`,
+ADD INDEX `fk_issuance_sheet_8_idx` (`transfer_agent_id` ASC);
+
+ALTER TABLE `stock_collective_expense`
+	ADD COLUMN `transfer_agent_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `user_id`,
+ADD INDEX `fk_transfer_agent_id_idx` (`transfer_agent_id` ASC);
+
+ALTER TABLE `issuance_sheet`
+	ADD CONSTRAINT `fk_issuance_sheet_8`
+		FOREIGN KEY (`transfer_agent_id`)
+			REFERENCES `wear_cards` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
+
+ALTER TABLE `stock_collective_expense`
+	ADD CONSTRAINT `fk_stock_collective_expense_3`
+		FOREIGN KEY (`transfer_agent_id`)
+			REFERENCES `wear_cards` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE;
+
+
+-- Добавляем пользовательские коды
+ALTER TABLE `posts`
+	ADD COLUMN `code` VARCHAR(20) NULL DEFAULT NULL AFTER `name`;
+
+ALTER TABLE `departments`
+	ADD COLUMN `code` VARCHAR(20) NULL DEFAULT NULL AFTER `name`;
+
+-- Правка максимальной стоимости номенклатуры
+ALTER TABLE `nomenclature`
+	CHANGE COLUMN `sale_cost` `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL ;
+
+-- Добавляем новую настройку пользователя
+ALTER TABLE `user_settings`
+	ADD COLUMN `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All' AFTER `maximize_on_start`;

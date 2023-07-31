@@ -86,6 +86,7 @@ namespace workwear.Journal.ViewModels.Company {
 				.Where(GetSearchCriterion(
 					() => postAlias.Id,
 					() => postAlias.Name,
+					() => postAlias.Code,
 					() => postAlias.Comments,
 					() => departmentAlias.Name,
 					() => subdivisionAlias.Name,
@@ -103,6 +104,7 @@ namespace workwear.Journal.ViewModels.Company {
 			query.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Comments).WithAlias(() => resultAlias.Comments)
 					.Select(() => professionAlias.Name).WithAlias(() => resultAlias.Profession)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
@@ -134,6 +136,7 @@ namespace workwear.Journal.ViewModels.Company {
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public string Code { get; set; }
 		public int Employees { get; set; }
 		public string Subdivision { get; set; }
 		public string Department { get; set; }

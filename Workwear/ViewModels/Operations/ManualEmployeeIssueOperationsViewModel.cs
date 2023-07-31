@@ -168,6 +168,8 @@ namespace Workwear.ViewModels.Operations
 				OnPropertyChanged(nameof(Heights));
 				OnPropertyChanged(nameof(BarcodesText));
 				OnPropertyChanged(nameof(BarcodesColor));
+				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			}
 		}
 

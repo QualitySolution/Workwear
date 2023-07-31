@@ -23,17 +23,13 @@ namespace Workwear.Views.Stock
 		{
 			expensedocitememployeeview1.ViewModel = ViewModel.CollectiveExpenseItemsViewModel;
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource();
-
 			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
-
 			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
-
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
-
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
-
+			entityTransferAgent.ViewModel = ViewModel.TransferAgentEntryViewModel;
 			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
-
+			
 			IssuanceSheetSensetive();
 		}
 

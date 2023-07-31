@@ -4,12 +4,15 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
@@ -186,7 +189,13 @@ namespace Workwear.Test.Integration.Stock
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
 				
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2018, 10, 22));
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = new DateTime(2018, 10, 22);
+				issueModel.FillWearInStockInfo(employee, stockModel);
 				
 				var expense = new Expense {
 					Operation = ExpenseOperations.Employee,

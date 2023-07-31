@@ -19,6 +19,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
@@ -35,6 +36,8 @@ namespace Workwear.ViewModels.Stock
 		private readonly IGuiDispatcher guiDispatcher;
 		private readonly IUserService userService;
 		private readonly ILifetimeScope autofacScope;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly IValidator validator;
 		public readonly BaseParameters BaseParameters;
@@ -46,10 +49,13 @@ namespace Workwear.ViewModels.Stock
 
 		public IssueByIdentifierViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			IGuiDispatcher guiDispatcher,
 			IUserService userService,
 			ILifetimeScope autofacScope,
+			EmployeeIssueModel employeeIssueModel,
+			StockBalanceModel stockBalanceModel,
 			StockRepository stockRepository,
 			EmployeeRepository employeeRepository,
 			FeaturesService featuresService,
@@ -64,6 +70,8 @@ namespace Workwear.ViewModels.Stock
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.issueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -75,7 +83,7 @@ namespace Workwear.ViewModels.Stock
 			EnableMinimizeMaximize = true;
 			Title = "Выдача по картам СКУД";
 
-			UowOfDialog = unitOfWorkFactory.CreateWithoutRoot();
+			unitOfWorkProvider.UoW = UowOfDialog = unitOfWorkFactory.CreateWithoutRoot();
 			var entryBuilder = new CommonEEVMBuilderFactory<IssueByIdentifierViewModel>(this, this, UowOfDialog, navigation, autofacScope);
 
 			if(cardReaderService != null) {
@@ -88,6 +96,7 @@ namespace Workwear.ViewModels.Stock
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			stockBalanceModel.Warehouse = Warehouse;
 
 			//Настройка таймера сброса
 			timerCleanSuccessfullyText = new Timer(40000);
@@ -396,7 +405,9 @@ namespace Workwear.ViewModels.Stock
 			Expense.Warehouse = Warehouse;
 			Expense.ObservableItems.Clear();
 
-			Employee.FillWearInStockInfo(uow, BaseParameters, Warehouse, Expense.Date, onlyUnderreceived: false);
+			stockBalanceModel.Warehouse = Warehouse;
+			stockBalanceModel.OnDate = Expense.Date;
+			issueModel.FillWearInStockInfo(Employee, stockBalanceModel);
 			foreach(var item in Employee.WorkwearItems) {
 				Expense.AddItem(item, BaseParameters);
 			}

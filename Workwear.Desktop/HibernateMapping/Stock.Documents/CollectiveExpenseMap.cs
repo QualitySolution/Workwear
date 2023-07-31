@@ -20,6 +20,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 
 			References (x => x.CreatedbyUser).Column ("user_id");
 			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
+			References (x => x.TransferAgent).Column ("transfer_agent_id");
 
 			HasOne(x => x.IssuanceSheet)
 				.PropertyRef(x => x.CollectiveExpense);

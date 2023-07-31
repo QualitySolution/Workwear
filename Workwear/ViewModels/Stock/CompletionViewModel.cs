@@ -16,6 +16,7 @@ using QS.ViewModels.Dialog;
 using workwear;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -73,31 +74,35 @@ namespace Workwear.ViewModels.Stock
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			lastWarehouse = Entity.SourceWarehouse;
+			Entity.ObservableResultItems.ListContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmountText));
+			Entity.ObservableSourceItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmountText));
+            lastWarehouse = Entity.SourceWarehouse;
 
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
 		#region View
-		public bool SensetiveDellSourceItemButton => SelectedSourceItem != null;
-		public bool SensetiveDellResultItemButton => SelectedResultItem != null;
-		public bool SensetiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null; 
+		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
+		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
+		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
+		public string ResultAmountText => $"Общее количество: {Entity.ObservableResultItems.Sum(x=>x.Amount)}";
+		public string SourceAmountText => $"Общее количество: {Entity.ObservableSourceItems.Sum(x=>x.Amount)}";
 		
 		private CompletionResultItem selectedResultItem;
 		public virtual CompletionResultItem SelectedResultItem {
 			get => selectedResultItem;
 			set {
 				selectedResultItem = value;	
-				OnPropertyChanged(nameof(SensetiveAddSizesResultButton));
-				OnPropertyChanged(nameof(SensetiveDellResultItemButton));
+				OnPropertyChanged(nameof(SensitiveAddSizesResultButton));
+				OnPropertyChanged(nameof(SensitiveDellResultItemButton));
 			}
 		}
-		private CompletionSourceItem selectedSourseItem;
+		private CompletionSourceItem selectedSourceItem;
 		public virtual CompletionSourceItem SelectedSourceItem {
-			get => selectedSourseItem;
+			get => selectedSourceItem;
 			set {
-				selectedSourseItem = value;
-				OnPropertyChanged(nameof(SensetiveDellSourceItemButton));
+				selectedSourceItem = value;
+				OnPropertyChanged(nameof(SensitiveDellSourceItemButton));
 			}
 		}
 
@@ -111,8 +116,8 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region EntityViewModels
-		public EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
-		public EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseExpenseEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseReceiptEntryViewModel;
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -139,15 +144,18 @@ namespace Workwear.ViewModels.Stock
 			}
 
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.CanChooseAmount = true;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
 		private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var selectVM = sender as StockBalanceJournalViewModel;
-			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, node.Amount);
-			}
+			var addedAmount = selectVM.Filter.AddAmount;
+			foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
+				Entity.AddSourceItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse,
+					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
 		}
+
 		public void AddResultItems() {
 			var selectJournal = MainClass.MainWin.NavigationManager.
 				OpenViewModel<NomenclatureJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave);

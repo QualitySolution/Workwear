@@ -26,10 +26,9 @@ namespace Workwear.Views.Stock
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
 			table.CreateFluentColumnsConfig<TransferItem>()
-			.AddColumn("Наименование").Tag("Name").AddTextRenderer(x => x.Nomenclature!= null ? x.Nomenclature.Name : String.Empty)
-				.WrapWidth(700)
-			.AddColumn("Размер").AddTextRenderer(x => x.WarehouseOperation.WearSize.Name)
-			.AddColumn("Рост").AddTextRenderer(x => x.WarehouseOperation.Height.Name)
+			.AddColumn("Наименование").Tag("Name").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name).WrapWidth(700)
+			.AddColumn("Размер").AddReadOnlyTextRenderer(x => x.WarehouseOperation.WearSize?.Name)
+			.AddColumn("Рост").AddReadOnlyTextRenderer(x => x.WarehouseOperation.Height?.Name)
 			.AddColumn("Собственники")
 				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 				.AddComboRenderer(x => x.Owner)
@@ -40,8 +39,7 @@ namespace Workwear.Views.Stock
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false)
 					.Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
-				.AddTextRenderer(x => 
-				x.Nomenclature != null && x.Nomenclature.Type.Units != null ? x.Nomenclature.Type.Units.Name : String.Empty,  false)
+				.AddReadOnlyTextRenderer(x => x.Nomenclature?.Type?.Units?.Name,  false)
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 

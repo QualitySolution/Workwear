@@ -26,9 +26,9 @@ namespace Workwear.Views.Communications
 				.AddBinding(vm => vm.SelectClaim, w=> w.SelectedRow)
 				.InitializeFromSource();
 			ytreeClaimMessages.ColumnsConfig = ColumnsConfigFactory.Create<ClaimMessage>()
-				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss"))
-				.AddColumn("Автор").AddTextRenderer(c => c.SenderName)
-				.AddColumn("Текст").AddTextRenderer(c => c.Text)
+				.AddColumn("Время").AddTextRenderer(c => c.SendTime.ToDateTime().ToLocalTime().ToString("dd MMM HH:mm:ss")).YAlign(0)
+				.AddColumn("Автор").AddTextRenderer(c => c.SenderName).YAlign(0)
+				.AddColumn("Текст").AddTextRenderer(c => c.Text).WrapWidth(800)
 				.RowCells()
 				.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = x.UserRead ? 400 : 600)
 				.Finish();
@@ -36,6 +36,22 @@ namespace Workwear.Views.Communications
 			ytreeClaimMessages.Binding
 				.AddBinding(ViewModel, vm => vm.MessagesSelectClaims, w => w.ItemsDataSource)
 				.InitializeFromSource();
+			
+			labelClaimTitle.Binding.AddBinding(ViewModel, v => v.ClaimTitle, w => w.LabelProp).InitializeFromSource();
+			labelEmployee.Binding.AddBinding(ViewModel, v => v.EmployeeName, w => w.LabelProp).InitializeFromSource();
+			buttonOpenEmployee.Binding.AddBinding(ViewModel, v => v.SensitiveOpenEmployee, w => w.Sensitive).InitializeFromSource();
+			buttonOpenEmployee.Clicked += (sender, args) => ViewModel.OpenEmployee();
+			labelProtectionToolsName.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ProtectionToolsTitle, w => w.LabelProp)
+				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)
+				.InitializeFromSource();
+			labelTitleProtectionTools.Binding.AddBinding(ViewModel, v => v.VisibleProtectionTools, w => w.Visible).InitializeFromSource();
+			buttonOpenProtectionTools.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.VisibleProtectionTools, w => w.Visible)
+				.AddBinding(v => v.SensitiveOpenProtectionTools, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonOpenProtectionTools.Clicked += (sender, args) => ViewModel.OpenProtectionTools();
+			
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Buffer.Text)
 				.InitializeFromSource();

@@ -6,10 +6,15 @@ using QS.Cloud.WearLk.Manage;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Communications 
 {
@@ -50,10 +55,24 @@ namespace Workwear.ViewModels.Communications
 		private Claim selectClaim;
 		[PropertyChangedAlso(nameof(SensitiveCloseClaim))]
 		[PropertyChangedAlso(nameof(SensitiveSend))]
+		[PropertyChangedAlso(nameof(ClaimTitle))]
+		[PropertyChangedAlso(nameof(VisibleProtectionTools))]
 		public Claim SelectClaim {
 			get => selectClaim;
-			set { SetField(ref selectClaim, value);
-				RefreshMessage(); }
+			set {
+				if(SetField(ref selectClaim, value)) {
+					RefreshMessage();
+					if(SelectClaim != null)
+						Employee = employeeRepository.GetEmployeeByPhone(SelectClaim.UserPhone);
+					else
+						Employee = null;
+					
+					if(SelectClaim != null && SelectClaim.ProtectionToolsId > 0)
+						ProtectionTools = UoW.GetById<ProtectionTools>((int)SelectClaim.ProtectionToolsId);
+					else
+						ProtectionTools = null;
+				}
+			}
 		}
 
 		private IList<ClaimMessage> messagesSelectClaims;
@@ -77,7 +96,30 @@ namespace Workwear.ViewModels.Communications
 			get => textMessage;
 			set => SetField(ref textMessage, value);
 		}
+		
+		private EmployeeCard employee;
+		[PropertyChangedAlso(nameof(SensitiveOpenEmployee))]
+		[PropertyChangedAlso(nameof(EmployeeName))]
+		public EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
+		
+		private ProtectionTools protectionTools;
+		[PropertyChangedAlso(nameof(SensitiveOpenProtectionTools))]
+		[PropertyChangedAlso(nameof(ProtectionToolsTitle))]
+		public ProtectionTools ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
+		
+		public string ClaimTitle => SelectClaim?.Title;
+		public string EmployeeName => Employee?.FullName ?? $"Неизвестный сотрудник {SelectClaim?.UserPhone}";
+		public string ProtectionToolsTitle => ProtectionTools?.Name ?? "Неизвестная номенклатура нормы";
 
+		public bool VisibleProtectionTools => (SelectClaim?.ProtectionToolsId ?? 0) > 0;
+		public bool SensitiveOpenEmployee => Employee != null;
+		public bool SensitiveOpenProtectionTools => ProtectionTools != null;
 		public bool SensitiveSend => SelectClaim != null && !String.IsNullOrWhiteSpace(TextMessage);
 		public bool SensitiveCloseClaim => SelectClaim != null && SelectClaim.ClaimState != ClaimState.Closed;
 
@@ -110,8 +152,7 @@ namespace Workwear.ViewModels.Communications
 			TextMessage = String.Empty;
 			RefreshClaims();
 		}
-		#endregion
-		
+
 		private void RefreshMessage() {
 			if(SelectClaim != null)
 				MessagesSelectClaims = claimsManager.GetMessages(SelectClaim.Id);
@@ -124,5 +165,14 @@ namespace Workwear.ViewModels.Communications
 			OnPropertyChanged(nameof(Claims));
 			return newClaims.Count > 0;
 		}
+		
+		public void OpenEmployee() {
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Employee.Id));
+		}
+		
+		public void OpenProtectionTools() {
+			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(ProtectionTools.Id));
+		}
+		#endregion
 	}
 }

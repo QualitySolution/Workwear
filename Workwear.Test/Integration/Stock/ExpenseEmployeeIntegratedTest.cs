@@ -3,13 +3,16 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Test.Integration.Stock
@@ -417,7 +420,7 @@ namespace Workwear.Test.Integration.Stock
 				};
 				var expenseItem = expense.AddItem(position1, 1);
 
-				expense.CreateIssuanceSheet(null);
+				expense.CreateIssuanceSheet(null, null, null);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
@@ -487,8 +490,13 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 				uow.Commit();
 				
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2018, 10, 22));
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = new DateTime(2018, 10, 22);
+				issueModel.FillWearInStockInfo(employee, stockModel);
 
 				var expense = new Expense();
 				expense.Operation = ExpenseOperations.Employee;
@@ -505,7 +513,7 @@ namespace Workwear.Test.Integration.Stock
 				
 				Assert.That(expenseItem.EmployeeIssueOperation.Id, Is.GreaterThan(0));
 
-				var repository = new EmployeeIssueRepository(uow);
+				var repository = new EmployeeIssueRepository(uowProvider);
 				var balance = repository.ItemsBalance(employee, new DateTime(2018, 10, 22));
 				Assert.That(balance, Is.Not.Empty);
 				Assert.That(balance.First().Amount, Is.EqualTo(1));

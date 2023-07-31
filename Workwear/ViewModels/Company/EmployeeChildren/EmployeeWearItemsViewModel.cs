@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -13,6 +14,7 @@ using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.ViewModels.Operations;
@@ -28,6 +30,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		
 		private readonly EmployeeViewModel employeeViewModel;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
@@ -38,6 +42,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
 			EmployeeViewModel employeeViewModel,
+			EmployeeIssueModel issueModel,
+			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
@@ -48,6 +54,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -68,21 +76,25 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#endregion
 
 		#region Показ
-		private bool isConfigured = false;
+		public bool IsConfigured {get; private set; }
 
 		public void OnShow()
 		{
-			if (isConfigured) return;
-			isConfigured = true;
-			var start = DateTime.Now;
-			progress.Start(2+4);
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
-			progress.Add();
+			if (IsConfigured) return;
+			IsConfigured = true;
+			var performance = new ProgressPerformanceHelper(progress, 4+4, nameof(issueModel.PreloadWearItems), logger: logger);
+			issueModel.PreloadWearItems(Entity.Id);
+			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
+			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+			performance.EndGroup();
+			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			progress.Add();
+			performance.CheckPoint("Обновление таблицы");
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
-			progress.Close();
-			logger.Debug($"Время заполнения таблицы «Спецодежда по нормам»: {(DateTime.Now - start).TotalSeconds} сек." );
+			Entity.PropertyChanged += EntityOnPropertyChanged;
+			performance.End();
+			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
 		#endregion
@@ -95,10 +107,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#endregion
 
-		#region Внутренне
+		#region Обработка изменений
 		void HandleEntityChangeEvent(EntityChangeEvent[] changeEvents)
 		{
-			if(!isConfigured)
+			if(!IsConfigured)
 				return;
 			bool isMySession = changeEvents.First().Session == UoW.Session;
 			//Не чего не делаем если это наше собственное изменение.
@@ -129,7 +141,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				RefreshWorkItems();
 			}
 		}
-
+		
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			//Так как склад подбора мог поменяться при смене подразделения.
+			if(e.PropertyName == nameof(Entity.Subdivision) && Entity.Subdivision?.Warehouse != stockBalanceModel.Warehouse) {
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				stockBalanceModel.Refresh();
+			}
+		}
+		
+		public void SizeChanged()
+		{
+			OnPropertyChanged(nameof(ObservableWorkwearItems));
+		}
 		#endregion
 
 		#region Действия View
@@ -159,7 +183,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
 			Entity.UpdateNextIssueAll();
 		}
 
@@ -243,7 +267,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			foreach(var item in Entity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 		}
 

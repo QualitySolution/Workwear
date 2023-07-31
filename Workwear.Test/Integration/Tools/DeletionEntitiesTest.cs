@@ -111,7 +111,7 @@ namespace Workwear.Test.Integration.Tools
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
 
-				expense.CreateIssuanceSheet(null);
+				expense.CreateIssuanceSheet(null, null, null);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);

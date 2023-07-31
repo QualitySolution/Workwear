@@ -53,8 +53,8 @@ namespace Workwear.Views.Stock
 					.WrapWidth(700)
 				.AddColumn("Номенклатура").Resizable().AddComboRenderer(x => x.StockBalanceSetter)
 					.WrapWidth(700)
-					.SetDisplayFunc(x => x.Nomenclature?.Name)
-					.SetDisplayListFunc(x => x.StockPosition.Title + " - " + x.Nomenclature.GetAmountAndUnitsText(x.Amount))
+					.SetDisplayFunc(x => x.Position.Nomenclature?.Name)
+					.SetDisplayListFunc(x => x.Position.Title + " - " + x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
 					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
 				.AddColumn("Размер")
@@ -137,19 +137,19 @@ namespace Workwear.Views.Stock
 
 			var itemOpenEmployee = new MenuItemId<CollectiveExpenseItem>("Открыть сотрудника");
 			itemOpenEmployee.ID = selected;
-			itemOpenEmployee.Sensitive = selected.Employee != null;
+			itemOpenEmployee.Sensitive = selected?.Employee != null;
 			itemOpenEmployee.Activated += ItemOpenEmployee_Activated;
 			menu.Add(itemOpenEmployee);
 
 			var itemOpenProtection = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру нормы");
 			itemOpenProtection.ID = selected;
-			itemOpenProtection.Sensitive = selected.ProtectionTools != null;
+			itemOpenProtection.Sensitive = selected?.ProtectionTools != null;
 			itemOpenProtection.Activated += ItemOpenProtection_Activated;
 			menu.Add(itemOpenProtection);
 
 			var itemOpenNomenclature = new MenuItemId<CollectiveExpenseItem>("Открыть номенклатуру");
 			itemOpenNomenclature.ID = selected;
-			itemOpenNomenclature.Sensitive = selected.Nomenclature != null;
+			itemOpenNomenclature.Sensitive = selected?.Nomenclature != null;
 			itemOpenNomenclature.Activated += Item_Activated;
 			menu.Add(itemOpenNomenclature);
 			

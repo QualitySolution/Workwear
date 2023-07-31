@@ -64,6 +64,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonDelExpenseNomenclature;
 
+		private global::Gamma.GtkWidgets.yLabel ylabelAmountSource;
+
 		private global::Gtk.VBox vbox3;
 
 		private global::Gtk.HBox hbox8;
@@ -81,6 +83,8 @@ namespace Workwear.Views.Stock
 		private global::Gamma.GtkWidgets.yButton buttonDelReceiptNomenclature;
 
 		private global::Gamma.GtkWidgets.yButton buttonAddSizesReceiptNomenclature;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelAmountResult;
 
 		protected virtual void Build()
 		{
@@ -139,7 +143,6 @@ namespace Workwear.Views.Stock
 			w6.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
-			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -375,14 +378,25 @@ namespace Workwear.Views.Stock
 			w29.Position = 1;
 			w29.Expand = false;
 			w29.Fill = false;
-			this.vbox2.Add(this.hbox7);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.ylabelAmountSource = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelAmountSource.Name = "ylabelAmountSource";
+			this.ylabelAmountSource.Xalign = 1F;
+			this.ylabelAmountSource.LabelProp = global::Mono.Unix.Catalog.GetString("В сумме: 0");
+			this.hbox7.Add(this.ylabelAmountSource);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.ylabelAmountSource]));
+			w30.PackType = ((global::Gtk.PackType)(1));
 			w30.Position = 2;
 			w30.Expand = false;
 			w30.Fill = false;
+			this.vbox2.Add(this.hbox7);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox7]));
+			w31.Position = 2;
+			w31.Expand = false;
+			w31.Fill = false;
 			this.hpaned1.Add(this.vbox2);
-			global::Gtk.Paned.PanedChild w31 = ((global::Gtk.Paned.PanedChild)(this.hpaned1[this.vbox2]));
-			w31.Resize = false;
+			global::Gtk.Paned.PanedChild w32 = ((global::Gtk.Paned.PanedChild)(this.hpaned1[this.vbox2]));
+			w32.Resize = false;
 			// Container child hpaned1.Gtk.Paned+PanedChild
 			this.vbox3 = new global::Gtk.VBox();
 			this.vbox3.Name = "vbox3";
@@ -397,15 +411,15 @@ namespace Workwear.Views.Stock
 			this.label2.Xalign = 0F;
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Результат");
 			this.hbox8.Add(this.label2);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.label2]));
-			w32.Position = 0;
-			w32.Expand = false;
-			w32.Fill = false;
-			this.vbox3.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox8]));
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.label2]));
 			w33.Position = 0;
 			w33.Expand = false;
 			w33.Fill = false;
+			this.vbox3.Add(this.hbox8);
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox8]));
+			w34.Position = 0;
+			w34.Expand = false;
+			w34.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
@@ -416,8 +430,8 @@ namespace Workwear.Views.Stock
 			this.ytreeReceiptItems.Name = "ytreeReceiptItems";
 			this.GtkScrolledWindow1.Add(this.ytreeReceiptItems);
 			this.vbox3.Add(this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.GtkScrolledWindow1]));
-			w35.Position = 1;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.GtkScrolledWindow1]));
+			w36.Position = 1;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox9 = new global::Gtk.HBox();
 			this.hbox9.Name = "hbox9";
@@ -428,13 +442,13 @@ namespace Workwear.Views.Stock
 			this.buttonAddReceiptNomenclature.Name = "buttonAddReceiptNomenclature";
 			this.buttonAddReceiptNomenclature.UseUnderline = true;
 			this.buttonAddReceiptNomenclature.Label = global::Mono.Unix.Catalog.GetString("Добавить номенклатуру");
-			global::Gtk.Image w36 = new global::Gtk.Image();
-			w36.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddReceiptNomenclature.Image = w36;
+			global::Gtk.Image w37 = new global::Gtk.Image();
+			w37.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAddReceiptNomenclature.Image = w37;
 			this.hbox9.Add(this.buttonAddReceiptNomenclature);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddReceiptNomenclature]));
-			w37.Position = 0;
-			w37.Expand = false;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddReceiptNomenclature]));
+			w38.Position = 0;
+			w38.Expand = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonDelReceiptNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDelReceiptNomenclature.CanFocus = true;
@@ -442,33 +456,44 @@ namespace Workwear.Views.Stock
 			this.buttonDelReceiptNomenclature.UseUnderline = true;
 			this.buttonDelReceiptNomenclature.Label = global::Mono.Unix.Catalog.GetString("Удалить");
 			this.hbox9.Add(this.buttonDelReceiptNomenclature);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonDelReceiptNomenclature]));
-			w38.Position = 1;
-			w38.Expand = false;
-			w38.Fill = false;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonDelReceiptNomenclature]));
+			w39.Position = 1;
+			w39.Expand = false;
+			w39.Fill = false;
 			// Container child hbox9.Gtk.Box+BoxChild
 			this.buttonAddSizesReceiptNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAddSizesReceiptNomenclature.CanFocus = true;
 			this.buttonAddSizesReceiptNomenclature.Name = "buttonAddSizesReceiptNomenclature";
 			this.buttonAddSizesReceiptNomenclature.UseUnderline = true;
 			this.buttonAddSizesReceiptNomenclature.Label = global::Mono.Unix.Catalog.GetString("Добавить размеры");
-			global::Gtk.Image w39 = new global::Gtk.Image();
-			w39.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
-			this.buttonAddSizesReceiptNomenclature.Image = w39;
+			global::Gtk.Image w40 = new global::Gtk.Image();
+			w40.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
+			this.buttonAddSizesReceiptNomenclature.Image = w40;
 			this.hbox9.Add(this.buttonAddSizesReceiptNomenclature);
-			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddSizesReceiptNomenclature]));
-			w40.Position = 2;
-			w40.Expand = false;
-			w40.Fill = false;
-			this.vbox3.Add(this.hbox9);
-			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox9]));
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.buttonAddSizesReceiptNomenclature]));
 			w41.Position = 2;
 			w41.Expand = false;
 			w41.Fill = false;
+			// Container child hbox9.Gtk.Box+BoxChild
+			this.ylabelAmountResult = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelAmountResult.Name = "ylabelAmountResult";
+			this.ylabelAmountResult.Xalign = 1F;
+			this.ylabelAmountResult.LabelProp = global::Mono.Unix.Catalog.GetString("В сумме: 0");
+			this.hbox9.Add(this.ylabelAmountResult);
+			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.hbox9[this.ylabelAmountResult]));
+			w42.PackType = ((global::Gtk.PackType)(1));
+			w42.Position = 3;
+			w42.Expand = false;
+			w42.Fill = false;
+			this.vbox3.Add(this.hbox9);
+			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.hbox9]));
+			w43.Position = 2;
+			w43.Expand = false;
+			w43.Fill = false;
 			this.hpaned1.Add(this.vbox3);
 			this.yvbox1.Add(this.hpaned1);
-			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.hpaned1]));
-			w43.Position = 2;
+			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.hpaned1]));
+			w45.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{

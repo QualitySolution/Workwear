@@ -24,8 +24,6 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
-using Workwear.Repository.Sizes;
-using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
@@ -37,8 +35,8 @@ namespace Workwear.ViewModels.Stock
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly StockRepository stockRepository;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
@@ -48,9 +46,8 @@ namespace Workwear.ViewModels.Stock
 			INavigationManager navigation,
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
+			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
-			StockRepository stockRepository,
-			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
 			PerformanceHelper performance
@@ -61,63 +58,55 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-
-			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(6);
-			//Запрашиваем все размеры чтобы были в кеше Uow.
-			SizeService.RefreshSizes(UoW);
-			performance.CheckPoint("Get all sizes");
-			globalProgress.Add();
 			
-			var items = UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id == Entity.Id)
-				.Fetch(SelectMode.Fetch, x => x)
-				.Fetch(SelectMode.Fetch, x => x.IssuanceSheetItem)
-				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+			//Запрашиваем все размеры чтобы были в кеше Uow.
+			performance.CheckPoint("Запрашиваем все размеры чтобы были в кеше Uow.");
+			SizeService.RefreshSizes(UoW);
+			performance.CheckPoint("Загружаем строки документа");
+			var allOwners = UoW.Session.QueryOver<Owner>().Future();
+			
+			CollectiveExpenseItem collectiveExpenseItemAlias = null;
+			UoW.Session.QueryOver<CollectiveExpense>()
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Skip, x => x.IssuanceSheet)
+				.Where(x => x.Id == Entity.Id)
+				.JoinAlias(x => x.Items, () => collectiveExpenseItemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.IssuanceSheetItem)
+				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.WarehouseOperation)
 				.List();
 			
-			performance.CheckPoint("Get rows info");
-			globalProgress.Add();
-
-			var employeeIds = items.Select(x => x.Employee.Id).Distinct().ToArray();
-			var query = UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.WorkwearItems)
-				.Future();
-
-			UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.Vacations)
-				.Future();
+			performance.CheckPoint("Загружаем информацию о сотрудниках");
+			var employeeIds = Entity.Items.Select(x => x.Employee.Id).Distinct().ToArray();
+			issueModel.PreloadEmployeeInfo(employeeIds);
 			
-			UoW.Session.QueryOver<EmployeeCard>()
-				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.Sizes)
-				.Future();
-			query.ToList();
+			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
+			issueModel.PreloadWearItems(employeeIds);
 			
-			performance.CheckPoint("Get employees info");
-			globalProgress.Add();
-			Entity.PrepareItems(UoW, performance);
-			performance.CheckPoint("PrepareItems");
-			globalProgress.Add();
+			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
+			var employees = Entity.Items.Select(x => x.Employee).Distinct();
+			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
+			stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.OnDate = Entity.Date;
+			stockBalanceModel.ExcludeOperations = excludeOperations;
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
+			
+			performance.CheckPoint("Fill EmployeeCardItem's");
+			foreach(var docItem in Entity.Items) {
+				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
+			}
+			
+			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
-			performance.CheckPoint("FillWearReceivedInfo");
-			globalProgress.Add();
 
+			performance.CheckPoint("Finish");
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			OnPropertyChanged(nameof(Sum));
-
-			performance.CheckPoint("Sum");
-			globalProgress.Add();
-			Owners = UoW.GetAll<Owner>().ToList();
-			performance.CheckPoint("Owners");
-			globalProgress.Close();
+			Owners = allOwners.ToList();
 		}
 
 		#region Хелперы
@@ -129,11 +118,6 @@ namespace Workwear.ViewModels.Stock
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 				$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 				$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
-
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
-		}
 
 		private CollectiveExpenseItem selectedItem;
 		[PropertyChangedAlso(nameof(SensitiveButtonDel))]
@@ -209,9 +193,7 @@ namespace Workwear.ViewModels.Stock
 			issueModel.FillWearReceivedInfo(employees.ToArray());
 			
 			progressPage?.ViewModel.Progress.Add(text:"Загружаем складские остатки");
-			foreach(var employee in employees) {
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			progressPage?.ViewModel.Progress.Add();
 			if(progressPage != null)
 				navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
@@ -237,7 +219,7 @@ namespace Workwear.ViewModels.Stock
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date)>0 ? 1 : 0,
 						1,
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date),
-						stockRepository.StockBalances(UoW,Entity.Warehouse,item.ProtectionTools.Nomenclatures,Entity.Date)
+						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
 								.Sum(x =>x.Amount)));
 			}
 
@@ -372,10 +354,16 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(Sum));
 		}
 
-		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(nameof(Entity.Warehouse) == e.PropertyName) 
-				OnPropertyChanged(nameof(SensitiveAddButton));
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					OnPropertyChanged(nameof(SensitiveAddButton));
+					break;
+				case nameof(Entity.Date):
+					stockBalanceModel.OnDate = Entity.Date;
+					break;
+			}
 		}
 	}
 }

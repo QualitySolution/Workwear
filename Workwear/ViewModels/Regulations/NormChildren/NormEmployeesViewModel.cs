@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
@@ -24,6 +25,17 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 		}
 
+		#region Свойства View
+		private NormEmployeeSortType sortBy = NormEmployeeSortType.FIO;
+		public NormEmployeeSortType SortBy {
+			get => sortBy;
+			set {
+				if(SetField(ref sortBy, value))
+					UpdateNodes();
+			}
+		}
+
+		#endregion
 		public IList<EmployeeNode> Employees { get; private set; }
 
 		#region События
@@ -95,7 +107,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			employees.JoinAlias(x => x.UsedNorms, () => normAlias)
 				.Where(x => normAlias.Id == parent.Entity.Id);
 			
-			Employees = employees.JoinAlias(() => employeeAlias.Post, () => postAlias, JoinType.LeftOuterJoin)
+			employees.JoinAlias(() => employeeAlias.Post, () => postAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => employeeAlias.Department, () => departmentAlias, JoinType.LeftOuterJoin)
 				.SelectList((list) => list
@@ -109,10 +121,34 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
-				)
-				.OrderBy(() => employeeAlias.LastName).Asc
-				.ThenBy(() => employeeAlias.FirstName).Asc
-				.ThenBy(() => employeeAlias.Patronymic).Asc
+				);
+			
+			
+			switch(SortBy) {
+				case NormEmployeeSortType.FIO:
+					employees = employees.OrderBy(() => employeeAlias.LastName).Asc
+						.ThenBy(() => employeeAlias.FirstName).Asc
+						.ThenBy(() => employeeAlias.Patronymic).Asc;
+					break;
+				case NormEmployeeSortType.SubdivisionAndPost:
+					employees = employees.OrderBy(() => subdivisionAlias.Name).Asc
+						.ThenBy(() => departmentAlias.Name).Asc
+						.ThenBy(() => postAlias.Name).Asc
+						.ThenBy(() => employeeAlias.LastName).Asc
+						.ThenBy(() => employeeAlias.FirstName).Asc
+						.ThenBy(() => employeeAlias.Patronymic).Asc;
+					break;
+				case NormEmployeeSortType.Post:
+					employees = employees.OrderBy(() => postAlias.Name).Asc
+						.ThenBy(() => employeeAlias.LastName).Asc
+						.ThenBy(() => employeeAlias.FirstName).Asc
+						.ThenBy(() => employeeAlias.Patronymic).Asc;
+					break;
+				default:
+					throw new NotImplementedException();
+			}
+
+			Employees = employees
 				.TransformUsing(Transformers.AliasToBean<EmployeeNode>())
 				.List<EmployeeNode>();
 			
@@ -142,5 +178,15 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 
 		public DateTime? DismissDate { get; set; }
+	}
+	
+	public enum NormEmployeeSortType
+	{
+		[Display(Name = "Ф.И.О.")]
+		FIO,
+		[Display(Name = "Подразделению, Отделу, Должности")]
+		SubdivisionAndPost,
+		[Display(Name = "Должности")]
+		Post,
 	}
 }

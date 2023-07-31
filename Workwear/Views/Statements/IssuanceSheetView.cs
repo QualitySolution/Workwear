@@ -29,12 +29,14 @@ namespace Workwear.Views.Statements
 			entityentrySubdivision.ViewModel = ViewModel.SubdivisionEntryViewModel;
 			entityentryResponsiblePerson.ViewModel = ViewModel.ResponsiblePersonEntryViewModel;
 			entityentryHeadOfDivisionPerson.ViewModel = ViewModel.HeadOfDivisionPersonEntryViewModel;
+			entityTransferAgent.ViewModel = ViewModel.TransferAgentEntryViewModel;
 
 			hboxExpense.Visible = ViewModel.VisibleExpense;
 			buttonFillBy.Visible = ViewModel.VisibleFillBy;
 			labelExpense.LabelProp = Entity.Expense?.Title;
 			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
+			entityTransferAgent.Sensitive = ViewModel.CanEditTransferAgent;
 			buttonCloseFillBy.Binding.AddBinding(ViewModel, v => v.VisibleCloseFillBy, w => w.Visible).InitializeFromSource();
 			labelFooter.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 
