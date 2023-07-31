@@ -2,6 +2,7 @@ using System;
 using System.Data.Common;
 using System.IO;
 using Autofac;
+using NHibernate.Driver.MySqlConnector;
 using QS.BaseParameters;
 using QS.BusinessCommon.Domain;
 using QS.BusinessCommon;
@@ -96,6 +97,7 @@ namespace workwear
 			// Настройка ORM
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
+				.Driver<MySqlConnectorDriver>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
 				.AdoNetBatchSize(100)
 				.ShowSql ()
