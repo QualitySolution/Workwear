@@ -73,6 +73,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
+			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			
