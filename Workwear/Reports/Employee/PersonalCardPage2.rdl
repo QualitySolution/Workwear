@@ -34,7 +34,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>65.6pt</Height>
+    <Height>88.1pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -162,7 +162,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>39.0pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -786,7 +786,12 @@
         stock_income_detail
     LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
     WHERE
-        stock_income.date &lt;= operation_issued_by_employee.operation_time AND operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND operation_issued_by_employee.size_id = stock_income_detail.size_id AND operation_issued_by_employee.height_id = stock_income_detail.height_id AND stock_income_detail.certificate IS NOT NULL AND operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
+        stock_income.date &lt;= operation_issued_by_employee.operation_time AND
+        operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND
+        operation_issued_by_employee.size_id &lt;=&gt; stock_income_detail.size_id AND
+        operation_issued_by_employee.height_id &lt;=&gt; stock_income_detail.height_id AND
+        stock_income_detail.certificate IS NOT NULL AND
+        operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
     ORDER BY
         stock_income.date
     DESC
