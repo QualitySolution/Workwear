@@ -122,7 +122,7 @@
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+    <ProjectReference Include="..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
     </ProjectReference>

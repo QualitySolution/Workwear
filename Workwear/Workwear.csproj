@@ -574,7 +574,7 @@
       <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
       <Name>QS.Features</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+    <ProjectReference Include="..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
     </ProjectReference>

@@ -59,7 +59,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features", "..\QSProject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features.Gtk", "..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj", "{13970AEE-1019-4962-A8C7-899D350E0F10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rglib.interop", "..\RusGuardSharp\rglib.interop\rglib.interop.csproj", "{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rglib.interop", "RusGuardSharp\rglib.interop\rglib.interop.csproj", "{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QS.Cloud", "QS.Cloud", "{A1E822AA-A95F-4C0D-B40A-D6431A2754C3}"
 EndProject

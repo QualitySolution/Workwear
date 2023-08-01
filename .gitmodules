@@ -1,0 +1,3 @@
+[submodule "RusGuardSharp"]
+	path = RusGuardSharp
+	url = git@github.com:QualitySolution/RusGuardSharp.git
