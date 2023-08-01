@@ -34,7 +34,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>65.6pt</Height>
+    <Height>88.1pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -162,7 +162,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>39.0pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -775,7 +775,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
@@ -789,7 +789,7 @@
         stock_income.date &lt;= operation_issued_by_employee.operation_time AND
         operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND
         operation_issued_by_employee.size &lt;=&gt; stock_income_detail.size AND
-        operation_issued_by_employee.growth &lt;=&gt; stock_income_detail.growth AND 
+        operation_issued_by_employee.growth &lt;=&gt; stock_income_detail.growth AND
         stock_income_detail.certificate IS NOT NULL AND
         operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
     ORDER BY
@@ -867,7 +867,7 @@ CONCAT_WS(
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="name_siz">
           <DataField>name_siz</DataField>
           <TypeName>System.String</TypeName>
