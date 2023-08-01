@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using MySqlConnector;
 
-namespace QS.DBScripts.Models
+namespace Workwear.Test.Sql.Models
 {
 	public class SqlServer
 	{

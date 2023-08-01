@@ -1,6 +1,6 @@
 using System;
 
-namespace QS.DBScripts.Models
+namespace Workwear.Test.Sql.Models
 {
 	public class DbSample
 	{
