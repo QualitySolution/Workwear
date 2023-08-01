@@ -149,41 +149,43 @@ WHERE
     <DataSet Name="Norms">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     protection_tools.name AS type_name,
     norms.ton_paragraph,
     measurement_units.name AS unit,
-CASE 
-	WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
-    WHEN norms_item.period_type = 'Wearout' THEN ',До износа' 
- 	WHEN norms_item.period_type = 'Year'
-    	THEN IF (norms_item.period_count = 1, norms_item.amount, 
-        	CONCAT(norms_item.amount, ' на ', norms_item.period_count,
-    			CASE 
-       		 		WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' лет'
-            	    WHEN norms_item.period_count % 10 = 1 THEN ' год'
-                	WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN ' года'
-                	ELSE ' лет'
-            	END))
-	WHEN norms_item.period_type = 'Month' THEN 
-		CASE
-        	WHEN norms_item.period_count &gt; 12 THEN
-            	CONCAT(norms_item.amount, ' на ', CAST(norms_item.amount * norms_item.period_count / 12 AS DOUBLE), ' года')           
-            WHEN norms_item.period_count &lt;= 12 THEN
-            	CONCAT(CAST(norms_item.amount * 12 / norms_item.period_count AS DOUBLE))       
-        END
-END AS count_by_year
+    CASE
+        WHEN norms_item.period_type = 'Shift' THEN CONCAT_WS(' ', norms_item.amount, 'на смену')
+        WHEN norms_item.period_type = 'Wearout' THEN CONCAT_WS(' ', norms_item.amount, 'до износа')
+        WHEN norms_item.period_type = 'Year'
+            THEN IF (norms_item.period_count = 1, norms_item.amount,
+                CONCAT_WS(' ',norms_item.amount, 'на', norms_item.period_count,
+                    CASE
+                        WHEN norms_item.period_count BETWEEN 11 AND 19 THEN 'лет'
+                        WHEN norms_item.period_count % 10 = 1 THEN 'год'
+                        WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN 'года'
+                        ELSE 'лет'
+                        END))
+        WHEN norms_item.period_type = 'Month' THEN
+            CASE
+                WHEN norms_item.period_count &gt; 12 THEN
+                    CONCAT_WS(' ', norms_item.amount, 'на',TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM CAST(norms_item.amount * norms_item.period_count / 12 AS DECIMAL(5,3)) ))), 'года')
+                WHEN norms_item.period_count &lt;= 12 THEN
+                    TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM  CAST(norms_item.amount * 12 / norms_item.period_count AS DECIMAL(5,3)))))
+                END
+        WHEN norms_item.period_type = 'Duty' THEN CONCAT_WS(' ', norms_item.amount, 'дежурный')
+                
+        END AS count_by_year
 FROM
     wear_cards_item
         LEFT JOIN
     protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+        LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+        LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
         LEFT JOIN
     norms_item ON wear_cards_item.norm_item_id = norms_item.id
-    LEFT JOIN norms ON norms.id = norms_item.norm_id
+        LEFT JOIN norms ON norms.id = norms_item.norm_id
 WHERE
-    wear_cards_item.wear_card_id = @id;</CommandText>
+        wear_cards_item.wear_card_id =  @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
