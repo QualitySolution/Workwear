@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>
-  </Description>
-  <Author>
-  </Author>
+  <Description></Description>
+  <Author></Author>
   <PageHeight>297mm</PageHeight>
   <PageWidth>210mm</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev26;user=andrey;password=;port=3306;server=office.qsolution.ru</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>210mm</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -21,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT nomenclature.number, IFNULL(nomenclature.name, protection_tools.name) as name, sizeAlias.name as size, heightAlias.name as growth, SUM(issuance_sheet_items.amount) as amount 
 FROM issuance_sheet_items 
@@ -37,7 +27,7 @@ GROUP BY IFNULL(issuance_sheet_items.nomenclature_id, issuance_sheet_items.prote
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="number">
           <DataField>number</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -61,7 +51,7 @@ GROUP BY IFNULL(issuance_sheet_items.nomenclature_id, issuance_sheet_items.prote
       </Fields>
     </DataSet>
     <DataSet Name="document">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     issuance_sheet.id,
@@ -99,7 +89,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -394,8 +384,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox11">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -495,8 +484,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -513,8 +501,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -526,8 +513,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -542,8 +528,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox17">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -577,8 +562,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -609,8 +593,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -640,8 +623,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>
-                      </Value>
+                      <Value></Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -710,8 +692,16 @@ WHERE issuance_sheet.id = @id;</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_dev26;user=andrey;password=;port=3306;server=office.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
