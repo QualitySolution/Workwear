@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.IO;
 using Autofac;
 using Gamma.Utilities;
 using NHibernate;
@@ -336,6 +337,10 @@ namespace Workwear.ViewModels.Stock {
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+			
+			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
+			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
+				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}

@@ -59,6 +59,14 @@ namespace Workwear.Tools
 			get => Dynamic.BarcodePrefix(typeof(int?));
 			set => Dynamic[nameof(BarcodePrefix)] = value;
 		}
+		
+		/// <summary>
+		/// При показе ведомости сворачивать дублирующиеся строки.
+		/// </summary>
+		public virtual bool CollapseDuplicateIssuanceSheet {
+			get => Dynamic.CollapseDuplicateIssuanceSheet(typeof(bool)) ?? true;
+			set => Dynamic[nameof(CollapseDuplicateIssuanceSheet)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
