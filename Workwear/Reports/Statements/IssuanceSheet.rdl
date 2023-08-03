@@ -838,6 +838,12 @@
         <Left>543.50pt</Left>
         <Top>6.00pt</Top>
         <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Right</TextAlign>
+        </Style>
+      </Textbox>
       <Textbox Name="Textbox49">
         <Height>15.77pt</Height>
         <Width>473.22pt</Width>
