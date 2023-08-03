@@ -844,12 +844,7 @@
         <ZIndex>1</ZIndex>
         <Left>543.50pt</Left>
         <Top>6.00pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <TextAlign>Right</TextAlign>
-        </Style>
+        <Style></Style>
       </Textbox>
       <Textbox Name="Textbox49">
         <Height>15.77pt</Height>
