@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>
-  </Description>
-  <Author>
-  </Author>
+  <Description></Description>
+  <Author></Author>
   <PageHeight>297mm</PageHeight>
   <PageWidth>210mm</PageWidth>
   <Width>7.5in</Width>
@@ -160,7 +158,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -180,7 +178,7 @@ WHERE
       </Fields>
     </DataSet>
     <DataSet Name="Sizes">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 size_types.name AS sizeName,
@@ -198,7 +196,7 @@ LIMIT 10</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="sizeName">
           <DataField>sizeName</DataField>
           <TypeName>System.String</TypeName>
@@ -286,8 +284,8 @@ LIMIT 10</CommandText>
         </Style>
       </Textbox>
       <List Name="List1">
-        <Height>226.88pt</Height>
-        <Width>558.52pt</Width>
+        <Height>138.12pt</Height>
+        <Width>386.87pt</Width>
         <Left>0.00pt</Left>
         <Top>157.80pt</Top>
         <ReportItems>
@@ -566,87 +564,6 @@ LIMIT 10</CommandText>
               <FontSize>11pt</FontSize>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox23">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
-            <Value>Пол</Value>
-            <ZIndex>1</ZIndex>
-            <Left>395.8pt</Left>
-            <Top>2.7pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox24">
-            <Height>12.00pt</Height>
-            <Width>137.52pt</Width>
-            <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М',Fields!sex.IsMissing, '—')</Value>
-            <ZIndex>1</ZIndex>
-            <Left>419.30pt</Left>
-            <Top>3.40pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox41">
-            <Height>12.00pt</Height>
-            <Width>130.77pt</Width>
-            <Value>Предусмотрена выдача</Value>
-            <ZIndex>1</ZIndex>
-            <Left>4.3pt</Left>
-            <Top>164.5pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>11pt</FontSize>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox42" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>23.25pt</Height>
-            <Width>428.52pt</Width>
-            <Value>={regulations}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>129.50pt</Left>
-            <Top>159.40pt</Top>
-            <Style>
-              <BorderStyle>
-                <Bottom>Solid</Bottom>
-              </BorderStyle>
-              <BorderColor />
-              <BorderWidth />
-              <FontStyle>Italic</FontStyle>
-              <FontSize>11pt</FontSize>
-              <TextAlign>Center</TextAlign>
-              <VerticalAlign>Middle</VerticalAlign>
-            </Style>
-            <CanGrow>true</CanGrow>
-          </Textbox>
-          <Textbox Name="Textbox43">
-            <Height>10.48pt</Height>
-            <Width>426.83pt</Width>
-            <Value>(наименование типовых (типовых отраслевых) норм)</Value>
-            <ZIndex>1</ZIndex>
-            <Left>130.9pt</Left>
-            <Top>183.3pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>9pt</FontSize>
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
         </ReportItems>
         <DataSetName>Card</DataSetName>
         <Style>
@@ -654,6 +571,7 @@ LIMIT 10</CommandText>
           <BorderColor />
           <BorderWidth />
         </Style>
+        <ZIndex>1</ZIndex>
       </List>
       <Table Name="Table1">
         <DataSetName>Norms</DataSetName>
@@ -828,7 +746,8 @@ LIMIT 10</CommandText>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>386.8pt</Top>
+        <Top>360pt</Top>
+        <ZIndex>1</ZIndex>
       </Table>
       <Textbox Name="Textbox52">
         <Height>15.75pt</Height>
@@ -836,7 +755,7 @@ LIMIT 10</CommandText>
         <Value>Руководитель структурного подразделения</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
-        <Top>425.4pt</Top>
+        <Top>397.2pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -850,7 +769,7 @@ LIMIT 10</CommandText>
         <Value>(подпись)</Value>
         <ZIndex>1</ZIndex>
         <Left>231.9pt</Left>
-        <Top>436.4pt</Top>
+        <Top>408.2pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -867,7 +786,7 @@ LIMIT 10</CommandText>
         <Value>(Ф.И.О.)</Value>
         <ZIndex>1</ZIndex>
         <Left>350.9pt</Left>
-        <Top>436.5pt</Top>
+        <Top>408.3pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -884,7 +803,7 @@ LIMIT 10</CommandText>
         <Value>=First({leader}, 'Card')</Value>
         <ZIndex>1</ZIndex>
         <Left>351.1pt</Left>
-        <Top>422.3pt</Top>
+        <Top>394.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -896,17 +815,17 @@ LIMIT 10</CommandText>
       </Textbox>
       <Table Name="Table2">
         <DataSetName>Sizes</DataSetName>
-        <NoRows>Query returned no rows!</NoRows>
+        <NoRows>Размеры не указаны</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>104.4pt</Width>
+            <Width>95.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>63.0pt</Width>
@@ -925,13 +844,14 @@ LIMIT 10</CommandText>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>11pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -944,14 +864,15 @@ LIMIT 10</CommandText>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth >
-                        </BorderWidth>
+                        <BorderColor />
+                        <BorderWidth></BorderWidth>
+                        <TextAlign>Center</TextAlign>
+                        <FontSize>11pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -960,11 +881,92 @@ LIMIT 10</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>396.3pt</Left>
+        <Left>393.80pt</Left>
         <Top>176.6pt</Top>
         <Width>150pt</Width>
         <ZIndex>1</ZIndex>
       </Table>
+      <Textbox Name="Textbox4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>12.00pt</Height>
+        <Width>137.52pt</Width>
+        <Value>=Switch(First({sex},"Card") = 'F', 'Ж', First({sex},"Card") = 'M', 'М',true ,'—')</Value>
+        <ZIndex>1</ZIndex>
+        <Left>417.30pt</Left>
+        <Top>162.70pt</Top>
+        <Style>
+          <BorderStyle>
+            <Bottom>Solid</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+          <FontStyle>Italic</FontStyle>
+          <FontSize>11pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox23" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>12.75pt</Height>
+        <Width>71.52pt</Width>
+        <Value>Пол</Value>
+        <ZIndex>1</ZIndex>
+        <Left>393.80pt</Left>
+        <Top>162.00pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>11pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox24" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>10.48pt</Height>
+        <Width>426.83pt</Width>
+        <Value>(наименование типовых (типовых отраслевых) норм)</Value>
+        <ZIndex>1</ZIndex>
+        <Left>128.9pt</Left>
+        <Top>342.6pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>9pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox25" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>23.25pt</Height>
+        <Width>428.52pt</Width>
+        <Value>=First({regulations},"Card")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>127.5pt</Left>
+        <Top>318.7pt</Top>
+        <Style>
+          <BorderStyle>
+            <Bottom>Solid</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+          <FontStyle>Italic</FontStyle>
+          <FontSize>11pt</FontSize>
+          <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
+      <Textbox Name="Textbox28" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>12.00pt</Height>
+        <Width>130.77pt</Width>
+        <Value>Предусмотрена выдача</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2.3pt</Left>
+        <Top>323.8pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>11pt</FontSize>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>457.5pt</Height>
     <Columns>1</Columns>
@@ -976,28 +978,27 @@ LIMIT 10</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=rs.qsolution.ru;user=demo;database=workwear;port=3306;password=demo;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>39</Value>
+          <Value>5545</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=rs.qsolution.ru;user=demo;database=workwear;port=3306;password=demo;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
