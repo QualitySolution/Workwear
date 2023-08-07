@@ -6,10 +6,12 @@ using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
+using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Regulations.NormChildren {
 	public class NormEmployeesViewModel : ViewModelBase {
@@ -90,6 +92,10 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			progressCreator.Add(text: "Обновление списка сотрудников");
 			UpdateNodes();
 			progressCreator.Close(); 
+		}
+
+		public void OpenEmployee(EmployeeNode employee) {
+			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(parent, EntityUoWBuilder.ForOpen(employee.Id));
 		}
 		#endregion
 
