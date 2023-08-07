@@ -115,7 +115,7 @@ namespace WorkwearTest.ViewModels.Company {
 					Name = "Перчатки",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();

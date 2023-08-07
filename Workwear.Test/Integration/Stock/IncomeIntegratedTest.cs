@@ -161,7 +161,7 @@ namespace Workwear.Test.Integration.Stock
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();

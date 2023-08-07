@@ -109,14 +109,14 @@ namespace Workwear.ViewModels.Regulations
 		{
 			var nomenclatures = UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()));
 			foreach(var nomenclature in nomenclatures) {
-				Entity.AddNomeclature(nomenclature);
+				Entity.AddNomenclature(nomenclature);
 			}
 		}
 
 		public void RemoveNomenclature(Nomenclature[] tools)
 		{
 			foreach(var item in tools) {
-				Entity.RemoveNomeclature(item);
+				Entity.RemoveNomenclature(item);
 			}
 		}
 
@@ -133,7 +133,7 @@ namespace Workwear.ViewModels.Regulations
 				Sex = ClothesSex.Universal,
 			};
 			UoW.Save(nomenclature);
-			Entity.AddNomeclature(nomenclature);
+			Entity.AddNomenclature(nomenclature);
 		}
 
 		public void OpenNomenclature(Nomenclature nomenclature) {

@@ -62,7 +62,7 @@ namespace Workwear.Views.Regulations
 			var menu = new Menu();
 			var selected = ytreeItems.GetSelectedObject<Nomenclature>();
 			
-			var itemNomenclature = new MenuItemId<ExpenseItem>("Открыть номенклатуру");
+			var itemNomenclature = new MenuItem("Открыть номенклатуру");
 			itemNomenclature.Sensitive = selected != null;
 			itemNomenclature.Activated += (sender, eventArgs) => ViewModel.OpenNomenclature(selected);
 			menu.Add(itemNomenclature);
