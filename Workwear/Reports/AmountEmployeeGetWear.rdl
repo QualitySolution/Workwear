@@ -55,10 +55,13 @@
             <Width>47.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>553.7pt</Width>
+            <Width>417.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>133.0pt</Width>
+            <Width>136.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>143.9pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -104,8 +107,25 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>Количество работников (чел.) за период (персональные выдачи)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox10" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>Количество работников (чел.) за перид</Value>
+                      <Value>Количество работников (чел.) за период  (коллективные выдачи)</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -166,8 +186,25 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox8">
+                          <Value>=Sum({count_peronal})</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox31" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                          <Value>=Sum({count_period})</Value>
+                          <Value>=Sum({count_collective})</Value>
                           <CanGrow>false</CanGrow>
                           <Style>
                             <BorderStyle>
@@ -232,8 +269,24 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>={count_peronal}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox41" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>={count_period}</Value>
+                      <Value>={count_collective}</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -251,7 +304,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>10.1pt</Left>
+        <Left>10.9pt</Left>
         <Top>17.9pt</Top>
       </Table>
     </ReportItems>
@@ -293,9 +346,13 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT objects.code, objects.name as obj, COUNT(*) as count_period 
-	FROM (SELECT DISTINCT employee_id	FROM operation_issued_by_employee 
- 		WHERE (operation_time &gt; CONVERT(@dateStart, DATE) AND operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY))) AS operation 
+        <CommandText>SELECT objects.code, objects.name as obj,SUM(operation.peronal_op) as count_peronal, SUM(operation.collective_op) as count_collective
+	FROM (SELECT DISTINCT employee_id, IF(item_types.issue_type = "Personal",1,0) AS peronal_op, IF(item_types.issue_type = "Collective",1,0) AS collective_op
+          FROM operation_issued_by_employee 
+          	JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
+    		LEFT JOIN item_types on item_types.id= protection_tools.item_types_id
+ 		  WHERE (operation_time &gt; CONVERT(@dateStart, DATE) AND operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY )) ) AS operation 
+          
 	JOIN wear_cards ON employee_id = wear_cards.id  
 	LEFT JOIN objects ON wear_cards.object_id = objects.id 
 	GROUP BY objects.id 
@@ -310,17 +367,21 @@
         </QueryParameters>
       </Query>
       <Fields >
+        <Field Name="code">
+          <DataField>code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="obj">
           <DataField>obj</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="count_period">
-          <DataField>count_period</DataField>
+        <Field Name="count_peronal">
+          <DataField>count_peronal</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>code</DataField>
-          <TypeName>System.String</TypeName>
+        <Field Name="count_collective">
+          <DataField>count_collective</DataField>
+          <TypeName>System.Int32</TypeName>
         </Field>
       </Fields>
     </DataSet>
