@@ -19,6 +19,7 @@ using Workwear.ViewModels.Communications;
 using QS.Utilities;
 using Workwear.Domain.Sizes;
 using Workwear.Models.Sizes;
+using Workwear.ViewModels.Stock.NomenclatureChildren;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -58,6 +59,9 @@ namespace Workwear.ViewModels.Stock
 						new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, 
 							{nameof(IUnitOfWork), UoW} })));
 
+			var parentParameter = new TypedParameter(typeof(NomenclatureViewModel), this);
+			ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(parentParameter);
+			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			lastSizeType = Entity.Type?.SizeType;
@@ -65,6 +69,10 @@ namespace Workwear.ViewModels.Stock
 		}
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		#endregion
+
+		#region ChildrenViewModels	
+		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
 		#endregion
 		#region Visible
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
