@@ -1,3 +1,12 @@
 [submodule "RusGuardSharp"]
 	path = RusGuardSharp
 	url = git@github.com:QualitySolution/RusGuardSharp.git
+[submodule "QSProjects"]
+	path = QSProjects
+	url = git@github.com:QualitySolution/QSProjects.git
+[submodule "My-FyiReporting"]
+	path = My-FyiReporting
+	url = git@github.com:QualitySolution/My-FyiReporting.git
+[submodule "Gtk.DataBindings"]
+	path = Gtk.DataBindings
+	url = git@github.com:QualitySolution/Gtk.DataBindings.git
