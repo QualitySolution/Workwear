@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
-using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -117,7 +116,6 @@ namespace Workwear.ViewModels.Stock
 		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
 		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
 		#endregion
-
 		#region Поля
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 				$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
@@ -339,7 +337,6 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#endregion
-
 		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
@@ -356,7 +353,7 @@ namespace Workwear.ViewModels.Stock
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
-
+		#region Обработка событий
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
 			OnPropertyChanged(nameof(SensitiveRefreshAllMenuItem));
 			OnPropertyChanged(nameof(Sum));
@@ -373,5 +370,6 @@ namespace Workwear.ViewModels.Stock
 					break;
 			}
 		}
+		#endregion
 	}
 }
