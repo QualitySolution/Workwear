@@ -4,7 +4,6 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
-using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -30,10 +29,13 @@ namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
+		private readonly ModalProgressCreator modalProgress;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -50,11 +52,13 @@ namespace Workwear.ViewModels.Stock
 			EmployeeRepository employeeRepository,
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
-			PerformanceHelper performance
+			ModalProgressCreator modalProgress,
+			PerformanceHelper performance //Только для использования в конструкторе. Шаги запуска.
 			)
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
@@ -160,45 +164,45 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
+			
+			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
-			progressPage.ViewModel.Progress.Add();
-			
-			AddEmployeesList(employees, progressPage);
+
+			AddEmployeesList(employees, performance);
 		}
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
+			
+			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
-			progressPage.ViewModel.Progress.Add();
-			
-			AddEmployeesList(employees, progressPage);
+
+			AddEmployeesList(employees, performance);
 		}
 		
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(4, text: "Загружаем список сотрудников");
+			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
 			
-			AddEmployeesList(employees, progressPage);
+			AddEmployeesList(employees, performance);
 		}
 		
-		private void AddEmployeesList(IList<EmployeeCard> employees, IPage<ProgressWindowViewModel> progressPage = null) {
-			progressPage?.ViewModel.Progress.Add(text:"Загружаем потребности");
+		private void AddEmployeesList(IList<EmployeeCard> employees, ProgressPerformanceHelper performance) {
+			if(!employees.Any()) {
+				performance.End();
+				interactive.ShowMessage(ImportanceLevel.Info, "Нет сотрудников для добавления");
+				return;
+			}
+			
+			performance.CheckPoint("Загружаем потребности");
 			issueModel.FillWearReceivedInfo(employees.ToArray());
 			
-			progressPage?.ViewModel.Progress.Add(text:"Загружаем складские остатки");
+			performance.CheckPoint("Загружаем складские остатки");
 			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
-			progressPage?.ViewModel.Progress.Add();
-			if(progressPage != null)
-				navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			
-			//Подготавливаем виджет
+			performance.CheckPoint("Подготавливаем потребностей");
 			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
 			
 			var needs = employees
@@ -223,6 +227,7 @@ namespace Workwear.ViewModels.Stock
 								.Sum(x =>x.Amount)));
 			}
 
+			performance.End();
 			if(!wigetList.Any()) {
 				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
 				return;
@@ -233,6 +238,7 @@ namespace Workwear.ViewModels.Stock
 					.ToDictionary(x => x.Key, x => x.Value));
 			
 			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, page, vac);
+			logger.Info($"Диалог выбора потребностей открыт за {performance.TotalTime.TotalSeconds} секунд.");
 		}
 
 		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs,
@@ -315,19 +321,12 @@ namespace Workwear.ViewModels.Stock
 		#region Обновление документа
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
-			progressPage.ViewModel.Progress.Add();
-			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList(),progressPage);
-			
-			Entity.ResortItems();
+			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList(), performance);
 		}
 		public void RefreshAll() {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
-			progressPage.ViewModel.Progress.Add();
-			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList(),progressPage);
-			Entity.ResortItems();
+			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList(), performance);
 		}
 
 		#endregion
