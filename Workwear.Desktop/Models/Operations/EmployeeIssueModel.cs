@@ -273,7 +273,7 @@ namespace Workwear.Models.Operations {
 			query.ToList();
 		}
 
-		public void PreloadEmployeeInfo(params int[] employeeIds) {
+		public IList<EmployeeCard> PreloadEmployeeInfo(params int[] employeeIds) {
 			var query = UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
 				.Future();
@@ -289,7 +289,7 @@ namespace Workwear.Models.Operations {
 				.Fetch(SelectMode.ChildFetch, x => x)
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.Future();
-			query.ToList();
+			return query.ToList();
 		}
 		
 		/// <summary>

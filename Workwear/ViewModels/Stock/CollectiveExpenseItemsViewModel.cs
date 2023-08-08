@@ -165,16 +165,15 @@ namespace Workwear.ViewModels.Stock
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			
-			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
-			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
 
-			AddEmployeesList(employees, performance);
+			AddEmployeesList(employeeIds, performance);
 		}
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			
-			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 
@@ -182,28 +181,38 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем сотрудников", logger, showProgressText: true);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
 			
 			AddEmployeesList(employees, performance);
 		}
-		
-		private void AddEmployeesList(IList<EmployeeCard> employees, ProgressPerformanceHelper performance) {
-			if(!employees.Any()) {
+
+		private void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
+			AddEmployeesList(employees.Select(x => x.Id).ToArray(), performance);
+		}
+
+		private void AddEmployeesList(int[] employeeIds, ProgressPerformanceHelper performance) {
+			if(!employeeIds.Any()) {
 				performance.End();
 				interactive.ShowMessage(ImportanceLevel.Info, "Нет сотрудников для добавления");
 				return;
 			}
 			
+			performance.CheckPoint("Загружаем информацию о сотрудниках");
+			var employees = issueModel.PreloadEmployeeInfo(employeeIds);
+			
 			performance.CheckPoint("Загружаем потребности");
+			issueModel.PreloadWearItems(employeeIds);
+			
+			performance.CheckPoint("Загружаем прошлые выдачи");
 			issueModel.FillWearReceivedInfo(employees.ToArray());
 			
 			performance.CheckPoint("Загружаем складские остатки");
 			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
 			performance.CheckPoint("Подготавливаем потребностей");
-			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
+			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
 			
 			var needs = employees
 				.SelectMany(x => x.WorkwearItems)
@@ -211,14 +220,14 @@ namespace Workwear.ViewModels.Stock
 				.ToList();
 			
 			foreach(var item in needs) {
-				if(wigetList.ContainsKey(item.ProtectionTools.Id)) {
-					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					wigetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
+				if(widgetList.ContainsKey(item.ProtectionTools.Id)) {
+					widgetList[item.ProtectionTools.Id].NumberOfNeeds++;
+					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
 					if(item.CalculateRequiredIssue(BaseParameters, Entity.Date) != 0)
-						wigetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
+						widgetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
+					widgetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective,
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date)>0 ? 1 : 0,
 						1,
@@ -228,13 +237,13 @@ namespace Workwear.ViewModels.Stock
 			}
 
 			performance.End();
-			if(!wigetList.Any()) {
+			if(!widgetList.Any()) {
 				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
 				return;
 			}
 
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
-				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
+				(null, widgetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 					.ToDictionary(x => x.Key, x => x.Value));
 			
 			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, page, vac);
@@ -242,10 +251,10 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs,
-			IPage page, bool excludeOnVaction) {
+			IPage page, bool excludeOnVacation) {
 			foreach(var item in needs) {
 				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
-					if(excludeOnVaction && item.EmployeeCard.OnVacation(Entity.Date))
+					if(excludeOnVacation && item.EmployeeCard.OnVacation(Entity.Date))
 						continue;
 					else
 						Entity.AddItem(item, BaseParameters);
@@ -321,12 +330,12 @@ namespace Workwear.ViewModels.Stock
 		#region Обновление документа
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
-			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем...", logger, showProgressText: true);
-			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList(), performance);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct(), performance);
 		}
 		public void RefreshAll() {
-			var performance = new ProgressPerformanceHelper(modalProgress, 5, "Загружаем...", logger, showProgressText: true);
-			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList(), performance);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct(), performance);
 		}
 
 		#endregion
