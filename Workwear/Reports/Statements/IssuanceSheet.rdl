@@ -1561,6 +1561,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1593,6 +1594,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1624,6 +1626,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
