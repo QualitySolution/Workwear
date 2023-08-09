@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -8,7 +9,6 @@ using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Utilities.Debug;
 using QS.ViewModels;
 using workwear;
 using Workwear.Domain.Company;
@@ -31,6 +31,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
@@ -42,6 +43,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public EmployeeWearItemsViewModel(
 			EmployeeViewModel employeeViewModel,
 			EmployeeIssueModel issueModel,
+			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
@@ -53,6 +55,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -79,14 +82,17 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (IsConfigured) return;
 			IsConfigured = true;
-			var performance = new ProgressPerformanceHelper(progress, 4+3, nameof(issueModel.PreloadWearItems), logger: logger);
+			var performance = new ProgressPerformanceHelper(progress, 4+4, nameof(issueModel.PreloadWearItems), logger: logger);
 			issueModel.PreloadWearItems(Entity.Id);
-			performance.CheckPoint(nameof(Entity.FillWearInStockInfo));
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now, progressStep: () => progress.Add());
+			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
+			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+			performance.EndGroup();
 			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			performance.CheckPoint("Обновление таблицы");
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
+			Entity.PropertyChanged += EntityOnPropertyChanged;
 			performance.End();
 			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
@@ -101,7 +107,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#endregion
 
-		#region Внутренне
+		#region Обработка изменений
 		void HandleEntityChangeEvent(EntityChangeEvent[] changeEvents)
 		{
 			if(!IsConfigured)
@@ -135,7 +141,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				RefreshWorkItems();
 			}
 		}
-
+		
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			//Так как склад подбора мог поменяться при смене подразделения.
+			if(e.PropertyName == nameof(Entity.Subdivision) && Entity.Subdivision?.Warehouse != stockBalanceModel.Warehouse) {
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				stockBalanceModel.Refresh();
+			}
+		}
+		
+		public void SizeChanged()
+		{
+			OnPropertyChanged(nameof(ObservableWorkwearItems));
+		}
 		#endregion
 
 		#region Действия View
@@ -165,7 +183,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void UpdateWorkwearItems()
 		{
 			Entity.UpdateWorkwearItems();
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
 			Entity.UpdateNextIssueAll();
 		}
 
@@ -249,7 +267,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			foreach(var item in Entity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
-			Entity.FillWearInStockInfo(UoW, BaseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 		}
 

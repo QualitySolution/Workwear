@@ -73,7 +73,7 @@ namespace Workwear.Views.Company {
 
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.CardNumber, w => w.Text)
-				.AddBinding(vm => vm.SensetiveCardNumber, w => w.Sensitive)
+				.AddBinding(vm => vm.SensitiveCardNumber, w => w.Sensitive)
 				.InitializeFromSource();
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoCardNumber, w => w.Active).InitializeFromSource();
 			labelUser.Binding.AddBinding(ViewModel, vm => vm.CreatedByUser, w => w.LabelProp).InitializeFromSource();

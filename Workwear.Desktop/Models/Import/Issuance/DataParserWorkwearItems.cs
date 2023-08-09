@@ -229,7 +229,7 @@ namespace Workwear.Models.Import.Issuance
 								Comment = "Создана при импорте выдач из файла " + importModel.FileName,
 							};
 							nomenclature.Sex = nomenclatureTypes.ParseSex(nomenclature.Name);
-							row.WorkwearItem.ProtectionTools.AddNomeclature(nomenclature);
+							row.WorkwearItem.ProtectionTools.AddNomenclature(nomenclature);
 						}
 
 						UsedNomenclatures.Add(nomenclature);

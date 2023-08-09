@@ -73,6 +73,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
+			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			
@@ -113,7 +114,7 @@ namespace WorkwearTest.ViewModels.Stock
 					Name = "Тестовый СИЗ",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -230,14 +231,14 @@ namespace WorkwearTest.ViewModels.Stock
 					Name = "Тестовый СИЗ(уже выдано частично)",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 				
 				var protectionTools2 = new ProtectionTools {
 					Name = "Тестовый СИЗ (надо выдать)",
 					Type = itemType
 				};
-				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
 
 				var norm = new Norm();
@@ -365,14 +366,14 @@ namespace WorkwearTest.ViewModels.Stock
 					Name = "Тестовый СИЗ",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 				
 				var protectionTools2 = new ProtectionTools {
 					Name = "Тестовый СИЗ 2",
 					Type = itemType
 				};
-				protectionTools2.AddNomeclature(nomenclature);
+				protectionTools2.AddNomenclature(nomenclature);
 				uow.Save(protectionTools2);
 
 				var norm = new Norm();
@@ -485,14 +486,14 @@ namespace WorkwearTest.ViewModels.Stock
 					Name = "Тестовый СИЗ",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 				
 				var protectionTools2 = new ProtectionTools {
 					Name = "Тестовый СИЗ 2",
 					Type = itemType
 				};
-				protectionTools2.AddNomeclature(nomenclature);
+				protectionTools2.AddNomenclature(nomenclature);
 				uow.Save(protectionTools2);
 
 				var norm = new Norm();

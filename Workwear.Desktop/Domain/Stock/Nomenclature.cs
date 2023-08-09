@@ -21,6 +21,8 @@ namespace Workwear.Domain.Stock {
 	[HistoryTrace]
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		
 		#region Свойства
 		public virtual int Id { get; set; }
 
@@ -147,6 +149,23 @@ namespace Workwear.Domain.Stock {
 				default:
 					return false;
 			}
+		}
+		#endregion
+
+		#region ProtectionTools
+
+		public virtual void AddProtectionTools(ProtectionTools protectionTools)
+		{
+			if(ProtectionTools.Any(p => DomainHelper.EqualDomainObjects(p, protectionTools))) {
+				logger.Warn("Номеклатура нормы уже добавлена. Пропускаем...");
+				return;
+			}
+			ObservableProtectionTools.Add(protectionTools);
+		}
+
+		public virtual void RemoveProtectionTools(ProtectionTools protectionTools)
+		{
+			ObservableProtectionTools.Remove(protectionTools);
 		}
 		#endregion
 	}

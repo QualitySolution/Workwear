@@ -277,6 +277,7 @@ namespace Workwear.ViewModels.Regulations
 		}
 		#endregion
 
+		#region Контекстное меню строки нормы
 		/// <summary>
 		/// Ручной перечет операций выдачи через контекстное меню строки нормы.
 		/// </summary>
@@ -319,6 +320,12 @@ namespace Workwear.ViewModels.Regulations
 			issueModel.RecalculateDateOfIssue(modifiableOperations, baseParameters, interactive, progress: progressCreator);
 			logger.Info($"{modifiableOperations.Count()} операций обновлено.");
 		}
+		
+		public void OpenProtectionTools(NormItem normItem) 
+		{
+			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
+		}
+		#endregion
 		#endregion
 		#region Сохранение
 		public override bool Save() 

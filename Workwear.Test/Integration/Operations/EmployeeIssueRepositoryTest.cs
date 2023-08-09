@@ -44,7 +44,7 @@ namespace Workwear.Test.Integration.Operations
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();
@@ -109,7 +109,7 @@ namespace Workwear.Test.Integration.Operations
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();
@@ -442,13 +442,13 @@ namespace Workwear.Test.Integration.Operations
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 				
 				var protectionTools2 = new ProtectionTools {
 					Name = "СИЗ для тестирования 2"
 				};
-				protectionTools2.AddNomeclature(nomenclature);
+				protectionTools2.AddNomenclature(nomenclature);
 				uow.Save(protectionTools2);
 
 				var employee = new EmployeeCard();
@@ -557,7 +557,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();
@@ -599,7 +599,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();
@@ -652,7 +652,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "СИЗ для тестирования";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var employee = new EmployeeCard();

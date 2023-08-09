@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -23,6 +24,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
@@ -35,6 +37,7 @@ namespace Workwear.ViewModels.Statements
 		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		public EntityEntryViewModel<Leader> ResponsiblePersonEntryViewModel;
 		public EntityEntryViewModel<Leader> HeadOfDivisionPersonEntryViewModel;
+		private readonly BaseParameters baseParameters;
 		public ILifetimeScope AutofacScope;
 		private readonly CommonMessages commonMessages;
 
@@ -45,11 +48,12 @@ namespace Workwear.ViewModels.Statements
 			IValidator validator, 
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
-			CommonMessages commonMessages) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
+			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -203,6 +207,10 @@ namespace Workwear.ViewModels.Statements
 					{ "id",  Entity.Id }
 				}
 			};
+
+			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
+			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
+				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}

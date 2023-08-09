@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
-using NHibernate.Criterion;
 using QS.Dialog;
-using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -24,20 +22,22 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock.Widgets;
 using Workwear.Models.Operations;
-using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
 	public class CollectiveExpenseItemsViewModel : ViewModelBase
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		
 		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
+		private readonly ModalProgressCreator modalProgress;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly StockRepository stockRepository;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 
@@ -47,30 +47,29 @@ namespace Workwear.ViewModels.Stock
 			INavigationManager navigation,
 			SizeService sizeService,
 			EmployeeIssueModel issueModel,
+			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
-			StockRepository stockRepository,
-			IProgressBarDisplayable globalProgress, 
 			IInteractiveMessage interactive,
 			BaseParameters baseParameters,
-			PerformanceHelper performance
+			ModalProgressCreator modalProgress,
+			PerformanceHelper performance //Только для использования в конструкторе. Шаги запуска.
 			)
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-
-			//Предварительная загрузка элементов для более быстрого открытия документа
-			globalProgress.Start(7);
+			
 			//Запрашиваем все размеры чтобы были в кеше Uow.
+			performance.CheckPoint("Запрашиваем все размеры чтобы были в кеше Uow.");
 			SizeService.RefreshSizes(UoW);
-			performance.CheckPoint("Get all sizes");
-			globalProgress.Add();
+			performance.CheckPoint("Загружаем строки документа");
 			var allOwners = UoW.Session.QueryOver<Owner>().Future();
 			
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
@@ -84,57 +83,43 @@ namespace Workwear.ViewModels.Stock
 				.Fetch(SelectMode.Fetch, () => collectiveExpenseItemAlias.WarehouseOperation)
 				.List();
 			
-			performance.CheckPoint("Get rows info");
-			globalProgress.Add();
-
+			performance.CheckPoint("Загружаем информацию о сотрудниках");
 			var employeeIds = Entity.Items.Select(x => x.Employee.Id).Distinct().ToArray();
 			issueModel.PreloadEmployeeInfo(employeeIds);
-			performance.CheckPoint("Get employees info");
-			globalProgress.Add();
 			
-			issueModel.PreloadWearItems(employeeIds);
 			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
-			globalProgress.Add();
-			var cardItems = Entity.Items.Select(x => x.Employee).Distinct().SelectMany(x => x.WorkwearItems);
-			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
-			performance.CheckPoint(nameof(excludeOperations) + "+" + nameof(cardItems));
+			issueModel.PreloadWearItems(employeeIds);
 			
-			EmployeeCard.FillWearInStockInfo(UoW, Warehouse, Entity.Date, cardItems, excludeOperations);
-			performance.CheckPoint(nameof(EmployeeCard.FillWearInStockInfo));
-			globalProgress.Add();
+			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
+			var employees = Entity.Items.Select(x => x.Employee).Distinct();
+			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
+			stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.OnDate = Entity.Date;
+			stockBalanceModel.ExcludeOperations = excludeOperations;
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
+			
+			performance.CheckPoint("Fill EmployeeCardItem's");
 			foreach(var docItem in Entity.Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
-			performance.CheckPoint("Fill EmployeeCardItem's");
 			
-			globalProgress.Add();
+			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
-			performance.CheckPoint("FillWearReceivedInfo");
-			globalProgress.Add();
 
+			performance.CheckPoint("Finish");
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			OnPropertyChanged(nameof(Sum));
-
-			performance.CheckPoint("Sum");
 			Owners = allOwners.ToList();
-			globalProgress.Close();
 		}
 
 		#region Хелперы
 		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
 		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
 		#endregion
-
 		#region Поля
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 				$" Сотрудников: <u>{Entity.Items.Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 				$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
-
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
-		}
 
 		private CollectiveExpenseItem selectedItem;
 		[PropertyChangedAlso(nameof(SensitiveButtonDel))]
@@ -177,48 +162,55 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
-			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
-			var employees = UoW.Query<EmployeeCard>().Where(x => x.Id.IsIn(employeeIds)).List();
-			progressPage.ViewModel.Progress.Add();
 			
-			AddEmployeesList(employees, progressPage);
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
+			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+
+			AddEmployeesList(employeeIds, performance);
 		}
 		
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем сотрудников");
+			
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
-			progressPage.ViewModel.Progress.Add();
-			
-			AddEmployeesList(employees, progressPage);
+
+			AddEmployeesList(employees, performance);
 		}
 		
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(4, text: "Загружаем список сотрудников");
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
 			
-			AddEmployeesList(employees, progressPage);
+			AddEmployeesList(employees, performance);
 		}
-		
-		private void AddEmployeesList(IList<EmployeeCard> employees, IPage<ProgressWindowViewModel> progressPage = null) {
-			progressPage?.ViewModel.Progress.Add(text:"Загружаем потребности");
+
+		private void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
+			AddEmployeesList(employees.Select(x => x.Id).ToArray(), performance);
+		}
+
+		private void AddEmployeesList(int[] employeeIds, ProgressPerformanceHelper performance) {
+			if(!employeeIds.Any()) {
+				performance.End();
+				interactive.ShowMessage(ImportanceLevel.Info, "Нет сотрудников для добавления");
+				return;
+			}
+			
+			performance.CheckPoint("Загружаем информацию о сотрудниках");
+			var employees = issueModel.PreloadEmployeeInfo(employeeIds);
+			
+			performance.CheckPoint("Загружаем потребности");
+			issueModel.PreloadWearItems(employeeIds);
+			
+			performance.CheckPoint("Загружаем прошлые выдачи");
 			issueModel.FillWearReceivedInfo(employees.ToArray());
 			
-			progressPage?.ViewModel.Progress.Add(text:"Загружаем складские остатки");
-			foreach(var employee in employees) {
-				employee.FillWearInStockInfo(UoW, BaseParameters, Entity.Warehouse, Entity.Date);
-			}
-			progressPage?.ViewModel.Progress.Add();
-			if(progressPage != null)
-				navigation.ForceClosePage(progressPage, CloseSource.FromParentPage);
+			performance.CheckPoint("Загружаем складские остатки");
+			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
-			//Подготавливаем виджет
-			Dictionary<int, IssueWidgetItem> wigetList = new Dictionary<int, IssueWidgetItem>();
+			performance.CheckPoint("Подготавливаем потребностей");
+			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
 			
 			var needs = employees
 				.SelectMany(x => x.WorkwearItems)
@@ -226,39 +218,41 @@ namespace Workwear.ViewModels.Stock
 				.ToList();
 			
 			foreach(var item in needs) {
-				if(wigetList.ContainsKey(item.ProtectionTools.Id)) {
-					wigetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					wigetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
+				if(widgetList.ContainsKey(item.ProtectionTools.Id)) {
+					widgetList[item.ProtectionTools.Id].NumberOfNeeds++;
+					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, Entity.Date);
 					if(item.CalculateRequiredIssue(BaseParameters, Entity.Date) != 0)
-						wigetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
+						widgetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
 				}
 				else
-					wigetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
+					widgetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective,
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date)>0 ? 1 : 0,
 						1,
 						item.CalculateRequiredIssue(BaseParameters, Entity.Date),
-						stockRepository.StockBalances(UoW,Entity.Warehouse,item.ProtectionTools.Nomenclatures,Entity.Date)
+						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
 								.Sum(x =>x.Amount)));
 			}
 
-			if(!wigetList.Any()) {
+			performance.End();
+			if(!widgetList.Any()) {
 				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
 				return;
 			}
 
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
-				(null, wigetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
+				(null, widgetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 					.ToDictionary(x => x.Key, x => x.Value));
 			
 			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, page, vac);
+			logger.Info($"Диалог выбора потребностей открыт за {performance.TotalTime.TotalSeconds} секунд.");
 		}
 
 		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs,
-			IPage page, bool excludeOnVaction) {
+			IPage page, bool excludeOnVacation) {
 			foreach(var item in needs) {
 				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
-					if(excludeOnVaction && item.EmployeeCard.OnVacation(Entity.Date))
+					if(excludeOnVacation && item.EmployeeCard.OnVacation(Entity.Date))
 						continue;
 					else
 						Entity.AddItem(item, BaseParameters);
@@ -334,23 +328,15 @@ namespace Workwear.ViewModels.Stock
 		#region Обновление документа
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
-			progressPage.ViewModel.Progress.Add();
-			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct().ToList(),progressPage);
-			
-			Entity.ResortItems();
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct(), performance);
 		}
 		public void RefreshAll() {
-			var progressPage = navigation.OpenViewModel<ProgressWindowViewModel>(сollectiveExpenseViewModel);
-			progressPage.ViewModel.Progress.Start(5, text: "Загружаем...");
-			progressPage.ViewModel.Progress.Add();
-			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct().ToList(),progressPage);
-			Entity.ResortItems();
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
+			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct(), performance);
 		}
 
 		#endregion
-
 		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
@@ -367,16 +353,23 @@ namespace Workwear.ViewModels.Stock
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
-
+		#region Обработка событий
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e) {
 			OnPropertyChanged(nameof(SensitiveRefreshAllMenuItem));
 			OnPropertyChanged(nameof(Sum));
 		}
 
-		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(nameof(Entity.Warehouse) == e.PropertyName) 
-				OnPropertyChanged(nameof(SensitiveAddButton));
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					OnPropertyChanged(nameof(SensitiveAddButton));
+					break;
+				case nameof(Entity.Date):
+					stockBalanceModel.OnDate = Entity.Date;
+					break;
+			}
 		}
+		#endregion
 	}
 }

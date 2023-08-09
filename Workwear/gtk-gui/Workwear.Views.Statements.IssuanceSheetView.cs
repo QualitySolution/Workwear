@@ -257,7 +257,7 @@ namespace Workwear.Views.Statements
 			this.label7 = new global::Gtk.Label();
 			this.label7.Name = "label7";
 			this.label7.Xalign = 1F;
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Ответствеый за передачу СИЗ");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString("Ответствеый за передачу СИЗ:");
 			this.label7.UseMarkup = true;
 			this.table1.Add(this.label7);
 			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.label7]));

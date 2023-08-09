@@ -172,7 +172,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(employeeCardItem.BestChoiceInStock.Any()) {
 				var position = employeeCardItem.BestChoiceInStock.FirstOrDefault();
 				if(position.Amount >= needPositionAmount) 
-					return AddItem(employeeCardItem, position.StockPosition, needPositionAmount);//Частичных выдач не делаем
+					return AddItem(employeeCardItem, position.Position, needPositionAmount);//Частичных выдач не делаем
 			}
 			return AddItem(employeeCardItem); 
 		}
@@ -187,13 +187,6 @@ namespace Workwear.Domain.Stock.Documents
 			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
 				RemoveItem(item);
 			}
-		}
-
-		public virtual void ResortItems()
-		{
-			//Items = Items.OrderBy(x => x.Employee.FullName).ThenBy(x => x.ProtectionTools.Name).ToList();
-			//observableItems = null;
-			//OnPropertyChanged(nameof(ObservableItems));
 		}
 
 		#endregion

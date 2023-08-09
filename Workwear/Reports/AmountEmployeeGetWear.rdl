@@ -38,7 +38,7 @@
     </ReportItems>
   </PageHeader>
   <Body>
-    <Height>99.2pt</Height>
+    <Height>289.5pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -52,24 +52,27 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>47.0pt</Width>
+            <Width>48.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>553.7pt</Width>
+            <Width>508.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>133.0pt</Width>
+            <Width>85.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>103.9pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>38.4pt</Height>
+              <Height>27.2pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox5">
-                      <Value>Шифр подраз-деления</Value>
+                      <Value>Шифр подраз-</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -79,7 +82,7 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
+                        <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -97,6 +100,48 @@
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox10">
+                      <Value>Количество работников (чел.) в документах выдачи за период </Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>2</ColSpan>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>13.1pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value>деления</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
@@ -104,9 +149,28 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox10" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>Количество работников (чел.) за перид</Value>
-                      <Style>
+                    <Textbox Name="Textbox12">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TextboxPersonalLabel">
+                      <Value>Персональная</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -119,6 +183,23 @@
                     </Textbox>
                   </ReportItems>
                   <ColSpan>1</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value>Коллективная</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -166,8 +247,26 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="TextboxPersonalSum">
+                          <Value>=Sum({count_personal})</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>1</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox31" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                          <Value>=Sum({count_period})</Value>
+                          <Value>=Sum({count_collective})</Value>
                           <CanGrow>false</CanGrow>
                           <Style>
                             <BorderStyle>
@@ -232,8 +331,25 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="TextboxPersonalCount">
+                      <Value>={count_personal}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>1</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox41" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                      <Value>={count_period}</Value>
+                      <Value>={count_collective}</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -251,7 +367,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>10.1pt</Left>
+        <Left>10.9pt</Left>
         <Top>17.9pt</Top>
       </Table>
     </ReportItems>
@@ -291,15 +407,24 @@
   </DataSources>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT objects.code, objects.name as obj, COUNT(*) as count_period 
-	FROM (SELECT DISTINCT employee_id	FROM operation_issued_by_employee 
- 		WHERE (operation_time &gt; CONVERT(@dateStart, DATE) AND operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY))) AS operation 
-	JOIN wear_cards ON employee_id = wear_cards.id  
-	LEFT JOIN objects ON wear_cards.object_id = objects.id 
-	GROUP BY objects.id 
-    ORDER BY objects.code</CommandText>
+        <CommandText>SELECT 
+	objects.code, 
+    objects.name as obj,
+    (SELECT COUNT(DISTINCT stock_expense.wear_card_id) FROM stock_expense 
+     	LEFT JOIN wear_cards on stock_expense.wear_card_id = wear_cards.id
+     	WHERE (stock_expense.date &gt; CONVERT(@dateStart, DATE) AND stock_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
+     	)as count_personal, 
+    (SELECT COUNT(DISTINCT stock_collective_expense_detail.employee_id) FROM stock_collective_expense
+     	JOIN stock_collective_expense_detail on stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
+     	LEFT JOIN wear_cards on stock_collective_expense_detail.employee_id = wear_cards.id
+     	WHERE (stock_collective_expense.date &gt; CONVERT(@dateStart, DATE) AND stock_collective_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
+		)as count_collective
+	
+    FROM objects	
+    HAVING (count_personal &gt; 0 OR count_collective &gt; 0) 
+	ORDER BY obj ASC</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -310,17 +435,21 @@
         </QueryParameters>
       </Query>
       <Fields >
+        <Field Name="code">
+          <DataField>code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="obj">
           <DataField>obj</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="count_period">
-          <DataField>count_period</DataField>
+        <Field Name="count_personal">
+          <DataField>count_personal</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>code</DataField>
-          <TypeName>System.String</TypeName>
+        <Field Name="count_collective">
+          <DataField>count_collective</DataField>
+          <TypeName>System.Int32</TypeName>
         </Field>
       </Fields>
     </DataSet>
