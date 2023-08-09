@@ -9,7 +9,7 @@ node {
          $class: 'GitSCM',
          branches: scm.branches,
          doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-         extensions: scm.extensions + [submodule(parentCredentials: true, recursiveSubmodules: true)],
+         extensions: scm.extensions + [submodule(recursiveSubmodules: true)],
          userRemoteConfigs: scm.userRemoteConfigs
       ])
    }
