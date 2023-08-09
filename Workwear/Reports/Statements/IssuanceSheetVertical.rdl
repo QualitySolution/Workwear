@@ -1599,6 +1599,7 @@
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1632,6 +1633,7 @@
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1663,6 +1665,7 @@
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
+                          <Bottom >Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
