@@ -5,15 +5,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear", "Workwear\Workwe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QSLibs", "QSLibs", "{792D3656-91FD-45AA-A40B-A0D63306A113}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSProjectsLib", "..\QSProjects\QSProjectsLib\QSProjectsLib.csproj", "{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSProjectsLib", "QSProjects\QSProjectsLib\QSProjectsLib.csproj", "{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSSaaS", "..\QSProjects\QSSaaS\QSSaaS.csproj", "{4B502FE5-D419-4B5C-9276-0A25EF2F508A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSSaaS", "QSProjects\QSSaaS\QSSaaS.csproj", "{4B502FE5-D419-4B5C-9276-0A25EF2F508A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSWidgetLib", "..\QSProjects\QSWidgetLib\QSWidgetLib.csproj", "{5A2BB01E-E124-432E-8099-D1343D3897B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSWidgetLib", "QSProjects\QSWidgetLib\QSWidgetLib.csproj", "{5A2BB01E-E124-432E-8099-D1343D3897B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSOrmProject", "..\QSProjects\QSOrmProject\QSOrmProject.csproj", "{00D32969-612C-417E-9565-BEC6A7719F80}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSOrmProject", "QSProjects\QSOrmProject\QSOrmProject.csproj", "{00D32969-612C-417E-9565-BEC6A7719F80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSBusinessCommon", "..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj", "{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSBusinessCommon", "QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj", "{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{18CAA370-49FE-4023-9602-708344350314}"
 EndProject
@@ -21,103 +21,103 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GammaBinding", "GammaBindin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gtk.DataBindings", "Gtk.DataBindings", "{42079D47-D372-4DEE-B9BE-FB5B56A70DC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Bindings", "..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj", "{54F958F5-7E58-4C89-9A04-8835E63B97C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Bindings", "Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj", "{54F958F5-7E58-4C89-9A04-8835E63B97C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSTelemetry", "..\QSProjects\QSTelemetry\QSTelemetry.csproj", "{EB4F19F8-2CC9-4712-9949-760A441A56FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSTelemetry", "QSProjects\QSTelemetry\QSTelemetry.csproj", "{EB4F19F8-2CC9-4712-9949-760A441A56FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSReport", "..\QSProjects\QSReport\QSReport.csproj", "{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSReport", "QSProjects\QSReport\QSReport.csproj", "{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MajorsilenceReporting", "MajorsilenceReporting", "{5419AAE0-04BE-4258-A2C0-F4D3F3FCA295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlGtkViewer", "..\My-FyiReporting\RdlGtkViewer\RdlGtkViewer\RdlGtkViewer.csproj", "{921488F1-F4FC-4438-920E-86E57442B253}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlGtkViewer", "My-FyiReporting\RdlGtkViewer\RdlGtkViewer\RdlGtkViewer.csproj", "{921488F1-F4FC-4438-920E-86E57442B253}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlEngine", "..\My-FyiReporting\RdlEngine\RdlEngine.csproj", "{C97E91F4-B310-44E2-9B6C-96775395722D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlEngine", "My-FyiReporting\RdlEngine\RdlEngine.csproj", "{C97E91F4-B310-44E2-9B6C-96775395722D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProviders", "..\My-FyiReporting\DataProviders\DataProviders.csproj", "{D9F4197F-52D2-49F0-8DAF-E2884733CF2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProviders", "My-FyiReporting\DataProviders\DataProviders.csproj", "{D9F4197F-52D2-49F0-8DAF-E2884733CF2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project", "..\QSProjects\QS.Project\QS.Project.csproj", "{28A78143-42E3-40E7-86F5-DD7E1679BE86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project", "QSProjects\QS.Project\QS.Project.csproj", "{28A78143-42E3-40E7-86F5-DD7E1679BE86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report", "..\QSProjects\QS.Report\QS.Report.csproj", "{D30A23BF-C5DC-4A1B-95FC-9C2038D46E8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report", "QSProjects\QS.Report\QS.Report.csproj", "{D30A23BF-C5DC-4A1B-95FC-9C2038D46E8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Utilities", "..\QSProjects\QS.Utilities\QS.Utilities.csproj", "{E2228A2B-4883-4DD8-8A05-23501F7B8A33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Utilities", "QSProjects\QS.Utilities\QS.Utilities.csproj", "{E2228A2B-4883-4DD8-8A05-23501F7B8A33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Gtk", "..\QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj", "{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Gtk", "QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj", "{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Testing", "..\QSProjects\QS.Testing\QS.Testing.csproj", "{BA8E8ACF-ECB0-4617-9E09-D1BE93992D0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Testing", "QSProjects\QS.Testing\QS.Testing.csproj", "{BA8E8ACF-ECB0-4617-9E09-D1BE93992D0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkwearTest", "WorkwearTest\WorkwearTest.csproj", "{E5AD3408-E67B-432C-8BF1-EC6BB984D7F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.BusinessCommon", "..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj", "{F22749B2-E35B-455D-BD8D-081373B16FC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.BusinessCommon", "QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj", "{F22749B2-E35B-455D-BD8D-081373B16FC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report.Gtk", "..\QSProjects\QS.Report.Gtk\QS.Report.Gtk.csproj", "{42708CEE-08D8-43D5-AFE0-9992EB46E9F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report.Gtk", "QSProjects\QS.Report.Gtk\QS.Report.Gtk.csproj", "{42708CEE-08D8-43D5-AFE0-9992EB46E9F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.NewsFeed", "..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj", "{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.NewsFeed", "QSProjects\QS.NewsFeed\QS.NewsFeed.csproj", "{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.NewsFeed.Gtk", "..\QSProjects\QS.NewsFeed.Gtk\QS.NewsFeed.Gtk.csproj", "{76858A6F-44D1-44E0-B9F3-B80B1B96AD25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.NewsFeed.Gtk", "QSProjects\QS.NewsFeed.Gtk\QS.NewsFeed.Gtk.csproj", "{76858A6F-44D1-44E0-B9F3-B80B1B96AD25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features", "..\QSProjects\QS.Features\QS.Features.csproj", "{8984DB2F-4849-4F5B-915C-CE69537E93A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features", "QSProjects\QS.Features\QS.Features.csproj", "{8984DB2F-4849-4F5B-915C-CE69537E93A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features.Gtk", "..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj", "{13970AEE-1019-4962-A8C7-899D350E0F10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Features.Gtk", "QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj", "{13970AEE-1019-4962-A8C7-899D350E0F10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rglib.interop", "..\RusGuardSharp\rglib.interop\rglib.interop.csproj", "{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rglib.interop", "RusGuardSharp\rglib.interop\rglib.interop.csproj", "{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QS.Cloud", "QS.Cloud", "{A1E822AA-A95F-4C0D-B40A-D6431A2754C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Cloud.WearLk.Client", "QS.Cloud.WearLk.Client\QS.Cloud.WearLk.Client.csproj", "{B0F853E4-43C9-4C7E-8812-2060FA43B5FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Cloud.Client", "..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj", "{390CE39B-B071-424E-9763-645E7624D9E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Cloud.Client", "QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj", "{390CE39B-B071-424E-9763-645E7624D9E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Sql", "Workwear.Sql\Workwear.Sql.csproj", "{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Core", "..\QSProjects\QS.Project.Core\QS.Project.Core.csproj", "{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Core", "QSProjects\QS.Project.Core\QS.Project.Core.csproj", "{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Desktop", "..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj", "{5EF2A7DA-3886-4809-95DF-880BD783A211}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Desktop", "QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj", "{5EF2A7DA-3886-4809-95DF-880BD783A211}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Core", "..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj", "{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Core", "QSProjects\QS.Updater.Core\QS.Updater.Core.csproj", "{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Binding", "..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj", "{190CEA0D-EA23-4C91-8030-203A5AFED7B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Binding", "QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj", "{190CEA0D-EA23-4C91-8030-203A5AFED7B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities", "..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj", "{1BF2A638-420D-456C-96A7-36873A0FB894}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities", "QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj", "{1BF2A638-420D-456C-96A7-36873A0FB894}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities.Gtk", "..\QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj", "{5735D438-792E-40CE-BAFD-25814C8879BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Utilities.Gtk", "QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj", "{5735D438-792E-40CE-BAFD-25814C8879BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Core", "Workwear.Core\Workwear.Core.csproj", "{8C8E9AC8-13C1-4B54-B4F4-9F8CD62A5744}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Gtk", "..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj", "{1C3B49FC-372C-46F7-995F-EEB44474E2DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Gtk", "QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj", "{1C3B49FC-372C-46F7-995F-EEB44474E2DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Desktop", "..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj", "{8730FBE6-065A-47EC-9C1B-70AA3503F140}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog.Desktop", "QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj", "{8730FBE6-065A-47EC-9C1B-70AA3503F140}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog", "..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj", "{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.HistoryLog", "QSProjects\QS.HistoryLog\QS.HistoryLog.csproj", "{83BAE8A5-C4A2-478D-81FE-CE8394D24DFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.BaseParameters", "..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj", "{A869EC36-67D2-4A36-95E9-0B1E7350928F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.BaseParameters", "QSProjects\QS.BaseParameters\QS.BaseParameters.csproj", "{A869EC36-67D2-4A36-95E9-0B1E7350928F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.ErrorReporting.Client", "..\QSProjects\QS.ErrorReporting.Client\QS.ErrorReporting.Client.csproj", "{BABA2CB7-6EFE-4B1B-9324-74CBCBACF257}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.ErrorReporting.Client", "QSProjects\QS.ErrorReporting.Client\QS.ErrorReporting.Client.csproj", "{BABA2CB7-6EFE-4B1B-9324-74CBCBACF257}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Desktop", "..\QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj", "{C776EE5A-1795-439B-BB7D-9AB1B20EEAC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.Desktop", "QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj", "{C776EE5A-1795-439B-BB7D-9AB1B20EEAC4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear.Desktop", "Workwear.Desktop\Workwear.Desktop.csproj", "{45B650C2-CF4D-4E34-9385-44E7C40A66C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Binding.Core", "..\QSProjects\Binding\Gamma.Binding.Core\Gamma.Binding.Core.csproj", "{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamma.Binding.Core", "QSProjects\Binding\Gamma.Binding.Core\Gamma.Binding.Core.csproj", "{4E341D0F-50B6-4FDB-B3BD-BEC2CBEC5D77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report.Core", "..\QSProjects\QS.Report.Core\QS.Report.Core.csproj", "{3E194A95-AC31-43D0-B93D-64164402A6DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Report.Core", "QSProjects\QS.Report.Core\QS.Report.Core.csproj", "{3E194A95-AC31-43D0-B93D-64164402A6DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlCri", "..\My-FyiReporting\RdlCri\RdlCri.csproj", "{9C9ECACA-0DEB-4517-8CF1-02C3D3EB128E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdlCri", "My-FyiReporting\RdlCri\RdlCri.csproj", "{9C9ECACA-0DEB-4517-8CF1-02C3D3EB128E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Abstract", "..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj", "{E95BE5DC-A197-4657-87DC-A2D677EADB76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Project.Abstract", "QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj", "{E95BE5DC-A197-4657-87DC-A2D677EADB76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Configuration", "..\QSProjects\QS.Configuration\QS.Configuration.csproj", "{5D124360-C8FB-4779-958B-0DA5D6B90C29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Configuration", "QSProjects\QS.Configuration\QS.Configuration.csproj", "{5D124360-C8FB-4779-958B-0DA5D6B90C29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.App", "..\QSProjects\QS.Updater.App\QS.Updater.App.csproj", "{45929A9F-7D94-4E85-9332-6CB7B2D5A03A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.App", "QSProjects\QS.Updater.App\QS.Updater.App.csproj", "{45929A9F-7D94-4E85-9332-6CB7B2D5A03A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.App.Gtk", "..\QSProjects\QS.Updater.App.Gtk\QS.Updater.App.Gtk.csproj", "{0166BDB5-6DB1-4C07-96BB-0FB5AB8AC077}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.App.Gtk", "QSProjects\QS.Updater.App.Gtk\QS.Updater.App.Gtk.csproj", "{0166BDB5-6DB1-4C07-96BB-0FB5AB8AC077}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.ErrorReporting", "..\QSProjects\QS.ErrorReporting\QS.ErrorReporting.csproj", "{7BAFF136-4379-4D1D-A554-7DC340CAF7A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.ErrorReporting", "QSProjects\QS.ErrorReporting\QS.ErrorReporting.csproj", "{7BAFF136-4379-4D1D-A554-7DC340CAF7A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.DB", "..\QSProjects\QS.Updater.DB\QS.Updater.DB.csproj", "{9ED68A8A-25EE-4B6A-A483-A386BFC2F12B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.DB", "QSProjects\QS.Updater.DB\QS.Updater.DB.csproj", "{9ED68A8A-25EE-4B6A-A483-A386BFC2F12B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.DB.Gtk", "..\QSProjects\QS.Updater.DB.Gtk\QS.Updater.DB.Gtk.csproj", "{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updater.DB.Gtk", "QSProjects\QS.Updater.DB.Gtk\QS.Updater.DB.Gtk.csproj", "{6D755374-6EAF-44B6-8C6C-6FE5E5AB3432}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updates.Client", "..\QSProjects\QS.Updates.Client\QS.Updates.Client.csproj", "{08451B0A-4E72-4B12-B422-B36E9047DCAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updates.Client", "QSProjects\QS.Updates.Client\QS.Updates.Client.csproj", "{08451B0A-4E72-4B12-B422-B36E9047DCAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
