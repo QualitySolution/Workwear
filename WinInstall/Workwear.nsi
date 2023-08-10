@@ -212,6 +212,8 @@ Section "${PRODUCT_NAME}" SecProgram
   
   ; Удаляем файлы используемые до версии 2.5.1
    Delete "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk"
+   
+  Delete $INSTDIR\MySql.Data.dll
 
 SectionEnd
 
