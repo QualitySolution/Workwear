@@ -214,6 +214,7 @@ Section "${PRODUCT_NAME}" SecProgram
    Delete "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk"
    
   Delete $INSTDIR\MySql.Data.dll
+  Delete $INSTDIR\MySql.Data.xml
 
 SectionEnd
 
