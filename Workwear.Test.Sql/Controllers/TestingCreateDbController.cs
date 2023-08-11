@@ -2,6 +2,7 @@ using System;
 using QS.DBScripts.Models;
 using QS.Dialog;
 using Workwear.Test.Sql;
+using Workwear.Test.Sql.Models;
 
 namespace QS.DBScripts.Controllers
 {

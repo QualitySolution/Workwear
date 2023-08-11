@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
-namespace QS.DBScripts.Models
+namespace Workwear.Test.Sql.Models
 {
 	public class SqlServer
 	{
@@ -32,7 +32,7 @@ namespace QS.DBScripts.Models
 		public void Start()
 		{
 			RunCommand(CommandStart, true);
-			var conStr = ConnectionStringBuilder.GetConnectionString(true);
+			var conStr = ConnectionStringBuilder.ConnectionString;
 			var endTime = DateTime.Now.AddSeconds(waitingConnection);
 			
 			Console.Write($"Connecting to {Name}");

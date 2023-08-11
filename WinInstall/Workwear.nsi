@@ -215,6 +215,8 @@ Section "${PRODUCT_NAME}" SecProgram
    
   ; Удаляем файлы используемые до 2.8
   Delete $INSTDIR\Nini.dll
+  Delete $INSTDIR\MySql.Data.dll
+  Delete $INSTDIR\MySql.Data.xml
 
 SectionEnd
 
