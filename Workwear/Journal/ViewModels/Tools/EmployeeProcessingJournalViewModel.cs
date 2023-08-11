@@ -72,7 +72,7 @@ namespace workwear.Journal.ViewModels.Tools
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			progressCreator.UserCanCancel = true;
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
-
+			Filter.CanShowOnlyWithoutNorms = true;
 			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
 			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
 			SelectionMode = JournalSelectionMode.Multiple;
@@ -102,6 +102,8 @@ namespace workwear.Journal.ViewModels.Tools
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
+			if(Filter.ShowOnlyWithoutNorms)
+				employees.Where(() => normAlias.Id == null);
 			if(Filter.Subdivision != null)
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
