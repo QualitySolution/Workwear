@@ -447,6 +447,12 @@ namespace Workwear.ViewModels.Company
 			[Display(Name = "Оборотная сторона")]
 			[ReportIdentifier("Employee.PersonalCardPage2")]
 			PersonalCardPage2,
+			[Display(Name = "Лицевая сторона (с 01.09.2023)")]
+			[ReportIdentifier("Employee.PersonalCardPageNew1")]
+			PersonalCardPageNew1,
+			[Display(Name = "Оборотная сторона (с 01.09.2023)")]
+			[ReportIdentifier("Employee.PersonalCardPageNew2")]
+			PersonalCardPageNew2,
 		}
 
 		public void Print(PersonalCardPrint doc)
