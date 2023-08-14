@@ -25,6 +25,7 @@ using workwear.Models.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
@@ -77,6 +78,8 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeWearItemsViewModel>().AsSelf();
 			builder.RegisterType<ManualEmployeeIssueOperationsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
+			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();
@@ -112,7 +115,7 @@ namespace WorkwearTest.ViewModels.Company {
 					Name = "Перчатки",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();

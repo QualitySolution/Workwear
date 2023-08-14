@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>
-  </Description>
-  <Author>
-  </Author>
+  <Description></Description>
+  <Author></Author>
   <PageHeight>297mm</PageHeight>
   <PageWidth>210mm</PageWidth>
   <Width>.1pt</Width>
@@ -47,13 +45,13 @@
             <Width>53.3pt</Width>
             <Visibility>
               <Hidden>=!{?show_size}</Hidden>
-            </Visibility>            
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>51.6pt</Width>
             <Visibility>
               <Hidden>=!{?show_size}</Hidden>
-            </Visibility>            
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>50.5pt</Width>
@@ -205,8 +203,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox1">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -238,8 +235,7 @@
                             <FontWeight>Bold</FontWeight>
                             <VerticalAlign>Middle</VerticalAlign>
                           </Style>
-                          <Visibility>
-                          </Visibility>
+                          <Visibility></Visibility>
                           <CanGrow>false</CanGrow>
                         </Textbox>
                       </ReportItems>
@@ -247,8 +243,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox7">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -266,8 +261,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox9">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -285,8 +279,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox13">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -304,8 +297,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox15">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -323,8 +315,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox28">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style>
                             <BorderStyle>
                               <Default>None</Default>
@@ -355,11 +346,11 @@
                               <Default>Solid</Default>
                             </BorderStyle>
                             <BackgroundColor>#E9E9E9</BackgroundColor>
-                            <BorderColor  />
-                            <BorderWidth  />
-                            <FontWeight >Bold</FontWeight>
-                            <TextAlign >Center</TextAlign>
-                            <VerticalAlign >Middle</VerticalAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
                           </Style>
                           <Value>Номер по порядку</Value>
                         </Textbox>
@@ -491,8 +482,7 @@
                               <Default>Solid</Default>
                             </BorderStyle>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value></Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -504,8 +494,7 @@
                               <Default>Solid</Default>
                             </BorderStyle>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value></Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -517,8 +506,7 @@
                               <Default>Solid</Default>
                             </BorderStyle>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value></Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -530,8 +518,7 @@
                               <Default>Solid</Default>
                             </BorderStyle>
                           </Style>
-                          <Value>
-                          </Value>
+                          <Value></Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -608,7 +595,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     protection_tools.name AS type_name,
@@ -676,7 +663,7 @@ ORDER BY type_name, size, growth, sex</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -724,15 +711,6 @@ ORDER BY type_name, size, growth, sex</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>database=workwear_dev26;user=;password=;port=3306;server=rs.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <ReportParameters>
     <ReportParameter Name="subdivision_id">
       <DataType>Integer</DataType>
@@ -744,32 +722,28 @@ ORDER BY type_name, size, growth, sex</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="issue_type">
       <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_sex">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt>
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_size">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt>
-      </Prompt> 
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="summary">
       <DataType>Boolean</DataType>
@@ -779,4 +753,13 @@ ORDER BY type_name, size, growth, sex</CommandText>
       <Prompt />
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_dev26;user=;password=;port=3306;server=rs.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>

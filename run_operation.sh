@@ -17,22 +17,22 @@ cd "$(dirname "$0")"
 case $case in
     *4*)
 rm -v -f -R ./Workwear/bin/*
-rm -v -f -R ../QSProjects/*/bin/
-rm -v -f -R ../QSProjects/*/*/bin/
-rm -v -f -R ../My-FyiReporting/*/bin/
-rm -v -f -R ../My-FyiReporting/*/*/bin/
-rm -v -f -R ../Gtk.DataBindings/System.Data.Bindings/bin
+rm -v -f -R ./QSProjects/*/bin/
+rm -v -f -R ./QSProjects/*/*/bin/
+rm -v -f -R ./My-FyiReporting/*/bin/
+rm -v -f -R ./My-FyiReporting/*/*/bin/
+rm -v -f -R ./Gtk.DataBindings/System.Data.Bindings/bin
 rm -v -f -R ./Workwear/obj/*
-rm -v -f -R ../QSProjects/*/obj
-rm -v -f -R ../QSProjects/*/*/obj
-rm -v -f -R ../My-FyiReporting/*/obj/
-rm -v -f -R ../My-FyiReporting/*/*/obj/
-rm -v -f -R ../Gtk.DataBindings/System.Data.Bindings/obj
+rm -v -f -R ./QSProjects/*/obj
+rm -v -f -R ./QSProjects/*/*/obj
+rm -v -f -R ./My-FyiReporting/*/obj/
+rm -v -f -R ./My-FyiReporting/*/*/obj/
+rm -v -f -R ./Gtk.DataBindings/System.Data.Bindings/obj
 ;;&
     *3*)
 rm -v -f -R ./packages/*
-rm -v -f -R ../QSProjects/packages/*
-rm -v -f -R ../My-FyiReporting/packages/*
+rm -v -f -R ./QSProjects/packages/*
+rm -v -f -R ./My-FyiReporting/packages/*
 ;;&
     *1*)
 git pull --autostash
@@ -48,8 +48,8 @@ cd ../Workwear
 ;;&
     *2*)
 nuget restore Workwear.sln;
-nuget restore ../QSProjects/QSProjectsLib.sln;
-nuget restore ../My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
+nuget restore ./QSProjects/QSProjectsLib.sln;
+nuget restore ./My-FyiReporting/MajorsilenceReporting-Linux-GtkViewer.sln
 ;;&
     *5*)
 dotnet test Workwear.Test/Workwear.Test.csproj

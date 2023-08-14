@@ -66,12 +66,12 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools();
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				protectionTools.Name = "СИЗ для тестирования увеличиваем срок носки";
 				uow.Save(protectionTools);
 				
 				var protectionTools2 = new ProtectionTools();
-				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.AddNomenclature(nomenclature2);
 				protectionTools2.Name = "СИЗ для тестирования не увеличиваем";
 				uow.Save(protectionTools2);
 

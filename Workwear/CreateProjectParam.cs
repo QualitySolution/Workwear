@@ -2,6 +2,7 @@ using System;
 using System.Data.Common;
 using System.IO;
 using Autofac;
+using NHibernate.Driver.MySqlConnector;
 using QS.BaseParameters;
 using QS.BusinessCommon.Domain;
 using QS.BusinessCommon;
@@ -96,6 +97,7 @@ namespace workwear
 			// Настройка ORM
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
+				.Driver<MySqlConnectorDriver>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
 				.AdoNetBatchSize(100)
 				.ShowSql ()
@@ -161,13 +163,11 @@ namespace workwear
 			#endif
 
 			containerBuilder.RegisterType<MySqlExceptionErrorNumberLogger>().As<IErrorHandler>();
-			containerBuilder.RegisterType<MySqlConnectorExceptionErrorNumberLogger>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlExceptionAccessDenied>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
-			containerBuilder.RegisterType<MySqlConnectorConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
 			#region Обновления и версии
@@ -311,6 +311,7 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 
 			#region Repository

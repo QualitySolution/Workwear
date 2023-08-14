@@ -91,7 +91,7 @@ namespace WorkwearTest.ViewModels.Stock
 					Name = "Тестовый СИЗ",
 					Type = itemType
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();

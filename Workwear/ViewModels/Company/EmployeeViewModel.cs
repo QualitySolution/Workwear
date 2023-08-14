@@ -19,7 +19,6 @@ using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -29,7 +28,6 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
-using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company.EmployeeChildren;
@@ -49,7 +47,6 @@ namespace Workwear.ViewModels.Company
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly LkUserManagerService lkUserManagerService;
-		private readonly BaseParameters baseParameters;
 		private readonly CommonMessages messages;
 		public SizeService SizeService { get; }
 
@@ -68,7 +65,6 @@ namespace Workwear.ViewModels.Company
 			EmployeeRepository employeeRepository,
 			NormRepository normRepository,
 			LkUserManagerService lkUserManagerService,
-			BaseParameters baseParameters,
 			SizeService sizeService,
 			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
@@ -77,9 +73,9 @@ namespace Workwear.ViewModels.Company
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			employeeRepository.RepoUow = UoW;
 			NormRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
@@ -187,7 +183,7 @@ namespace Workwear.ViewModels.Company
 
 		#region Sensetive
 
-		public bool SensetiveCardNumber => !AutoCardNumber;
+		public bool SensitiveCardNumber => !AutoCardNumber;
 
 		#endregion
 
@@ -195,7 +191,7 @@ namespace Workwear.ViewModels.Company
 
 		private bool autoCardNumber = true;
 		[PropertyChangedAlso(nameof(CardNumber))]
-		[PropertyChangedAlso(nameof(SensetiveCardNumber))]
+		[PropertyChangedAlso(nameof(SensitiveCardNumber))]
 		public bool AutoCardNumber { get => autoCardNumber; set => SetField(ref autoCardNumber, value); }
 
 		public string CardNumber {
@@ -205,14 +201,12 @@ namespace Workwear.ViewModels.Company
 
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
-		public string SubdivisionAddress => Entity.Subdivision?.Address ?? "--//--";
-
 		#region CardUid
 		public virtual string CardUid {
 			get => Entity.CardKey;
 			set {
 				Entity.CardKey = value;
-				OnPropertyChanged(nameof(CardUid));
+				OnPropertyChanged();
 				OnPropertyChanged(nameof(CardUidEntryColor));
 			}
 		}
@@ -302,11 +296,6 @@ namespace Workwear.ViewModels.Company
 
 		void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			//Так как склад подбора мог поменяться при смене подразделения.
-			if(e.PropertyName == nameof(Entity.Subdivision)) {
-				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
-				OnPropertyChanged(nameof(SubdivisionAddress));
-			}
 			if(e.PropertyName == nameof(Entity.FirstName)) {
 				var sex = personNames.GetSexByName(Entity.FirstName);
 				if(sex != Sex.None)
@@ -401,7 +390,7 @@ namespace Workwear.ViewModels.Company
 			}
 			//Проверка номера телефона на уникальность для базы
 			if(!String.IsNullOrWhiteSpace(Entity.PhoneNumber)) {
-				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(UoW, Entity.PhoneNumber);
+				var employeeSamePhone = employeeRepository.GetEmployeeByPhone(Entity.PhoneNumber);
 				if(employeeSamePhone != null && !employeeSamePhone.IsSame(Entity)) {
 					if(interactive.Question($"Телефон {Entity.PhoneNumber} уже привязан к сотруднику {employeeSamePhone.ShortName}. " +
 					                        $"Удалить у него телефон? Чтобы сохранить {Entity.ShortName}?")) {
@@ -561,7 +550,7 @@ namespace Workwear.ViewModels.Company
 
 			if(WearItemsViewModel.IsConfigured) {
 				//Если вкладка со списком спецодежды уже открыта, то обновляем предложения номенклатуры.
-				Entity.FillWearInStockInfo(UoW, baseParameters, Entity.Subdivision?.Warehouse, DateTime.Now);
+				WearItemsViewModel.SizeChanged();
 			}
 		}
 		#endregion

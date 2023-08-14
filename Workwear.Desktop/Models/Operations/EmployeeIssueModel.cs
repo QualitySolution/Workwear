@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -273,8 +273,9 @@ namespace Workwear.Models.Operations {
 			query.ToList();
 		}
 
-		public void PreloadEmployeeInfo(params int[] employeeIds) {
+		public IList<EmployeeCard> PreloadEmployeeInfo(params int[] employeeIds) {
 			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
 				.Future();
 			
 			UoW.Session.QueryOver<EmployeeCard>()
@@ -288,7 +289,41 @@ namespace Workwear.Models.Operations {
 				.Fetch(SelectMode.ChildFetch, x => x)
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.Future();
-			query.ToList();
+			return query.ToList();
+		}
+		
+		/// <summary>
+		/// Заполняет в сотрудниках(не обязательно в одного) информацию по складским остаткам для строк карточек.
+		/// </summary>
+		/// <param name="progressStep">Метод вызывается перед каждым шагом, передавая название шага. Метод выполняет 4 шага.</param>
+		public void FillWearInStockInfo(
+			IEnumerable<EmployeeCard> employees,
+			StockBalanceModel stockBalanceModel,
+			Action<string> progressStep = null)
+		{
+			progressStep?.Invoke("Получаем строки потребностей");
+			var items = employees.SelectMany(x => x.WorkwearItems).ToList();
+			progressStep?.Invoke("Получаем список номенклатур");
+			var allNomenclatures = 
+				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+			progressStep?.Invoke("Обновляем складские остатки при необходимости");
+			stockBalanceModel.AddNomenclatures(allNomenclatures);
+			progressStep?.Invoke("Заполняем строки карточек");
+			foreach(var item in items) {
+				item.StockBalanceModel = stockBalanceModel;
+			}
+		}
+		
+		/// <summary>
+		/// Заполняем в сотрудника информацию по складским остаткам для строк карточек.
+		/// </summary>
+		/// <param name="progressStep">Метод вызывается перед каждым шагом, передавая название шага. Метод выполняет 4 шага.</param>
+		public void FillWearInStockInfo(
+			EmployeeCard employee,
+			StockBalanceModel stockBalanceModel,
+			Action<string> progressStep = null)
+		{
+			FillWearInStockInfo(new [] {employee}, stockBalanceModel, progressStep);
 		}
 		#endregion
 	}

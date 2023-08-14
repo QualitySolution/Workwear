@@ -12,7 +12,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.Repository.Stock;
+using Workwear.Models.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Company
@@ -73,14 +73,14 @@ namespace Workwear.Domain.Company
 			set => SetField (ref nextIssueAnnotation, value);
 		}
 		#endregion
-		#region Не хранимое в базе значение
-		private IList<StockBalanceDTO> inStock;
-		[Display (Name = "На складе")]
-		public virtual IList<StockBalanceDTO> InStock {
-			get => inStock;
-			set => SetField (ref inStock, value);
-		}
+		/// <summary>
+		/// Получаем значения остатков на складе для подходящих позиций.
+		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
+		/// </summary>
+		public virtual IEnumerable<StockBalance> InStock => StockBalanceModel?.Balances.Where(x => MatchStockPosition(x.Position));
 
+		#region Модели
+		public virtual StockBalanceModel StockBalanceModel { get; set; }
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
@@ -115,7 +115,7 @@ namespace Workwear.Domain.Company
 
 		public virtual StockStateInfo InStockState {
 			get {
-				if(InStock == null)
+				if(StockBalanceModel == null)
 					return StockStateInfo.NotLoaded;
 
 				if(!ProtectionTools.MatchedNomenclatures.Any())
@@ -130,7 +130,7 @@ namespace Workwear.Domain.Company
 				return StockStateInfo.NotEnough;
 			}
 		}
-		public virtual IEnumerable<StockBalanceDTO> BestChoiceInStock {
+		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
 				var bestChoice = InStock.ToList();
 				bestChoice.Sort(new BestChoiceInStockComparer(ProtectionTools));
@@ -170,15 +170,16 @@ namespace Workwear.Domain.Company
 				if(InStockState == StockStateInfo.UnknownNomenclature)
 					return "нет подходящей";
 
-				if(InStock == null || InStock.Count == 0)
+				if(StockBalanceModel == null || !InStock.Any())
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
-				var text = first.StockPosition.Title + " - " + 
+				var text = first.Position.Title + " - " + 
 				           (ProtectionTools?.Type?.Units?.MakeAmountShortStr(first.Amount) ?? first.Amount.ToString());
-				if(InStock.Count > 1)
+				var inStockCount = InStock.Count();
+				if(inStockCount > 1)
 					text += NumberToTextRus.FormatCase(
-						InStock.Count - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
+						inStockCount - 1, " (еще {0} вариант)", " (еще {0} варианта)", " (еще {0} вариантов)");
 				return text;
 			}
 		}
@@ -349,7 +350,7 @@ namespace Workwear.Domain.Company
 		OutOfStock,
 	}
 
-	public class BestChoiceInStockComparer : IComparer<StockBalanceDTO> {
+	public class BestChoiceInStockComparer : IComparer<StockBalance> {
 		private readonly ProtectionTools protectionTools;
 		public BestChoiceInStockComparer(ProtectionTools protectionTools) => 
 			this.protectionTools = protectionTools;
@@ -358,17 +359,17 @@ namespace Workwear.Domain.Company
 		//Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
 		//Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
 		//Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
-		public int Compare(StockBalanceDTO x, StockBalanceDTO y) {
+		public int Compare(StockBalance x, StockBalance y) {
 			if(x is null || y is null)
 				throw new ArgumentNullException();
-			if(x.Owner?.Priority != y.Owner?.Priority)
-				return (y.Owner?.Priority ?? 0).CompareTo(x.Owner?.Priority ?? 0);
-			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Nomenclature)).Count();
-			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Nomenclature)).Count();
+			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
+				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
+			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
+			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
 				return xMatchedNomenclature.CompareTo(yMatchedNomenclature);
-			if(x.WearPercent != y.WearPercent)
-				return x.WearPercent.CompareTo(y.WearPercent);
+			if(x.Position.WearPercent != y.Position.WearPercent)
+				return x.Position.WearPercent.CompareTo(y.Position.WearPercent);
 			if(x.Amount != y.Amount)
 				return y.Amount.CompareTo(x.Amount);
 			return 0;

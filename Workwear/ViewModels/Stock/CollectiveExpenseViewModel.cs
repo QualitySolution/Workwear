@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -58,6 +59,7 @@ namespace Workwear.ViewModels.Stock
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
+			IProgressBarDisplayable globalProgress, 
 			IChangeMonitor<CollectiveExpenseItem> changeMonitor
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
@@ -69,7 +71,7 @@ namespace Workwear.ViewModels.Stock
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
 
-			var performance = new PerformanceHelper("Диалог", logger);
+			var performance = new ProgressPerformanceHelper(globalProgress, 13, "Предзагрузка данных документа", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -82,21 +84,20 @@ namespace Workwear.ViewModels.Stock
 					.Fetch(SelectMode.Fetch, x => x.Warehouse)
 					.SingleOrDefault();
 			}
-			performance.CheckPoint("Предзагрузка данных документа");
+			performance.CheckPoint("entryBuilder и changeMonitor");
 			
 			changeMonitor.SubscribeAllChange(
 					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
 				.TargetField(x => x.Employee);
 			changeMonitor.AddSetTargetUnitOfWorks(UoW);
-
-			performance.CheckPoint("entryBuilder и changeMonitor");
+			
+			performance.CheckPoint("Warehouse");
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
 			
-			performance.CheckPoint("Warehouse");
 			performance.StartGroup("CollectiveExpenseItemsViewModel");
 			var parameterModel = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
 			var parameterPerformance = new TypedParameter(typeof(PerformanceHelper), performance);
@@ -105,8 +106,7 @@ namespace Workwear.ViewModels.Stock
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
-			performance.CheckPoint("Конец");
-			performance.PrintAllPoints(logger);
+			performance.End();
 		}
 
 		#region EntityViewModels
@@ -176,6 +176,10 @@ namespace Workwear.ViewModels.Stock
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+
+			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
+			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
+				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}

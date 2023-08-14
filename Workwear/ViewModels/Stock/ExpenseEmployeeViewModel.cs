@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.IO;
 using Autofac;
 using Gamma.Utilities;
 using NHibernate;
@@ -48,6 +49,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly BaseParameters baseParameters;
 		private readonly IProgressBarDisplayable globalProgress;
 		private readonly ModalProgressCreator modalProgressCreator;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
@@ -62,6 +64,7 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactive,
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator modalProgressCreator,
+			StockBalanceModel stockBalanceModel,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
@@ -79,6 +82,7 @@ namespace Workwear.ViewModels.Stock {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
 			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
@@ -111,6 +115,8 @@ namespace Workwear.ViewModels.Stock {
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			stockBalanceModel.Warehouse = Entity.Warehouse;
+			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
 				performance.StartGroup("FillUnderreceived");
 				FillUnderreceived(performance);
@@ -209,8 +215,8 @@ namespace Workwear.ViewModels.Stock {
 			issueModel.PreloadWearItems(Entity.Employee.Id);
 			performance.CheckPoint(nameof(Entity.Employee.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(new []{Entity.Employee});
-			performance.CheckPoint(nameof(Entity.Employee.FillWearInStockInfo));
-			Entity.Employee.FillWearInStockInfo(UoW, baseParameters, Entity.Warehouse, Entity.Date, onlyUnderreceived: false);
+			performance.CheckPoint(nameof(issueModel.FillWearInStockInfo));
+			issueModel.FillWearInStockInfo(Entity.Employee, stockBalanceModel);
 
 			performance.CheckPoint("Заполняем строки документа");
 			foreach(var item in Entity.Employee.WorkwearItems) {
@@ -331,6 +337,10 @@ namespace Workwear.ViewModels.Stock {
 					{ "id",  Entity.IssuanceSheet.Id }
 				}
 			};
+			
+			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
+			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
+				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
@@ -348,7 +358,11 @@ namespace Workwear.ViewModels.Stock {
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch(e.PropertyName) {
+				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					break;
 				case nameof(Entity.Date):
+					stockBalanceModel.OnDate = Entity.Date;
 					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
 						UpdateAmounts();
 					break;

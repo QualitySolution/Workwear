@@ -19,7 +19,18 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			get => showOnlyWork;
 			set => SetField(ref showOnlyWork, value);
 		}
-
+		
+		private bool canShowOnlyWithoutNorms = false;
+		public bool CanShowOnlyWithoutNorms {
+			get => canShowOnlyWithoutNorms;
+			set => SetField(ref canShowOnlyWithoutNorms, value);
+		}
+		private bool showOnlyWithoutNorms = false;
+		public virtual bool ShowOnlyWithoutNorms {
+			get => showOnlyWithoutNorms;
+			set => SetField(ref showOnlyWithoutNorms, value);
+		}
+		
 		private Subdivision subdivision;
 		public virtual Subdivision Subdivision {
 			get => subdivision;

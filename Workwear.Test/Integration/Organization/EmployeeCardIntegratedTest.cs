@@ -3,6 +3,7 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -10,7 +11,9 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Test.Integration.Organization
@@ -58,8 +61,8 @@ namespace Workwear.Test.Integration.Organization
 				var protectionTools = new ProtectionTools {
 					Name = "Номенклатура нормы"
 				};
-				protectionTools.AddNomeclature(nomenclature);
-				protectionTools.AddNomeclature(nomenclature2);
+				protectionTools.AddNomenclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -91,15 +94,20 @@ namespace Workwear.Test.Integration.Organization
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				var today = new DateTime(2020, 07, 22);
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = today;
+				issueModel.FillWearInStockInfo(employee, stockModel);
 				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters, today).First();
 				Assert.That(employeeCardItem.BestChoiceInStock.Count(), Is.GreaterThan(0));
 
 				var bestChoice = employeeCardItem.BestChoiceInStock.First();
 
-				Assert.That(bestChoice.Nomenclature, Is.EqualTo(nomenclature));
+				Assert.That(bestChoice.Position.Nomenclature, Is.EqualTo(nomenclature));
 			}
 		}
 
@@ -144,8 +152,8 @@ namespace Workwear.Test.Integration.Organization
 				var protectionTools = new ProtectionTools {
 					Name = "Номенклатура нормы"
 				};
-				protectionTools.AddNomeclature(nomenclature);
-				protectionTools.AddNomeclature(nomenclature2);
+				protectionTools.AddNomenclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -195,8 +203,13 @@ namespace Workwear.Test.Integration.Organization
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
 
 				var today = new DateTime(2020, 07, 22);
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = today;
+				issueModel.FillWearInStockInfo(employee, stockModel);
 				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
 				var employeeCardItem = employee.GetUnderreceivedItems(baseParameters, today).First();
 				var employeeCardItemCount = employee.GetUnderreceivedItems(baseParameters, today).Count();
@@ -209,7 +222,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var bestChoice = employeeCardItem.BestChoiceInStock.First();
 
-				Assert.That(bestChoice.Nomenclature, Is.EqualTo(nomenclature));
+				Assert.That(bestChoice.Position.Nomenclature, Is.EqualTo(nomenclature));
 			}
 		}
 
@@ -264,13 +277,13 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(nomenclature3);
 
 				var protectionTools = new ProtectionTools {Name = "Номенклатура нормы"};
-				protectionTools.AddNomeclature(nomenclature);
-				protectionTools.AddNomeclature(nomenclature3);
+				protectionTools.AddNomenclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature3);
 
 				uow.Save(protectionTools);
 
 				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
-				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
 
 				var norm = new Norm();
@@ -329,8 +342,13 @@ namespace Workwear.Test.Integration.Organization
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));
 
 				var today = new DateTime(2020, 07, 22);
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, today);
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = today;
+				issueModel.FillWearInStockInfo(employee, stockModel);
 				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.GreaterThan(0));
 				Assert.That(employee.GetUnderreceivedItems(baseParameters, today).Count(), Is.EqualTo(2));
 
@@ -379,10 +397,10 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools {Name = "Номенклатура нормы"};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 
 				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
-				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.AddNomenclature(nomenclature2);
 
 				protectionTools.AddAnalog(protectionTools2);
 				protectionTools2.AddAnalog(protectionTools);
@@ -433,13 +451,20 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(income);
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
-
-				employee.FillWearInStockInfo(uow, baseParameters, warehouse, new DateTime(2020, 07, 22));
+				
+				var today = new DateTime(2020, 07, 22);
+				var uowProvider = new UnitOfWorkProvider(uow);
+				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				stockModel.Warehouse = warehouse;
+				stockModel.OnDate = today;
+				issueModel.FillWearInStockInfo(employee, stockModel);
+				
 				var item1 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem);
 				var item2 = employee.WorkwearItems.FirstOrDefault(x => x.ActiveNormItem == normItem2);
-				Assert.That(item1.BestChoiceInStock.First().Nomenclature.Id, Is.EqualTo(nomenclature.Id));
+				Assert.That(item1.BestChoiceInStock.First().Position.Nomenclature.Id, Is.EqualTo(nomenclature.Id));
 				Assert.That(item1.BestChoiceInStock.Count(), Is.EqualTo(2));
-				Assert.That(item2.BestChoiceInStock.First().Nomenclature.Id, Is.EqualTo(nomenclature2.Id));
+				Assert.That(item2.BestChoiceInStock.First().Position.Nomenclature.Id, Is.EqualTo(nomenclature2.Id));
 				Assert.That(item2.BestChoiceInStock.Count(), Is.EqualTo(2));
 			}
 		}
@@ -467,7 +492,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionToolsAnalog = new ProtectionTools();
 				protectionToolsAnalog.Name = "Номенклатура нормы Аналог";
-				protectionToolsAnalog.AddNomeclature(nomenclature);
+				protectionToolsAnalog.AddNomenclature(nomenclature);
 				uow.Save(protectionToolsAnalog);
 
 				var protectionTools = new ProtectionTools();
@@ -536,7 +561,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "Номенклатура нормы";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -621,7 +646,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "Номенклатура нормы";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -724,7 +749,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "Номенклатура нормы";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -807,7 +832,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "Номенклатура нормы";
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var norm = new Norm();
@@ -873,12 +898,12 @@ namespace Workwear.Test.Integration.Organization
 
 				var protectionToolsAnalog = new ProtectionTools();
 				protectionToolsAnalog.Name = "Номенклатура нормы Аналог";
-				protectionToolsAnalog.AddNomeclature(nomenclature);
+				protectionToolsAnalog.AddNomenclature(nomenclature);
 
 				var protectionTools = new ProtectionTools();
 				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddAnalog(protectionToolsAnalog);
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				protectionToolsAnalog.AddAnalog(protectionTools);
 				uow.Save(protectionToolsAnalog);
 				uow.Save(protectionTools);

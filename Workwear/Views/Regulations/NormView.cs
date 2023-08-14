@@ -107,11 +107,19 @@ namespace Workwear.Views.Regulations
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeItems.GetSelectedObject<NormItem>();
-				var menuItem = 
-					new MenuItemId<NormItem>("Пересчитать сроки носки в документах выдачи");
-				menuItem.ID = selected;
-				menuItem.Activated += (sender, e) => ViewModel.ReSaveLastIssue(((MenuItemId<NormItem>)sender).ID);
+				
+				var menuItem = new MenuItem("Открыть номенклатуру нормы");
+				menuItem.Sensitive = selected != null;
+				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
 				menu.Add(menuItem);
+				
+				menu.Add(new SeparatorMenuItem());
+				
+				menuItem = new MenuItem("Пересчитать сроки носки в документах выдачи");
+				menuItem.Sensitive = selected != null;
+				menuItem.Activated += (sender, e) => ViewModel.ReSaveLastIssue(selected);
+				menu.Add(menuItem);
+				
 				menu.ShowAll();
 				menu.Popup();
 			}

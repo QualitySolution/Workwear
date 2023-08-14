@@ -19,12 +19,14 @@ namespace Workwear.ViewModels.Tools
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
 			ShiftExpluatacion = baseParameters.ShiftExpluatacion;
 			ExtendPeriod = baseParameters.ExtendPeriod;
+			CollapseDuplicateIssuanceSheet = this.baseParameters.CollapseDuplicateIssuanceSheet;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
 		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
+		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod;
 
 		#region Parameters
@@ -33,6 +35,8 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
+
+		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -47,6 +51,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.ShiftExpluatacion = ShiftExpluatacion;
 			if(ExtendPeriod != baseParameters.ExtendPeriod)
 				baseParameters.ExtendPeriod = ExtendPeriod;
+			if(CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet)
+				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
 			return true;
 		}
 	}

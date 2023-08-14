@@ -6,21 +6,22 @@ using Workwear.ViewModels.Stock;
 using Gtk;
 using Gamma.Binding.Converters;
 using Workwear.Domain.Sizes;
+using QS.Views.Resolve;
 
 namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		public NomenclatureView(NomenclatureViewModel viewModel) : base(viewModel)
+		public NomenclatureView(NomenclatureViewModel viewModel, IGtkViewResolver viewResolver) : base(viewModel)
 		{
 			this.Build();
-			ConfigureDlg();
+			ConfigureDlg(viewResolver);
 			CommonButtonSubscription();
 			ybuttonratingDetails.Clicked += ButtonRatingDetailsOnClicked;
 		}
 
-		private void ConfigureDlg()
+		private void ConfigureDlg(IGtkViewResolver viewResolver)
 		{
 			yentryNumber.Binding
 				.AddBinding(Entity, e => e.Number, w => w.Text)
@@ -81,6 +82,10 @@ namespace Workwear.Views.Stock {
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
+
+			var protectionToolsView = viewResolver.Resolve(ViewModel.ProtectionToolsViewModel);
+			dialog1_VBox.Add(protectionToolsView);
+			protectionToolsView.Show();
 		}
 
 		void MakeMenu()

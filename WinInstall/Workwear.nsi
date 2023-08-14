@@ -211,7 +211,12 @@ Section "${PRODUCT_NAME}" SecProgram
   Delete $INSTDIR\workwear_ru.pdf
   
   ; Удаляем файлы используемые до версии 2.5.1
-   Delete "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk"
+  Delete "$SMPROGRAMS\${MENU_DIR_NAME}\Документация.lnk"
+   
+  ; Удаляем файлы используемые до 2.8
+  Delete $INSTDIR\Nini.dll
+  Delete $INSTDIR\MySql.Data.dll
+  Delete $INSTDIR\MySql.Data.xml
 
 SectionEnd
 

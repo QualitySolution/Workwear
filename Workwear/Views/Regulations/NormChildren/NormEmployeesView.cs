@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Gamma.ColumnConfig;
+using Gtk;
 using QS.Views;
 using Workwear.ViewModels.Regulations.NormChildren;
 
@@ -20,9 +22,14 @@ namespace Workwear.Views.Regulations.NormChildren {
 			tvEmployees.Selection.Mode = Gtk.SelectionMode.Multiple;
 			tvEmployees.Binding.AddBinding(ViewModel, vm => vm.Employees, w => w.ItemsDataSource).InitializeFromSource();
 			tvEmployees.Selection.Changed += (sender, e) => buttonRemove.Sensitive = tvEmployees.Selection.CountSelectedRows() > 0;
+			tvEmployees.RowActivated += TvEmployeesOnRowActivated;
 
 			comboSort.ItemsEnum = typeof(NormEmployeeSortType);
 			comboSort.Binding.AddBinding(ViewModel, v => v.SortBy, w => w.SelectedItem).InitializeFromSource();
+		}
+
+		private void TvEmployeesOnRowActivated(object o, RowActivatedArgs args) {
+			ViewModel.OpenEmployee(tvEmployees.GetSelectedObjects<EmployeeNode>().First());
 		}
 
 		protected void OnButtonAddClicked(object sender, EventArgs e) {

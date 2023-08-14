@@ -62,13 +62,13 @@ namespace Workwear.Test.Integration.Tools
 				var protectionTools = new ProtectionTools {
 					Name = "СИЗ для тестирования"
 				};
-				protectionTools.AddNomeclature(nomenclature);
+				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
 
 				var protectionTools2 = new ProtectionTools {
 					Name = "СИЗ для тестирования 2"
 				};
-				protectionTools2.AddNomeclature(nomenclature2);
+				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
 
 				var norm = new Norm();
