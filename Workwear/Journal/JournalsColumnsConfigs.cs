@@ -167,7 +167,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<NormJournalViewModel>(
 				() => FluentColumnsConfig<NormJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("№ ТОН").AddTextRenderer(node => node.TonNumber)
 					.AddColumn("№ Приложения").AddTextRenderer(node => node.TonAttachment)
