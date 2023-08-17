@@ -125,8 +125,9 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Код").AddTextRenderer(node => node.Code).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node => node.IndentedName).SearchHighlight()
-					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.AddColumn("Сотрудников").AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
 					.AddColumn("Головное подразделение").AddTextRenderer(node => node.ParentName)
+					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
 					.Finish()
 			);
 

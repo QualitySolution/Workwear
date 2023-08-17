@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -32,6 +33,7 @@ namespace workwear.Journal.ViewModels.Company
 		}
 		protected override IQueryOver<Subdivision> ItemsQuery(IUnitOfWork uow)
 		{
+			EmployeeCard employeeAlias = null;
 			SubdivisionJournalNode resultAlias = null;
 			Subdivision parent1SubdivisionAlias = null;
 			Subdivision parent2SubdivisionAlias = null;
@@ -49,6 +51,10 @@ namespace workwear.Journal.ViewModels.Company
 					() => parent2SubdivisionAlias.Name,
 					() => parent1SubdivisionAlias.Name,
 					() => subdivisionAlias.Name);
+			
+			var employeesSubQuery = QueryOver.Of<EmployeeCard>(() => employeeAlias)
+				.Where(() => employeeAlias.Subdivision.Id == subdivisionAlias.Id)
+				.ToRowCountQuery();
 
 			var query = uow.Session.QueryOver(() => subdivisionAlias)
 				.Where(GetSearchCriterion<Subdivision>(
@@ -74,6 +80,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 						.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+						.SelectSubQuery(employeesSubQuery).WithAlias(() => resultAlias.Employees)
 						.Select(() => parent1SubdivisionAlias.Id).WithAlias(() => resultAlias.Parent1Id)
 						.Select(() => parent2SubdivisionAlias.Id).WithAlias(() => resultAlias.Parent2Id)
 						.Select(() => parent3SubdivisionAlias.Id).WithAlias(() => resultAlias.Parent3Id)
@@ -88,6 +95,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+					.SelectSubQuery(employeesSubQuery).WithAlias(() => resultAlias.Employees)
 					.Select(() => parent1SubdivisionAlias.Name).WithAlias(() => resultAlias.ParentName)
 					).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SubdivisionJournalNode>());
@@ -98,6 +106,7 @@ namespace workwear.Journal.ViewModels.Company
 		public string Code { get; set; }
 		public string Name { get; set; }
 		public string Address { get; set; }
+		public int Employees { get; set; }
 		public string ParentName { get; set; }
 		public int? Parent1Id { get; set; }
 		public int? Parent2Id { get; set; }
