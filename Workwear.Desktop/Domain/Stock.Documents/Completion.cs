@@ -15,9 +15,9 @@ using BindingsObservableResultList =  System.Data.Bindings.Collections.Generic.G
 namespace Workwear.Domain.Stock.Documents
 {
     [Appellative (Gender = GrammaticalGender.Feminine,
-        NominativePlural = "комплектации номенклатуры",
-        Nominative = "комплектация номенклатуры",
-        Genitive = "комплектации номенклатуры")]
+        NominativePlural = "документы комплектации",
+        Nominative = "документ комплектации",
+        Genitive = "документ комплектации")]
     [HistoryTrace]
     public class Completion: StockDocument, IValidatableObject
     {
