@@ -534,6 +534,14 @@ namespace Workwear.Domain.Operations
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if((Nomenclature?.UseBarcode ?? false) && BarcodeOperations.Count != Issued)
 				yield return new ValidationResult("Количество созданных штрихкодов должно соответствовать количеству выданного.");
+			if(manualOperation) {
+				if(OperationTime == null || OperationTime == DateTime.MinValue)
+					yield return new ValidationResult("Дата операции должнны быть задана.");
+				if(Issued <= 0)
+					yield return new ValidationResult("Количество должно быть больше 0.");
+				if(ProtectionTools == null)
+					yield return new ValidationResult("Номенклатура нормы должна быть задана.");
+			}
 		}
 	}
 }
