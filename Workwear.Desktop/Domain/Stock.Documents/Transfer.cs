@@ -107,15 +107,15 @@ namespace Workwear.Domain.Stock.Documents
 				currentItems = items.Where(x => x == item).ToList();
 			}
 			else {
-				nomenclatures = items.Select(x => x.Nomenclature).ToList();
+				nomenclatures = items.Select(x => x.Nomenclature).Distinct().ToList();
 				currentItems = items;
 			}
 			var stock = new StockRepository().StockBalances(UoW, WarehouseFrom, nomenclatures, Date);
 			foreach(var currentItem in currentItems) {
-				var currentNomeclature = currentItem.Nomenclature;
+				var currentNomenclature = currentItem.Nomenclature;
 
 				var stockBalanceDTO = stock
-					.FirstOrDefault(x => x.Nomenclature == currentNomeclature && 
+					.FirstOrDefault(x => x.Nomenclature == currentNomenclature && 
 					                     x.WearSize == currentItem.WarehouseOperation.WearSize && 
 					                     x.Height == currentItem.WarehouseOperation?.Height);
 

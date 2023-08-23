@@ -270,7 +270,7 @@ namespace Workwear.ViewModels.Company
 					}
 					return true;
 				}
-				if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered)
+				if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered && !String.IsNullOrWhiteSpace(lkLastPhone))
 					lkUserManagerService.ReplacePhone(lkLastPhone, Entity.PhoneNumber);
 
 				if(LkPasswordNotChanged)

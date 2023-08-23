@@ -125,11 +125,15 @@ namespace Workwear.ViewModels.Stock
 		[PropertyChangedAlso(nameof(SensitiveButtonDel))]
 		[PropertyChangedAlso(nameof(SensitiveButtonChange))]
 		[PropertyChangedAlso(nameof(SensitiveRefreshMenuItem))]
+		[PropertyChangedAlso(nameof(CountItemsForEmployee))]
+		[PropertyChangedAlso(nameof(CountItemsForProtectionTools))]
 		public virtual CollectiveExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
 		}
 		
+		public int CountItemsForEmployee => SelectedItem?.Employee != null ? Entity.Items.Count(x => x.Employee.IsSame(SelectedItem?.Employee)) : 0;
+		public int CountItemsForProtectionTools => SelectedItem?.ProtectionTools != null ? Entity.Items.Count(x => x.ProtectionTools.IsSame(SelectedItem?.ProtectionTools)) : 0;
 		public IList<Owner> Owners { get; }
 
 		#endregion
@@ -311,6 +315,14 @@ namespace Workwear.ViewModels.Stock
 				DeleteItem(deleteItem);
 			}
 		}
+		
+		public void DeleteProtectionTools(CollectiveExpenseItem item) {
+			var toDelete = Entity.Items.Where(x => x.ProtectionTools.IsSame(item.ProtectionTools)).ToList();
+			foreach(var deleteItem in toDelete) {
+				DeleteItem(deleteItem);
+			}
+		}
+
 		#endregion
 		#region Расчет для View
 		public string GetRowColor(CollectiveExpenseItem item) {

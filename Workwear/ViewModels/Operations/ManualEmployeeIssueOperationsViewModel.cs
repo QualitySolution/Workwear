@@ -155,9 +155,9 @@ namespace Workwear.ViewModels.Operations
 			get => SelectOperation?.Nomenclature;
 			set {
 				SelectOperation.Nomenclature = value;
-				if(Size != null && !Size.SizeType.IsSame(Nomenclature.Type.SizeType))
+				if(Size != null && !Size.SizeType.IsSame(Nomenclature?.Type?.SizeType))
 					Size = null;
-				if(Height != null && !Height.SizeType.IsSame(Nomenclature.Type.HeightType))
+				if(Height != null && !Height.SizeType.IsSame(Nomenclature?.Type?.HeightType))
 					Height = null;
 				
 				OnPropertyChanged();
