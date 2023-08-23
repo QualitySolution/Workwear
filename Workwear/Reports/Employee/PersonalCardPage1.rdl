@@ -182,14 +182,13 @@ WHERE
     <DataSet Name="Sizes">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-size_types.name AS sizeName,
-sizes.name AS sizeValue
-FROM `wear_cards_sizes` 
-LEFT JOIN sizes ON size_id = sizes.id
-LEFT JOIN size_types ON wear_cards_sizes.size_type_id = size_types.id
+        <CommandText>SELECT
+    size_types.name AS sizeName,
+    sizes.name AS sizeValue
+FROM size_types
+    LEFT JOIN wear_cards_sizes ON wear_cards_sizes.employee_id = @id AND wear_cards_sizes.size_type_id = size_types.id
+    LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
 WHERE size_types.use_in_employee = true
-AND `employee_id` = @id
 ORDER BY size_types.position
 LIMIT 10</CommandText>
         <QueryParameters>
@@ -849,11 +848,13 @@ LIMIT 10</CommandText>
                           <Left>None</Left>
                           <Right>None</Right>
                           <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <FontSize>11pt</FontSize>
+                        <TextAlign>Left</TextAlign>
+                        <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -875,6 +876,7 @@ LIMIT 10</CommandText>
                         <BorderWidth></BorderWidth>
                         <TextAlign>Center</TextAlign>
                         <FontSize>11pt</FontSize>
+                        <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
