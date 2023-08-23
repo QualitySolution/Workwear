@@ -117,43 +117,62 @@ WHERE
     <DataSet Name="Norms">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
-    protection_tools.name AS type_name,
-    norms.ton_paragraph,
-    measurement_units.name AS unit,
-    CASE
-        WHEN norms_item.period_type = 'Shift' THEN CONCAT_WS(' ', norms_item.amount, 'на смену')
-        WHEN norms_item.period_type = 'Wearout' THEN CONCAT_WS(' ', norms_item.amount, 'до износа')
-        WHEN norms_item.period_type = 'Year'
-            THEN IF (norms_item.period_count = 1, norms_item.amount,
-                CONCAT_WS(' ',norms_item.amount, 'на', norms_item.period_count,
-                    CASE
-                        WHEN norms_item.period_count BETWEEN 11 AND 19 THEN 'лет'
-                        WHEN norms_item.period_count % 10 = 1 THEN 'год'
-                        WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN 'года'
-                        ELSE 'лет'
-                        END))
-        WHEN norms_item.period_type = 'Month' THEN
-            CASE
-                WHEN norms_item.period_count &gt; 12 THEN
-                    CONCAT_WS(' ', norms_item.amount, 'на',TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM CAST(norms_item.amount * norms_item.period_count / 12 AS DECIMAL(5,3)) ))), 'года')
-                WHEN norms_item.period_count &lt;= 12 THEN
-                    TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM  CAST(norms_item.amount * 12 / norms_item.period_count AS DECIMAL(5,3)))))
-                END
-        WHEN norms_item.period_type = 'Duty' THEN CONCAT_WS(' ', norms_item.amount, 'дежурный')
-                
-        END AS count_by_year
-FROM
-    wear_cards_item
-        LEFT JOIN
-    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-        LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-        LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
-        LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
-        LEFT JOIN norms ON norms.id = norms_item.norm_id
-WHERE
-        wear_cards_item.wear_card_id =  @id;</CommandText>
+        <CommandText>SELECT protection_tools.name  AS type_name,
+       norms.ton_paragraph,
+       norms_item.amount AS amount,
+       CONCAT(
+          CASE
+              WHEN measurement_units.okei = 796
+                  THEN 'штук '
+              WHEN measurement_units.okei = 715
+                  THEN 'пар '
+              WHEN measurement_units.okei = 839
+                  THEN 'комплктов '
+              WHEN measurement_units.okei = 704
+                  THEN 'наборов '
+          END,
+          CASE
+             WHEN norms_item.period_type = 'Shift'
+                 THEN 'на смену'
+             WHEN norms_item.period_type = 'Wearout'
+                 THEN 'до износа'
+             WHEN norms_item.period_type = 'Duty'
+                 THEN 'дежурных'
+             WHEN norms_item.period_type = 'Year'
+                 THEN CASE
+                     WHEN norms_item.period_count = 1
+                         THEN 'на год'
+                     WHEN norms_item.period_count BETWEEN 11 AND 19 
+                         THEN CONCAT('на ',norms_item.period_count ,' лет')
+                     WHEN norms_item.period_count % 10 = 1 
+                         THEN CONCAT('на ',norms_item.period_count ,' год')
+                     WHEN norms_item.period_count % 10 BETWEEN 2 and 4 
+                         THEN CONCAT('на ',norms_item.period_count ,' года')
+                     ELSE CONCAT('на ',norms_item.period_count ,' лет')
+                 END
+             WHEN norms_item.period_type = 'Month'
+                 THEN CASE
+                     WHEN norms_item.period_count = 1
+                         THEN 'на месяц'
+                     WHEN norms_item.period_count BETWEEN 11 AND 19
+                         THEN CONCAT('на ',norms_item.period_count ,' месяцев')
+                     WHEN norms_item.period_count % 10 = 1
+                         THEN CONCAT('на ',norms_item.period_count ,' месяц')
+                     WHEN norms_item.period_count % 10 BETWEEN 2 and 4
+                         THEN CONCAT('на ',norms_item.period_count ,' месяца')
+                     ELSE CONCAT('на ',norms_item.period_count ,' месяцев')
+                 END
+             END
+          )AS unit_on_period
+FROM wear_cards_item
+         LEFT JOIN
+     protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+         LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+         LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+         LEFT JOIN
+     norms_item ON wear_cards_item.norm_item_id = norms_item.id
+         LEFT JOIN norms ON norms.id = norms_item.norm_id
+WHERE wear_cards_item.wear_card_id = 10;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -169,12 +188,12 @@ WHERE
           <DataField>ton_paragraph</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="unit">
-          <DataField>unit</DataField>
-          <TypeName>System.String</TypeName>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <TypeName>System.UInt16</TypeName>
         </Field>
-        <Field Name="count_by_year">
-          <DataField>count_by_year</DataField>
+        <Field Name="unit_on_period">
+          <DataField>unit_on_period</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -182,14 +201,13 @@ WHERE
     <DataSet Name="Sizes">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-size_types.name AS sizeName,
-sizes.name AS sizeValue
-FROM `wear_cards_sizes` 
-LEFT JOIN sizes ON size_id = sizes.id
-LEFT JOIN size_types ON wear_cards_sizes.size_type_id = size_types.id
+        <CommandText>SELECT
+    size_types.name AS sizeName,
+    sizes.name AS sizeValue
+FROM size_types
+    LEFT JOIN wear_cards_sizes ON wear_cards_sizes.employee_id = @id AND wear_cards_sizes.size_type_id = size_types.id
+    LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
 WHERE size_types.use_in_employee = true
-AND `employee_id` = @id
 ORDER BY size_types.position
 LIMIT 10</CommandText>
         <QueryParameters>
@@ -707,7 +725,7 @@ LIMIT 10</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit.Value</Value>
+                      <Value>=Fields!unit_on_period.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -723,7 +741,7 @@ LIMIT 10</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!count_by_year.Value</Value>
+                      <Value>=Fields!amount.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -794,7 +812,7 @@ LIMIT 10</CommandText>
       </Textbox>
       <Table Name="Table2">
         <DataSetName>Sizes</DataSetName>
-        <NoRows>Query returned no rows!</NoRows>
+        <NoRows>Размеры не указаны.</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
@@ -826,10 +844,12 @@ LIMIT 10</CommandText>
                           <Left>None</Left>
                           <Right>None</Right>
                           <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                        <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
                       <ZIndex>1</ZIndex>
                     </Textbox>
@@ -850,6 +870,8 @@ LIMIT 10</CommandText>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth></BorderWidth>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
                       <ZIndex>1</ZIndex>
                     </Textbox>
@@ -912,7 +934,7 @@ LIMIT 10</CommandText>
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>39</Value>
+          <Value>4649</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -921,11 +943,11 @@ LIMIT 10</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=office.qsolution.ru;user=Space;database=workwear_test_sibur3;port=3306;password=4562;</ConnectString>
+        <ConnectString>server=office.qsolution.ru;user=;database=workwear_test_;port=3306;password=;</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
