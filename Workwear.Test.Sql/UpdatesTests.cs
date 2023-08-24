@@ -5,14 +5,14 @@ using System.IO;
 using System.Linq;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using NLog;
 using NUnit.Framework;
 using QS.DBScripts.Controllers;
-using QS.DBScripts.Models;
 using QS.Updater.DB;
 using QS.Utilities.Text;
 using Workwear.Sql;
+using Workwear.Test.Sql.Models;
 
 namespace Workwear.Test.Sql
 {
@@ -63,7 +63,8 @@ namespace Workwear.Test.Sql
 			//Выполняем обновление
 			var builder = server.ConnectionStringBuilder;
 			builder.Database = sample.DbName;
-			var connectionString = builder.GetConnectionString(true);
+			builder.AllowUserVariables = true;
+			var connectionString = builder.ConnectionString;
 			using(var connection = new MySqlConnection(connectionString)) {
 				connection.Open();
 				foreach(var hop in updateConfiguration.GetHopsToLast(sample.TypedVersion, false)) {
@@ -73,13 +74,7 @@ namespace Workwear.Test.Sql
 				}
 
 				//Сравнение обновлённой базы и новой
-				var builderCurrentDd = server.ConnectionStringBuilder;
-				builderCurrentDd.Database = currentDdName;
-				var connectionStringCurrentDd = builderCurrentDd.GetConnectionString(true);
-				using(var connectionCurrentDd = new MySqlConnection(connectionStringCurrentDd)) {
-					connectionCurrentDd.Open();
-					ComparisonSchema(connectionCurrentDd, connection);
-				}
+				ComparisonSchema(connection, currentDdName, sample.DbName);
 			}
 
 			//Сделал максимально просто. По хорошему объединить с настоящим обновлением.
@@ -176,42 +171,54 @@ namespace Workwear.Test.Sql
 			return (string)connection.ExecuteScalar(sql);
 		}
 
-		private void ComparisonSchema(MySqlConnection connection1, MySqlConnection connection2) {
-			TestContext.Progress.WriteLine($"Сравниваем схемы базы {connection1.Database} и {connection2.Database}.");
-			var versionDb1 = GetVersion(connection1, connection1.Database);
-			var versionDb2 = GetVersion(connection2, connection2.Database);
+		private void ComparisonSchema(MySqlConnection connection, string db1, string db2) {
+			TestContext.Progress.WriteLine($"Сравниваем схемы базы {db1} и {db2}.");
+			var versionDb1 = GetVersion(connection, db1);
+			var versionDb2 = GetVersion(connection, db2);
 			Assert.That(versionDb1, Is.EqualTo(versionDb2), $"Версии у баз различаются. '{ versionDb1}' и '{versionDb2}'");
 
-			var compareResult = DBSchemaEqual(connection1, connection2, true, Console.WriteLine);
-			var reverseCompareResult = DBSchemaEqual(connection2, connection1, false, Console.WriteLine);
-			Assert.That(compareResult && reverseCompareResult, Is.True,"Схемы баз отличаются");
+			var compareResult = DBSchemaEqual(connection, db1, db2, Console.WriteLine);
+			Assert.That(compareResult, Is.True,"Схемы баз отличаются");
 		}
 
-		private bool DBSchemaEqual(MySqlConnection connection1, MySqlConnection connection2, bool checkDiff, RowOfSchema.Log log) {
+		private static bool DBSchemaEqual(MySqlConnection connection, string dbname1, string dbname2, RowOfSchema.Log log) {
 			bool result = true;
 
-			foreach(string schema in new List<string> {"Tables", "Foreign Keys", "Indexes", "IndexColumns", "Columns"})  {
-				var db1 = connection1.GetSchema(schema).Rows
-					.Cast<DataRow>()
-					.Select(x => new RowOfSchema(schema, connection1.Database, x))
+			foreach(var schema in SchemaInfo.Schemas) {
+				var allRows = connection.GetSchema(schema.Name).Rows
+					.Cast<DataRow>().ToList();
+				var db1 = allRows	
+					.Where(row => (string)row[row.Table.Columns.IndexOf(schema.DataBaseColumn)] == dbname1)
+					.Select(x => new RowOfSchema(schema, x))
 					.ToDictionary(x => x.FullName, x => x);
-
-				var db2 = connection2.GetSchema(schema).Rows
-					.Cast<DataRow>()
-					.Select(x => new RowOfSchema(schema, connection2.Database, x))
+				var db2 = allRows
+					.Where(row => (string)row[row.Table.Columns.IndexOf(schema.DataBaseColumn)] == dbname2)
+					.Select(x => new RowOfSchema(schema, x))
 					.ToDictionary(x => x.FullName, x => x);
+				
+				Assert.That(db1, Is.Not.Empty, $"Метаданные {schema} в базе {dbname1} отсутствуют");
+				Assert.That(db2, Is.Not.Empty, $"Метаданные {schema} в базе {dbname2} отсутствуют");
 
 				foreach(var row in db1) {
-					if(db2.ContainsKey(row.Key)) {
-						if(checkDiff && db1[row.Key].IsDiff(db2[row.Key], log)) {
+					if(db2.TryGetValue(row.Key, out var value)) {
+						if(db1[row.Key].IsDiff(value, log)) {
 							//детали переданы в log()
 							result = false;
 						}
 					}
 					else {
 						log($"{schema} — значение {row.Value.FullName}\n" +
-						    $"  присутствует в    {connection1.Database}\n" +
-						    $"  но отсутствует в  {connection2.Database}");
+						    $"  присутствует в    {dbname1}\n" +
+						    $"  но отсутствует в  {dbname2}");
+						result = false;
+					}
+				}
+				
+				foreach(var row in db2) {
+					if(!db1.ContainsKey(row.Key)) {
+						log($"{schema} — значение {row.Value.FullName}\n" +
+						    $"  присутствует в    {dbname2}\n" +
+						    $"  но отсутствует в  {dbname1}");
 						result = false;
 					}
 				}

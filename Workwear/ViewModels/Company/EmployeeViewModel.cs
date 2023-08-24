@@ -270,7 +270,7 @@ namespace Workwear.ViewModels.Company
 					}
 					return true;
 				}
-				if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered)
+				if(lkLastPhone != Entity.PhoneNumber && Entity.LkRegistered && !String.IsNullOrWhiteSpace(lkLastPhone))
 					lkUserManagerService.ReplacePhone(lkLastPhone, Entity.PhoneNumber);
 
 				if(LkPasswordNotChanged)
@@ -441,12 +441,18 @@ namespace Workwear.ViewModels.Company
 
 		public enum PersonalCardPrint
 		{
-			[Display(Name = "Лицевая сторона")]
+			[Display(Name = "Лицевая сторона (Приказ №28н от 27.01.2010г.)")]
 			[ReportIdentifier("Employee.PersonalCardPage1")]
 			PersonalCardPage1,
-			[Display(Name = "Оборотная сторона")]
+			[Display(Name = "Оборотная сторона (Приказ №28н от 27.01.2010г.)")]
 			[ReportIdentifier("Employee.PersonalCardPage2")]
 			PersonalCardPage2,
+			[Display(Name = "Лицевая сторона (Приказ №776н от 29.10.2021г.)")]
+			[ReportIdentifier("Employee.PersonalCardPageNew1")]
+			PersonalCardPageNew1,
+			[Display(Name = "Оборотная сторона (Приказ №776н от 29.10.2021г.)")]
+			[ReportIdentifier("Employee.PersonalCardPageNew2")]
+			PersonalCardPageNew2,
 		}
 
 		public void Print(PersonalCardPrint doc)

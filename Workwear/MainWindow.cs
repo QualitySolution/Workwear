@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Autofac;
 using Gtk;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using NLog;
 using QS.BusinessCommon.Domain;
 using QS.Configuration;

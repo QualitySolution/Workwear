@@ -13,7 +13,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.3" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-        <PackageReference Include="MySqlBackup.NET" Version="2.3.8" />
+        <PackageReference Include="MySqlBackup.NET.MySqlConnector" Version="2.3.8" />
         <PackageReference Include="NSubstitute" Version="5.0.0" />
         <PackageReference Include="NUnit" Version="3.13.3" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj" />
+      <ProjectReference Include="..\QSProjects\QS.Utilities\QS.Utilities.csproj" />
       <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj" />
     </ItemGroup>
 

@@ -28,10 +28,10 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<CostCenter>()
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.CostCenter)
 				.AddClearDependence<Post>(x => x.CostCenter);
-			
+
 			DeleteConfig.AddHibernateDeleteInfo<Department>()
-				.AddClearDependence<EmployeeCard>(x => x.Department)
-				.AddClearDependence<Post>(x => x.Department);
+				.AddDeleteDependence<Post>(x => x.Department)
+				.AddClearDependence<EmployeeCard>(x => x.Department);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
@@ -73,15 +73,15 @@ namespace Workwear
 				.AddClearDependence<EmployeeCard>(x => x.Post);
 
 			DeleteConfig.AddHibernateDeleteInfo<Subdivision>()
+				.AddDeleteDependence<Subdivision>(x => x.ParentSubdivision)
 				.AddDeleteDependence<Department>(x => x.Subdivision)
+				.AddDeleteDependence<Post>(x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionPlace>(x => x.Subdivision)
 				.AddDeleteDependence<Expense>(x => x.Subdivision)
 				.AddDeleteDependence<Income>(x => x.Subdivision)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
 				.AddClearDependence<EmployeeCard>(x => x.Subdivision)
-				.AddClearDependence<Post>(x => x.Subdivision)
-				.AddClearDependence<IssuanceSheet>(x => x.Subdivision)
-				.AddClearDependence<Subdivision>(x => x.ParentSubdivision);
+				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
 
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
 				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace)

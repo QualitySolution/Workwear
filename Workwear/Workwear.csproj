@@ -71,9 +71,6 @@
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="Nini">
-      <HintPath>..\..\QSProjects\lib\Nini.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -441,143 +438,143 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\My-FyiReporting\RdlCri\RdlCri.csproj">
+    <ProjectReference Include="..\My-FyiReporting\RdlCri\RdlCri.csproj">
       <Project>{9c9ecaca-0deb-4517-8cf1-02c3d3eb128e}</Project>
       <Name>RdlCri</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
+    <ProjectReference Include="..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
       <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>
       <Name>Gamma.Binding</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\Binding\Gamma.Utilities.Gtk\Gamma.Utilities.Gtk.csproj">
       <Project>{5735d438-792e-40ce-bafd-25814c8879bc}</Project>
       <Name>Gamma.Utilities.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj">
+    <ProjectReference Include="..\QSProjects\Binding\Gamma.Utilities\Gamma.Utilities.csproj">
       <Project>{1bf2a638-420d-456c-96a7-36873a0fb894}</Project>
       <Name>Gamma.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
+    <ProjectReference Include="..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
       <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
       <Name>QS.BaseParameters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Configuration\QS.Configuration.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Configuration\QS.Configuration.csproj">
       <Project>{5d124360-c8fb-4779-958b-0da5d6b90c29}</Project>
       <Name>QS.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.ErrorReporting\QS.ErrorReporting.csproj">
+    <ProjectReference Include="..\QSProjects\QS.ErrorReporting\QS.ErrorReporting.csproj">
       <Project>{7baff136-4379-4d1d-a554-7dc340caf7a2}</Project>
       <Name>QS.ErrorReporting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj">
       <Project>{1c3b49fc-372c-46f7-995f-eeb44474e2de}</Project>
       <Name>QS.HistoryLog.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj">
+    <ProjectReference Include="..\QSProjects\QS.HistoryLog\QS.HistoryLog.csproj">
       <Project>{3d3d6700-c625-46c5-9702-5f010a8dd035}</Project>
       <Name>QS.HistoryLog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj">
       <Project>{e95be5dc-a197-4657-87dc-a2d677eadb76}</Project>
       <Name>QS.Project.Abstract</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj">
       <Project>{5ef2a7da-3886-4809-95df-880bd783a211}</Project>
       <Name>QS.Project.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Report.Core\QS.Report.Core.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Report.Core\QS.Report.Core.csproj">
       <Project>{3e194a95-ac31-43d0-b93d-64164402a6dd}</Project>
       <Name>QS.Report.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.App.Gtk\QS.Updater.App.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Updater.App.Gtk\QS.Updater.App.Gtk.csproj">
       <Project>{0166bdb5-6db1-4c07-96bb-0fb5ab8ac077}</Project>
       <Name>QS.Updater.App.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.App\QS.Updater.App.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Updater.App\QS.Updater.App.csproj">
       <Project>{45929a9f-7d94-4e85-9332-6cb7b2d5a03a}</Project>
       <Name>QS.Updater.App</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.DB.Gtk\QS.Updater.DB.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Updater.DB.Gtk\QS.Updater.DB.Gtk.csproj">
       <Project>{6d755374-6eaf-44b6-8c6c-6fe5e5ab3432}</Project>
       <Name>QS.Updater.DB.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj">
       <Project>{c776ee5a-1795-439b-bb7d-9ab1b20eeac4}</Project>
       <Name>QS.Updater.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
+    <ProjectReference Include="..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
       <Name>QSProjectsLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSWidgetLib\QSWidgetLib.csproj">
+    <ProjectReference Include="..\QSProjects\QSWidgetLib\QSWidgetLib.csproj">
       <Project>{5A2BB01E-E124-432E-8099-D1343D3897B9}</Project>
       <Name>QSWidgetLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSSaaS\QSSaaS.csproj">
+    <ProjectReference Include="..\QSProjects\QSSaaS\QSSaaS.csproj">
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj">
+    <ProjectReference Include="..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj">
       <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
       <Name>System.Data.Bindings</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSOrmProject\QSOrmProject.csproj">
+    <ProjectReference Include="..\QSProjects\QSOrmProject\QSOrmProject.csproj">
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
       <Name>QSOrmProject</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
+    <ProjectReference Include="..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
       <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
       <Name>QSBusinessCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSTelemetry\QSTelemetry.csproj">
+    <ProjectReference Include="..\QSProjects\QSTelemetry\QSTelemetry.csproj">
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>
       <Name>QSTelemetry</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QSReport\QSReport.csproj">
+    <ProjectReference Include="..\QSProjects\QSReport\QSReport.csproj">
       <Project>{9C0363D4-EE69-45B8-BA45-BDA24CE35A06}</Project>
       <Name>QSReport</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Project\QS.Project.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Project\QS.Project.csproj">
       <Project>{28A78143-42E3-40E7-86F5-DD7E1679BE86}</Project>
       <Name>QS.Project</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Report\QS.Report.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Report\QS.Report.csproj">
       <Project>{D30A23BF-C5DC-4A1B-95FC-9C2038D46E8E}</Project>
       <Name>QS.Report</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Utilities\QS.Utilities.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Utilities\QS.Utilities.csproj">
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Project.Gtk\QS.Project.Gtk.csproj">
       <Project>{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}</Project>
       <Name>QS.Project.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
+    <ProjectReference Include="..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
       <Name>QS.BusinessCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Report.Gtk\QS.Report.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Report.Gtk\QS.Report.Gtk.csproj">
       <Project>{42708CEE-08D8-43D5-AFE0-9992EB46E9F9}</Project>
       <Name>QS.Report.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.NewsFeed.Gtk\QS.NewsFeed.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.NewsFeed.Gtk\QS.NewsFeed.Gtk.csproj">
       <Project>{76858A6F-44D1-44E0-B9F3-B80B1B96AD25}</Project>
       <Name>QS.NewsFeed.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
+    <ProjectReference Include="..\QSProjects\QS.NewsFeed\QS.NewsFeed.csproj">
       <Project>{9EBC7EFD-CD37-45D3-97AB-24CB38D986B6}</Project>
       <Name>QS.NewsFeed</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Features.Gtk\QS.Features.Gtk.csproj">
       <Project>{13970AEE-1019-4962-A8C7-899D350E0F10}</Project>
       <Name>QS.Features.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Features\QS.Features.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Features\QS.Features.csproj">
       <Project>{8984DB2F-4849-4F5B-915C-CE69537E93A8}</Project>
       <Name>QS.Features</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
+    <ProjectReference Include="..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
       <Name>rglib.interop</Name>
     </ProjectReference>
@@ -585,11 +582,11 @@
       <Project>{B0F853E4-43C9-4C7E-8812-2060FA43B5FE}</Project>
       <Name>QS.Cloud.WearLk.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj">
       <Project>{390CE39B-B071-424E-9763-645E7624D9E3}</Project>
       <Name>QS.Cloud.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Project.Core</Name>
     </ProjectReference>
@@ -605,11 +602,11 @@
       <Project>{CD86B5DA-6D84-4406-B7A8-0A35E87772AA}</Project>
       <Name>Workwear.Sql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
+    <ProjectReference Include="..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj">
       <Project>{BC159BA7-EF22-4800-AC34-DE4B2B386AAE}</Project>
       <Name>QS.Updater.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj">
+    <ProjectReference Include="..\QSProjects\QS.HistoryLog.Desktop\QS.HistoryLog.Desktop.csproj">
       <Project>{8730fbe6-065a-47ec-9c1b-70aa3503f140}</Project>
       <Name>QS.HistoryLog.Desktop</Name>
     </ProjectReference>
@@ -766,7 +763,6 @@
     <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.5" />
     <PackageReference Include="K4os.Hash.xxHash" Version="1.0.8" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.32.1" />
     <PackageReference Include="NHibernate" Version="5.4.1" />
     <PackageReference Include="nhibernate.logger.nlog" Version="1.1.2" />
     <PackageReference Include="NLog" Version="5.1.2" />
@@ -787,6 +783,14 @@
     <None Include="Reports\Barcodes\BarcodeFromEmployeeIssue.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Reports\Employee\PersonalCardPageNew1.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Employee\PersonalCardPageNew2.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

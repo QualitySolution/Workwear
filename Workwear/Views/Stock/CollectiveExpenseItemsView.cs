@@ -86,8 +86,13 @@ namespace Workwear.Views.Stock
 			var item = new yMenuItem("Удалить строку");
 			item.Activated += (sender, e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
 			delMenu.Add(item);
-			item = new yMenuItem("Удалить все строки сотрудника");
+			item = new yMenuItem("");
 			item.Activated += (sender, e) => ViewModel.DeleteEmployee(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			item.Binding.AddFuncBinding(viewModel, v => $"Удалить все строки сотрудника ({v.CountItemsForEmployee})", i => i.Label).InitializeFromSource();
+			delMenu.Add(item);
+			item = new yMenuItem("");
+			item.Activated += (sender, e) => ViewModel.DeleteProtectionTools(ytreeItems.GetSelectedObject<CollectiveExpenseItem>());
+			item.Binding.AddFuncBinding(viewModel, v => $"Удалить все строки номенклатуры нормы ({v.CountItemsForProtectionTools})", i => i.Label).InitializeFromSource();
 			delMenu.Add(item);
 			buttonDel.Menu = delMenu;
 			delMenu.ShowAll();

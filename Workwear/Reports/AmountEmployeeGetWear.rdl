@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>
-  </Description>
-  <Author>
-  </Author>
+  <Description></Description>
+  <Author></Author>
   <PageHeight>17in</PageHeight>
   <PageWidth>11in</PageWidth>
   <Width>7.5in</Width>
@@ -216,8 +214,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox9">
-                          <Value>
-                          </Value>
+                          <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -396,15 +393,6 @@
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySQL.NET</DataProvider>
-        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <DataSets>
     <DataSet Name="Data">
       <Query>
@@ -414,12 +402,12 @@
     objects.name as obj,
     (SELECT COUNT(DISTINCT stock_expense.wear_card_id) FROM stock_expense 
      	LEFT JOIN wear_cards on stock_expense.wear_card_id = wear_cards.id
-     	WHERE (stock_expense.date &gt; CONVERT(@dateStart, DATE) AND stock_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
+     	WHERE (stock_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
      	)as count_personal, 
     (SELECT COUNT(DISTINCT stock_collective_expense_detail.employee_id) FROM stock_collective_expense
      	JOIN stock_collective_expense_detail on stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
      	LEFT JOIN wear_cards on stock_collective_expense_detail.employee_id = wear_cards.id
-     	WHERE (stock_collective_expense.date &gt; CONVERT(@dateStart, DATE) AND stock_collective_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
+     	WHERE (stock_collective_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_collective_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
 		)as count_collective
 	
     FROM objects	
@@ -470,4 +458,13 @@
       <Prompt />
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>

@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.8.6"
+!define PRODUCT_VERSION "2.8.7"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецаутсорсинг"
@@ -199,6 +199,11 @@ Section "${PRODUCT_NAME}" SecProgram
   RMDir /r "$PROGRAMFILES\Спецпошив Аутсорсинг"
   RMDir /r "$SMPROGRAMS\Спецпошив Аутсорсинг"
   Delete "$DESKTOP\Спецпошив Аутсорсинг.lnk"
+
+  ; Удаляем файлы используемые до 2.8
+  Delete $INSTDIR\Nini.dll
+  Delete $INSTDIR\MySql.Data.dll
+  Delete $INSTDIR\MySql.Data.xml
 
 SectionEnd
 
