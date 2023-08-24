@@ -82,7 +82,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if (IsConfigured) return;
 			IsConfigured = true;
-			var performance = new ProgressPerformanceHelper(progress, 4+4, nameof(issueModel.PreloadWearItems), logger: logger);
+			var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
 			issueModel.PreloadWearItems(Entity.Id);
 			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
 			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
