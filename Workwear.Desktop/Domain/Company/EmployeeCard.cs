@@ -38,6 +38,13 @@ namespace Workwear.Domain.Company
 		#region Свойства
 		public virtual int Id { get; set; }
 
+		private DateTime lastUpdate;
+		[Display (Name = "Последнее обновление")]
+		public virtual DateTime LastUpdate {
+			get => lastUpdate;
+			set => SetField(ref lastUpdate, value);
+		}
+		
 		private string cardNumber;
 		[StringLength(15)]
 		[Display (Name = "Номер карточки")]
