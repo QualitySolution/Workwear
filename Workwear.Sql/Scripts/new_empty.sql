@@ -705,6 +705,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `manual_operation` TINYINT(1) NOT NULL DEFAULT 0,
   `override_before` TINYINT(1) NOT NULL DEFAULT (manual_operation),
   `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0,
+  `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
   INDEX `fk_operation_issued_by_employee_2_idx` (`nomenclature_id` ASC),
