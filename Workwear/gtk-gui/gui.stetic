@@ -6,19 +6,19 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../QSProjects/Binding/Gamma.Binding/bin/Debug/GammaBinding.dll" />
-    <widget-library name="../../../QSProjects/QS.HistoryLog.Gtk/bin/Debug/QS.HistoryLog.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater.App.Gtk/bin/Debug/QS.Updater.App.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Updater.DB.Gtk/bin/Debug/QSUpdater.dll" />
-    <widget-library name="../../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
-    <widget-library name="../../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
-    <widget-library name="../../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
-    <widget-library name="../../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
-    <widget-library name="../../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
-    <widget-library name="../../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
-    <widget-library name="../../../QSProjects/QS.Features.Gtk/bin/Debug/QS.Features.Gtk.dll" />
+    <widget-library name="../../QSProjects/Binding/Gamma.Binding/bin/Debug/GammaBinding.dll" />
+    <widget-library name="../../QSProjects/QS.HistoryLog.Gtk/bin/Debug/QS.HistoryLog.Gtk.dll" />
+    <widget-library name="../../QSProjects/QS.Updater.App.Gtk/bin/Debug/QS.Updater.App.Gtk.dll" />
+    <widget-library name="../../QSProjects/QS.Updater.DB.Gtk/bin/Debug/QSUpdater.dll" />
+    <widget-library name="../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
+    <widget-library name="../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
+    <widget-library name="../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
+    <widget-library name="../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
+    <widget-library name="../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
+    <widget-library name="../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
+    <widget-library name="../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
+    <widget-library name="../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
+    <widget-library name="../../QSProjects/QS.Features.Gtk/bin/Debug/QS.Features.Gtk.dll" />
     <widget-library name="../bin/Debug/workwear.exe" internal="true" />
   </import>
   <icon-factory>
@@ -20867,7 +20867,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Operations.ManualEmployeeIssueOperationsView" design-size="669 369">
+  <widget class="Gtk.Bin" id="Workwear.Views.Operations.ManualEmployeeIssueOperationsView" design-size="681 453">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -21023,7 +21023,7 @@
         <child>
           <widget class="Gamma.GtkWidgets.yTable" id="ytable2">
             <property name="MemberName" />
-            <property name="NRows">8</property>
+            <property name="NRows">9</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -21094,6 +21094,37 @@
                 <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">True</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+                <property name="MemberName" />
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                    <property name="AcceptsTab">False</property>
+                    <property name="Text" translatable="yes" />
+                    <property name="WrapMode">WordChar</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -21330,6 +21361,27 @@
               <packing>
                 <property name="TopAttach">6</property>
                 <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelСommentTitle1">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="Yalign">0</property>
+                <property name="LabelProp" translatable="yes">Комментарий:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
