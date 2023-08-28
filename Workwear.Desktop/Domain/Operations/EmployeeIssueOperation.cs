@@ -207,7 +207,14 @@ namespace Workwear.Domain.Operations
 		public virtual IList<BarcodeOperation> BarcodeOperations {
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);
-		}
+		}	
+		
+		private string comment;
+        [Display(Name = "Комменарий")]
+        public virtual string Comment {
+         	get => comment;
+         	set => SetField(ref comment, value);
+        }
 
 		/// <summary>
 		/// Для создания операций выдачи надо использовать конструктор с BaseParameters
