@@ -12,6 +12,7 @@ namespace workwear.Journal.Filter.Views.Regulations
 			entryPost.ViewModel = viewModel.EntryPost;
 			entryProtectionTools.ViewModel = viewModel.EntryProtectionTools;
 			entitySubdivision.ViewModel = viewModel.EntrySubdivision;
+			entityDepartment.ViewModel = viewModel.EntryDepartment;
 		}
 	}
 }
