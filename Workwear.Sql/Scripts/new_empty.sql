@@ -174,6 +174,7 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wear_cards` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `card_number` VARCHAR(15) NULL DEFAULT NULL,
   `personnel_number` VARCHAR(15) NULL DEFAULT NULL,
   `last_name` VARCHAR(20) NULL,
@@ -195,6 +196,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `photo` MEDIUMBLOB NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_wear_cards_object_idx` (`object_id` ASC),
   INDEX `fk_wear_cards_post_idx` (`post_id` ASC),
   INDEX `fk_wear_cards_leader_idx` (`leader_id` ASC),
@@ -682,7 +684,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `employee_id` INT UNSIGNED NOT NULL,
   `operation_time` DATETIME NOT NULL,
   `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -708,7 +709,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
   INDEX `fk_operation_issued_by_employee_2_idx` (`nomenclature_id` ASC),
   INDEX `fk_operation_issued_by_employee_3_idx` (`issued_operation_id` ASC),
