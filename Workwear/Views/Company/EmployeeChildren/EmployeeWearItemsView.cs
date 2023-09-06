@@ -79,8 +79,17 @@ namespace Workwear.Views.Company.EmployeeChildren
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;
 		}
 
-		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Select(x => x.date > DateTime.Today ? $"<span foreground=\"darkviolet\">{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", 
+			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
+				.Select(x => $"{FormatOfLastIssue(x.date.Date)} - {x.amount}{ShowIfExist(x.removed)}"));
 		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
+
+		private string FormatOfLastIssue(DateTime issueDate) {
+			if(issueDate.Date < DateTime.Today)
+				return $"{issueDate:d}";
+			var color = issueDate.Date == DateTime.Today ? "darkgreen" : "darkviolet";
+			return $"<span foreground=\"{color}\">{issueDate:d}</span>";
+		}
 		#endregion
 
 		#region Кнопки

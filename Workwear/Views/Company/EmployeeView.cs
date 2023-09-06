@@ -149,6 +149,7 @@ namespace Workwear.Views.Company {
 		{
 			MessageDialogHelper.RunInfoDialog(
 				"<b>Колонка «Послед. получения»:</b>\n" +
+				"<span color='darkgreen'>●</span> — выдано сегодня\n" +
 				"<span color='darkviolet'>●</span> — дата получения в будущем\n" +
 				"\n<b>Колонка «Числится»:</b>\n" +
 				"<span color='darkgreen'>●</span> — потребность закрыта полностью\n" +
