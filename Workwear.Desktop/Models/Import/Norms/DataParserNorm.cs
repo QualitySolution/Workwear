@@ -219,20 +219,21 @@ namespace Workwear.Models.Import.Norms
 			progress.Close();
 		}
 
-		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
+		internal void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
 			IList<Subdivision> subdivisions,
 			IList<Department> departments,
 			ImportModelNorm model,
 			bool withoutSubdivision,
 			bool withoutDepartment) {
 			foreach(var postName in combination.AllPostNames) {
-				var post = UsedPosts.Concat(posts).FirstOrDefault(x =>
+				var existPosts = UsedPosts.Concat(posts).Where(x =>
 					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
 					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
-					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)));
+					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)))
+					.ToList();
 
-				if(post == null) {
-					post = new Post {
+				if(!existPosts.Any()) {
+					var post = new Post {
 						Name = postName.post,
 						Comments = "Создана при импорте норм из файла " + model.FileName,
 					};
@@ -262,9 +263,10 @@ namespace Workwear.Models.Import.Norms
 
 					post.Subdivision = subdivision;
 					post.Department = department;
-					UsedPosts.Add(post);
+					existPosts.Add(post);
+					UsedPosts.AddRange(existPosts);
 				}
-				combination.Posts.Add(post);
+				combination.Posts.AddRange(existPosts);
 			}
 		}
 
