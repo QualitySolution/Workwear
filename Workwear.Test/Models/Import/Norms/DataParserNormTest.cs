@@ -113,6 +113,55 @@ namespace Workwear.Test.Models.Import.Norms {
 		}
 		
 		[Test(Description =
+			"Как выше но с отделом! Проверяем что с колонкой подразделение мы подбираем все должности с подходящем названием и подразделением без учета отделов.")]
+		public void SetOrMakePost_WithSubdivisionAndDepartment() {
+			var normRepository = Substitute.For<NormRepository>();
+			var protectionToolsRepository = Substitute.For<ProtectionToolsRepository>();
+			var sizeService = Substitute.For<SizeService>();
+
+			var subdivision1 = new Subdivision {
+				Name = "Цех 1",
+			};
+			
+			var subdivision2 = new Subdivision {
+				Name = "Цех 2",
+			};
+			
+			var department1 = new Department {
+				Name = "Отдел 1",
+				Subdivision = subdivision1
+			};
+
+			var posts = new List<Post> {
+				new Post {
+					Name = "Директор",
+				},
+				new Post {
+					Name = "Мастер",
+					Subdivision = subdivision1
+				},
+				new Post {
+					Name = "Мастер",
+					Subdivision = subdivision2
+				},
+				new Post {
+					Name = "Мастер",
+					Subdivision = subdivision1,
+					Department = department1
+				},
+			};
+			
+			var settings = Substitute.For<SettingsNormsViewModel>(new ParametersServiceForTest());
+			var postCombination = new SubdivisionPostCombination(settings, null,"Мастер", "Цех 1", "Отдел 1");
+			
+			var parser = new DataParserNorm(normRepository, protectionToolsRepository, sizeService);
+			
+			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), false, false, String.Empty);
+			Assert.That(postCombination.Posts.Count, Is.EqualTo(1));
+			Assert.That(postCombination.Posts.Any(x => x.Name == "Мастер" && x.Subdivision == subdivision1 && x.Department == department1), Is.True);
+		}
+		
+		[Test(Description =
 			"Проверяем что при отсутствии колонок с подразделением и отделом мы подбираем все должности(с учетом разделителя) с подходящем названием из любых подразделение или отделов.")]
 		public void SetOrMakePost_WithoutDepartmentAndSubdivisionAllPosts() {
 			var normRepository = Substitute.For<NormRepository>();
@@ -160,5 +209,7 @@ namespace Workwear.Test.Models.Import.Norms {
 			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), true, true, String.Empty);
 			Assert.That(postCombination.Posts.Count, Is.EqualTo(4));
 		}
+		
+		
 	}
 }
