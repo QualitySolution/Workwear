@@ -20,7 +20,7 @@ namespace Workwear.Domain.Stock.Documents
 	public class Transfer : StockDocument, IValidatableObject
 	{
 		public Transfer() { }
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		#region Свойства
 		private Warehouse warehouseFrom;
 		[Display(Name = "Склад отправитель")]
@@ -62,13 +62,13 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult("Документ не должен содержать строк с нулевым количеством.",
 					new[] { nameof(Items) });
 			if (warehouseTo == null)
-				yield return new ValidationResult("Склад добавления должен быть указан",
+				yield return new ValidationResult("Склад получатель должен быть указан",
 				new[] { nameof(Items) });
 			if(warehouseFrom == null)
-				yield return new ValidationResult("Склад списания должен быть указан",
+				yield return new ValidationResult("Склад отправитель должен быть указан",
 				new[] { nameof(Items) });
 			if (WarehouseTo == WarehouseFrom)
-				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
+				yield return new ValidationResult("Склад получатель должен отличаться от склада отправителя",
 				new[] { nameof(Items) });
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (baseParameters.CheckBalances) {
