@@ -21,7 +21,7 @@ namespace Workwear.Views.Stock
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			entryNumber.Binding.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter()).InitializeFromSource();
 			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.Text).InitializeFromSource();
-			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer).InitializeFromSource();
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
