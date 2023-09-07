@@ -243,12 +243,13 @@ namespace workwear.Journal.ViewModels.Stock
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
-			var updateStatusAction = new JournalAction("Открыть документ",
+			var openDocument = new JournalAction("Открыть документ",
 					(selected) => selected.Cast<StockMovementsJournalNode>().Any(x => x.DocumentId.HasValue),
 					(selected) => true,
 					(selected) => OpenDocument(selected.Cast<StockMovementsJournalNode>().ToArray())
 					);
-			NodeActionsList.Add(updateStatusAction);
+			NodeActionsList.Add(openDocument);
+			RowActivatedAction = openDocument;
 		}
 
 		void OpenDocument(StockMovementsJournalNode[] nodes)
