@@ -6,7 +6,6 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
@@ -89,7 +88,6 @@ namespace Workwear.Domain.Stock.Documents
 			}
 			var newItem = new TransferItem(UoW, this, position, amount);
 			ObservableItems.Add(newItem);
-			SetAmountInStock(newItem);
 			return newItem;
 		}
 		public virtual void RemoveItem(TransferItem item) {
@@ -97,36 +95,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
-		}
-		public virtual void SetAmountInStock(TransferItem item = null) {
-			IList<Nomenclature> nomenclatures;
-			IList<TransferItem> currentItems;
-
-			if(item != null) {
-				nomenclatures = new List<Nomenclature> { item.Nomenclature };
-				currentItems = items.Where(x => x == item).ToList();
-			}
-			else {
-				nomenclatures = items.Select(x => x.Nomenclature).Distinct().ToList();
-				currentItems = items;
-			}
-			var stock = new StockRepository().StockBalances(UoW, WarehouseFrom, nomenclatures, Date);
-			foreach(var currentItem in currentItems) {
-				var currentNomenclature = currentItem.Nomenclature;
-
-				var stockBalanceDTO = stock
-					.FirstOrDefault(x => x.Nomenclature == currentNomenclature && 
-					                     x.WearSize == currentItem.WarehouseOperation.WearSize && 
-					                     x.Height == currentItem.WarehouseOperation?.Height);
-
-				if(currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO != null)
-					stockBalanceDTO.Amount += currentItem.WarehouseOperation.Amount;
-
-				if (currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO == null) 
-					currentItem.AmountInStock = currentItem.Amount;
-				else 
-					currentItem.AmountInStock = stockBalanceDTO.Amount;
-			}
 		}
 	}
 

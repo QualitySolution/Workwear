@@ -16,6 +16,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -25,65 +26,76 @@ namespace Workwear.ViewModels.Stock
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
-		private ILifetimeScope AutofacScope;
+		public readonly FeaturesService FeaturesService;
+		private readonly StockBalanceModel stockBalanceModel;
 		private readonly IInteractiveQuestion interactive;
-		public readonly FeaturesService featuresService;
-
-		private Warehouse lastWarehouse;
+		
 		public IList<Owner> Owners { get; }
 
 		public WarehouseTransferViewModel(
 			IEntityUoWBuilder uowBuilder,
-			IUnitOfWorkFactory unitOfWorkFactory, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigationManager, 
 			ILifetimeScope autofacScope, 
 			IValidator validator, 
 			IUserService userService,
 			BaseParameters baseParameters,
+			StockBalanceModel stockBalanceModel,
 			IInteractiveQuestion interactive,
-			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator) {
-			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator, unitOfWorkProvider) {
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 
 			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
-				AutofacScope = AutofacScope
+				AutofacScope = autofacScope
 			};
-			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom)
-										 .UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
-										 .UseViewModelDialog<WarehouseViewModel>()
-										 .Finish();
-			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo)
-										 .UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
-										 .UseViewModelDialog<WarehouseViewModel>()
-										 .Finish();
-			LoadActualAmountFromStock();
+			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
+			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
+			
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			lastWarehouse = Entity.WarehouseFrom;
+			Owners = UoW.GetAll<Owner>().ToList();
 
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, 
 					new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 
-			this.featuresService = featuresService;
-			Owners = UoW.GetAll<Owner>().ToList();
+			this.FeaturesService = featuresService;
+			
+			//Заполняем складские остатки
+			stockBalanceModel.Warehouse = Entity.WarehouseFrom;
+			stockBalanceModel.OnDate = Entity.Date;
+			if(Entity.Items.Any()) {
+				stockBalanceModel.ExcludeOperations = Entity.Items.Select(x => x.WarehouseOperation).ToList();
+				stockBalanceModel.AddNomenclatures(Entity.Items.Select(x => x.Nomenclature));
+				foreach(var item in Entity.Items) {
+					item.StockBalanceModel = this.stockBalanceModel;
+				}
+			}
 		}
 
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if (e.PropertyName != nameof(Entity.WarehouseFrom) || Entity.WarehouseFrom == lastWarehouse) return;
-			if(Entity.Items.Any()) {
-				if(interactive.Question("При изменении склада отправителя строки документа будут очищены. Продолжить?")) {
-					Entity.ObservableItems.Clear();
+			if(e.PropertyName == nameof(Entity.WarehouseFrom) && Entity.WarehouseFrom != stockBalanceModel.Warehouse) {
+				if(Entity.Items.Any()) {
+					if(interactive.Question("При изменении склада отправителя строки документа будут очищены. Продолжить?")) {
+						Entity.ObservableItems.Clear();
+					}
+					else {
+						//Возвращаем назад старый склад
+						Entity.WarehouseFrom = stockBalanceModel.Warehouse;
+						return;
+					}
 				}
-				else { //Возвращаем назад старый склад
-					Entity.WarehouseFrom = lastWarehouse;
-					return;
-				}
+				
+				stockBalanceModel.Warehouse = Entity.WarehouseFrom;
+				OnPropertyChanged(nameof(CanAddItem));
 			}
-			lastWarehouse = Entity.WarehouseFrom;
-			OnPropertyChanged(nameof(CanAddItem));
+
+			if(e.PropertyName == nameof(Entity.Date))
+				stockBalanceModel.OnDate = Entity.Date;
 		}
 		#region Sensetive
 		public bool CanAddItem => Entity.WarehouseFrom != null;
@@ -99,9 +111,15 @@ namespace Workwear.ViewModels.Stock
 
 		private void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var addedAmount = ((StockBalanceJournalViewModel)sender).Filter.AddAmount;
-				foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
-					Entity.AddItem(node.GetStockPosition(UoW), 
-						addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
+			var items = new List<TransferItem>();
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				var position = node.GetStockPosition(UoW);
+				items.Add(Entity.AddItem(position, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount)));
+			}
+			stockBalanceModel.AddNomenclatures(items.Select(x => x.Nomenclature));
+			foreach(var item in items) {
+				item.StockBalanceModel = stockBalanceModel;
+			}
 		}
 		public void RemoveItems(IEnumerable<TransferItem> items) {
 			foreach(var item in items) {
@@ -113,8 +131,6 @@ namespace Workwear.ViewModels.Stock
 				this, EntityUoWBuilder.ForOpen(nomenclature.Id));
 		}
 		public override bool Save() {
-			if(Entity.Id == 0)
-				Entity.CreationDate = DateTime.Now;
 			Entity.UpdateOperations(UoW, null); 
 			return base.Save();
 		}
@@ -124,9 +140,6 @@ namespace Workwear.ViewModels.Stock
 		}
 		public bool ValidateNomenclature(TransferItem transferItem) {
 			return transferItem.Amount <= transferItem.AmountInStock;
-		}
-		private void LoadActualAmountFromStock() {
-			Entity.SetAmountInStock();
 		}
 	}
 }

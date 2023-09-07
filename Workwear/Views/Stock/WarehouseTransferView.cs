@@ -30,7 +30,7 @@ namespace Workwear.Views.Stock
 			.AddColumn("Размер").AddReadOnlyTextRenderer(x => x.WarehouseOperation.WearSize?.Name)
 			.AddColumn("Рост").AddReadOnlyTextRenderer(x => x.WarehouseOperation.Height?.Name)
 			.AddColumn("Собственники")
-				.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
+				.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
 				.AddComboRenderer(x => x.Owner)
 				.SetDisplayFunc(x => x.Name)
 				.FillItems(ViewModel.Owners, "Нет")

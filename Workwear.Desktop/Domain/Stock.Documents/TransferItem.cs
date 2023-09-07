@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
+using Workwear.Models.Operations;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -45,12 +46,6 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
-		private int amountInStock;
-		[Display(Name = "Количество на складе")]
-		public virtual int AmountInStock {
-			get => amountInStock;
-			set => SetField(ref amountInStock, value);
-		}
 		
 		[Display(Name = "Собственник имущества")]
 		public virtual Owner Owner {
@@ -73,6 +68,11 @@ namespace Workwear.Domain.Stock.Documents
 			warehouseOperation.WearSize, 
 			warehouseOperation.Height, 
 			warehouseOperation.Owner);
+		public virtual int AmountInStock => StockBalanceModel.GetAmount(StockPosition);
+		#endregion
+
+		#region Служебные
+		public virtual StockBalanceModel StockBalanceModel { get; set; }
 		#endregion
 		public TransferItem() { }
 		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount) {
