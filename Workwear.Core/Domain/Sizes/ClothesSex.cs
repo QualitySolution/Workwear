@@ -3,11 +3,11 @@
 namespace Workwear.Domain.Sizes
 {
 	public enum ClothesSex {
-		[Display(Name = "Универсальный")]
+		[Display(Name = "Универсальный", ShortName = "уни.")]
 		Universal,
-		[Display(Name = "Женский")]
+		[Display(Name = "Женский", ShortName = "жен.")]
 		Women,
-		[Display(Name = "Мужской")]
+		[Display(Name = "Мужской", ShortName = "муж.")]
 		Men,
 	}
 }
