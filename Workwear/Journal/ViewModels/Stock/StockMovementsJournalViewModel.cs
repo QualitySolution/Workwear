@@ -190,7 +190,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
-					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
+					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.SelectGroup(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
@@ -220,8 +220,8 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
-					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferId)
-					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferItemId)
+					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferItemId)
+					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.Select(() => writeOffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)
 					.Select(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -243,12 +243,13 @@ namespace workwear.Journal.ViewModels.Stock
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
-			var updateStatusAction = new JournalAction("Открыть документ",
+			var openDocument = new JournalAction("Открыть документ",
 					(selected) => selected.Cast<StockMovementsJournalNode>().Any(x => x.DocumentId.HasValue),
 					(selected) => true,
 					(selected) => OpenDocument(selected.Cast<StockMovementsJournalNode>().ToArray())
 					);
-			NodeActionsList.Add(updateStatusAction);
+			NodeActionsList.Add(openDocument);
+			RowActivatedAction = openDocument;
 		}
 
 		void OpenDocument(StockMovementsJournalNode[] nodes)

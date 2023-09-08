@@ -87,7 +87,10 @@ namespace workwear.Journal.ViewModels.Regulations
 
 			if(Filter.Subdivision != null)
 				norms.Where(() => subdivisionAlias.Id == Filter.Subdivision.Id);
-
+			
+			if(Filter.Department != null)
+				norms.Where(() => departmentAlias.Id == Filter.Department.Id);
+			
 			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)

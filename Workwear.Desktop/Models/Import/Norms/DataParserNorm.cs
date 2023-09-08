@@ -128,7 +128,7 @@ namespace Workwear.Models.Import.Norms
 			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs) {
 				if(pair.AllPostNames.Any())
-					SetOrMakePost(pair, posts, subdivisions, departments, model, subdivisionColumn == null, departmentColumn == null);
+					SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null, model.FileName);
 			}
 			progress.Add();
 
@@ -219,22 +219,23 @@ namespace Workwear.Models.Import.Norms
 			progress.Close();
 		}
 
-		void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
+		internal void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
 			IList<Subdivision> subdivisions,
 			IList<Department> departments,
-			ImportModelNorm model,
 			bool withoutSubdivision,
-			bool withoutDepartment) {
+			bool withoutDepartment,
+			string importFileName) {
 			foreach(var postName in combination.AllPostNames) {
-				var post = UsedPosts.Concat(posts).FirstOrDefault(x =>
+				var existPosts = UsedPosts.Concat(posts).Where(x =>
 					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
 					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
-					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)));
+					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)))
+					.ToList();
 
-				if(post == null) {
-					post = new Post {
+				if(!existPosts.Any()) {
+					var post = new Post {
 						Name = postName.post,
-						Comments = "Создана при импорте норм из файла " + model.FileName,
+						Comments = "Создана при импорте норм из файла " + importFileName,
 					};
 
 					Subdivision subdivision = null;
@@ -255,16 +256,17 @@ namespace Workwear.Models.Import.Norms
 							String.Equals(x.Name, postName.department, StringComparison.CurrentCultureIgnoreCase));
 
 						if(department == null) {
-							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из файла " + model.FileName};
+							department = new Department { Name = postName.department, Subdivision = subdivision, Comments = "Создан при импорте норм из файла " + importFileName};
 							UsedDepartments.Add(department);
 						}
 					}
 
 					post.Subdivision = subdivision;
 					post.Department = department;
-					UsedPosts.Add(post);
+					existPosts.Add(post);
+					UsedPosts.AddRange(existPosts);
 				}
-				combination.Posts.Add(post);
+				combination.Posts.AddRange(existPosts);
 			}
 		}
 

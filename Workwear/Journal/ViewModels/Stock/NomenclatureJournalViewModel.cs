@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -11,6 +12,7 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
@@ -72,6 +74,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(x => x.Number).WithAlias(() => resultAlias.Number)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.ItemType)
 				 	.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
+					.Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
 					.Select(x => x.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
 					.Select(x => x.SaleCost).WithAlias(() => resultAlias.SaleCost)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
@@ -109,6 +112,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Number { get; set; }
 		[SearchHighlight]
 		public string ItemType { get; set; }
+		public ClothesSex Sex { get; set; }
+		public string SexText => Sex.GetEnumShortTitle();
 		public bool Archival { get; set; }
 		public bool UseBarcode { get; set; }
 		public decimal SaleCost { get; set; }

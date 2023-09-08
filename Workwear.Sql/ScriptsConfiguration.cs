@@ -142,7 +142,12 @@ namespace Workwear.Sql
 				new Version(2, 8, 4),
 				"Workwear.Sql.Scripts.2.8.4.sql"
 			);
-			//TODO Создан набросок следующего скрипта 2.8.next.sql дополняйте его.
+			configuration.AddUpdate(
+				new Version(2, 8, 4),
+				new Version(2, 8, 8),
+				"Workwear.Sql.Scripts.2.8.8.sql",
+				onTesting: true
+			);
  
 			return configuration;
 		}

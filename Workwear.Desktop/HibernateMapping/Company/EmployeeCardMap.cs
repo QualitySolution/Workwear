@@ -13,6 +13,9 @@ namespace Workwear.HibernateMapping.Company
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
 			else
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
+			
+			OptimisticLock.Version();
+			Version(x => x.LastUpdate).Column("last_update");
 
 			Map(x => x.CardNumber).Column("card_number");
 			Map(x => x.PersonnelNumber).Column("personnel_number");

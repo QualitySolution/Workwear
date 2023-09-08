@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.8.7"
+!define PRODUCT_VERSION "2.8.8"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецаутсорсинг"
@@ -44,6 +44,7 @@ RequestExecutionLevel admin
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN "$INSTDIR\${EXE_NAME}.exe"
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_CONFIRM

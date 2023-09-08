@@ -113,6 +113,7 @@ namespace Workwear.ViewModels.Operations
 						DateTime = value.OperationTime;
 						Issued = value.Issued;
 						OverrideBefore = value.OverrideBefore;
+						Comment = value.Comment;
 					}
 					else
 						Issued = 0;
@@ -198,14 +199,22 @@ namespace Workwear.ViewModels.Operations
 						SelectOperation.OverrideBefore = value;
 			}
 		}
-		
+
+		private string comment;
+		public string Comment {
+			get => comment;
+			set {
+				if(SetField(ref comment, value))
+					if(SelectOperation != null)
+						SelectOperation.Comment = value;
+			}
+		}
 		#endregion
 
 		#region Заполняемые значения
 
 		public IEnumerable<Size> Sizes => sizeService.GetSize(UoW, Nomenclature?.Type.SizeType, onlyUseInNomenclature: true);
 		public IEnumerable<Size> Heights => sizeService.GetSize(UoW, Nomenclature?.Type.HeightType, onlyUseInNomenclature: true);
-
 		#endregion
 		
 		#region Sensintive and Visibility

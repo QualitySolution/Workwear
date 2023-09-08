@@ -65,6 +65,10 @@ namespace Workwear.Views.Operations
 				.AddBinding(wm => wm.OverrideBefore, w => w.Active)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
+			
+			ytextComment.Binding.
+				AddBinding(ViewModel , v => v.Comment, w => w.Buffer.Text)
+				.InitializeFromSource();
 
 			#region Штрихкоды
 			ylabelBarcodeTitle.Binding.AddBinding(ViewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
