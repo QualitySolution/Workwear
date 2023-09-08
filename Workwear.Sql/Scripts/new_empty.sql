@@ -1642,7 +1642,6 @@ CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
   `quantity` INT UNSIGNED NULL,
   `warehouse_operation_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_stock_transfer_detail_1_idx` (`stock_transfer_id` ASC),
   INDEX `fk_stock_transfer_detail_2_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_transfer_detail_3_idx` (`warehouse_operation_id` ASC),
