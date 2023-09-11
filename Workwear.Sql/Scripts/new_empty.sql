@@ -294,6 +294,7 @@ COMMENT = 'Внимание id до 100 пользователем создав�
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `item_types` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(240) NOT NULL,
   `category` ENUM('wear', 'property') NULL DEFAULT 'wear',
   `wear_category` ENUM('Wear', 'Shoes', 'WinterShoes', 'Headgear', 'Gloves', 'Mittens', 'PPE') NULL DEFAULT NULL,
@@ -304,6 +305,7 @@ CREATE TABLE IF NOT EXISTS `item_types` (
   `size_type_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_type_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_item_types_1_idx` (`units_id` ASC),
   INDEX `fk_item_types_2_idx` (`size_type_id` ASC),
   INDEX `fk_item_types_3_idx` (`height_type_id` ASC),
