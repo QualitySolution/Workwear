@@ -331,6 +331,7 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `nomenclature` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(240) NOT NULL,
   `type_id` INT UNSIGNED NULL DEFAULT NULL,
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
@@ -342,6 +343,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
   INDEX `index_nomenclature_number` (`number` ASC),
   CONSTRAINT `fk_nomenclature_type`
@@ -2066,7 +2068,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.8');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.9');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

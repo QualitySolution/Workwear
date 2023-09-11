@@ -147,6 +147,13 @@ namespace Workwear.Sql
 				new Version(2, 8, 8),
 				"Workwear.Sql.Scripts.2.8.8.sql"
 			);
+			configuration.AddUpdate(
+				new Version(2, 8, 8),
+				new Version(2, 8, 9),
+				"Workwear.Sql.Scripts.2.8.9.sql",
+				onTesting: true
+			);
+
  
 			return configuration;
 		}
