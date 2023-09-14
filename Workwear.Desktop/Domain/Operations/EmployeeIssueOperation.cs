@@ -128,7 +128,10 @@ namespace Workwear.Domain.Operations
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
-			set => SetField(ref autoWriteoffDate, value?.Date);
+			set {
+				if(SetField(ref autoWriteoffDate, value?.Date))
+					UseAutoWriteoff = value != null;
+			}
 		}
 
 		private EmployeeIssueOperation issuedOperation;
@@ -210,7 +213,7 @@ namespace Workwear.Domain.Operations
 		}	
 		
 		private string comment;
-        [Display(Name = "Комменарий")]
+        [Display(Name = "Комментарий")]
         public virtual string Comment {
          	get => comment;
          	set => SetField(ref comment, value);
