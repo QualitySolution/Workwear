@@ -163,7 +163,7 @@ namespace WorkwearTest.ViewModels.Company {
 				//Редактирование ручной операции
 				vmEmployeeCard.WearItemsViewModel.SetIssueDateManual(vmEmployeeCard.Entity.WorkwearItems.First());
 				var vmManualIssue = (vmEmployeeCard.NavigationManager as NavigationManagerForTests).FindPage<ManualEmployeeIssueOperationsViewModel>();
-				vmManualIssue.ViewModel.DateTime = new DateTime(2022, 11, 21);
+				vmManualIssue.ViewModel.IssueDate = new DateTime(2022, 11, 21);
 				vmManualIssue.ViewModel.SaveAndClose();
 				//Проверяем что данные внутри карточки изменились.
 				var item = vmEmployeeCard.Entity.WorkwearItems.First();

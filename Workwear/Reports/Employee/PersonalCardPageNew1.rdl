@@ -127,7 +127,7 @@ WHERE
               WHEN measurement_units.okei = 715
                   THEN 'пар '
               WHEN measurement_units.okei = 839
-                  THEN 'комплктов '
+                  THEN 'комплектов '
               WHEN measurement_units.okei = 704
                   THEN 'наборов '
           END,
@@ -172,7 +172,7 @@ FROM wear_cards_item
          LEFT JOIN
      norms_item ON wear_cards_item.norm_item_id = norms_item.id
          LEFT JOIN norms ON norms.id = norms_item.norm_id
-WHERE wear_cards_item.wear_card_id = 10;</CommandText>
+WHERE wear_cards_item.wear_card_id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>

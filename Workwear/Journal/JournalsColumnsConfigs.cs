@@ -318,6 +318,10 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())
 					.AddColumn("Значение").AddTextRenderer(node => node.Value)
+					.AddColumn("Создан").AddReadOnlyTextRenderer(x => x.CreateDate.ToShortDateString())
+					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature)
+					.AddColumn("Размер").AddTextRenderer(node => node.Size)
+					.AddColumn("Рост").AddTextRenderer(node => node.Height)
 					.Finish()
 				);
 			#endregion
