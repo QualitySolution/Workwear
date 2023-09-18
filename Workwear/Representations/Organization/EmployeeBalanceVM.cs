@@ -94,7 +94,7 @@ namespace workwear.Representations.Organization
 			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
-			.AddColumn ("Cтоимость").AddTextRenderer (e => e.AvgCostText)
+			.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 			.AddSetter ((w, e) => w.Text = 
 				(e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))

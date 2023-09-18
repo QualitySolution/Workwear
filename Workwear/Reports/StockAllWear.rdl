@@ -11,12 +11,12 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
-    (SUM(case when operation_warehouse.warehouse_receipt_id is not null then operation_warehouse.amount else 0 end) -
-		SUM(case when operation_warehouse.warehouse_expense_id is not null then operation_warehouse.amount else 0 end)) as quantity,
+    (SUM(IF(operation_warehouse.warehouse_receipt_id = @id, operation_warehouse.amount, 0)) -
+		SUM(IF(operation_warehouse.warehouse_expense_id = @id, operation_warehouse.amount, 0))) as quantity,
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
@@ -39,14 +39,18 @@
     LEFT JOIN
     owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
     WHERE operation_warehouse.warehouse_receipt_id = @id or operation_warehouse.warehouse_expense_id = @id
-	GROUP BY nomenclature_id, size, growth, owner, wear_percent</CommandText>
+	GROUP BY nomenclature_id, size, growth, owner, wear_percent
+    HAVING quantity &lt;&gt; 0
+    ORDER BY nomenclature.name, 
+    	CAST(SUBSTRING_INDEX(sizeAlias.name, '-', 1) AS DECIMAL(5,1)),
+        CAST(SUBSTRING_INDEX(heightAlias.name, '-', 1) AS DECIMAL(5,1));</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -122,7 +126,7 @@
             <Width>102.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>349.1pt</Width>
+            <Width>345.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -282,8 +286,8 @@
                             <PaddingLeft>2pt</PaddingLeft>
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left>None</Left>
-                              <Right>None</Right>
+                              <Left>Solid</Left>
+                              <Right>Solid</Right>
                               <Top>None</Top>
                               <Bottom>None</Bottom>
                             </BorderStyle>
@@ -645,7 +649,7 @@
             </TableRow>
           </TableRows>
         </Footer>
-        <Left>6.4pt</Left>
+        <Left>0.0pt</Left>
         <Top>0.0pt</Top>
       </Table>
     </ReportItems>
@@ -693,7 +697,7 @@
       <Prompt />
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

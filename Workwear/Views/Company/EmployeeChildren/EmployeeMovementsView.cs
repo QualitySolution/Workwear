@@ -81,7 +81,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png");
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeMovementItem>()
-				.AddColumn("Дата").AddTextRenderer(e => e.Date.ToShortDateString())
+				.AddColumn("Дата").ToolTipText(x => $"ИД операции: {x.Operation.Id}")
+				.AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated
 				.AddColumn("Документ").AddTextRenderer(e => e.DocumentTitle)
 				.AddColumn("Номенклатура").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)

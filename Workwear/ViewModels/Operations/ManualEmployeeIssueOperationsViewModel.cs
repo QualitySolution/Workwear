@@ -32,6 +32,8 @@ namespace Workwear.ViewModels.Operations
 		private readonly BarcodeService barcodeService;
 		private readonly IInteractiveQuestion interactive;
 		private readonly ProtectionTools protectionTools;
+		private readonly EmployeeCard employee;
+		
 		public ManualEmployeeIssueOperationsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -42,30 +44,39 @@ namespace Workwear.ViewModels.Operations
 			IInteractiveQuestion interactive,
 			EmployeeCardItem cardItem = null,
 			EmployeeIssueOperation selectOperation = null,
+			ProtectionTools protectionTools = null,
+			EmployeeCard employee = null,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, "Редактирование ручных операций") 
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(cardItem != null) {
-				Title = cardItem.ProtectionTools.Name;
-				protectionTools = cardItem.ProtectionTools;
+				this.protectionTools = cardItem.ProtectionTools;
 				EmployeeCardItem = UoW.GetById<EmployeeCardItem>(cardItem.Id);
-				Operations = new GenericObservableList<EmployeeIssueOperation>(
-					repository.GetAllManualIssue(UoW, EmployeeCardItem.EmployeeCard, EmployeeCardItem.ProtectionTools)
-						.OrderBy(x => x.OperationTime)
-						.ToList());
+				this.employee = EmployeeCardItem.EmployeeCard;
 			}
 			else if(selectOperation != null) {
-				Title = selectOperation.ProtectionTools?.Name;
-				protectionTools = selectOperation.ProtectionTools;
-				Operations = new GenericObservableList<EmployeeIssueOperation>(
-					repository.GetAllManualIssue(UoW, selectOperation.Employee, selectOperation.ProtectionTools)
-						.OrderBy(x => x.OperationTime)
-						.ToList());
+				this.protectionTools = selectOperation.ProtectionTools;
+				this.employee = selectOperation.Employee;
 			}
-			else
-				throw new ArgumentNullException(nameof(selectOperation) + nameof(cardItem));
+			else {
+				this.protectionTools = protectionTools;
+				this.employee = employee;
+			}
+			
+			if(this.employee == null || this.protectionTools == null)
+				throw new ArgumentNullException(String.Join(" or ", nameof(selectOperation), nameof(cardItem), nameof(protectionTools), nameof(employee)));
+			
+			if(EmployeeCardItem == null)
+				EmployeeCardItem = this.employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(protectionTools));
+			
+			Title = $"Ручные операции для {this.protectionTools.Name}";
+			
+			Operations = new GenericObservableList<EmployeeIssueOperation>(
+				repository.GetAllManualIssue(UoW, this.employee, this.protectionTools)
+					.OrderBy(x => x.OperationTime)
+					.ToList());
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<ManualEmployeeIssueOperationsViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope
@@ -110,9 +121,11 @@ namespace Workwear.ViewModels.Operations
 				if(SetField(ref selectOperation, value)) {
 					NomenclatureEntryViewModel.IsEditable = SelectOperation != null;
 					if(value != null) {
-						DateTime = value.OperationTime;
+						IssueDate = value.OperationTime;
+						AutoWriteoffDate = value.AutoWriteoffDate;
 						Issued = value.Issued;
 						OverrideBefore = value.OverrideBefore;
+						Comment = value.Comment;
 					}
 					else
 						Issued = 0;
@@ -125,13 +138,23 @@ namespace Workwear.ViewModels.Operations
 		#endregion
 		#region Проброс свойст операции
 		
-		private DateTime dateTime;
-		public DateTime DateTime {
-			get => dateTime;
+		private DateTime issueDate;
+		public DateTime IssueDate {
+			get => issueDate;
 			set {
-				if(SetField(ref dateTime, value) && SelectOperation.StartOfUse != value) {
+				if(SetField(ref issueDate, value) && SelectOperation.StartOfUse != value) {
 					RecalculateDatesOfSelectedOperation();
 				}
+			}
+		}
+		
+		private DateTime? autoWriteoffDate;
+		public DateTime? AutoWriteoffDate {
+			get => autoWriteoffDate;
+			set {
+				if(SetField(ref autoWriteoffDate, value))
+					if(SelectOperation != null)
+						SelectOperation.AutoWriteoffDate = value;
 			}
 		}
 
@@ -198,26 +221,50 @@ namespace Workwear.ViewModels.Operations
 						SelectOperation.OverrideBefore = value;
 			}
 		}
-		
+
+		private string comment;
+		public string Comment {
+			get => comment;
+			set {
+				if(SetField(ref comment, value))
+					if(SelectOperation != null)
+						SelectOperation.Comment = value;
+			}
+		}
 		#endregion
 
 		#region Заполняемые значения
 
 		public IEnumerable<Size> Sizes => sizeService.GetSize(UoW, Nomenclature?.Type.SizeType, onlyUseInNomenclature: true);
 		public IEnumerable<Size> Heights => sizeService.GetSize(UoW, Nomenclature?.Type.HeightType, onlyUseInNomenclature: true);
-
 		#endregion
 		
 		#region Sensintive and Visibility
 		public bool VisibleHeight => Nomenclature?.Type.HeightType != null;
 		public bool VisibleSize => Nomenclature?.Type.SizeType != null;
 		public bool VisibleBarcodes => (Nomenclature?.UseBarcode ?? false) || (SelectOperation?.BarcodeOperations.Any() ?? false);
+		public bool VisibleManualCalculate => EmployeeCardItem?.ActiveNormItem == null;
 		public bool CanEditOperation => SelectOperation != null;
-		public bool CanAddOperation => EmployeeCardItem != null;
+		public bool CanAddOperation => employee != null && protectionTools != null;
 		public bool SensitiveCreateBarcodes => (Nomenclature?.UseBarcode ?? false) && (SelectOperation?.BarcodeOperations.Count ?? 0) != Issued;
 		public bool SensitiveBarcodesPrint => Issued > 0 && ((Nomenclature?.UseBarcode ?? false) || (SelectOperation?.BarcodeOperations.Count ?? 0) > 0);
 
 		public event Action<ProtectionTools> SaveChanged;
+
+		#endregion
+
+		#region Списание
+
+		private int expiredMonths;
+
+		public virtual int ExpiredMonths {
+			get => expiredMonths;
+			set => SetField(ref expiredMonths, value);
+		}
+
+		public void CalculateExpense() {
+			AutoWriteoffDate = IssueDate.AddMonths(ExpiredMonths);
+		}
 
 		#endregion
 		
@@ -265,9 +312,9 @@ namespace Workwear.ViewModels.Operations
 
 		#region private
 		void RecalculateDatesOfSelectedOperation() {
-			SelectOperation.OperationTime = DateTime;
-			SelectOperation.StartOfUse = DateTime;
-			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(DateTime, SelectOperation.Issued);
+			SelectOperation.OperationTime = IssueDate;
+			SelectOperation.StartOfUse = IssueDate;
+			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(IssueDate, SelectOperation.Issued);
 			if(SelectOperation.UseAutoWriteoff)
 				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
 		}
@@ -288,16 +335,14 @@ namespace Workwear.ViewModels.Operations
 		}
 
 		public void AddOnClicked() {
-			if(EmployeeCardItem == null)
-				throw new ArgumentNullException(nameof(EmployeeCardItem));
-			var startDate = EmployeeCardItem.NextIssue ?? DateTime.Today;
-			var endDate = EmployeeCardItem.ActiveNormItem?.CalculateExpireDate(startDate);
+			var startDate = EmployeeCardItem?.NextIssue ?? DateTime.Today;
+			var endDate = EmployeeCardItem?.ActiveNormItem?.CalculateExpireDate(startDate);
 			var issue = new EmployeeIssueOperation {
-				Employee = EmployeeCardItem.EmployeeCard,
-				Issued = EmployeeCardItem.ActiveNormItem?.Amount ?? 1,
+				Employee = employee,
+				Issued = EmployeeCardItem?.ActiveNormItem?.Amount ?? 1,
 				ManualOperation = true,
-				NormItem = EmployeeCardItem.ActiveNormItem,
-				ProtectionTools = EmployeeCardItem.ProtectionTools,
+				NormItem = EmployeeCardItem?.ActiveNormItem,
+				ProtectionTools = protectionTools,
 				Returned = 0,
 				WearPercent = 0m,
 				UseAutoWriteoff = true,
@@ -306,6 +351,7 @@ namespace Workwear.ViewModels.Operations
 				AutoWriteoffDate = endDate,
 				ExpiryByNorm = endDate
 			};
+			
 			if(!Operations.Any())
 				issue.OverrideBefore = true;
 			

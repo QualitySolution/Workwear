@@ -20,7 +20,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		private global::Gtk.Button buttonRefreshWorkwearItems;
 
-		private global::Gamma.GtkWidgets.yButton buttonManualIssueDate;
+		private global::QS.Widgets.MenuButton buttonManualIssueDate;
 
 		private global::Gtk.Button buttonTimeLine;
 
@@ -108,11 +108,12 @@ namespace Workwear.Views.Company.EmployeeChildren
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox11.Gtk.Box+BoxChild
-			this.buttonManualIssueDate = new global::Gamma.GtkWidgets.yButton();
-			this.buttonManualIssueDate.Sensitive = false;
+			this.buttonManualIssueDate = new global::QS.Widgets.MenuButton();
 			this.buttonManualIssueDate.CanFocus = true;
 			this.buttonManualIssueDate.Name = "buttonManualIssueDate";
 			this.buttonManualIssueDate.UseUnderline = true;
+			this.buttonManualIssueDate.UseMarkup = false;
+			this.buttonManualIssueDate.LabelXAlign = 0F;
 			this.buttonManualIssueDate.Label = global::Mono.Unix.Catalog.GetString("Ручные операции выдачи");
 			global::Gtk.Image w11 = new global::Gtk.Image();
 			w11.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.rows.нand.png");
@@ -153,7 +154,6 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.buttonReturnWear1.Clicked += new global::System.EventHandler(this.OnButtonReturnWearClicked);
 			this.buttonWriteOffWear1.Clicked += new global::System.EventHandler(this.OnButtonWriteOffWearClicked);
 			this.buttonRefreshWorkwearItems.Clicked += new global::System.EventHandler(this.OnButtonRefreshWorkwearItemsClicked);
-			this.buttonManualIssueDate.Clicked += new global::System.EventHandler(this.OnButtonManualIssueDateClicked);
 			this.buttonTimeLine.Clicked += new global::System.EventHandler(this.OnButtonTimeLineClicked);
 		}
 	}

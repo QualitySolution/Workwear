@@ -128,7 +128,10 @@ namespace Workwear.Domain.Operations
 		[Display(Name = "Дата автосписания")]
 		public virtual DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
-			set => SetField(ref autoWriteoffDate, value?.Date);
+			set {
+				if(SetField(ref autoWriteoffDate, value?.Date))
+					UseAutoWriteoff = value != null;
+			}
 		}
 
 		private EmployeeIssueOperation issuedOperation;
@@ -207,7 +210,14 @@ namespace Workwear.Domain.Operations
 		public virtual IList<BarcodeOperation> BarcodeOperations {
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);
-		}
+		}	
+		
+		private string comment;
+        [Display(Name = "Комментарий")]
+        public virtual string Comment {
+         	get => comment;
+         	set => SetField(ref comment, value);
+        }
 
 		/// <summary>
 		/// Для создания операций выдачи надо использовать конструктор с BaseParameters

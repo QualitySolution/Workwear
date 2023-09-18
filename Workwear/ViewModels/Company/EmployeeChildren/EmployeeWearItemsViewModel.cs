@@ -14,6 +14,7 @@ using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
@@ -105,6 +106,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public FeaturesService FeaturesService { get; }
 
+		private EmployeeCardItem selectedWorkwearItem;
+		[PropertyChangedAlso(nameof(SensitiveManualIssueOnRow))]
+		public virtual EmployeeCardItem SelectedWorkwearItem {
+			get => selectedWorkwearItem;
+			set => SetField(ref selectedWorkwearItem, value);
+		}
+
+		#endregion
+
+		#region Sensetive And Visibility
+
+		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null;
+
 		#endregion
 
 		#region Обработка изменений
@@ -187,6 +201,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			Entity.UpdateNextIssueAll();
 		}
 
+		#region Ручные операции
 		public void SetIssueDateManual(EmployeeCardItem row)
 		{
 			var operations = employeeIssueRepository
@@ -216,6 +231,21 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			Entity.UpdateNextIssue(protectionTools);
 			UoW.Save();
 		}
+
+		public void SetIssueDateManual() {
+			var page = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(employeeViewModel, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			page.ViewModel.OnSelectResult += SetIssueDateManual_OnSelectResult;
+		}
+		
+		void SetIssueDateManual_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var protectionTools = UoW.GetById<ProtectionTools>(e.SelectedObjects.First().GetId());
+			var page = navigation.OpenViewModel<ManualEmployeeIssueOperationsViewModel, ProtectionTools, EmployeeCard>(
+				employeeViewModel, protectionTools, Entity, OpenPageOptions.AsSlave);
+			page.ViewModel.SaveChanged += SetIssueDateManual_PageClosed;
+		}
+		#endregion
 		#endregion
 		#region Контекстное меню
 		public void OpenProtectionTools(EmployeeCardItem row)

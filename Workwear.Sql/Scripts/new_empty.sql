@@ -174,6 +174,7 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wear_cards` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `card_number` VARCHAR(15) NULL DEFAULT NULL,
   `personnel_number` VARCHAR(15) NULL DEFAULT NULL,
   `last_name` VARCHAR(20) NULL,
@@ -195,6 +196,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `photo` MEDIUMBLOB NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_wear_cards_object_idx` (`object_id` ASC),
   INDEX `fk_wear_cards_post_idx` (`post_id` ASC),
   INDEX `fk_wear_cards_leader_idx` (`leader_id` ASC),
@@ -292,6 +294,7 @@ COMMENT = 'Внимание id до 100 пользователем создав�
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `item_types` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(240) NOT NULL,
   `category` ENUM('wear', 'property') NULL DEFAULT 'wear',
   `wear_category` ENUM('Wear', 'Shoes', 'WinterShoes', 'Headgear', 'Gloves', 'Mittens', 'PPE') NULL DEFAULT NULL,
@@ -302,6 +305,7 @@ CREATE TABLE IF NOT EXISTS `item_types` (
   `size_type_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_type_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_item_types_1_idx` (`units_id` ASC),
   INDEX `fk_item_types_2_idx` (`size_type_id` ASC),
   INDEX `fk_item_types_3_idx` (`height_type_id` ASC),
@@ -329,6 +333,7 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `nomenclature` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(240) NOT NULL,
   `type_id` INT UNSIGNED NULL DEFAULT NULL,
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
@@ -340,6 +345,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
   INDEX `index_nomenclature_number` (`number` ASC),
   CONSTRAINT `fk_nomenclature_type`
@@ -705,6 +711,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `manual_operation` TINYINT(1) NOT NULL DEFAULT 0,
   `override_before` TINYINT(1) NOT NULL DEFAULT (manual_operation),
   `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0,
+  `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
   INDEX `fk_operation_issued_by_employee_2_idx` (`nomenclature_id` ASC),
@@ -1639,7 +1646,6 @@ CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
   `quantity` INT UNSIGNED NULL,
   `warehouse_operation_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   INDEX `fk_stock_transfer_detail_1_idx` (`stock_transfer_id` ASC),
   INDEX `fk_stock_transfer_detail_2_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_transfer_detail_3_idx` (`warehouse_operation_id` ASC),
@@ -2064,7 +2070,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.4');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.9');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

@@ -1,3 +1,4 @@
+using System;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -6,6 +7,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Stock;
 
@@ -28,10 +30,22 @@ namespace workwear.Journal.ViewModels.Stock
 		protected override IQueryOver<Barcode> ItemsQuery(IUnitOfWork uow) 
 		{
 			BarcodeJournalNode resultAlias = null;
+			
+			Nomenclature nomenclatureAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
+			
 			return uow.Session.QueryOver<Barcode>()
+				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
+				.Left.JoinAlias(x => x.Size, () => sizeAlias)
+				.Left.JoinAlias(x => x.Height, () => heightAlias)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
+					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
+					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
+					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.Size)
+					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
 				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 		}
@@ -41,5 +55,9 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public int Id { get; set; }
 		public string Value { get; set; }
+		public string Nomenclature { get; set; }
+		public string Size { get; set; }
+		public string Height { get; set; }
+		public DateTime CreateDate { get; set; }
 	}
 }

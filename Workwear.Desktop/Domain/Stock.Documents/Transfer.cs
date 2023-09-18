@@ -6,7 +6,6 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
@@ -20,7 +19,7 @@ namespace Workwear.Domain.Stock.Documents
 	public class Transfer : StockDocument, IValidatableObject
 	{
 		public Transfer() { }
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		#region Свойства
 		private Warehouse warehouseFrom;
 		[Display(Name = "Склад отправитель")]
@@ -62,13 +61,13 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult("Документ не должен содержать строк с нулевым количеством.",
 					new[] { nameof(Items) });
 			if (warehouseTo == null)
-				yield return new ValidationResult("Склад добавления должен быть указан",
+				yield return new ValidationResult("Склад получатель должен быть указан",
 				new[] { nameof(Items) });
 			if(warehouseFrom == null)
-				yield return new ValidationResult("Склад списания должен быть указан",
+				yield return new ValidationResult("Склад отправитель должен быть указан",
 				new[] { nameof(Items) });
 			if (WarehouseTo == WarehouseFrom)
-				yield return new ValidationResult("Склад добавления должен отличаться от склада списания",
+				yield return new ValidationResult("Склад получатель должен отличаться от склада отправителя",
 				new[] { nameof(Items) });
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (baseParameters.CheckBalances) {
@@ -89,7 +88,6 @@ namespace Workwear.Domain.Stock.Documents
 			}
 			var newItem = new TransferItem(UoW, this, position, amount);
 			ObservableItems.Add(newItem);
-			SetAmountInStock(newItem);
 			return newItem;
 		}
 		public virtual void RemoveItem(TransferItem item) {
@@ -97,36 +95,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
-		}
-		public virtual void SetAmountInStock(TransferItem item = null) {
-			IList<Nomenclature> nomenclatures;
-			IList<TransferItem> currentItems;
-
-			if(item != null) {
-				nomenclatures = new List<Nomenclature> { item.Nomenclature };
-				currentItems = items.Where(x => x == item).ToList();
-			}
-			else {
-				nomenclatures = items.Select(x => x.Nomenclature).Distinct().ToList();
-				currentItems = items;
-			}
-			var stock = new StockRepository().StockBalances(UoW, WarehouseFrom, nomenclatures, Date);
-			foreach(var currentItem in currentItems) {
-				var currentNomenclature = currentItem.Nomenclature;
-
-				var stockBalanceDTO = stock
-					.FirstOrDefault(x => x.Nomenclature == currentNomenclature && 
-					                     x.WearSize == currentItem.WarehouseOperation.WearSize && 
-					                     x.Height == currentItem.WarehouseOperation?.Height);
-
-				if(currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO != null)
-					stockBalanceDTO.Amount += currentItem.WarehouseOperation.Amount;
-
-				if (currentItem.WarehouseOperation.Id > 0 && stockBalanceDTO == null) 
-					currentItem.AmountInStock = currentItem.Amount;
-				else 
-					currentItem.AmountInStock = stockBalanceDTO.Amount;
-			}
 		}
 	}
 

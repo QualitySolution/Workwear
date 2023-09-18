@@ -17,8 +17,10 @@ namespace Workwear.Views.Operations
 			
 			ybuttonAdd.Clicked += ButtonAddOnClicked;
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
+			buttonCalculateExpence.Clicked += (sender, args) => ViewModel.CalculateExpense();
 
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
+				.AddColumn("ИД").AddReadOnlyTextRenderer(x => x.Id.ToString())
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
 				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
@@ -32,9 +34,23 @@ namespace Workwear.Views.Operations
 
 			ydatepicker.Binding
 				.AddSource(ViewModel)
-				.AddBinding(wm => wm.DateTime, w => w.Date)
+				.AddBinding(wm => wm.IssueDate, w => w.Date)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
+			
+			dateExpense.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.AutoWriteoffDate, w => w.DateOrNull)
+				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
+				.InitializeFromSource();
+			
+			spinExpenseMonths.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.ExpiredMonths, w => w.ValueAsInt)
+				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
+				.InitializeFromSource();
+			
+			hboxManualCalculate.Binding.AddBinding(ViewModel, v => v.VisibleManualCalculate, w => w.Visible).InitializeFromSource();
 
 			entityNomenclature.ViewModel = ViewModel.NomenclatureEntryViewModel;
 
@@ -64,6 +80,10 @@ namespace Workwear.Views.Operations
 				.AddSource(ViewModel)
 				.AddBinding(wm => wm.OverrideBefore, w => w.Active)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
+				.InitializeFromSource();
+			
+			ytextComment.Binding.
+				AddBinding(ViewModel , v => v.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();
 
 			#region Штрихкоды

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
@@ -27,6 +28,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				viewModel = value;
 				viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				ConfigureTable();
+				MakeManualIssueMenu();
 			}
 		}
 
@@ -39,8 +41,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
 		{
+			ViewModel.SelectedWorkwearItem = ytreeWorkwear.GetSelectedObject<EmployeeCardItem>();
 			buttonTimeLine.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
-			buttonManualIssueDate.Sensitive = ytreeWorkwear.Selection.CountSelectedRows() > 0;
 		}
 
 		#region private
@@ -79,8 +81,30 @@ namespace Workwear.Views.Company.EmployeeChildren
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;
 		}
 
-		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Select(x => x.date > DateTime.Today ? $"<span foreground=\"darkviolet\">{x.date:d}</span> - {x.amount}{ShowIfExist(x.removed)}" : $"{x.date:d} - {x.amount}{ShowIfExist(x.removed)}"));
+		private void MakeManualIssueMenu() {
+			var menu = new Menu();
+			var itemManualIssueRow = new yMenuItem("Для выбранной строки");
+			itemManualIssueRow.Binding.AddBinding(ViewModel, v => v.SensitiveManualIssueOnRow, w => w.Sensitive).InitializeFromSource();
+			itemManualIssueRow.Activated += (sender, e) => ViewModel.SetIssueDateManual(ytreeWorkwear.GetSelectedObject<EmployeeCardItem>());
+			menu.Add(itemManualIssueRow);
+			var itemManualIssueNew = new MenuItem("Для другой номенклатуры нормы");
+			itemManualIssueNew.Activated += (sender, e) => ViewModel.SetIssueDateManual();
+			menu.Add(itemManualIssueNew);
+			menu.ShowAll();
+			buttonManualIssueDate.Menu = menu;
+		}
+
+		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", 
+			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
+				.Select(x => $"{FormatOfLastIssue(x.date.Date)} - {x.amount}{ShowIfExist(x.removed)}"));
 		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
+
+		private string FormatOfLastIssue(DateTime issueDate) {
+			if(issueDate.Date < DateTime.Today)
+				return $"{issueDate:d}";
+			var color = issueDate.Date == DateTime.Today ? "darkgreen" : "darkviolet";
+			return $"<span foreground=\"{color}\">{issueDate:d}</span>";
+		}
 		#endregion
 
 		#region Кнопки
