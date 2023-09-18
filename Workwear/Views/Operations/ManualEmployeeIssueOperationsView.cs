@@ -20,6 +20,7 @@ namespace Workwear.Views.Operations
 			buttonCalculateExpence.Clicked += (sender, args) => ViewModel.CalculateExpense();
 
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
+				.AddColumn("ИД").AddReadOnlyTextRenderer(x => x.Id.ToString())
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
 				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
