@@ -661,6 +661,8 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
+  `issue_reason` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
+  `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
   INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC),

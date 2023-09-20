@@ -57,6 +57,8 @@ namespace Workwear.Views.Regulations
 						.SetDisplayListFunc(x => x?.Name ?? "нет")
 					.FillItems(ViewModel.NormConditions)
 					.Editing()
+				.AddColumn("Пункт норм").AddTextRenderer(x => x.IssueReason).Editable()
+				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
