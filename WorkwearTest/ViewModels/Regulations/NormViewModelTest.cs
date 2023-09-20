@@ -11,7 +11,6 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Testing.DB;
 using QS.Testing.Testing.Navigation;
-using QS.Tools;
 using QS.Validation;
 using QS.Validation.Testing;
 using Workwear.Domain.Company;
@@ -50,7 +49,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 
 			var featuresService = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveService>();
-			var monitor = Substitute.For<IChangeMonitor<NormItem>>();
+			var monitor = Substitute.For<IEntityChangeWatcher>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
 			var validator = new ValidatorForTests();
 			
@@ -63,7 +62,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => featuresService).AsSelf();
 			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
-			builder.Register(x => monitor).As<IChangeMonitor<NormItem>>();
+			builder.Register(x => monitor).As<IEntityChangeWatcher>();
 			builder.Register(x => validator).As<IValidator>();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
