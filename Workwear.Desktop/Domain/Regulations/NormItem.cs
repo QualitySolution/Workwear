@@ -70,11 +70,11 @@ namespace Workwear.Domain.Regulations
 			set => SetField(ref normCondition, value); 
 		}
 
-		private string issueReason;
-		[Display(Name = "Пункт нормы")]
-		public virtual string IssueReason {
-			get => String.IsNullOrWhiteSpace(issueReason) ? null : issueReason; //Чтобы в базе хранить null, а не пустую строку.
-			set => SetField(ref issueReason, value); 
+		private string normParagraph;
+		[Display(Name = "Пункт норм")]
+		public virtual string NormParagraph {
+			get => String.IsNullOrWhiteSpace(normParagraph) ? null : normParagraph; //Чтобы в базе хранить null, а не пустую строку.
+			set => SetField(ref normParagraph, value); 
 		}
 		
 		private string comment;

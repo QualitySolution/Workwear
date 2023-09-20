@@ -7,5 +7,5 @@ ALTER TABLE `nomenclature` ADD `last_update` TIMESTAMP on update CURRENT_TIMESTA
 ALTER TABLE `nomenclature` ADD INDEX(`last_update`); 
 
 -- В стоку нормы добавлено поле пунктом нормы
-ALTER TABLE `norms_item` ADD `issue_reason` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи' AFTER `condition_id`;
+ALTER TABLE `norms_item` ADD `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи' AFTER `condition_id`;
 ALTER TABLE `norms_item` ADD `comment` TEXT NULL DEFAULT NULL AFTER `issue_reason`;
