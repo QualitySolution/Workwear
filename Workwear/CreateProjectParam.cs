@@ -230,7 +230,7 @@ namespace workwear
             builder.RegisterType<ObjectValidator>().As<IValidator>();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterGeneric(typeof(NHibernateChangeMonitor<>)).As(typeof(IChangeMonitor<>));
-			builder.Register(x => NotifyConfiguration.Instance).As<IEntityChangeWatcher>().ExternallyOwned();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<BarcodeService>().AsSelf();
 			#endregion
 
