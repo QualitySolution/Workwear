@@ -118,7 +118,7 @@ WHERE
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT protection_tools.name  AS type_name,
-       norms.ton_paragraph,
+       IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
        norms_item.amount AS amount,
        CONCAT(
           CASE

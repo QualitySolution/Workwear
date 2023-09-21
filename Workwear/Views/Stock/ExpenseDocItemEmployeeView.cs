@@ -90,9 +90,6 @@ namespace Workwear.Views.Stock
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
 					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
-				.AddColumn("Списание").AddToggleRenderer(e => e.IsWriteOff).Editing()
-				.AddSetter((c, e) => c.Visible = e.IsEnableWriteOff)
-				.AddColumn("Номер акта").AddTextRenderer(e => e.AktNumber).Editable().AddSetter((c, e) => c.Visible = e.IsWriteOff)
 				.AddColumn("Бухгалтерский документ").Resizable().AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 

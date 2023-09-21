@@ -64,13 +64,25 @@ namespace Workwear.Domain.Regulations
 		}
 
 		private NormCondition normCondition;
-
 		[Display(Name = "Условия нормы")]
 		public virtual NormCondition NormCondition {
 			get => normCondition; 
 			set => SetField(ref normCondition, value); 
 		}
 
+		private string normParagraph;
+		[Display(Name = "Пункт норм")]
+		public virtual string NormParagraph {
+			get => String.IsNullOrWhiteSpace(normParagraph) ? null : normParagraph; //Чтобы в базе хранить null, а не пустую строку.
+			set => SetField(ref normParagraph, value); 
+		}
+		
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => String.IsNullOrWhiteSpace(comment) ? null : comment; //Чтобы в базе хранить null, а не пустую строку. 
+			set => SetField(ref comment, value); 
+		}
 		#endregion
 
 		public virtual double AmountPerYear

@@ -162,13 +162,6 @@ namespace Workwear.Domain.Operations
 			set => SetField(ref buhDocument, value);
 		}
 
-		private EmployeeIssueOperation employeeOperationIssueOnWriteOff;
-		[Display(Name = "Операция списания при выдачи по списанию")]
-		public virtual EmployeeIssueOperation EmployeeOperationIssueOnWriteOff {
-			get => employeeOperationIssueOnWriteOff;
-			set => SetField(ref employeeOperationIssueOnWriteOff, value);
-		}
-
 		private string signCardKey;
 		[Display(Name = "UID карты доступа")]
 		public virtual string SignCardKey {
@@ -322,11 +315,6 @@ namespace Workwear.Domain.Operations
 
 			if(ProtectionTools == null)
 				ProtectionTools = NormItem.ProtectionTools;
-
-			if(EmployeeOperationIssueOnWriteOff != null) {
-				if(item.ExpenseDoc.Date.Date != OperationTime.Date)
-					this.EmployeeOperationIssueOnWriteOff.OperationTime = item.ExpenseDoc.Date;
-			}
 
 			var anotherRows =
 				item.ExpenseDoc.Items

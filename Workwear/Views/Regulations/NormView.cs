@@ -45,7 +45,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("ИД").AddTextRenderer(p => p.ProtectionTools.Id.ToString())
 				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("Количество")
-				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, 1000000, 1, 10, 10))
+				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, 65535, 1, 10, 10))
 				.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 				.AddColumn("Период")
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
@@ -57,6 +57,8 @@ namespace Workwear.Views.Regulations
 						.SetDisplayListFunc(x => x?.Name ?? "нет")
 					.FillItems(ViewModel.NormConditions)
 					.Editing()
+				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
+				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.ObservableItems;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;

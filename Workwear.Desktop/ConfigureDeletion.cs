@@ -167,8 +167,7 @@ namespace Workwear
 			#region Складские документы
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)
-				.AddDeleteDependence<IssuanceSheet>(x => x.Expense)
-				.AddDeleteCascadeDependence(x => x.WriteOffDoc);
+				.AddDeleteDependence<IssuanceSheet>(x => x.Expense);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)
@@ -194,8 +193,7 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
-				.AddDeleteDependence<WriteoffItem>(x => x.Document)
-				.AddClearDependence<Expense>(x => x.WriteOffDoc);
+				.AddDeleteDependence<WriteoffItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
 				.AddRemoveFromDependence<Writeoff>(x => x.Items)//Необходимо иначе будут исключения при удалении строк выдачи которые создают списание. 
@@ -244,9 +242,7 @@ namespace Workwear
 				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
-				.AddDeleteCascadeDependence(x => x.EmployeeOperationIssueOnWriteOff)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
-				.AddClearDependence<EmployeeIssueOperation>(x => x.EmployeeOperationIssueOnWriteOff)
 				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
 				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
 

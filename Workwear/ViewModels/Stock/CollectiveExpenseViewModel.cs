@@ -8,24 +8,24 @@ using Gamma.Utilities;
 using NHibernate;
 using NLog;
 using QS.Dialog;
-using QS.Dialog.ViewModels;
-using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.Tools;
 using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using workwear;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -41,10 +41,12 @@ namespace Workwear.ViewModels.Stock
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
 		private IInteractiveQuestion interactive;
+		private readonly EmployeeIssueModel issueModel;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
 		private readonly BaseParameters baseParameters;
-		private readonly IChangeMonitor<CollectiveExpenseItem> changeMonitor;
+		private readonly ModalProgressCreator progressCreator;
+		private readonly IEntityChangeWatcher changeWatcher;
 
 		public CollectiveExpenseViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -55,23 +57,27 @@ namespace Workwear.ViewModels.Stock
 			IUserService userService,
 			CurrentUserSettings currentUserSettings,
 			IInteractiveQuestion interactive,
+			EmployeeIssueModel issueModel,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
-			IProgressBarDisplayable globalProgress, 
-			IChangeMonitor<CollectiveExpenseItem> changeMonitor
+			IProgressBarDisplayable globalProgress,
+			ModalProgressCreator progressCreator,
+			IEntityChangeWatcher changeWatcher
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.changeMonitor = changeMonitor ?? throw new ArgumentNullException(nameof(changeMonitor));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 
-			var performance = new ProgressPerformanceHelper(globalProgress, 13, "Предзагрузка данных документа", logger);
+			var performance = new ProgressPerformanceHelper(globalProgress, 12, "Предзагрузка данных документа", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
 			if (UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -84,12 +90,6 @@ namespace Workwear.ViewModels.Stock
 					.Fetch(SelectMode.Fetch, x => x.Warehouse)
 					.SingleOrDefault();
 			}
-			performance.CheckPoint("entryBuilder и changeMonitor");
-			
-			changeMonitor.SubscribeAllChange(
-					x => DomainHelper.EqualDomainObjects(x.Document, Entity))
-				.TargetField(x => x.Employee);
-			changeMonitor.AddSetTargetUnitOfWorks(UoW);
 			
 			performance.CheckPoint("Warehouse");
 			if(Entity.Warehouse == null)
@@ -103,6 +103,13 @@ namespace Workwear.ViewModels.Stock
 			var parameterPerformance = new TypedParameter(typeof(PerformanceHelper), performance);
 			CollectiveExpenseItemsViewModel = this.autofacScope.Resolve<CollectiveExpenseItemsViewModel>(parameterModel, parameterPerformance);
 			performance.EndGroup();
+			
+			this.changeWatcher.BatchSubscribe(Subscriber)
+				.OnlyForUow(UoW)
+				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(TypeOfChangeEvent.Insert)
+				.AndChangeType(TypeOfChangeEvent.Update);
+			
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
@@ -114,6 +121,13 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		#endregion
 
+		#region Сохранение
+		private void Subscriber(EntityChangeEvent[] changeevents) {
+			changedOperations = changeevents.Select(x => x.GetEntity<EmployeeIssueOperation>()).ToArray();
+		}
+
+		private EmployeeIssueOperation[] changedOperations = new EmployeeIssueOperation[0];
+
 		public override bool Save()
 		{
 			if(!Validate())
@@ -121,35 +135,35 @@ namespace Workwear.ViewModels.Stock
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 
-			logger.Info("Запись документа...");
-			var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(this);
-			var progress = progressPage.ViewModel.Progress;
-
-			var employeeItemGroups = Entity.Items.GroupBy(x => x.Employee);
-			//О подсчете прогресса, метод UpdateEmployeeWearItems использует умноженное на 2 количество сотрудников, как шагов прогресса.
-			progress.Start(maxValue: employeeItemGroups.Count() * 2 + 2, text: "Подготовка...");
+			var performance = new ProgressPerformanceHelper(progressCreator, 6, "Подготовка документа...", logger, showProgressText: true);
 			Entity.CleanupItems();
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
-			progress.Add(text: "Обновление ведомости...");
+			performance.CheckPoint("Обновление ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
 
+			performance.CheckPoint("Сохранение...");
 			UoWGeneric.Save();
-			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-			Entity.UpdateEmployeeWearItems(progress, changeMonitor.EntityIds.ToList());
-			progress.Add(text: "Сохранение в базу данных...");
+			UoW.Commit();
+			performance.CheckPoint("Обновление карточек сотрудников...");
+			if(changedOperations.Any()) {
+				//progressCreator.UpdateMax(6 + changedOperations.Length + 1);
+				issueModel.UpdateNextIssue(changedOperations, progressCreator);
+			}
+			
+			performance.CheckPoint("Завершение...");
 			UoWGeneric.Commit();
-			progress.Close();
+			performance.End();
 			logger.Info("Ok");
-			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 			return true;
 		}
+		#endregion
 
 		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
-				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())	
 					return;
 			}
 			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));

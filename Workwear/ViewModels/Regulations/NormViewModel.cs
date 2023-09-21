@@ -6,10 +6,10 @@ using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Tools;
 using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Dialog;
@@ -31,7 +31,7 @@ namespace Workwear.ViewModels.Regulations
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
-		private readonly IChangeMonitor<NormItem> changeMonitor;
+		private readonly IEntityChangeWatcher changeWatcher;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
@@ -44,7 +44,7 @@ namespace Workwear.ViewModels.Regulations
 			EmployeeIssueRepository employeeIssueRepository,
 			INavigationManager navigation, 
 			IInteractiveService interactive,
-			IChangeMonitor<NormItem> changeMonitor,
+			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
@@ -55,7 +55,7 @@ namespace Workwear.ViewModels.Regulations
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.interactive = interactive;
-			this.changeMonitor = changeMonitor;
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.employeeRepository = employeeRepository;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
@@ -86,9 +86,18 @@ namespace Workwear.ViewModels.Regulations
 			EmployeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(thisViewModel);
 			performance.CheckPoint("Создание дочерних вию моделей");
 			
-			changeMonitor.AddSetTargetUnitOfWorks(UoW);
-			changeMonitor.SubscribeToCreate(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
-			changeMonitor.SubscribeToUpdates(i => DomainHelper.EqualDomainObjects(i.Norm, Entity));
+			this.changeWatcher.BatchSubscribe(Subscriber).OnlyForUow(UoW)
+				.IfEntity<NormItem>()
+				.AndWhere(x => x.Norm.Id == Entity.Id)
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndChangeType(TypeOfChangeEvent.Insert)
+				.AndDiffAnyOfProperties(
+					x => x.ProtectionTools, 
+					x => x.Amount,
+					x => x.NormCondition,
+					x => x.NormPeriod,
+					x => x.PeriodCount);
+			
 			performance.CheckPoint("Конец");
 			performance.PrintAllPoints(logger);
 		}
@@ -328,15 +337,26 @@ namespace Workwear.ViewModels.Regulations
 		#endregion
 		#endregion
 		#region Сохранение
+		List<NormItem> needRecalculateIssue = new List<NormItem>();
+		bool needUpdateEmployees;
+		
+		private void Subscriber(EntityChangeEvent[] changeevents) {
+			needUpdateEmployees = true;
+			needRecalculateIssue = changeevents.Where(x => x.EventType == TypeOfChangeEvent.Update)
+				.Select(x => x.GetEntity<NormItem>()).ToList();
+		}
+		
 		public override bool Save() 
 		{
+			needUpdateEmployees = false;
+			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
 
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
-			if(changeMonitor.IdsUpdateEntities.Any()) {
+			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(
-					Entity.Items.Where(i => changeMonitor.IdsUpdateEntities.Contains(i.Id)).ToArray(), 
+					needRecalculateIssue.ToArray(), 
 					q => q.Fetch(
 						SelectMode.Fetch, 
 						x => x.Employee),
@@ -363,7 +383,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
-			if (employees.Any() && (changeMonitor.IdsCreateEntities.Any() || changeMonitor.IdsUpdateEntities.Any())) 
+			if (employees.Any() && needUpdateEmployees) 
 			{
 				logger.Info("Пересчитываем сотрудников");
 				var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);

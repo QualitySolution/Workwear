@@ -2030,7 +2030,7 @@
     IFNULL(nomenclature.name, protection_tools.name) as nomenclature,
     sizeAlias.name as size,
     heightAlias.name as growth,
-    case when operation_issued_by_employee.operation_write_off_id is null then nomenclature.number else concat(nomenclature.number, 'a')  end as nomenclature_number,
+    nomenclature.number as nomenclature_number,
     measurement_units.name as units,
     measurement_units.okei,
     issuance_sheet_items.amount,
