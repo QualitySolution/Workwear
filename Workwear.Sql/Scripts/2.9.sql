@@ -6,3 +6,6 @@ ALTER TABLE operation_issued_by_employee DROP FOREIGN KEY fk_operation_issued_by
 ALTER TABLE `operation_issued_by_employee` DROP `operation_write_off_id`;
 
 ALTER TABLE `stock_write_off_detail` DROP `akt_number`;
+
+-- Удаляем номер бухгалтерского документа
+ALTER TABLE `operation_issued_by_employee` DROP `buh_document`;
