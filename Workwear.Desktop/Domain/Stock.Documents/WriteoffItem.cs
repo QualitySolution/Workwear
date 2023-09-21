@@ -88,13 +88,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#endregion
-
-		string aktNumber;
-		[Display(Name = "Номер акта")]
-		public virtual string AktNumber {
-			get => aktNumber;
-			set => SetField(ref aktNumber, value);
-		}
+		
 		private Size wearSize;
 		[Display(Name = "Размер")]
 		public virtual Size WearSize {
@@ -176,16 +170,6 @@ namespace Workwear.Domain.Stock.Documents
 					"Строка документа списания находится в поломанном состоянии. " +
 					"Должна быть заполнена хотя бы одна операция.");
 			}
-		}
-
-		#endregion
-		#region Не сохраняемые в базу свойства
-		private string buhDocument;
-		[Display(Name = "Документ бухгалтерского учета")]
-		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument {
-			get => buhDocument ?? EmployeeWriteoffOperation?.BuhDocument;
-			set => SetField(ref buhDocument, value);
 		}
 
 		#endregion

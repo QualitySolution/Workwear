@@ -155,20 +155,6 @@ namespace Workwear.Domain.Operations
 			set => SetField(ref normItem, value);
 		}
 
-		private string buhDocument;
-		[Display(Name = "Документ бухгалтерского учета")]
-		public virtual string BuhDocument {
-			get => buhDocument;
-			set => SetField(ref buhDocument, value);
-		}
-
-		private EmployeeIssueOperation employeeOperationIssueOnWriteOff;
-		[Display(Name = "Операция списания при выдачи по списанию")]
-		public virtual EmployeeIssueOperation EmployeeOperationIssueOnWriteOff {
-			get => employeeOperationIssueOnWriteOff;
-			set => SetField(ref employeeOperationIssueOnWriteOff, value);
-		}
-
 		private string signCardKey;
 		[Display(Name = "UID карты доступа")]
 		public virtual string SignCardKey {
@@ -298,7 +284,6 @@ namespace Workwear.Domain.Operations
 			Issued = item.Amount;
 			Returned = 0;
 			IssuedOperation = null;
-			BuhDocument = item.BuhDocument;
 			WarehouseOperation = item.WarehouseOperation;
 			ProtectionTools = item.ProtectionTools;
 
@@ -322,11 +307,6 @@ namespace Workwear.Domain.Operations
 
 			if(ProtectionTools == null)
 				ProtectionTools = NormItem.ProtectionTools;
-
-			if(EmployeeOperationIssueOnWriteOff != null) {
-				if(item.ExpenseDoc.Date.Date != OperationTime.Date)
-					this.EmployeeOperationIssueOnWriteOff.OperationTime = item.ExpenseDoc.Date;
-			}
 
 			var anotherRows =
 				item.ExpenseDoc.Items
@@ -383,7 +363,6 @@ namespace Workwear.Domain.Operations
 			WarehouseOperation = item.WarehouseOperation;
 			IssuedOperation = item.IssuedEmployeeOnOperation;
 			protectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools;
-			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
@@ -398,7 +377,6 @@ namespace Workwear.Domain.Operations
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;
-			BuhDocument = item.BuhDocument;
 			NormItem = null;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
@@ -413,7 +391,6 @@ namespace Workwear.Domain.Operations
 			Issued = issueOperation.issued;
 			Returned = issueOperation.returned;
 			WarehouseOperation = null;
-			BuhDocument = null;
 			NormItem = issueOperation.normItem;;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;

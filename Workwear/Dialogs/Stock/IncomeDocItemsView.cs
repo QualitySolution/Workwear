@@ -30,7 +30,7 @@ namespace workwear
 	[ToolboxItem(true)]
 	public partial class IncomeDocItemsView : WidgetOnDialogBase
 	{
-		private enum ColumnTags { BuhDoc, CommentReturn }
+		private enum ColumnTags { CommentReturn }
 		private Income incomeDoc;
 		public SizeService SizeService { get; set; }
 		public IInteractiveMessage Interactive { get; set; }
@@ -45,19 +45,12 @@ namespace workwear
 				IncomeDoc_PropertyChanged(null,
 					new PropertyChangedEventArgs(IncomeDoc.GetPropertyName(d => d.Operation)));
 				CalculateTotal();
-				IncomeDoc.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 				if(incomeDoc.Operation != IncomeOperations.Enter) buttonAddSizes.Visible = false;
 			}
 		}
 
 		private FeaturesService featuresService = MainClass.AppDIContainer.BeginLifetimeScope().Resolve<FeaturesService>();
 		public IList<Owner> Owners = UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
-
-		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(IncomeItem.BuhDocument)) {
-				((EntityDialogBase<Income>) MyEntityDialog).HasChanges = true;
-			}
-		}
 
 		private void IncomeDoc_ObservableItems_ListContentChanged (object sender, EventArgs e) {
 			CalculateTotal();
@@ -78,13 +71,10 @@ namespace workwear
                 buttonSetNomenclature.Visible = IncomeDoc.Operation == IncomeOperations.Return;
 			}
 
-			if (e.PropertyName != IncomeDoc.GetPropertyName(x => x.Operation)) return;
-			var buhDocColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.BuhDoc).First();
-			buhDocColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
-			buttonFillBuhDoc.Visible = IncomeDoc.Operation == IncomeOperations.Return;
-			
-			var сommentReturnColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.CommentReturn).First();
-			сommentReturnColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+			if (e.PropertyName == IncomeDoc.GetPropertyName(x => x.Operation)) {
+				var сommentReturnColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.CommentReturn).First();
+				сommentReturnColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+			}
 		}
 
 		public IncomeDocItemsView() {
@@ -121,8 +111,6 @@ namespace workwear
 					.Tag(ColumnTags.CommentReturn)
 					.AddTextRenderer (e => e.СommentReturn)
 					.Editable()
-				.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc)
-					.AddTextRenderer(e => e.BuhDocument).Editable()
 				.Finish ();
 			
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -228,27 +216,6 @@ namespace workwear
 				$"Позиций в документе: <u>{IncomeDoc.Items.Count}</u>  " +
 				$"Количество единиц: <u>{IncomeDoc.Items.Sum(x => x.Amount)}</u>  " +
 				$"Сумма: <u>{IncomeDoc.Items.Sum(x => x.Total):C}</u>";
-			buttonFillBuhDoc.Sensitive = IncomeDoc.Items.Count > 0;
-		}
-
-		private void OnButtonFillBuhDocClicked(object sender, EventArgs e) {
-			using (var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
-				var docEntry = new Entry(80);
-				if (incomeDoc.Items.Count > 0)
-					docEntry.Text = incomeDoc.Items.First().BuhDocument;
-				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. " +
-				                       "Отобразится вместо подписи сотрудника в карточке.";
-				docEntry.ActivatesDefault = true;
-				dlg.VBox.Add(docEntry);
-				dlg.AddButton("Заменить", ResponseType.Ok);
-				dlg.AddButton("Отмена", ResponseType.Cancel);
-				dlg.DefaultResponse = ResponseType.Ok;
-				dlg.ShowAll();
-				if (dlg.Run() == (int)ResponseType.Ok) {
-					incomeDoc.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
-				}
-				dlg.Destroy();
-			}
 		}
 
 		private void OnButtonSetNomenclatureClicked(object sender, EventArgs e) {

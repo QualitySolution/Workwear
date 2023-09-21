@@ -1,27 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Gtk;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
-using QS.Report;
 using QS.Report.ViewModels;
-using QS.ViewModels;
+using QS.Report;
 using QS.ViewModels.Dialog;
-using workwear;
-using Workwear.Domain.Stock;
+using QS.ViewModels;
 using Workwear.Domain.Stock.Documents;
-using workwear.Journal.ViewModels.Stock;
-using Workwear.Tools;
-using Workwear.Tools.Features;
-using Workwear.ViewModels.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Barcodes;
-using QS.Dialog;
+using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools;
+using Workwear.ViewModels.Regulations;
+using workwear.Journal.ViewModels.Stock;
+using workwear;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -46,7 +45,6 @@ namespace Workwear.ViewModels.Stock
 			IInteractiveQuestion interactive,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
-			EmployeeIssueRepository employeeRepository,
 			BaseParameters baseParameters,
 			BarcodeService barcodeService,
 			IList<Owner> owners)
@@ -57,16 +55,12 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
-			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			employeeRepository.RepoUow = UoW;
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
-			Entity.PropertyChanged += EntityOnPropertyChanged;
-			Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 
 		#region Хелперы
@@ -99,7 +93,6 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
 		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
@@ -110,26 +103,6 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		#endregion
 		#region Действия View
-		public void FillBuhDoc()
-		{
-			using(var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
-				var docEntry = new Entry(80);
-				if(expenseEmployeeViewModel.Entity.Items.Count > 0)
-					docEntry.Text = expenseEmployeeViewModel.Entity.Items.First().BuhDocument;
-				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
-				docEntry.ActivatesDefault = true;
-				dlg.VBox.Add(docEntry);
-				dlg.AddButton("Заменить", ResponseType.Ok);
-				dlg.AddButton("Отмена", ResponseType.Cancel);
-				dlg.DefaultResponse = ResponseType.Ok;
-				dlg.ShowAll();
-				if(dlg.Run() == (int)ResponseType.Ok) {
-					expenseEmployeeViewModel.Entity.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
-				}
-				dlg.Destroy();
-			}
-		}
-
 		public void AddItem()
 		{
 			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
@@ -269,20 +242,11 @@ namespace Workwear.ViewModels.Stock
 
 		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{ 
-			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
-				expenseEmployeeViewModel.HasChanges = true;
-			}
 			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
-		}
-
-		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(Entity.Date))
-				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
 	}

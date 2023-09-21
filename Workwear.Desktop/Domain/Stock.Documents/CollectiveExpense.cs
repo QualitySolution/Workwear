@@ -6,11 +6,8 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
-using QS.Utilities.Debug;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
-using Workwear.Domain.Users;
-using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
@@ -196,22 +193,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser));
-		}
-
-		public virtual void UpdateEmployeeWearItems(IProgressBarDisplayable progress, IList<int> itemIds = null)
-		{
-			var groups = itemIds is null ? 
-				Items.GroupBy(x => x.Employee) : 
-				Items.Where(x => itemIds.Contains(x.Employee.Id))
-					.GroupBy(x => x.Employee);
-			
-			foreach(var employeeGroup in groups) {
-				progress.Add(text: $"Обновляем потребности {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-				progress.Add();
-				employeeGroup.Key.UpdateNextIssue(employeeGroup.Select(x => x.ProtectionTools).ToArray());
-				UoW.Save(employeeGroup.Key);
-			}
 		}
 		#endregion
 		#region Ведомость

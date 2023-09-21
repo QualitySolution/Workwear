@@ -7,7 +7,6 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
@@ -111,33 +110,6 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Не сохраняемые в базу свойства
-
-		private bool isWriteOff;
-		[Display(Name = "Выдача по списанию")]
-		public virtual bool IsWriteOff {
-			get => isWriteOff;
-			set => SetField(ref isWriteOff, value);
-		}
-
-		private string aktNumber;
-		[Display(Name = "Номер акта")]
-		public virtual string AktNumber {
-			get => IsWriteOff ? aktNumber : null;
-			set => SetField(ref aktNumber, value);
-		}
-
-		public virtual bool IsEnableWriteOff { get; set; }
-
-		private string buhDocument;
-
-		[Display(Name = "Документ бухгалтерского учета")]
-		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument
-		{
-			get => buhDocument ?? EmployeeIssueOperation?.BuhDocument;
-			set => SetField(ref buhDocument, value);
-		}
-
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
 			get => WarehouseOperation.WearPercent;
@@ -145,8 +117,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private EmployeeCardItem employeeCardItem;
-
-		[Display(Name = "Процент износа")]
+		
 		public virtual EmployeeCardItem EmployeeCardItem {
 			get => employeeCardItem;
 			set => employeeCardItem = value;
@@ -245,8 +216,6 @@ namespace Workwear.Domain.Stock.Documents
 				}
 
 				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
-
-				UpdateIssuedWriteOffOperation(uow);
 									
 				uow.Save(EmployeeIssueOperation);
 			}
@@ -267,36 +236,6 @@ namespace Workwear.Domain.Stock.Documents
 			else if(SubdivisionIssueOperation != null) {
 				uow.Delete(SubdivisionIssueOperation);
 				SubdivisionIssueOperation = null;
-			}
-		}
-
-		public virtual void UpdateIssuedWriteOffOperation(IUnitOfWork uow)
-		{
-			if(this.ExpenseDoc.WriteOffDoc == null)
-				return;
-
-			WriteoffItem relatedWriteoffItem = null;
-			if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null) 
-				relatedWriteoffItem = this.ExpenseDoc.WriteOffDoc.Items
-					.FirstOrDefault(x => EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
-
-			if(IsWriteOff) {
-				if(relatedWriteoffItem == null && ProtectionTools != null) {
-					var graph = IssueGraph.MakeIssueGraph(uow, expenseDoc.Employee, ProtectionTools);
-					var interval = graph.IntervalOfDate(ExpenseDoc.Date);
-					var toWriteoff = interval.ActiveItems.First(x => x.IssueOperation != EmployeeIssueOperation);
-					relatedWriteoffItem = ExpenseDoc.WriteOffDoc.AddItem(toWriteoff.IssueOperation, toWriteoff.AmountAtEndOfDay(ExpenseDoc.Date));
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = relatedWriteoffItem.EmployeeWriteoffOperation;
-				}
-				relatedWriteoffItem.Amount = Amount;
-				relatedWriteoffItem.AktNumber = this.AktNumber;
-				relatedWriteoffItem.UpdateOperations(uow);
-
-			}
-			else if(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff != null && relatedWriteoffItem != null) {
-					uow.Delete(EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff);
-					ExpenseDoc.WriteOffDoc.Items.Remove(relatedWriteoffItem);
-					EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff = null;
 			}
 		}
 		#endregion

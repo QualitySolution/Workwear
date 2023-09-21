@@ -123,9 +123,6 @@ namespace Workwear.ViewModels.Stock {
 				performance.EndGroup();
 			}
 
-			if(Entity.WriteOffDoc != null)
-				FillAktNumber();
-
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 									.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 									.UseViewModelDialog<WarehouseViewModel>()
@@ -157,8 +154,6 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
-		public bool WriteoffOpenVisible => Entity.WriteOffDoc != null;
-		public string WriteoffDocNumber => (Entity.WriteOffDoc?.Id > 0) ? Entity.WriteOffDoc?.Id.ToString() : null;
 		#endregion
 
 		#region Заполение документа
@@ -171,7 +166,6 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.Employee)
 				.Fetch(SelectMode.Fetch, x => x.Warehouse)
 				.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
-				.Fetch(SelectMode.Fetch, x => x.WriteOffDoc)
 				.Where(x => x.Id == Entity.Id)
 				.Future();
 				
@@ -231,14 +225,6 @@ namespace Workwear.ViewModels.Stock {
 		}
 		#endregion
 
-		public void FillAktNumber()
-		{
-			foreach(var item in Entity.WriteOffDoc.Items)
-				foreach(var i in Entity.Items)
-					if(item.Nomenclature == i.Nomenclature)
-						i.AktNumber = item.AktNumber;
-		}
-
 		public bool SkipBarcodeCheck;
 		
 		public override bool Save()
@@ -263,19 +249,9 @@ namespace Workwear.ViewModels.Stock {
 			// 2 - Сохраняем основной документ, без закрытия транзакции.
 			// 3 - Обрабатываем и сохраняем доп документы.
 
-			var performance = new ProgressPerformanceHelper(modalProgressCreator, 8, "Очистка строк документа выдачи...", logger, true);
+			var performance = new ProgressPerformanceHelper(modalProgressCreator, 6, "Очистка строк документа выдачи...", logger, true);
 			Entity.CleanupItems();
-			Entity.CleanupItemsWriteOff();
-			performance.CheckPoint("Запись документа списания...");
-			if(Entity.Items.Any(x => x.IsWriteOff) && Entity.WriteOffDoc == null) {
-				Entity.WriteOffDoc = new Writeoff();
-				Entity.WriteOffDoc.Date = Entity.Date;
-				Entity.WriteOffDoc.CreatedbyUser = Entity.CreatedbyUser;
-			}
-			if(Entity.WriteOffDoc != null) {
-				logger.Info("Предварительная запись списания...");
-				UoW.Save(Entity.WriteOffDoc);
-			}
+			
 			performance.CheckPoint("Предварительная запись ведомости...");
 			Entity.CleanupIssuanceSheetItems();
 			if(Entity.IssuanceSheet != null) {
@@ -290,11 +266,6 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
-
-			performance.CheckPoint("Запись документа списания...");
-			Entity.UpdateIssuedWriteOffOperation();
-			if(Entity.WriteOffDoc != null)
-				UoW.Save(Entity.WriteOffDoc);
 
 			performance.CheckPoint("Обновляем записи в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
@@ -345,15 +316,6 @@ namespace Workwear.ViewModels.Stock {
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 		#endregion
-		#region Списание
-		public void OpenWriteoff() {
-			if(UoW.HasChanges) {
-				if(!interactive.Question("В документе были изменения. Сохранить документ выдачи перед открытием связанного списания?") || !Save())
-					return;
-			}
-			MainClass.MainWin.NavigationManager.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.WriteOffDoc.Id));
-		}
-		#endregion
 
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -376,9 +338,6 @@ namespace Workwear.ViewModels.Stock {
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
 					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
-					break;
-				case nameof(Entity.WriteOffDoc):
-					OnPropertyChanged(nameof(WriteoffOpenVisible));
 					break;
 			}
 		}

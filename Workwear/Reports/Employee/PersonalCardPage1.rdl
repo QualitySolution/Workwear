@@ -119,7 +119,7 @@ WHERE
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
-    norms.ton_paragraph,
+    IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
     measurement_units.name AS unit,
     CASE
         WHEN norms_item.period_type = 'Shift' THEN CONCAT_WS(' ', norms_item.amount, 'на смену')

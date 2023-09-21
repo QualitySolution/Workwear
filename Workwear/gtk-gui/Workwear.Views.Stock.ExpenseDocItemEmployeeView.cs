@@ -12,8 +12,6 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonColorsLegend;
 
-		private global::Gtk.Button buttonFillBuhDoc;
-
 		private global::Gamma.GtkWidgets.yButton buttonPrintBarcodes;
 
 		private global::Gamma.GtkWidgets.yButton buttonCreateOrDeleteBarcodes;
@@ -72,55 +70,40 @@ namespace Workwear.Views.Stock
 			w3.Expand = false;
 			w3.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
-			this.buttonFillBuhDoc = new global::Gtk.Button();
-			this.buttonFillBuhDoc.CanFocus = true;
-			this.buttonFillBuhDoc.Name = "buttonFillBuhDoc";
-			this.buttonFillBuhDoc.UseUnderline = true;
-			this.buttonFillBuhDoc.Label = global::Mono.Unix.Catalog.GetString("Заменить бух. документ");
-			global::Gtk.Image w4 = new global::Gtk.Image();
-			w4.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-copy", global::Gtk.IconSize.Menu);
-			this.buttonFillBuhDoc.Image = w4;
-			this.hbox2.Add(this.buttonFillBuhDoc);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonFillBuhDoc]));
-			w5.PackType = ((global::Gtk.PackType)(1));
-			w5.Position = 2;
-			w5.Expand = false;
-			w5.Fill = false;
-			// Container child hbox2.Gtk.Box+BoxChild
 			this.buttonPrintBarcodes = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintBarcodes.CanFocus = true;
 			this.buttonPrintBarcodes.Name = "buttonPrintBarcodes";
 			this.buttonPrintBarcodes.UseUnderline = true;
 			this.buttonPrintBarcodes.Label = global::Mono.Unix.Catalog.GetString("Печать штрихкодов");
-			global::Gtk.Image w6 = new global::Gtk.Image();
-			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonPrintBarcodes.Image = w6;
+			global::Gtk.Image w4 = new global::Gtk.Image();
+			w4.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
+			this.buttonPrintBarcodes.Image = w4;
 			this.hbox2.Add(this.buttonPrintBarcodes);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonPrintBarcodes]));
-			w7.PackType = ((global::Gtk.PackType)(1));
-			w7.Position = 3;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonPrintBarcodes]));
+			w5.PackType = ((global::Gtk.PackType)(1));
+			w5.Position = 2;
+			w5.Expand = false;
+			w5.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.buttonCreateOrDeleteBarcodes = new global::Gamma.GtkWidgets.yButton();
 			this.buttonCreateOrDeleteBarcodes.CanFocus = true;
 			this.buttonCreateOrDeleteBarcodes.Name = "buttonCreateOrDeleteBarcodes";
 			this.buttonCreateOrDeleteBarcodes.UseUnderline = true;
 			this.buttonCreateOrDeleteBarcodes.Label = global::Mono.Unix.Catalog.GetString("Создать штрихкоды");
-			global::Gtk.Image w8 = new global::Gtk.Image();
-			w8.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.barcode-add.png");
-			this.buttonCreateOrDeleteBarcodes.Image = w8;
+			global::Gtk.Image w6 = new global::Gtk.Image();
+			w6.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.barcode-add.png");
+			this.buttonCreateOrDeleteBarcodes.Image = w6;
 			this.hbox2.Add(this.buttonCreateOrDeleteBarcodes);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonCreateOrDeleteBarcodes]));
-			w9.PackType = ((global::Gtk.PackType)(1));
-			w9.Position = 4;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonCreateOrDeleteBarcodes]));
+			w7.PackType = ((global::Gtk.PackType)(1));
+			w7.Position = 3;
+			w7.Expand = false;
+			w7.Fill = false;
 			this.vbox2.Add(this.hbox2);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox2]));
-			w10.Position = 0;
-			w10.Expand = false;
-			w10.Fill = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox2]));
+			w8.Position = 0;
+			w8.Expand = false;
+			w8.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -131,8 +114,8 @@ namespace Workwear.Views.Stock
 			this.ytreeItems.Name = "ytreeItems";
 			this.GtkScrolledWindow.Add(this.ytreeItems);
 			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w12.Position = 1;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
+			w10.Position = 1;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -143,14 +126,14 @@ namespace Workwear.Views.Stock
 			this.buttonAdd.Name = "buttonAdd";
 			this.buttonAdd.UseUnderline = true;
 			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
-			global::Gtk.Image w13 = new global::Gtk.Image();
-			w13.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAdd.Image = w13;
+			global::Gtk.Image w11 = new global::Gtk.Image();
+			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAdd.Image = w11;
 			this.hbox1.Add(this.buttonAdd);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonAdd]));
-			w14.Position = 0;
-			w14.Expand = false;
-			w14.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonAdd]));
+			w12.Position = 0;
+			w12.Expand = false;
+			w12.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gtk.Button();
 			this.buttonDel.Sensitive = false;
@@ -158,14 +141,14 @@ namespace Workwear.Views.Stock
 			this.buttonDel.Name = "buttonDel";
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w15 = new global::Gtk.Image();
-			w15.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w15;
+			global::Gtk.Image w13 = new global::Gtk.Image();
+			w13.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonDel.Image = w13;
 			this.hbox1.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonDel]));
-			w16.Position = 1;
-			w16.Expand = false;
-			w16.Fill = false;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonDel]));
+			w14.Position = 1;
+			w14.Expand = false;
+			w14.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.buttonShowAllSize = new global::Gtk.Button();
 			this.buttonShowAllSize.Sensitive = false;
@@ -173,14 +156,14 @@ namespace Workwear.Views.Stock
 			this.buttonShowAllSize.Name = "buttonShowAllSize";
 			this.buttonShowAllSize.UseUnderline = true;
 			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Выбрать варианты");
-			global::Gtk.Image w17 = new global::Gtk.Image();
-			w17.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
-			this.buttonShowAllSize.Image = w17;
+			global::Gtk.Image w15 = new global::Gtk.Image();
+			w15.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
+			this.buttonShowAllSize.Image = w15;
 			this.hbox1.Add(this.buttonShowAllSize);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonShowAllSize]));
-			w18.Position = 2;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.buttonShowAllSize]));
+			w16.Position = 2;
+			w16.Expand = false;
+			w16.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
@@ -188,13 +171,13 @@ namespace Workwear.Views.Stock
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.labelSum.UseMarkup = true;
 			this.hbox1.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w19.Position = 3;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
+			w17.Position = 3;
 			this.vbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
-			w20.Position = 2;
-			w20.Expand = false;
-			w20.Fill = false;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
+			w18.Position = 2;
+			w18.Expand = false;
+			w18.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
@@ -203,7 +186,6 @@ namespace Workwear.Views.Stock
 			this.Hide();
 			this.buttonCreateOrDeleteBarcodes.Clicked += new global::System.EventHandler(this.OnButtonCreateOrDeleteBarcodesClicked);
 			this.buttonPrintBarcodes.Clicked += new global::System.EventHandler(this.OnButtonPrintBarcodesClicked);
-			this.buttonFillBuhDoc.Clicked += new global::System.EventHandler(this.OnButtonFillBuhDocClicked);
 			this.buttonColorsLegend.Clicked += new global::System.EventHandler(this.OnButtonColorsLegendClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
 			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
