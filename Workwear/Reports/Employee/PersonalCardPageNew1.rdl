@@ -240,8 +240,8 @@ LIMIT 10</CommandText>
         <Width>556.24pt</Width>
         <Value>= "ЛИЧНАЯ КАРТОЧКА № " +  First({id}, 'Card')</Value>
         <ZIndex>1</ZIndex>
-        <Left>2.50pt</Left>
-        <Top>117.80pt</Top>
+        <Left>2.5pt</Left>
+        <Top>118.6pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -251,7 +251,7 @@ LIMIT 10</CommandText>
         </Style>
       </Textbox>
       <Textbox Name="Textbox2">
-        <Height>96.29pt</Height>
+        <Height>80.54pt</Height>
         <Width>111.37pt</Width>
         <Value>Приложение № 2 к Правилам обеспечения работников средствами индивидуальной защиты и смывающими средствами,  утвержденным приказом Минтруда России от 29 октября 2021 г. № 766н</Value>
         <ZIndex>1</ZIndex>
@@ -758,17 +758,17 @@ LIMIT 10</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>2.4pt</Left>
-        <Top>294.0pt</Top>
+        <Left>0.8pt</Left>
+        <Top>314.0pt</Top>
         <ZIndex>1</ZIndex>
       </Table>
       <Textbox Name="Textbox52">
-        <Height>34.52pt</Height>
+        <Height>29.27pt</Height>
         <Width>221.23pt</Width>
         <Value>Ответственное лицо за ведение карточек учёта выдачи СИЗ</Value>
         <ZIndex>1</ZIndex>
         <Left>2.4pt</Left>
-        <Top>356.9pt</Top>
+        <Top>368.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -781,8 +781,8 @@ LIMIT 10</CommandText>
         <Width>112.89pt</Width>
         <Value>(подпись)</Value>
         <ZIndex>1</ZIndex>
-        <Left>184.3pt</Left>
-        <Top>370.3pt</Top>
+        <Left>227.5pt</Left>
+        <Top>384.7pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -798,8 +798,8 @@ LIMIT 10</CommandText>
         <Width>207.39pt</Width>
         <Value>(Ф.И.О.)</Value>
         <ZIndex>1</ZIndex>
-        <Left>307.1pt</Left>
-        <Top>370.4pt</Top>
+        <Left>350.3pt</Left>
+        <Top>384.8pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -844,7 +844,7 @@ LIMIT 10</CommandText>
                           <Left>None</Left>
                           <Right>None</Right>
                           <Top>None</Top>
-                          <Bottom>Solid</Bottom>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -881,8 +881,8 @@ LIMIT 10</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>400pt</Left>
-        <Top>180pt</Top>
+        <Left>397.6pt</Left>
+        <Top>180.0pt</Top>
         <Width>150pt</Width>
         <ZIndex>1</ZIndex>
       </Table>
@@ -891,8 +891,8 @@ LIMIT 10</CommandText>
         <Width>134.53pt</Width>
         <Value>=Switch(First({sex},'Card') = 'F', 'Ж', First({sex},'Card') = 'M', 'М')</Value>
         <ZIndex>1</ZIndex>
-        <Left>423.20pt</Left>
-        <Top>163.70pt</Top>
+        <Left>423.2pt</Left>
+        <Top>161.3pt</Top>
         <Style>
           <BorderStyle>
             <Bottom>Solid</Bottom>
@@ -909,7 +909,7 @@ LIMIT 10</CommandText>
         <Width>71.52pt</Width>
         <Value>Пол</Value>
         <ZIndex>1</ZIndex>
-        <Left>400pt</Left>
+        <Left>397.6pt</Left>
         <Top>160.0pt</Top>
         <Style>
           <BorderStyle />
@@ -943,7 +943,7 @@ LIMIT 10</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
