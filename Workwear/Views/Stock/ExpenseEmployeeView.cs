@@ -41,10 +41,6 @@ namespace Workwear.Views.Stock
 				.AddBinding(v => v.IssuanceSheetCreateVisible, w => w.Visible)
 				.AddBinding(v => v.IssuanceSheetCreateSensitive, w => w.Sensitive)
 				.InitializeFromSource();
-
-			labelWriteOfNumber.Binding.AddBinding(ViewModel, v => v.WriteoffDocNumber, w => w.LabelProp).InitializeFromSource();
-			labelWriteoffTitle.Binding.AddBinding(ViewModel, v => v.WriteoffOpenVisible, w => w.Visible).InitializeFromSource();
-			hboxWriteoff.Binding.AddBinding(ViewModel, v => v.WriteoffOpenVisible, w => w.Visible).InitializeFromSource();
 		}
 
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
@@ -59,10 +55,6 @@ namespace Workwear.Views.Stock
 		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e)
 		{
 			ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
-		}
-
-		protected void OnButtonOpenWriteoffClicked(object sender, EventArgs e) {
-			ViewModel.OpenWriteoff();
 		}
 	}
 }

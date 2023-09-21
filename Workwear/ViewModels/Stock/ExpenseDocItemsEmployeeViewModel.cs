@@ -1,27 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Gtk;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
-using QS.Report;
 using QS.Report.ViewModels;
-using QS.ViewModels;
+using QS.Report;
 using QS.ViewModels.Dialog;
-using workwear;
-using Workwear.Domain.Stock;
+using QS.ViewModels;
 using Workwear.Domain.Stock.Documents;
-using workwear.Journal.ViewModels.Stock;
-using Workwear.Tools;
-using Workwear.Tools.Features;
-using Workwear.ViewModels.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Barcodes;
-using QS.Dialog;
+using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools;
+using Workwear.ViewModels.Regulations;
+using workwear.Journal.ViewModels.Stock;
+using workwear;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -46,7 +45,6 @@ namespace Workwear.ViewModels.Stock
 			IInteractiveQuestion interactive,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
-			EmployeeIssueRepository employeeRepository,
 			BaseParameters baseParameters,
 			BarcodeService barcodeService,
 			IList<Owner> owners)
@@ -57,16 +55,12 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
-			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			employeeRepository.RepoUow = UoW;
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
 			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
-			Entity.PropertyChanged += EntityOnPropertyChanged;
-			Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 
 		#region Хелперы
@@ -277,12 +271,6 @@ namespace Workwear.ViewModels.Stock
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			}
-		}
-
-		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(Entity.Date))
-				Entity.FillCanWriteoffInfo(employeeRepository);
 		}
 		#endregion
 	}

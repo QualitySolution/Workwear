@@ -22,7 +22,6 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References (x => x.Employee).Column ("wear_card_id");
 			References (x => x.CreatedbyUser).Column ("user_id");
 			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
-			References(x => x.WriteOffDoc).Column("write_off_doc");
 
 			HasOne(x => x.IssuanceSheet)
 				.PropertyRef(x => x.Expense);

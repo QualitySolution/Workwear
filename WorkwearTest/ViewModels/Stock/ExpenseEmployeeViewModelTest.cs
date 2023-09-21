@@ -81,9 +81,9 @@ namespace WorkwearTest.ViewModels.Stock
 		}
 		#endregion
 
-		[Test(Description = "Проверяем проверяем что можем пере-сохранить документ с одновременным списанием.")]
+		[Test(Description = "Проверяем проверяем что можем пере-сохранить документ")]
 		[Category("Integrated")]
-		public void CreateAndResaveDocWithWriteoff()
+		public void CreateAndResaveDoc()
 		{
 			NewSessionWithSameDB();
 			NotifyConfiguration.Enable();
@@ -136,26 +136,8 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(warehouseOperation);
 				
 				uow.Commit();
-				
-				//Создаем предыдущую выдачу которая должна быть списана.
-				using (var scope = container.BeginLifetimeScope()) {
-					var vmCreateLastIssue = scope.Resolve<ExpenseEmployeeViewModel>(
-						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
-						);
-					
-					vmCreateLastIssue.Entity.Date = new DateTime(2022, 04, 1);
-					vmCreateLastIssue.Entity.Warehouse = vmCreateLastIssue.UoW.GetById<Warehouse>(warehouse.Id);
-					vmCreateLastIssue.Entity.Employee = vmCreateLastIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
-					Assert.That(vmCreateLastIssue.Entity.Items.Count, Is.EqualTo(1));
-					var itemLast = vmCreateLastIssue.Entity.Items.First();
-					itemLast.Amount = 1;
-					Assert.That(itemLast.IsEnableWriteOff, Is.False);
 
-					Assert.That(vmCreateLastIssue.Save(), Is.True);
-				}
-
-				//Создаем выдачу в место выданного ранее.
+				//Создаем выдачу
 				int expenseIdForResave;
 				using (var scope = container.BeginLifetimeScope()) {
 					var vmCreate = scope.Resolve<ExpenseEmployeeViewModel>(
@@ -168,9 +150,6 @@ namespace WorkwearTest.ViewModels.Stock
 					Assert.That(vmCreate.Entity.Items.Count, Is.EqualTo(1));
 					var item = vmCreate.Entity.Items.First();
 					item.Amount = 1;
-					Assert.That(item.IsEnableWriteOff, Is.True);
-					//Главное в этом тесте, устанавливаем галочку что выдача идет вместе со списанием.
-					item.IsWriteOff = true;
 
 					Assert.That(vmCreate.Save(), Is.True);
 					expenseIdForResave = vmCreate.Entity.Id;

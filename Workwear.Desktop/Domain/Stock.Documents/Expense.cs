@@ -9,7 +9,6 @@ using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
-using Workwear.Domain.Users;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -85,15 +84,6 @@ namespace Workwear.Domain.Stock.Documents
 			get => issuanceSheet;
 			set => SetField(ref issuanceSheet, value);
 		}
-
-		private Writeoff writeOffDoc;
-
-		[Display(Name = "Связанный документ списания")]
-		public virtual Writeoff WriteOffDoc {
-			get { return writeOffDoc; }
-			set { SetField(ref writeOffDoc, value); }
-		}
-
 		#endregion
 
 		public virtual string Title{
@@ -127,12 +117,6 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
 				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.", 
 					new[] { nameof (Items)});
-
-			foreach(var item in Items) {
-				if(item.IsWriteOff && item.Amount == 0)
-					yield return new ValidationResult ($"В строке выдачи '{item.ProtectionTools?.Name}' установлено списание, но количество 0.", 
-						new[] { nameof (Items)});
-			}
 			
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
@@ -222,22 +206,6 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Методы
-		public virtual void FillCanWriteoffInfo(EmployeeIssueRepository employeeRepository) {
-			var operationIds = Items.Where(x => x.EmployeeIssueOperation?.Id > 0).Select(x => x.EmployeeIssueOperation.Id).ToList();
-				operationIds.AddRange(Items.Where(x => x.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff?.Id > 0).Select(x => x.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.Id));
-			var itemsBalance = employeeRepository.ItemsBalance(Employee, Date, operationIds.ToArray());
-			foreach(var item in Items) {
-				item.IsWriteOff = item.EmployeeIssueOperation?.EmployeeOperationIssueOnWriteOff != null;
-				item.IsEnableWriteOff = item.IsWriteOff || itemsBalance.Where(x => x.ProtectionToolsId == item.ProtectionTools?.Id).Sum(x => x.Amount) > 0;
-				if(WriteOffDoc != null) {
-					var relatedWriteoffItem = WriteOffDoc.Items
-					.FirstOrDefault(x => item.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff.IsSame(x.EmployeeWriteoffOperation));
-					if(relatedWriteoffItem != null)
-						item.AktNumber = relatedWriteoffItem.AktNumber;
-				}
-			}
-		}
-
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
@@ -294,31 +262,6 @@ namespace Workwear.Domain.Stock.Documents
 				.Where(item => !Items.Any(expenseItem => item.ExpenseItem.IsSame(expenseItem))).ToList();
 			foreach(var item in toRemove) {
 				IssuanceSheet.Items.Remove(item);
-			}
-		}
-		#endregion
-		#region Списание
-		public virtual void CleanupItemsWriteOff()
-		{
-			if(this.WriteOffDoc == null) return;
-
-			var toRemove = WriteOffDoc.Items
-				.Where(writeoffItem => !Items.Any(expenseItem => DomainHelper.EqualDomainObjects(writeoffItem.EmployeeWriteoffOperation, expenseItem.EmployeeIssueOperation.EmployeeOperationIssueOnWriteOff))).ToList();
-			foreach(var item in toRemove) {
-				this.WriteOffDoc.RemoveItem(item);
-			}
-		}
-		
-		public virtual void UpdateIssuedWriteOffOperation()
-		{
-			if(WriteOffDoc == null)
-				return;
-
-			WriteOffDoc.Items.ToList().ForEach(x => x.UpdateOperations(UoW));
-
-			if(WriteOffDoc.Items.Count < 1) {
-				UoW.Delete(WriteOffDoc);
-				WriteOffDoc = null;
 			}
 		}
 		#endregion
