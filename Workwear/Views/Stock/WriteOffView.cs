@@ -44,9 +44,6 @@ namespace Workwear.Views.Stock
 				buttonDel.Binding
 					.AddBinding(ViewModel, vm => vm.DelSensitive, w => w.Sensitive)
 					.InitializeFromSource();
-				buttonFillBuhDoc.Binding
-					.AddBinding(ViewModel, vm => vm.FillBuhDocSensitive, m => m.Sensitive)
-					.InitializeFromSource();
 				buttonAddObject.Sensitive = ViewModel.Employee is null;
 				buttonAddWorker.Sensitive = ViewModel.Subdivision is null;
 				buttonAddStore.Sensitive = ViewModel.Subdivision is null && ViewModel.Employee is null;
@@ -54,7 +51,6 @@ namespace Workwear.Views.Stock
 				buttonAddWorker.Clicked += OnButtonAddFromEmployeeClicked;
 				buttonAddObject.Clicked += OnButtonAddFromObjectClicked;
 				buttonDel.Clicked += OnButtonDelClicked;
-				buttonFillBuhDoc.Clicked += OnButtonFillBuhDocClicked;
 		}
 		private void ConfigureItems()
 		{
@@ -82,8 +78,6 @@ namespace Workwear.Views.Stock
 					.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
-					.AddColumn("Бухгалтерский документ").Tag(ColumnTags.BuhDoc).AddTextRenderer(e => e.BuhDocument)
-						.AddSetter((c, e) => c.Editable = e.WriteoffFrom == WriteoffFrom.Employee)
 					.Finish ();
 			
 			ytreeItems.Binding
@@ -123,7 +117,6 @@ namespace Workwear.Views.Stock
 
 		private void OnButtonAddFromEmployeeClicked(object sender, EventArgs e) => ViewModel.AddFromEmployee();
 		private void OnButtonAddFromObjectClicked(object sender, EventArgs e) => ViewModel.AddFromObject();
-		private void OnButtonFillBuhDocClicked(object sender, EventArgs eventArgs) => ViewModel.FillBuhDoc();
 		#endregion
 	}
 }

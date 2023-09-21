@@ -90,7 +90,6 @@ namespace Workwear.Views.Stock
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
 					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
-				.AddColumn("Бухгалтерский документ").Resizable().AddTextRenderer(e => e.BuhDocument).Editable()
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
 						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
@@ -144,7 +143,6 @@ namespace Workwear.Views.Stock
 
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			buttonFillBuhDoc.Sensitive = ViewModel.SensitiveFillBuhDoc;
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
 				var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
 				var path = ytreeItems.YTreeModel.GetPath(iter);
@@ -154,11 +152,6 @@ namespace Workwear.Views.Stock
 		#endregion
 
 		#region Кнопки
-		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
-		{
-			ViewModel.FillBuhDoc();
-		}
-
 		protected void OnButtonDelClicked(object sender, EventArgs e)
 		{
 			viewModel.Delete(ytreeItems.GetSelectedObject<ExpenseItem>());

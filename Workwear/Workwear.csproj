@@ -387,9 +387,6 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeBalanceFilterView.cs" />
     <Compile Include="Journal\Filter.Views\Company\SubdivisionBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionBalanceFilterView.cs" />
-    <Compile Include="Views\Stock\Widgets\BuhDocumentView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BuhDocumentView.cs" />
-    <Compile Include="ViewModels\Stock\Widgets\BuhDocumentViewModel.cs" />
     <Compile Include="ReportParameters\Views\ListBySizeView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.ListBySizeView.cs" />
     <Compile Include="ReportParameters\ViewModels\ListBySizeViewModel.cs" />

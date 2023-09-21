@@ -95,11 +95,6 @@ namespace Workwear.Views.Stock
 				buttonAdd.Sensitive = ViewModel.expenseObjectViewModel.Entity.Warehouse != null;
 		}
 
-		protected void OnButtonFillBuhDocClicked(object sender, EventArgs e)
-		{
-			ViewModel.FillBuhDoc();
-		}
-
 		protected void OnButtonDelClicked(object sender, EventArgs e)
 		{
 			viewModel.Delete(ytreeItems.GetSelectedObject<ExpenseItem>());

@@ -173,16 +173,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#endregion
-		#region Не сохраняемые в базу свойства
-		private string buhDocument;
-		[Display(Name = "Документ бухгалтерского учета")]
-		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument {
-			get => buhDocument ?? EmployeeWriteoffOperation?.BuhDocument;
-			set => SetField(ref buhDocument, value);
-		}
-
-		#endregion
 		#region Конструкторы
 		protected WriteoffItem (){}
 		public WriteoffItem(Writeoff writeOff, EmployeeIssueOperation issueOperation, int amount) {

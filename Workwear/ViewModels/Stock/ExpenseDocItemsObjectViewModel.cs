@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gtk;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -36,7 +35,6 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
-			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
@@ -67,26 +65,6 @@ namespace Workwear.ViewModels.Stock
 		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
 
 		#endregion
-
-		public void FillBuhDoc()
-		{
-			using(var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
-				var docEntry = new Entry(80);
-				if(expenseObjectViewModel.Entity.Items.Count > 0)
-					docEntry.Text = expenseObjectViewModel.Entity.Items.First().BuhDocument;
-				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
-				docEntry.ActivatesDefault = true;
-				dlg.VBox.Add(docEntry);
-				dlg.AddButton("Заменить", ResponseType.Ok);
-				dlg.AddButton("Отмена", ResponseType.Cancel);
-				dlg.DefaultResponse = ResponseType.Ok;
-				dlg.ShowAll();
-				if(dlg.Run() == (int)ResponseType.Ok) {
-					expenseObjectViewModel.Entity.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
-				}
-				dlg.Destroy();
-			}
-		}
 
 		public void AddItem()
 		{
@@ -136,14 +114,6 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-		}
-
-		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
-				expenseObjectViewModel.HasChanges = true;
-			}
-
 		}
 	}
 }
