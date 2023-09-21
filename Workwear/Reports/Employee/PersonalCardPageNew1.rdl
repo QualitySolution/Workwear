@@ -597,22 +597,22 @@ LIMIT 10</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>258.1pt</Width>
+            <Width>236.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>80.6pt</Width>
+            <Width>125.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>146.7pt</Width>
+            <Width>127.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>72.0pt</Width>
+            <Width>68.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>31.3pt</Height>
+              <Height>25.9pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -626,7 +626,7 @@ LIMIT 10</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize>11pt</FontSize>
+                        <FontSize>10pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -641,7 +641,7 @@ LIMIT 10</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <FontSize>11pt</FontSize>
+                        <FontSize>10pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -658,7 +658,7 @@ LIMIT 10</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <FontSize>11pt</FontSize>
+                        <FontSize>10pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -675,7 +675,7 @@ LIMIT 10</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <FontSize>11pt</FontSize>
+                        <FontSize>10pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -690,7 +690,7 @@ LIMIT 10</CommandText>
         <Details>
           <TableRows>
             <TableRow>
-              <Height>18.4pt</Height>
+              <Height>23.9pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -701,6 +701,7 @@ LIMIT 10</CommandText>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <PaddingBottom >5pt</PaddingBottom>
                       </Style>
                       <ZIndex>1</ZIndex>
                     </Textbox>
@@ -718,6 +719,7 @@ LIMIT 10</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <PaddingBottom >5pt</PaddingBottom>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -768,7 +770,7 @@ LIMIT 10</CommandText>
         <Value>Ответственное лицо за ведение карточек учёта выдачи СИЗ</Value>
         <ZIndex>1</ZIndex>
         <Left>2.4pt</Left>
-        <Top>368.1pt</Top>
+        <Top>369.7pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
