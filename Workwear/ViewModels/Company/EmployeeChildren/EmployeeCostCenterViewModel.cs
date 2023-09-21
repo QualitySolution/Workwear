@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels;
@@ -33,7 +33,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		}
 
 		#region  Свойства View
-		public GenericObservableList<EmployeeCostCenter> ObservableCostCenters => Entity.ObservableCostCenters;
+		public IObservableList<EmployeeCostCenter> ObservableCostCenters => Entity.CostCenters;
 		#endregion
 
 		#region Методы
@@ -58,7 +58,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			if(deleteItem.Id > 0) {
 				UoW.Delete(deleteItem);
 			}
-			Entity.ObservableCostCenters.Remove(deleteItem);
+			Entity.CostCenters.Remove(deleteItem);
 		}
 		#endregion
 	}

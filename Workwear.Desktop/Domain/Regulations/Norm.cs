@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NLog;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 
@@ -53,31 +53,7 @@ namespace Workwear.Domain.Regulations
 			get => name;
 			set => SetField(ref name, value);
 		}
-
-		private IList<Post> posts = new List<Post>();
-		[Display (Name = "Должности")]
-		public virtual IList<Post> Posts {
-			get => posts;
-			set => SetField (ref posts, value);
-		}
-
-		GenericObservableList<Post> observablePosts;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Post> ObservablePosts => 
-			observablePosts ?? (observablePosts = new GenericObservableList<Post>(Posts));
-
-		private IList<NormItem> items = new List<NormItem>();
-		[Display (Name = "Строки норм")]
-		public virtual IList<NormItem> Items {
-			get => items;
-			set => SetField (ref items, value);
-		}
-
-		GenericObservableList<NormItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<NormItem> ObservableItems => 
-			observableItems ?? (observableItems = new GenericObservableList<NormItem>(Items));
-
+		
 		private string comment;
 
 		[Display(Name = "Комментарий")]
@@ -98,6 +74,21 @@ namespace Workwear.Domain.Regulations
 		public virtual DateTime? DateTo {
 			get => dateTo;
 			set => SetField(ref dateTo, value);
+		}
+		#endregion
+		#region Коллеции
+		private IObservableList<Post> posts = new ObservableList<Post>();
+		[Display (Name = "Должности")]
+		public virtual IObservableList<Post> Posts {
+			get => posts;
+			set => SetField (ref posts, value);
+		}
+
+		private IObservableList<NormItem> items = new ObservableList<NormItem>();
+		[Display (Name = "Строки норм")]
+		public virtual IObservableList<NormItem> Items {
+			get => items;
+			set => SetField (ref items, value);
 		}
 		#endregion
 		#region Генерируемые
@@ -145,11 +136,11 @@ namespace Workwear.Domain.Regulations
 				logger.Warn ("Такая профессия уже добавлена. Пропускаем...");
 				return;
 			}
-			ObservablePosts.Add (prof);
+			Posts.Add (prof);
 		}
 
 		public virtual void RemovePost(Post prof) {
-			ObservablePosts.Remove (prof);
+			Posts.Remove (prof);
 		}
 
 		public virtual NormItem AddItem(ProtectionTools tools) {
@@ -166,12 +157,12 @@ namespace Workwear.Domain.Regulations
 				PeriodCount = 1
 			};
 
-			ObservableItems.Add (item);
+			Items.Add (item);
 			return item;
 		}
 
 		public virtual void RemoveItem(NormItem item) {
-			ObservableItems.Remove (item);
+			Items.Remove (item);
 		}
 
 		/// <summary>
@@ -185,11 +176,11 @@ namespace Workwear.Domain.Regulations
 			newNorm.Name = name;
 			//тут передобавлять
 			foreach(var item in posts) {
-				newNorm.ObservablePosts.Add(item);
+				newNorm.Posts.Add(item);
 			}
 			//тут передобавлять
 			foreach(var item in items.Select(i => i.CopyNormItem(newNorm))) {
-				newNorm.ObservableItems.Add(item);
+				newNorm.Items.Add(item);
 			}
 			newNorm.Comment = comment;
 			newNorm.DateFrom = dateFrom;

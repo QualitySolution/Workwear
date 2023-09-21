@@ -98,8 +98,8 @@ namespace Workwear.Views.Regulations
 
 		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
 		{
-			ycomboAnnex.ItemsList = Entity.Document?.Annexess;
-			ycomboAnnex.Sensitive = Entity.Document?.Annexess.Count > 0;
+			ycomboAnnex.ItemsList = Entity.Document?.Annexes;
+			ycomboAnnex.Sensitive = Entity.Document?.Annexes.Count > 0;
 		}
 		
 		#region PopupMenu

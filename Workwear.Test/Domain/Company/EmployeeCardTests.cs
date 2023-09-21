@@ -4,6 +4,7 @@ using System.Linq;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 
@@ -27,7 +28,8 @@ namespace Workwear.Test.Domain.Company
 			norm1item2.ProtectionTools.Returns(protectionTools2);
 			norm1item2.AmountPerYear.Returns(2);
 			norm1item2.NormCondition.ReturnsNull();
-			norm1.Items.Returns(new List<NormItem> { norm1item1, norm1item2 });
+			var items = new ObservableList<NormItem> { norm1item1, norm1item2 };
+			norm1.Items.Returns(items);
 			
 			var norm2 = Substitute.For<Norm>();
 			var norm2item1 = Substitute.For<NormItem>();
@@ -37,7 +39,8 @@ namespace Workwear.Test.Domain.Company
 			var norm2item2 = Substitute.For<NormItem>();
 			norm2item2.ProtectionTools.Returns(protectionTools3);
 			norm2item2.NormCondition.ReturnsNull();
-			norm2.Items.Returns(new List<NormItem> { norm2item1, norm2item2 });
+			var items2 = new ObservableList<NormItem> { norm2item1, norm2item2 };
+			norm2.Items.Returns(items2);
 			
 			var employee = new EmployeeCard();
 			employee.AddUsedNorm(norm1);
@@ -74,7 +77,8 @@ namespace Workwear.Test.Domain.Company
 			norm1item2.ProtectionTools.Returns(protectionTools2);
 			norm1item2.AmountPerYear.Returns(5);
 			norm1item2.NormCondition.Returns(failCondition);
-			norm1.Items.Returns(new List<NormItem> { norm1item1, norm1item2 });
+			var items = new ObservableList<NormItem> { norm1item1, norm1item2 };
+			norm1.Items.Returns(items);
 			
 			var norm2 = Substitute.For<Norm>();
 			var norm2item1 = Substitute.For<NormItem>();
@@ -84,7 +88,8 @@ namespace Workwear.Test.Domain.Company
 			var norm2item2 = Substitute.For<NormItem>();
 			norm2item2.ProtectionTools.Returns(protectionTools3);
 			norm2item2.NormCondition.ReturnsNull();
-			norm2.Items.Returns(new List<NormItem> { norm2item1, norm2item2 });
+			var items2 = new ObservableList<NormItem> { norm2item1, norm2item2 };
+			norm2.Items.Returns(items2);
 			
 			employee.AddUsedNorm(norm1);
 			employee.AddUsedNorm(norm2);
@@ -120,7 +125,8 @@ namespace Workwear.Test.Domain.Company
 			norm1item2.ProtectionTools.Returns(protectionTools2);
 			norm1item2.AmountPerYear.Returns(5);
 			norm1item2.NormCondition.Returns(failCondition);
-			norm1.Items.Returns(new List<NormItem> { norm1item1, norm1item2 });
+			var items = new ObservableList<NormItem> { norm1item1, norm1item2 };
+			norm1.Items.Returns(items);
 			
 			var norm2 = Substitute.For<Norm>();
 			var norm2item1 = Substitute.For<NormItem>();
@@ -130,7 +136,8 @@ namespace Workwear.Test.Domain.Company
 			var norm2item2 = Substitute.For<NormItem>();
 			norm2item2.ProtectionTools.Returns(protectionTools3);
 			norm2item2.NormCondition.ReturnsNull();
-			norm2.Items.Returns(new List<NormItem> { norm2item1, norm2item2 });
+			var items2 = new ObservableList<NormItem> { norm2item1, norm2item2 };
+			norm2.Items.Returns(items2);
 			
 			employee.AddUsedNorm(norm2);
 			employee.AddUsedNorm(norm1);

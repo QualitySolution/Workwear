@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Domain.Sizes;
-using BindingsObservableSourceList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionSourceItem>;
-using BindingsObservableResultList =  System.Data.Bindings.Collections.Generic.GenericObservableList<Workwear.Domain.Stock.Documents.CompletionResultItem>;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -34,26 +33,21 @@ namespace Workwear.Domain.Stock.Documents
             get => resultWarehouse;
             set => SetField(ref resultWarehouse, value);
         }
-        private IList<CompletionSourceItem> sourceCompletionItems = new List<CompletionSourceItem>();
+        #endregion
+        #region Коллекции
+        private IObservableList<CompletionSourceItem> sourceCompletionItems = new ObservableList<CompletionSourceItem>();
         [Display (Name = "Комплектующие")]
-        public virtual IList<CompletionSourceItem> SourceItems {
+        public virtual IObservableList<CompletionSourceItem> SourceItems {
             get => sourceCompletionItems;
             set => SetField (ref sourceCompletionItems, value);
         }
-        private BindingsObservableSourceList observableSourceItems;
-        //FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual BindingsObservableSourceList ObservableSourceItems => 
-            observableSourceItems ?? (observableSourceItems = new BindingsObservableSourceList(SourceItems));
-        private IList<CompletionResultItem> resultItems = new List<CompletionResultItem>();
+
+        private IObservableList<CompletionResultItem> resultItems = new ObservableList<CompletionResultItem>();
         [Display (Name = "Результат комплектации")]
-        public virtual IList<CompletionResultItem> ResultItems {
+        public virtual IObservableList<CompletionResultItem> ResultItems {
             get => resultItems;
             set => SetField (ref resultItems, value);
         }
-        private BindingsObservableResultList observableResultItems;
-        //FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual BindingsObservableResultList ObservableResultItems => 
-            observableResultItems ?? (observableResultItems = new BindingsObservableResultList(ResultItems));
         #endregion
         #region Расчётные
         public virtual string Title => String.Format("Комплектация №{0} от {1:d}" ,Id, Date);
@@ -130,7 +124,7 @@ namespace Workwear.Domain.Stock.Documents
                     Owner = position.Owner
                 }
             };
-            ObservableSourceItems.Add(item);
+            SourceItems.Add(item);
         }
         public virtual CompletionResultItem AddResultItem(Nomenclature nomenclature, Size wearSize = null, Size height = null, int amount = 0, Owner owner = null) {
             var item = new CompletionResultItem {
@@ -146,7 +140,7 @@ namespace Workwear.Domain.Stock.Documents
                 Amount = amount,
                 Owner = owner
             };
-            ObservableResultItems.Add(item);
+            ResultItems.Add(item);
             return item;
         }
         public virtual void UpdateItems() {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Stock;
 
@@ -66,19 +66,12 @@ namespace Workwear.Domain.Company
 			set => SetField(ref parentSubdivision, value);
 		}
 		
-		private IList<Subdivision> childSubdivisions = new List<Subdivision>();
+		private IObservableList<Subdivision> childSubdivisions = new ObservableList<Subdivision>();
 		[Display (Name = "Дочерние подразделения")]
-		public virtual IList<Subdivision> ChildSubdivisions {
+		public virtual IObservableList<Subdivision> ChildSubdivisions {
 			get => childSubdivisions;
 			set => SetField (ref childSubdivisions, value);
 		}
-
-		GenericObservableList<Subdivision> observableChildSubdivisions;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Subdivision> ObservableChildSubdivisions =>
-			observableChildSubdivisions ?? (observableChildSubdivisions =
-				new GenericObservableList<Subdivision>(ChildSubdivisions));
-
 		#endregion
 		#region Методы
 		public virtual IEnumerable<Subdivision> AllGenerationsSubdivisions {

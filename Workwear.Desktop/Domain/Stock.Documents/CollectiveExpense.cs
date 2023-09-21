@@ -5,6 +5,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
@@ -41,22 +42,12 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField(ref transferAgent, value, () => TransferAgent); }
 		}
 
-		private IList<CollectiveExpenseItem> items = new List<CollectiveExpenseItem>();
+		private IObservableList<CollectiveExpenseItem> items = new ObservableList<CollectiveExpenseItem>();
 
 		[Display (Name = "Строки документа")]
-		public virtual IList<CollectiveExpenseItem> Items {
+		public virtual IObservableList<CollectiveExpenseItem> Items {
 			get => items;
 			set => SetField(ref items, value);
-		}
-
-		System.Data.Bindings.Collections.Generic.GenericObservableList<CollectiveExpenseItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<CollectiveExpenseItem> ObservableItems {
-			get {
-				if (observableItems == null)
-					observableItems = new System.Data.Bindings.Collections.Generic.GenericObservableList<CollectiveExpenseItem> (Items);
-				return observableItems;
-			}
 		}
 
 		private IssuanceSheet issuanceSheet;
@@ -149,7 +140,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(position != null) 
 				newItem.StockPosition = position;
 			
-			ObservableItems.Add(newItem);
+			Items.Add(newItem);
 			return newItem;
 		}
 
@@ -176,7 +167,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
-			ObservableItems.Remove(item);
+			Items.Remove(item);
 		}
 
 		public virtual void CleanupItems()

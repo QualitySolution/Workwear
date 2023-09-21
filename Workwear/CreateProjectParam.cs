@@ -19,6 +19,7 @@ using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
 using QS.ErrorReporting.Handlers;
+using QS.Extensions.Observable.Collections.List;
 using QS.Features;
 using QS.HistoryLog.ViewModels;
 using QS.HistoryLog.Views;
@@ -102,6 +103,7 @@ namespace workwear
 				.ShowSql ()
 				.FormatSql ();
 
+			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),

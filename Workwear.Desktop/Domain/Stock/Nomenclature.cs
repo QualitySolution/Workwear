@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -104,17 +104,12 @@ namespace Workwear.Domain.Stock {
 			Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		#endregion
 		#region Средства защиты
-		private IList<ProtectionTools> protectionTools = new List<ProtectionTools>();
+		private IObservableList<ProtectionTools> protectionTools = new ObservableList<ProtectionTools>();
 		[Display(Name = "Номенклатура нормы")]
-		public virtual IList<ProtectionTools> ProtectionTools {
+		public virtual IObservableList<ProtectionTools> ProtectionTools {
 			get => protectionTools;
 			set => SetField(ref protectionTools, value);
 		}
-		private GenericObservableList<ProtectionTools> observableProtectionTools;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ProtectionTools> ObservableProtectionTools =>
-			observableProtectionTools ?? (observableProtectionTools =
-				new GenericObservableList<ProtectionTools>(ProtectionTools));
 		#endregion
 		public Nomenclature () { }
 		#region IValidatableObject implementation
@@ -160,12 +155,12 @@ namespace Workwear.Domain.Stock {
 				logger.Warn("Номеклатура нормы уже добавлена. Пропускаем...");
 				return;
 			}
-			ObservableProtectionTools.Add(protectionTools);
+			ProtectionTools.Add(protectionTools);
 		}
 
 		public virtual void RemoveProtectionTools(ProtectionTools protectionTools)
 		{
-			ObservableProtectionTools.Remove(protectionTools);
+			ProtectionTools.Remove(protectionTools);
 		}
 		#endregion
 	}

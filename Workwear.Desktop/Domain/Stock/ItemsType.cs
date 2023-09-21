@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
 
@@ -80,17 +79,12 @@ namespace Workwear.Domain.Stock
 			get => comment;
 			set => SetField(ref comment, value);
 		}
-		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
+		private IObservableList<Nomenclature> nomenclatures = new ObservableList<Nomenclature>();
 		[Display(Name = "Номенклатура")]
-		public virtual IList<Nomenclature> Nomenclatures {
+		public virtual IObservableList<Nomenclature> Nomenclatures {
 			get => nomenclatures;
 			set => SetField(ref nomenclatures, value);
 		}
-		GenericObservableList<Nomenclature> observableNomenclatures;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures =>
-			observableNomenclatures ??
-			(observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures));
 
 		private SizeType sizeType;
 		[Display(Name = "Тип размера")]

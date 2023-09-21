@@ -63,6 +63,10 @@
       <Project>{5d124360-c8fb-4779-958b-0da5d6b90c29}</Project>
       <Name>QS.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Extensions.Observable\QS.Extensions.Observable.csproj">
+      <Project>{2a0710b2-b71b-4959-88da-0940100e172a}</Project>
+      <Name>QS.Extensions.Observable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj">
       <Project>{e95be5dc-a197-4657-87dc-a2d677eadb76}</Project>
       <Name>QS.Project.Abstract</Name>

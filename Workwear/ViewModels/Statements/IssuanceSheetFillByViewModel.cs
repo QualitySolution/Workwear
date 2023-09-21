@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.ViewModels;
 using Workwear.Domain.Company;
@@ -25,14 +24,14 @@ namespace Workwear.ViewModels.Statements
 		#region Notify
 
 		private DateTime? beginDate;
-		[PropertyChangedAlso(nameof(SensetiveFillButton))]
+		[PropertyChangedAlso(nameof(SensitiveFillButton))]
 		public virtual DateTime? BeginDate {
 			get => beginDate;
 			set => SetField(ref beginDate, value);
 		}
 
 		private DateTime? endDate;
-		[PropertyChangedAlso(nameof(SensetiveFillButton))]
+		[PropertyChangedAlso(nameof(SensitiveFillButton))]
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -44,7 +43,7 @@ namespace Workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool SensetiveFillButton => BeginDate.HasValue && EndDate.HasValue && employees.Count > 0;
+		public bool SensitiveFillButton => BeginDate.HasValue && EndDate.HasValue && ObservableEmployees.Count > 0;
 
 		#endregion
 
@@ -54,17 +53,7 @@ namespace Workwear.ViewModels.Statements
 
 		#endregion
 
-		List<EmployeeCard> employees = new List<EmployeeCard>();
-
-		GenericObservableList<EmployeeCard> observableEmployees;
-
-		public GenericObservableList<EmployeeCard> ObservableEmployees { get {
-				if(observableEmployees == null)
-					observableEmployees = new GenericObservableList<EmployeeCard>(employees);
-
-				return observableEmployees;
-			}
-		}
+		public readonly IObservableList<EmployeeCard> ObservableEmployees = new ObservableList<EmployeeCard>();
 
 		public IssuanceSheetFillByViewModel(IssuanceSheetViewModel issuanceSheetViewModel, EmployeeIssueRepository employeeIssueRepository, EmployeeRepository employeeRepository, IInteractiveQuestion question)
 		{
@@ -83,7 +72,7 @@ namespace Workwear.ViewModels.Statements
 			foreach(var employee in employees) {
 				ObservableEmployees.Remove(employee);
 			}
-			OnPropertyChanged(nameof(SensetiveFillButton));
+			OnPropertyChanged(nameof(SensitiveFillButton));
 		}
 		public void AddEmployees()
 		{
@@ -98,13 +87,13 @@ namespace Workwear.ViewModels.Statements
 
 		void SelectDialog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var emploeesToAdd = issuanceSheetViewModel.UoW.GetById<EmployeeCard>(e.SelectedObjects.Select(DomainHelper.GetId));
+			var employeesToAdd = issuanceSheetViewModel.UoW.GetById<EmployeeCard>(e.SelectedObjects.Select(DomainHelper.GetId));
 
-			foreach(var employee in emploeesToAdd) {
+			foreach(var employee in employeesToAdd) {
 				if(!ObservableEmployees.Contains(employee))
 					ObservableEmployees.Add(employee);
 			}
-			OnPropertyChanged(nameof(SensetiveFillButton));
+			OnPropertyChanged(nameof(SensitiveFillButton));
 		}
 
 		public void AddEmployeesFromDivision()
@@ -126,11 +115,11 @@ namespace Workwear.ViewModels.Statements
 					issuanceSheetViewModel.Entity.Subdivision = issuanceSheetViewModel.UoW.GetById<Subdivision>(subdivisionNode.Id);
 				var inSubdivision = employeeRepository.GetActiveEmployeesFromSubdivisions(issuanceSheetViewModel.UoW, new int[] {subdivisionNode.Id });
 				foreach(var employee in inSubdivision) {
-					if(employees.All(x => x.Id != employee.Id))
-						observableEmployees.Add(employee);
+					if(ObservableEmployees.All(x => x.Id != employee.Id))
+						ObservableEmployees.Add(employee);
 				}
 			}
-			OnPropertyChanged(nameof(SensetiveFillButton));
+			OnPropertyChanged(nameof(SensitiveFillButton));
 		}
 
 		public void FillIssuanceSheet()
@@ -157,7 +146,7 @@ namespace Workwear.ViewModels.Statements
 		private void FillByExpense()
 		{
 			var issueOperations = employeeIssueRepository.GetOperationsByDates( 
-				employees.ToArray(), 
+				ObservableEmployees.ToArray(), 
 				BeginDate.Value,
 				EndDate.Value,
 				x => x.Fetch(SelectMode.Fetch, f => f.Nomenclature));
@@ -170,7 +159,7 @@ namespace Workwear.ViewModels.Statements
 		private void FillByNeed()
 		{
 			var items = EmployeeRepository.GetItems(issuanceSheetViewModel.UoW,
-				employees.ToArray(),
+				ObservableEmployees.ToArray(),
 				BeginDate.Value,
 				EndDate.Value);
 			foreach(var item in items.OrderBy(x => x.EmployeeCard.FullName).ThenBy(x => x.NextIssue)) {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Tools;
 
@@ -35,16 +35,12 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouseTo;
 			set => SetField(ref warehouseTo, value);
 		}
-		private IList<TransferItem> items = new List<TransferItem>();
+		private IObservableList<TransferItem> items = new ObservableList<TransferItem>();
 		[Display(Name = "Строки документа")]
-		public virtual IList<TransferItem> Items {
+		public virtual IObservableList<TransferItem> Items {
 			get => items;
 			set => SetField(ref items, value);
 		}
-		private GenericObservableList<TransferItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<TransferItem> ObservableItems => 
-			observableItems ?? (observableItems = new GenericObservableList<TransferItem>(Items));
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Перемещение №{Id} от {Date:d}";
@@ -87,11 +83,11 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 			var newItem = new TransferItem(UoW, this, position, amount);
-			ObservableItems.Add(newItem);
+			Items.Add(newItem);
 			return newItem;
 		}
 		public virtual void RemoveItem(TransferItem item) {
-			ObservableItems.Remove(item);
+			Items.Remove(item);
 		}
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));

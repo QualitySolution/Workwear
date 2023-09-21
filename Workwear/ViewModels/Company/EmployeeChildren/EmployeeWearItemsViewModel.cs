@@ -1,12 +1,12 @@
 using System;
 using System.ComponentModel;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
@@ -102,7 +102,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#region Свойства
 
-		public GenericObservableList<EmployeeCardItem> ObservableWorkwearItems => Entity.ObservableWorkwearItems;
+		public IObservableList<EmployeeCardItem> ObservableWorkwearItems => Entity.WorkwearItems;
 
 		public FeaturesService FeaturesService { get; }
 

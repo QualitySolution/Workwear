@@ -72,7 +72,7 @@ namespace Workwear.ViewModels.Regulations
 				.Future();
 
 			var regulationQuery = UoW.Session.QueryOver<RegulationDoc>()
-				.Fetch(SelectMode.Fetch, x => x.Annexess)
+				.Fetch(SelectMode.Fetch, x => x.Annexes)
 				.Future();
 			
 			NormConditions = normConditionQuery.ToList();
