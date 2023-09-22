@@ -4,10 +4,8 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using Gtk;
 using QS.Views.Dialog;
-using QSWidgetLib;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.Views.Regulations
@@ -36,7 +34,7 @@ namespace Workwear.Views.Regulations
 			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ProtectionTools>.Create()
 				.AddColumn("Аналог СИЗ").AddTextRenderer(p => p.Name)
 				.Finish();
-			ytreeNormAnalog.ItemsDataSource = Entity.ObservableAnalog;
+			ytreeNormAnalog.ItemsDataSource = Entity.Analogs;
 			ytreeNormAnalog.Selection.Mode = Gtk.SelectionMode.Multiple;
 			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 
@@ -50,7 +48,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
 				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 				.Finish();
-			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
+			ytreeItems.ItemsDataSource = Entity.Nomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 

@@ -39,8 +39,8 @@ namespace workwear
 			set { if (incomeDoc == value)
 					return;
 				incomeDoc = value;
-				ytreeItems.ItemsDataSource = incomeDoc.ObservableItems;
-				incomeDoc.ObservableItems.ListContentChanged += IncomeDoc_ObservableItems_ListContentChanged;
+				ytreeItems.ItemsDataSource = incomeDoc.Items;
+				incomeDoc.Items.ContentChanged += IncomeDoc_ObservableItems_ListContentChanged;
 				IncomeDoc.PropertyChanged += IncomeDoc_PropertyChanged;
 				IncomeDoc_PropertyChanged(null,
 					new PropertyChangedEventArgs(IncomeDoc.GetPropertyName(d => d.Operation)));
@@ -72,8 +72,8 @@ namespace workwear
 			}
 
 			if (e.PropertyName == IncomeDoc.GetPropertyName(x => x.Operation)) {
-				var сommentReturnColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.CommentReturn).First();
-				сommentReturnColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
+				var commentReturnColumn = ytreeItems.ColumnsConfig.GetColumnsByTag(ColumnTags.CommentReturn).First();
+				commentReturnColumn.Visible = IncomeDoc.Operation == IncomeOperations.Return;
 			}
 		}
 

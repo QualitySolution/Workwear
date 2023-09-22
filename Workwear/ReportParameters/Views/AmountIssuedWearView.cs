@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using QS.Views;
 using workwear.ReportParameters.ViewModels;
 using Workwear.Domain.Stock;
@@ -35,11 +34,11 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(v => v.SelectAll, w => w.Active)
 				.InitializeFromSource();
 			
-			ytreeSubdivisions.CreateFluentColumnsConfig<SelectedSubdivison>()
+			ytreeSubdivisions.CreateFluentColumnsConfig<SelectedSubdivision>()
 				.AddColumn("Показ").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Подразделение").AddTextRenderer(x => x.Name)
 				.Finish();
-			ytreeSubdivisions.ItemsDataSource = new GenericObservableList<SelectedSubdivison>(viewModel.Subdivisions);
+			ytreeSubdivisions.ItemsDataSource = ViewModel.Subdivisions;
 
 			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 

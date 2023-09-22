@@ -67,7 +67,7 @@ namespace Workwear.Views.Statements
 			ytreeviewItems.Selection.Changed += Selection_Changed;
 			ytreeviewItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeviewItems.Selection.Mode = SelectionMode.Multiple;
-			ytreeviewItems.ItemsDataSource = ViewModel.Entity.ObservableItems;
+			ytreeviewItems.ItemsDataSource = ViewModel.Entity.Items;
 
 			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
 			Entity.PropertyChanged += Entity_PropertyChanged;
@@ -135,8 +135,8 @@ namespace Workwear.Views.Statements
 		}
 
 		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(Entity.ObservableItems))
-				ytreeviewItems.ItemsDataSource = Entity.ObservableItems;
+			if(e.PropertyName == nameof(Entity.Items))
+				ytreeviewItems.ItemsDataSource = Entity.Items;
 		}
 
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {

@@ -6,6 +6,7 @@ using QS.Deletion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -43,7 +44,7 @@ namespace Workwear.ViewModels.Tools
 			
 			TargetEntryViewModel = entryBuilder.ForEntity<ProtectionTools>().MakeByType().Finish();
 			TargetEntryViewModel.Changed += TargetEntryViewModel_Changed;
-			SourceList.ListChanged += list => OnPropertyChanged(nameof(SensitiveReplaceButton));
+			SourceList.ContentChanged += (s, a) => OnPropertyChanged(nameof(SensitiveReplaceButton));
 		}
 
 		#region View Properties
@@ -60,7 +61,7 @@ namespace Workwear.ViewModels.Tools
 			set => SetField(ref removeSource, value);
 		}
 
-		public GenericObservableList<ReplaceEntityItem> SourceList = new GenericObservableList<ReplaceEntityItem>();
+		public IObservableList<ReplaceEntityItem> SourceList = new ObservableList<ReplaceEntityItem>();
 		#endregion
 
 		#region Entry

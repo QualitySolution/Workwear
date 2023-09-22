@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.Utilities;
 using QS.Utilities.Text;
@@ -37,9 +36,9 @@ namespace workwear.ReportParameters.Views {
 				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
-			var protectionTools = new GenericObservableList<SelectedProtectionTools>(viewModel.ProtectionTools);
-			ytreeNomenclature.ItemsDataSource = protectionTools;
-			ycheckbuttonAllNomenclature.Sensitive = protectionTools.Any();
+			
+			ytreeNomenclature.ItemsDataSource = ViewModel.ProtectionTools;
+			ycheckbuttonAllNomenclature.Sensitive = ViewModel.ProtectionTools.Any();
 			
 			ycheckChild.Binding
 				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
@@ -50,7 +49,7 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active)
 				.InitializeFromSource();
 
-			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveRunReport, w => w.Sensitive).InitializeFromSource();
+			buttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveRunReport, w => w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

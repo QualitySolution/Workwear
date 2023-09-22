@@ -5,7 +5,6 @@ using QS.Utilities.Text;
 using QS.Utilities;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
-using QSWidgetLib;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
 
@@ -60,7 +59,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
 				.Finish ();
-			ytreeItems.ItemsDataSource = Entity.ObservableItems;
+			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding.AddSource(ViewModel)

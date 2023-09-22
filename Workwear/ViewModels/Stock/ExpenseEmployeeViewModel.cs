@@ -198,7 +198,7 @@ namespace Workwear.ViewModels.Stock {
 
 		private void FillUnderreceived(PerformanceHelper performance)
 		{
-			Entity.ObservableItems.Clear();
+			Entity.Items.Clear();
 
 			if(Entity.Employee == null)
 				return;
