@@ -1,5 +1,4 @@
 using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Deletion;

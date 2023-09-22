@@ -1,5 +1,4 @@
-﻿using System;
-using QS.DomainModel.UoW;
+﻿using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;

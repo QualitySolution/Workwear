@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views;
+﻿using QS.Views;
 using Workwear.ViewModels.Import;
 
 namespace Workwear.Views.Import {

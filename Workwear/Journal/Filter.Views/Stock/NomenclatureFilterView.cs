@@ -1,4 +1,3 @@
-using System;
 using QS.Views;
 using workwear.Journal.Filter.ViewModels.Stock;
 
