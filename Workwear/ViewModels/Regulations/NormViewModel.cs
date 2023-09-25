@@ -108,7 +108,7 @@ namespace Workwear.ViewModels.Regulations
 		public void CopyNormFrom(int normId)
 		{
 			var norm = UoW.GetById<Norm>(normId);
-			norm.CopyNorm(Entity);
+			Entity.CopyFromNorm(norm);
 		}
 
 		#region Дочерние ViewModels

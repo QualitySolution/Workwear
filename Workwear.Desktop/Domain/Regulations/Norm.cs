@@ -104,7 +104,6 @@ namespace Workwear.Domain.Regulations
 
 		public virtual string Title => Name ?? $"{DocumentNumberText} {AnnexNumberText} {TONParagraph}";
 		#endregion
-
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Items.Count == 0)
@@ -130,6 +129,7 @@ namespace Workwear.Domain.Regulations
 		}
 
 		#endregion
+		#region Должности
 		public virtual void AddPost(Post prof) {
 			if(Posts.Any (p => DomainHelper.EqualDomainObjects (p, prof)))
 			{
@@ -142,7 +142,9 @@ namespace Workwear.Domain.Regulations
 		public virtual void RemovePost(Post prof) {
 			Posts.Remove (prof);
 		}
+		#endregion
 
+		#region Строки нормы
 		public virtual NormItem AddItem(ProtectionTools tools) {
 			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.ProtectionTools, tools))) {
 				logger.Warn ("Такое наименование уже добавлено. Пропускаем...");
@@ -164,27 +166,27 @@ namespace Workwear.Domain.Regulations
 		public virtual void RemoveItem(NormItem item) {
 			Items.Remove (item);
 		}
+		#endregion
 
 		/// <summary>
-		/// Присваивает newNorm копию текущего объекта Norm 
+		/// Заполняет текущую норму данными из нормы, переданной в параметре. 
 		/// </summary>
-		/// <param name="newNorm">Ссылка на норму, в которую необходимо скопировать текущую норму</param>
-		public virtual void CopyNorm(Norm newNorm) {
-			newNorm.Document = document;
-			newNorm.Annex = annex;
-			newNorm.TONParagraph= tonParagraph;
-			newNorm.Name = name;
-			//тут передобавлять
-			foreach(var item in posts) {
-				newNorm.Posts.Add(item);
+		public virtual void CopyFromNorm(Norm norm) {
+			Document = norm.Document;
+			Annex = norm.Annex;
+			TONParagraph= norm.tonParagraph;
+			Name = norm.name;
+			DateFrom = norm.dateFrom;
+			DateTo = norm.dateTo;
+			Comment = norm.comment;
+			
+			foreach(var post in norm.Posts) {
+				AddPost(post);
 			}
-			//тут передобавлять
-			foreach(var item in items.Select(i => i.CopyNormItem(newNorm))) {
-				newNorm.Items.Add(item);
+			
+			foreach(var item in norm.Items) {
+				Items.Add(item.Copy(this));
 			}
-			newNorm.Comment = comment;
-			newNorm.DateFrom = dateFrom;
-			newNorm.DateTo = dateTo;
 		}
 	}
 }
