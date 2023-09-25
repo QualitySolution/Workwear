@@ -99,6 +99,12 @@ namespace Workwear.ViewModels.Stock
 			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity);
 		}
 		#endregion
+		#region Внешние дейстия
+		public void CopyFrom(int nomenclatureId) {
+			var nomenclature = UoW.GetById<Nomenclature>(nomenclatureId);
+			Entity.CopyFrom(nomenclature);
+		}
+		#endregion
 		
 		private SizeType lastSizeType;
 		private SizeType lastHeightType;

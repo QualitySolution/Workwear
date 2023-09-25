@@ -145,8 +145,21 @@ namespace Workwear.Domain.Stock {
 					return false;
 			}
 		}
-		#endregion
+		
+		public virtual void CopyFrom(Nomenclature nomenclature) {
+			Name = nomenclature.Name;
+			Type = nomenclature.Type;
+			Number = nomenclature.Number;
+			Sex = nomenclature.Sex;
+			Comment = nomenclature.Comment;
+			Archival = nomenclature.Archival;
+			SaleCost = nomenclature.SaleCost;
+			UseBarcode = nomenclature.UseBarcode;
 
+			foreach(var pt in nomenclature.ProtectionTools) 
+				ProtectionTools.Add(pt);
+		}
+		#endregion
 		#region ProtectionTools
 
 		public virtual void AddProtectionTools(ProtectionTools protectionTools)

@@ -125,7 +125,7 @@ namespace workwear.Journal.ViewModels.Regulations
 		#region Popupmenu action implementation
 		protected override void CreatePopupActions()
 		{
-			PopupActionsList.Add(new JournalAction("Копировать норму", (arg) => arg.Length == 1, (arg) => true, CopyNorm));
+			PopupActionsList.Add(new JournalAction("Создать копию нормы", (arg) => arg.Length == 1, (arg) => true, CopyNorm));
 			PopupActionsList.Add(new JournalAction("Сотрудники использующие норму", (arg) => arg.Length == 1, (arg) => true, ShowEmployees));
 			PopupActionsList.Add(new JournalAction("Обновить потребности у использующих норму", 
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),

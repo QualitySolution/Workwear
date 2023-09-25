@@ -7,8 +7,10 @@ using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
@@ -91,9 +93,18 @@ namespace workwear.Journal.ViewModels.Stock
 		#region Popup
 		private void MakePopup()
 		{
+			PopupActionsList.Add(new JournalAction("Создать копию номенклатуры", (arg) => arg.Length == 1, (arg) => true, CopyNomenclature));
 			PopupActionsList.Add(new JournalAction("Открыть складские движения", n => true, n => true, OpenMovements));
 		}
 
+		private void CopyNomenclature(object[] nodes)
+		{
+			if(nodes.Length != 1)
+				return;
+			
+			var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			page.ViewModel.CopyFrom(nodes[0].GetId());
+		}
 		private void OpenMovements(object[] nodes)
 		{
 			foreach(NomenclatureJournalNode node in nodes) {
