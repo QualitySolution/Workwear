@@ -4,6 +4,7 @@ using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Linq;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -19,6 +20,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -26,6 +28,9 @@ namespace workwear.Journal.ViewModels.Stock
 {
 	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>
 	{
+		private readonly IInteractiveService interactiveService;
+		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
+		private readonly ModalProgressCreator progressCreator;
 		public FeaturesService FeaturesService { get; }
 		public NomenclatureFilterViewModel Filter { get; private set; }
 
@@ -35,10 +40,15 @@ namespace workwear.Journal.ViewModels.Stock
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope, 
 			FeaturesService featuresService,
+			SizeTypeReplaceModel sizeTypeReplaceModel,
+			ModalProgressCreator progressCreator,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = true;
 
@@ -141,6 +151,13 @@ namespace workwear.Journal.ViewModels.Stock
 		private void SetType(NomenclatureJournalNode[] nodes, ItemsType itemsType) {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var ids = nodes.Select(n => n.Id).ToArray();
+				var nomenclatures = uow.Session.QueryOver<Nomenclature>()
+					.Where(n =>  n.Id.IsIn(ids))
+					.Fetch(SelectMode.Fetch, n => n.Type)
+					.Fetch(SelectMode.Fetch)
+					.List();
+				if(!sizeTypeReplaceModel.TryReplaceSizes(uow, interactiveService, progressCreator, nomenclatures.ToArray(), itemsType.SizeType, itemsType.HeightType))
+					return;
 				uow.GetAll<Nomenclature>()
 					.Where(n => ids.Contains(n.Id))
 					.UpdateBuilder()
