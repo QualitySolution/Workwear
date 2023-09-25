@@ -29,14 +29,14 @@ namespace workwear.Journal.ViewModels.Regulations
 		private readonly ILifetimeScope autofacScope;
 		public NormFilterViewModel Filter { get; private set; }
 
-		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null, bool useMultiSelect = false) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			UseSlider = false;
 			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
-			if(useMultiSelect)
-				UseMultiSelect();
+			TableSelectionMode = JournalSelectionMode.Multiple;
+			CreateNodeActions();
 		}
 
 		protected override IQueryOver<Norm> ItemsQuery(IUnitOfWork uow)
@@ -114,16 +114,11 @@ namespace workwear.Journal.ViewModels.Regulations
 				.TransformUsing(Transformers.AliasToBean<NormJournalNode>());
 		}
 
-		public void UseMultiSelect()
+		public void CreateNodeActions()
 		{
-			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
-			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
-			SelectionMode = JournalSelectionMode.Multiple;
-			NodeActionsList.RemoveAll(x => x.Title == "Выбрать");
-			RowActivatedAction = NodeActionsList.First(x => x.Title == "Изменить");
 			NodeActionsList.Add(new JournalAction("Обновить потребности",
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
-				(arg) => true,
+				(arg) => SelectionMode == JournalSelectionMode.None,
 				UpdateWearItems));
 		}
 

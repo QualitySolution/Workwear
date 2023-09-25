@@ -49,10 +49,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = HandlePostLoadProcessing;
 
-			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
-			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
-			SelectionMode = JournalSelectionMode.Multiple;
-			NodeActionsList.Clear();
+			TableSelectionMode = JournalSelectionMode.Multiple;
 			CreateActions();
 		}
 
@@ -196,6 +193,7 @@ namespace workwear.Journal.ViewModels.Communications
 		#region Действия
 		void CreateActions()
 		{
+			NodeActionsList.Clear();
 			var loadAllAction = new JournalAction("Загрузить всех",
 					(selected) => true,
 					(selected) => true,
