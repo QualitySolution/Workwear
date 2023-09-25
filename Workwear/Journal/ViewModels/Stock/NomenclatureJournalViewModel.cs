@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -40,6 +42,9 @@ namespace workwear.Journal.ViewModels.Stock
 
 			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(NomenclatureJournalViewModel), this));
 			MakePopup();
+			
+			TableSelectionMode = JournalSelectionMode.Multiple;
+			CreateActions();
 		}
 
 		protected override IQueryOver<Nomenclature> ItemsQuery(IUnitOfWork uow)
@@ -99,6 +104,39 @@ namespace workwear.Journal.ViewModels.Stock
 				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this, 
 					addingRegistrations: builder => builder.RegisterInstance(nomenclature));
 			}
+		}
+		#endregion
+		
+		#region Actions
+		private void CreateActions() {
+			base.CreateNodeActions();
+			var changeTypeAction = new JournalAction("Изменить тип",
+				(selected) => selected.Any(),
+				(selected) => SelectionMode == JournalSelectionMode.None
+			);
+			NodeActionsList.Add(changeTypeAction);
+			
+			var itemTypes = UoW.GetAll<ItemsType>().OrderBy(x => x.Name).ToList();
+			foreach(ItemsType itemsType in itemTypes) {
+				var updateTypeAction = new JournalAction(itemsType?.Name,
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => SetType(selected.Cast<NomenclatureJournalNode>().ToArray(), itemsType)
+				);
+				changeTypeAction.ChildActionsList.Add(updateTypeAction);
+			}
+		}
+		
+		private void SetType(NomenclatureJournalNode[] nodes, ItemsType itemsType) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var ids = nodes.Select(n => n.Id).ToArray();
+				uow.GetAll<Nomenclature>()
+					.Where(n => ids.Contains(n.Id))
+					.UpdateBuilder()
+					.Set(n => n.Type, itemsType)
+					.Update();
+			}
+			Refresh();
 		}
 		#endregion
 	}

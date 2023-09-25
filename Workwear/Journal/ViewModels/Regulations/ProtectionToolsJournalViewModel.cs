@@ -1,4 +1,6 @@
-﻿using NHibernate;
+﻿using System.Linq;
+using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -26,6 +28,9 @@ namespace workwear.Journal.ViewModels.Regulations
 		{
 			UseSlider = true;
 			this.type = type;
+			
+			TableSelectionMode = JournalSelectionMode.Multiple;
+			CreateActions();
 		}
 
 		protected override IQueryOver<ProtectionTools> ItemsQuery(IUnitOfWork uow)
@@ -50,6 +55,39 @@ namespace workwear.Journal.ViewModels.Regulations
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<ProtectionToolsJournalNode>());
 		}
+		
+		#region Actions
+		private void CreateActions() {
+			base.CreateNodeActions();
+			var changeTypeAction = new JournalAction("Изменить тип",
+				(selected) => selected.Any(),
+				(selected) => SelectionMode == JournalSelectionMode.None
+			);
+			NodeActionsList.Add(changeTypeAction);
+			
+			var itemTypes = UoW.GetAll<ItemsType>().OrderBy(x => x.Name).ToList();
+			foreach(ItemsType itemsType in itemTypes) {
+				var updateTypeAction = new JournalAction(itemsType?.Name,
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => SetType(selected.Cast<ProtectionToolsJournalNode>().ToArray(), itemsType)
+				);
+				changeTypeAction.ChildActionsList.Add(updateTypeAction);
+			}
+		}
+		
+		private void SetType(ProtectionToolsJournalNode[] nodes, ItemsType itemsType) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var ids = nodes.Select(n => n.Id).ToArray();
+				uow.GetAll<ProtectionTools>()
+					.Where(p => ids.Contains(p.Id))
+					.UpdateBuilder()
+					.Set(n => n.Type, itemsType)
+					.Update();
+			}
+			Refresh();
+		}
+		#endregion
 	}
 
 	public class ProtectionToolsJournalNode
