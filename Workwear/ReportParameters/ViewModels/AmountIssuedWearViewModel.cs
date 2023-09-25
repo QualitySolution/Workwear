@@ -7,6 +7,7 @@ using Gamma.Widgets;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Report;
 using QS.Report.ViewModels;
 using Workwear.Domain.Company;
@@ -27,23 +28,21 @@ namespace workwear.ReportParameters.ViewModels {
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
 			using(var uow = uowFactory.CreateWithoutRoot()) {
-				SelectedSubdivison resultAlias = null;
-				Subdivisions = subdivisionRepository.ActiveQuery(uow) 
+				SelectedSubdivision resultAlias = null;
+				Subdivisions = new ObservableList<SelectedSubdivision>(subdivisionRepository.ActiveQuery(uow) 
 					.SelectList(list => list
 					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
 				)
-				.TransformUsing(Transformers.AliasToBean<SelectedSubdivison>())
-				.List<SelectedSubdivison>();
+				.TransformUsing(Transformers.AliasToBean<SelectedSubdivision>())
+				.List<SelectedSubdivision>());
 			}
 			Subdivisions.Insert(0, 
-				new SelectedSubdivison {
+				new SelectedSubdivision {
 					Id = -1,
 					Name = "Без подразделения" 
 			});
-			foreach(var item in Subdivisions) {
-				item.PropertyChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
-			}
+			Subdivisions.PropertyOfElementChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -60,7 +59,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"summary", !BySubdivision},
 					{"bySize", BySize},
 					{"withoutsub", Subdivisions.First(x =>x.Id == -1).Select },
-					{"subdivisions", SelectSubdivisons() },
+					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
@@ -181,7 +180,7 @@ namespace workwear.ReportParameters.ViewModels {
 			}
 		}
 
-		public IList<SelectedSubdivison> Subdivisions;
+		public IObservableList<SelectedSubdivision> Subdivisions;
 
 		private IList<Owner> owners;
 		public IList<Owner> Owners {
@@ -214,7 +213,7 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 		#endregion
 
-		private int[] SelectSubdivisons() {
+		private int[] SelectSubdivisions() {
 			var selectedId = Subdivisions
 				.Where(x => x.Select).Select(x => x.Id).ToList();
 			
@@ -232,7 +231,7 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 	}
 
-	public class SelectedSubdivison : PropertyChangedBase
+	public class SelectedSubdivision : PropertyChangedBase
 	{
 		private bool select;
 		public virtual bool Select {

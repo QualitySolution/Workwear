@@ -45,7 +45,7 @@ namespace Workwear.Views.Stock
 
 			table.Selection.Changed += Selection_Changed;
 			table.Selection.Mode = SelectionMode.Multiple;
-			table.ItemsDataSource = ViewModel.Entity.ObservableItems;
+			table.ItemsDataSource = ViewModel.Entity.Items;
 			table.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;

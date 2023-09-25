@@ -88,7 +88,7 @@ namespace Workwear.Views.Stock
 			.AddColumn("Пол")
 				.AddTextRenderer(p => p.Sex.GetEnumTitle())
 			.Finish();
-			ytreeItems.ItemsDataSource = Entity.ObservableNomenclatures;
+			ytreeItems.ItemsDataSource = Entity.Nomenclatures;
 		}
 
 		private void OnYcomboCategoryChanged (object sender, EventArgs e) {

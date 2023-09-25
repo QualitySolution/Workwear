@@ -48,7 +48,7 @@ namespace Workwear.ViewModels.Stock
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
-            Entity.ObservableItems.PropertyChanged += CalculateTotal;
+            Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
@@ -70,7 +70,7 @@ namespace Workwear.ViewModels.Stock
         }
         #endregion
 
-        private void CalculateTotal(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
+        private void CalculateTotal(object sender, EventArgs eventArgs) {
             Total = $"Позиций в документе: {Entity.Items.Count}  " +
                     $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
         }

@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 
@@ -23,24 +23,13 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Свойства
 
-		private IList<WriteoffItem> items = new List<WriteoffItem>();
+		private IObservableList<WriteoffItem> items = new ObservableList<WriteoffItem>();
 
 		[Display (Name = "Строки документа")]
-		public virtual IList<WriteoffItem> Items {
+		public virtual IObservableList<WriteoffItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
 		}
-
-		GenericObservableList<WriteoffItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<WriteoffItem> ObservableItems {
-			get {
-				if (observableItems == null)
-					observableItems = new GenericObservableList<WriteoffItem> (Items);
-				return observableItems;
-			}
-		}
-			
 		#endregion
 
 		public virtual string Title{
@@ -84,7 +73,7 @@ namespace Workwear.Domain.Stock.Documents
 				return;
 			}
 
-			ObservableItems.Add(new WriteoffItem(this, operation, count));
+			Items.Add(new WriteoffItem(this, operation, count));
 		}
 
 		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count)
@@ -97,7 +86,7 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 			var item = new WriteoffItem(this, operation, count);
-			ObservableItems.Add(item);
+			Items.Add(item);
 			return item;
 		}
 
@@ -114,12 +103,12 @@ namespace Workwear.Domain.Stock.Documents
 				return;
 			}
 
-			ObservableItems.Add (new WriteoffItem(this, position, warehouse, count));
+			Items.Add (new WriteoffItem(this, position, warehouse, count));
 		}
 
 		public virtual void RemoveItem(WriteoffItem item)
 		{
-			ObservableItems.Remove (item);
+			Items.Remove (item);
 		}
 
 		public virtual void UpdateOperations(IUnitOfWork uow)

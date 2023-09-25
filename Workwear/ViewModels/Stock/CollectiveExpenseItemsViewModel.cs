@@ -108,7 +108,7 @@ namespace Workwear.ViewModels.Stock
 
 			performance.CheckPoint("Finish");
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Owners = allOwners.ToList();
 		}
 
@@ -345,7 +345,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		public void RefreshAll() {
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
-			AddEmployeesList(Entity.ObservableItems.Select(x => x.Employee).Distinct(), performance);
+			AddEmployeesList(Entity.Items.Select(x => x.Employee).Distinct(), performance);
 		}
 
 		#endregion

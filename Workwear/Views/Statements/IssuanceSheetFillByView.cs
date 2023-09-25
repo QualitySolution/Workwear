@@ -25,7 +25,7 @@ namespace Workwear.Views.Statements
 			ytreeviewEmployees.Selection.Changed += Selection_Changed;
 			ytreeviewEmployees.SetItemsSource<EmployeeCard>(viewModel.ObservableEmployees);
 
-			buttonFill.Binding.AddBinding(viewModel, v => v.SensetiveFillButton, w => w.Sensitive).InitializeFromSource();
+			buttonFill.Binding.AddBinding(viewModel, v => v.SensitiveFillButton, w => w.Sensitive).InitializeFromSource();
 		}
 
 		void Selection_Changed(object sender, EventArgs e)

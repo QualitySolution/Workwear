@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.Transform;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
@@ -15,6 +20,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -22,6 +28,9 @@ namespace workwear.Journal.ViewModels.Stock
 {
 	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>
 	{
+		private readonly IInteractiveService interactiveService;
+		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
+		private readonly ModalProgressCreator progressCreator;
 		public FeaturesService FeaturesService { get; }
 		public NomenclatureFilterViewModel Filter { get; private set; }
 
@@ -31,15 +40,23 @@ namespace workwear.Journal.ViewModels.Stock
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope, 
 			FeaturesService featuresService,
+			SizeTypeReplaceModel sizeTypeReplaceModel,
+			ModalProgressCreator progressCreator,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = true;
 
 			JournalFilter = Filter = autofacScope.Resolve<NomenclatureFilterViewModel>(new TypedParameter(typeof(NomenclatureJournalViewModel), this));
 			MakePopup();
+			
+			TableSelectionMode = JournalSelectionMode.Multiple;
+			CreateActions();
 		}
 
 		protected override IQueryOver<Nomenclature> ItemsQuery(IUnitOfWork uow)
@@ -86,9 +103,18 @@ namespace workwear.Journal.ViewModels.Stock
 		#region Popup
 		private void MakePopup()
 		{
+			PopupActionsList.Add(new JournalAction("Создать копию номенклатуры", (arg) => arg.Length == 1, (arg) => true, CopyNomenclature));
 			PopupActionsList.Add(new JournalAction("Открыть складские движения", n => true, n => true, OpenMovements));
 		}
 
+		private void CopyNomenclature(object[] nodes)
+		{
+			if(nodes.Length != 1)
+				return;
+			
+			var page = NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			page.ViewModel.CopyFrom(nodes[0].GetId());
+		}
 		private void OpenMovements(object[] nodes)
 		{
 			foreach(NomenclatureJournalNode node in nodes) {
@@ -99,6 +125,46 @@ namespace workwear.Journal.ViewModels.Stock
 				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this, 
 					addingRegistrations: builder => builder.RegisterInstance(nomenclature));
 			}
+		}
+		#endregion
+		
+		#region Actions
+		private void CreateActions() {
+			base.CreateNodeActions();
+			var changeTypeAction = new JournalAction("Изменить тип",
+				(selected) => selected.Any(),
+				(selected) => SelectionMode == JournalSelectionMode.None
+			);
+			NodeActionsList.Add(changeTypeAction);
+			
+			var itemTypes = UoW.GetAll<ItemsType>().OrderBy(x => x.Name).ToList();
+			foreach(ItemsType itemsType in itemTypes) {
+				var updateTypeAction = new JournalAction(itemsType?.Name,
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => SetType(selected.Cast<NomenclatureJournalNode>().ToArray(), itemsType)
+				);
+				changeTypeAction.ChildActionsList.Add(updateTypeAction);
+			}
+		}
+		
+		private void SetType(NomenclatureJournalNode[] nodes, ItemsType itemsType) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var ids = nodes.Select(n => n.Id).ToArray();
+				var nomenclatures = uow.Session.QueryOver<Nomenclature>()
+					.Where(n =>  n.Id.IsIn(ids))
+					.Fetch(SelectMode.Fetch, n => n.Type)
+					.Fetch(SelectMode.Fetch)
+					.List();
+				if(!sizeTypeReplaceModel.TryReplaceSizes(uow, interactiveService, progressCreator, nomenclatures.ToArray(), itemsType.SizeType, itemsType.HeightType))
+					return;
+				uow.GetAll<Nomenclature>()
+					.Where(n => ids.Contains(n.Id))
+					.UpdateBuilder()
+					.Set(n => n.Type, itemsType)
+					.Update();
+			}
+			Refresh();
 		}
 		#endregion
 	}

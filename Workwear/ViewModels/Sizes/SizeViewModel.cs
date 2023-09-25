@@ -42,10 +42,9 @@ namespace Workwear.ViewModels.Sizes
 				if (Entity.Id <= SizeService.MaxStandardSizeId) IsStandard = true;
 			}
 			
-			Entity.ObservableSuitableSizes.ListContentChanged += ObservableSuitableSizesOnListContentChanged;
+			Entity.SuitableSizes.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(AllSuitable));
 		}
-
-		private void ObservableSuitableSizesOnListContentChanged(object sender, EventArgs e) => OnPropertyChanged(nameof(AllSuitable));
+		
 		public IList<Size> AllSuitable => Entity.SuitableSizes.Union(Entity.SizesWhereIsThisSizeAsSuitable).ToList();
 
 		public bool IsStandard { get; }
@@ -69,15 +68,15 @@ namespace Workwear.ViewModels.Sizes
 			var selects = e.GetSelectedObjects<SizeJournalNode>();
 			var analogs = UoW.GetById<Size>(selects.Select(x => x.Id));
 			foreach (var analog in analogs) {
-				Entity.ObservableSuitableSizes.Add(analog);
+				Entity.SuitableSizes.Add(analog);
 			}
 		}
 		public void RemoveAnalog(Size analog) {
-			if(Entity.ObservableSuitableSizes.Contains(analog))
-				Entity.ObservableSuitableSizes.Remove(analog);
+			if(Entity.SuitableSizes.Contains(analog))
+				Entity.SuitableSizes.Remove(analog);
 			else {
 				Entity.SizesWhereIsThisSizeAsSuitable.Remove(analog);
-				ObservableSuitableSizesOnListContentChanged(this, null);
+				OnPropertyChanged(nameof(AllSuitable));
 			}
 		}
 	}

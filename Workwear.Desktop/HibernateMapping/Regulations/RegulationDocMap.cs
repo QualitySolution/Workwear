@@ -18,7 +18,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map (x => x.DocDate).Column ("doc_date");
 			Map(x => x.Number).Column("number");
 
-			HasMany(x => x.Annexess).KeyColumn("regulations_id").Not.KeyNullable().Inverse().Cascade.All()
+			HasMany(x => x.Annexes).KeyColumn("regulations_id").Not.KeyNullable().Inverse().Cascade.All()
 				.LazyLoad();
 		}
 	}

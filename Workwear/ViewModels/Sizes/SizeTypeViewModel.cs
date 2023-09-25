@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
@@ -33,10 +33,10 @@ namespace Workwear.ViewModels.Sizes
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
 			if (UoW.IsNew) {
 				IsNew = true;
-				Sizes = new GenericObservableList<Size>();
+				Sizes = new ObservableList<Size>();
 			}
 			else {
-				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
+				Sizes = new ObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 				if (Entity.Id <= SizeService.MaxStandardSizeTypeId) IsStandardType = true;
 			}
 		}
@@ -48,8 +48,8 @@ namespace Workwear.ViewModels.Sizes
 		public bool CanAdd => featuresService.Available(WorkwearFeature.CustomSizes);
 		public bool CanEdit => (IsNew || !IsStandardType) && featuresService.Available(WorkwearFeature.CustomSizes);
 		#endregion
-		private GenericObservableList<Size> sizes;
-		public GenericObservableList<Size> Sizes {
+		private IObservableList<Size> sizes;
+		public IObservableList<Size> Sizes {
 			get => sizes;
 			set => SetField(ref sizes, value);
 		}
@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Sizes
 					this, EntityUoWBuilder.ForCreate(), Entity);
 			page.PageClosed += (sender, args) => {
 				sizeService.RefreshSizes(UoW);
-				Sizes = new GenericObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
+				Sizes = new ObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 			};
 		}
 

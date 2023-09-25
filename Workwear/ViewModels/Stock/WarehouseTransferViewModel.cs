@@ -81,7 +81,7 @@ namespace Workwear.ViewModels.Stock
 			if(e.PropertyName == nameof(Entity.WarehouseFrom) && Entity.WarehouseFrom != stockBalanceModel.Warehouse) {
 				if(Entity.Items.Any()) {
 					if(interactive.Question("При изменении склада отправителя строки документа будут очищены. Продолжить?")) {
-						Entity.ObservableItems.Clear();
+						Entity.Items.Clear();
 					}
 					else {
 						//Возвращаем назад старый склад
@@ -123,7 +123,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		public void RemoveItems(IEnumerable<TransferItem> items) {
 			foreach(var item in items) {
-				Entity.ObservableItems.Remove(item);
+				Entity.Items.Remove(item);
 			}
 		}
 		public void OpenNomenclature(Nomenclature nomenclature) {

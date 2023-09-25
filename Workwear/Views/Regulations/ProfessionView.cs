@@ -1,5 +1,4 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using QS.Views.Dialog;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;

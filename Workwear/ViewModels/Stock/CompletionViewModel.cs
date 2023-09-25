@@ -74,8 +74,8 @@ namespace Workwear.ViewModels.Stock
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, {nameof(IUnitOfWork), UoW} })));
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.ObservableResultItems.ListContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmountText));
-			Entity.ObservableSourceItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmountText));
+			Entity.ResultItems.ContentChanged  += (sender, args) => OnPropertyChanged(nameof(ResultAmountText));
+			Entity.SourceItems.ContentChanged += (sender, args) => OnPropertyChanged(nameof(SourceAmountText));
             lastWarehouse = Entity.SourceWarehouse;
 
 			Owners = UoW.GetAll<Owner>().ToList();
@@ -85,8 +85,8 @@ namespace Workwear.ViewModels.Stock
 		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
 		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
-		public string ResultAmountText => $"Общее количество: {Entity.ObservableResultItems.Sum(x=>x.Amount)}";
-		public string SourceAmountText => $"Общее количество: {Entity.ObservableSourceItems.Sum(x=>x.Amount)}";
+		public string ResultAmountText => $"Общее количество: {Entity.ResultItems.Sum(x=>x.Amount)}";
+		public string SourceAmountText => $"Общее количество: {Entity.SourceItems.Sum(x=>x.Amount)}";
 		
 		private CompletionResultItem selectedResultItem;
 		public virtual CompletionResultItem SelectedResultItem {
@@ -124,7 +124,7 @@ namespace Workwear.ViewModels.Stock
 			if (e.PropertyName != nameof(Entity.SourceWarehouse) || Entity.SourceWarehouse == lastWarehouse || Entity.SourceItems is null) return;
 			if(Entity.SourceItems.Any()) {
 				if(interactive.Question("При изменении склада комплектующих строки документа будут очищены. Продолжить?")) {
-					Entity.ObservableSourceItems.Clear();
+					Entity.SourceItems.Clear();
 				}
 				else { //Возвращаем назад старый склад
 					Entity.SourceWarehouse = lastWarehouse;
@@ -168,10 +168,10 @@ namespace Workwear.ViewModels.Stock
 				.ToList().ForEach(n => Entity.AddResultItem(n));
 		}
 		public void DelSourceItems(CompletionSourceItem item) {
-			Entity.ObservableSourceItems.Remove(item);
+			Entity.SourceItems.Remove(item);
 		}
 		public void DelResultItems(CompletionResultItem item) {
-			Entity.ObservableResultItems.Remove(item);
+			Entity.ResultItems.Remove(item);
 		}
 		public void AddSizesResultItems(CompletionResultItem item) {
 			if(item == null || item.Nomenclature == null)

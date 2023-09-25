@@ -47,7 +47,7 @@ namespace Workwear.Views.Stock {
 				.AddColumn("ФИО").AddTextRenderer(l => l.Title)
 				.AddColumn("Должность").AddTextRenderer(l => l.Position)
 				.Finish();
-			ytreeMembers.ItemsDataSource = Entity.ObservableMembers;
+			ytreeMembers.ItemsDataSource = Entity.Members;
 		}
 		
 		private void ConfigureItems()
@@ -69,7 +69,7 @@ namespace Workwear.Views.Stock {
 					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
 					.Finish ();
 			ytreeItems.Binding
-				.AddBinding(Entity, vm => vm.ObservableItems, w => w.ItemsDataSource)
+				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
 		}
 

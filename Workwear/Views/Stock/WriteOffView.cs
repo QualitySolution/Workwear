@@ -14,8 +14,6 @@ namespace Workwear.Views.Stock
 {
 	public partial class WriteOffView : EntityDialogViewBase<WriteOffViewModel, Writeoff>
 	{
-		private enum ColumnTags { BuhDoc }
-		
 		public WriteOffView(WriteOffViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
@@ -81,7 +79,7 @@ namespace Workwear.Views.Stock
 					.Finish ();
 			
 			ytreeItems.Binding
-				.AddBinding(Entity, vm => vm.ObservableItems, w => w.ItemsDataSource)
+				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;

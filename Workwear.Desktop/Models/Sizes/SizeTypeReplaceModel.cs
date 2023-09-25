@@ -21,7 +21,7 @@ namespace Workwear.Models.Sizes {
 			this.sizeRepository = sizeRepository;
 		}
 
-		public bool TryReplaceSizes(IUnitOfWork uow, IInteractiveService interactive, IProgressBarDisplayable progress, Nomenclature[] nomenclatures, SizeType oldSizeType, SizeType newSizeType, SizeType oldHeight, SizeType newHeight) {
+		public bool TryReplaceSizes(IUnitOfWork uow, IInteractiveService interactive, IProgressBarDisplayable progress, Nomenclature[] nomenclatures, SizeType newSizeType, SizeType newHeight) {
 			var usedSizesAll = sizeRepository.GetUsedSizes(uow, nomenclatures);
 			if(!usedSizesAll.Any()) {
 				logger.Debug("Смена типа размера, не потребовала замены размеров в базе.");

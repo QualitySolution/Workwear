@@ -41,7 +41,7 @@ namespace workwear.Dialogs.Regulations
 				.Finish();
 			ytreeAnnexes.Selection.Changed += treeAnnexes_Selection_Changed;
 
-			ytreeAnnexes.SetItemsSource(Entity.ObservableAnnexes);
+			ytreeAnnexes.SetItemsSource(Entity.Annexes);
 		}
 
 		void treeAnnexes_Selection_Changed(object sender, EventArgs e)

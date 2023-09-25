@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views.Dialog;
+﻿using QS.Views.Dialog;
 using Workwear.Domain.Communications;
 using Workwear.ViewModels.Communications;
 

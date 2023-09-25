@@ -22,7 +22,6 @@ namespace Workwear.ViewModels.Regulations
 {
 	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
 	{
-		private readonly ILifetimeScope autofacScope;
 		private readonly IInteractiveService interactiveService;
 		private readonly FeaturesService featuresService;
 
@@ -36,13 +35,12 @@ namespace Workwear.ViewModels.Regulations
 		{
 			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 			.MakeByType()
 			.Finish();
 
-			Entity.ObservableNomenclatures.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			Entity.Nomenclatures.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 

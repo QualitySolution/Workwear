@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
@@ -34,7 +35,7 @@ namespace Workwear.ViewModels.Stock
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
-			Entity.ObservableItems.ListContentChanged += ExpenceDoc_ObservableItems_ListContentChanged;
+			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
 
@@ -48,10 +49,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Поля
-
-		public System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
-			get { return Entity.ObservableItems; }
-		}
+		public IObservableList<ExpenseItem> ObservableItems => Entity.Items;
 
 		private string sum;
 		public virtual string Sum {
@@ -111,7 +109,7 @@ namespace Workwear.ViewModels.Stock
 			);
 		}
 
-		private void ExpenceDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
+		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
 		}

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Stock;
 
@@ -57,22 +57,12 @@ namespace Workwear.Domain.Regulations
 
 		#region Аналоги
 
-		private IList<ProtectionTools> analogs = new List<ProtectionTools>();
+		private IObservableList<ProtectionTools> analogs = new ObservableList<ProtectionTools>();
 
 		[Display(Name = "Аналоги")]
-		public virtual IList<ProtectionTools> Analogs {
+		public virtual IObservableList<ProtectionTools> Analogs {
 			get { return analogs; }
 			set { SetField(ref analogs, value, () => Analogs); }
-		}
-
-		GenericObservableList<ProtectionTools> observableAnalogs;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<ProtectionTools> ObservableAnalog {
-			get {
-				if(observableAnalogs == null)
-					observableAnalogs = new GenericObservableList<ProtectionTools>(Analogs);
-				return observableAnalogs;
-			}
 		}
 
 		public virtual void AddAnalog(ProtectionTools Analog)
@@ -85,12 +75,12 @@ namespace Workwear.Domain.Regulations
 				logger.Warn("Нельзя добавлять в качестве аналога себя. Пропускаем...");
 				return;
 			}
-			ObservableAnalog.Add(Analog);
+			Analogs.Add(Analog);
 		}
 
 		public virtual void RemoveAnalog(ProtectionTools Analog)
 		{
-			ObservableAnalog.Remove(Analog);
+			Analogs.Remove(Analog);
 		}
 
 		#region Расчетные
@@ -108,22 +98,12 @@ namespace Workwear.Domain.Regulations
 
 		#region Номенклатура
 
-		private IList<Nomenclature> nomenclatures = new List<Nomenclature>();
+		private IObservableList<Nomenclature> nomenclatures = new ObservableList<Nomenclature>();
 
 		[Display(Name = "Номенклатура")]
-		public virtual IList<Nomenclature> Nomenclatures {
+		public virtual IObservableList<Nomenclature> Nomenclatures {
 			get { return nomenclatures; }
 			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
-		}
-
-		GenericObservableList<Nomenclature> observableNomenclatures;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Nomenclature> ObservableNomenclatures {
-			get {
-				if(observableNomenclatures == null)
-					observableNomenclatures = new GenericObservableList<Nomenclature>(Nomenclatures);
-				return observableNomenclatures;
-			}
 		}
 
 		public virtual IEnumerable<Nomenclature> MatchedNomenclatures => Nomenclatures.Union(Analogs.SelectMany(x => x.Nomenclatures));
@@ -134,12 +114,12 @@ namespace Workwear.Domain.Regulations
 				logger.Warn("Номеклатура уже добавлена. Пропускаем...");
 				return;
 			}
-			ObservableNomenclatures.Add(nomenclature);
+			Nomenclatures.Add(nomenclature);
 		}
 
 		public virtual void RemoveNomenclature(Nomenclature nomenclature)
 		{
-			ObservableNomenclatures.Remove(nomenclature);
+			Nomenclatures.Remove(nomenclature);
 		}
 		#endregion
 	}

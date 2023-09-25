@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 
@@ -22,9 +22,9 @@ namespace Workwear.Domain.Stock.Documents {
 			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", Id, Date);}
 		}
 
-		private IList<InspectionItem> items = new List<InspectionItem>();
+		private IObservableList<InspectionItem> items = new ObservableList<InspectionItem>();
 		[Display (Name = "Строки документа")]
-		public virtual IList<InspectionItem> Items {
+		public virtual IObservableList<InspectionItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
 		}
@@ -50,37 +50,17 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField(ref organization, value, () => Organization); }
 		}
 
-		private IList<Leader> members = new List<Leader>();
+		private IObservableList<Leader> members = new ObservableList<Leader>();
 		[Display(Name = "Члены комисии")]
-		public virtual IList<Leader> Members {
+		public virtual IObservableList<Leader> Members {
 			get { return members; }
 			set { SetField(ref members, value, () => Members); }
 		}
 		#endregion
-		
-		GenericObservableList<InspectionItem> observableItems;
-        //FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual GenericObservableList<InspectionItem> ObservableItems {
-			get {
-				if(observableItems == null)
-					observableItems = new GenericObservableList<InspectionItem>(Items);
-				return observableItems;
-	        }
-		}
-        
-        GenericObservableList<Leader> observableMembers;
-        //FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        public virtual GenericObservableList<Leader> ObservableMembers {
-	        get {
-		        if(observableMembers == null)
-			        observableMembers = new GenericObservableList<Leader>(Members);
-		        return observableMembers;
-	        }
-        }
 
         #region Методы
 		public virtual void RemoveItem(InspectionItem item) {
-			ObservableItems.Remove (item);
+			Items.Remove (item);
 		}
 		public virtual void AddItem(EmployeeIssueOperation operation, decimal wearPercent) {
 			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.OperationIssue, operation))) {
@@ -99,11 +79,11 @@ namespace Workwear.Domain.Stock.Documents {
 			item.ExpiryByNormAfter = operation.ExpiryByNorm;
 			item.WearPercentAfter = wearPercent; 
 			
-			ObservableItems.Add(item);
+			Items.Add(item);
 		}
 		
 		public virtual void RemoveMember(Leader member) {
-			ObservableMembers.Remove (member);
+			Members.Remove (member);
 		}
 		
 		public virtual void AddMember(Leader member) {
@@ -111,7 +91,7 @@ namespace Workwear.Domain.Stock.Documents {
 				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
 				return;
 			}
-			ObservableMembers.Add(member);
+			Members.Add(member);
 		}
 		#endregion
 		

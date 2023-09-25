@@ -75,7 +75,7 @@ namespace Workwear.Views.Stock {
 				 .Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 					.AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish();
-			 ytreeExpenseItems.ItemsDataSource = Entity.ObservableSourceItems;
+			 ytreeExpenseItems.ItemsDataSource = Entity.SourceItems;
 			 ylabelAmountSource.Binding.AddBinding(ViewModel, vm => vm.SourceAmountText, w => w.LabelProp).InitializeFromSource();
 			 #endregion
 			 #region TreeResult
@@ -101,7 +101,7 @@ namespace Workwear.Views.Stock {
 				 .AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
 				 .AddTextRenderer (e => e.Nomenclature.Type.Units.Name)
 				 .Finish();
-			 ytreeReceiptItems.ItemsDataSource = Entity.ObservableResultItems;
+			 ytreeReceiptItems.ItemsDataSource = Entity.ResultItems;
 			 ylabelAmountResult.Binding.AddBinding(ViewModel, vm => vm.ResultAmountText, w => w.LabelProp).InitializeFromSource();
 			 #endregion
 		}

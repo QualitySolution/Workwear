@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gtk;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
-			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 		}
 
@@ -69,10 +69,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Поля
-
-		public System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
-			get { return Entity.ObservableItems; }
-		}
+		public IObservableList<ExpenseItem> ObservableItems => Entity.Items;
 
 		private string sum;
 		public virtual string Sum {

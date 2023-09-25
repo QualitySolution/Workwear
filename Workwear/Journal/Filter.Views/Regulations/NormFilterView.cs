@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views;
+﻿using QS.Views;
 using workwear.Journal.Filter.ViewModels.Regulations;
 
 namespace workwear.Journal.Filter.Views.Regulations

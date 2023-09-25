@@ -7,6 +7,3 @@
 [submodule "My-FyiReporting"]
 	path = My-FyiReporting
 	url = https://@github.com/QualitySolution/My-FyiReporting.git
-[submodule "Gtk.DataBindings"]
-	path = Gtk.DataBindings
-	url = https://github.com/QualitySolution/Gtk.DataBindings.git

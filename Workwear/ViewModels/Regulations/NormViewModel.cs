@@ -72,7 +72,7 @@ namespace Workwear.ViewModels.Regulations
 				.Future();
 
 			var regulationQuery = UoW.Session.QueryOver<RegulationDoc>()
-				.Fetch(SelectMode.Fetch, x => x.Annexess)
+				.Fetch(SelectMode.Fetch, x => x.Annexes)
 				.Future();
 			
 			NormConditions = normConditionQuery.ToList();
@@ -108,7 +108,7 @@ namespace Workwear.ViewModels.Regulations
 		public void CopyNormFrom(int normId)
 		{
 			var norm = UoW.GetById<Norm>(normId);
-			norm.CopyNorm(Entity);
+			Entity.CopyFromNorm(norm);
 		}
 
 		#region Дочерние ViewModels

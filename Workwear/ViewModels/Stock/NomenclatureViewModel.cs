@@ -99,6 +99,12 @@ namespace Workwear.ViewModels.Stock
 			var page = NavigationManager.OpenViewModel<RatingsViewModel, Nomenclature>(this, Entity);
 		}
 		#endregion
+		#region Внешние дейстия
+		public void CopyFrom(int nomenclatureId) {
+			var nomenclature = UoW.GetById<Nomenclature>(nomenclatureId);
+			Entity.CopyFrom(nomenclature);
+		}
+		#endregion
 		
 		private SizeType lastSizeType;
 		private SizeType lastHeightType;
@@ -107,7 +113,7 @@ namespace Workwear.ViewModels.Stock
 				return false;
 			//Обрабатываем размеры
 			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
-				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, lastSizeType, Entity.Type.SizeType, lastHeightType, Entity.Type.HeightType))
+				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, Entity.Type.SizeType, Entity.Type.HeightType))
 					return false;
 			}
 			UoW.Save();

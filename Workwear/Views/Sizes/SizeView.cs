@@ -15,7 +15,7 @@ namespace Workwear.Views.Sizes
 			this.Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
-			Entity.ObservableSuitableSizes.PropertyOfElementChanged += ObservableSuitableSizesOnPropertyOfElementChanged;
+			Entity.SuitableSizes.PropertyOfElementChanged += ObservableSuitableSizesOnPropertyOfElementChanged;
 		}
 
 		private void ConfigureDlg()

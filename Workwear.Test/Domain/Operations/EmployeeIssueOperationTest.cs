@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
@@ -170,7 +171,8 @@ namespace Workwear.Test.Domain.Operations
 			vacation.Employee.Returns(employee);
 			vacation.BeginDate.Returns(new DateTime(2019, 2, 1));
 			vacation.EndDate.Returns(new DateTime(2019, 2, 10));
-			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
+			var vacations = new ObservableList<EmployeeVacation> { vacation };
+			employee.Vacations.Returns(vacations);
 
 			var protectionTools = Substitute.For<ProtectionTools>();
 
@@ -223,7 +225,8 @@ namespace Workwear.Test.Domain.Operations
 			vacation2.Employee.Returns(employee);
 			vacation2.BeginDate.Returns(new DateTime(2018, 7, 3));
 			vacation2.EndDate.Returns(new DateTime(2018, 7, 5));
-			employee.Vacations.Returns(new List<EmployeeVacation> { vacation, vacation2 });
+			var vacations = new ObservableList<EmployeeVacation> { vacation, vacation2 };
+			employee.Vacations.Returns(vacations);
 
 			var protectionTools = Substitute.For<ProtectionTools>();
 

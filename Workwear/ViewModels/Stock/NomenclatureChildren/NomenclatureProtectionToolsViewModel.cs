@@ -1,8 +1,8 @@
 using System;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
@@ -28,7 +28,7 @@ namespace Workwear.ViewModels.Stock.NomenclatureChildren {
 		#endregion
 
 		#region Свойства View
-		public GenericObservableList<ProtectionTools> ObservableProtectionTools  => parent.Entity.ObservableProtectionTools;
+		public IObservableList<ProtectionTools> ObservableProtectionTools  => parent.Entity.ProtectionTools;
 		#endregion
 		
 		#region Действия View

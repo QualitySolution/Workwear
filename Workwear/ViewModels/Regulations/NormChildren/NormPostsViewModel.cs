@@ -1,8 +1,8 @@
 using System;
-using System.Data.Bindings.Collections.Generic;
 using NHibernate;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
@@ -30,7 +30,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 
 		#region Свойства View
 
-		public GenericObservableList<Post> Posts => Entity.ObservablePosts;
+		public IObservableList<Post> Posts => Entity.Posts;
 
 		#endregion
 		

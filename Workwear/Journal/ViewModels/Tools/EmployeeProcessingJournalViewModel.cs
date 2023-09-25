@@ -73,10 +73,8 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.UserCanCancel = true;
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			Filter.CanShowOnlyWithoutNorms = true;
-			//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
-			//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
-			SelectionMode = JournalSelectionMode.Multiple;
-			NodeActionsList.Clear();
+			 
+			TableSelectionMode = JournalSelectionMode.Multiple;
 			CreateActions();
 
 			(DataLoader as ThreadDataLoader<EmployeeProcessingJournalNode>).PostLoadProcessingFunc = delegate (System.Collections.IList items, uint addedSince) {
@@ -151,6 +149,7 @@ namespace workwear.Journal.ViewModels.Tools
 		#region Действия
 		void CreateActions()
 		{
+			NodeActionsList.Clear();
 			var loadAllAction = new JournalAction("Загрузить всех",
 					(selected) => true,
 					(selected) => true,
