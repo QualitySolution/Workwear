@@ -127,6 +127,10 @@ namespace Workwear.Tools.Features
 						if(ProductEdition != 0 && ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
+					case WorkwearFeature.Postomats:
+						if(ProductEdition != 0 && ProductEdition != 3)
+							return false;
+						return AvailableCloudFeatures.Contains("postomats");
 				}
 			}
 
@@ -204,6 +208,9 @@ namespace Workwear.Tools.Features
 		[IsCloudFeature]
 		[Display(Name = "Отзывы")]
 		Ratings,
+		[IsCloudFeature]
+		[Display(Name = "Постоматы")]
+		Postomats,
 		#endregion
 		#endregion
 		#region Спецредакции
