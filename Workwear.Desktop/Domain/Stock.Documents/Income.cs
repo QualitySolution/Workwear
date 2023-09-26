@@ -190,7 +190,7 @@ namespace Workwear.Domain.Stock.Documents
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
-				Cost = 0,
+				Cost = nomenclature.SaleCost ?? 0m,
 			};
 
 			Items.Add (newItem);
