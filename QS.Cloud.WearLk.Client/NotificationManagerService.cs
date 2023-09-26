@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
 namespace QS.Cloud.WearLk.Client
 {
     public class NotificationManagerService : WearLkServiceBase
     {
-        public NotificationManagerService(string sessionId) : base(sessionId)
+        public NotificationManagerService(ISessionInfoProvider sessionInfoProvider) : base(sessionInfoProvider)
         {
         }
 

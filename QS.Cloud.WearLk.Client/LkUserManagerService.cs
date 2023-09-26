@@ -1,10 +1,11 @@
 using System;
+using QS.Cloud.Client;
 
 namespace QS.Cloud.WearLk.Client
 {
     public class LkUserManagerService : WearLkServiceBase
     {
-        public LkUserManagerService(string sessionId) : base(sessionId)
+        public LkUserManagerService(ISessionInfoProvider sessionInfoProvider) : base(sessionInfoProvider)
         {
         }
         

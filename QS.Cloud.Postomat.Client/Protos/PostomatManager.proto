@@ -1,0 +1,45 @@
+﻿syntax = "proto3";
+
+package QS.Cloud.Postomat.Manage;
+
+service PostomatManager {
+	rpc GetPostomatList(GetPostomatListRequest) returns (GetPostomatListResponse) {}
+	rpc GetPostomat(GetPostomatRequest) returns (GetPostomatResponse) {}
+}
+
+//GetPostomatList
+message GetPostomatListRequest {
+}
+
+message GetPostomatListResponse {
+	repeated PostomatInfo postomats = 1;
+}
+
+message PostomatInfo {
+	string id = 1;
+	bool is_active = 2;
+	string name = 3;
+	string location = 4;
+}
+
+//GetPostomat
+message GetPostomatRequest {
+	string id = 1;
+}
+
+message GetPostomatResponse {
+	bool is_active = 1;
+	string name = 2;
+	string location = 3;
+	repeated CellInfo cells = 4;
+}
+
+message CellInfo {
+	CellLocation location = 1;
+}
+
+message CellLocation {
+	int32 storage = 1;
+	int32 shelf = 2;
+	int32 cell = 3;
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
+using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
 namespace QS.Cloud.WearLk.Client 
@@ -10,7 +11,7 @@ namespace QS.Cloud.WearLk.Client
 	public class ClaimsManagerService : WearLkServiceBase
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-		public ClaimsManagerService(string sessionId) : base(sessionId)
+		public ClaimsManagerService(ISessionInfoProvider sessionInfoProvider) : base(sessionInfoProvider)
 		{
 		}
 

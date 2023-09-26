@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
 namespace QS.Cloud.WearLk.Client
 {
     public class MessagesService : WearLkServiceBase
     {
-        public MessagesService(string sessionId) : base(sessionId)
+        public MessagesService(ISessionInfoProvider sessionInfoProvider) : base(sessionInfoProvider)
         {
         }
 

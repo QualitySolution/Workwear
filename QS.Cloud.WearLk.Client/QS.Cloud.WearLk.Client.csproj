@@ -27,4 +27,8 @@
 		<Protobuf Include="Protos\RatingManager.proto" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+    </ItemGroup>
+
 </Project>

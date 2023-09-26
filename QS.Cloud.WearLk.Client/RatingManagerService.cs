@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
 namespace QS.Cloud.WearLk.Client 
 {
 	public class RatingManagerService : WearLkServiceBase
 	{
-		public RatingManagerService(string sessionId) : base(sessionId)
+		public RatingManagerService(ISessionInfoProvider sessionInfoProvider) : base(sessionInfoProvider)
 		{
 		}
 
