@@ -7,6 +7,7 @@ using QS.BaseParameters;
 using QS.BusinessCommon.Domain;
 using QS.BusinessCommon;
 using QS.Cloud.Client;
+using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
@@ -333,6 +334,7 @@ namespace workwear
 			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

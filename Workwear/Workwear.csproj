@@ -434,6 +434,10 @@
       <Project>{9c9ecaca-0deb-4517-8cf1-02c3d3eb128e}</Project>
       <Name>RdlCri</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.Postomat.Client\QS.Cloud.Postomat.Client.csproj">
+      <Project>{2983a1a1-9b12-48bd-8211-1745049d5a00}</Project>
+      <Name>QS.Cloud.Postomat.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
       <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>
       <Name>Gamma.Binding</Name>

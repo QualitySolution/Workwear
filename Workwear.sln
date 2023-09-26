@@ -117,6 +117,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Updates.Client", "QSProj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Extensions.Observable", "QSProjects\QS.Extensions.Observable\QS.Extensions.Observable.csproj", "{2A0710B2-B71B-4959-88DA-0940100E172A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Cloud.Postomat.Client", "QS.Cloud.Postomat.Client\QS.Cloud.Postomat.Client.csproj", "{2983A1A1-9B12-48BD-8211-1745049D5A00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -442,6 +444,12 @@ Global
 		{2A0710B2-B71B-4959-88DA-0940100E172A}.Release|x86.Build.0 = Release|Any CPU
 		{2A0710B2-B71B-4959-88DA-0940100E172A}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
 		{2A0710B2-B71B-4959-88DA-0940100E172A}.ReleaseWin|x86.Build.0 = Debug|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.Debug|x86.Build.0 = Debug|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.Release|x86.ActiveCfg = Release|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.Release|x86.Build.0 = Release|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.ReleaseWin|x86.ActiveCfg = Debug|Any CPU
+		{2983A1A1-9B12-48BD-8211-1745049D5A00}.ReleaseWin|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A6C1914F-7732-49F5-BABA-8BBBA521FAAB} = {792D3656-91FD-45AA-A40B-A0D63306A113}
@@ -493,6 +501,7 @@ Global
 		{C776EE5A-1795-439B-BB7D-9AB1B20EEAC4} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{08451B0A-4E72-4B12-B422-B36E9047DCAF} = {792D3656-91FD-45AA-A40B-A0D63306A113}
 		{2A0710B2-B71B-4959-88DA-0940100E172A} = {792D3656-91FD-45AA-A40B-A0D63306A113}
+		{2983A1A1-9B12-48BD-8211-1745049D5A00} = {A1E822AA-A95F-4C0D-B40A-D6431A2754C3}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
