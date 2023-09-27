@@ -6,6 +6,7 @@ using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
@@ -163,6 +164,21 @@ namespace workwear.Journal
 
 			#endregion
 
+			#region Postomats
+			TreeViewColumnsConfigFactory.Register<PostomatDocumentsJournalViewModel>(
+				jvm => FluentColumnsConfig<PostomatDocumentJournalNode>.Create()
+					.AddColumn("Номер").AddReadOnlyTextRenderer(x => x.Id.ToString()).XAlign(0.5f)
+					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortTimeString()).XAlign(0.5f)
+					.AddColumn("Тип").AddReadOnlyTextRenderer(x => x.Type.GetEnumTitle()).XAlign(0.5f)
+					.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.Status.GetEnumTitle()).XAlign(0.5f)
+					.AddColumn("Постомат")
+						.AddReadOnlyTextRenderer(x => x.TerminalId.ToString()).XAlign(0.5f)
+						.AddTextRenderer(x => jvm.GetTerminalName(x.TerminalId))
+					.AddColumn("Размещение постомата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
+					.Finish()
+				);
+			#endregion
+			
 			#region Regulations
 
 			TreeViewColumnsConfigFactory.Register<NormJournalViewModel>(

@@ -4,7 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 
 namespace Workwear.Domain.Postomats {
-	public class PostomatDocument : PropertyChangedBase {
+	public class PostomatDocument : PropertyChangedBase, IDomainObject {
 		#region Cвойства	
 		public virtual int Id { get; set; }
 

@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Postomats
 	{
 		public PostomatDocumentItemMap ()
 		{
-			Table ("stock_expense_detail");
+			Table ("postomat_document_items");
 
 			if(Workwear.HibernateMapping.MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");

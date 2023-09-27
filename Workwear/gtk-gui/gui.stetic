@@ -5355,7 +5355,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1036 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1751 458">
     <action-group name="Default">
       <action id="ActionBase">
         <property name="Type">Action</property>
@@ -5985,6 +5985,12 @@
         <property name="Group">UpdateChannel</property>
         <signal name="Toggled" handler="OnActionChannelStableToggled" />
       </action>
+      <action id="ActionPostomatDocs">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Документы постоматов</property>
+        <property name="ShortLabel" translatable="yes">Документы постоматов</property>
+        <signal name="Activated" handler="OnActionPostomatDocsActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6045,6 +6051,7 @@
                 <node type="Menuitem" action="ActionMenuNotification" />
                 <node type="Menuitem" action="ActionMenuClaims" />
                 <node type="Menuitem" action="ActionMenuRatings" />
+                <node type="Menuitem" action="ActionPostomatDocs" />
               </node>
               <node type="Menu" action="Action39">
                 <node type="Menuitem" action="ActionOrganizations" />
