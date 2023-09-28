@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 
 namespace Workwear.Domain.Postomats {
-	public class PostomatDocument : PropertyChangedBase, IDomainObject {
+	[Appellative(Gender = GrammaticalGender.Masculine, NominativePlural = "документы постомата", Nominative = "документ постомата")]
+	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
 		public virtual int Id { get; set; }
 
@@ -36,6 +39,13 @@ namespace Workwear.Domain.Postomats {
 			set => SetField(ref type, value);
 		}
 		
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
+		}
+		
 		private IObservableList<PostomatDocumentItem> items = new ObservableList<PostomatDocumentItem>();
 		[Display(Name = "Строки документа")]
 		public virtual IObservableList<PostomatDocumentItem> Items {
@@ -43,6 +53,21 @@ namespace Workwear.Domain.Postomats {
 			set => SetField(ref items, value);
 		}
 		#endregion
+
+		#region Расчетные
+		public virtual string Title => $"{Type.GetEnumTitle()} постомата №{Id} от {CreateTime:d}";
+
+		#endregion
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(TerminalId == 0)
+				yield return new ValidationResult("Не выбран постомат.", new[] { nameof(TerminalId) });
+			if(Items.Count == 0)
+				yield return new ValidationResult("Не заполнены строки документа.", new[] { nameof(Items) });
+			foreach(var item in Items) {
+				if(item.Location.IsEmpty)
+					yield return new ValidationResult($"Не заполнено место хранения для номенклатуры {item.Nomenclature.Name}.", new[] { nameof(Items) });
+			}
+		}
 	}
 
 	public enum DocumentType {

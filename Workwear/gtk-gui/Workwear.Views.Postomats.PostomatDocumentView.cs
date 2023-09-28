@@ -24,9 +24,9 @@ namespace Workwear.Views.Postomats
 
 		private global::Gtk.Label label4;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel2;
+		private global::Gamma.GtkWidgets.yLabel labelId;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelId;
+		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
 		private global::Gtk.Table table3;
 
@@ -52,7 +52,7 @@ namespace Workwear.Views.Postomats
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
-		private global::Gamma.GtkWidgets.yTreeView ytreeview1;
+		private global::Gamma.GtkWidgets.yTreeView treeItems;
 
 		private global::Gtk.HBox hbox5;
 
@@ -167,24 +167,24 @@ namespace Workwear.Views.Postomats
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
+			this.labelId = new global::Gamma.GtkWidgets.yLabel();
+			this.labelId.Name = "labelId";
+			this.labelId.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel3");
+			this.table2.Add(this.labelId);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.labelId]));
+			w10.LeftAttach = ((uint)(1));
+			w10.RightAttach = ((uint)(2));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table2.Gtk.Table+TableChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Постомат:");
 			this.table2.Add(this.ylabel2);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabel2]));
-			w10.TopAttach = ((uint)(2));
-			w10.BottomAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table2.Gtk.Table+TableChild
-			this.ylabelId = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelId.Name = "ylabelId";
-			this.ylabelId.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel3");
-			this.table2.Add(this.ylabelId);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelId]));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabel2]));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.hbox1.Add(this.table2);
@@ -322,10 +322,10 @@ namespace Workwear.Views.Postomats
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.ytreeview1 = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeview1.CanFocus = true;
-			this.ytreeview1.Name = "ytreeview1";
-			this.GtkScrolledWindow.Add(this.ytreeview1);
+			this.treeItems = new global::Gamma.GtkWidgets.yTreeView();
+			this.treeItems.CanFocus = true;
+			this.treeItems.Name = "treeItems";
+			this.GtkScrolledWindow.Add(this.treeItems);
 			this.dialog1_VBox.Add(this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.GtkScrolledWindow]));
 			w26.Position = 3;

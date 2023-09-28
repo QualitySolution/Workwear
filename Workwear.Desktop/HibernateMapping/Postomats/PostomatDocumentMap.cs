@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Postomats
 			Map(x => x.CreateTime).Column("create_time");
 			Map (x => x.Status).Column ("status");
 			Map (x => x.Type).Column ("type");
+			Map(x => x.Comment).Column("comment");
 
 			HasMany (x => x.Items)
 				.Inverse()

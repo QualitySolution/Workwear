@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
+	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постомата", Nominative = "строка документа постомата")]
 	public class PostomatDocumentItem : PropertyChangedBase{
 		#region Cвойства
 		public virtual int Id { get; set; }
@@ -51,5 +53,46 @@ namespace Workwear.Domain.Postomats {
 			set => SetField(ref locationCell, value);
 		}
 		#endregion
+		
+		#region Расчетные
+
+		private CellLocation? location;
+		public virtual CellLocation Location {
+			get => location ?? new CellLocation(LocationStorage, LocationShelf, LocationCell);
+			set {
+				location = value;
+				LocationStorage = location?.Storage ?? 0;
+				LocationShelf = location?.Shelf ?? 0;
+				LocationCell = location?.Cell ?? 0;
+				OnPropertyChanged();
+			}
+		}
+
+		#endregion
+	}
+	
+	public struct CellLocation : IEquatable<CellLocation> {
+		public readonly uint Storage;
+		public readonly uint Shelf;
+		public readonly uint Cell;
+
+		public CellLocation(uint storage, uint shelf, uint cell) {
+			Storage = storage;
+			Shelf = shelf;
+			Cell = cell;
+		}
+		
+		public CellLocation(QS.Cloud.Postomat.Manage.CellLocation location) {
+			Storage = location.Storage;
+			Shelf = location.Shelf;
+			Cell = location.Cell;
+		}
+
+		public bool IsEmpty => Storage == 0 && Shelf == 0 && Cell == 0;
+		public string Title => IsEmpty ? null : $"{Storage}-{Shelf}-{Cell}";
+		
+		public bool Equals(CellLocation other) {
+			return Storage == other.Storage && Shelf == other.Shelf && Cell == other.Cell;
+		}
 	}
 }
