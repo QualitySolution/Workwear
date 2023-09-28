@@ -168,7 +168,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<PostomatDocumentsJournalViewModel>(
 				jvm => FluentColumnsConfig<PostomatDocumentJournalNode>.Create()
 					.AddColumn("Номер").AddReadOnlyTextRenderer(x => x.Id.ToString()).XAlign(0.5f)
-					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortTimeString()).XAlign(0.5f)
+					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortDateString()).XAlign(0.5f)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(x => x.Type.GetEnumTitle()).XAlign(0.5f)
 					.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.Status.GetEnumTitle()).XAlign(0.5f)
 					.AddColumn("Постомат")

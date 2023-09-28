@@ -166,7 +166,7 @@
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
-    <Compile Include="ViewModels\Postomat\PostomatDocumentViewModel.cs" />
+    <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
@@ -429,6 +429,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormPostsView.cs" />
     <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureProtectionToolsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureProtectionToolsView.cs" />
+    <Compile Include="Views\Postomats\PostomatDocumentView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -667,6 +669,7 @@
     <Folder Include="Journal\Filter.Views\Sizes\" />
     <Folder Include="Models\WearLk\" />
     <Folder Include="Views\Regulations\NormChildren\" />
+    <Folder Include="Views\Postomats\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

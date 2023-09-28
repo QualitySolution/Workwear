@@ -10,7 +10,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Postomats;
-using workwear.ViewModels.Postomat;
+using Workwear.ViewModels.Postomats;
 
 namespace workwear.Journal.ViewModels.Postomats {
 	public class PostomatDocumentsJournalViewModel : EntityJournalViewModelBase<PostomatDocument, PostomatDocumentViewModel, PostomatDocumentJournalNode>
@@ -24,7 +24,9 @@ namespace workwear.Journal.ViewModels.Postomats {
 			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) {
 			this.postomatManagerService = postomatManagerService ?? throw new ArgumentNullException(nameof(postomatManagerService));
-
+			
+			VisibleDeleteAction = false;
+			
 			var terminals = this.postomatManagerService.GetPostomatList();
 			foreach (var terminal in terminals) {
 				Terminals.Add(terminal.Id, (terminal.Name, terminal.Location));
