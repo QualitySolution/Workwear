@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
@@ -51,10 +52,10 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
-		private IList<ExpenseItem> items = new List<ExpenseItem>();
+		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
 
 		[Display (Name = "Строки документа")]
-		public virtual IList<ExpenseItem> Items {
+		public virtual IObservableList<ExpenseItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
 		}
@@ -66,16 +67,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual Warehouse Warehouse {
 			get { return warehouse; }
 			set { SetField(ref warehouse, value, () => Warehouse); }
-		}
-
-		System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
-			get {
-				if (observableItems == null)
-					observableItems = new System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> (Items);
-				return observableItems;
-			}
 		}
 
 		private IssuanceSheet issuanceSheet;
@@ -162,7 +153,7 @@ namespace Workwear.Domain.Stock.Documents
 				Owner = position.Owner
 			};
 
-			ObservableItems.Add(newItem);
+			Items.Add(newItem);
 			return newItem;
 		}
 
@@ -178,7 +169,7 @@ namespace Workwear.Domain.Stock.Documents
 				newItem = new ExpenseItem() {
 					ExpenseDoc = this,
 				};
-				ObservableItems.Add(newItem);
+				Items.Add(newItem);
 			}
 
 			newItem.EmployeeCardItem = employeeCardItem;
@@ -193,7 +184,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void RemoveItem(ExpenseItem item)
 		{
-			ObservableItems.Remove (item);
+			Items.Remove (item);
 		}
 
 		public virtual void CleanupItems()

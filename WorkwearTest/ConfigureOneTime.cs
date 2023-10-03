@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.BusinessCommon.Domain;
+using QS.Extensions.Observable.Collections.List;
 using QS.Project.DB;
 using QS.Project.Domain;
 using Workwear;
@@ -27,8 +28,8 @@ namespace WorkwearTest
 				//.ShowSql().FormatSql()
 				;
 
-			Console.WriteLine("ORM");
 			// Настройка ORM
+			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm(db_config, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(Workwear.Domain.Users.UserSettings)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),

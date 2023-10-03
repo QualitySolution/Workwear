@@ -19,7 +19,6 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
-using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -49,7 +48,7 @@ namespace Workwear.ViewModels.Stock
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
-            Entity.ObservableItems.PropertyChanged += CalculateTotal;
+            Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
@@ -69,17 +68,11 @@ namespace Workwear.ViewModels.Stock
             get => delSensitive;
             set => SetField(ref delSensitive, value);
         }
-        private bool fillBuhDocSensitive;
-        public bool FillBuhDocSensitive {
-            get => fillBuhDocSensitive;
-            set => SetField(ref fillBuhDocSensitive, value);
-        }
         #endregion
 
-        private void CalculateTotal(object sender, PropertyChangedEventArgs propertyChangedEventArgs) {
+        private void CalculateTotal(object sender, EventArgs eventArgs) {
             Total = $"Позиций в документе: {Entity.Items.Count}  " +
                     $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
-            FillBuhDocSensitive = Entity.Items.Count > 0;
         }
 
         #region Items
@@ -155,18 +148,6 @@ namespace Workwear.ViewModels.Stock
             CalculateTotal(null, null);
         }
         #endregion
-        public void FillBuhDoc() {
-            var docText = String.Empty;
-            if (Entity.Items.Any(x => x.WriteoffFrom == WriteoffFrom.Employee)) 
-                docText = Entity.Items.First(x => x.WriteoffFrom == WriteoffFrom.Employee).BuhDocument;
-            var dlg = NavigationManager.OpenViewModel<BuhDocumentViewModel, String>(this, docText);
-            dlg.ViewModel.SetChangeAndCloseEvent += SetBuhDoc;
-        }
-        private void SetBuhDoc(object sender, BuhDocEventArgs args) =>
-            Entity.ObservableItems
-                .Where(x => x.WriteoffFrom == WriteoffFrom.Employee)
-                .ToList().ForEach(x => x.BuhDocument = args.Value);
-
         #region Save
         public override bool Save() {
             logger.Info ("Запись документа...");

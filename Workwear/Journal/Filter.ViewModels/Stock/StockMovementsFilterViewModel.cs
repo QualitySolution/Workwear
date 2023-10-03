@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
@@ -74,6 +75,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => StockPosition == null ? height : StockPosition.Height;
 			set => SetField(ref height, value);
 		}
+		
+		private Owner owner;
+		public virtual Owner Owner {
+			get => StockPosition is null ? owner : StockPosition.Owner;
+			set => SetField(ref owner, value);
+		}
 
 		private bool collapseCollectiveIssue;
 		public bool CollapseOperationItems {
@@ -84,7 +91,9 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public string StockPositionTitle => StockPosition?.Title;
 		#region Visible
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
+		public bool VisibleOwner => featuresService.Available(WorkwearFeature.Owners);
 		#endregion
+		
 		#region Sensitive
 		public bool SensitiveNomeclature => StockPosition == null;
 		public bool SensitiveSize => StockPosition == null;
@@ -103,6 +112,17 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 				nomenclature.Type?.HeightType is null ? new Size[]{} : 
 					sizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
 
+		public List<Owner> Owners {
+			get {
+				List<Owner> owners = new List<Owner>() {
+					new Owner() { Id = -1, Name = "Все" }, 
+					new Owner() { Id = 0, Name = "Без собственика" }
+				}; 
+				owners.AddRange(UoW.GetAll<Owner>());
+				return owners;
+			}
+		}
+		
 		private DirectionOfOperation direction;
 		public DirectionOfOperation Direction {
 			get => direction;
@@ -120,8 +140,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
 			StockRepository stockRepository,
-			SizeService sizeService,
-			Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
+			SizeService sizeService, Nomenclature nomenclature = null): base(journal, unitOfWorkFactory)
 		{
 			this.sizeService = sizeService;
 			var builder = new CommonEEVMBuilderFactory<StockMovementsFilterViewModel>(journal, this, UoW, navigation, autofacScope);

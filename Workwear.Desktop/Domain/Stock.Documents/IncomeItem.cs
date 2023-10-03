@@ -143,14 +143,6 @@ namespace Workwear.Domain.Stock.Documents
 			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
 		#endregion
 		#region Не сохраняемые в базу свойства
-		private string buhDocument;
-		[Display(Name = "Документ бухгалтерского учета")]
-		//В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		public virtual string BuhDocument {
-			get => buhDocument ?? ReturnFromEmployeeOperation?.BuhDocument;
-			set => SetField(ref buhDocument, value);
-		}
-
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
 			get => WarehouseOperation.WearPercent;

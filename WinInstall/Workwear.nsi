@@ -218,6 +218,9 @@ Section "${PRODUCT_NAME}" SecProgram
   Delete $INSTDIR\Nini.dll
   Delete $INSTDIR\MySql.Data.dll
   Delete $INSTDIR\MySql.Data.xml
+  
+  ;Удаляем файлы не используемые после 2.8.9
+  Delete $INSTDIR\System.Data.Bindings.dll
 
 SectionEnd
 

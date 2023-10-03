@@ -1,5 +1,4 @@
-﻿using System;
-namespace Workwear.ViewModels.Stock
+﻿namespace Workwear.ViewModels.Stock
 {
 	public interface ISelectItem
 	{

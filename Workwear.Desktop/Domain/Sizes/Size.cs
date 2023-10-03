@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
-using System.Data.Bindings.Collections.Generic;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.Domain.Sizes
@@ -54,18 +54,12 @@ namespace Workwear.Domain.Sizes
         }
         #endregion
         #region Suitable
-        private IList<Size> suitableSizes  = new List<Size>();
+        private IObservableList<Size> suitableSizes  = new ObservableList<Size>();
         [Display(Name = "Подходящие размеры")]
-        public virtual IList<Size> SuitableSizes {
+        public virtual IObservableList<Size> SuitableSizes {
             get => suitableSizes;
             set => SetField(ref suitableSizes, value);
         }
-        
-        private GenericObservableList<Size> observableSuitableSizes;
-        //FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-        [Display(Name = "Подходящие размеры")]
-        public virtual GenericObservableList<Size> ObservableSuitableSizes => 
-            observableSuitableSizes ?? (observableSuitableSizes = new GenericObservableList<Size>(SuitableSizes));
         
         [Display(Name = "Размеры в которых этот размер указан как подходящий")]
         public virtual IList<Size> SizesWhereIsThisSizeAsSuitable { get; } = new List<Size>();

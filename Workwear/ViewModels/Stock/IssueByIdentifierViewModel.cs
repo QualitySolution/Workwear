@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using Autofac;
@@ -9,6 +8,7 @@ using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Services;
 using QS.Utilities.Text;
@@ -35,7 +35,6 @@ namespace Workwear.ViewModels.Stock
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 		private readonly IGuiDispatcher guiDispatcher;
 		private readonly IUserService userService;
-		private readonly ILifetimeScope autofacScope;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeRepository employeeRepository;
@@ -69,7 +68,6 @@ namespace Workwear.ViewModels.Stock
 			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.guiDispatcher = guiDispatcher ?? throw new ArgumentNullException(nameof(guiDispatcher));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.issueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
@@ -351,7 +349,7 @@ namespace Workwear.ViewModels.Stock
 			set => SetField(ref expense, value);
 		}
 
-		public GenericObservableList<ExpenseItem> ObservableItems => Expense?.ObservableItems;
+		public IObservableList<ExpenseItem> ObservableItems => Expense?.Items;
 
 		#region Вызовы View
 
@@ -403,7 +401,7 @@ namespace Workwear.ViewModels.Stock
 			Expense.Operation = ExpenseOperations.Employee;
 			Expense.Employee = Employee;
 			Expense.Warehouse = Warehouse;
-			Expense.ObservableItems.Clear();
+			Expense.Items.Clear();
 
 			stockBalanceModel.Warehouse = Warehouse;
 			stockBalanceModel.OnDate = Expense.Date;

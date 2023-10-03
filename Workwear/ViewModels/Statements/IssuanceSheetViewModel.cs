@@ -71,7 +71,7 @@ namespace Workwear.ViewModels.Statements
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 
-			Entity.ObservableItems.ListContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
+			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
 		}
 
 		#region Поля View
@@ -114,14 +114,14 @@ namespace Workwear.ViewModels.Statements
 					Amount = 1,
 					Lifetime = 12,
 				};
-				Entity.ObservableItems.Add(item);
+				Entity.Items.Add(item);
 			}
 		}
 
 		public void RemoveItems(IssuanceSheetItem[] items)
 		{
 			foreach(var item in items) {
-				Entity.ObservableItems.Remove(item);
+				Entity.Items.Remove(item);
 			}
 		}
 
@@ -236,7 +236,6 @@ namespace Workwear.ViewModels.Statements
 		{
 			if(changeEvents.Any(x => (x.Entity as ExpenseItem).ExpenseDoc.Id == Entity.Expense?.Id)){
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
-				Entity.CleanObservableItems();
 			}
 		}
 
@@ -244,7 +243,6 @@ namespace Workwear.ViewModels.Statements
 		{
 			if(changeEvents.Any(x => (x.Entity as CollectiveExpenseItem).Document.Id == Entity.CollectiveExpense?.Id)) {
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
-				Entity.CleanObservableItems();
 			}
 		}
 

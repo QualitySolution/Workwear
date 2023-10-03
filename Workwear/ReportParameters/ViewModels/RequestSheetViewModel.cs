@@ -5,6 +5,7 @@ using Autofac;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
@@ -42,28 +43,28 @@ namespace workwear.ReportParameters.ViewModels {
 
 		#region Свойства View
 		private int beginMonth;
-		[PropertyChangedAlso(nameof(SensetiveRunReport))]
+		[PropertyChangedAlso(nameof(SensitiveRunReport))]
 		public virtual int BeginMonth {
 			get => beginMonth;
 			set => SetField(ref beginMonth, value);
 		}
 
 		private int beginYear;
-		[PropertyChangedAlso(nameof(SensetiveRunReport))]
+		[PropertyChangedAlso(nameof(SensitiveRunReport))]
 		public virtual int BeginYear {
 			get => beginYear;
 			set => SetField(ref beginYear, value);
 		}
 
 		private int endMonth;
-		[PropertyChangedAlso(nameof(SensetiveRunReport))]
+		[PropertyChangedAlso(nameof(SensitiveRunReport))]
 		public virtual int EndMonth {
 			get => endMonth;
 			set => SetField(ref endMonth, value);
 		}
 
 		private int endYear;
-		[PropertyChangedAlso(nameof(SensetiveRunReport))]
+		[PropertyChangedAlso(nameof(SensitiveRunReport))]
 		public virtual int EndYear {
 			get => endYear;
 			set => SetField(ref endYear, value);
@@ -81,8 +82,8 @@ namespace workwear.ReportParameters.ViewModels {
 			set => SetField(ref addChildSubdivisions, value);
 		}
 
-		private IList<SelectedProtectionTools> protectionTools;
-		public IList<SelectedProtectionTools> ProtectionTools {
+		private IObservableList<SelectedProtectionTools> protectionTools;
+		public IObservableList<SelectedProtectionTools> ProtectionTools {
 			get {
 				if(protectionTools == null)
 					FillProtectionTools();
@@ -105,18 +106,18 @@ namespace workwear.ReportParameters.ViewModels {
 		void FillProtectionTools(){
 			SelectedProtectionTools resultAlias = null;
 
-			protectionTools = uow.Session.QueryOver<ProtectionTools>()
+			protectionTools = new ObservableList<SelectedProtectionTools>(uow.Session.QueryOver<ProtectionTools>()
 				.SelectList(list => list
 					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					   .Select(() => true).WithAlias(() => resultAlias.Select)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
-				.List<SelectedProtectionTools>();
+				.List<SelectedProtectionTools>());
 		}
 
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
-		public bool SensetiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
+		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
 		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {

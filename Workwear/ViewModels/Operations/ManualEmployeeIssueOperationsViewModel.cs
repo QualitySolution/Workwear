@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -73,7 +73,7 @@ namespace Workwear.ViewModels.Operations
 			
 			Title = $"Ручные операции для {this.protectionTools.Name}";
 			
-			Operations = new GenericObservableList<EmployeeIssueOperation>(
+			Operations = new ObservableList<EmployeeIssueOperation>(
 				repository.GetAllManualIssue(UoW, this.employee, this.protectionTools)
 					.OrderBy(x => x.OperationTime)
 					.ToList());
@@ -99,8 +99,8 @@ namespace Workwear.ViewModels.Operations
 
 		#region PublicProperty
 
-		private GenericObservableList<EmployeeIssueOperation> operations;
-		public GenericObservableList<EmployeeIssueOperation> Operations {
+		private IObservableList<EmployeeIssueOperation> operations;
+		public IObservableList<EmployeeIssueOperation> Operations {
 			get => operations;
 			private set => SetField(ref operations, value);
 		}

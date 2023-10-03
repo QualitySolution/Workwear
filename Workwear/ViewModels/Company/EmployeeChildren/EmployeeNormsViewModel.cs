@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.Bindings.Collections.Generic;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
@@ -33,7 +33,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private IUnitOfWork UoW => employeeViewModel.UoW;
 		private EmployeeCard Entity => employeeViewModel.Entity;
 
-		public GenericObservableList<Norm> ObservableUsedNorms => Entity.ObservableUsedNorms;
+		public IObservableList<Norm> ObservableUsedNorms => Entity.UsedNorms;
 
 		#endregion
 

@@ -35,7 +35,7 @@ namespace Workwear.Views.Stock
 				.AddSource(ViewModel)
 					.AddBinding(v => v.SelectedItem, w => w.SelectedRow)
 				.AddSource(ViewModel.Entity)
-					.AddBinding(e => e.ObservableItems, w => w.ItemsDataSource)
+					.AddBinding(e => e.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			buttonAdd.Binding.AddBinding(viewModel,v =>v.SensitiveAddButton,w=>w.Sensitive).InitializeFromSource();
 			buttonDel.Binding.AddBinding(viewModel,v =>v.SensitiveButtonDel,w=>w.Sensitive).InitializeFromSource();

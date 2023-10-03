@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Gamma.Utilities;
@@ -9,6 +8,7 @@ using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
 using QS.Utilities.Numeric;
@@ -16,9 +16,7 @@ using QS.Utilities.Text;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock;
 using Workwear.Repository.Operations;
-using Workwear.Repository.Stock;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
 
@@ -196,81 +194,52 @@ namespace Workwear.Domain.Company
 
 		#endregion
 		#region Размеры одежды
-		private IList<EmployeeSize> sizes = new List<EmployeeSize>();
+		private IObservableList<EmployeeSize> sizes = new ObservableList<EmployeeSize>();
 		[Display (Name = "Размеры")]
-		public virtual IList<EmployeeSize> Sizes {
+		public virtual IObservableList<EmployeeSize> Sizes {
 			get => sizes;
 			set => SetField(ref sizes, value);
 		}
-
-		private GenericObservableList<EmployeeSize> observableSizes;
-		//FIXME Кослыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeSize> ObservableSizes
-			=> observableSizes ?? (observableSizes = new GenericObservableList<EmployeeSize>(Sizes));
 		#endregion
 		#region Norms
-		private IList<Norm> usedNorms = new List<Norm>();
+		private IObservableList<Norm> usedNorms = new ObservableList<Norm>();
 		[Display (Name = "Примененные нормы")]
-		public virtual IList<Norm> UsedNorms {
+		public virtual IObservableList<Norm> UsedNorms {
 			get => usedNorms;
 			set => SetField(ref usedNorms, value);
 		}
-
-		private GenericObservableList<Norm> observableUsedNorms;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<Norm> ObservableUsedNorms 
-			=> observableUsedNorms ?? (observableUsedNorms = new GenericObservableList<Norm>(UsedNorms));
 		#endregion
 		#region Items
-		private IList<EmployeeCardItem> workwearItems = new List<EmployeeCardItem>();
+		private IObservableList<EmployeeCardItem> workwearItems = new ObservableList<EmployeeCardItem>();
 		[Display (Name = "Спецодежда")]
-		public virtual IList<EmployeeCardItem> WorkwearItems {
+		public virtual IObservableList<EmployeeCardItem> WorkwearItems {
 			get => workwearItems;
 			set => SetField(ref workwearItems, value);
 		}
-
-		private GenericObservableList<EmployeeCardItem> observableWorkwearItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeCardItem> ObservableWorkwearItems =>
-			observableWorkwearItems ??
-			(observableWorkwearItems = new GenericObservableList<EmployeeCardItem>(WorkwearItems));
-
 		#endregion
 		#region Vacation
-		private IList<EmployeeVacation> vacations = new List<EmployeeVacation>();
+		private IObservableList<EmployeeVacation> vacations = new ObservableList<EmployeeVacation>();
 		[Display(Name = "Отпуска")]
-		public virtual IList<EmployeeVacation> Vacations {
+		public virtual IObservableList<EmployeeVacation> Vacations {
 			get => vacations;
 			set => SetField(ref vacations, value);
 		}
-
-		private GenericObservableList<EmployeeVacation> observableVacations;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeVacation> ObservableVacations =>
-			observableVacations ??
-			(observableVacations = new GenericObservableList<EmployeeVacation>(Vacations));
 		#endregion
 		
 		#region CostCenters
-		private IList<EmployeeCostCenter> сostCenters = new List<EmployeeCostCenter>();
+		private IObservableList<EmployeeCostCenter> сostCenters = new ObservableList<EmployeeCostCenter>();
 		[Display(Name = "Места возникновения затрат")]
-		public virtual IList<EmployeeCostCenter> CostCenters {
+		public virtual IObservableList<EmployeeCostCenter> CostCenters {
 			get => сostCenters;
 			set => SetField(ref сostCenters, value);
 		}
-
-		private GenericObservableList<EmployeeCostCenter> observableCostCenters;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<EmployeeCostCenter> ObservableCostCenters =>
-			observableCostCenters ??
-			(observableCostCenters = new GenericObservableList<EmployeeCostCenter>(CostCenters));
 		
 		public virtual void AddCostCenter(EmployeeCostCenter employeeCostCenter) {
 			if(CostCenters.Any(x => x.CostCenter.Id == employeeCostCenter.CostCenter.Id)) {
 				logger.Warn($"МВЗ {employeeCostCenter.CostCenter.Title} уже добавлен. Пропускаем...");
 				return;
 			}
-			ObservableCostCenters.Add(employeeCostCenter);
+			CostCenters.Add(employeeCostCenter);
 		}
 		#endregion
 		
@@ -360,7 +329,7 @@ namespace Workwear.Domain.Company
 				logger.Warn ("Такая норма уже добавлена. Пропускаем...");
 				return;
 			}
-			ObservableUsedNorms.Add (norm);
+			UsedNorms.Add (norm);
 			UpdateWorkwearItems ();
 		}
 
@@ -370,13 +339,13 @@ namespace Workwear.Domain.Company
 					logger.Warn($"Норма {norm.Title} уже добавлена. Пропускаем...");
 					continue;
 				}
-				ObservableUsedNorms.Add(norm);
+				UsedNorms.Add(norm);
 			}
 			UpdateWorkwearItems();
 		}
 
 		public virtual void RemoveUsedNorm(Norm norm) {
-			ObservableUsedNorms.Remove (norm);
+			UsedNorms.Remove (norm);
 			UpdateWorkwearItems ();
 		}
 
@@ -402,7 +371,7 @@ namespace Workwear.Domain.Company
 					if (currentItem == null) {
 						//FIXME Возможно нужно проверять если что-то подходящее уже выдавалось то пересчитывать.
 						currentItem = new EmployeeCardItem (this, normItem);
-						ObservableWorkwearItems.Add (currentItem);
+						WorkwearItems.Add (currentItem);
 					}
 					if(processed.Contains (currentItem)) {
 						if (normItem.AmountPerYear > currentItem.ActiveNormItem.AmountPerYear)
@@ -416,7 +385,7 @@ namespace Workwear.Domain.Company
 			}
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
-			needRemove.ToList ().ForEach (i => ObservableWorkwearItems.Remove (i));
+			needRemove.ToList ().ForEach (i => WorkwearItems.Remove (i));
 			//Обновляем информацию о прошлых выдачах, перед обновление даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
 			if(processed.Any())
 				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
@@ -503,7 +472,7 @@ namespace Workwear.Domain.Company
 		#region Функции работы с отпусками
 		public virtual void AddVacation(EmployeeVacation vacation) {
 			vacation.Employee = this;
-			ObservableVacations.Add(vacation);
+			Vacations.Add(vacation);
 		}
 		public virtual bool OnVacation(DateTime date) {
 			foreach(var vacation in Vacations) 

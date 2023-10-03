@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Report;
 using QS.Utilities.Dates;
@@ -89,23 +89,12 @@ namespace Workwear.Domain.Statements
 
 		#endregion
 
-		IList<IssuanceSheetItem> items = new List<IssuanceSheetItem>();
+		IObservableList<IssuanceSheetItem> items = new ObservableList<IssuanceSheetItem>();
 		[Display(Name = "Строки")]
-		public virtual IList<IssuanceSheetItem> Items {
+		public virtual IObservableList<IssuanceSheetItem> Items {
 		    get => items;
 			set => SetField(ref items, value);
 		}
-
-		GenericObservableList<IssuanceSheetItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<IssuanceSheetItem> ObservableItems {
-		    get {
-		        if(observableItems == null)
-		            observableItems = new GenericObservableList<IssuanceSheetItem>(Items);
-		        return observableItems;
-			}
-		}
-
 		#endregion
 
 		#region Вычисляемые свойства
@@ -122,7 +111,7 @@ namespace Workwear.Domain.Statements
 				IssuanceSheet = this,
 				ExpenseItem = expenseItem
 			};
-			ObservableItems.Add(item);
+			Items.Add(item);
 			item.UpdateFromExpense();
 			return item;
 		}
@@ -133,14 +122,9 @@ namespace Workwear.Domain.Statements
 				IssuanceSheet = this,
 				CollectiveExpenseItem = expenseItemItem
 			};
-			ObservableItems.Add(item);
+			Items.Add(item);
 			item.UpdateFromCollectiveExpense();
 			return item;
-		}
-		public virtual void CleanObservableItems()
-		{
-			observableItems = null;
-			OnPropertyChanged(nameof(ObservableItems));
 		}
 
 		public virtual IssuanceSheetItem AddItem(EmployeeIssueOperation operation)
@@ -155,7 +139,7 @@ namespace Workwear.Domain.Statements
 				Nomenclature = operation.Nomenclature,
 				StartOfUse = operation.StartOfUse ?? operation.OperationTime
 			};
-			ObservableItems.Add(item);
+			Items.Add(item);
 			return item;
 		}
 
@@ -169,7 +153,7 @@ namespace Workwear.Domain.Statements
 				Lifetime = employeeItem.ActiveNormItem.PeriodInMonths,
 				StartOfUse = employeeItem.NextIssue ?? Date,
 			};
-			ObservableItems.Add(item);
+			Items.Add(item);
 			return item;
 		}
 		#endregion

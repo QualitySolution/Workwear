@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.BusinessCommon.Domain;
+using QS.Extensions.Observable.Collections.List;
 using QS.Project.DB;
 using QS.Project.Domain;
 using Workwear.HibernateMapping;
@@ -23,9 +24,9 @@ namespace Workwear.Test
 			MappingParams.UseIdsForTest = true;
 			Console.WriteLine("Инициализация");
 			var db_config = FluentNHibernate.Cfg.Db.MonoSqliteConfiguration.Standard.InMemory();
-
-			Console.WriteLine("ORM");
+			
 			// Настройка ORM
+			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm(db_config, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(Workwear.Domain.Users.UserSettings)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),

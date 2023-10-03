@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views;
+﻿using QS.Views;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 

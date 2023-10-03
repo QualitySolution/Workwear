@@ -19,6 +19,7 @@ using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
 using QS.ErrorReporting.Handlers;
+using QS.Extensions.Observable.Collections.List;
 using QS.Features;
 using QS.HistoryLog.ViewModels;
 using QS.HistoryLog.Views;
@@ -102,6 +103,7 @@ namespace workwear
 				.ShowSql ()
 				.FormatSql ();
 
+			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
 				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
@@ -323,12 +325,14 @@ namespace workwear
 			#endregion
 			
 			#region Облачные сервисы
-			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new ClaimsManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new RatingManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+
+			builder.Register(c => new SessionInfoProvider(QSSaaS.Session.SessionId)).As<ISessionInfoProvider>().SingleInstance();
+			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
+			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();
+			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

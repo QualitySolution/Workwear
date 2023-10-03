@@ -21,6 +21,11 @@ namespace workwear.Journal.Filter.Views.Stock
 			labelWarehouse.Binding
 				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
 				.InitializeFromSource();
+			
+			labelOwner.Binding
+				.AddBinding(viewModel, v => v.VisibleOwner, w => w.Visible)
+				.InitializeFromSource();
+			
 			comboSize.SetRenderTextFunc<Size>(x => x.Title);
 			comboSize.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Size, w => w.SelectedItem)
@@ -34,9 +39,14 @@ namespace workwear.Journal.Filter.Views.Stock
 				.AddBinding(v => v.SensitiveGrowth, w => w.Sensitive)
 				.InitializeFromSource();
 
+			comboOwner.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Owner, w => w.SelectedItem)
+				.AddBinding(v => v.Owners, w => w.ItemsList)
+				.AddBinding(v => v.VisibleOwner, w => w.Visible)
+				.InitializeFromSource();
+
 			entryNomenclature.ViewModel = ViewModel.EntryNomenclature;
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
-
 			ycheckCollapse.Binding
 				.AddBinding(viewModel, v => v.CollapseOperationItems, w => w.Active)
 				.InitializeFromSource();

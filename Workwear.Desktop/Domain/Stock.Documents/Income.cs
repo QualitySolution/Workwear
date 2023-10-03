@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -62,18 +62,12 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
-		private IList<IncomeItem> items = new List<IncomeItem>();
+		private IObservableList<IncomeItem> items = new ObservableList<IncomeItem>();
 		[Display (Name = "Строки документа")]
-		public virtual IList<IncomeItem> Items {
+		public virtual IObservableList<IncomeItem> Items {
 			get => items;
 			set { SetField (ref items, value, () => Items); }
 		}
-
-		private GenericObservableList<IncomeItem> observableItems;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<IncomeItem> ObservableItems => 
-			observableItems ?? (observableItems = new GenericObservableList<IncomeItem>(Items));
-
 		#endregion
 		public virtual string Title{
 			get{
@@ -159,7 +153,7 @@ namespace Workwear.Domain.Stock.Documents
 				Cost = issuedOperation.CalculatePercentWear(Date),
 				WearPercent = issuedOperation.CalculateDepreciationCost(Date)
 			};
-			ObservableItems.Add (newItem);
+			Items.Add (newItem);
 		}
 		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
@@ -179,7 +173,7 @@ namespace Workwear.Domain.Stock.Documents
 				WearPercent = issuedOperation.CalculatePercentWear(Date),
 			};
 
-			ObservableItems.Add(newItem);
+			Items.Add(newItem);
 			return newItem;
 		}
 		public virtual IncomeItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
@@ -196,10 +190,10 @@ namespace Workwear.Domain.Stock.Documents
 			var newItem = new IncomeItem (this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
-				Cost = 0,
+				Cost = nomenclature.SaleCost ?? 0m,
 			};
 
-			ObservableItems.Add (newItem);
+			Items.Add (newItem);
 			return newItem;
 		}
 		public virtual IncomeItem AddItem(
@@ -221,7 +215,7 @@ namespace Workwear.Domain.Stock.Documents
 					Certificate = certificate,
 					Owner = owner
 				};
-				ObservableItems.Add(item);
+				Items.Add(item);
 			}
 			else {
 				item.Amount+= amount;
@@ -229,7 +223,7 @@ namespace Workwear.Domain.Stock.Documents
 			return item;
 		}
 		public virtual void RemoveItem(IncomeItem item) {
-			ObservableItems.Remove (item);
+			Items.Remove (item);
 		}
 
 		public virtual IncomeItem FindItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => Items

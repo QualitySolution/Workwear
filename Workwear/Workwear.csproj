@@ -387,9 +387,6 @@
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.EmployeeBalanceFilterView.cs" />
     <Compile Include="Journal\Filter.Views\Company\SubdivisionBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Company.SubdivisionBalanceFilterView.cs" />
-    <Compile Include="Views\Stock\Widgets\BuhDocumentView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BuhDocumentView.cs" />
-    <Compile Include="ViewModels\Stock\Widgets\BuhDocumentViewModel.cs" />
     <Compile Include="ReportParameters\Views\ListBySizeView.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.ListBySizeView.cs" />
     <Compile Include="ReportParameters\ViewModels\ListBySizeViewModel.cs" />
@@ -461,6 +458,10 @@
       <Project>{7baff136-4379-4d1d-a554-7dc340caf7a2}</Project>
       <Name>QS.ErrorReporting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Extensions.Observable\QS.Extensions.Observable.csproj">
+      <Project>{2a0710b2-b71b-4959-88da-0940100e172a}</Project>
+      <Name>QS.Extensions.Observable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.HistoryLog.Gtk\QS.HistoryLog.Gtk.csproj">
       <Project>{1c3b49fc-372c-46f7-995f-eeb44474e2de}</Project>
       <Name>QS.HistoryLog.Gtk</Name>
@@ -508,10 +509,6 @@
     <ProjectReference Include="..\QSProjects\QSSaaS\QSSaaS.csproj">
       <Project>{4B502FE5-D419-4B5C-9276-0A25EF2F508A}</Project>
       <Name>QSSaaS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Gtk.DataBindings\System.Data.Bindings\System.Data.Bindings.csproj">
-      <Project>{54F958F5-7E58-4C89-9A04-8835E63B97C3}</Project>
-      <Name>System.Data.Bindings</Name>
     </ProjectReference>
     <ProjectReference Include="..\QSProjects\QSOrmProject\QSOrmProject.csproj">
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>

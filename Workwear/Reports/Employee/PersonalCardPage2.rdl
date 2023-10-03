@@ -798,7 +798,7 @@ LIMIT 1
     operation_issued_by_employee.wear_percent * 100
 ) AS wearout, 
 IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
-    IFNULL(NULLIF(operation_issued_by_employee.buh_document, ' '), CONCAT('Ведомость №', issuance_sheet_items.issuance_sheet_id))) AS issue_sign, 
+    CONCAT('Ведомость №', issuance_sheet_items.issuance_sheet_id)) AS issue_sign, 
 CONCAT_WS(
     '\n',
     GROUP_CONCAT(
@@ -825,7 +825,7 @@ CONCAT_WS(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
             ) AS returned_wearout,
             GROUP_CONCAT(
-                IFNULL(CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')), returned.buh_document) 
+                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')) 
                 SEPARATOR '\n'
             ) AS returned_sign
         FROM
@@ -841,8 +841,7 @@ CONCAT_WS(
                 return_detail.returned AS quantity,
                 return_detail.wear_percent,
                 return_detail.sign_key,
-                return_detail.sign_timestamp,
-                return_detail.buh_document
+                return_detail.sign_timestamp
             FROM
                 operation_issued_by_employee AS return_detail
             WHERE

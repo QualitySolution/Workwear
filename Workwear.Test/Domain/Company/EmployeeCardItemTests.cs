@@ -4,6 +4,7 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
@@ -202,7 +203,8 @@ namespace Workwear.Test.Domain.Company
 			vacation.Employee.Returns(employee);
 			vacation.BeginDate.Returns(new DateTime(2018, 1, 15));
 			vacation.EndDate.Returns(new DateTime(2018, 2, 15));
-			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
+			var vacationList = new ObservableList<EmployeeVacation> { vacation };
+			employee.Vacations.Returns(vacationList);
 
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
@@ -235,7 +237,8 @@ namespace Workwear.Test.Domain.Company
 			vacation.Employee.Returns(employee);
 			vacation.BeginDate.Returns(new DateTime(2018, 2, 15));
 			vacation.EndDate.Returns(new DateTime(2018, 3, 15));
-			employee.Vacations.Returns(new List<EmployeeVacation> { vacation });
+			var vacationList = new ObservableList<EmployeeVacation> { vacation };
+			employee.Vacations.Returns(vacationList);
 
 			var norm = Substitute.For<NormItem>();
 			norm.Amount.Returns(10);
@@ -515,7 +518,7 @@ namespace Workwear.Test.Domain.Company
 			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
 			var employee = Substitute.For<EmployeeCard>();
 			employee.Sex.Returns(Sex.M);
-			var sizes = new List<EmployeeSize>();
+			var sizes = new ObservableList<EmployeeSize>();
 			employee.Sizes.Returns(sizes);
 			employee.Sizes.Add(new EmployeeSize{Size = new Size {Name = "182"}, SizeType = heightType, Employee = employee});
 			employee.Sizes.Add(new EmployeeSize{Size = size, SizeType = sizeType, Employee = employee});
@@ -566,7 +569,7 @@ namespace Workwear.Test.Domain.Company
 				Name = "52", 
 				SizeType = sizeType, 
 				ShowInEmployee = true, 
-				SuitableSizes = new List<Size> {size52And54}
+				SuitableSizes = new ObservableList<Size> {size52And54}
 			};
 			employee.Sizes.Add(new EmployeeSize{Size = size52And54, SizeType = sizeType});
 
@@ -603,7 +606,7 @@ namespace Workwear.Test.Domain.Company
 				Name = "170", 
 				SizeType = heightType, 
 				ShowInEmployee = true, 
-				SuitableSizes = new List<Size> {height170And176}
+				SuitableSizes = new ObservableList<Size> {height170And176}
 			};
 			employee.Sizes.Add(new EmployeeSize{Size = height170And176, SizeType = heightType});
 			employee.Sizes.Add(new EmployeeSize{Size = size52, SizeType = sizeType});

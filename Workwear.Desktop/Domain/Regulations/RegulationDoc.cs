@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Bindings.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 
 namespace Workwear.Domain.Regulations
@@ -49,27 +49,14 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref docDate, value, () => DocDate); }
 		}
 
-		private IList<RegulationDocAnnex> annexes = new List<RegulationDocAnnex>();
+		private IObservableList<RegulationDocAnnex> annexes = new ObservableList<RegulationDocAnnex>();
 
 		[Display(Name = "Приложения")]
-		public virtual IList<RegulationDocAnnex> Annexess
+		public virtual IObservableList<RegulationDocAnnex> Annexes
 		{
 			get { return annexes; }
-			set { SetField(ref annexes, value, () => Annexess); }
+			set { SetField(ref annexes, value, () => Annexes); }
 		}
-
-		GenericObservableList<RegulationDocAnnex> observableAnnexes;
-		//FIXME Костыль пока не разберемся как научить hibernate работать с обновляемыми списками.
-		public virtual GenericObservableList<RegulationDocAnnex> ObservableAnnexes
-		{
-			get
-			{
-				if (observableAnnexes == null)
-					observableAnnexes = new GenericObservableList<RegulationDocAnnex>(Annexess);
-				return observableAnnexes;
-			}
-		}
-
 		#endregion
 
 		#region Расчетные
@@ -92,16 +79,16 @@ namespace Workwear.Domain.Regulations
 			if (String.IsNullOrWhiteSpace(Name))
 				yield return new ValidationResult("Название документа должно быть заполнено.",
 												  new[] { this.GetPropertyName(o => o.Name) });
-			if(Annexess.Any(x => x.Number < 0))
+			if(Annexes.Any(x => x.Number < 0))
 				yield return new ValidationResult("Номер приложения должен быть положительным числом.",
-												  new[] { nameof(Annexess) });
-			if(Annexess.Any(x => x.Number > 127))
+												  new[] { nameof(Annexes) });
+			if(Annexes.Any(x => x.Number > 127))
 				yield return new ValidationResult("Номер приложения не может превышать 127.",
-												  new[] { nameof(Annexess) });
+												  new[] { nameof(Annexes) });
 
-			if(Annexess.Any(x => !String.IsNullOrEmpty(x.Name) && x.Name.Length > 255))
+			if(Annexes.Any(x => !String.IsNullOrEmpty(x.Name) && x.Name.Length > 255))
 				yield return new ValidationResult("Название приложения не может превышать 255 символов.",
-												  new[] { nameof(Annexess) });
+												  new[] { nameof(Annexes) });
 		}
 
 		#region Методы
@@ -110,17 +97,17 @@ namespace Workwear.Domain.Regulations
 		{
 			var annex = new RegulationDocAnnex();
 			annex.Document = this;
-			if (Annexess.Count == 0)
+			if (Annexes.Count == 0)
 				annex.Number = 1;
 			else
-				annex.Number = Annexess.Max(x => x.Number) + 1;
+				annex.Number = Annexes.Max(x => x.Number) + 1;
 
-			ObservableAnnexes.Add(annex);
+			Annexes.Add(annex);
 			return annex;
 		}
 
 		public virtual void RemoveAnnex(RegulationDocAnnex annex){
-			ObservableAnnexes.Remove(annex);
+			Annexes.Remove(annex);
 		}
 
   		#endregion

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gtk;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Services;
@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
-			Entity.ObservableItems.ListContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 		}
 
@@ -69,10 +69,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Поля
-
-		public System.Data.Bindings.Collections.Generic.GenericObservableList<ExpenseItem> ObservableItems {
-			get { return Entity.ObservableItems; }
-		}
+		public IObservableList<ExpenseItem> ObservableItems => Entity.Items;
 
 		private string sum;
 		public virtual string Sum {
@@ -93,7 +90,6 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensitiveFillBuhDoc => Entity.Items.Count > 0;
 		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
@@ -104,26 +100,6 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		#endregion
 		#region Действия View
-		public void FillBuhDoc()
-		{
-			using(var dlg = new Dialog("Введите бухгалтерский документ", MainClass.MainWin, DialogFlags.Modal)) {
-				var docEntry = new Entry(80);
-				if(expenseEmployeeViewModel.Entity.Items.Count > 0)
-					docEntry.Text = expenseEmployeeViewModel.Entity.Items.First().BuhDocument;
-				docEntry.TooltipText = "Бухгалтерский документ по которому была произведена выдача. Отобразится вместо подписи сотрудника в карточке.";
-				docEntry.ActivatesDefault = true;
-				dlg.VBox.Add(docEntry);
-				dlg.AddButton("Заменить", ResponseType.Ok);
-				dlg.AddButton("Отмена", ResponseType.Cancel);
-				dlg.DefaultResponse = ResponseType.Ok;
-				dlg.ShowAll();
-				if(dlg.Run() == (int)ResponseType.Ok) {
-					expenseEmployeeViewModel.Entity.ObservableItems.ToList().ForEach(x => x.BuhDocument = docEntry.Text);
-				}
-				dlg.Destroy();
-			}
-		}
-
 		public void AddItem()
 		{
 			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
@@ -263,9 +239,6 @@ namespace Workwear.ViewModels.Stock
 
 		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{ 
-			if(e.PropertyName == nameof(ExpenseItem.BuhDocument)) {
-				expenseEmployeeViewModel.HasChanges = true;
-			}
 			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));

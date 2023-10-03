@@ -36,16 +36,12 @@ namespace workwear.Journal.ViewModels.Company {
 				.Resolve<PostFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
 			if(featuresService.Available(WorkwearFeature.CostCenter)) {
-				//Обход проблемы с тем что SelectionMode одновременно управляет и выбором в журнале, и самим режимом журнала.
-				//То есть создает действие выбора. Удалить после того как появится рефакторинг действий журнала. 
-				SelectionMode = JournalSelectionMode.Multiple;
-				NodeActionsList.Clear();
+				TableSelectionMode = JournalSelectionMode.Multiple;
 				CreateNodeActions();
-				RowActivatedAction = NodeActionsList.First(x => x.Title == "Изменить");
 
 				var setCostCenterAction = new JournalAction("Изменить МВЗ",
 					(selected) => selected.Any(),
-					(selected) => true
+					(selected) => SelectionMode == JournalSelectionMode.None
 				);
 				NodeActionsList.Add(setCostCenterAction);
 

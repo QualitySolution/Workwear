@@ -186,25 +186,11 @@ namespace Workwear.Domain.Regulations
 		public NormItem () { }
 
 		/// <summary>
-		/// Возвращает копию текущего объекта без привязки к норме
-		/// </summary>
-		/// <returns>Копия текущего объекта NormItem.</returns>
-		public virtual NormItem CopyNormItem()
-		{
-			NormItem newNormItem = new NormItem();
-			newNormItem.protectionTools = this.ProtectionTools;
-			newNormItem.normPeriod = this.normPeriod;
-			newNormItem.periodCount = this.periodCount;
-			newNormItem.amount = this.amount;
-			return newNormItem;
-		}
-
-		/// <summary>
 		/// Возвращает копию текущего объекта с привязкой к норме
 		/// </summary>
 		/// <returns>Копия текущего объекта NormItem.</returns>
 		/// <param name="Norm">Норма, которой будет привязан возвращаемый объект NormItem</param>
-		public virtual NormItem CopyNormItem(Norm norm)
+		public virtual NormItem Copy(Norm norm)
 		{
 			NormItem newNormItem = new NormItem();
 			newNormItem.norm = norm;
@@ -212,6 +198,9 @@ namespace Workwear.Domain.Regulations
 			newNormItem.normPeriod = this.normPeriod;
 			newNormItem.periodCount = this.periodCount;
 			newNormItem.amount = this.amount;
+			newNormItem.normCondition = this.normCondition;
+			newNormItem.normParagraph = this.normParagraph;
+			newNormItem.comment = this.comment;
 			return newNormItem;
 		}
 	}

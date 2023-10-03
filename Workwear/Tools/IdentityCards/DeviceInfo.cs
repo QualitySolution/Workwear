@@ -1,5 +1,4 @@
-﻿using System;
-using RglibInterop;
+﻿using RglibInterop;
 
 namespace workwear.Tools.IdentityCards
 {
