@@ -185,6 +185,9 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(ExpenseItem item)
 		{
 			Items.Remove (item);
+			if(item.IssuanceSheetItem != null) {
+				IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
+			}
 		}
 
 		public virtual void CleanupItems()
