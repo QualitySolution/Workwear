@@ -124,6 +124,7 @@
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\ClothingService\ClaimsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\VacationTypeJournalViewModel.cs" />
