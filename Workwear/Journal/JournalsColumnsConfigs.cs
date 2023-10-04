@@ -309,6 +309,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").Resizable().AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.WearSizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
+					.AddColumn("Собственник").Resizable().AddTextRenderer(node => node.OwnerName)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
 					.Finish()

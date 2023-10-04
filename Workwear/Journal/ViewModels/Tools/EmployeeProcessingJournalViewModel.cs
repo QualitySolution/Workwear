@@ -6,9 +6,11 @@ using Autofac;
 using Gamma.ColumnConfig;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.Linq;
 using NHibernate.Transform;
 using NLog.Targets;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
@@ -21,6 +23,7 @@ using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
@@ -165,6 +168,7 @@ namespace workwear.Journal.ViewModels.Tools
 			NodeActionsList.Add(editAction);
 			RowActivatedAction = editAction;
 
+			#region Установить нормы
 			var updateStatusAction = new JournalAction("Установить нормы",
 				(selected) => selected.Any(),
 				(selected) => true
@@ -191,7 +195,8 @@ namespace workwear.Journal.ViewModels.Tools
 				selected => CatchExceptionAndCloseProgress(RemoveAllNorms, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 			);
 			updateStatusAction.ChildActionsList.Add(removeAllNorms);
-
+			#endregion
+			#region Пересчитать
 			var recalculateAction = new JournalAction("Пересчитать",
 					(selected) => selected.Any(),
 					(selected) => true
@@ -211,7 +216,38 @@ namespace workwear.Journal.ViewModels.Tools
 					(selected) => CatchExceptionAndCloseProgress(UpdateLastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
+			#endregion
 
+			#region Заменить
+			var replaceAction = new JournalAction("Заменить",
+					(selected) => selected.Any(),
+					(selected) => true
+					);
+			NodeActionsList.Add(replaceAction);
+			
+			var replaceSubdivisionAction = new JournalAction("Подразделение",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => ReplaceSubdivision(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					);
+			replaceAction.ChildActionsList.Add(replaceSubdivisionAction);
+			
+			var replaceDepartmentAction = new JournalAction("Отдел",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => ReplaceDepartment(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					);
+			replaceAction.ChildActionsList.Add(replaceDepartmentAction);
+			
+			var replacePostAction = new JournalAction("Должность",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => ReplacePost(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					);
+			
+			replaceAction.ChildActionsList.Add(replacePostAction);
+			#endregion
+			
 			var logAction = new JournalAction("Лог выполнения",
 					(selected) => File.Exists(logFile),
 					(selected) => true,
@@ -222,6 +258,7 @@ namespace workwear.Journal.ViewModels.Tools
 
 		private Dictionary<int, (string text, string color)> Results = new Dictionary<int, (string text, string color)>();
 
+		#region Установить нормы
 		void UpdateNorms(EmployeeProcessingJournalNode[] nodes)
 		{
 			progressCreator.Start(nodes.Length + 3, text: "Загружаем сотрудников");
@@ -346,7 +383,9 @@ namespace workwear.Journal.ViewModels.Tools
 				progressCreator.Close();
 			}
 		}
+		#endregion
 
+		#region Пресчет
 		void UpdateNextIssue(EmployeeProcessingJournalNode[] nodes)
 		{
 			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
@@ -416,7 +455,96 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 			progressCreator.Close();
 		}
+		#endregion
 
+		#region Замена
+		void ReplaceSubdivision(EmployeeProcessingJournalNode[] nodes) {
+			var pageSelectionSubdivision = NavigationManager.OpenViewModel<SubdivisionJournalViewModel>(this, OpenPageOptions.AsSlave);
+			pageSelectionSubdivision.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			pageSelectionSubdivision.ViewModel.OnSelectResult += (sender, e) => {
+				using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Корректировка сотрудников -> Замена подразделения")) {
+					var selectedSubdivision = uow.GetById<Subdivision>(e.SelectedObjects.First().GetId());
+					if(selectedSubdivision == null)
+						throw new InvalidOperationException("Не удалось получить подразделение.");
+					var ids = nodes.Select(n => n.Id).ToArray();
+					
+					var changed = uow.GetAll<EmployeeCard>()
+						.Where(n => ids.Contains(n.Id))
+						.UpdateBuilder()
+						.Set(n => n.Subdivision, selectedSubdivision)
+						.Update();
+					loggerProcessing.Info($"Замена подразделения. Заменено у {changed} сотрудников.");
+				}
+
+				foreach(var node in nodes)
+					Results[node.Id] = ("ОК", "green");
+				Refresh();
+			};
+		}
+		
+		void ReplaceDepartment(EmployeeProcessingJournalNode[] nodes) {
+			var pageSelectionDepartment = NavigationManager.OpenViewModel<DepartmentJournalViewModel>(this, OpenPageOptions.AsSlave);
+			pageSelectionDepartment.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			pageSelectionDepartment.ViewModel.OnSelectResult += (sender, e) => {
+				using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Корректировка сотрудников -> Замена отдела")) {
+					var selectedDepartment = uow.GetById<Department>(e.SelectedObjects.First().GetId());
+					if(selectedDepartment == null)
+						throw new InvalidOperationException("Не удалось получить отдел.");
+					
+					var ids = nodes.Select(n => n.Id).ToArray();
+					var builder = uow.GetAll<EmployeeCard>()
+						.Where(n => ids.Contains(n.Id))
+						.UpdateBuilder()
+						.Set(n => n.Department, selectedDepartment);
+					if(selectedDepartment.Subdivision != null && interactive.Question("Установить так же подразделение из отдела?")) {
+						builder.Set(n => n.Subdivision, selectedDepartment.Subdivision);
+					}
+					
+					var changed = builder.Update();
+					loggerProcessing.Info($"Замена отдела. Заменено у {changed} сотрудников.");
+				}
+
+				foreach(var node in nodes)
+					Results[node.Id] = ("ОК", "green");
+				Refresh();
+			};
+		}
+
+		void ReplacePost(EmployeeProcessingJournalNode[] nodes) {
+			var pageSelectionPost = NavigationManager.OpenViewModel<PostJournalViewModel>(this, OpenPageOptions.AsSlave);
+			pageSelectionPost.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			pageSelectionPost.ViewModel.OnSelectResult += (sender, e) => {
+				using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Корректировка сотрудников -> Замена должности")) {
+					var selectedPost = uow.GetById<Post>(e.SelectedObjects.First().GetId());
+					if(selectedPost == null)
+						throw new InvalidOperationException("Не удалось получить должность.");
+					var ids = nodes.Select(n => n.Id).ToArray();
+					
+					var builder =  uow.GetAll<EmployeeCard>()
+						.Where(n => ids.Contains(n.Id))
+						.UpdateBuilder()
+						.Set(n => n.Post, selectedPost);
+					if(selectedPost.Subdivision != null && selectedPost.Department != null){
+						if(interactive.Question("Установить так же подразделение и отдел из должности?")) {
+							builder.Set(n => n.Subdivision, selectedPost.Subdivision);
+							builder.Set(n => n.Department, selectedPost.Department);
+						}
+					} else if(selectedPost.Subdivision != null && interactive.Question("Установить так же подразделение из должности?")) {
+						builder.Set(n => n.Subdivision, selectedPost.Subdivision);
+					} else if(selectedPost.Department != null && interactive.Question("Установить так же отдел из должности?")) {
+						builder.Set(n => n.Department, selectedPost.Department);
+					}
+					var changed	= builder.Update();
+					loggerProcessing.Info($"Замена должности. Заменено у {changed} сотрудников.");
+				}
+
+				foreach(var node in nodes)
+					Results[node.Id] = ("ОК", "green");
+				Refresh();
+			};
+		}
+		#endregion
+		
 		void LoadAll()
 		{
 			DataLoader.DynamicLoadingEnabled = false;
