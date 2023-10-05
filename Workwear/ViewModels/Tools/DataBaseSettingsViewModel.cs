@@ -19,13 +19,15 @@ namespace Workwear.ViewModels.Tools
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
 			ShiftExpluatacion = baseParameters.ShiftExpluatacion;
 			ExtendPeriod = baseParameters.ExtendPeriod;
-			CollapseDuplicateIssuanceSheet = this.baseParameters.CollapseDuplicateIssuanceSheet;
+			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
+			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
 		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
+		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod;
 
@@ -36,6 +38,7 @@ namespace Workwear.ViewModels.Tools
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
 
+		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		#endregion
 
@@ -51,6 +54,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.ShiftExpluatacion = ShiftExpluatacion;
 			if(ExtendPeriod != baseParameters.ExtendPeriod)
 				baseParameters.ExtendPeriod = ExtendPeriod;
+			if(CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal)
+				baseParameters.CollectiveIssueWithPersonal = CollectiveIssueWithPersonal;
 			if(CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet)
 				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
 			return true;
