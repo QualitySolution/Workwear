@@ -5991,6 +5991,12 @@
         <property name="ShortLabel" translatable="yes">Документы постоматов</property>
         <signal name="Activated" handler="OnActionPostomatDocsActivated" />
       </action>
+      <action id="ActionClothingService">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Обслуживание одежды</property>
+        <property name="ShortLabel" translatable="yes">Обслуживание одежды</property>
+        <signal name="Activated" handler="OnActionClothingServiceActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6044,6 +6050,7 @@
                 <node type="Menuitem" action="ActionStockDocs" />
                 <node type="Menuitem" action="ActionStockBalance" />
                 <node type="Menuitem" action="ActionStockMovements" />
+                <node type="Menuitem" action="ActionClothingService" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionIssuanceSheets" />
               </node>

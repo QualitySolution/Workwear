@@ -5,27 +5,27 @@ using QS.DomainModel.Entity;
 namespace Workwear.Domain.ClothingService {
 	public class StateOperation : PropertyChangedBase, IDomainObject{
 		#region Свойства
-		public int Id { get; set; }
+		public virtual int Id { get; set; }
 		
 		private ServiceClaim claim;
 		[Display(Name = "Заявка")]
 		public virtual ServiceClaim Claim {
-			get { return claim; }
-			set { SetField(ref claim, value, () => Claim); }
+			get => claim;
+			set => SetField(ref claim, value);
 		}
 		
 		private DateTime operationTime;
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
-			get { return operationTime; }
-			set { SetField(ref operationTime, value, () => OperationTime); }
+			get => operationTime;
+			set => SetField(ref operationTime, value);
 		}
 		
 		private ClaimState state;
 		[Display(Name = "Состояние")]
 		public virtual ClaimState State {
-			get { return state; }
-			set { SetField(ref state, value, () => State); }
+			get => state;
+			set => SetField(ref state, value);
 		}
 		#endregion
 	}

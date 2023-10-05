@@ -52,6 +52,7 @@ using Workwear.ViewModels.Import;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Tools;
 using Workwear.ViewModels.User;
+using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Postomats;
@@ -853,5 +854,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionPostomatDocsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<PostomatDocumentsJournalViewModel>(null);
+	}
+
+	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
 	}
 }
