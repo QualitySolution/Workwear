@@ -62,13 +62,28 @@ namespace Workwear.Views.Company.EmployeeChildren
 				menu.Add(itemRemoveOperation);
 
 				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
-				var submenu = new Menu();
-				foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
-					var ptItem = new MenuItem(protectionTools.Name);
-					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
-					submenu.Append(ptItem);
-				}
-				itemChangeProtectionTools.Submenu = submenu;
+				var subItemChangeProtectionTools = new Menu();
+					var menuItemChangePT = new MenuItem("Из списка потребностей");
+					var submenuChangePT = new Menu();
+					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
+						var ptItem = new MenuItem(protectionTools.Name);
+						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+						submenuChangePT.Append(ptItem);
+					}
+					menuItemChangePT.Submenu = submenuChangePT;
+					subItemChangeProtectionTools.Append(menuItemChangePT);
+					
+					var menuItemChangePtFull = new MenuItem("Из полного списка");
+					var submenuChangePtFull = new Menu();
+					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsFullList) {
+						var ptItem = new MenuItem(protectionTools.Name);
+						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+						submenuChangePtFull.Append(ptItem);
+					}
+					menuItemChangePtFull.Submenu = submenuChangePtFull;
+					subItemChangeProtectionTools.Append(menuItemChangePtFull);
+					
+				itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
 				menu.Add(itemChangeProtectionTools);
 				
 				menu.ShowAll();

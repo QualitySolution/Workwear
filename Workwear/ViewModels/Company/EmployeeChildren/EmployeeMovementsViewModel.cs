@@ -94,7 +94,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		
 		
 		#region Замена Номенклатуры нормы
+		
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
+		public List<ProtectionTools> ProtectionToolsFullList => UoW.GetAll<ProtectionTools>().ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
 			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools> { protectionTools };
