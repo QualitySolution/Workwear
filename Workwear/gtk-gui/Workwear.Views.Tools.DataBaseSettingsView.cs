@@ -310,7 +310,7 @@ namespace Workwear.Views.Tools
 			this.ylabel6 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel6.Name = "ylabel6";
 			this.ylabel6.Xalign = 1F;
-			this.ylabel6.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллетивой:");
+			this.ylabel6.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллективной:");
 			this.table1.Add(this.ylabel6);
 			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel6]));
 			w23.TopAttach = ((uint)(6));

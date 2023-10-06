@@ -61,7 +61,7 @@ namespace Workwear.Tools
 		}
 		
 		/// <summary>
-		/// При заполнении доккумента пердональной выдачи проставлять позиции коллективной выдачи.
+		/// При заполнении документа персональной выдачи проставлять позиции коллективной выдачи.
 		/// </summary>
 		public virtual bool CollectiveIssueWithPersonal {
 			get => Dynamic.CollectiveIssueWithPersonal(typeof(bool)) ?? false;

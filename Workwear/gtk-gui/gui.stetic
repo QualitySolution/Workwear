@@ -9012,7 +9012,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel6">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">При персональной выдаче добавлять позиции коллетивой:</property>
+                        <property name="LabelProp" translatable="yes">При персональной выдаче добавлять позиции коллективной:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">6</property>
