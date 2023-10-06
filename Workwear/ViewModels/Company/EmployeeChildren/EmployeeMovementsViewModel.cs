@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -31,7 +32,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly ITdiCompatibilityNavigation navigation;
 		List<EmployeeMovementItem> movements;
 
-		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, OpenStockDocumentsModel openStockDocumentsModel,  EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
+		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
+			OpenStockDocumentsModel openStockDocumentsModel,  
+			EmployeeIssueRepository employeeIssueRepository,  
+			FeaturesService featuresService, 
+			ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
@@ -132,6 +137,22 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 		
 		public void MakeEmptyProtectionTools(EmployeeMovementItem item) {
+			if(item.EmployeeIssueReference?.DocumentType != null) {
+				switch(item.EmployeeIssueReference.DocumentType) {
+					case StockDocumentType.ExpenseEmployeeDoc:
+						var docPerItem =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						docPerItem.ProtectionTools = null;
+						UoW.Save(docPerItem);
+						break;
+					case StockDocumentType.CollectiveExpense:
+						var docColItem =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						docColItem.ProtectionTools = null;
+						UoW.Save(docColItem);
+						break;
+					default:
+						throw new NotSupportedException("Unknown document type.");
+				}
+			}
 			item.Operation.ProtectionTools = null;
 		}
 
