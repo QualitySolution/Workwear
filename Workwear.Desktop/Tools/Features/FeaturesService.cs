@@ -140,6 +140,7 @@ namespace Workwear.Tools.Features
 				#endif
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
+				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
@@ -191,6 +192,8 @@ namespace Workwear.Tools.Features
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
+		[Display(Name = "Обслуживание спецодежды")]
+		ClothingService,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
