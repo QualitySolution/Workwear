@@ -52,14 +52,19 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
 				                              || selected?.Operation.ManualOperation == true;
 				
-				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				itemOpenLastIssue.Activated += (sender, e) => ViewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
 				var itemRemoveOperation = new MenuItemId<EmployeeMovementItem>("Удалить операцию");
 				itemRemoveOperation.ID = selected;
 				itemRemoveOperation.Sensitive = selected?.EmployeeIssueReference?.DocumentType == null;
-				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				itemRemoveOperation.Activated += (sender, e) => ViewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
+
+				var itemMakeEmptyProtectionTools = new MenuItemId<EmployeeMovementItem>("Очистить номенклатуру нормы");
+				itemMakeEmptyProtectionTools.ID = selected;
+				itemMakeEmptyProtectionTools.Activated += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				menu.Add(itemMakeEmptyProtectionTools);
 
 				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
 				var subItemChangeProtectionTools = new Menu();

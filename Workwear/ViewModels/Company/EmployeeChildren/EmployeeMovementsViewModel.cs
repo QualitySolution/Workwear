@@ -130,6 +130,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
+		
+		public void MakeEmptyProtectionTools(EmployeeMovementItem item) {
+			item.Operation.ProtectionTools = null;
+		}
 
 		#endregion
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
