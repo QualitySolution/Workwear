@@ -61,6 +61,14 @@ namespace Workwear.Tools
 		}
 		
 		/// <summary>
+		/// При заполнении документа персональной выдачи проставлять позиции коллективной выдачи.
+		/// </summary>
+		public virtual bool CollectiveIssueWithPersonal {
+			get => Dynamic.CollectiveIssueWithPersonal(typeof(bool)) ?? false;
+			set => Dynamic[nameof(CollectiveIssueWithPersonal)] = value;
+		}
+		
+		/// <summary>
 		/// При показе ведомости сворачивать дублирующиеся строки.
 		/// </summary>
 		public virtual bool CollapseDuplicateIssuanceSheet {
