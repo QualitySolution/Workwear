@@ -61,31 +61,28 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemRemoveOperation.Activated += (sender, e) => ViewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 
-				var itemMakeEmptyProtectionTools = new MenuItemId<EmployeeMovementItem>("Очистить номенклатуру нормы");
-				itemMakeEmptyProtectionTools.ID = selected;
-				itemMakeEmptyProtectionTools.Activated += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
-				menu.Add(itemMakeEmptyProtectionTools);
-
 				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
 				var subItemChangeProtectionTools = new Menu();
+				
+					var itemMakeEmptyProtectionTools = new MenuItemId<EmployeeMovementItem>("Очистить");
+					itemMakeEmptyProtectionTools.ID = selected;
+					itemMakeEmptyProtectionTools.Selected += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+					subItemChangeProtectionTools.Append(itemMakeEmptyProtectionTools);
+				
 					var menuItemChangePT = new MenuItem("Из списка потребностей");
 					var submenuChangePT = new Menu();
 					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
 						var ptItem = new MenuItem(protectionTools.Name);
-						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+						ptItem.Selected += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
 						submenuChangePT.Append(ptItem);
 					}
 					menuItemChangePT.Submenu = submenuChangePT;
 					subItemChangeProtectionTools.Append(menuItemChangePT);
 					
-					var menuItemChangePtFull = new MenuItem("Из полного списка");
-					var submenuChangePtFull = new Menu();
-					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsFullList) {
-						var ptItem = new MenuItem(protectionTools.Name);
-						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
-						submenuChangePtFull.Append(ptItem);
-					}
-					menuItemChangePtFull.Submenu = submenuChangePtFull;
+					var menuItemChangePtFull = new MenuItemId<EmployeeMovementItem>("Из полного списка ...");
+					menuItemChangePtFull.ID = selected;
+					menuItemChangePtFull.Selected += (sender, e) => ViewModel.OpenJournalChangeProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+			
 					subItemChangeProtectionTools.Append(menuItemChangePtFull);
 					
 				itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
