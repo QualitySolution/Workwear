@@ -66,14 +66,14 @@ namespace Workwear.Views.Company.EmployeeChildren
 				
 					var itemMakeEmptyProtectionTools = new MenuItemId<EmployeeMovementItem>("Очистить");
 					itemMakeEmptyProtectionTools.ID = selected;
-					itemMakeEmptyProtectionTools.Selected += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+					itemMakeEmptyProtectionTools.ButtonPressEvent += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
 					subItemChangeProtectionTools.Append(itemMakeEmptyProtectionTools);
 				
 					var menuItemChangePT = new MenuItem("Из списка потребностей");
 					var submenuChangePT = new Menu();
 					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
 						var ptItem = new MenuItem(protectionTools.Name);
-						ptItem.Selected += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
 						submenuChangePT.Append(ptItem);
 					}
 					menuItemChangePT.Submenu = submenuChangePT;
@@ -81,7 +81,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 					
 					var menuItemChangePtFull = new MenuItemId<EmployeeMovementItem>("Из полного списка ...");
 					menuItemChangePtFull.ID = selected;
-					menuItemChangePtFull.Selected += (sender, e) => ViewModel.OpenJournalChangeProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+					menuItemChangePtFull.ButtonPressEvent += (sender, e) => ViewModel.OpenJournalChangeProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
 			
 					subItemChangeProtectionTools.Append(menuItemChangePtFull);
 					

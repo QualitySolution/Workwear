@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Report.ViewModels;
 using QS.Report;
@@ -21,6 +23,8 @@ using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
+using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -70,6 +74,8 @@ namespace Workwear.ViewModels.Stock
 
 		#region Поля
 		public IObservableList<ExpenseItem> ObservableItems => Entity.Items;
+		
+		public List<ProtectionTools> EmployeesProtectionToolsList  => Entity.Employee.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		private string sum;
 		public virtual string Sum {
@@ -130,6 +136,27 @@ namespace Workwear.ViewModels.Stock
 			CalculateTotal();
 		}
 
+		public void OpenJournalChangeProtectionTools(ExpenseItem item) {
+			var selectJournal = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+			
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = item;
+			selectJournal.ViewModel.OnSelectResult += ChangeProtectionToolsFromJournal;
+		}
+		private void ChangeProtectionToolsFromJournal(object sender, JournalSelectedEventArgs e) {
+			var page = navigation.FindPage((DialogViewModelBase)sender);
+			var item = page.Tag as ExpenseItem;
+			ChangeProtectionTools(item, UoW.GetById<ProtectionTools>(e.SelectedObjects.First().GetId()));
+		}
+
+		public void ChangeProtectionTools(ExpenseItem item, ProtectionTools protectionTools) {
+			item.ProtectionTools = protectionTools;
+		}
+		
+		public void MakeEmptyProtectionTools(ExpenseItem item) {
+			item.ProtectionTools = null;
+		}
+		
 		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
