@@ -138,8 +138,7 @@ namespace Workwear.ViewModels.Stock
 				if(normItem != null
 				   && interactive.Question($"Считать \"{stockPosition.Nomenclature.Name}\"," +
 				                           $" как выданное по норме \"{normItem.ProtectionTools.Name}\"?")) {
-						item.UpdateOperations(UoW,BaseParameters,interactive);
-						item.EmployeeIssueOperation.NormItem = normItem;
+						item.UpdateOperations(UoW,BaseParameters,interactive,normItem: normItem);
 						item.EmployeeIssueOperation.ProtectionTools = normItem.ProtectionTools;
 						item.ProtectionTools = normItem.ProtectionTools;
 				}

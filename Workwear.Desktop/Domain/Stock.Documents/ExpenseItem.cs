@@ -203,7 +203,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null, NormItem normItem = null)
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
@@ -215,6 +215,7 @@ namespace Workwear.Domain.Stock.Documents
 					EmployeeIssueOperation = new EmployeeIssueOperation();
 				}
 
+				EmployeeIssueOperation.NormItem = normItem;
 				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
 									
 				uow.Save(EmployeeIssueOperation);
