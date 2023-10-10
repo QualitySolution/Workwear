@@ -131,7 +131,18 @@ namespace Workwear.ViewModels.Stock
 		public void AddNomenclature(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				expenseEmployeeViewModel.Entity.AddItem(node.GetStockPosition(expenseEmployeeViewModel.UoW));
+				var stockPosition = node.GetStockPosition(expenseEmployeeViewModel.UoW);
+				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
+							.Contains(stockPosition.Nomenclature))?.ActiveNormItem;
+				var item = expenseEmployeeViewModel.Entity.AddItem(stockPosition);
+				if(normItem != null
+				   && interactive.Question($"Считать \"{stockPosition.Nomenclature.Name}\"," +
+				                           $" как выданное по норме \"{normItem.ProtectionTools.Name}\"?")) {
+						item.UpdateOperations(UoW,BaseParameters,interactive);
+						item.EmployeeIssueOperation.NormItem = normItem;
+						item.EmployeeIssueOperation.ProtectionTools = normItem.ProtectionTools;
+						item.ProtectionTools = normItem.ProtectionTools;
+				}
 			}
 			CalculateTotal();
 		}

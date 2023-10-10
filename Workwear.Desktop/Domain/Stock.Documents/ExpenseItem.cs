@@ -39,7 +39,7 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Номенклатура нормы")]
 		public virtual ProtectionTools ProtectionTools {
 			get => protectionTools;
-			set { SetField(ref protectionTools, value, () => ProtectionTools); }
+			set => SetField(ref protectionTools, value);
 		}
 
 		private Nomenclature nomenclature;

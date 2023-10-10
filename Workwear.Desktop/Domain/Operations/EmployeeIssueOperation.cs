@@ -293,20 +293,12 @@ namespace Workwear.Domain.Operations
 				SignTimestamp = DateTime.Now;
 			}
 
-			if (NormItem == null)
-				NormItem = Employee.WorkwearItems
-					.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
-						.Contains(Nomenclature))?.ActiveNormItem;
-
 			if(NormItem == null) {
 				logger.Warn(
 					$"В операции выдачи {Nomenclature.Name} " +
 					$"не указана ссылка на норму, перерасчет сроков выдачи невозможен.");
 				return;
 			}
-
-			if(ProtectionTools == null)
-				ProtectionTools = NormItem.ProtectionTools;
 
 			var anotherRows =
 				item.ExpenseDoc.Items
@@ -420,12 +412,6 @@ namespace Workwear.Domain.Operations
 					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
 					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return false;
-			}
-
-			if(NormItem == null) {
-				//Пробуем найти норму сами.
-				var cardItem = Employee.WorkwearItems.FirstOrDefault(x => ProtectionTools.IsSame(x.ProtectionTools));
-				NormItem = cardItem?.ActiveNormItem;
 			}
 
 			if(NormItem == null) {
