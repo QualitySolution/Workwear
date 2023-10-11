@@ -23,6 +23,7 @@ using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
+using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 
@@ -138,9 +139,10 @@ namespace Workwear.ViewModels.Stock
 				if(normItem != null
 				   && interactive.Question($"Считать \"{stockPosition.Nomenclature.Name}\"," +
 				                           $" как выданное по норме \"{normItem.ProtectionTools.Name}\"?")) {
-						item.UpdateOperations(UoW,BaseParameters,interactive,normItem: normItem);
-						item.EmployeeIssueOperation.ProtectionTools = normItem.ProtectionTools;
-						item.ProtectionTools = normItem.ProtectionTools;
+					item.EmployeeCardItem = Entity.Employee.WorkwearItems
+						.FirstOrDefault(x => x.ProtectionTools == normItem.ProtectionTools);
+					item.ProtectionTools = normItem.ProtectionTools;
+					item.UpdateOperations(UoW,BaseParameters,interactive);
 				}
 			}
 			CalculateTotal();

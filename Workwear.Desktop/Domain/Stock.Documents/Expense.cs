@@ -204,7 +204,7 @@ namespace Workwear.Domain.Stock.Documents
 		#region Методы
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
 		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid, x.EmployeeCardItem.ActiveNormItem));
+			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
 		}
 
 		public virtual void UpdateEmployeeWearItems()

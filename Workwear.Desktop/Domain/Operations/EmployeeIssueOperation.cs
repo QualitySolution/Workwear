@@ -287,6 +287,8 @@ namespace Workwear.Domain.Operations
 			WarehouseOperation = item.WarehouseOperation;
 			ProtectionTools = item.ProtectionTools;
 
+			if(item.EmployeeCardItem != null) 
+				NormItem = item.EmployeeCardItem.ActiveNormItem;
 
 			if(!String.IsNullOrEmpty(signCardUid)) {
 				SignCardKey = signCardUid;
