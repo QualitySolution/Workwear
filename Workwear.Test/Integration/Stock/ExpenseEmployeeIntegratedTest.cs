@@ -111,8 +111,13 @@ namespace Workwear.Test.Integration.Stock
 					Employee = employee,
 					Date = new DateTime(2018, 10, 22)
 				};
-				expense.AddItem(position1, 1);
-				expense.AddItem(position2, 1);
+				var expenseItem1 = expense.AddItem(position1, 1);
+				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem1.ProtectionTools = protectionTools;
+				
+				var expenseItem2 = expense.AddItem(position2, 1);
+				expenseItem2.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem2.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
@@ -216,8 +221,13 @@ namespace Workwear.Test.Integration.Stock
 					Employee = employee,
 					Date = new DateTime(2018, 10, 22)
 				};
-				expense.AddItem(position1, 1);
-				expense.AddItem(position2, 1);
+				var expenseItem1 = expense.AddItem(position1, 1);
+				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem1.ProtectionTools = protectionTools;
+				
+				var expenseItem2 = expense.AddItem(position2, 1);
+				expenseItem2.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem2.ProtectionTools = protectionTools;
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020 
@@ -324,7 +334,9 @@ namespace Workwear.Test.Integration.Stock
 					Employee = employee,
 					Date = new DateTime(2018, 10, 22)
 				};
-				expense.AddItem(position1, 1);
+				var expenseItem1 = expense.AddItem(position1, 1);
+				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem1.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
