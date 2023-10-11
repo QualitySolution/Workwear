@@ -109,8 +109,14 @@ namespace Workwear.Test.Integration.Organization
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 5, 10);
 				expense.Operation = ExpenseOperations.Employee;
-				expense.AddItem(position1, 1);
-				expense.AddItem(position2, 1);
+				
+				var expenseItem1 = expense.AddItem(position1, 1);
+				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem1.ProtectionTools = protectionTools;
+				
+				var expenseItem2 = expense.AddItem(position2, 1);
+				expenseItem2.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools2);
+				expenseItem2.ProtectionTools = protectionTools2;
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);

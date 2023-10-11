@@ -105,8 +105,12 @@ namespace Workwear.Test.Integration.Tools
 					Employee = employee,
 					Date = new DateTime(2018, 10, 22)
 				};
-				expense.AddItem(position1, 1);
-				expense.AddItem(position2, 1);
+				var expenseItem1 = expense.AddItem(position1, 1);
+				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+				expenseItem1.ProtectionTools = protectionTools;
+				var expenseItem2 = expense.AddItem(position2, 1);
+				expenseItem2.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools2);
+				expenseItem2.ProtectionTools = protectionTools2;
 
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
