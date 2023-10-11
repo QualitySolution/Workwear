@@ -1,9 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
+using QS.HistoryLog;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.ClothingService {
+	[HistoryTrace]
+	[Appellative(Gender = GrammaticalGender.Feminine,
+		NominativePlural = "заявки на обслуживание",
+		Nominative = "заявка на обслуживание")]
 	public class ServiceClaim : PropertyChangedBase, IDomainObject {
 		#region Cвойства
 		public virtual int Id { get; set; }

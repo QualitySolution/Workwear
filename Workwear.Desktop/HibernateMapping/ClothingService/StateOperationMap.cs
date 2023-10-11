@@ -9,7 +9,9 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.OperationTime).Column("operation_time");
 			Map(x => x.State).Column("state");
+			Map(x => x.Comment).Column("comment");
 			References(x => x.Claim).Column("claim_id");
+			References(x => x.User).Column("user_id");
 		}
 	}
 }
