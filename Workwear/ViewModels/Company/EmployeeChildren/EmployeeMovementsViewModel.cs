@@ -110,6 +110,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				protectionToolsForUpdate.Add(item.Operation.ProtectionTools);
 
 			item.Operation.ProtectionTools = protectionTools;
+			item.Operation.NormItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools)?.ActiveNormItem;
 			UoW.Save(item.Operation);
 			
 			if(item.EmployeeIssueReference?.DocumentType == null)

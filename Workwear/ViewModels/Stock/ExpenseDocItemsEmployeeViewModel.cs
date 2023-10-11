@@ -162,7 +162,13 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void ChangeProtectionTools(ExpenseItem item, ProtectionTools protectionTools) {
+			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools> { protectionTools };
+			if (item.ProtectionTools != null) 
+				protectionToolsForUpdate.Add(item.ProtectionTools);
+			
 			item.ProtectionTools = protectionTools;
+			item.EmployeeCardItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+			Entity.Employee.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
 		
 		public void MakeEmptyProtectionTools(ExpenseItem item) {
