@@ -160,7 +160,9 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
+    <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
+    <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
@@ -433,6 +435,10 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureProtectionToolsView.cs" />
     <Compile Include="Views\Postomats\PostomatDocumentView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentView.cs" />
+    <Compile Include="Views\ClothingService\ClothingReceiptView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingReceiptView.cs" />
+    <Compile Include="Views\ClothingService\BarcodeInfoView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.ClothingService.BarcodeInfoView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -672,6 +678,7 @@
     <Folder Include="Models\WearLk\" />
     <Folder Include="Views\Regulations\NormChildren\" />
     <Folder Include="Views\Postomats\" />
+    <Folder Include="Views\ClothingService\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

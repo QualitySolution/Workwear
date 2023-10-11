@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -14,12 +16,17 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
+		private IInteractiveService interactive; 
 		public ClaimsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			Title = "Обслуживание одежды";
+			
+			CreateActions();
 		}
 
 		protected override IQueryOver<ServiceClaim> ItemsQuery(IUnitOfWork uow) {
@@ -64,6 +71,50 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				)
 				.TransformUsing(Transformers.AliasToBean<ClaimsJournalNode>());
 		}
+
+		#region Действия
+		private void CreateActions() {
+			NodeActionsList.Clear();
+			
+			var receiveAction = new JournalAction("Принять в стирку",
+				selected => true,
+				selected => true,
+				selected => Receive());
+			NodeActionsList.Add(receiveAction);
+			
+			var cancelAction = new JournalAction("Отменить получение",
+				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService,
+				selected => true,
+				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
+			NodeActionsList.Add(cancelAction);
+			
+			var changeStateAction = new JournalAction("Выполнить движение",
+				selected => true,
+				selected => true,
+				selected => ChangeState());
+			NodeActionsList.Add(changeStateAction);
+		}
+
+		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
+				var claim = uow.GetById<ServiceClaim>(selected.First().Id);
+				if(claim.States.Count != 1)
+					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
+				uow.Delete(claim.States.First());
+				uow.Delete(claim);
+				uow.Commit();
+			}
+		}
+
+		private void ChangeState() {
+			throw new NotImplementedException();
+		}
+
+		private void Receive() {
+			NavigationManager.OpenViewModel<ClothingReceiptViewModel>(this);
+		}
+
+		#endregion
 	}
 
 	public class ClaimsJournalNode {

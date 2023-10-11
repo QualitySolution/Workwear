@@ -20,6 +20,13 @@ namespace Workwear.Domain.ClothingService {
 			set { SetField(ref barcode, value, () => Barcode); }
 		}
 		
+		private bool isClosed;
+		[Display(Name = "Закрыта")]
+		public virtual bool IsClosed {
+			get { return isClosed; }
+			set { SetField(ref isClosed, value, () => IsClosed); }
+		}
+		
 		private bool needForRepair;
 		[Display(Name = "Требуется ремонт")]
 		public virtual bool NeedForRepair {
