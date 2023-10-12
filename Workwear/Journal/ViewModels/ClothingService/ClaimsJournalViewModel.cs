@@ -107,7 +107,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		}
 
 		private void ChangeState() {
-			throw new NotImplementedException();
+			NavigationManager.OpenViewModel<ClothingMoveViewModel>(this);
 		}
 
 		private void Receive() {
