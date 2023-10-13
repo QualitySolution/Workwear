@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
+using QS.HistoryLog;
 
 namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, NominativePlural = "документы постомата", Nominative = "документ постомата")]
+	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
 		public virtual int Id { get; set; }

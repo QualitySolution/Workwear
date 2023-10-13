@@ -1,14 +1,18 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using NPOI.SS.Formula.Functions;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постомата", Nominative = "строка документа постомата")]
-	public class PostomatDocumentItem : PropertyChangedBase{
+	[HistoryTrace]
+	public class PostomatDocumentItem : PropertyChangedBase, IDomainObject{
 		#region Cвойства
 		public virtual int Id { get; set; }
 		
+		[IgnoreHistoryTrace]
 		public virtual PostomatDocument Document { get; set; }
 		
 		private Nomenclature nomenclature;
@@ -68,6 +72,9 @@ namespace Workwear.Domain.Postomats {
 			}
 		}
 
+		public virtual string Title => Delta > 0 
+			? $"Загрузка {Nomenclature.Name} х {Delta} в ячейку {Location.Title}"
+		    : $"Выдача {Nomenclature.Name} х {-Delta} из ячейки {Location.Title}";
 		#endregion
 	}
 	

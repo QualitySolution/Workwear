@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using QS.Project.Domain;
@@ -47,6 +48,9 @@ namespace Workwear.Domain.ClothingService {
 			get => comment;
 			set => SetField(ref comment, value);
 		}
+		#endregion
+		#region Расчетные
+		public virtual string Title => $"Операция {State.GetEnumTitle()} заявки №{Claim.Id} от {OperationTime:d}";
 		#endregion
 	}
 

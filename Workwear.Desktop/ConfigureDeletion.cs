@@ -1,9 +1,11 @@
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Communications;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Postomats;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
@@ -21,6 +23,12 @@ namespace Workwear
 		{
 			logger.Info ("Настройка параметров удаления...");
 
+			#region Обслуживание спецодежды
+			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
+				.AddDeleteDependence<StateOperation>(x => x.Claim);
+
+			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
+			#endregion
 			#region Связь
 			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
 			#endregion
@@ -127,6 +135,12 @@ namespace Workwear
 				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation);
 
 			#endregion
+			#region Постоматы
+			DeleteConfig.AddHibernateDeleteInfo<PostomatDocument>()
+				.AddDeleteDependence<PostomatDocumentItem>(x => x.Document);
+
+			DeleteConfig.AddHibernateDeleteInfo<PostomatDocumentItem>();
+			#endregion
 			#region Нормы выдачи
 
 			DeleteConfig.AddHibernateDeleteInfo<Norm>()
@@ -201,7 +215,9 @@ namespace Workwear
 			#endregion
 			#region Склад
 			DeleteConfig.AddHibernateDeleteInfo<Barcode>()
-				.AddDeleteDependence<BarcodeOperation>(x => x.Barcode);
+				.AddDeleteDependence<BarcodeOperation>(x => x.Barcode)
+				.AddDeleteDependence<PostomatDocumentItem>(x => x.Barcode)
+				.AddDeleteDependence<ServiceClaim>(x => x.Barcode);
 			
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType>()
 				.AddDeleteDependence<Nomenclature>(x => x.Type)
@@ -225,16 +241,18 @@ namespace Workwear
 				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
-				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
+				.AddDeleteDependence<Barcode>(x => x.Nomenclature)
 				.AddDeleteDependence<CollectiveExpenseItem> (x => x.Nomenclature)
-				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
-				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
-				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
-				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
+				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
+				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
-				.AddDeleteDependence<Barcode>(x => x.Nomenclature);
+				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
+				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
+				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
+				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
+				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<Owner>()
 				.AddClearDependence<WarehouseOperation>(x => x.Owner);
