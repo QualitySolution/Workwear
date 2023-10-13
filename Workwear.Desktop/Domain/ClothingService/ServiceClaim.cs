@@ -48,5 +48,10 @@ namespace Workwear.Domain.ClothingService {
 			set { SetField(ref states, value, () => States); }
 		}
 		#endregion
+
+		#region Вычисляемые
+		public virtual string Title => $"Заявка на обслуживание №{Id}";
+
+		#endregion
 	}
 }

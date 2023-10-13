@@ -1,14 +1,28 @@
-﻿using QS.DomainModel.UoW;
+﻿using System;
+using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 
-namespace workwear.ViewModels.ClothingService {
+namespace Workwear.ViewModels.ClothingService {
 	public class ServiceClaimViewModel : EntityDialogViewModelBase<ServiceClaim> {
-		public ServiceClaimViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
-		{
+		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
+
+		public ServiceClaimViewModel(
+			IEntityUoWBuilder uowBuilder,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			BarcodeInfoViewModel barcodeInfoViewModel,
+			INavigationManager navigation,
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
+			BarcodeInfoViewModel.Barcode = Entity.Barcode;
 		}
+
+		#region Sensitive
+		public bool CanEdit => !Entity.IsClosed;
+		#endregion
 	}
 }

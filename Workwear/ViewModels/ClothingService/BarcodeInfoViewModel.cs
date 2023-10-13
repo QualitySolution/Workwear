@@ -25,12 +25,10 @@ namespace Workwear.ViewModels.ClothingService {
 						if(barcode != null) {
 							LabelInfo = null;
 							Barcode = barcode;
-							Employee = barcodeRepository.GetLastEmployeeFor(barcode);
 						}
 						else {
 							LabelInfo = "Штрихкод не найден";
 							Barcode = null;
-							Employee = null;
 						}
 					}
 				}
@@ -47,7 +45,11 @@ namespace Workwear.ViewModels.ClothingService {
 		[PropertyChangedAlso(nameof(VisibleBarcode))]
 		public virtual Barcode Barcode {
 			get => barcode;
-			set { SetField(ref barcode, value); }
+			set {
+				if(SetField(ref barcode, value)) {
+					Employee = barcode != null ? barcodeRepository.GetLastEmployeeFor(barcode) : null;
+				}
+			}
 		}
 		
 		private EmployeeCard employee;

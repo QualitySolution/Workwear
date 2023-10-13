@@ -442,6 +442,8 @@
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.BarcodeInfoView.cs" />
     <Compile Include="Views\ClothingService\ClothingMoveView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingMoveView.cs" />
+    <Compile Include="Views\ClothingService\ServiceClaimView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceClaimView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
