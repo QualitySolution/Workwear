@@ -73,6 +73,7 @@ namespace workwear.Journal.ViewModels.Stock
 			MeasurementUnits unitsAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
+			Owner ownerAlias = null;
 
 			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias)
 				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
@@ -92,6 +93,7 @@ namespace workwear.Journal.ViewModels.Stock
 				queryStock.Where(x => x.WearSize == Filter.StockPosition.WearSize);
 				queryStock.Where(x => x.Height == Filter.StockPosition.Height);
 				queryStock.Where(x => x.WearPercent == Filter.StockPosition.WearPercent);
+				queryStock.Where(x => x.Owner == Filter.StockPosition.Owner);
 			}
 
 			if(Filter.Nomenclature != null)
@@ -102,7 +104,19 @@ namespace workwear.Journal.ViewModels.Stock
 
 			if(Filter.Height != null)
 				queryStock.Where(x => x.Height.Id == Filter.Height.Id);
-
+			
+			if(Filter.Owner != null)
+				switch(Filter.Owner.Id) {
+					case -1: //все
+						break;
+					case 0: //без собственника 
+						queryStock.Where(x => x.Owner == null);
+						break;
+					default: //с указаным сбственником
+						queryStock.Where(x => x.Owner.Id == Filter.Owner.Id);
+						break;
+				}
+			
 			IProjection receiptProjection, expenseProjection;
 			if(Filter.Warehouse != null) {
 				receiptProjection = Projections.Conditional(
@@ -155,6 +169,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
 				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
+				.JoinAlias(() => warehouseOperationAlias.Owner,  () => ownerAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -198,6 +213,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
 					.SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					.SelectGroup(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
 				);
 			}
 			else {
@@ -211,6 +227,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
 					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+					.Select(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 					//Ссылки
 					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
@@ -270,6 +287,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Amount { get; set; }
 		public string WearSizeName { get; set; }
 		public string HeightName { get; set; }
+		public string OwnerName { get; set; }
 		public string NomenclatureName { get; set; }
 		public string AmountText => $"{Direction} {Amount} {UnitsName}";
 		public string OperationTimeText => OperationTime.ToString("g");

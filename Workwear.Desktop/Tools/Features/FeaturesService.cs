@@ -127,6 +127,10 @@ namespace Workwear.Tools.Features
 						if(ProductEdition != 0 && ProductEdition != 3)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
+					case WorkwearFeature.Postomats:
+						if(ProductEdition != 0 && ProductEdition != 3)
+							return false;
+						return AvailableCloudFeatures.Contains("postomats");
 				}
 			}
 
@@ -134,6 +138,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
+				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
@@ -185,6 +190,8 @@ namespace Workwear.Tools.Features
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
+		[Display(Name = "Обслуживание спецодежды")]
+		ClothingService,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
@@ -202,6 +209,9 @@ namespace Workwear.Tools.Features
 		[IsCloudFeature]
 		[Display(Name = "Отзывы")]
 		Ratings,
+		[IsCloudFeature]
+		[Display(Name = "Постоматы")]
+		Postomats,
 		#endregion
 		#endregion
 		#region Спецредакции

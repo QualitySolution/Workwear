@@ -7,6 +7,7 @@ using QS.BaseParameters;
 using QS.BusinessCommon.Domain;
 using QS.BusinessCommon;
 using QS.Cloud.Client;
+using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
@@ -168,6 +169,7 @@ namespace workwear
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlExceptionAccessDenied>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
+			containerBuilder.RegisterType<NHibernateStaleObjectStateException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
@@ -325,12 +327,15 @@ namespace workwear
 			#endregion
 			
 			#region Облачные сервисы
-			builder.Register(c => new CloudClientService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new LkUserManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new MessagesService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new NotificationManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new ClaimsManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
-			builder.Register(c => new RatingManagerService(QSSaaS.Session.SessionId)).AsSelf().SingleInstance();
+
+			builder.Register(c => new SessionInfoProvider(QSSaaS.Session.SessionId)).As<ISessionInfoProvider>().SingleInstance();
+			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
+			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();
+			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

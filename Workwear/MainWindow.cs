@@ -44,6 +44,7 @@ using Workwear.Models.Import.Norms;
 using Workwear.Models.Import;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
+using Workwear.Tools.User;
 using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
@@ -51,8 +52,10 @@ using Workwear.ViewModels.Import;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Tools;
 using Workwear.ViewModels.User;
+using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
@@ -61,10 +64,8 @@ using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
-using Workwear.Tools.User;
 
-public partial class MainWindow : Gtk.Window
-{
+public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
 
 	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
@@ -208,41 +209,42 @@ public partial class MainWindow : Gtk.Window
 		}
 	}
 
-	private void CreateDefaultWarehouse()
-	{
+	private void CreateDefaultWarehouse() {
 		Warehouse warehouse = new Warehouse();
 		warehouse.Name = "Основной склад";
 		UoW.Session.Save(warehouse);
 	}
 
-	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e)
-	{
+	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e) {
 		if(e.ViewModel != null)
 			MainTelemetry.AddCount(e.ViewModel.GetType().Name.Replace("ViewModel", ""));
 	}
 
 	#region Workwear featrures
-	private void DisableFeatures()
-	{
-		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
-		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
-		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
-		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+	private void DisableFeatures() {
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
-		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
-		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
-		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
-		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications) 
-		                         || FeaturesService.Available(WorkwearFeature.Claims) 
-		                         || FeaturesService.Available(WorkwearFeature.Ratings);
-		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionClothingService.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
+		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
+		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
+		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
+		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
+		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+
+		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
+						 || FeaturesService.Available(WorkwearFeature.Claims)
+						 || FeaturesService.Available(WorkwearFeature.Ratings)
+						 || FeaturesService.Available(WorkwearFeature.Postomats);
 
 		#region Для спецпошива
 		ActionPay.Visible = false;
@@ -854,5 +856,13 @@ public partial class MainWindow : Gtk.Window
 	protected void OnActionChannelStableToggled(object sender, EventArgs e) {
 		if(ActionChannelStable.Active)
 			SetChannel(UpdateChannel.Stable);
+	}
+
+	protected void OnActionPostomatDocsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<PostomatDocumentsJournalViewModel>(null);
+	}
+
+	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
 	}
 }

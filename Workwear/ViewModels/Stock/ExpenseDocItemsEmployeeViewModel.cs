@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Report.ViewModels;
 using QS.Report;
@@ -21,6 +23,9 @@ using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -70,6 +75,8 @@ namespace Workwear.ViewModels.Stock
 
 		#region Поля
 		public IObservableList<ExpenseItem> ObservableItems => Entity.Items;
+		
+		public List<ProtectionTools> EmployeesProtectionToolsList  => Entity.Employee.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		private string sum;
 		public virtual string Sum {
@@ -125,11 +132,49 @@ namespace Workwear.ViewModels.Stock
 		public void AddNomenclature(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
-				expenseEmployeeViewModel.Entity.AddItem(node.GetStockPosition(expenseEmployeeViewModel.UoW));
+				var stockPosition = node.GetStockPosition(expenseEmployeeViewModel.UoW);
+				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
+							.Contains(stockPosition.Nomenclature))?.ActiveNormItem;
+				var item = expenseEmployeeViewModel.Entity.AddItem(stockPosition);
+				if(normItem != null
+				   && interactive.Question($"Считать \"{stockPosition.Nomenclature.Name}\"," +
+				                           $" как выданное по норме \"{normItem.ProtectionTools.Name}\"?")) {
+					item.EmployeeCardItem = Entity.Employee.WorkwearItems
+						.FirstOrDefault(x => x.ProtectionTools == normItem.ProtectionTools);
+					item.ProtectionTools = normItem.ProtectionTools;
+					item.UpdateOperations(UoW,BaseParameters,interactive);
+				}
 			}
 			CalculateTotal();
 		}
 
+		public void OpenJournalChangeProtectionTools(ExpenseItem item) {
+			var selectJournal = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+			
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = item;
+			selectJournal.ViewModel.OnSelectResult += ChangeProtectionToolsFromJournal;
+		}
+		private void ChangeProtectionToolsFromJournal(object sender, JournalSelectedEventArgs e) {
+			var page = navigation.FindPage((DialogViewModelBase)sender);
+			var item = page.Tag as ExpenseItem;
+			ChangeProtectionTools(item, UoW.GetById<ProtectionTools>(e.SelectedObjects.First().GetId()));
+		}
+
+		public void ChangeProtectionTools(ExpenseItem item, ProtectionTools protectionTools) {
+			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools> { protectionTools };
+			if (item.ProtectionTools != null) 
+				protectionToolsForUpdate.Add(item.ProtectionTools);
+			
+			item.ProtectionTools = protectionTools;
+			item.EmployeeCardItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
+			Entity.Employee.UpdateNextIssue(protectionToolsForUpdate.ToArray());
+		}
+		
+		public void MakeEmptyProtectionTools(ExpenseItem item) {
+			item.ProtectionTools = null;
+		}
+		
 		public void AddNomenclatureProtectionTools(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			var page = navigation.FindPage((DialogViewModelBase)sender);
