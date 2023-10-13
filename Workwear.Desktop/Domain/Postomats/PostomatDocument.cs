@@ -7,7 +7,10 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 
 namespace Workwear.Domain.Postomats {
-	[Appellative(Gender = GrammaticalGender.Masculine, NominativePlural = "документы постомата", Nominative = "документ постомата")]
+	[Appellative(Gender = GrammaticalGender.Masculine, 
+		NominativePlural = "документы постомата",
+		Nominative = "документ постомата",
+		Genitive = "документ постомата")]
 	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
