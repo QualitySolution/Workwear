@@ -161,6 +161,8 @@
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
+    <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeGroupViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
@@ -427,6 +429,12 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormPostsView.cs" />
     <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureProtectionToolsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureProtectionToolsView.cs" />
+    <Compile Include="Views\Company\EmployeeGroupView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmploeeInGroupsView.cs" />
+    <Compile Include="Views\Company\EmployeeGroupItemsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupItemsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
