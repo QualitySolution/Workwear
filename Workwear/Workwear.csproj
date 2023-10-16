@@ -432,9 +432,9 @@
     <Compile Include="Views\Company\EmployeeGroupView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupView.cs" />
     <Compile Include="Views\Company\EmployeeChildren\EmploeeInGroupsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView.cs" />
     <Compile Include="Views\Company\EmployeeGroupItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupItemsView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
