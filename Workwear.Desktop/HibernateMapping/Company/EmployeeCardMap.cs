@@ -14,8 +14,8 @@ namespace Workwear.HibernateMapping.Company
 			else
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
 			
-			OptimisticLock.Version();
-			Version(x => x.LastUpdate).Column("last_update");
+			//OptimisticLock.Version();
+			//Version(x => x.LastUpdate).Column("last_update");
 
 			Map(x => x.CardNumber).Column("card_number");
 			Map(x => x.PersonnelNumber).Column("personnel_number");
