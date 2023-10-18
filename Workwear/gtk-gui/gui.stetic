@@ -5985,6 +5985,12 @@
         <property name="Group">UpdateChannel</property>
         <signal name="Toggled" handler="OnActionChannelStableToggled" />
       </action>
+      <action id="ActionEmployeeGroup">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Группы сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Группы сотрудников</property>
+        <signal name="Activated" handler="OnActionEmployeeGroupActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6074,6 +6080,7 @@
                 <node type="Menuitem" action="ActionVacationTypes" />
                 <node type="Menuitem" action="ActionCostCenter" />
                 <node type="Menuitem" action="ActionLeaders" />
+                <node type="Menuitem" action="ActionEmployeeGroup" />
               </node>
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />
@@ -23815,7 +23822,7 @@
             <child>
               <widget class="Gtk.Table" id="table1">
                 <property name="MemberName" />
-                <property name="NRows">3</property>
+                <property name="NRows">2</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
@@ -23835,8 +23842,8 @@
                     </child>
                   </widget>
                   <packing>
-                    <property name="TopAttach">2</property>
-                    <property name="BottomAttach">3</property>
+                    <property name="TopAttach">1</property>
+                    <property name="BottomAttach">2</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">False</property>
@@ -23849,24 +23856,6 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label1">
-                    <property name="MemberName" />
-                    <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Код:</property>
-                  </widget>
-                  <packing>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
                   <widget class="Gtk.Label" id="label26">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
@@ -23874,8 +23863,8 @@
                     <property name="LabelProp" translatable="yes">Комментарий:</property>
                   </widget>
                   <packing>
-                    <property name="TopAttach">2</property>
-                    <property name="BottomAttach">3</property>
+                    <property name="TopAttach">1</property>
+                    <property name="BottomAttach">2</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
@@ -23894,8 +23883,6 @@
                     <property name="LabelProp" translatable="yes">Название группы:</property>
                   </widget>
                   <packing>
-                    <property name="TopAttach">1</property>
-                    <property name="BottomAttach">2</property>
                     <property name="AutoSize">True</property>
                     <property name="XOptions">Fill</property>
                     <property name="YOptions">Fill</property>
@@ -23914,27 +23901,6 @@
                     <property name="IsEditable">True</property>
                     <property name="MaxLength">200</property>
                     <property name="InvisibleChar">●</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">1</property>
-                    <property name="BottomAttach">2</property>
-                    <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabelId">
-                    <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">ylabel1</property>
                   </widget>
                   <packing>
                     <property name="LeftAttach">1</property>

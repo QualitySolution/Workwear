@@ -25,7 +25,7 @@ namespace Workwear.Domain.Company {
 		}
 		
 		private string comment;
-		[Display(Name = "Коментарийц")]
+		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get { return comment; }
 			set { SetField(ref comment, value); }

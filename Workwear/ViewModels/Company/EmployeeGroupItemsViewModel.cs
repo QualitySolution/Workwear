@@ -1,27 +1,24 @@
-﻿using QS.DomainModel.UoW;
+﻿using QS.Dialog;
 using QS.Navigation;
-using QS.Project.Domain;
-using QS.Validation;
-using QS.ViewModels.Dialog;
-using Workwear.Domain.Company;
-using Workwear.Views.Company;
-using Workwear.ViewModels.Stock;
+using QS.ViewModels;
 
 
 namespace Workwear.ViewModels.Company {
-	public class EmployeeGroupItemsViewModel : EntityDialogViewModelBase<EmployeeGroupItem>, ISelectItem {
+	public class EmployeeGroupItemsViewModel : ViewModelBase{
 		public EmployeeGroupItemsViewModel(
-			IEntityUoWBuilder uowBuilder, 
-			IUnitOfWorkFactory unitOfWorkFactory, 
-			INavigationManager navigation, 
-			IValidator validator = null,
-			UnitOfWorkProvider unitOfWorkProvider = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
-		{
-		}
+			EmployeeGroupViewModel parent, 
+			INavigationManager navigation) {
+				this.parent = parent;
+				this.navigation = navigation;
+			}
 
+		private readonly EmployeeGroupViewModel parent;
+		private readonly INavigationManager navigation;
+		
 		public void SelectItem(int id) {
 			throw new System.NotImplementedException();
 		}
+
+		public void OnShow() { }
 	}
 }

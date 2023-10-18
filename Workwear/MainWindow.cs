@@ -850,4 +850,8 @@ public partial class MainWindow : Gtk.Window
 		if(ActionChannelStable.Active)
 			SetChannel(UpdateChannel.Stable);
 	}
+
+	protected void OnActionEmployeeGroupActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<EmployeeGroupJournalViewModel>(null);
+	}
 }

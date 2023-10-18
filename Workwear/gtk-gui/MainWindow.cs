@@ -193,6 +193,8 @@ public partial class MainWindow
 
 	private global::Gtk.RadioAction ActionChannelStable;
 
+	private global::Gtk.Action ActionEmployeeGroup;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -521,6 +523,9 @@ public partial class MainWindow
 		this.ActionChannelStable.Group = this.ActionChannelCurrent.Group;
 		this.ActionChannelStable.ShortLabel = global::Mono.Unix.Catalog.GetString("Стабильный");
 		w1.Add(this.ActionChannelStable, null);
+		this.ActionEmployeeGroup = new global::Gtk.Action("ActionEmployeeGroup", global::Mono.Unix.Catalog.GetString("Группы сотрудников"), null, null);
+		this.ActionEmployeeGroup.ShortLabel = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
+		w1.Add(this.ActionEmployeeGroup, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -577,29 +582,30 @@ public partial class MainWindow
 				"on=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name" +
 				"=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostC" +
 				"enter\' action=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionL" +
-				"eaders\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name" +
-				"=\'Action10\' action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><sep" +
-				"arator/><menuitem name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=" +
-				"\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageA" +
-				"nnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\' act" +
-				"ion=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssued" +
-				"SheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssu" +
-				"edSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'Act" +
-				"ionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'Actio" +
-				"nAmountIssuedWear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem" +
-				" name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action" +
-				"=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHi" +
-				"story\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem " +
-				"name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'Actio" +
-				"nChannelStable\' action=\'ActionChannelStable\'/></menu><menuitem name=\'ActionUpdat" +
-				"e\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Action" +
-				"Site\'/><menuitem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu na" +
-				"me=\'Action38\' action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><me" +
-				"nuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'Ac" +
-				"tionTwitter\' action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'Acti" +
-				"onYouTube\'/></menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><m" +
-				"enuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutActi" +
-				"on\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"eaders\'/><menuitem name=\'ActionEmployeeGroup\' action=\'ActionEmployeeGroup\'/></me" +
+				"nu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' a" +
+				"ction=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menu" +
+				"item name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionReques" +
+				"tSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' ac" +
+				"tion=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\' action=\'Action\'>" +
+				"<menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/" +
+				"><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSummar" +
+				"y\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmpl" +
+				"oyeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmountIssued" +
+				"Wear\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAc" +
+				"tion\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdmin" +
+				"Guide\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu" +
+				" name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionC" +
+				"hannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStabl" +
+				"e\' action=\'ActionChannelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'Ac" +
+				"tionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menui" +
+				"tem name=\'ActionOpenReformal\' action=\'ActionOpenReformal\'/><menu name=\'Action38\'" +
+				" action=\'Action38\'><menuitem name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'" +
+				"ActionOdnoklasniki\' action=\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' " +
+				"action=\'ActionTwitter\'/><menuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/><" +
+				"/menu><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=" +
+				"\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'a" +
+				"boutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -808,5 +814,6 @@ public partial class MainWindow
 		this.ActionCostCenter.Activated += new global::System.EventHandler(this.OnActionCostCenterActivated);
 		this.ActionChannelCurrent.Toggled += new global::System.EventHandler(this.OnActionChannelCurrentToggled);
 		this.ActionChannelStable.Toggled += new global::System.EventHandler(this.OnActionChannelStableToggled);
+		this.ActionEmployeeGroup.Activated += new global::System.EventHandler(this.OnActionEmployeeGroupActivated);
 	}
 }
