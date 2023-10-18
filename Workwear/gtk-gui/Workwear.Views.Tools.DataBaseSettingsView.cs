@@ -48,7 +48,7 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.GtkWidgets.yLabel ylabel5;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel6;
+		private global::Gamma.GtkWidgets.yLabel ylabelCollectiveIssueWithPersonal;
 
 		protected virtual void Build()
 		{
@@ -58,6 +58,7 @@ namespace Workwear.Views.Tools
 			this.Name = "Workwear.Views.Tools.DataBaseSettingsView";
 			// Container child Workwear.Views.Tools.DataBaseSettingsView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox2 = new global::Gtk.HBox();
@@ -307,12 +308,12 @@ namespace Workwear.Views.Tools
 			w22.XOptions = ((global::Gtk.AttachOptions)(4));
 			w22.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ylabel6 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel6.Name = "ylabel6";
-			this.ylabel6.Xalign = 1F;
-			this.ylabel6.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллективной:");
-			this.table1.Add(this.ylabel6);
-			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel6]));
+			this.ylabelCollectiveIssueWithPersonal = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelCollectiveIssueWithPersonal.Name = "ylabelCollectiveIssueWithPersonal";
+			this.ylabelCollectiveIssueWithPersonal.Xalign = 1F;
+			this.ylabelCollectiveIssueWithPersonal.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллективной:");
+			this.table1.Add(this.ylabelCollectiveIssueWithPersonal);
+			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelCollectiveIssueWithPersonal]));
 			w23.TopAttach = ((uint)(6));
 			w23.BottomAttach = ((uint)(7));
 			w23.XOptions = ((global::Gtk.AttachOptions)(4));
