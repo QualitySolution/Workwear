@@ -7,6 +7,7 @@ using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 
@@ -28,6 +29,7 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			ProtectionToolsEntry = builder.ForEntity<ProtectionTools>().MakeByType().Finish();
 
 			excludeInVacation = true;
 		}
@@ -35,6 +37,7 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
+					{"protection_tools_id", ProtectionToolsEntry.Entity?.Id ?? -1 },
 					{"issue_type", IssueType?.ToString() },
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
@@ -87,6 +90,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public EntityEntryViewModel<ProtectionTools> ProtectionToolsEntry;
 		#endregion
 
 		public void Dispose()

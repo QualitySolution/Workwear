@@ -28,6 +28,7 @@ namespace workwear.ReportParameters.Views
 			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			entityProtectionTools.ViewModel = ViewModel.ProtectionToolsEntry;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
