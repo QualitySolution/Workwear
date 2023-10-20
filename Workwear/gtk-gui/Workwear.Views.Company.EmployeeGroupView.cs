@@ -28,20 +28,6 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label label9;
 
-		private global::Gtk.VBox vbox2;
-
-		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
-
-		private global::Gamma.GtkWidgets.yTreeView ytreeItems;
-
-		private global::Gtk.HBox hbox6;
-
-		private global::Gtk.Button buttonAddItem;
-
-		private global::Gtk.Button buttonRemoveItem;
-
-		private global::Gtk.Label label10;
-
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -50,6 +36,7 @@ namespace Workwear.Views.Company
 			this.Name = "Workwear.Views.Company.EmployeeGroupView";
 			// Container child Workwear.Views.Company.EmployeeGroupView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox4 = new global::Gtk.HBox();
@@ -92,7 +79,7 @@ namespace Workwear.Views.Company
 			this.tabs = new global::Gamma.GtkWidgets.yNotebook();
 			this.tabs.CanFocus = true;
 			this.tabs.Name = "tabs";
-			this.tabs.CurrentPage = 1;
+			this.tabs.CurrentPage = 0;
 			// Container child tabs.Gtk.Notebook+NotebookChild
 			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(2)), false);
 			this.table1.Name = "table1";
@@ -156,72 +143,9 @@ namespace Workwear.Views.Company
 			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Основное");
 			this.tabs.SetTabLabel(this.table1, this.label9);
 			this.label9.ShowAll();
-			// Container child tabs.Gtk.Notebook+NotebookChild
-			this.vbox2 = new global::Gtk.VBox();
-			this.vbox2.Name = "vbox2";
-			this.vbox2.Spacing = 6;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
-			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
-			this.ytreeItems = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeItems.CanFocus = true;
-			this.ytreeItems.Name = "ytreeItems";
-			this.GtkScrolledWindow1.Add(this.ytreeItems);
-			this.vbox2.Add(this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow1]));
-			w13.Position = 0;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.hbox6 = new global::Gtk.HBox();
-			this.hbox6.Name = "hbox6";
-			this.hbox6.Spacing = 6;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonAddItem = new global::Gtk.Button();
-			this.buttonAddItem.CanFocus = true;
-			this.buttonAddItem.Name = "buttonAddItem";
-			this.buttonAddItem.UseUnderline = true;
-			this.buttonAddItem.Label = global::Mono.Unix.Catalog.GetString("Добавить");
-			global::Gtk.Image w14 = new global::Gtk.Image();
-			w14.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddItem.Image = w14;
-			this.hbox6.Add(this.buttonAddItem);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonAddItem]));
-			w15.Position = 0;
-			w15.Expand = false;
-			w15.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonRemoveItem = new global::Gtk.Button();
-			this.buttonRemoveItem.Sensitive = false;
-			this.buttonRemoveItem.CanFocus = true;
-			this.buttonRemoveItem.Name = "buttonRemoveItem";
-			this.buttonRemoveItem.UseUnderline = true;
-			this.buttonRemoveItem.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w16 = new global::Gtk.Image();
-			w16.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonRemoveItem.Image = w16;
-			this.hbox6.Add(this.buttonRemoveItem);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonRemoveItem]));
-			w17.Position = 1;
-			w17.Expand = false;
-			w17.Fill = false;
-			this.vbox2.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox6]));
-			w18.Position = 1;
-			w18.Expand = false;
-			w18.Fill = false;
-			this.tabs.Add(this.vbox2);
-			global::Gtk.Notebook.NotebookChild w19 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.vbox2]));
-			w19.Position = 1;
-			// Notebook tab
-			this.label10 = new global::Gtk.Label();
-			this.label10.Name = "label10";
-			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Участники группы");
-			this.tabs.SetTabLabel(this.vbox2, this.label10);
-			this.label10.ShowAll();
 			this.vbox1.Add(this.tabs);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tabs]));
-			w20.Position = 1;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tabs]));
+			w12.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

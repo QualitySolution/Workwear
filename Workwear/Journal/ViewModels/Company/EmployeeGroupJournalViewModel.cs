@@ -1,4 +1,6 @@
-﻿using NHibernate;
+﻿using System;
+using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -25,7 +27,14 @@ namespace workwear.Journal.ViewModels.Company {
 		protected override IQueryOver<EmployeeGroup> ItemsQuery(IUnitOfWork uow) {
 			{
 				EmployeeGroupJournalNode resultAlias = null;
-				return uow.Session.QueryOver<EmployeeGroup>()
+				EmployeeGroup employeeGroupAlias = null;
+				EmployeeGroupItem itemAlias = null;
+                				
+				var itemsSubQuery = QueryOver.Of<EmployeeGroupItem>(() => itemAlias)
+					.Where(() => itemAlias.Group.Id == employeeGroupAlias.Id)
+					.ToRowCountQuery();
+				
+				return uow.Session.QueryOver<EmployeeGroup>(() => employeeGroupAlias)
 					.Where(GetSearchCriterion<EmployeeGroup>(
 						x => x.Id, 
 						x => x.Name,
@@ -35,9 +44,7 @@ namespace workwear.Journal.ViewModels.Company {
 						.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 						.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
-//Проверить				
-						//
-						//.Select(x => x.Items.Count).WithAlias(() => resultAlias.Count)
+						.SelectSubQuery(itemsSubQuery).WithAlias(() => resultAlias.Count)
 					).OrderBy(x => x.Id).Asc
 					.TransformUsing(Transformers.AliasToBean<EmployeeGroupJournalNode>());
 			}
@@ -49,6 +56,6 @@ namespace workwear.Journal.ViewModels.Company {
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Comment { get; set; }
-		public string Count = "0"; //{ get; set; }
+		public int Count { get; set; }
 	}
 }

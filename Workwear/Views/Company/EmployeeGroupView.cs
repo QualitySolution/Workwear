@@ -18,8 +18,8 @@ namespace Workwear.Views.Company {
 		{
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
-			ytreeItems.ItemsDataSource = Entity.Items;
 			
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.ItemsViewModel), "Сотрудники");
 			tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 		}
 	}

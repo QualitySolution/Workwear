@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 
@@ -11,8 +12,16 @@ namespace Workwear.Domain.Company {
 	[HistoryTrace]
 	public class EmployeeGroupItem : PropertyChangedBase, IDomainObject{
 		
-		#region Свойства
-
+		public EmployeeGroupItem(){}
+		
+		#region Генерируемые Свойства
+		public virtual string FullName => $"{Employee?.LastName} {Employee?.FirstName} {Employee?.Patronymic}".Trim();
+		public virtual string EmployeePersonnelNumber => Employee?.PersonnelNumber;
+		public virtual string CardNumberText => Employee?.CardNumber ?? Employee?.Id.ToString();
+		public virtual bool Dismiss => Employee?.DismissDate != null;
+		#endregion
+		
+		#region Хранимые Свойства
 		public virtual int Id { get; set; }
 
 		private EmployeeGroup group;
@@ -30,10 +39,10 @@ namespace Workwear.Domain.Company {
 		}
 		
 		private string comment;
-		[Display(Name = "Коментарийц")]
+		[Display(Name = "Коментарий")]
 		public virtual string Comment {
-			get { return comment; }
-			set { SetField(ref comment, value); }
+			get => String.IsNullOrWhiteSpace(comment) ? null : comment;  //Чтобы в базе хранить null, а не пустую строку. 
+			set => SetField(ref comment, value);
 		}
 		#endregion
 	}

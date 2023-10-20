@@ -163,8 +163,8 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
 					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
 						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
-						.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
-						.AddColumn("Кол-во").AddTextRenderer(node => node.Count).SearchHighlight()
+						.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).SearchHighlight()
+						.AddColumn("Кол-во").AddReadOnlyTextRenderer(node => node.Count.ToString()).SearchHighlight()
 						.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 						.Finish()
 			);

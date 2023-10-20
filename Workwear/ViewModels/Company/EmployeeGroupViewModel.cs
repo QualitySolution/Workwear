@@ -27,11 +27,7 @@ namespace Workwear.ViewModels.Company {
 		private int currentTab = 1;
 		public virtual int CurrentTab {
 			get => currentTab;
-			set {
-				SetField(ref currentTab, value);
-				if(currentTab == 2)
-					ItemsViewModel.OnShow();
-			}
+			set => SetField(ref currentTab, value);
 		}
 		#endregion
 	}

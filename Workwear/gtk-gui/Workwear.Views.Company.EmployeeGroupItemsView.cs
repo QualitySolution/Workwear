@@ -16,6 +16,8 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Button buttonRemove;
 
+		private global::Gtk.Button buttonтOpen;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -61,7 +63,7 @@ namespace Workwear.Views.Company
 			this.buttonRemove.CanFocus = true;
 			this.buttonRemove.Name = "buttonRemove";
 			this.buttonRemove.UseUnderline = true;
-			this.buttonRemove.Label = global::Mono.Unix.Catalog.GetString("Убрать");
+			this.buttonRemove.Label = global::Mono.Unix.Catalog.GetString("Исключить");
 			global::Gtk.Image w5 = new global::Gtk.Image();
 			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
 			this.buttonRemove.Image = w5;
@@ -69,11 +71,26 @@ namespace Workwear.Views.Company
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonRemove]));
 			w6.Position = 1;
 			w6.Expand = false;
+			// Container child hbox5.Gtk.Box+BoxChild
+			this.buttonтOpen = new global::Gtk.Button();
+			this.buttonтOpen.Sensitive = false;
+			this.buttonтOpen.CanFocus = true;
+			this.buttonтOpen.Name = "buttonтOpen";
+			this.buttonтOpen.UseUnderline = true;
+			this.buttonтOpen.Label = global::Mono.Unix.Catalog.GetString("Открыть сотрудников");
+			global::Gtk.Image w7 = new global::Gtk.Image();
+			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_new-bcard", global::Gtk.IconSize.Menu);
+			this.buttonтOpen.Image = w7;
+			this.hbox5.Add(this.buttonтOpen);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonтOpen]));
+			w8.Position = 2;
+			w8.Expand = false;
+			w8.Fill = false;
 			this.vbox1.Add(this.hbox5);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
-			w7.Position = 1;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
