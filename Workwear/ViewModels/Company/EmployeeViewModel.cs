@@ -537,7 +537,7 @@ namespace Workwear.ViewModels.Company
 
 		#region Размеры
 		public void SetSizes(Size size, SizeType sizeType) {
-			var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType == sizeType);
+			var employeeSize = Entity.Sizes.FirstOrDefault(x => x.SizeType.IsSame(sizeType));
 			if (size is null) {
 				if(employeeSize != null)
 					Entity.Sizes.Remove(employeeSize);
