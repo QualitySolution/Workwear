@@ -42,7 +42,13 @@ namespace Workwear.Repository.Company
 				.Where(x => x.Department.Id.IsIn(departmentIds))
 				.List();
 		}
-
+		public IList<EmployeeCard> GetActiveEmployeesFromGroups(IUnitOfWork uow, int[] groupsIds) {
+			EmployeeGroup groupAlias = null;
+			return ActiveEmployeesQuery(uow)
+				.JoinAlias(x => x.EmployeeGroups, () => groupAlias)
+				.Where(() => groupAlias.Id.IsIn(groupsIds))
+				.List();
+		}
 		#region Norms
 		public IList<EmployeeCard> GetEmployeesUseNorm(Norm[] norms, IUnitOfWork uow = null)
 		{

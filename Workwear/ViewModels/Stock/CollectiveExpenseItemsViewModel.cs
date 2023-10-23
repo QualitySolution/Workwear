@@ -154,38 +154,50 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
-		public void AddSubdivisions() {
-			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
-		}
-		public void AddDepartments() {
-			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
-		}
-
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			
+
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
 			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
 
 			AddEmployeesList(employeeIds, performance);
 		}
-		
+
+		public void AddSubdivisions() {
+			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
+		}
 		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			
+
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 
 			AddEmployeesList(employees, performance);
 		}
-		
+
+		public void AddDepartments() {
+			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
+		}
 		private void LoadDepartments(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
 			var departmentsIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentsIds);
+			
+			AddEmployeesList(employees, performance);
+		}
+		
+		public void AddEmployeeGroups() {
+			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadEmployeeGroups;
+		}
+		private void LoadEmployeeGroups(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Ищем сотрудников", logger, showProgressText: true);
+			var groupsIds = e.GetSelectedObjects<EmployeeGroupJournalNode>().Select(x => x.Id).ToArray();
+			var employees = employeeRepository.GetActiveEmployeesFromGroups(UoW, groupsIds);
 			
 			AddEmployeesList(employees, performance);
 		}
