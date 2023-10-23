@@ -146,6 +146,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
+		public bool VisibleEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		#endregion
 		#region Действия View
 

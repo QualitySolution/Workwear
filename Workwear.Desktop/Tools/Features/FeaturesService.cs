@@ -147,6 +147,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Exchange1C:
 					return ProductEdition == 0 || ProductEdition == 3;
 				case WorkwearFeature.CollectiveExpense:
+				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.Inspection:
 				case WorkwearFeature.LoadExcel:
@@ -166,6 +167,8 @@ namespace Workwear.Tools.Features
 		#region Профессиональная
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
+		[Display(Name = "Группы сотрудников")]
+		EmployeeGroups,
 		[Display(Name = "Комплектация")]
 		Completion,
 		[Display(Name = "Переоценки")]

@@ -109,6 +109,7 @@ namespace Workwear.Views.Stock
 			addMenu.Add(item);
 			item = new yMenuItem("Группы");
 			item.Activated += (sender, e) => ViewModel.AddEmployeeGroups();
+			item.Visible = ViewModel.VisibleEmployeeGroup;
 			addMenu.Add(item);
 			addMenu.Add(new SeparatorMenuItem());
 			item = new yMenuItem("Дополнительно выбранному сотруднику");

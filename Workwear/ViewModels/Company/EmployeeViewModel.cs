@@ -172,6 +172,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
+		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;

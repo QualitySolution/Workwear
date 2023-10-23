@@ -24,7 +24,7 @@ create table employee_group_items
 	employee_id int unsigned not null,
 	comment text null,
 	constraint foreign_key_employee_groups_items_employees
-		foreign key (employee_id) references employees (id)
+		foreign key (employee_id) references wear_cards (id)
 			on update cascade on delete cascade,
 	constraint foreign_key_employee_groups_items_employee_groups
 		foreign key (employee_group_id) references employee_groups (id)

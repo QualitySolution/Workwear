@@ -49,8 +49,9 @@ namespace Workwear.Views.Company {
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
 			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;
-			notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(5).Visible = ViewModel.VisibleEmployeeGroups;
+			notebook1.GetNthPage(6).Visible = ViewModel.VisibleListedItem;
+			notebook1.GetNthPage(7).Visible = ViewModel.VisibleHistory;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
