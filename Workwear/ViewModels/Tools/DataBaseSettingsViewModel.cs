@@ -3,6 +3,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Tools
 {
@@ -10,7 +11,12 @@ namespace Workwear.ViewModels.Tools
 	{
 		private readonly BaseParameters baseParameters;
 
-		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters) : base(unitOfWorkFactory, navigation)
+		#region Ограниения версии
+		public bool CollectiveIssueWithPersonalVisible = true;
+
+		#endregion
+		
+		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters, FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Настройки учёта";
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -21,6 +27,7 @@ namespace Workwear.ViewModels.Tools
 			ExtendPeriod = baseParameters.ExtendPeriod;
 			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
 			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
+			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
