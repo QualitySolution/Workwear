@@ -14,30 +14,30 @@ using workwear.Journal.ViewModels.Company;
 namespace Workwear.ViewModels.Company {
 	public class EmployeeGroupItemsViewModel : ViewModelBase {
 		public EmployeeGroupItemsViewModel(
-			EmployeeGroupViewModel parent,
+			EmployeeGroupViewModel employeeGroupViewModel,
 			INavigationManager navigation) {
-			this.parent = parent;
+			this.employeeGroupViewModel = employeeGroupViewModel;
 			this.navigation = navigation;
 
-			if(parent.Entity.Id == 0)
-				this.parent.CurrentTab = 0;
+			if(employeeGroupViewModel.Entity.Id == 0)
+				this.employeeGroupViewModel.CurrentTab = 0;
 		}
 
-		private readonly EmployeeGroupViewModel parent;
+		private readonly EmployeeGroupViewModel employeeGroupViewModel;
 		private readonly INavigationManager navigation;
 		
-		public IObservableList<EmployeeGroupItem> Items => parent.Entity.Items;
+		public IObservableList<EmployeeGroupItem> Items => employeeGroupViewModel.Entity.Items;
 
 		#region Действия View
 
 		public void AddEmployees() {
-			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(parent, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(employeeGroupViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 		void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var selectedIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id);
-			parent.Entity.Add(parent.UoW.GetById<EmployeeCard>(selectedIds));
+			employeeGroupViewModel.Entity.AddItems(employeeGroupViewModel.UoW.GetById<EmployeeCard>(selectedIds));
 		}
 		
 		public void Remove(EmployeeGroupItem[] items) {

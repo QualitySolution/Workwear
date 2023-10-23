@@ -139,6 +139,7 @@ namespace Workwear.ViewModels.Company
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
+			InGroupsViewModel = AutofacScope.Resolve<EmployeeInGroupsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 			//Панели
 			EmployeePhotoViewModel = AutofacScope.Resolve<EmployeePhotoViewModel>(parameter);
@@ -310,9 +311,10 @@ namespace Workwear.ViewModels.Company
 		public EmployeeNormsViewModel NormsViewModel;				//2
 		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
 		public EmployeeCostCentersViewModel CostCenterViewModel;	//4
-		public EmployeeListedItemsViewModel ListedItemsViewModel;	//5
-		public EmployeeMovementsViewModel MovementsViewModel;       //6
-		public EmployeeVacationsViewModel VacationsViewModel;       //7
+		public EmployeeInGroupsViewModel InGroupsViewModel;			//5
+		public EmployeeListedItemsViewModel ListedItemsViewModel;	//6
+		public EmployeeMovementsViewModel MovementsViewModel;       //7
+		public EmployeeVacationsViewModel VacationsViewModel;       //8
 
 
 		private int lastTab;
@@ -340,14 +342,15 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
-				case 4: 
-						CostCenterViewModel.OnShow();
+				case 4: CostCenterViewModel.OnShow();
 					break;
-				case 5: ListedItemsViewModel.OnShow();
+				case 5: InGroupsViewModel.OnShow();
 					break;
-				case 6: MovementsViewModel.OnShow();
+				case 6: ListedItemsViewModel.OnShow();
 					break;
-				case 7:
+				case 7: MovementsViewModel.OnShow();
+					break;
+				case 8:
 					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {

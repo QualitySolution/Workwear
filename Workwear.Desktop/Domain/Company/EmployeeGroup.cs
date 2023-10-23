@@ -49,15 +49,15 @@ namespace Workwear.Domain.Company {
 		}
 		#endregion
 
-		public virtual IList<EmployeeGroupItem> Add(IList<EmployeeCard> employees) {
+		public virtual IList<EmployeeGroupItem> AddItems(IList<EmployeeCard> employees) {
 			IList<EmployeeGroupItem> itemsLList = new List<EmployeeGroupItem>();
 			foreach(var employee in employees)
 				if(!Items.Any(x => x.Employee.Id == employee.Id))
-					itemsLList.Add(Add(employee));
+					itemsLList.Add(AddEmployee(employee));
 			return itemsLList;
 		}
 
-		public virtual EmployeeGroupItem Add(EmployeeCard employee) {
+		public virtual EmployeeGroupItem AddEmployee(EmployeeCard employee) {
 			if (Items.Any(i => i.Employee.Id == employee.Id))
 				return null;
 			EmployeeGroupItem item = new EmployeeGroupItem() {Employee = employee, Group = this};

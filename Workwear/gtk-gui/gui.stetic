@@ -5987,7 +5987,7 @@
       </action>
       <action id="ActionEmployeeGroup">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Группы сотрудников</property>
+        <property name="Label" translatable="yes">Группы сотрудников </property>
         <property name="ShortLabel" translatable="yes">Группы сотрудников</property>
         <signal name="Activated" handler="OnActionEmployeeGroupActivated" />
       </action>
@@ -6056,6 +6056,7 @@
                 <node type="Menuitem" action="ActionOrganizations" />
                 <node type="Menuitem" action="ActionObjects" />
                 <node type="Menuitem" action="ActionDepartment" />
+                <node type="Menuitem" action="ActionEmployeeGroup" />
                 <node type="Menuitem" action="ActionEmployees" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionRegulationDoc" />
@@ -6080,7 +6081,6 @@
                 <node type="Menuitem" action="ActionVacationTypes" />
                 <node type="Menuitem" action="ActionCostCenter" />
                 <node type="Menuitem" action="ActionLeaders" />
-                <node type="Menuitem" action="ActionEmployeeGroup" />
               </node>
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />

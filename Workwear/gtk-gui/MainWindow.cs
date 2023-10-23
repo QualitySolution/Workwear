@@ -359,11 +359,11 @@ public partial class MainWindow
 		this.ActionIconsSmall.ShortLabel = global::Mono.Unix.Catalog.GetString("Маленькие иконки");
 		w1.Add(this.ActionIconsSmall, null);
 		this.ActionIconsMiddle = new global::Gtk.RadioAction("ActionIconsMiddle", global::Mono.Unix.Catalog.GetString("Средние иконки"), null, null, 0);
-		this.ActionIconsMiddle.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsMiddle.Group = this.ActionIconsExtraSmall.Group;
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -523,7 +523,7 @@ public partial class MainWindow
 		this.ActionChannelStable.Group = this.ActionChannelCurrent.Group;
 		this.ActionChannelStable.ShortLabel = global::Mono.Unix.Catalog.GetString("Стабильный");
 		w1.Add(this.ActionChannelStable, null);
-		this.ActionEmployeeGroup = new global::Gtk.Action("ActionEmployeeGroup", global::Mono.Unix.Catalog.GetString("Группы сотрудников"), null, null);
+		this.ActionEmployeeGroup = new global::Gtk.Action("ActionEmployeeGroup", global::Mono.Unix.Catalog.GetString("Группы сотрудников "), null, null);
 		this.ActionEmployeeGroup.ShortLabel = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
 		w1.Add(this.ActionEmployeeGroup, null);
 		this.UIManager.InsertActionGroup(w1, 0);
@@ -568,21 +568,21 @@ public partial class MainWindow
 				"menu name=\'Action39\' action=\'Action39\'><menuitem name=\'ActionOrganizations\' acti" +
 				"on=\'ActionOrganizations\'/><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/" +
 				"><menuitem name=\'ActionDepartment\' action=\'ActionDepartment\'/><menuitem name=\'Ac" +
-				"tionEmployees\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegul" +
-				"ationDoc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' a" +
-				"ction=\'ActionProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'" +
-				"/><menuitem name=\'ActionConditionNorm\' action=\'ActionConditionNorm\'/><separator/" +
-				"><menuitem name=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Act" +
-				"ion6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><menuitem name" +
-				"=\'ActionOwner\' action=\'ActionOwner\'/><menuitem name=\'ActionBarcodes\' action=\'Act" +
-				"ionBarcodes\'/><separator/><menuitem name=\'ActionSizeType\' action=\'ActionSizeType" +
-				"\'/><menuitem name=\'ActionSize\' action=\'ActionSize\'/><separator/><menuitem name=\'" +
-				"Action7\' action=\'Action7\'/><menuitem name=\'ActionNotificationTemplates\' action=\'" +
-				"ActionNotificationTemplates\'/><separator/><menuitem name=\'ActionProfession\' acti" +
-				"on=\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name" +
-				"=\'ActionVacationTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostC" +
-				"enter\' action=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionL" +
-				"eaders\'/><menuitem name=\'ActionEmployeeGroup\' action=\'ActionEmployeeGroup\'/></me" +
+				"tionEmployeeGroup\' action=\'ActionEmployeeGroup\'/><menuitem name=\'ActionEmployees" +
+				"\' action=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' act" +
+				"ion=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'Action" +
+				"ProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuitem n" +
+				"ame=\'ActionConditionNorm\' action=\'ActionConditionNorm\'/><separator/><menuitem na" +
+				"me=\'Action5\' action=\'Action5\'/><menuitem name=\'Action6\' action=\'Action6\'/><menui" +
+				"tem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><menuitem name=\'ActionOwner" +
+				"\' action=\'ActionOwner\'/><menuitem name=\'ActionBarcodes\' action=\'ActionBarcodes\'/" +
+				"><separator/><menuitem name=\'ActionSizeType\' action=\'ActionSizeType\'/><menuitem " +
+				"name=\'ActionSize\' action=\'ActionSize\'/><separator/><menuitem name=\'Action7\' acti" +
+				"on=\'Action7\'/><menuitem name=\'ActionNotificationTemplates\' action=\'ActionNotific" +
+				"ationTemplates\'/><separator/><menuitem name=\'ActionProfession\' action=\'ActionPro" +
+				"fession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'ActionVacat" +
+				"ionTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostCenter\' action" +
+				"=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></me" +
 				"nu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' a" +
 				"ction=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menu" +
 				"item name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionReques" +

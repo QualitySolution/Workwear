@@ -45,6 +45,7 @@ namespace Workwear.Views.Company {
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
 			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
+			emploeeingroupsview1.ViewModel = ViewModel.InGroupsViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
 			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;

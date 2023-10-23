@@ -161,6 +161,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupViewModel.cs" />

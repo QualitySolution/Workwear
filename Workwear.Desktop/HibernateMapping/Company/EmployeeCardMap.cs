@@ -68,6 +68,11 @@ namespace Workwear.HibernateMapping.Company
 				.Cascade.AllDeleteOrphan()
 				.Inverse()
 				.LazyLoad();
+			
+			HasManyToMany(x => x.EmployeeGroups).Table("wear_card_group_items")
+				.ParentKeyColumn("wear_card_id")
+				.ChildKeyColumn("wear_card_group_id")
+				.LazyLoad();
 		}
 	}
 }
