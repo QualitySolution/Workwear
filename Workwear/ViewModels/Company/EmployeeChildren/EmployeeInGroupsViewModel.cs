@@ -4,7 +4,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
-using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.ViewModels;
 using Workwear.Domain.Company;
