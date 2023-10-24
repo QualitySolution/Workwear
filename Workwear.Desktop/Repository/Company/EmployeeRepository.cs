@@ -6,6 +6,7 @@ using NHibernate.Criterion;
 using NHibernate.Dialect;
 using NHibernate.Dialect.Function;
 using NHibernate.Engine;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -43,10 +44,10 @@ namespace Workwear.Repository.Company
 				.List();
 		}
 		public IList<EmployeeCard> GetActiveEmployeesFromGroups(IUnitOfWork uow, int[] groupsIds) {
-			EmployeeGroup groupAlias = null;
+			EmployeeGroupItem employeeGroupAlias = null;
 			return ActiveEmployeesQuery(uow)
-				.JoinAlias(x => x.EmployeeGroups, () => groupAlias)
-				.Where(() => groupAlias.Id.IsIn(groupsIds))
+				.JoinAlias(e => e.EmployeeGroupItems, () => employeeGroupAlias, JoinType.InnerJoin)
+				.Where( () => employeeGroupAlias.Group.Id.IsIn(groupsIds))
 				.List();
 		}
 		#region Norms

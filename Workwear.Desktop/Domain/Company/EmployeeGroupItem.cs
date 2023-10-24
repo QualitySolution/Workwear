@@ -15,6 +15,7 @@ namespace Workwear.Domain.Company {
 		public EmployeeGroupItem(){}
 		
 		#region Генерируемые Свойства
+		public virtual string Title => $"{Employee.FullName} в группе {Group.Name}";
 		public virtual string FullName => $"{Employee?.LastName} {Employee?.FirstName} {Employee?.Patronymic}".Trim();
 		public virtual string EmployeePersonnelNumber => Employee?.PersonnelNumber;
 		public virtual string CardNumberText => Employee?.CardNumber ?? Employee?.Id.ToString();

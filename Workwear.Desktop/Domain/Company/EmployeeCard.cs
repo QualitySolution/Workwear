@@ -243,20 +243,19 @@ namespace Workwear.Domain.Company
 		}
 		#endregion		
 		#region EmployeeGroups
-            private IObservableList<EmployeeGroup> employeeGroups = new ObservableList<EmployeeGroup>();
+            private IObservableList<EmployeeGroupItem> employeeGroupItems = new ObservableList<EmployeeGroupItem>();
             [Display(Name = "Группы")]
-            public virtual IObservableList<EmployeeGroup> EmployeeGroups {
-                get => employeeGroups;
-                set => SetField(ref employeeGroups, value);
+            public virtual IObservableList<EmployeeGroupItem> EmployeeGroupItems {
+                get => employeeGroupItems;
+                set => SetField(ref employeeGroupItems, value);
             }
 
             public virtual void AddEmployeeGroup(EmployeeGroup employeeGroup) {
-                if(EmployeeGroups.Any(x => x.Id == employeeGroup.Id)) {
+                if(employeeGroup.Items.Any(x => x.Employee.Id == Id)) {
                     logger.Warn($"Группа №{employeeGroup.Id} \"{employeeGroup.Name}\" уже добавлена. Пропускаем...");
                     return;
                 }
-                employeeGroup.AddEmployee(this);
-                EmployeeGroups.Add(employeeGroup);
+                EmployeeGroupItems.Add(employeeGroup.AddEmployee(this));
             }
 		#endregion
 		

@@ -69,9 +69,10 @@ namespace Workwear.HibernateMapping.Company
 				.Inverse()
 				.LazyLoad();
 			
-			HasManyToMany(x => x.EmployeeGroups).Table("employee_group_items")
-				.ParentKeyColumn("employee_id")
-				.ChildKeyColumn("employee_group_id")
+			HasMany(x => x.EmployeeGroupItems).Table("employee_group_items")
+				.KeyColumn("employee_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
 				.LazyLoad();
 		}
 	}

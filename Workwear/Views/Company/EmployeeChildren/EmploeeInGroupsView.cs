@@ -20,14 +20,13 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		}
 
 		private void CreateTable() {
-			ytreeItems.CreateFluentColumnsConfig<EmployeeGroup>()
-				.AddColumn("Группа").Resizable().AddTextRenderer(e => e.Name)
-				.AddColumn("Комментарий группы").Resizable().AddTextRenderer(e => e.Comment)
-				.AddColumn("Комментарий").Resizable()
-					.AddTextRenderer(e => e.Items.First(x => x.Employee.Id == viewModel.Entity.Id).Comment)
+			ytreeItems.CreateFluentColumnsConfig<EmployeeGroupItem>()
+				.AddColumn("Группа").Resizable().AddTextRenderer(e => e.Group.Name)
+				.AddColumn("Комментарий группы").Resizable().AddTextRenderer(e => e.Group.Comment)
+				.AddColumn("Комментарий").Resizable().AddTextRenderer(e => e.Comment).Editable()
 				.AddColumn("") //Заглушка, чтобы не расширялось
 				.Finish();
-			ytreeItems.Binding.AddBinding(ViewModel, v => v.EmployeeGroups, w => w.ItemsDataSource);
+			ytreeItems.Binding.AddBinding(ViewModel, v => v.EmployeeGroupItems, w => w.ItemsDataSource);
 			ytreeItems.Selection.Mode = Gtk.SelectionMode.Multiple;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 
@@ -40,7 +39,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		}
 		
 		private void OnButtonRemoveClicked(object sender, EventArgs e) {
-			ViewModel.DeleteItems(ytreeItems.GetSelectedObjects<EmployeeGroup>());
+			ViewModel.DeleteItems(ytreeItems.GetSelectedObjects<EmployeeGroupItem>());
 		}
 		
 		private void YtreeItems_Selection_Changed(object sender, EventArgs e) {

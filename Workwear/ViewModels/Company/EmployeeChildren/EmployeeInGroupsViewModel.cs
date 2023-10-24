@@ -29,12 +29,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public void OnShow() {
 			if(!isConfigured) {
 				isConfigured = true;
-				OnPropertyChanged(nameof(EmployeeGroups));
+				OnPropertyChanged(nameof(EmployeeGroupItems));
 			}
 		}
 
 		#region  Свойства View
-		public IObservableList<EmployeeGroup> EmployeeGroups => Entity.EmployeeGroups;
+		public IObservableList<EmployeeGroupItem> EmployeeGroupItems => Entity.EmployeeGroupItems;
 		#endregion
 
 		#region Методы
@@ -50,11 +50,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				Entity.AddEmployeeGroup(group);
 		}
 
-		public void DeleteItems(EmployeeGroup deleteGroup) {
-			Entity.EmployeeGroups.Remove(deleteGroup);
+		public void DeleteItems(EmployeeGroupItem deleteGroupItem) {
+			Entity.EmployeeGroupItems.Remove(deleteGroupItem);
+			deleteGroupItem.Group.Items.Remove(deleteGroupItem);
 		}
-		public void DeleteItems(EmployeeGroup[] deleteGroupItem) {
-			foreach(var item in deleteGroupItem) 
+		public void DeleteItems(EmployeeGroupItem[] deleteGroupItems) {
+			foreach(var item in deleteGroupItems) 
 				DeleteItems(item);
 		}
 		#endregion
