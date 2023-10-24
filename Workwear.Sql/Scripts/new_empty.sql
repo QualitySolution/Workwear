@@ -2096,6 +2096,8 @@ create table employee_group_items
 	employee_id int unsigned not null,
 	comment text null,
 	PRIMARY KEY (`id`),
+	constraint wear_card_groups_items_unique
+		unique (employee_id, employee_group_id),
 	constraint foreign_key_employee_groups_items_employees
 		foreign key (employee_id) references wear_cards (id)
 			on update cascade on delete cascade,
