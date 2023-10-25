@@ -44,7 +44,7 @@ namespace Workwear.Domain.Company {
 		}
 		#endregion
 
-		public virtual IList<EmployeeGroupItem> AddItems(IList<EmployeeCard> employees) {
+		public virtual IList<EmployeeGroupItem> AddEmployees(IList<EmployeeCard> employees) {
 			IList<EmployeeGroupItem> itemsList = new List<EmployeeGroupItem>();
 			foreach(var employee in employees) {
 				var item = AddEmployee(employee);

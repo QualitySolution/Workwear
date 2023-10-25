@@ -37,7 +37,7 @@ namespace Workwear.ViewModels.Company {
 		}
 		void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var selectedIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id);
-			employeeGroupViewModel.Entity.AddItems(employeeGroupViewModel.UoW.GetById<EmployeeCard>(selectedIds));
+			employeeGroupViewModel.Entity.AddEmployees(employeeGroupViewModel.UoW.GetById<EmployeeCard>(selectedIds));
 		}
 		
 		public void Remove(EmployeeGroupItem[] items) {
