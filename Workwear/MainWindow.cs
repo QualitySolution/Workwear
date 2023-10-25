@@ -230,6 +230,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
+		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
@@ -851,6 +852,10 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionChannelStableToggled(object sender, EventArgs e) {
 		if(ActionChannelStable.Active)
 			SetChannel(UpdateChannel.Stable);
+	}
+
+	protected void OnActionEmployeeGroupActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<EmployeeGroupJournalViewModel>(null);
 	}
 
 	protected void OnActionPostomatDocsActivated(object sender, EventArgs e) {

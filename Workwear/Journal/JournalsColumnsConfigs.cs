@@ -178,6 +178,14 @@ namespace workwear.Journal
 						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
+					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
+						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+						.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).SearchHighlight()
+						.AddColumn("Кол-во").AddReadOnlyTextRenderer(node => node.Count.ToString())
+						.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+						.Finish()
+			);
 
 			#endregion
 
