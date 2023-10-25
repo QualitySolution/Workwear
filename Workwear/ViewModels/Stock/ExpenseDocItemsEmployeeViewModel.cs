@@ -26,6 +26,7 @@ using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -37,6 +38,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveQuestion interactive;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
+		private readonly EmployeeIssueModel issueModel;
 		private readonly BarcodeService barcodeService;
 
 		public SizeService SizeService { get; }
@@ -52,6 +54,7 @@ namespace Workwear.ViewModels.Stock
 			IDeleteEntityService deleteService,
 			BaseParameters baseParameters,
 			BarcodeService barcodeService,
+			EmployeeIssueModel issueModel,
 			IList<Owner> owners)
 		{
 			this.expenseEmployeeViewModel = expenseEmployeeViewModel ?? throw new ArgumentNullException(nameof(expenseEmployeeViewModel));
@@ -61,6 +64,7 @@ namespace Workwear.ViewModels.Stock
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			Owners = owners;
 			
@@ -90,6 +94,8 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private ExpenseItem selectedItem;
+		
+
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -145,6 +151,7 @@ namespace Workwear.ViewModels.Stock
 					item.UpdateOperations(UoW,BaseParameters,interactive);
 				}
 			}
+			issueModel.FillWearReceivedInfo(new[] { Entity.Employee });
 			CalculateTotal();
 		}
 
