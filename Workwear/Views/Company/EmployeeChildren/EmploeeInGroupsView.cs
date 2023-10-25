@@ -23,8 +23,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 			ytreeItems.CreateFluentColumnsConfig<EmployeeGroupItem>()
 				.AddColumn("Группа").Resizable().AddTextRenderer(e => e.Group.Name)
 				.AddColumn("Комментарий группы").Resizable().AddTextRenderer(e => e.Group.Comment)
-				.AddColumn("Комментарий").Resizable().AddTextRenderer(e => e.Comment).Editable()
-				.AddColumn("") //Заглушка, чтобы не расширялось
+				.AddColumn("Комментарий").AddTextRenderer(e => e.Comment).Editable()
 				.Finish();
 			ytreeItems.Binding.AddBinding(ViewModel, v => v.EmployeeGroupItems, w => w.ItemsDataSource);
 			ytreeItems.Selection.Mode = Gtk.SelectionMode.Multiple;

@@ -45,7 +45,7 @@ namespace workwear.Journal.ViewModels.Company {
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 						.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 						.SelectSubQuery(itemsSubQuery).WithAlias(() => resultAlias.Count)
-					).OrderBy(x => x.Id).Asc
+					).OrderBy(x => x.Name).Asc
 					.TransformUsing(Transformers.AliasToBean<EmployeeGroupJournalNode>());
 			}
 		}

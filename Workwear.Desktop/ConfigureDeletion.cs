@@ -102,9 +102,7 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroup>()
 				.AddDeleteDependence<EmployeeGroupItem>(x => x.Group);
 
-			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem> ()
-				.AddDeleteCascadeDependence(x => x.Employee)
-				.AddDeleteCascadeDependence(x => x.Group);
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem>();
 
 			#endregion
 			#region Операции

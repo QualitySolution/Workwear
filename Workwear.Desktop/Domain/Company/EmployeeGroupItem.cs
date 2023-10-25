@@ -33,7 +33,7 @@ namespace Workwear.Domain.Company {
 		}
 		
 		private EmployeeCard employee;
-		[Display (Name = "Член группы")]
+		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
 			get { return employee; }
 			set { SetField(ref employee, value); }

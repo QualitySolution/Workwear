@@ -182,7 +182,7 @@ namespace workwear.Journal
 					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
 						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 						.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).SearchHighlight()
-						.AddColumn("Кол-во").AddReadOnlyTextRenderer(node => node.Count.ToString()).SearchHighlight()
+						.AddColumn("Кол-во").AddReadOnlyTextRenderer(node => node.Count.ToString())
 						.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 						.Finish()
 			);

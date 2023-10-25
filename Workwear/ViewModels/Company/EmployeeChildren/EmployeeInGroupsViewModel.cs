@@ -49,13 +49,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				Entity.AddEmployeeGroup(group);
 		}
 
-		public void DeleteItems(EmployeeGroupItem deleteGroupItem) {
-			Entity.EmployeeGroupItems.Remove(deleteGroupItem);
-			deleteGroupItem.Group.Items.Remove(deleteGroupItem);
-		}
-		public void DeleteItems(EmployeeGroupItem[] deleteGroupItems) {
-			foreach(var item in deleteGroupItems) 
-				DeleteItems(item);
+		public void DeleteItems(params EmployeeGroupItem[] deleteGroupItems) {
+			foreach(var item in deleteGroupItems) {
+				Entity.EmployeeGroupItems.Remove(item);
+				item.Group.Items.Remove(item);
+			}
 		}
 		#endregion
 	}
