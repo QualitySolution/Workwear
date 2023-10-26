@@ -160,10 +160,12 @@ namespace Workwear.ViewModels.Communications
 
 		public bool UploadClaims() {
 			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed).ToList();
+			if (newClaims.Count == 0)
+				return false;
 			Claims.AddRange(newClaims);
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
 			OnPropertyChanged(nameof(Claims));
-			return newClaims.Count > 0;
+			return true;
 		}
 		
 		public void OpenEmployee() {
