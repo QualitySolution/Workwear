@@ -162,9 +162,8 @@ namespace Workwear.ViewModels.Communications
 			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed).ToList();
 			if (newClaims.Count == 0)
 				return false;
-			Claims.AddRange(newClaims);
+			Claims = Claims.Union(newClaims).ToList();
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
-			OnPropertyChanged(nameof(Claims));
 			return true;
 		}
 		
