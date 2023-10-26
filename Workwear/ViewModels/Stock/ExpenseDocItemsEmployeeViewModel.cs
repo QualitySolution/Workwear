@@ -151,7 +151,6 @@ namespace Workwear.ViewModels.Stock
 					item.UpdateOperations(UoW,BaseParameters,interactive);
 				}
 			}
-			issueModel.FillWearReceivedInfo(new[] { Entity.Employee });
 			CalculateTotal();
 		}
 
@@ -175,7 +174,6 @@ namespace Workwear.ViewModels.Stock
 			
 			item.ProtectionTools = protectionTools;
 			item.EmployeeCardItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
-			Entity.Employee.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
 		
 		public void MakeEmptyProtectionTools(ExpenseItem item) {
@@ -256,8 +254,9 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Расчет для View
-		public string GetRowColor(ExpenseItem item)
-		{
+		public string GetRowColor(ExpenseItem item) {
+			if(item.EmployeeCardItem?.Graph == null)
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
