@@ -1353,6 +1353,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `default_organization_id` INT UNSIGNED NULL,
   `default_responsible_person_id` INT UNSIGNED NULL,
   `default_leader_id` INT UNSIGNED NULL,
+  `default_claim_list_type` ENUM('NotAnswered','NotClosed','All') NOT NULL DEFAULT 'NotClosed',
   PRIMARY KEY (`id`),
   INDEX `fk_user_settings_1_idx` (`user_id` ASC),
   INDEX `fk_user_settings_warehouse_id_idx` (`default_warehouse_id` ASC),

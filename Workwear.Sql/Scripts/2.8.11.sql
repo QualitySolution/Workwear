@@ -36,3 +36,8 @@ create index employee_groups_items_employee_groups_id_index
 
 create index employee_groups_items_employees_id_index
 	on employee_group_items (employee_id);
+
+-- Добавляем настройку списка обращений
+
+ALTER TABLE `user_settings` 
+    ADD `default_claim_list_type` ENUM('NotAnswered','NotClosed','All') NOT NULL DEFAULT 'NotClosed' AFTER `default_leader_id`; 

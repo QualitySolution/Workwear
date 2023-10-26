@@ -3,6 +3,7 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QS.Cloud.WearLk.Manage;
 using QS.Views.Dialog;
+using Workwear.Domain.Users;
 using Workwear.ViewModels.Communications;
 
 namespace Workwear.Views.Communications 
@@ -55,8 +56,9 @@ namespace Workwear.Views.Communications
 			yentryMessage.Binding
 				.AddBinding(ViewModel, vm => vm.TextMessage, w => w.Buffer.Text)
 				.InitializeFromSource();
-			ycheckbuttonShowClosed.Binding
-				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active)
+			comboListType.ItemsEnum = typeof(ClaimListType);
+			comboListType.Binding
+				.AddBinding(ViewModel, vm => vm.ListType, w => w.SelectedItem)
 				.InitializeFromSource();
 			buttonAnswer.Binding
 				.AddBinding(ViewModel, vm => vm.SensitiveSend, w => w.Sensitive)
