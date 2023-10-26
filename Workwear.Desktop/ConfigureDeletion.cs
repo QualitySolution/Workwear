@@ -44,6 +44,7 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
+				.AddDeleteDependence<EmployeeGroupItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
@@ -97,6 +98,11 @@ namespace Workwear
 				
 			DeleteConfig.AddHibernateDeleteInfo<VacationType>()
 				.AddDeleteDependence<EmployeeVacation>(x => x.VacationType);
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroup>()
+				.AddDeleteDependence<EmployeeGroupItem>(x => x.Group);
+
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem>();
 
 			#endregion
 			#region Операции

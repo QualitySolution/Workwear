@@ -178,6 +178,14 @@ namespace workwear.Journal
 						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
+					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
+						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+						.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).SearchHighlight()
+						.AddColumn("Кол-во").AddReadOnlyTextRenderer(node => node.Count.ToString())
+						.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+						.Finish()
+			);
 
 			#endregion
 
@@ -292,7 +300,8 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
+					.AddColumn("ИД").AddTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
+					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()

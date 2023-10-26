@@ -72,9 +72,9 @@ namespace Workwear.Views.Communications
 		private void OnScroll(object sender, EventArgs e) {
 			if(ytreeClaims.Vadjustment.Value + ytreeClaims.Vadjustment.PageSize < ytreeClaims.Vadjustment.Upper)
 				return;
+			var lastPos = ytreeClaims.Vadjustment.Value;
 			if(!ViewModel.UploadClaims())
 				return;
-			var lastPos = ytreeClaims.Vadjustment.Upper;
 			ytreeClaims.Vadjustment.Value = lastPos;
 		}
 
