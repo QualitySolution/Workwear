@@ -15,7 +15,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>119.7pt</Height>
+    <Height>211.7pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -402,6 +402,163 @@
         <Top>33.7pt</Top>
         <TableGroups>
           <TableGroup>
+            <Grouping Name="Subdivision">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression >={subdivision_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox38">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>11pt</FontSize>
+                          </Style>
+                          <Value>= Iif(Fields!subdivision_id.IsMissing, "      Без подразделения", {subdivision_name})</Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>7</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox51">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Footer>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox47">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value></Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox49">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                          <Value>По подразделеию:</Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox52">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                          <Value>=Sum({protection_tools_assessed_cost})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox53">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                          <Value></Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox55">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                          <Value>=Sum({amount})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox56">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                          <Value></Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Footer>
+            <Sorting >
+              <SortBy>
+                <SortExpression>={subdivision_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
             <Grouping Name="ProtectionTools">
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
@@ -477,6 +634,7 @@
                             <BorderWidth />
                             <TextAlign>Center</TextAlign>
                             <Format>0.00</Format>
+                            <FontWeight>Bold</FontWeight>
                           </Style>
                         </Textbox>
                       </ReportItems>
@@ -507,6 +665,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <TextAlign>Center</TextAlign>
+                            <FontWeight>Bold</FontWeight>
                           </Style>
                           <Value>=Sum({amount})</Value>
                           <Visibility>
@@ -609,6 +768,8 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>12pt</FontSize>
                       </Style>
                       <Value>=Sum({protection_tools_assessed_cost})</Value>
                     </Textbox>
@@ -694,6 +855,9 @@
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
+    if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
+    if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
+    objects.name as subdivision_name,
     GROUP_CONCAT( CONCAT_WS('',
             CONCAT(wear_cards.last_name, ' '),
             IF(wear_cards.first_name = '',
@@ -706,7 +870,7 @@
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
     sizeAlias.name AS size,
-	heightAlias.name AS growth,
+    heightAlias.name AS growth,
     measurement_units.name AS unit,
     SUM(norms_item.amount) AS amount,
     (
@@ -745,15 +909,17 @@
 FROM
     wear_cards_item
 JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+LEFT JOIN posts ON wear_cards.post_id = posts.id
+LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
 JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
 LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
 LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id 
-LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id 
-LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id) 
-LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id 
-LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id) 
+LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
 LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 WHERE
@@ -761,10 +927,11 @@ WHERE
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
-    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-    AND (@exclude_before = "" OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
+    AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
+    IF(@group_by_subdivision, objects.id, NULL),
     wear_cards_item.protection_tools_id,
     IF(@show_sex, wear_cards.sex, NULL),
     size,
@@ -796,6 +963,9 @@ ORDER BY
           <QueryParameter Name="@protection_tools_ids">
             <Value>={?protection_tools_ids}</Value>
           </QueryParameter>
+          <QueryParameter Name="@group_by_subdivision">
+            <Value>={?group_by_subdivision}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -803,13 +973,37 @@ ORDER BY
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="protection_tools_assessed_cost">
+          <DataField>protection_tools_assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
         <Field Name="protection_tools_id">
           <DataField>protection_tools_id</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="subdivision_name">
+          <DataField>subdivision_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employees">
+          <DataField>employees</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="sex">
           <DataField>sex</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="sizeTypeId">
+          <DataField>sizeTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="heightTypeId">
+          <DataField>heightTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -831,22 +1025,6 @@ ORDER BY
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="protection_tools_assessed_cost">
-          <DataField>protection_tools_assessed_cost</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="sizeTypeId">
-          <DataField>sizeTypeId</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="heightTypeId">
-          <DataField>heightTypeId</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="employees">
-          <DataField>employees</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -866,7 +1044,7 @@ ORDER BY
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=;user=;password=;port=3306;server=</ConnectString>
+        <ConnectString>database=workwear_test_agronom;user=Space;password=4562;port=3306;server=office.qsolution.ru</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -876,7 +1054,7 @@ ORDER BY
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2021-10-01</Value>
+          <Value>2023-10-27</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -888,7 +1066,7 @@ ORDER BY
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>25</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -898,6 +1076,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="issue_type">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Collrctive</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -905,6 +1088,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="show_sex">
       <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -912,6 +1100,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="show_employees">
       <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -919,6 +1112,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -926,6 +1124,11 @@ ORDER BY
     </ReportParameter>
     <ReportParameter Name="exclude_before">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2000-1-1</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
@@ -935,12 +1138,24 @@ ORDER BY
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>53</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

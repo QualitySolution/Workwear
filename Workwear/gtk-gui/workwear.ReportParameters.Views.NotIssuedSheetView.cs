@@ -60,6 +60,9 @@ namespace workwear.ReportParameters.Views
 			this.checkDontShowZeroStock.Label = "";
 			this.checkDontShowZeroStock.DrawIndicator = true;
 			this.checkDontShowZeroStock.UseUnderline = true;
+			this.checkDontShowZeroStock.FocusOnClick = false;
+			this.checkDontShowZeroStock.Xalign = 0F;
+			this.checkDontShowZeroStock.Yalign = 0F;
 			this.table1.Add(this.checkDontShowZeroStock);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkDontShowZeroStock]));
 			w1.TopAttach = ((uint)(5));

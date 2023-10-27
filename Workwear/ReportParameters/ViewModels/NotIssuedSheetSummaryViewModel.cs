@@ -7,7 +7,6 @@ using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 
@@ -39,6 +38,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
 					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"issue_type", IssueType?.ToString() },
+					{"group_by_subdivision", GroupBySubdivision },
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", excludeInVacation },
@@ -69,6 +69,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual bool ExcludeInVacation {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
+		}
+		
+		private bool groupBySubdivision;
+		public virtual bool GroupBySubdivision {
+			get => groupBySubdivision;
+			set => SetField(ref groupBySubdivision, value);
 		}
 
 		private bool showSex;
