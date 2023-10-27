@@ -33,12 +33,15 @@ namespace workwear.ReportParameters.ViewModels {
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
+
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,uow); //AutofacScope.Resolve<ChoiceProtectionToolsViewModel>();
 		}
 
 		private readonly IUnitOfWork uow;
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		#region Свойства View
@@ -81,15 +84,6 @@ namespace workwear.ReportParameters.ViewModels {
 			get => addChildSubdivisions;
 			set => SetField(ref addChildSubdivisions, value);
 		}
-
-		private IObservableList<SelectedProtectionTools> protectionTools;
-		public IObservableList<SelectedProtectionTools> ProtectionTools {
-			get {
-				if(protectionTools == null)
-					FillProtectionTools();
-				return protectionTools;
-			}
-		}
 		
 		private bool showSex;
 		public bool ShowSex {
@@ -101,19 +95,6 @@ namespace workwear.ReportParameters.ViewModels {
 		public virtual bool ExcludeInVacation {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
-		}
-
-		void FillProtectionTools(){
-			SelectedProtectionTools resultAlias = null;
-
-			protectionTools = new ObservableList<SelectedProtectionTools>(uow.Session.QueryOver<ProtectionTools>()
-				.SelectList(list => list
-					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					   .Select(() => true).WithAlias(() => resultAlias.Select)
-				).OrderBy(x => x.Name).Asc
-				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
-				.List<SelectedProtectionTools>());
 		}
 
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
@@ -140,11 +121,11 @@ namespace workwear.ReportParameters.ViewModels {
 
 		private int[] SelectedProtectionTools()
 		{
-			if(ProtectionTools.All(x => x.Select))
+			if(ChoiceProtectionToolsViewModel.ProtectionTools.All(x => x.Select))
 				return new int[] { -1 };
-			if(ProtectionTools.All(x => !x.Select))
+			if(ChoiceProtectionToolsViewModel.ProtectionTools.All(x => !x.Select))
 				return new int[] { -2 };
-			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
+			return ChoiceProtectionToolsViewModel.ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
 
 		private int[] SelectSubdivisions() {
@@ -158,17 +139,5 @@ namespace workwear.ReportParameters.ViewModels {
 				.Distinct()
 				.ToArray();
 		}
-	}
-
-	public class SelectedProtectionTools : PropertyChangedBase
-	{
-		private bool select;
-		public virtual bool Select {
-			get => select;
-			set => SetField(ref select, value);
-		}
-
-		public int Id { get; set; }
-		public string Name { get; set; }
 	}
 }
