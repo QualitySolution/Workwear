@@ -526,7 +526,7 @@
                             <BorderWidth />
                             <TextAlign>Center</TextAlign>
                           </Style>
-                          <Value></Value>
+                          <Value>=Sum(Iif(Fields!in_stock.IsMissing, 0, {in_stock}))</Value>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
