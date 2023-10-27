@@ -27,7 +27,7 @@ namespace workwear.ReportParameters.Views
 			checkDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
-			entityProtectionTools.ViewModel = ViewModel.ProtectionToolsEntry;
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

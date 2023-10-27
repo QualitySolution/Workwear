@@ -12,6 +12,7 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.ReportParameters.Views;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
@@ -108,7 +109,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"end_year", EndYear},
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", SelectedProtectionTools() },
+					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation }
@@ -117,15 +118,6 @@ namespace workwear.ReportParameters.ViewModels {
 		public void Dispose()
 		{
 			uow.Dispose();
-		}
-
-		private int[] SelectedProtectionTools()
-		{
-			if(ChoiceProtectionToolsViewModel.ProtectionTools.All(x => x.Select))
-				return new int[] { -1 };
-			if(ChoiceProtectionToolsViewModel.ProtectionTools.All(x => !x.Select))
-				return new int[] { -2 };
-			return ChoiceProtectionToolsViewModel.ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
 
 		private int[] SelectSubdivisions() {

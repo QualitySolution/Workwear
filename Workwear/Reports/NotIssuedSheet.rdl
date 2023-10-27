@@ -842,7 +842,7 @@ WHERE
     wear_cards.dismiss_date IS NULL 
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND( @protection_tools_id= -1 OR wear_cards_item.protection_tools_id = @protection_tools_id )
+    AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
     AND (@exclude_before = "" OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
@@ -873,8 +873,8 @@ ORDER BY
           <QueryParameter Name="@exclude_zero_stock">
             <Value>={?exclude_zero_stock}</Value>
           </QueryParameter>
-          <QueryParameter Name="@protection_tools_id">
-            <Value>={?protection_tools_id}</Value>
+          <QueryParameter Name="@protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1016,7 +1016,7 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="protection_tools_id">
+    <ReportParameter Name="protection_tools_ids">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -1025,7 +1025,7 @@ ORDER BY
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="issue_type">

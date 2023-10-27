@@ -38,8 +38,8 @@ namespace workwear.ReportParameters.ViewModels {
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
 				.List<SelectedProtectionTools>());
 		}
-		
-		private int[] SelectedProtectionTools()
+
+		public int[] SelectedProtectionToolsIds()
 		{
 			if(ProtectionTools.All(x => x.Select))
 				return new int[] { -1 };

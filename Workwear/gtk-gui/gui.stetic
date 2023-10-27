@@ -7175,7 +7175,14 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview1">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
         <child>
           <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
@@ -7599,7 +7606,14 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview2">
+            <property name="MemberName" />
+            <property name="Events">ButtonPressMask</property>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
         <child>
           <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
