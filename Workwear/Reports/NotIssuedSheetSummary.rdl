@@ -1044,7 +1044,7 @@ ORDER BY
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_test_agronom;user=Space;password=4562;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=workwear_test_;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
