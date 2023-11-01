@@ -87,6 +87,13 @@ namespace Workwear.Domain.Users
 			get => defaultLeader;
 			set { SetField(ref defaultLeader, value, () => DefaultLeader); }
 		}
+		
+		private ClaimListType defaultClaimListType = ClaimListType.NotClosed;
+		[Display(Name = "Тип списка обращений по умолчанию")]
+		public virtual ClaimListType DefaultClaimListType {
+			get => defaultClaimListType;
+			set => SetField(ref defaultClaimListType, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Настройки {User.Name}";
@@ -117,4 +124,13 @@ namespace Workwear.Domain.Users
 		[Display(Name = " 0 ")]
 		Zero
 	} 
+	
+	public enum ClaimListType {
+		[Display(Name = "Неотвеченные")]
+		NotAnswered,
+		[Display(Name = "Незакрытые")]
+		NotClosed,
+		[Display(Name = "Все")]
+		All,
+	}
 }

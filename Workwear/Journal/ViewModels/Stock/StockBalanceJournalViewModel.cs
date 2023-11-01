@@ -145,6 +145,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => warehouseOperationAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Id,
 					() => nomenclatureAlias.Number,
 					() => nomenclatureAlias.Name,
 					() => sizeAlias.Name,
@@ -152,6 +153,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 				.SelectList(list => list
 			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
+			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
@@ -207,6 +209,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockBalanceJournalNode
 	{
 		public int Id { get; set; }
+		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public string UnitsName { get; set; }

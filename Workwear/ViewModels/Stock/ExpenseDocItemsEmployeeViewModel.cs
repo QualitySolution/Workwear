@@ -23,7 +23,6 @@ using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
-using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 
@@ -90,6 +89,8 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private ExpenseItem selectedItem;
+		
+
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -168,7 +169,6 @@ namespace Workwear.ViewModels.Stock
 			
 			item.ProtectionTools = protectionTools;
 			item.EmployeeCardItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
-			Entity.Employee.UpdateNextIssue(protectionToolsForUpdate.ToArray());
 		}
 		
 		public void MakeEmptyProtectionTools(ExpenseItem item) {
@@ -249,8 +249,9 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Расчет для View
-		public string GetRowColor(ExpenseItem item)
-		{
+		public string GetRowColor(ExpenseItem item) {
+			if(item.EmployeeCardItem?.Graph == null)
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";

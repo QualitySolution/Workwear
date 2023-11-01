@@ -180,7 +180,7 @@ WHERE
       </Fields>
     </DataSet>
     <DataSet Name="Sizes">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     size_types.name AS sizeName,
@@ -190,14 +190,14 @@ FROM size_types
     LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
 WHERE size_types.use_in_employee = true
 ORDER BY size_types.position
-LIMIT 10</CommandText>
+LIMIT 20</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="sizeName">
           <DataField>sizeName</DataField>
           <TypeName>System.String</TypeName>
@@ -221,8 +221,8 @@ LIMIT 10</CommandText>
         <Width>556.24pt</Width>
         <Value>= "ЛИЧНАЯ КАРТОЧКА № " +  First({id}, 'Card')</Value>
         <ZIndex>1</ZIndex>
-        <Left>2.5pt</Left>
-        <Top>117.8pt</Top>
+        <Left>2pt</Left>
+        <Top>115.4pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -285,17 +285,17 @@ LIMIT 10</CommandText>
         </Style>
       </Textbox>
       <List Name="List1">
-        <Height>138.12pt</Height>
-        <Width>386.87pt</Width>
+        <Height>138.87pt</Height>
+        <Width>379.37pt</Width>
         <Left>0.00pt</Left>
         <Top>157.80pt</Top>
         <ReportItems>
           <Textbox Name="Textbox3">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
+            <Height>12.00pt</Height>
+            <Width>57.25pt</Width>
             <Value>Фамилия</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.30pt</Left>
+            <Left>2pt</Left>
             <Top>3.80pt</Top>
             <Style>
               <BorderStyle />
@@ -306,10 +306,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox7">
             <Height>12.00pt</Height>
-            <Width>323.52pt</Width>
+            <Width>309.26pt</Width>
             <Value>={last_name}</Value>
             <ZIndex>1</ZIndex>
-            <Left>52.40pt</Left>
+            <Left>66.66pt</Left>
             <Top>4.50pt</Top>
             <Style>
               <BorderStyle>
@@ -323,12 +323,12 @@ LIMIT 10</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox8">
-            <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
+            <Height>12.00pt</Height>
+            <Width>34.61pt</Width>
             <Value>Имя</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.9pt</Left>
-            <Top>18.4pt</Top>
+            <Left>2pt</Left>
+            <Top>18.40pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -338,10 +338,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox9">
             <Height>12.00pt</Height>
-            <Width>152.52pt</Width>
+            <Width>136.67pt</Width>
             <Value>={first_name}</Value>
             <ZIndex>1</ZIndex>
-            <Left>28.20pt</Left>
+            <Left>44.05pt</Left>
             <Top>19.10pt</Top>
             <Style>
               <BorderStyle>
@@ -356,10 +356,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox10">
             <Height>12.00pt</Height>
-            <Width>142.77pt</Width>
+            <Width>130.77pt</Width>
             <Value>={patronymic_name}</Value>
             <ZIndex>1</ZIndex>
-            <Left>232.90pt</Left>
+            <Left>244.90pt</Left>
             <Top>19.60pt</Top>
             <Style>
               <BorderStyle>
@@ -374,11 +374,11 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox11">
             <Height>12.75pt</Height>
-            <Width>71.52pt</Width>
+            <Width>57.97pt</Width>
             <Value>Отчество</Value>
             <ZIndex>1</ZIndex>
-            <Left>181.4pt</Left>
-            <Top>18.9pt</Top>
+            <Left>181.40pt</Left>
+            <Top>18.90pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -387,11 +387,11 @@ LIMIT 10</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox12">
-            <Height>12.00pt</Height>
-            <Width>277.77pt</Width>
+            <Height>12.75pt</Height>
+            <Width>258.91pt</Width>
             <Value>={personnel_number}</Value>
             <ZIndex>1</ZIndex>
-            <Left>98.20pt</Left>
+            <Left>117.06pt</Left>
             <Top>34.60pt</Top>
             <Style>
               <BorderStyle>
@@ -405,11 +405,11 @@ LIMIT 10</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox13">
-            <Height>12.75pt</Height>
+            <Height>12.00pt</Height>
             <Width>106.77pt</Width>
             <Value>Табельный номер</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.50pt</Left>
+            <Left>2pt</Left>
             <Top>33.90pt</Top>
             <Style>
               <BorderStyle />
@@ -419,11 +419,11 @@ LIMIT 10</CommandText>
             </Style>
           </Textbox>
           <Textbox Name="Textbox14">
-            <Height>12.00pt</Height>
-            <Width>220.77pt</Width>
+            <Height>12.75pt</Height>
+            <Width>206.49pt</Width>
             <Value>={subdivision}</Value>
             <ZIndex>1</ZIndex>
-            <Left>155.40pt</Left>
+            <Left>169.68pt</Left>
             <Top>49.80pt</Top>
             <Style>
               <BorderStyle>
@@ -439,11 +439,11 @@ LIMIT 10</CommandText>
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox15">
-            <Height>12.75pt</Height>
-            <Width>159.27pt</Width>
+            <Height>13.50pt</Height>
+            <Width>158.49pt</Width>
             <Value>Структурное подразделение</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.20pt</Left>
+            <Left>2pt</Left>
             <Top>49.10pt</Top>
             <Style>
               <BorderStyle />
@@ -454,10 +454,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox16">
             <Height>12.75pt</Height>
-            <Width>159.27pt</Width>
+            <Width>138.96pt</Width>
             <Value>Профессия (должность)</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.60pt</Left>
+            <Left>2pt</Left>
             <Top>64.40pt</Top>
             <Style>
               <BorderStyle />
@@ -468,10 +468,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox17">
             <Height>12.00pt</Height>
-            <Width>244.77pt</Width>
+            <Width>225.21pt</Width>
             <Value>={post}</Value>
             <ZIndex>1</ZIndex>
-            <Left>131.00pt</Left>
+            <Left>150.56pt</Left>
             <Top>65.10pt</Top>
             <Style>
               <BorderStyle>
@@ -491,7 +491,7 @@ LIMIT 10</CommandText>
             <Width>159.27pt</Width>
             <Value>Дата поступления на работу</Value>
             <ZIndex>1</ZIndex>
-            <Left>3.40pt</Left>
+            <Left>2pt</Left>
             <Top>79.10pt</Top>
             <Style>
               <BorderStyle />
@@ -502,10 +502,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox19">
             <Height>12.00pt</Height>
-            <Width>220.02pt</Width>
+            <Width>201.99pt</Width>
             <Value>={hire_date}</Value>
             <ZIndex>1</ZIndex>
-            <Left>155.60pt</Left>
+            <Left>173.63pt</Left>
             <Top>79.80pt</Top>
             <Style>
               <BorderStyle>
@@ -524,7 +524,7 @@ LIMIT 10</CommandText>
             <Width>358.77pt</Width>
             <Value>Дата изменения профессии (должности) или перевода в другое</Value>
             <ZIndex>1</ZIndex>
-            <Left>2.40pt</Left>
+            <Left>2pt</Left>
             <Top>95.40pt</Top>
             <Style>
               <BorderStyle />
@@ -535,10 +535,10 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox21">
             <Height>12.00pt</Height>
-            <Width>223.77pt</Width>
+            <Width>211.00pt</Width>
             <Value>=Iif(Fields!change_of_position_date.IsMissing, '—', Format({change_of_position_date}, 'd'))</Value>
             <ZIndex>1</ZIndex>
-            <Left>151.20pt</Left>
+            <Left>163.97pt</Left>
             <Top>112.40pt</Top>
             <Style>
               <BorderStyle>
@@ -553,11 +553,11 @@ LIMIT 10</CommandText>
           </Textbox>
           <Textbox Name="Textbox22">
             <Height>12.75pt</Height>
-            <Width>159.27pt</Width>
+            <Width>154.02pt</Width>
             <Value>структурное подразделение</Value>
             <ZIndex>1</ZIndex>
-            <Left>2.2pt</Left>
-            <Top>111.7pt</Top>
+            <Left>2pt</Left>
+            <Top>111.70pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -766,11 +766,11 @@ LIMIT 10</CommandText>
       </Textbox>
       <Textbox Name="Textbox53">
         <Height>10.50pt</Height>
-        <Width>112.89pt</Width>
+        <Width>104.63pt</Width>
         <Value>(подпись)</Value>
         <ZIndex>1</ZIndex>
-        <Left>231.9pt</Left>
-        <Top>408.2pt</Top>
+        <Left>240.16pt</Left>
+        <Top>408.20pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -889,6 +889,7 @@ LIMIT 10</CommandText>
         <Top>176.6pt</Top>
         <Width>150pt</Width>
         <ZIndex>1</ZIndex>
+        <Height>130.0pt</Height>
       </Table>
       <Textbox Name="Textbox4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>12.00pt</Height>
@@ -924,11 +925,11 @@ LIMIT 10</CommandText>
       </Textbox>
       <Textbox Name="Textbox24" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>10.48pt</Height>
-        <Width>426.83pt</Width>
+        <Width>417.06pt</Width>
         <Value>(наименование типовых (типовых отраслевых) норм)</Value>
         <ZIndex>1</ZIndex>
-        <Left>128.9pt</Left>
-        <Top>342.6pt</Top>
+        <Left>137.70pt</Left>
+        <Top>342.60pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -939,11 +940,11 @@ LIMIT 10</CommandText>
       </Textbox>
       <Textbox Name="Textbox25" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>23.25pt</Height>
-        <Width>428.52pt</Width>
+        <Width>420.27pt</Width>
         <Value>=First({regulations},"Card")</Value>
         <ZIndex>1</ZIndex>
-        <Left>127.5pt</Left>
-        <Top>318.7pt</Top>
+        <Left>136.30pt</Left>
+        <Top>318.70pt</Top>
         <Style>
           <BorderStyle>
             <Bottom>Solid</Bottom>
@@ -982,12 +983,21 @@ LIMIT 10</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=office.qsolution.ru;user=;database=workwear_test_;port=3306;password=;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>5545</Value>
+          <Value>259</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -996,13 +1006,4 @@ LIMIT 10</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=rs.qsolution.ru;user=demo;database=workwear;port=3306;password=demo;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

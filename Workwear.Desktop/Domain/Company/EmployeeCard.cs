@@ -241,6 +241,22 @@ namespace Workwear.Domain.Company
 			}
 			CostCenters.Add(employeeCostCenter);
 		}
+		#endregion		
+		#region EmployeeGroups
+            private IObservableList<EmployeeGroupItem> employeeGroupItems = new ObservableList<EmployeeGroupItem>();
+            [Display(Name = "Группы")]
+            public virtual IObservableList<EmployeeGroupItem> EmployeeGroupItems {
+                get => employeeGroupItems;
+                set => SetField(ref employeeGroupItems, value);
+            }
+
+            public virtual void AddEmployeeGroup(EmployeeGroup employeeGroup) {
+                if(employeeGroup.Items.Any(x => x.Employee.Id == Id)) {
+                    logger.Warn($"Группа №{employeeGroup.Id} \"{employeeGroup.Name}\" уже добавлена. Пропускаем...");
+                    return;
+                }
+                EmployeeGroupItems.Add(employeeGroup.AddEmployee(this));
+            }
 		#endregion
 		
 		#region Расчетные

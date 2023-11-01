@@ -126,6 +126,7 @@
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\ClothingService\ClaimsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Company\EmployeeGroupJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\SubdivisionBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\VacationTypeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsJournalViewModel.cs" />
@@ -167,7 +168,10 @@
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
+    <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeGroupViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
@@ -435,6 +439,12 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormChildren.NormPostsView.cs" />
     <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureProtectionToolsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureProtectionToolsView.cs" />
+    <Compile Include="Views\Company\EmployeeGroupView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmploeeInGroupsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView.cs" />
+    <Compile Include="Views\Company\EmployeeGroupItemsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeGroupItemsView.cs" />
     <Compile Include="Views\Postomats\PostomatDocumentView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentView.cs" />
     <Compile Include="Views\ClothingService\ClothingReceiptView.cs" />
