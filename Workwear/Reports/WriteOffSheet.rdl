@@ -806,7 +806,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox77">
-                      <Value>о списании товарноматериальных ценностей</Value>
+                      <Value>о списании товарно-материальных ценностей</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
