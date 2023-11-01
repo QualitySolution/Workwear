@@ -39,6 +39,8 @@ namespace Workwear.ViewModels.Stock
         public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
+        private OrganizationRepository organizationRepository;
+        private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
 
         public WriteOffViewModel(
@@ -94,8 +96,6 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
-        private OrganizationRepository organizationRepository;
-        private IInteractiveService interactive;
         
         private string total;
         public string Total {
