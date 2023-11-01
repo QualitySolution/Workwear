@@ -1,4 +1,4 @@
-﻿--Добавление общих данных для документа списания
+﻿-- Добавление общих данных для документа списания
 alter table stock_write_off	collate = utf8mb3_general_ci;
 alter table stock_write_off	add organization_id int unsigned null after user_id;
 alter table stock_write_off	add director_id int unsigned null after organization_id;
@@ -19,10 +19,10 @@ alter table stock_write_off
 		foreign key (director_id) references leaders (id)
 			on update cascade on delete set null;
 
---Добавление комментария в строку списания
+-- Добавление комментария в строку списания
 alter table stock_write_off_detail	add cause text null;
 
---Члены комиссии документа списания
+-- Члены комиссии документа списания
 create table stock_write_off_members
 (
 	id int unsigned auto_increment

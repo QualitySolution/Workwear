@@ -1008,7 +1008,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE
+    ON UPDATE CASCADE,
 	constraint fk_stock_write_off_chairman_id
 	foreign key (chairman_id) references leaders (id)
 	on update cascade on delete set null, 
@@ -1028,12 +1028,12 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 
 create table stock_write_off_members(
-	id int INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	write_off_id int unsigned not null,
 	member_id int unsigned not null,
 	PRIMARY KEY (`id`),
-	create index stock_write_off_members_fk1_idx (write_off_id ASC),
-	create index stock_write_off_members_fk2_idx (member_id ASC),
+	index stock_write_off_members_fk1_idx (write_off_id ASC),
+	index stock_write_off_members_fk2_idx (member_id ASC),
 	constraint stock_write_off_members_fk1
 		foreign key (write_off_id) references stock_write_off (id)
 			on update cascade on delete cascade,
@@ -1184,7 +1184,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `akt_number` VARCHAR(45) NULL DEFAULT NULL,
-  `cause text` null, 
+  `cause` text null, 
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
   INDEX `fk_stock_write_off_detail_nomenclature_idx` (`nomenclature_id` ASC),
