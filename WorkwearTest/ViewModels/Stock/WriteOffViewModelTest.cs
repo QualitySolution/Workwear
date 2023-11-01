@@ -23,6 +23,7 @@ using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
+using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -59,6 +60,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+			builder.RegisterType<OrganizationRepository>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.Register(x => Substitute.For<FeaturesService>()).As<FeaturesService>();
 			builder.Register(x => validator).As<IValidator>();
