@@ -16,8 +16,6 @@
         <CommandText>SELECT    
     n.name as nomenclature_name,
     items.quantity as amount, 
-    n.sale_cost,
-    (n.sale_cost * items.quantity) as sum_cost,
     mu.name as unit,
     IF(items.employee_issue_operation_id is not null,
         CONCAT_WS(' ',
@@ -56,14 +54,6 @@ FROM stock_write_off_detail as items
         <Field Name="amount">
           <DataField>amount</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="sale_cost">
-          <DataField>sale_cost</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="sum_cost">
-          <DataField>sum_cost</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="unit">
           <DataField>unit</DataField>
@@ -201,16 +191,16 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <Width>185.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>114.4pt</Width>
+            <Width>96.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>32.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>33.3pt</Width>
+            <Width>82.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>181.4pt</Width>
+            <Width>152.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -1046,13 +1036,13 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>210.3pt</Width>
+            <Width>306.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>113.9pt</Width>
+            <Width>116.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>247.0pt</Width>
+            <Width>152.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -1197,7 +1187,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>309.3pt</Top>
+        <Top>307.8pt</Top>
         <PageBreakAtStart>false</PageBreakAtStart>
         <PageBreakAtEnd>false</PageBreakAtEnd>
       </Table>
@@ -1216,7 +1206,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <Width>24.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>185.9pt</Width>
+            <Width>282.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>114.4pt</Width>
@@ -1226,12 +1216,6 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>33.5pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>37.1pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>56.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>87.5pt</Width>
@@ -1285,7 +1269,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>7</ColSpan>
+                  <ColSpan>5</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1369,42 +1353,6 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                     <Textbox Name="Textbox172">
                       <Value>Ед. изм.</Value>
                       <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Bottom</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox173">
-                      <Value>Цена</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Bottom</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox174">
-                      <Value>Сумма</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1532,43 +1480,6 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox183">
-                      <Value>=Fields!sale_cost.Value</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign>Center</TextAlign>
-                        <FontSize>8pt</FontSize>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox184">
-                      <Value>=Fields!sum_cost.Value</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign>Center</TextAlign>
-                        <FontSize>8pt</FontSize>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox185" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>=Fields!cause.Value</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -1589,129 +1500,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>229.3pt</Top>
-        <Footer>
-          <TableRows>
-            <TableRow>
-              <Height>.2in</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox23">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <Value></Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox25">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <Value></Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox26">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <Value></Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox35">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <Value></Value>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox36">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Right</TextAlign>
-                      </Style>
-                      <Value>Сумарно:</Value>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>2</ColSpan>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox38">
-                      <Style>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                      <Value>=Sum(Fields!sum_cost.Value)</Value>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>2</ColSpan>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-          </TableRows>
-        </Footer>
+        <Top>231.0pt</Top>
       </Table>
       <Table Name="Table3" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Members</DataSetName>
@@ -1729,7 +1518,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>360.8pt</Width>
+            <Width>364.8pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -1763,8 +1552,8 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>209.2pt</Left>
-        <Top>208.8pt</Top>
+        <Left>210pt</Left>
+        <Top>210.5pt</Top>
       </Table>
       <Textbox Name="Textbox8">
         <Height>18.75pt</Height>
@@ -1772,7 +1561,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Value>членов:</Value>
         <ZIndex>1</ZIndex>
         <Left>0.0pt</Left>
-        <Top>209.9pt</Top>
+        <Top>211.6pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
