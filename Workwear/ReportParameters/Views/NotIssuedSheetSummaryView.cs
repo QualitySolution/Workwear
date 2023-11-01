@@ -22,12 +22,13 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			checkShowEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Active).InitializeFromSource();
-
+			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			checkGroupBySubdivision.Binding.AddBinding(viewModel, w => w.GroupBySubdivision, v => v.Active).InitializeFromSource();
+				
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
-			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
-
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			choiceprotectiontoolsview2.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

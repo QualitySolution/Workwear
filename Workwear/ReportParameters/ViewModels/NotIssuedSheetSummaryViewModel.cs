@@ -28,6 +28,7 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW); 
 
 			excludeInVacation = true;
 		}
@@ -35,7 +36,9 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"issue_type", IssueType?.ToString() },
+					{"group_by_subdivision", GroupBySubdivision },
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", excludeInVacation },
@@ -67,6 +70,12 @@ namespace workwear.ReportParameters.ViewModels
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+		
+		private bool groupBySubdivision;
+		public virtual bool GroupBySubdivision {
+			get => groupBySubdivision;
+			set => SetField(ref groupBySubdivision, value);
+		}
 
 		private bool showSex;
 		public bool ShowSex {
@@ -87,6 +96,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		public void Dispose()

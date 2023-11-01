@@ -34,6 +34,8 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
 
+		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
@@ -58,6 +60,9 @@ namespace workwear.ReportParameters.Views
 			this.checkDontShowZeroStock.Label = "";
 			this.checkDontShowZeroStock.DrawIndicator = true;
 			this.checkDontShowZeroStock.UseUnderline = true;
+			this.checkDontShowZeroStock.FocusOnClick = false;
+			this.checkDontShowZeroStock.Xalign = 0F;
+			this.checkDontShowZeroStock.Yalign = 0F;
 			this.table1.Add(this.checkDontShowZeroStock);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkDontShowZeroStock]));
 			w1.TopAttach = ((uint)(5));
@@ -227,6 +232,13 @@ namespace workwear.ReportParameters.Views
 			w14.Expand = false;
 			w14.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
+			this.dialog1_VBox.Add(this.choiceprotectiontoolsview1);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.choiceprotectiontoolsview1]));
+			w15.Position = 1;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.Sensitive = false;
 			this.buttonRun.CanFocus = true;
@@ -234,11 +246,11 @@ namespace workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w15.PackType = ((global::Gtk.PackType)(1));
-			w15.Position = 1;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w16.PackType = ((global::Gtk.PackType)(1));
+			w16.Position = 2;
+			w16.Expand = false;
+			w16.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
