@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Documents
@@ -29,6 +30,48 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IObservableList<WriteoffItem> Items {
 			get { return items; }
 			set { SetField (ref items, value, () => Items); }
+		}
+		
+		private Leader director;
+		[Display (Name = "Утверждающее лицо")]
+		public virtual Leader Director {
+			get { return director; }
+			set { SetField (ref director, value, () => Director); }
+		}
+		
+		private Leader chairman;
+		[Display (Name = "Председатель комисии")]
+		public virtual Leader Chairman {
+			get { return chairman; }
+			set { SetField (ref chairman, value, () => Chairman); }
+		}
+		
+		private Organization organization;
+		[Display(Name = "Председатель комиcсии")]
+		public virtual Organization Organization {
+			get { return organization; }
+			set { SetField(ref organization, value, () => Organization); }
+		}
+
+		private IObservableList<Leader> members = new ObservableList<Leader>();
+		[Display(Name = "Члены комисии")]
+		public virtual IObservableList<Leader> Members {
+			get { return members; }
+			set { SetField(ref members, value, () => Members); }
+		}
+		#endregion
+
+		#region Methods
+		public virtual void RemoveMember(Leader member) {
+			Members.Remove (member);
+		}
+		
+		public virtual void AddMember(Leader member) {
+			if(Members.Any(p => DomainHelper.EqualDomainObjects(p, member))) {
+				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
+				return;
+			}
+			Members.Add(member);
 		}
 		#endregion
 

@@ -69,6 +69,13 @@ namespace Workwear.Domain.Stock.Documents
 				}
 			}
 		}
+		
+		private string cause;
+		[Display(Name = "Причина списания")]
+		public virtual string Cause {
+			get => cause;
+			set => SetField(ref cause, value);
+		}
 
 		#region Списание со склада
 
