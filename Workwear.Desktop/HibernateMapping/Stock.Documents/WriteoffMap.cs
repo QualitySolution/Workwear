@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.HibernateMapping.Stock.Documents
@@ -19,6 +20,14 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			Map(x => x.CreationDate).Column("creation_date");
 
 			References (x => x.CreatedbyUser).Column ("user_id");
+			References (x => x.Director).Column ("director_id");
+			References (x => x.Chairman).Column ("chairman_id");
+			References (x => x.Organization).Column ("organization_id");
+			
+			HasManyToMany<Leader>(x => x.Members)
+				.Table("stock_write_off_members")
+				.ParentKeyColumn("write_off_id")
+				.ChildKeyColumn("member_id");
 
 			HasMany (x => x.Items)
 				.Inverse()

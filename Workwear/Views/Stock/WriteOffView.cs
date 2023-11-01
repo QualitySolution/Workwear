@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using Gamma.ColumnConfig;
 using Gtk;
 using QS.Project.Domain;
 using QS.Views.Dialog;
 using QSOrmProject;
 using QSWidgetLib;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
@@ -18,12 +20,17 @@ namespace Workwear.Views.Stock
 		{
 			this.Build();
 			ConfigureDlg();
+			ConfigureMembers();
 			ConfigureItems();
 			CommonButtonSubscription();
 		}
 
 		private void ConfigureDlg()
 		{
+			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
+			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
+			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
+			
 			ylabelId.Binding
 					.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
 					.InitializeFromSource ();
@@ -49,6 +56,11 @@ namespace Workwear.Views.Stock
 				buttonAddWorker.Clicked += OnButtonAddFromEmployeeClicked;
 				buttonAddObject.Clicked += OnButtonAddFromObjectClicked;
 				buttonDel.Clicked += OnButtonDelClicked;
+				
+				ytreeMembers.Selection.Changed += Members_Selection_Changed;
+				ybuttonAddMember.Clicked += OnButtonAddMembersClicked;
+				ybuttonDelMember.Clicked += OnButtonDelMembersClicked;
+				buttonPrint.Clicked += OnButtonPrintClicked;
 		}
 		private void ConfigureItems()
 		{
@@ -75,7 +87,8 @@ namespace Workwear.Views.Stock
 						.AddTextRenderer(e => "%", expand: false)
 					.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
-						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
+					.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
+					.AddColumn("Причина списания").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
 					.Finish ();
 			
 			ytreeItems.Binding
@@ -83,6 +96,14 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
+		}
+		
+		private void ConfigureMembers() {
+			ytreeMembers.ColumnsConfig = FluentColumnsConfig<Leader>.Create()
+				.AddColumn("ФИО").AddTextRenderer(l => l.Title)
+				.AddColumn("Должность").AddTextRenderer(l => l.Position)
+				.Finish();
+			ytreeMembers.ItemsDataSource = Entity.Members;
 		}
 
 		#region Methods
@@ -113,8 +134,14 @@ namespace Workwear.Views.Stock
 		private void OnButtonDelClicked(object sender, EventArgs e) => 
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<WriteoffItem>());
 
+		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 		private void OnButtonAddFromEmployeeClicked(object sender, EventArgs e) => ViewModel.AddFromEmployee();
 		private void OnButtonAddFromObjectClicked(object sender, EventArgs e) => ViewModel.AddFromObject();
+		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
+		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
+		private void Members_Selection_Changed(object sender, EventArgs e){
+			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0;
+		}
 		#endregion
 	}
 }

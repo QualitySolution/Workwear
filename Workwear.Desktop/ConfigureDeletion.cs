@@ -70,12 +70,16 @@ namespace Workwear
 				.AddClearDependence<UserSettings>(x => x.DefaultLeader)
 				.AddClearDependence<Inspection>(x => x.Director)
 				.AddClearDependence<Inspection>(x => x.Chairman)
-				.AddRemoveFromDependence<Inspection>(x => x.Members);
+				.AddRemoveFromDependence<Inspection>(x => x.Members)
+				.AddClearDependence<Writeoff>(x => x.Director)
+				.AddClearDependence<Writeoff>(x => x.Chairman)
+				.AddRemoveFromDependence<Writeoff>(x => x.Members);
 
 			DeleteConfig.AddHibernateDeleteInfo<Organization>()
 				.AddClearDependence<IssuanceSheet>(x => x.Organization)
 				.AddClearDependence<UserSettings>(x => x.DefaultOrganization)
-				.AddClearDependence<Inspection>(x => x.Organization);
+				.AddClearDependence<Inspection>(x => x.Organization)
+				.AddClearDependence<Writeoff>(x => x.Organization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()
 				.AddRemoveFromDependence<Norm>(x => x.Posts)
