@@ -54,7 +54,6 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
-			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -69,8 +68,8 @@ namespace workwear.ReportParameters.Views
 			this.checkDontShowZeroStock.Yalign = 0F;
 			this.table1.Add(this.checkDontShowZeroStock);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkDontShowZeroStock]));
-			w1.TopAttach = ((uint)(6));
-			w1.BottomAttach = ((uint)(7));
+			w1.TopAttach = ((uint)(7));
+			w1.BottomAttach = ((uint)(8));
 			w1.LeftAttach = ((uint)(1));
 			w1.RightAttach = ((uint)(2));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -84,8 +83,8 @@ namespace workwear.ReportParameters.Views
 			this.comboIssueType.DefaultFirst = false;
 			this.table1.Add(this.comboIssueType);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.comboIssueType]));
-			w2.TopAttach = ((uint)(3));
-			w2.BottomAttach = ((uint)(4));
+			w2.TopAttach = ((uint)(4));
+			w2.BottomAttach = ((uint)(5));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -102,8 +101,8 @@ namespace workwear.ReportParameters.Views
 			this.dateExcludeBefore.HideButtonClearDate = false;
 			this.table1.Add(this.dateExcludeBefore);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.dateExcludeBefore]));
-			w3.TopAttach = ((uint)(2));
-			w3.BottomAttach = ((uint)(3));
+			w3.TopAttach = ((uint)(3));
+			w3.BottomAttach = ((uint)(4));
 			w3.LeftAttach = ((uint)(1));
 			w3.RightAttach = ((uint)(2));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -114,6 +113,8 @@ namespace workwear.ReportParameters.Views
 			this.entitySubdivision.Name = "entitySubdivision";
 			this.table1.Add(this.entitySubdivision);
 			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
+			w4.TopAttach = ((uint)(1));
+			w4.BottomAttach = ((uint)(2));
 			w4.LeftAttach = ((uint)(1));
 			w4.RightAttach = ((uint)(2));
 			w4.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -125,8 +126,8 @@ namespace workwear.ReportParameters.Views
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Дата отчета:");
 			this.table1.Add(this.label1);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w5.TopAttach = ((uint)(1));
-			w5.BottomAttach = ((uint)(2));
+			w5.TopAttach = ((uint)(2));
+			w5.BottomAttach = ((uint)(3));
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
 			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -141,8 +142,6 @@ namespace workwear.ReportParameters.Views
 			this.label2.Justify = ((global::Gtk.Justification)(3));
 			this.table1.Add(this.label2);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w6.TopAttach = ((uint)(7));
-			w6.BottomAttach = ((uint)(8));
 			w6.RightAttach = ((uint)(2));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
@@ -153,6 +152,8 @@ namespace workwear.ReportParameters.Views
 			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.table1.Add(this.label3);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -162,8 +163,8 @@ namespace workwear.ReportParameters.Views
 			this.labelIssueType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.table1.Add(this.labelIssueType);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIssueType]));
-			w8.TopAttach = ((uint)(3));
-			w8.BottomAttach = ((uint)(4));
+			w8.TopAttach = ((uint)(4));
+			w8.BottomAttach = ((uint)(5));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -176,8 +177,8 @@ namespace workwear.ReportParameters.Views
 			this.ycheckCondition.UseUnderline = true;
 			this.table1.Add(this.ycheckCondition);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCondition]));
-			w9.TopAttach = ((uint)(5));
-			w9.BottomAttach = ((uint)(6));
+			w9.TopAttach = ((uint)(6));
+			w9.BottomAttach = ((uint)(7));
 			w9.LeftAttach = ((uint)(1));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -192,8 +193,8 @@ namespace workwear.ReportParameters.Views
 			this.ycheckExcludeInVacation.UseUnderline = true;
 			this.table1.Add(this.ycheckExcludeInVacation);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckExcludeInVacation]));
-			w10.TopAttach = ((uint)(4));
-			w10.BottomAttach = ((uint)(5));
+			w10.TopAttach = ((uint)(5));
+			w10.BottomAttach = ((uint)(6));
 			w10.LeftAttach = ((uint)(1));
 			w10.RightAttach = ((uint)(2));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -208,8 +209,8 @@ namespace workwear.ReportParameters.Views
 			this.ydateReport.AutoSeparation = true;
 			this.table1.Add(this.ydateReport);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
-			w11.TopAttach = ((uint)(1));
-			w11.BottomAttach = ((uint)(2));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
 			w11.LeftAttach = ((uint)(1));
 			w11.RightAttach = ((uint)(2));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
@@ -220,8 +221,8 @@ namespace workwear.ReportParameters.Views
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Только при наличии на складе:");
 			this.table1.Add(this.ylabel1);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
-			w12.TopAttach = ((uint)(6));
-			w12.BottomAttach = ((uint)(7));
+			w12.TopAttach = ((uint)(7));
+			w12.BottomAttach = ((uint)(8));
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -231,8 +232,8 @@ namespace workwear.ReportParameters.Views
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Исключать сотрудников в отпуске:");
 			this.table1.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel2]));
-			w13.TopAttach = ((uint)(4));
-			w13.BottomAttach = ((uint)(5));
+			w13.TopAttach = ((uint)(5));
+			w13.BottomAttach = ((uint)(6));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -242,8 +243,8 @@ namespace workwear.ReportParameters.Views
 			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Исключить невыданное до:");
 			this.table1.Add(this.ylabel3);
 			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel3]));
-			w14.TopAttach = ((uint)(2));
-			w14.BottomAttach = ((uint)(3));
+			w14.TopAttach = ((uint)(3));
+			w14.BottomAttach = ((uint)(4));
 			w14.XOptions = ((global::Gtk.AttachOptions)(4));
 			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -253,8 +254,8 @@ namespace workwear.ReportParameters.Views
 			this.ylabelcheckCondition.LabelProp = global::Mono.Unix.Catalog.GetString("Учитывать период выдачи:");
 			this.table1.Add(this.ylabelcheckCondition);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelcheckCondition]));
-			w15.TopAttach = ((uint)(5));
-			w15.BottomAttach = ((uint)(6));
+			w15.TopAttach = ((uint)(6));
+			w15.BottomAttach = ((uint)(7));
 			w15.XOptions = ((global::Gtk.AttachOptions)(4));
 			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
