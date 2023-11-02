@@ -406,7 +406,7 @@
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression >={subdivision_id}</GroupExpression>
+                <GroupExpression>={subdivision_id}</GroupExpression>
               </GroupExpressions>
             </Grouping>
             <Header>
@@ -551,7 +551,7 @@
                 </TableRow>
               </TableRows>
             </Footer>
-            <Sorting >
+            <Sorting>
               <SortBy>
                 <SortExpression>={subdivision_name}</SortExpression>
                 <Direction>Ascending</Direction>
@@ -922,11 +922,16 @@ LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
 LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
 LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
 WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
+    AND (@condition = false OR norm_conditions.issuance_start is null OR
+       IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
+          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
     AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
     AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
@@ -965,6 +970,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@group_by_subdivision">
             <Value>={?group_by_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@condition">
+            <Value>={?condition}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1040,11 +1048,11 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_test_;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YfS/r4j6*VRkX4Nw;</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -1157,6 +1165,18 @@ ORDER BY
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="condition">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>TRUE</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
