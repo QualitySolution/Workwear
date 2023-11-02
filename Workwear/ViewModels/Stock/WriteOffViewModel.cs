@@ -238,7 +238,7 @@ namespace Workwear.ViewModels.Stock
 			
 	        var reportInfo = new ReportInfo {
 		        Title = String.Format("Акт списания №{0}", Entity.Id),
-		        Identifier = "WriteOffSheet",
+		        Identifier = "Documents.WriteOffSheet",
 		        Parameters = new Dictionary<string, object> {
 			        { "id",  Entity.Id }
 		        }

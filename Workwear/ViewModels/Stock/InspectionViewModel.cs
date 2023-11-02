@@ -169,7 +169,7 @@ namespace Workwear.ViewModels.Stock {
 			
 			var reportInfo = new ReportInfo {
 				Title = String.Format("Документ переоценки №{0}", Entity.Id),
-				Identifier = "InspectionSheet",
+				Identifier = "Documents.InspectionSheet",
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }
 				}

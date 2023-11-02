@@ -78,19 +78,16 @@ namespace Workwear.Views.Company
 			this.buttonтOpen.Name = "buttonтOpen";
 			this.buttonтOpen.UseUnderline = true;
 			this.buttonтOpen.Label = global::Mono.Unix.Catalog.GetString("Открыть сотрудников");
-			global::Gtk.Image w7 = new global::Gtk.Image();
-			w7.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "stock_new-bcard", global::Gtk.IconSize.Menu);
-			this.buttonтOpen.Image = w7;
 			this.hbox5.Add(this.buttonтOpen);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonтOpen]));
-			w8.Position = 2;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonтOpen]));
+			w7.Position = 2;
+			w7.Expand = false;
+			w7.Fill = false;
+			this.vbox1.Add(this.hbox5);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
+			w8.Position = 1;
 			w8.Expand = false;
 			w8.Fill = false;
-			this.vbox1.Add(this.hbox5);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
-			w9.Position = 1;
-			w9.Expand = false;
-			w9.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

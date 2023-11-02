@@ -14,7 +14,7 @@ namespace Workwear.Domain.Company {
 		Genitive = "группы сотрудников"
 	)]
 	[HistoryTrace]
-	public class EmployeeGroup: PropertyChangedBase, IDomainObject {
+	public class EmployeeGroup: PropertyChangedBase, IDomainObject , IValidatableObject{
 		
 		#region Хранимые Свойства
 
@@ -65,5 +65,14 @@ namespace Workwear.Domain.Company {
 			Items.Add(item);
 			return item;
 		}
+		
+		#region IValidatableObject
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(String.IsNullOrEmpty(Name))
+				yield return new ValidationResult($"Название не должно быть пустым");
+		}
+		#endregion
+
+		
 	}
 }
