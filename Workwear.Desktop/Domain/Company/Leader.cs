@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using QS.Utilities.Text;
@@ -11,7 +13,7 @@ namespace Workwear.Domain.Company
 		Genitive ="должностного лица"
 		)]
 	[HistoryTrace]
-	public class Leader : PropertyChangedBase, IDomainObject
+	public class Leader : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Свойства
 
@@ -66,6 +68,13 @@ namespace Workwear.Domain.Company
 		public Leader ()
 		{
 		}
+		
+		#region IValidatableObject
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(String.IsNullOrEmpty(Surname))
+				yield return new ValidationResult($"Фамилия не должна быть пустой");
+		}
+		#endregion
 	}
 }
 
