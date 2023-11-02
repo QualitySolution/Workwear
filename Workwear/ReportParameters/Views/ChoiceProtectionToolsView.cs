@@ -21,7 +21,7 @@ namespace Workwear.ReportParameters.Views {
 
 		private void CreateTable(){
 			ytreeProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
-				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()
+				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
 			
