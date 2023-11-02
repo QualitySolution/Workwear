@@ -156,6 +156,7 @@ namespace Workwear.Views.Stock
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.table2 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
+			this.table2.Name = "table2";
 			this.table2.RowSpacing = ((uint)(6));
 			this.table2.ColumnSpacing = ((uint)(6));
 			// Container child table2.Gtk.Table+TableChild
@@ -190,6 +191,7 @@ namespace Workwear.Views.Stock
 			this.ytreeMembers = new global::Gamma.GtkWidgets.yTreeView();
 			this.ytreeMembers.CanFocus = true;
 			this.ytreeMembers.Name = "ytreeMembers";
+			this.ytreeMembers.HoverExpand = true;
 			this.GtkScrolledWindow1.Add(this.ytreeMembers);
 			this.table2.Add(this.GtkScrolledWindow1);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.GtkScrolledWindow1]));
@@ -197,7 +199,6 @@ namespace Workwear.Views.Stock
 			w11.BottomAttach = ((uint)(4));
 			w11.LeftAttach = ((uint)(1));
 			w11.RightAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.label4 = new global::Gtk.Label();
