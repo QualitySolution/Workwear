@@ -132,7 +132,7 @@ namespace Workwear.Views.Stock
 				var submenuChangePT = new Menu();
 				foreach(ProtectionTools protectionTools in ViewModel.EmployeesProtectionToolsList) {
 					var ptItem = new MenuItem(protectionTools.Name);
-					ptItem.Selected += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
 					submenuChangePT.Append(ptItem);
 				}
 				menuItemChangePT.Submenu = submenuChangePT;

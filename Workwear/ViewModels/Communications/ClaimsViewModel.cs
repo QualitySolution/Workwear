@@ -7,12 +7,13 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
-using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Users;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 
@@ -23,6 +24,7 @@ namespace Workwear.ViewModels.Communications
 		
 		private readonly ClaimsManagerService claimsManager;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly CurrentUserSettings currentUserSettings;
 		private readonly uint sizePage = 300;
 		private Dictionary<string, FIO> employeeNames;
 
@@ -31,13 +33,13 @@ namespace Workwear.ViewModels.Communications
 			INavigationManager navigation,
 			ClaimsManagerService claimsManager,
 			EmployeeRepository employeeRepository,
-			IValidator validator = null, 
-			string UoWTitle = "Обращения сотрудников"
-			) : base(unitOfWorkFactory, navigation, validator, UoWTitle) 
+			CurrentUserSettings currentUserSettings
+			) : base(unitOfWorkFactory, navigation, UoWTitle: "Обращения сотрудников") 
 		{
 			Title = "Обращения сотрудников";
 			this.claimsManager = claimsManager;
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			employeeRepository.RepoUow = UoW;
 			messagesSelectClaims = new List<ClaimMessage>();
 			Claims = new List<Claim>();
@@ -80,13 +82,27 @@ namespace Workwear.ViewModels.Communications
 			get => messagesSelectClaims;
 			set => SetField(ref messagesSelectClaims, value);
 		}
-
-		private bool showClosed;
-		public bool ShowClosed {
-			get => showClosed;
+		
+		public ClaimListType ListType {
+			get => currentUserSettings.Settings.DefaultClaimListType;
 			set {
-				SetField(ref showClosed, value);
+				currentUserSettings.Settings.DefaultClaimListType = value;
 				RefreshClaims();
+			}
+		}
+		
+		protected ShowClaim ShowType {
+			get {
+				switch(ListType) {
+					case ClaimListType.NotAnswered:
+						return ShowClaim.NotAnswered;
+					case ClaimListType.NotClosed:
+						return ShowClaim.NotClosed;
+					case ClaimListType.All:
+						return ShowClaim.All;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -135,7 +151,7 @@ namespace Workwear.ViewModels.Communications
 		}
 
 		public void RefreshClaims() {
-			Claims = claimsManager.GetClaims(sizePage, 0, ShowClosed).ToList();
+			Claims = claimsManager.GetClaims(sizePage, 0, ShowType).ToList();
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
 		}
 
@@ -159,12 +175,11 @@ namespace Workwear.ViewModels.Communications
 		}
 
 		public bool UploadClaims() {
-			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowClosed).ToList();
+			var newClaims = claimsManager.GetClaims(sizePage, (uint)Claims.Count, ShowType).ToList();
 			if (newClaims.Count == 0)
 				return false;
-			Claims.AddRange(newClaims);
+			Claims = Claims.Union(newClaims).ToList();
 			employeeNames = employeeRepository.GetFioByPhones(claims.Select(x => x.UserPhone).Where(x => !String.IsNullOrEmpty(x)).Distinct().ToArray());
-			OnPropertyChanged(nameof(Claims));
 			return true;
 		}
 		

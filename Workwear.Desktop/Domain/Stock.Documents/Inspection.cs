@@ -37,21 +37,21 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 		
 		private Leader chairman;
-		[Display (Name = "Председатель комисии")]
+		[Display (Name = "Председатель комиссии")]
 		public virtual Leader Chairman {
 			get { return chairman; }
 			set { SetField (ref chairman, value, () => Chairman); }
 		}
 		
 		private Organization organization;
-		[Display(Name = "Председатель комиcсии")]
+		[Display(Name = "Организация")]
 		public virtual Organization Organization {
 			get { return organization; }
 			set { SetField(ref organization, value, () => Organization); }
 		}
 
 		private IObservableList<Leader> members = new ObservableList<Leader>();
-		[Display(Name = "Члены комисии")]
+		[Display(Name = "Члены комиссии")]
 		public virtual IObservableList<Leader> Members {
 			get { return members; }
 			set { SetField(ref members, value, () => Members); }
@@ -88,10 +88,10 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		public virtual void AddMember(Leader member) {
 			if(Members.Any(p => DomainHelper.EqualDomainObjects(p, member))) {
-				logger.Warn("Этот член комисии уже добавлен. Пропускаем...");
+				logger.Warn("Этот член комиссии уже добавлен. Пропускаем...");
 				return;
 			}
-			Members.Add(member);
+			Members.Add(member); 
 		}
 		#endregion
 		

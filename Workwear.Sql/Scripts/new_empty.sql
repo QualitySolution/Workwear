@@ -993,20 +993,54 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL,
+  `organization_id` int unsigned null,
+  `director_id` int unsigned null,
+  `chairman_id` int unsigned null,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_user_idx` (`user_id` ASC),
   INDEX `index_stock_write_off_date` (`date` ASC),
+  index `fk_stock_write_off_chairman_id_idx` (`chairman_id` ASC),
+  index `fk_stock_write_off_director_idx` (`director_id` ASC),
+  index `fk_stock_write_off_organization_idx` (`organization_id` ASC),
   CONSTRAINT `fk_stock_write_off_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+	constraint fk_stock_write_off_chairman_id
+	foreign key (chairman_id) references leaders (id)
+	on update cascade on delete set null, 
+	constraint fk_stock_write_off_organization_id
+	foreign key (organization_id) references organizations (id)
+	on update cascade on delete set null,
+	constraint stock_inspection_fk_director_id
+	foreign key (director_id) references leaders (id)
+	on update cascade on delete set null
+    )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
 
+-- -----------------------------------------------------
+-- Table `stock_write_off_members`
+-- -----------------------------------------------------
+
+create table stock_write_off_members(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	write_off_id int unsigned not null,
+	member_id int unsigned not null,
+	PRIMARY KEY (`id`),
+	index stock_write_off_members_fk1_idx (write_off_id ASC),
+	index stock_write_off_members_fk2_idx (member_id ASC),
+	constraint stock_write_off_members_fk1
+		foreign key (write_off_id) references stock_write_off (id)
+			on update cascade on delete cascade,
+	constraint stock_write_off_members_fk2
+		foreign key (member_id) references leaders (id)
+			on update cascade
+);
 
 -- -----------------------------------------------------
 -- Table `stock_expense`
@@ -1150,6 +1184,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `akt_number` VARCHAR(45) NULL DEFAULT NULL,
+  `cause` text null, 
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
   INDEX `fk_stock_write_off_detail_nomenclature_idx` (`nomenclature_id` ASC),
@@ -1353,6 +1388,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `default_organization_id` INT UNSIGNED NULL,
   `default_responsible_person_id` INT UNSIGNED NULL,
   `default_leader_id` INT UNSIGNED NULL,
+  `default_claim_list_type` ENUM('NotAnswered','NotClosed','All') NOT NULL DEFAULT 'NotClosed',
   PRIMARY KEY (`id`),
   INDEX `fk_user_settings_1_idx` (`user_id` ASC),
   INDEX `fk_user_settings_warehouse_id_idx` (`default_warehouse_id` ASC),
@@ -2171,7 +2207,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.10');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.11');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

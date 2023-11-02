@@ -753,7 +753,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -785,7 +785,7 @@
     departments.id as department_id,
     departments.name as department_name,
     sizeTypeAlias.id as sizeTypeId,
-    heightTypeAlias.id as heightTypeId, 
+    heightTypeAlias.id as heightTypeId,
     sizeAlias.name AS size,
 	heightAlias.name AS growth,
     measurement_units.name AS unit,
@@ -810,45 +810,51 @@
         JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
         WHERE
             (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
+            AND (protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
             SELECT
                 protection_tools_replacement.protection_tools_analog_id
             FROM
                 protection_tools_replacement
             WHERE
                 protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
-        ))
+        )))
         AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
         AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
     ) AS in_stock
 FROM
     wear_cards_item
-JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-LEFT JOIN departments ON wear_cards.department_id = departments.id
-LEFT JOIN posts ON wear_cards.post_id = posts.id
-LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
-LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
-LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+    JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+    JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+    LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+    LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+    JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+    LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
+    LEFT JOIN departments ON wear_cards.department_id = departments.id
+    LEFT JOIN posts ON wear_cards.post_id = posts.id
+    LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
+    LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+    LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+    LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+    LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+    LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+    LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+    LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 WHERE
-    wear_cards.dismiss_date IS NULL 
+    wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
+    AND (@condition = false OR norm_conditions.issuance_start is null OR
+        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
+            SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+            SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
+    AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-    AND (@exclude_before = "" OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
+    AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
     wear_cards_item.wear_card_id,
     wear_cards_item.protection_tools_id
-HAVING 
+HAVING
     (@exclude_zero_stock = false OR in_stock &gt; 0)
 ORDER BY
     employee,
@@ -872,9 +878,15 @@ ORDER BY
           <QueryParameter Name="@exclude_zero_stock">
             <Value>={?exclude_zero_stock}</Value>
           </QueryParameter>
+          <QueryParameter Name="@protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@condition">
+            <Value>={?condition}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -902,6 +914,10 @@ ORDER BY
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="protection_tools_assessed_cost">
+          <DataField>protection_tools_assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
         </Field>
         <Field Name="protection_tools_id">
           <DataField>protection_tools_id</DataField>
@@ -931,6 +947,14 @@ ORDER BY
           <DataField>department_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="sizeTypeId">
+          <DataField>sizeTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="heightTypeId">
+          <DataField>heightTypeId</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
         <Field Name="size">
           <DataField>size</DataField>
           <TypeName>System.String</TypeName>
@@ -951,18 +975,6 @@ ORDER BY
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="protection_tools_assessed_cost">
-          <DataField>protection_tools_assessed_cost</DataField>
-          <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="sizeTypeId">
-          <DataField>sizeTypeId</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="heightTypeId">
-          <DataField>heightTypeId</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -978,7 +990,16 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YfS/r4j6*VRkX4Nw;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1001,6 +1022,18 @@ ORDER BY
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="issue_type">
@@ -1041,14 +1074,17 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="condition">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>TRUE</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_osmbt_copy;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
