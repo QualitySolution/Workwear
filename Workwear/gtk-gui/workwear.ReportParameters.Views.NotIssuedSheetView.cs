@@ -250,7 +250,7 @@ namespace workwear.ReportParameters.Views
 			this.ylabelcheckCondition = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelcheckCondition.Name = "ylabelcheckCondition";
 			this.ylabelcheckCondition.Xalign = 1F;
-			this.ylabelcheckCondition.LabelProp = global::Mono.Unix.Catalog.GetString("Учитывать период условий нормы:");
+			this.ylabelcheckCondition.LabelProp = global::Mono.Unix.Catalog.GetString("Учитывать период выдачи:");
 			this.table1.Add(this.ylabelcheckCondition);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelcheckCondition]));
 			w15.TopAttach = ((uint)(5));

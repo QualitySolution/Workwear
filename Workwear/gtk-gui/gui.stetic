@@ -7467,7 +7467,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelcheckCondition">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Учитывать период условий нормы:</property>
+                <property name="LabelProp" translatable="yes">Учитывать период выдачи:</property>
               </widget>
               <packing>
                 <property name="TopAttach">5</property>
@@ -7947,7 +7947,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelcheckCondition">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Учитывать период условий нормы:</property>
+                <property name="LabelProp" translatable="yes">Учитывать период выдачи:</property>
               </widget>
               <packing>
                 <property name="TopAttach">7</property>
