@@ -31,6 +31,7 @@ namespace workwear.ReportParameters.ViewModels
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW); 
 
 			excludeInVacation = true;
+			condition = true;
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -41,7 +42,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"group_by_subdivision", GroupBySubdivision },
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
-					{"exclude_in_vacation", excludeInVacation },
+					{"exclude_in_vacation", ExcludeInVacation },
+					{"condition", Condition },
 					{"exclude_before", ExcludeBefore }
 				 };
 
@@ -71,6 +73,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref excludeInVacation, value);
 		}
 		
+		private bool condition;
+		public virtual bool Condition {
+			get => condition;
+			set => SetField(ref condition, value);
+		}
+		
 		private bool groupBySubdivision;
 		public virtual bool GroupBySubdivision {
 			get => groupBySubdivision;
@@ -91,6 +99,7 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool SensetiveLoad => ReportDate != null;
 		#endregion
 
