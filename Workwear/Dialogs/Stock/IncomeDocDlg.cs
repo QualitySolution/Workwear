@@ -317,7 +317,7 @@ namespace workwear
 		public enum IncomeDocReport
 		{
 			[Display(Name = "Документ возврата")]
-			[ReportIdentifier("ReturnSheet")]
+			[ReportIdentifier("Documents.ReturnSheet")]
 			ReturnSheet,
 		}
 	}
