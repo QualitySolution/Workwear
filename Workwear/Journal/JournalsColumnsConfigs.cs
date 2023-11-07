@@ -217,6 +217,12 @@ namespace workwear.Journal
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<DutyNormsJournalViewModel>(
+				() => FluentColumnsConfig<DutyNormsJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
+					.Finish()
+			);
 
 			TreeViewColumnsConfigFactory.Register<NormConditionJournalViewModel>(
 				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
