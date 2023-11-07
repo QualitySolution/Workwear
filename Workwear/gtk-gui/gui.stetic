@@ -1705,7 +1705,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">4</property>
+            <property name="CurrentPage">5</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.HBox" id="hbox1">
@@ -2803,6 +2803,24 @@
               </packing>
             </child>
             <child>
+              <widget class="Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView" id="emploeeingroupsview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">5</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelTabEmploeeingroupsview">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Группы</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.VBox" id="vbox5">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
@@ -2818,7 +2836,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">5</property>
+                <property name="Position">6</property>
               </packing>
             </child>
             <child>
@@ -2846,7 +2864,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">6</property>
+                <property name="Position">7</property>
               </packing>
             </child>
             <child>
@@ -2864,7 +2882,7 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">7</property>
+                <property name="Position">8</property>
               </packing>
             </child>
             <child>
