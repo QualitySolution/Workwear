@@ -421,6 +421,8 @@ namespace Workwear.Views.Regulations
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.buttonAddItem.Clicked += new global::System.EventHandler(this.OnButtonAddItemClicked);
+			this.buttonRemoveItem.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
 		}
 	}
 }
