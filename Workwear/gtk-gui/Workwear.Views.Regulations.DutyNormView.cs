@@ -66,6 +66,10 @@ namespace Workwear.Views.Regulations
 
 		private global::Gtk.Label label10;
 
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeviewHistory;
+
 		private global::Gtk.Label label2;
 
 		protected virtual void Build()
@@ -119,7 +123,7 @@ namespace Workwear.Views.Regulations
 			this.tabs = new global::Gamma.GtkWidgets.yNotebook();
 			this.tabs.CanFocus = true;
 			this.tabs.Name = "tabs";
-			this.tabs.CurrentPage = 0;
+			this.tabs.CurrentPage = 2;
 			// Container child tabs.Gtk.Notebook+NotebookChild
 			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
 			this.table1.Name = "table1";
@@ -403,18 +407,27 @@ namespace Workwear.Views.Regulations
 			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Норма");
 			this.tabs.SetTabLabel(this.vbox1, this.label10);
 			this.label10.ShowAll();
+			// Container child tabs.Gtk.Notebook+NotebookChild
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			this.ytreeviewHistory = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewHistory.CanFocus = true;
+			this.ytreeviewHistory.Name = "ytreeviewHistory";
+			this.GtkScrolledWindow.Add(this.ytreeviewHistory);
+			this.tabs.Add(this.GtkScrolledWindow);
+			global::Gtk.Notebook.NotebookChild w33 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.GtkScrolledWindow]));
+			w33.Position = 2;
 			// Notebook tab
-			global::Gtk.Label w32 = new global::Gtk.Label();
-			w32.Visible = true;
-			this.tabs.Add(w32);
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Числится");
-			this.tabs.SetTabLabel(w32, this.label2);
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("История выдач");
+			this.tabs.SetTabLabel(this.GtkScrolledWindow, this.label2);
 			this.label2.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w33.Position = 1;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w34.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

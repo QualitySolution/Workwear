@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 
@@ -18,12 +19,12 @@ namespace Workwear.ViewModels.Regulations {
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null) 
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
-		{
 
+			currentTab = Entity.Id == 0 ? 0 : 1;
 		}
-		
+
 		#region Свойства
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 		public List<RegulationDoc> RegulationDocs { get; set; }
 		
 		private DutyNormItem selectedItem;
@@ -32,7 +33,7 @@ namespace Workwear.ViewModels.Regulations {
 			set => SetField(ref selectedItem, value);
 		}
 
-		private int currentTab = 1;
+		private int currentTab;
 		public virtual int CurrentTab {
 			get => currentTab;
 			set {
@@ -40,7 +41,10 @@ namespace Workwear.ViewModels.Regulations {
 			}
 		}
 
-		#endregion
+		 public virtual IList<DutyNormIssueOperation> Operations => UoW.Session.QueryOver<DutyNormIssueOperation>()
+			 .Where(o => o.DutyNorm.Id == Entity.Id).List();
+
+		 #endregion
 		
 		
 		#region Дочерние ViewModels

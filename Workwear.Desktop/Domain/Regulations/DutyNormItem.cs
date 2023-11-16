@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Utilities;
@@ -11,9 +11,6 @@ namespace Workwear.Domain.Regulations {
 		Genitive = "нормы выдачи"
 	)]
 	public class DutyNormItem : PropertyChangedBase, IDomainObject {
-		
-		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-		
 		#region Свойства
 		public virtual int Id { get; set; }
 		

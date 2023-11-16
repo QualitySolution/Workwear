@@ -17,6 +17,7 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -55,6 +56,7 @@ namespace workwear.Journal.ViewModels.Stock
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(QueryIncomeDoc);
 			dataLoader.AddQuery(QueryExpenseDoc);
+			dataLoader.AddQuery(QueryExpenseDutyNornDoc);
 			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
@@ -84,6 +86,7 @@ namespace workwear.Journal.ViewModels.Stock
 		private Warehouse warehouseReceiptAlias = null;
 		private Warehouse warehouseExpenseAlias = null;
 		private IssuanceSheet issuanceSheetAlias = null;  
+		private DutyNorm dutyNormAlias = null;
 
 		protected IQueryOver<Income> QueryIncomeDoc(IUnitOfWork uow)
 		{
@@ -190,6 +193,46 @@ namespace workwear.Journal.ViewModels.Stock
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return expenseQuery;
+		}
+
+		protected IQueryOver<ExpenseDutyNorn> QueryExpenseDutyNornDoc(IUnitOfWork uow) {
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseDutyNornDoc)
+				return null;
+
+			ExpenseDutyNorn expenseDutyNornAlias = null;
+
+			var expenseDutyNornQuery = uow.Session.QueryOver<ExpenseDutyNorn>(() => expenseDutyNornAlias);
+			if(Filter.StartDate.HasValue)
+				expenseDutyNornQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				expenseDutyNornQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				expenseDutyNornQuery.Where(x => x.Warehouse == Filter.Warehouse);
+
+			expenseDutyNornQuery.Where(GetSearchCriterion(
+				() => expenseDutyNornAlias.Id,
+				() => authorAlias.Name,
+				() => dutyNormAlias.Name
+			));
+			
+			expenseDutyNornQuery
+				.JoinAlias(() => expenseDutyNornAlias.DutyNorm, () => dutyNormAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)	
+				.JoinAlias(() => expenseDutyNornAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNornAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.SelectList(list => list
+					.Select(() => expenseDutyNornAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => expenseDutyNornAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => expenseDutyNornAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => StockDocumentType.ExpenseDutyNornDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => expenseDutyNornAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+				.OrderBy(() => expenseDutyNornAlias.Date).Desc
+				.ThenBy(() => expenseDutyNornAlias.CreationDate).Desc
+				.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+			
+			return expenseDutyNornQuery;
 		}
 
 		protected IQueryOver<CollectiveExpense> QueryCollectiveExpenseDoc(IUnitOfWork uow)

@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NLog;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
-using Workwear.Domain.Company;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -65,6 +65,13 @@ namespace Workwear.Domain.Regulations {
 			set => SetField(ref dateTo, value);
 		}
 		
+		private bool archive;
+		[Display(Name = "Архивная(отключена)")]
+		public virtual bool Archive {
+			get => archive;
+			set => SetField(ref archive, value);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
@@ -101,5 +108,7 @@ namespace Workwear.Domain.Regulations {
 			return item;
 		}
 		#endregion
+
+		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
 	}
 }

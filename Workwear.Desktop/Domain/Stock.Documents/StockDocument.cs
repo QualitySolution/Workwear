@@ -47,6 +47,8 @@ namespace Workwear.Domain.Stock.Documents
 				case StockDocumentType.ExpenseEmployeeDoc:
 				case StockDocumentType.ExpenseObjectDoc:
 					return typeof(Expense);
+				case StockDocumentType.ExpenseDutyNornDoc:
+					return typeof(ExpenseDutyNorn);
 				case StockDocumentType.CollectiveExpense:
 					return typeof(CollectiveExpense);
 				case StockDocumentType.WriteoffDoc:
@@ -72,6 +74,8 @@ namespace Workwear.Domain.Stock.Documents
 		CollectiveExpense,
 		[Display(Name = "Выдача на подразделение")]
 		ExpenseObjectDoc,
+		[Display(Name = "Выдача по дежурной норме")]
+		ExpenseDutyNornDoc,
 		[Display(Name = "Перемещение")]
 		TransferDoc,
 		[Display(Name = "Списание")]

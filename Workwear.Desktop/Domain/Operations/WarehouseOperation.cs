@@ -109,6 +109,18 @@ namespace Workwear.Domain.Operations
 			Height = item.Height;
 			Amount = item.Amount;
 		}
+		public virtual void Update(IUnitOfWork uow, ExpenseDutyNornItem item) {
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			ExpenseWarehouse = item.Document.Warehouse;
+			ReceiptWarehouse = null;
+			Nomenclature = item.Nomenclature;
+			WearSize = item.WearSize;
+			Height = item.Height;
+			Amount = item.Amount;
+		}
 		public virtual void Update(IUnitOfWork uow, CollectiveExpenseItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)

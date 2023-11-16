@@ -10,6 +10,8 @@ namespace Workwear.Models.Operations
 		public OperationType OperationType;
 		public int? ExpenceId;
 		public int? ExpenceItemId;
+		public int? ExpenseDutyNornId;
+		public int? ExpenseDutyNornItemId;
 		public ExpenseOperations? ExpenseOperation;
 		public int? IncomeId;
 		public int? IncomeItemId;
@@ -31,6 +33,8 @@ namespace Workwear.Models.Operations
 			get {
 				if(ExpenceId.HasValue)
 					return ExpenseOperation == ExpenseOperations.Employee ? StockDocumentType.ExpenseEmployeeDoc : StockDocumentType.ExpenseObjectDoc;
+				if(ExpenseDutyNornId.HasValue)
+					return StockDocumentType.ExpenseDutyNornDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
 				if(IncomeId.HasValue)
@@ -50,9 +54,9 @@ namespace Workwear.Models.Operations
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId =>
-			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
+			ExpenceId ?? ExpenseDutyNornId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
 
-		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ??
+		public int? ItemId => ExpenceItemId ?? ExpenseDutyNornItemId ?? CollectiveExpenseItemId ??
 			IncomeItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
 
 		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{DocumentId}";
