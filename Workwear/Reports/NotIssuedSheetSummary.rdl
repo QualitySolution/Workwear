@@ -895,14 +895,8 @@
         JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
         WHERE
             (@show_sex = 0 OR n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id OR protection_tools_nomenclature.protection_tools_id IN(
-            SELECT
-                protection_tools_replacement.protection_tools_analog_id
-            FROM
-                protection_tools_replacement
-            WHERE
-                protection_tools_replacement.protection_tools_id = wear_cards_item.protection_tools_id
-        ))
+            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+        )
         AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
         AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
     ) AS in_stock
