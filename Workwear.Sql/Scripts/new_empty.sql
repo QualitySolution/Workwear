@@ -1765,28 +1765,6 @@ CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `protection_tools_replacement`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `protection_tools_replacement` (
-  `protection_tools_id` INT UNSIGNED NOT NULL,
-  `protection_tools_analog_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`protection_tools_id`, `protection_tools_analog_id`),
-  INDEX `fk_item_types_replacement_2_idx` (`protection_tools_analog_id` ASC),
-  CONSTRAINT `fk_item_types_replacement_1`
-    FOREIGN KEY (`protection_tools_id`)
-    REFERENCES `protection_tools` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_item_types_replacement_2`
-    FOREIGN KEY (`protection_tools_analog_id`)
-    REFERENCES `protection_tools` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `protection_tools_nomenclature`
 -- -----------------------------------------------------
