@@ -6,11 +6,11 @@ namespace Workwear.ReportParameters.Views
 	{
 		private global::Gtk.VBox vbox1;
 
-		private global::Gamma.GtkWidgets.yButton ycheckbuttonAllProtectionTools;
+		private global::Gamma.GtkWidgets.yButton ycheckbuttonChoiseAllProtectionTools;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
-		private global::Gamma.GtkWidgets.yTreeView ytreeProtectionTools;
+		private global::Gamma.GtkWidgets.yTreeView ytreeChoiseProtectionTools;
 
 		protected virtual void Build()
 		{
@@ -23,13 +23,13 @@ namespace Workwear.ReportParameters.Views
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.ycheckbuttonAllProtectionTools = new global::Gamma.GtkWidgets.yButton();
-			this.ycheckbuttonAllProtectionTools.CanFocus = true;
-			this.ycheckbuttonAllProtectionTools.Name = "ycheckbuttonAllProtectionTools";
-			this.ycheckbuttonAllProtectionTools.UseUnderline = true;
-			this.ycheckbuttonAllProtectionTools.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
-			this.vbox1.Add(this.ycheckbuttonAllProtectionTools);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckbuttonAllProtectionTools]));
+			this.ycheckbuttonChoiseAllProtectionTools = new global::Gamma.GtkWidgets.yButton();
+			this.ycheckbuttonChoiseAllProtectionTools.CanFocus = true;
+			this.ycheckbuttonChoiseAllProtectionTools.Name = "ycheckbuttonChoiseAllProtectionTools";
+			this.ycheckbuttonChoiseAllProtectionTools.UseUnderline = true;
+			this.ycheckbuttonChoiseAllProtectionTools.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
+			this.vbox1.Add(this.ycheckbuttonChoiseAllProtectionTools);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckbuttonChoiseAllProtectionTools]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;
@@ -38,10 +38,10 @@ namespace Workwear.ReportParameters.Views
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.ytreeProtectionTools = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeProtectionTools.CanFocus = true;
-			this.ytreeProtectionTools.Name = "ytreeProtectionTools";
-			this.GtkScrolledWindow.Add(this.ytreeProtectionTools);
+			this.ytreeChoiseProtectionTools = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeChoiseProtectionTools.CanFocus = true;
+			this.ytreeChoiseProtectionTools.Name = "ytreeChoiseProtectionTools";
+			this.GtkScrolledWindow.Add(this.ytreeChoiseProtectionTools);
 			this.vbox1.Add(this.GtkScrolledWindow);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
 			w3.Position = 1;
@@ -51,6 +51,7 @@ namespace Workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.ycheckbuttonChoiseAllProtectionTools.Clicked += new global::System.EventHandler(this.OnYcheckbuttonChoiseAllProtectionToolsClicked);
 		}
 	}
 }

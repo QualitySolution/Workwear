@@ -20,19 +20,20 @@ namespace Workwear.ReportParameters.Views {
 		}
 
 		private void CreateTable(){
-			ytreeProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
+			ytreeChoiseProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
 			
-			ytreeProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
+			ytreeChoiseProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
 			
-			ycheckbuttonAllProtectionTools.Sensitive = ViewModel.ProtectionTools.Any();
-			ycheckbuttonAllProtectionTools.Clicked += OnYcheckbuttonAllProtectionToolsClicked;
+			ycheckbuttonChoiseAllProtectionTools.Sensitive = ViewModel.ProtectionTools.Any();
+			ycheckbuttonChoiseAllProtectionTools.Clicked += OnYcheckbuttonChoiseAllProtectionToolsClicked;
 		}
 
 		private bool selectAllState = true;
-		protected void OnYcheckbuttonAllProtectionToolsClicked(object sender, EventArgs e) {
+
+		protected void OnYcheckbuttonChoiseAllProtectionToolsClicked(object sender, EventArgs e) {
 			selectAllState = !selectAllState;
 			foreach (var pt in ViewModel.ProtectionTools)
 				pt.Select = selectAllState;

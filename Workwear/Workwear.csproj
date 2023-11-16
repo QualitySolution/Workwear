@@ -141,6 +141,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
@@ -457,6 +458,8 @@
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceClaimView.cs" />
     <Compile Include="ReportParameters\Views\ChoiceProtectionToolsView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceProtectionToolsView.cs" />
+    <Compile Include="ReportParameters\Views\ChoiceSubdivisionView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceSubdivisionView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
