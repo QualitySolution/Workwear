@@ -13,7 +13,8 @@ namespace workwear.ReportParameters.Views {
 		{
 			this.Build();
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
-
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			
 			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			yenumIssueType.ItemsEnum = typeof(IssueType);
 			yenumIssueType.Binding.AddSource(ViewModel)
@@ -32,14 +33,6 @@ namespace workwear.ReportParameters.Views {
 			comboEndMonth.ItemsList = Enumerable.Range(1, 12);
 			comboEndMonth.Binding.AddBinding(ViewModel, v => v.EndMonth, w => w.SelectedItem).InitializeFromSource();
 
-			ytreeNomenclature.CreateFluentColumnsConfig<SelectedProtectionTools>()
-				.AddColumn("🗹").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Название").AddTextRenderer(x => x.Name)
-				.Finish();
-			
-			ytreeNomenclature.ItemsDataSource = ViewModel.ProtectionTools;
-			ycheckbuttonAllNomenclature.Sensitive = ViewModel.ProtectionTools.Any();
-			
 			ycheckChild.Binding
 				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
 				.InitializeFromSource();
@@ -55,14 +48,6 @@ namespace workwear.ReportParameters.Views {
 		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
 			ViewModel.LoadReport();
-		}
-
-		protected void SelectAll(object sender, EventArgs e)
-		{
-			var antiSelect = !ViewModel.ProtectionTools.FirstOrDefault().Select;
-			foreach(var item in ViewModel.ProtectionTools) { 
-				item.Select = antiSelect; 
-			}
 		}
 	}
 }

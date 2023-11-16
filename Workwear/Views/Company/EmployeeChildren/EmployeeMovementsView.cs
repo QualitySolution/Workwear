@@ -52,23 +52,40 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
 				                              || selected?.Operation.ManualOperation == true;
 				
-				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				itemOpenLastIssue.Activated += (sender, e) => ViewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
 				var itemRemoveOperation = new MenuItemId<EmployeeMovementItem>("Удалить операцию");
 				itemRemoveOperation.ID = selected;
 				itemRemoveOperation.Sensitive = selected?.EmployeeIssueReference?.DocumentType == null;
-				itemRemoveOperation.Activated += (sender, e) => viewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				itemRemoveOperation.Activated += (sender, e) => ViewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 
 				var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
-				var submenu = new Menu();
-				foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
-					var ptItem = new MenuItem(protectionTools.Name);
-					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
-					submenu.Append(ptItem);
-				}
-				itemChangeProtectionTools.Submenu = submenu;
+				var subItemChangeProtectionTools = new Menu();
+				
+					var itemMakeEmptyProtectionTools = new MenuItemId<EmployeeMovementItem>("Очистить");
+					itemMakeEmptyProtectionTools.ID = selected;
+					itemMakeEmptyProtectionTools.ButtonPressEvent += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+					subItemChangeProtectionTools.Append(itemMakeEmptyProtectionTools);
+				
+					var menuItemChangePT = new MenuItem("Из списка потребностей");
+					var submenuChangePT = new Menu();
+					foreach(ProtectionTools protectionTools in ViewModel.ProtectionToolsForChange) {
+						var ptItem = new MenuItem(protectionTools.Name);
+						ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+						submenuChangePT.Append(ptItem);
+					}
+					menuItemChangePT.Submenu = submenuChangePT;
+					subItemChangeProtectionTools.Append(menuItemChangePT);
+					
+					var menuItemChangePtFull = new MenuItemId<EmployeeMovementItem>("Из полного списка ...");
+					menuItemChangePtFull.ID = selected;
+					menuItemChangePtFull.ButtonPressEvent += (sender, e) => ViewModel.OpenJournalChangeProtectionTools(((MenuItemId<EmployeeMovementItem>)sender).ID);
+			
+					subItemChangeProtectionTools.Append(menuItemChangePtFull);
+					
+				itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
 				menu.Add(itemChangeProtectionTools);
 				
 				menu.ShowAll();

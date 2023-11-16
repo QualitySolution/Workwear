@@ -34,6 +34,30 @@ CREATE TABLE IF NOT EXISTS `base_parameters` (
   PRIMARY KEY (`name`))
 ENGINE = InnoDB;
 
+CREATE TABLE `clothing_service_claim` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `barcode_id` int(10) unsigned NOT NULL,
+  `is_closed` tinyint(1) NOT NULL DEFAULT 0,
+  `need_for_repair` tinyint(1) NOT NULL,
+  `defect` text DEFAULT NULL COMMENT 'Описание дефекта при сдаче, который нужно починить.',
+  PRIMARY KEY (`id`),
+  KEY `barcode_id` (`barcode_id`),
+  CONSTRAINT `fk_claim_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `clothing_service_states` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`claim_id` int(10) unsigned NOT NULL,
+	`operation_time` datetime NOT NULL,
+	`state` enum('WaitService','InTransit','InRepair','InWashing','AwaitIssue','Returned') NOT NULL,
+	`user_id` int(10) unsigned DEFAULT NULL,
+	`comment` text DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	KEY `fk_clame_id` (`claim_id`),
+	KEY `user_id` (`user_id`),
+	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`),
+	CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `warehouse`
@@ -127,6 +151,43 @@ CREATE TABLE IF NOT EXISTS `cost_center` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
+--
+-- Table structure for table `postomat_document_items`
+--
+
+CREATE TABLE `postomat_document_items` (
+   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `document_id` int(10) unsigned NOT NULL,
+   `nomenclature_id` int(10) unsigned NOT NULL,
+   `barcode_id` int(10) unsigned DEFAULT NULL,
+   `delta` int(11) NOT NULL,
+   `loc_storage` int(11) unsigned NOT NULL,
+   `loc_shelf` int(11) unsigned NOT NULL,
+   `loc_cell` int(11) unsigned NOT NULL,
+   PRIMARY KEY (`id`),
+   KEY `fk_postomat_document_id` (`document_id`),
+   KEY `fk_barcode_id` (`barcode_id`),
+   KEY `fk_nomenclature_id` (`nomenclature_id`),
+   CONSTRAINT `fk_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
+   CONSTRAINT `fk_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
+   CONSTRAINT `fk_postomat_document_id` FOREIGN KEY (`document_id`) REFERENCES `postomat_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `postomat_documents`
+--
+
+CREATE TABLE `postomat_documents` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `create_time` datetime NOT NULL,
+  `status` enum('New','Done','Deleted','') NOT NULL DEFAULT 'New',
+  `type` enum('Income','Outgo','Correction','') NOT NULL,
+  `terminal_id` int(11) unsigned NOT NULL,
+  `comment` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `last_update` (`last_update`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `posts`
@@ -932,20 +993,54 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL,
+  `organization_id` int unsigned null,
+  `director_id` int unsigned null,
+  `chairman_id` int unsigned null,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_user_idx` (`user_id` ASC),
   INDEX `index_stock_write_off_date` (`date` ASC),
+  index `fk_stock_write_off_chairman_id_idx` (`chairman_id` ASC),
+  index `fk_stock_write_off_director_idx` (`director_id` ASC),
+  index `fk_stock_write_off_organization_idx` (`organization_id` ASC),
   CONSTRAINT `fk_stock_write_off_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+	constraint fk_stock_write_off_chairman_id
+	foreign key (chairman_id) references leaders (id)
+	on update cascade on delete set null, 
+	constraint fk_stock_write_off_organization_id
+	foreign key (organization_id) references organizations (id)
+	on update cascade on delete set null,
+	constraint stock_inspection_fk_director_id
+	foreign key (director_id) references leaders (id)
+	on update cascade on delete set null
+    )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
 
+-- -----------------------------------------------------
+-- Table `stock_write_off_members`
+-- -----------------------------------------------------
+
+create table stock_write_off_members(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	write_off_id int unsigned not null,
+	member_id int unsigned not null,
+	PRIMARY KEY (`id`),
+	index stock_write_off_members_fk1_idx (write_off_id ASC),
+	index stock_write_off_members_fk2_idx (member_id ASC),
+	constraint stock_write_off_members_fk1
+		foreign key (write_off_id) references stock_write_off (id)
+			on update cascade on delete cascade,
+	constraint stock_write_off_members_fk2
+		foreign key (member_id) references leaders (id)
+			on update cascade
+);
 
 -- -----------------------------------------------------
 -- Table `stock_expense`
@@ -1089,6 +1184,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `akt_number` VARCHAR(45) NULL DEFAULT NULL,
+  `cause` text null, 
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
   INDEX `fk_stock_write_off_detail_nomenclature_idx` (`nomenclature_id` ASC),
@@ -1292,6 +1388,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `default_organization_id` INT UNSIGNED NULL,
   `default_responsible_person_id` INT UNSIGNED NULL,
   `default_leader_id` INT UNSIGNED NULL,
+  `default_claim_list_type` ENUM('NotAnswered','NotClosed','All') NOT NULL DEFAULT 'NotClosed',
   PRIMARY KEY (`id`),
   INDEX `fk_user_settings_1_idx` (`user_id` ASC),
   INDEX `fk_user_settings_warehouse_id_idx` (`default_warehouse_id` ASC),
@@ -2013,6 +2110,44 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+-- Table `employee_groups`
+
+create table employee_groups
+(
+	id int unsigned not null auto_increment,
+	name varchar(128) null,
+	comment text null,
+	PRIMARY KEY (`id`)
+);
+
+create index employee_groups_name_index
+	on employee_groups (name);
+
+-- Table `employee_group_items`
+
+create table employee_group_items
+(
+	id int unsigned not null auto_increment,
+	employee_group_id int unsigned not null,
+	employee_id int unsigned not null,
+	comment text null,
+	PRIMARY KEY (`id`),
+	constraint wear_card_groups_items_unique
+		unique (employee_id, employee_group_id),
+	constraint foreign_key_employee_groups_items_employees
+		foreign key (employee_id) references wear_cards (id)
+			on update cascade on delete cascade,
+	constraint foreign_key_employee_groups_items_employee_groups
+		foreign key (employee_group_id) references employee_groups (id)
+			on update cascade on delete cascade
+);
+
+create index employee_groups_items_employee_groups_id_index
+	on employee_group_items (employee_group_id);
+
+create index employee_groups_items_employees_id_index
+	on employee_group_items (employee_id);
+
 
 -- -----------------------------------------------------
 -- function count_issue
@@ -2072,7 +2207,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.9');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.11');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

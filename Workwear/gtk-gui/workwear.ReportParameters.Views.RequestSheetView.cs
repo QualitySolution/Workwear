@@ -40,13 +40,9 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
-		private global::Gamma.GtkWidgets.yButton ycheckbuttonAllNomenclature;
-
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
-		private global::Gtk.ScrolledWindow scrolledwindow1;
-
-		private global::Gamma.GtkWidgets.yTreeView ytreeNomenclature;
+		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
 
 		protected virtual void Build()
 		{
@@ -262,50 +258,31 @@ namespace workwear.ReportParameters.Views
 			w17.Expand = false;
 			w17.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.ycheckbuttonAllNomenclature = new global::Gamma.GtkWidgets.yButton();
-			this.ycheckbuttonAllNomenclature.CanFocus = true;
-			this.ycheckbuttonAllNomenclature.Name = "ycheckbuttonAllNomenclature";
-			this.ycheckbuttonAllNomenclature.UseUnderline = true;
-			this.ycheckbuttonAllNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
-			this.dialog1_VBox.Add(this.ycheckbuttonAllNomenclature);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonAllNomenclature]));
-			w18.Position = 2;
-			w18.Expand = false;
-			w18.Fill = false;
-			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w18.PackType = ((global::Gtk.PackType)(1));
+			w18.Position = 2;
+			w18.Expand = false;
+			w18.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
+			this.dialog1_VBox.Add(this.choiceprotectiontoolsview1);
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.choiceprotectiontoolsview1]));
 			w19.PackType = ((global::Gtk.PackType)(1));
 			w19.Position = 3;
-			w19.Expand = false;
-			w19.Fill = false;
-			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
-			this.scrolledwindow1.CanFocus = true;
-			this.scrolledwindow1.Name = "scrolledwindow1";
-			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child scrolledwindow1.Gtk.Container+ContainerChild
-			this.ytreeNomenclature = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeNomenclature.CanFocus = true;
-			this.ytreeNomenclature.Name = "ytreeNomenclature";
-			this.ytreeNomenclature.HeadersVisible = false;
-			this.scrolledwindow1.Add(this.ytreeNomenclature);
-			this.dialog1_VBox.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.scrolledwindow1]));
-			w21.PackType = ((global::Gtk.PackType)(1));
-			w21.Position = 4;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Show();
-			this.ycheckbuttonAllNomenclature.Clicked += new global::System.EventHandler(this.SelectAll);
 			this.buttonRun.Clicked += new global::System.EventHandler(this.OnButtonRunClicked);
 		}
 	}

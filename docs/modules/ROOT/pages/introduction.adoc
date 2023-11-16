@@ -69,6 +69,12 @@
 |+
 |+
 
+|<<organization.adoc#employees-groups,Группы сотрудников>>
+|-
+|+
+|+
+
+
 |<<regulations.adoc#norm-conditions,Условия нормы>>
 |-
 |+

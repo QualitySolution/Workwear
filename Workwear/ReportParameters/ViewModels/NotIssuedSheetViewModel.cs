@@ -7,6 +7,7 @@ using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 
@@ -27,16 +28,20 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW);
 
 			excludeInVacation = true;
+			condition = true;
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
-					{"exclude_in_vacation", excludeInVacation },
+					{"exclude_in_vacation", ExcludeInVacation },
+					{"condition", Condition },
 					{"exclude_zero_stock", ExcludeZeroStock},
 				 };
 
@@ -65,6 +70,12 @@ namespace workwear.ReportParameters.ViewModels
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+		
+		private bool condition;
+		public virtual bool Condition {
+			get => condition;
+			set => SetField(ref condition, value);
+		}
 
 		private bool excludeZeroStock;
 		public virtual bool ExcludeZeroStock {
@@ -74,11 +85,13 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool SensetiveLoad => ReportDate != null;
 		#endregion
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
 

@@ -24,9 +24,13 @@ namespace workwear.ReportParameters.Views
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			ycheckCondition.Binding.AddBinding(viewModel, w => w.Condition, v => v.Active).InitializeFromSource();
+			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
+			ylabelcheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			checkDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

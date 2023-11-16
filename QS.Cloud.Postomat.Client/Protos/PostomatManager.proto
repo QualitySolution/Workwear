@@ -16,7 +16,7 @@ message GetPostomatListResponse {
 }
 
 message PostomatInfo {
-	string id = 1;
+	uint32 id = 1;
 	bool is_active = 2;
 	string name = 3;
 	string location = 4;
@@ -24,7 +24,7 @@ message PostomatInfo {
 
 //GetPostomat
 message GetPostomatRequest {
-	string id = 1;
+	uint32 id = 1;
 }
 
 message GetPostomatResponse {
@@ -39,7 +39,7 @@ message CellInfo {
 }
 
 message CellLocation {
-	int32 storage = 1;
-	int32 shelf = 2;
-	int32 cell = 3;
+	uint32 storage = 1;
+	uint32 shelf = 2;
+	uint32 cell = 3;
 }

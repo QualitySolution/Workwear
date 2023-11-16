@@ -3,6 +3,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Tools
 {
@@ -10,7 +11,12 @@ namespace Workwear.ViewModels.Tools
 	{
 		private readonly BaseParameters baseParameters;
 
-		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters) : base(unitOfWorkFactory, navigation)
+		#region Ограниения версии
+		public bool CollectiveIssueWithPersonalVisible = true;
+
+		#endregion
+		
+		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters, FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Настройки учёта";
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -19,13 +25,16 @@ namespace Workwear.ViewModels.Tools
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
 			ShiftExpluatacion = baseParameters.ShiftExpluatacion;
 			ExtendPeriod = baseParameters.ExtendPeriod;
-			CollapseDuplicateIssuanceSheet = this.baseParameters.CollapseDuplicateIssuanceSheet;
+			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
+			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
+			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
 		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
+		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod;
 
@@ -36,6 +45,7 @@ namespace Workwear.ViewModels.Tools
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
 
+		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		#endregion
 
@@ -51,6 +61,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.ShiftExpluatacion = ShiftExpluatacion;
 			if(ExtendPeriod != baseParameters.ExtendPeriod)
 				baseParameters.ExtendPeriod = ExtendPeriod;
+			if(CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal)
+				baseParameters.CollectiveIssueWithPersonal = CollectiveIssueWithPersonal;
 			if(CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet)
 				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
 			return true;

@@ -17,10 +17,10 @@ namespace QS.Cloud.WearLk.Client
 
 		#region Запросы
 
-		public IList<Claim> GetClaims(uint size, uint offset, bool showClosed) {
+		public IList<Claim> GetClaims(uint size, uint offset, ShowClaim listType) {
 			var client = new ClaimManager.ClaimManagerClient(Channel);
-			var request = new GetClaimsRequest{PageSize = size, ItemsSkipped = offset, ShowClosed = showClosed};
-			return client.GetClaims(request, Headers).Claims;
+			var request = new GetClaims2Request(){PageSize = size, ItemsSkipped = offset, ListType = listType};
+			return client.GetClaims2(request, Headers).Claims;
 		}
 
 		public IList<ClaimMessage> GetMessages(int id) {
@@ -58,7 +58,6 @@ namespace QS.Cloud.WearLk.Client
 
 			var request = new NeedForResponseCountRequest();
 			var response = client.NeedForResponseCount(request, Headers);
-			//var watcher = new NotificationConnectionWatcher(channel, OnChanalStateChanged);
 
 			responseReaderTask = Task.Run(async () =>
 				{

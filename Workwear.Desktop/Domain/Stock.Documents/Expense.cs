@@ -175,8 +175,10 @@ namespace Workwear.Domain.Stock.Documents
 			newItem.EmployeeCardItem = employeeCardItem;
 			newItem.ProtectionTools = employeeCardItem.ProtectionTools;
 
-			if(newItem.Nomenclature != null && newItem.ProtectionTools?.Type.IssueType == IssueType.Personal) 
-				newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date);
+			if(newItem.Nomenclature != null 
+			   && (newItem.ProtectionTools?.Type.IssueType == IssueType.Personal
+			   || (newItem.ProtectionTools?.Type.IssueType == IssueType.Collective && baseParameters.CollectiveIssueWithPersonal))) 
+					newItem.Amount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date);
 			else newItem.Amount = 0;
 
 			return newItem;
@@ -185,6 +187,9 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(ExpenseItem item)
 		{
 			Items.Remove (item);
+			if(item.IssuanceSheetItem != null) {
+				IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
+			}
 		}
 
 		public virtual void CleanupItems()

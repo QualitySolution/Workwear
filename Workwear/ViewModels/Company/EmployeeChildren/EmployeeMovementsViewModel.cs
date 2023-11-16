@@ -7,12 +7,15 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Journal;
 using QS.Utilities.Debug;
 using QS.ViewModels;
+using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
@@ -31,7 +34,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly ITdiCompatibilityNavigation navigation;
 		List<EmployeeMovementItem> movements;
 
-		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, OpenStockDocumentsModel openStockDocumentsModel,  EmployeeIssueRepository employeeIssueRepository,  FeaturesService featuresService, ITdiCompatibilityNavigation navigation)
+		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
+			OpenStockDocumentsModel openStockDocumentsModel,  
+			EmployeeIssueRepository employeeIssueRepository,  
+			FeaturesService featuresService, 
+			ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
@@ -94,6 +101,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		
 		
 		#region Замена Номенклатуры нормы
+		
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
@@ -102,6 +110,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				protectionToolsForUpdate.Add(item.Operation.ProtectionTools);
 
 			item.Operation.ProtectionTools = protectionTools;
+			item.Operation.NormItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools)?.ActiveNormItem;
 			UoW.Save(item.Operation);
 			
 			if(item.EmployeeIssueReference?.DocumentType == null)
@@ -127,6 +136,39 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
+		}
+
+		public void OpenJournalChangeProtectionTools(EmployeeMovementItem item) {
+			var selectJournal = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(employeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
+			
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			selectJournal.Tag = item;
+			selectJournal.ViewModel.OnSelectResult += ChangeProtectionToolsFromJournal;
+		}
+		private void ChangeProtectionToolsFromJournal(object sender, JournalSelectedEventArgs e) {
+			var page = navigation.FindPage((DialogViewModelBase)sender);
+			var item = page.Tag as EmployeeMovementItem;
+			ChangeProtectionTools(item, UoW.GetById<ProtectionTools>(e.SelectedObjects.First().GetId()));
+		}
+
+		public void MakeEmptyProtectionTools(EmployeeMovementItem item) {
+			if(item.EmployeeIssueReference?.DocumentType != null) {
+				switch(item.EmployeeIssueReference.DocumentType) {
+					case StockDocumentType.ExpenseEmployeeDoc:
+						var docPerItem =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						docPerItem.ProtectionTools = null;
+						UoW.Save(docPerItem);
+						break;
+					case StockDocumentType.CollectiveExpense:
+						var docColItem =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						docColItem.ProtectionTools = null;
+						UoW.Save(docColItem);
+						break;
+					default:
+						throw new NotSupportedException("Unknown document type.");
+				}
+			}
+			item.Operation.ProtectionTools = null;
 		}
 
 		#endregion

@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using NSubstitute;
 using NUnit.Framework;
+using QS.Cloud.Client;
 using QS.Cloud.WearLk.Client;
 using QS.Dialog;
 using QS.DomainModel.NotifyChange;
@@ -57,7 +58,8 @@ namespace WorkwearTest.ViewModels.Company {
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var deleteEntityService = Substitute.For<IDeleteEntityService>();
 			var featureService = Substitute.For<FeaturesService>();
-			var lkUserManagerService = Substitute.For<LkUserManagerService>("");
+			var sessionInfoProvider = Substitute.For<ISessionInfoProvider>();
+			var lkUserManagerService = Substitute.For<LkUserManagerService>(sessionInfoProvider);
 			var tdiCompatibilityNavigation = Substitute.For<ITdiCompatibilityNavigation>();
 			var openStockDocumentsModel = Substitute.For<OpenStockDocumentsModel>(tdiCompatibilityNavigation);
 			var progress = Substitute.For<IProgressBarDisplayable>();
@@ -71,6 +73,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeMovementsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeNormsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeCostCentersViewModel>().AsSelf();
+			builder.RegisterType<EmployeeInGroupsViewModel>().AsSelf();
 			builder.RegisterType<EmployeePhotoViewModel>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeVacationsViewModel>().AsSelf();

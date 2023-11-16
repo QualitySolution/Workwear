@@ -28,17 +28,22 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW); 
 
 			excludeInVacation = true;
+			condition = true;
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"issue_type", IssueType?.ToString() },
+					{"group_by_subdivision", GroupBySubdivision },
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
-					{"exclude_in_vacation", excludeInVacation },
+					{"exclude_in_vacation", ExcludeInVacation },
+					{"condition", Condition },
 					{"exclude_before", ExcludeBefore }
 				 };
 
@@ -67,6 +72,18 @@ namespace workwear.ReportParameters.ViewModels
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+		
+		private bool condition;
+		public virtual bool Condition {
+			get => condition;
+			set => SetField(ref condition, value);
+		}
+		
+		private bool groupBySubdivision;
+		public virtual bool GroupBySubdivision {
+			get => groupBySubdivision;
+			set => SetField(ref groupBySubdivision, value);
+		}
 
 		private bool showSex;
 		public bool ShowSex {
@@ -82,11 +99,13 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool SensetiveLoad => ReportDate != null;
 		#endregion
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		public void Dispose()

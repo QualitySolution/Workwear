@@ -7,6 +7,7 @@ using QS.BaseParameters;
 using QS.BusinessCommon.Domain;
 using QS.BusinessCommon;
 using QS.Cloud.Client;
+using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
@@ -168,6 +169,7 @@ namespace workwear
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlExceptionAccessDenied>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
+			containerBuilder.RegisterType<NHibernateStaleObjectStateException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
@@ -333,6 +335,7 @@ namespace workwear
 			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

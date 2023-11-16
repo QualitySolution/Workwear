@@ -15,6 +15,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
             	Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Amount).Column ("quantity");
+			Map (x => x.Cause).Column ("cause");
 
 			References(x => x.Document).Column("stock_write_off_id");
 			References(x => x.Nomenclature).Column ("nomenclature_id");

@@ -1,13 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using Autofac;
 using NLog;
+using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
+using QS.Services;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -17,8 +23,10 @@ using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -31,6 +39,8 @@ namespace Workwear.ViewModels.Stock
         public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
+        private OrganizationRepository organizationRepository;
+        private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
 
         public WriteOffViewModel(
@@ -38,9 +48,12 @@ namespace Workwear.ViewModels.Stock
             IUnitOfWorkFactory unitOfWorkFactory,
             UnitOfWorkProvider unitOfWorkProvider,
             INavigationManager navigation,
+            IInteractiveService interactive,
+            ILifetimeScope autofacScope,
             SizeService sizeService,
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
+            OrganizationRepository organizationRepository,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -48,6 +61,8 @@ namespace Workwear.ViewModels.Stock
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
+            this.interactive = interactive;
+            this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             if (employee != null)
@@ -55,9 +70,33 @@ namespace Workwear.ViewModels.Stock
             else if (subdivision != null)
                 Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
             Owners = UoW.GetAll<Owner>().ToList();
+            var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
+	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
+            };
+            
+            ResponsibleDirectorPersonEntryViewModel = entryBuilder.ForProperty(x => x.Director)
+	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+	            .UseViewModelDialog<LeadersViewModel>()
+	            .Finish();
+            ResponsibleChairmanPersonEntryViewModel = entryBuilder.ForProperty(x => x.Chairman)
+	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+	            .UseViewModelDialog<LeadersViewModel>()
+	            .Finish();
+            ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
+	            .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
+	            .UseViewModelDialog<OrganizationViewModel>()
+	            .Finish();
+            if(Entity.Id == 0)
+	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
+
         }
         
         #region ViewProperty
+        
+        public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
+        public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
+        public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+        
         private string total;
         public string Total {
             get => total;
@@ -148,7 +187,24 @@ namespace Workwear.ViewModels.Stock
             CalculateTotal(null, null);
         }
         #endregion
-        #region Save
+
+        #region Members
+        public void DeleteMember(Leader member) {
+	        Entity.RemoveMember(member);
+        }
+        public void AddMembers() {
+	        var selectPage = NavigationManager.OpenViewModel<LeadersJournalViewModel>(this, OpenPageOptions.AsSlave);
+	        selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+	        selectPage.ViewModel.OnSelectResult += MemberOnSelectResult;
+        }
+        void MemberOnSelectResult(object sender, JournalSelectedEventArgs e) {
+	        var members = UoW.GetById<Leader>(e.SelectedObjects.Select(x => x.GetId()));
+	        foreach(var member in members)
+		        Entity.AddMember(member);
+        }
+        #endregion
+        
+        #region Save and print
         public override bool Save() {
             logger.Info ("Запись документа...");
             
@@ -172,6 +228,22 @@ namespace Workwear.ViewModels.Stock
             }
             logger.Info ("Ok");
             return true;
+        }
+        
+        public void Print() {
+	        if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+		        return;
+	        if (!Save())
+		        return;
+			
+	        var reportInfo = new ReportInfo {
+		        Title = String.Format("Акт списания №{0}", Entity.Id),
+		        Identifier = "Documents.WriteOffSheet",
+		        Parameters = new Dictionary<string, object> {
+			        { "id",  Entity.Id }
+		        }
+	        };
+	        NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
         }
         #endregion
     }

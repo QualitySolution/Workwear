@@ -4,6 +4,7 @@ using System.Reflection;
 using Gtk;
 using QS.Dialog.GtkUI;
 using QSWidgetLib;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
@@ -118,6 +119,33 @@ namespace Workwear.Views.Stock
 			itemNomenclature.Sensitive = selected?.Nomenclature != null;
 			itemNomenclature.Activated += Item_Activated;
 			menu.Add(itemNomenclature);
+			
+			var itemChangeProtectionTools = new MenuItem("Изменить номенклатуру нормы");
+			var subItemChangeProtectionTools = new Menu();
+				
+				var itemMakeEmptyProtectionTools = new MenuItemId<ExpenseItem>("Очистить");
+				itemMakeEmptyProtectionTools.ID = selected;
+				itemMakeEmptyProtectionTools.ButtonPressEvent += (sender, e) => ViewModel.MakeEmptyProtectionTools(((MenuItemId<ExpenseItem>)sender).ID);
+				subItemChangeProtectionTools.Append(itemMakeEmptyProtectionTools);
+					
+				var menuItemChangePT = new MenuItem("Из списка потребностей");
+				var submenuChangePT = new Menu();
+				foreach(ProtectionTools protectionTools in ViewModel.EmployeesProtectionToolsList) {
+					var ptItem = new MenuItem(protectionTools.Name);
+					ptItem.ButtonPressEvent += (sender, e) => ViewModel.ChangeProtectionTools(selected,protectionTools);
+					submenuChangePT.Append(ptItem);
+				}
+				menuItemChangePT.Submenu = submenuChangePT;
+				subItemChangeProtectionTools.Append(menuItemChangePT);
+					
+				var menuItemChangePtFull = new MenuItemId<ExpenseItem>("Из полного списка ...");
+				menuItemChangePtFull.ID = selected;
+				menuItemChangePtFull.ButtonPressEvent += (sender, e) => ViewModel.OpenJournalChangeProtectionTools(((MenuItemId<ExpenseItem>)sender).ID);
+				
+				subItemChangeProtectionTools.Append(menuItemChangePtFull);
+					
+			itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
+			menu.Add(itemChangeProtectionTools);
 			
 			menu.ShowAll();
 			menu.Popup();

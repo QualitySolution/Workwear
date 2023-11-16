@@ -12,6 +12,7 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.ReportParameters.Views;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
@@ -33,12 +34,15 @@ namespace workwear.ReportParameters.ViewModels {
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
+
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,uow); //AutofacScope.Resolve<ChoiceProtectionToolsViewModel>();
 		}
 
 		private readonly IUnitOfWork uow;
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		#region Свойства View
@@ -81,15 +85,6 @@ namespace workwear.ReportParameters.ViewModels {
 			get => addChildSubdivisions;
 			set => SetField(ref addChildSubdivisions, value);
 		}
-
-		private IObservableList<SelectedProtectionTools> protectionTools;
-		public IObservableList<SelectedProtectionTools> ProtectionTools {
-			get {
-				if(protectionTools == null)
-					FillProtectionTools();
-				return protectionTools;
-			}
-		}
 		
 		private bool showSex;
 		public bool ShowSex {
@@ -103,19 +98,6 @@ namespace workwear.ReportParameters.ViewModels {
 			set => SetField(ref excludeInVacation, value);
 		}
 
-		void FillProtectionTools(){
-			SelectedProtectionTools resultAlias = null;
-
-			protectionTools = new ObservableList<SelectedProtectionTools>(uow.Session.QueryOver<ProtectionTools>()
-				.SelectList(list => list
-					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
-					   .Select(() => true).WithAlias(() => resultAlias.Select)
-				).OrderBy(x => x.Name).Asc
-				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
-				.List<SelectedProtectionTools>());
-		}
-
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
 		#endregion
@@ -127,7 +109,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"end_year", EndYear},
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", SelectedProtectionTools() },
+					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation }
@@ -136,15 +118,6 @@ namespace workwear.ReportParameters.ViewModels {
 		public void Dispose()
 		{
 			uow.Dispose();
-		}
-
-		private int[] SelectedProtectionTools()
-		{
-			if(ProtectionTools.All(x => x.Select))
-				return new int[] { -1 };
-			if(ProtectionTools.All(x => !x.Select))
-				return new int[] { -2 };
-			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
 
 		private int[] SelectSubdivisions() {
@@ -158,17 +131,5 @@ namespace workwear.ReportParameters.ViewModels {
 				.Distinct()
 				.ToArray();
 		}
-	}
-
-	public class SelectedProtectionTools : PropertyChangedBase
-	{
-		private bool select;
-		public virtual bool Select {
-			get => select;
-			set => SetField(ref select, value);
-		}
-
-		public int Id { get; set; }
-		public string Name { get; set; }
 	}
 }

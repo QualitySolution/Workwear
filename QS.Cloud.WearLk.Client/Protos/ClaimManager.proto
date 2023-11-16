@@ -5,7 +5,10 @@ import "google/protobuf/timestamp.proto";
 package QS.Cloud.WearLk.Manage;
 
 service ClaimManager {
+	//Используется до версии 2.8.10 включительно
     rpc GetClaims (GetClaimsRequest) returns (GetClaimsResponse);
+	//Используется начиная с версии 2.8.11
+	rpc GetClaims2 (GetClaims2Request) returns (GetClaimsResponse);
     rpc NeedForResponseCount (NeedForResponseCountRequest) returns (stream NeedForResponseCountResponse);
     rpc GetClaim (GetClaimRequest) returns (GetClaimResponse);
     rpc SendAnswer (SendAnswerRequest) returns (SendAnswerResponse);
@@ -37,6 +40,20 @@ enum ClaimState{
     CLAIM_STATE_CLOSED = 0;
     CLAIM_STATE_WAIT_SUPPORT = 1;
     CLAIM_STATE_WAIT_USER = 2;
+}
+
+//GetClaims2
+message GetClaims2Request {
+	ShowClaim list_type = 1;
+	//Для частичной загрузки
+	uint32 page_size = 2;
+	uint32 items_skipped = 3;
+}
+
+enum ShowClaim{
+	SHOW_CLAIM_ALL = 0;
+	SHOW_CLAIM_NOT_CLOSED = 1;
+	SHOW_CLAIM_NOT_ANSWERED = 2;
 }
 
 //NeedForResponseCount

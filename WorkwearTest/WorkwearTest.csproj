@@ -59,6 +59,10 @@
       <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
       <Name>QS.BaseParameters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj">
+      <Project>{390ce39b-b071-424e-9763-645e7624d9e3}</Project>
+      <Name>QS.Cloud.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.Configuration\QS.Configuration.csproj">
       <Project>{5d124360-c8fb-4779-958b-0da5d6b90c29}</Project>
       <Name>QS.Configuration</Name>

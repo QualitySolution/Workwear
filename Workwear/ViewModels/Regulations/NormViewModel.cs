@@ -254,20 +254,9 @@ namespace Workwear.ViewModels.Regulations
 					logger.Info("Ок");
 					if(!interactive.Question(mes) || !Validate()) //В этом месте проводим валидацию, так как дальше норма будет сохранена, не надо проводить замену если норму нельзя сохранить.
 						return;
-
 					SaveSensitive = CancelSensitive = false;
+					
 					var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(this);
-					progressPage.ViewModel.Progress.Start(worksEmployees.Count + operations.Count + 1, text: "Обработка сотрудников...");
-					foreach(var emp in worksEmployees) {
-						emp.UoW = UoW;
-						foreach(var employeeItem in emp.WorkwearItems) {
-							if(item.IsSame(employeeItem.ActiveNormItem))
-								employeeItem.ProtectionTools = newProtectionTools;
-						}
-						UoW.Save(emp);
-						progressPage.ViewModel.Progress.Add();
-					}
-					logger.Info($"Заменены потребности у {worksEmployees.Count} сотрудников");
 					progressPage.ViewModel.Progress.Update("Обработка произведенных выдач...");
 					foreach(var operation in operations) {
 						operation.ProtectionTools = newProtectionTools;
@@ -275,6 +264,20 @@ namespace Workwear.ViewModels.Regulations
 						progressPage.ViewModel.Progress.Add();
 					}
 					logger.Info($"Заменены номенклатуры нормы в {operations.Count} операциях");
+					
+					progressPage.ViewModel.Progress.Start(worksEmployees.Count + operations.Count + 1, text: "Обработка сотрудников...");
+					foreach(var emp in worksEmployees) {
+						emp.UoW = UoW;
+						foreach(var employeeItem in emp.WorkwearItems) {
+							if(item.IsSame(employeeItem.ActiveNormItem))
+								employeeItem.ProtectionTools = newProtectionTools;
+						}
+						emp.UpdateWorkwearItems();
+						UoW.Save(emp);
+						progressPage.ViewModel.Progress.Add();
+					}
+					logger.Info($"Заменены потребности у {worksEmployees.Count} сотрудников");
+					
 					progressPage.ViewModel.Progress.Update("Сохранение нормы...");
 					UoW.Commit(); //Здесь комит нужен для того чтобы при пересчете графф строился уже по новой номенклатуре нормы.
 					Save();
