@@ -9,3 +9,6 @@ ALTER TABLE `stock_write_off_detail` DROP `akt_number`;
 
 -- Удаляем номер бухгалтерского документа
 ALTER TABLE `operation_issued_by_employee` DROP `buh_document`;
+
+-- Удаляем аналоги из номенклатуры нормы
+DROP TABLE `protection_tools_replacement`;
