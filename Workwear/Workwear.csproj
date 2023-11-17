@@ -460,6 +460,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceProtectionToolsView.cs" />
     <Compile Include="ReportParameters\Views\ChoiceSubdivisionView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceSubdivisionView.cs" />
+    <Compile Include="ReportParameters\Views\ProvisionReport.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ProvisionReport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
