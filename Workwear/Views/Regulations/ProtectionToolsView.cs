@@ -31,13 +31,6 @@ namespace Workwear.Views.Regulations
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
-			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ProtectionTools>.Create()
-				.AddColumn("Аналог СИЗ").AddTextRenderer(p => p.Name)
-				.Finish();
-			ytreeNormAnalog.ItemsDataSource = Entity.Analogs;
-			ytreeNormAnalog.Selection.Mode = Gtk.SelectionMode.Multiple;
-			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
-
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
 				.AddColumn("Тип").AddTextRenderer(p => p.TypeName).WrapWidth(500)
@@ -69,24 +62,6 @@ namespace Workwear.Views.Regulations
 			menu.Popup();
 
 		}
-
-		#region Аналоги
-
-		void YtreeItemsType_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonRemoveNormAnalog.Sensitive = ytreeNormAnalog.Selection.CountSelectedRows() > 0;
-		}
-
-		protected void OnButtonAddNormAnalogClicked(object sender, EventArgs e)
-		{
-			ViewModel.AddAnalog();
-		}
-
-		protected void OnButtonRemoveNormAnalogClicked(object sender, EventArgs e)
-		{
-			ViewModel.RemoveAnalog(ytreeNormAnalog.GetSelectedObjects<ProtectionTools>());
-		}
-		#endregion
 		#region Номенклатуры
 		protected void OnButtonAddNomenclatureClicked(object sender, EventArgs e)
 		{

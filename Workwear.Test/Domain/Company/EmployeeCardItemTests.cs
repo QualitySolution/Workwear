@@ -515,7 +515,8 @@ namespace Workwear.Test.Domain.Company
 			nomenclature.Type.Returns(itemType);
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var observableNomenclatures = new ObservableList<Nomenclature> { nomenclature };
+			protectionTools.Nomenclatures.Returns(observableNomenclatures);
 			var employee = Substitute.For<EmployeeCard>();
 			employee.Sex.Returns(Sex.M);
 			var sizes = new ObservableList<EmployeeSize>();
@@ -547,7 +548,8 @@ namespace Workwear.Test.Domain.Company
 			nomenclature.Type.Returns(itemType);
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var observableNomenclatures = new ObservableList<Nomenclature> { nomenclature };
+			protectionTools.Nomenclatures.Returns(observableNomenclatures);
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 
@@ -581,7 +583,8 @@ namespace Workwear.Test.Domain.Company
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 
 			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var observableNomenclatures = new ObservableList<Nomenclature> { nomenclature };
+			protectionTools.Nomenclatures.Returns(observableNomenclatures);
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 
@@ -618,7 +621,8 @@ namespace Workwear.Test.Domain.Company
 			nomenclature.Type.Returns(itemType);
 			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
 			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			var observableNomenclatures = new ObservableList<Nomenclature> { nomenclature };
+			protectionTools.Nomenclatures.Returns(observableNomenclatures);
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 
@@ -649,7 +653,7 @@ namespace Workwear.Test.Domain.Company
 				Sex = clothesSex
 			};
 			var protectionTools = Substitute.For<ProtectionTools>();
-			protectionTools.MatchedNomenclatures.Returns(new[] { nomenclature });
+			protectionTools.Nomenclatures.Returns(new ObservableList<Nomenclature> { nomenclature });
 			var normItem = Substitute.For<NormItem>();
 			normItem.ProtectionTools.Returns(protectionTools);
 			var employeeItem = new EmployeeCardItem(employee, normItem);

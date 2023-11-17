@@ -134,7 +134,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			if (Filter.ProtectionTools != null) {
 				queryStock.Where(x 
-					=> x.Nomenclature.IsIn(Filter.ProtectionTools.MatchedNomenclatures.ToArray()));
+					=> x.Nomenclature.IsIn(Filter.ProtectionTools.Nomenclatures.ToArray()));
 			}
 
 			return queryStock

@@ -38,18 +38,6 @@ namespace Workwear.Views.Regulations
 
 		private global::Gamma.GtkWidgets.ySpinButton yspinAssessedCost;
 
-		private global::Gtk.VBox vbox1;
-
-		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
-
-		private global::Gamma.GtkWidgets.yTreeView ytreeNormAnalog;
-
-		private global::Gtk.HBox hbox6;
-
-		private global::Gtk.Button buttonAddNormAnalog;
-
-		private global::Gtk.Button buttonRemoveNormAnalog;
-
 		private global::Gtk.HBox hbox7;
 
 		private global::Gtk.Button buttonAddNomenclature;
@@ -119,6 +107,7 @@ namespace Workwear.Views.Regulations
 			this.hbox5.Spacing = 6;
 			// Container child hbox5.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(2)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			this.table1.BorderWidth = ((uint)(9));
@@ -253,66 +242,9 @@ namespace Workwear.Views.Regulations
 			this.hbox5.Add(this.table1);
 			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.table1]));
 			w17.Position = 0;
-			// Container child hbox5.Gtk.Box+BoxChild
-			this.vbox1 = new global::Gtk.VBox();
-			this.vbox1.Name = "vbox1";
-			this.vbox1.Spacing = 6;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
-			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
-			this.ytreeNormAnalog = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeNormAnalog.CanFocus = true;
-			this.ytreeNormAnalog.Name = "ytreeNormAnalog";
-			this.GtkScrolledWindow1.Add(this.ytreeNormAnalog);
-			this.vbox1.Add(this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow1]));
-			w19.Position = 0;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox6 = new global::Gtk.HBox();
-			this.hbox6.Name = "hbox6";
-			this.hbox6.Spacing = 6;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonAddNormAnalog = new global::Gtk.Button();
-			this.buttonAddNormAnalog.CanFocus = true;
-			this.buttonAddNormAnalog.Name = "buttonAddNormAnalog";
-			this.buttonAddNormAnalog.UseUnderline = true;
-			this.buttonAddNormAnalog.Label = global::Mono.Unix.Catalog.GetString("Добавить");
-			global::Gtk.Image w20 = new global::Gtk.Image();
-			w20.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddNormAnalog.Image = w20;
-			this.hbox6.Add(this.buttonAddNormAnalog);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonAddNormAnalog]));
-			w21.Position = 0;
-			w21.Expand = false;
-			w21.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonRemoveNormAnalog = new global::Gtk.Button();
-			this.buttonRemoveNormAnalog.Sensitive = false;
-			this.buttonRemoveNormAnalog.CanFocus = true;
-			this.buttonRemoveNormAnalog.Name = "buttonRemoveNormAnalog";
-			this.buttonRemoveNormAnalog.UseUnderline = true;
-			this.buttonRemoveNormAnalog.Label = global::Mono.Unix.Catalog.GetString("Убрать");
-			global::Gtk.Image w22 = new global::Gtk.Image();
-			w22.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonRemoveNormAnalog.Image = w22;
-			this.hbox6.Add(this.buttonRemoveNormAnalog);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonRemoveNormAnalog]));
-			w23.Position = 1;
-			w23.Expand = false;
-			w23.Fill = false;
-			this.vbox1.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox6]));
-			w24.Position = 1;
-			w24.Expand = false;
-			w24.Fill = false;
-			this.hbox5.Add(this.vbox1);
-			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.vbox1]));
-			w25.Position = 1;
 			this.dialog1_VBox.Add(this.hbox5);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox5]));
-			w26.Position = 1;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox5]));
+			w18.Position = 1;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.hbox7 = new global::Gtk.HBox();
 			this.hbox7.Name = "hbox7";
@@ -323,14 +255,14 @@ namespace Workwear.Views.Regulations
 			this.buttonAddNomenclature.Name = "buttonAddNomenclature";
 			this.buttonAddNomenclature.UseUnderline = true;
 			this.buttonAddNomenclature.Label = global::Mono.Unix.Catalog.GetString("Добавить");
-			global::Gtk.Image w27 = new global::Gtk.Image();
-			w27.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddNomenclature.Image = w27;
+			global::Gtk.Image w19 = new global::Gtk.Image();
+			w19.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAddNomenclature.Image = w19;
 			this.hbox7.Add(this.buttonAddNomenclature);
-			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonAddNomenclature]));
-			w28.Position = 0;
-			w28.Expand = false;
-			w28.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonAddNomenclature]));
+			w20.Position = 0;
+			w20.Expand = false;
+			w20.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
 			this.buttonRemoveNomeclature = new global::Gtk.Button();
 			this.buttonRemoveNomeclature.Sensitive = false;
@@ -338,14 +270,14 @@ namespace Workwear.Views.Regulations
 			this.buttonRemoveNomeclature.Name = "buttonRemoveNomeclature";
 			this.buttonRemoveNomeclature.UseUnderline = true;
 			this.buttonRemoveNomeclature.Label = global::Mono.Unix.Catalog.GetString("Убрать");
-			global::Gtk.Image w29 = new global::Gtk.Image();
-			w29.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonRemoveNomeclature.Image = w29;
+			global::Gtk.Image w21 = new global::Gtk.Image();
+			w21.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonRemoveNomeclature.Image = w21;
 			this.hbox7.Add(this.buttonRemoveNomeclature);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonRemoveNomeclature]));
-			w30.Position = 1;
-			w30.Expand = false;
-			w30.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonRemoveNomeclature]));
+			w22.Position = 1;
+			w22.Expand = false;
+			w22.Fill = false;
 			// Container child hbox7.Gtk.Box+BoxChild
 			this.buttonCreateNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.buttonCreateNomenclature.TooltipMarkup = "Создать складскую номенклатуру с тем же названием.";
@@ -354,17 +286,17 @@ namespace Workwear.Views.Regulations
 			this.buttonCreateNomenclature.UseUnderline = true;
 			this.buttonCreateNomenclature.Label = global::Mono.Unix.Catalog.GetString("Создать идентичную номенклатуру");
 			this.hbox7.Add(this.buttonCreateNomenclature);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonCreateNomenclature]));
-			w31.PackType = ((global::Gtk.PackType)(1));
-			w31.Position = 2;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.buttonCreateNomenclature]));
+			w23.PackType = ((global::Gtk.PackType)(1));
+			w23.Position = 2;
+			w23.Expand = false;
+			w23.Fill = false;
 			this.dialog1_VBox.Add(this.hbox7);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox7]));
-			w32.PackType = ((global::Gtk.PackType)(1));
-			w32.Position = 2;
-			w32.Expand = false;
-			w32.Fill = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox7]));
+			w24.PackType = ((global::Gtk.PackType)(1));
+			w24.Position = 2;
+			w24.Expand = false;
+			w24.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.hbox2 = new global::Gtk.HBox();
 			this.hbox2.Name = "hbox2";
@@ -379,12 +311,12 @@ namespace Workwear.Views.Regulations
 			this.ytreeItems.Name = "ytreeItems";
 			this.GtkScrolledWindow2.Add(this.ytreeItems);
 			this.hbox2.Add(this.GtkScrolledWindow2);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.GtkScrolledWindow2]));
-			w34.Position = 0;
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.GtkScrolledWindow2]));
+			w26.Position = 0;
 			this.dialog1_VBox.Add(this.hbox2);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox2]));
-			w35.PackType = ((global::Gtk.PackType)(1));
-			w35.Position = 3;
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox2]));
+			w27.PackType = ((global::Gtk.PackType)(1));
+			w27.Position = 3;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.label5 = new global::Gtk.Label();
 			this.label5.Name = "label5";
@@ -392,19 +324,17 @@ namespace Workwear.Views.Regulations
 			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Номенклатура</b>");
 			this.label5.UseMarkup = true;
 			this.dialog1_VBox.Add(this.label5);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.label5]));
-			w36.PackType = ((global::Gtk.PackType)(1));
-			w36.Position = 4;
-			w36.Expand = false;
-			w36.Fill = false;
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.label5]));
+			w28.PackType = ((global::Gtk.PackType)(1));
+			w28.Position = 4;
+			w28.Expand = false;
+			w28.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.buttonAddNormAnalog.Clicked += new global::System.EventHandler(this.OnButtonAddNormAnalogClicked);
-			this.buttonRemoveNormAnalog.Clicked += new global::System.EventHandler(this.OnButtonRemoveNormAnalogClicked);
 			this.buttonAddNomenclature.Clicked += new global::System.EventHandler(this.OnButtonAddNomenclatureClicked);
 			this.buttonRemoveNomeclature.Clicked += new global::System.EventHandler(this.OnButtonRemoveNomeclatureClicked);
 			this.buttonCreateNomenclature.Clicked += new global::System.EventHandler(this.OnButtonCreateNomenclatureClicked);
