@@ -303,6 +303,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
+					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)

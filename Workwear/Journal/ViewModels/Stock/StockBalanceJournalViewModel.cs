@@ -1,5 +1,6 @@
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
@@ -156,6 +157,7 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
+			   .Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
 			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
@@ -212,6 +214,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
+		public ClothesSex Sex { get; set; }
+		public string SexText => Sex.GetEnumShortTitle();
 		public string UnitsName { get; set; }
 		public string SizeName { get; set; }
 		public int SizeId { get; set; }
