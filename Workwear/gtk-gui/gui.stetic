@@ -710,7 +710,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.NomenclatureView" design-size="478 426">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.NomenclatureView" design-size="478 430">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -781,7 +781,7 @@
         <child>
           <widget class="Gtk.Table" id="table2">
             <property name="MemberName" />
-            <property name="NRows">9</property>
+            <property name="NRows">10</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -790,6 +790,39 @@
             </child>
             <child>
               <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkWashable">
+                <property name="MemberName" />
+                <property name="WidthRequest">0</property>
+                <property name="HeightRequest">0</property>
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Можно сдать в стирку</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
             </child>
             <child>
               <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
@@ -806,8 +839,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -828,8 +861,8 @@
                 <property name="LabelProp" translatable="yes">Комментарий:</property>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -1097,8 +1130,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -1119,8 +1152,8 @@
                 <property name="LabelProp" translatable="yes">Средняя оценка:</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>

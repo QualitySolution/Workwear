@@ -405,6 +405,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
+  `washable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Можно отдать в стирку',
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),

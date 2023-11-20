@@ -162,6 +162,12 @@ namespace Workwear.Sql
 				new Version(2, 8, 11),
 				"Workwear.Sql.Scripts.2.8.11.sql"
 			);
+			configuration.AddUpdate(
+				new Version(2, 8, 11),
+				new Version(2, 8, 12),
+				"Workwear.Sql.Scripts.2.8.12.sql",
+				onTesting: true
+			);
 			return configuration;
 		}
 
