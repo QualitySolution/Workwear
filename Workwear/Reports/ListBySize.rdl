@@ -18,16 +18,19 @@
             wear_cards.last_name,
             wear_cards.first_name,
             wear_cards.patronymic_name) AS employee,
-            IF(top1.id IS NULL, "-", size1.name) AS size_name_1,
-            IF(top2.id IS NULL, "-", size2.name) AS size_name_2,
-            IF(top3.id IS NULL, "-", size3.name) AS size_name_3,
-            IF(top4.id IS NULL, "-", size4.name) AS size_name_4,
-            IF(top5.id IS NULL, "-", size5.name) AS size_name_5,
-            IF(top6.id IS NULL, "-", size6.name) AS size_name_6,
+    if(@group_by_subdivision, wear_cards.object_id, NULL)as subdivision_id,
+    if(@group_by_subdivision, subdivision.name, NULL) as subdivision_name,
+    IF(top1.id IS NULL, '-', size1.name) AS size_name_1,
+    IF(top2.id IS NULL, '-', size2.name) AS size_name_2,
+    IF(top3.id IS NULL, '-', size3.name) AS size_name_3,
+    IF(top4.id IS NULL, '-', size4.name) AS size_name_4,
+    IF(top5.id IS NULL, '-', size5.name) AS size_name_5,
+    IF(top6.id IS NULL, '-', size6.name) AS size_name_6,
     personnel_number,
     sex
 FROM
     wear_cards
+LEFT JOIN objects AS subdivision ON wear_cards.object_id = subdivision.id
 LEFT JOIN wear_cards_sizes AS top1 ON wear_cards.id = top1.employee_id AND top1.size_type_id = @type_id_0
 LEFT JOIN sizes AS size1 ON top1.size_id = size1.id
 LEFT JOIN wear_cards_sizes AS top2 ON wear_cards.id = top2.employee_id AND top2.size_type_id = @type_id_1
@@ -80,6 +83,9 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <QueryParameter Name="type_name_5">
             <Value>={?type_name_5}</Value>
           </QueryParameter>
+          <QueryParameter Name="group_by_subdivision">
+            <Value>={?group_by_subdivision}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
@@ -87,12 +93,12 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <DataField>employee</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="sex">
-          <DataField>sex</DataField>
+        <Field Name="subdivision_name">
+          <DataField>subdivision_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="size_name_1">
@@ -117,6 +123,14 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         </Field>
         <Field Name="size_name_6">
           <DataField>size_name_6</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -580,9 +594,93 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         </Details>
         <Left>0.0pt</Left>
         <Top>0.8pt</Top>
+        <TableGroups>
+          <TableGroup>
+            <Grouping Name="subdivision">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={subdivision_name}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox9">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>12pt</FontSize>
+                          </Style>
+                          <Value>= Iif({?group_by_subdivision},Iif(Fields!subdivision_name.IsMissing, "      Без подразделения", {subdivision_name}), NULL)</Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>8</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox25">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value></Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox26">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>None</Left>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value></Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={subdivision_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+        </TableGroups>
       </Table>
     </ReportItems>
-    <Height>64.2pt</Height>
+    <Height>87.9pt</Height>
+    <Columns>1</Columns>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
@@ -605,6 +703,17 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_test_agronom;user=SpMob;password=IVCbn2X2aHoJumE;port=3306;server=192.168.1.10</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
   <ReportParameters>
     <ReportParameter Name="type_id_0">
       <DataType>Integer</DataType>
@@ -688,16 +797,19 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_depot;user=depot_demo;password=beta;port=3306;server=</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
