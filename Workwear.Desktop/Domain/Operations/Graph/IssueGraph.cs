@@ -132,12 +132,10 @@ namespace Workwear.Domain.Operations.Graph
 		{
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
-				
-			var matchedProtectionTools = protectionTools.MatchedProtectionTools;
 
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
 					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.ProtectionTools.Id.IsIn(matchedProtectionTools.Select(n => n.Id).ToArray()))
+					.Where(x => x.ProtectionTools.Id == protectionTools.Id)
 					.OrderBy(x => x.OperationTime).Asc
 					.List();
 			if(unsavedOprarations != null)

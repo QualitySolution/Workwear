@@ -1,12 +1,12 @@
 using System;
+using Gamma.Binding.Converters;
+using Gtk;
 using NLog;
 using QS.Views.Dialog;
+using QS.Views.Resolve;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Stock;
-using Gtk;
-using Gamma.Binding.Converters;
-using Workwear.Domain.Sizes;
-using QS.Views.Resolve;
 
 namespace Workwear.Views.Stock {
 	public partial class NomenclatureView : EntityDialogViewBase<NomenclatureViewModel, Nomenclature>
@@ -74,10 +74,15 @@ namespace Workwear.Views.Stock {
 				.AddBinding(vm => vm.VisibleRating, w => w.Visible)
 				.AddBinding(wm => wm.RatingLabel, w => w.Text)
 				.InitializeFromSource();
-
-			ycheckBarcode.Visible = ViewModel.VisibleBarcode;
+			
 			ycheckBarcode.Binding
+				.AddBinding(ViewModel, v => v.VisibleBarcode, w => w.Visible)
 				.AddBinding(Entity, e => e.UseBarcode, w => w.Active)
+				.InitializeFromSource();
+			
+			checkWashable.Binding
+				.AddBinding(ViewModel, v => v.VisibleWashable, w => w.Visible)
+				.AddBinding(Entity, e => e.Washable, w => w.Active)
 				.InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;

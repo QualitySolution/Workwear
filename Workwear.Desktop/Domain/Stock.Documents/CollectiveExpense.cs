@@ -83,7 +83,7 @@ namespace Workwear.Domain.Stock.Documents
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (UoW != null && baseParameters.CheckBalances)
+			if (baseParameters.CheckBalances)
 			{
 				var repository = new StockRepository();
 				var nomenclatures =

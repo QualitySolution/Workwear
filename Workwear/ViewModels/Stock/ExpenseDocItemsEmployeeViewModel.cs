@@ -134,7 +134,7 @@ namespace Workwear.ViewModels.Stock
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				var stockPosition = node.GetStockPosition(expenseEmployeeViewModel.UoW);
-				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
+				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Nomenclatures
 							.Contains(stockPosition.Nomenclature))?.ActiveNormItem;
 				var item = expenseEmployeeViewModel.Entity.AddItem(stockPosition);
 				if(normItem != null

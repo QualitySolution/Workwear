@@ -251,23 +251,7 @@ namespace Workwear.Models.Operations {
 			UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
 				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Analogs)
-				.Future();
-
-			UoW.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
 				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
-				.Future();
-
-			ProtectionTools protectionToolsAnalogAlias = null;
-
-			UoW.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.JoinAlias(p => p.Analogs, () => protectionToolsAnalogAlias, NHibernate.SqlCommand.JoinType.InnerJoin)
-				.Fetch(SelectMode.ChildFetch, () => protectionToolsAnalogAlias)
-				.Fetch(SelectMode.Fetch, () => protectionToolsAnalogAlias.Nomenclatures)
 				.Future();
 
 			query.ToList();
@@ -305,7 +289,7 @@ namespace Workwear.Models.Operations {
 			var items = employees.SelectMany(x => x.WorkwearItems).ToList();
 			progressStep?.Invoke("Получаем список номенклатур");
 			var allNomenclatures = 
-				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+				items.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().ToList();
 			progressStep?.Invoke("Обновляем складские остатки при необходимости");
 			stockBalanceModel.AddNomenclatures(allNomenclatures);
 			progressStep?.Invoke("Заполняем строки карточек");
