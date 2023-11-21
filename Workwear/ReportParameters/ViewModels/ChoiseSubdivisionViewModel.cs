@@ -7,7 +7,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 
-namespace workwear.ReportParameters.ViewModels {
+namespace Workwear.ReportParameters.ViewModels {
 	public class ChoiceSubdivisionViewModel : ViewModelBase {
 		
 		private readonly IUnitOfWork UoW;
@@ -20,9 +20,9 @@ namespace workwear.ReportParameters.ViewModels {
 		private IObservableList<SelectedChoiceSubdivision> subdivisions;
 		public IObservableList<SelectedChoiceSubdivision> Subdivisions {
 			get {
-				if(Subdivisions == null)
+				if(subdivisions == null)
 					FillSubdivision();
-				return Subdivisions;
+				return subdivisions;
 			}
 		}
 
@@ -46,6 +46,13 @@ namespace workwear.ReportParameters.ViewModels {
 			if(Subdivisions.All(x => !x.Select))
 				return new int[] { -2 };
 			return Subdivisions.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		private bool selectAllState = true; 
+		public void SelectUnselectAll() {
+			selectAllState = !selectAllState;
+			foreach (var s in Subdivisions)
+				s.Select = selectAllState;
 		}
 	}
 	

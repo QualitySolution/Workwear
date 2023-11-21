@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using workwear.ReportParameters.ViewModels;
+using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
 	[System.ComponentModel.ToolboxItem(true)]
@@ -31,12 +31,8 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonChoiseAllProtectionTools.Clicked += OnYcheckbuttonChoiseAllProtectionToolsClicked;
 		}
 
-		private bool selectAllState = true;
-
 		protected void OnYcheckbuttonChoiseAllProtectionToolsClicked(object sender, EventArgs e) {
-			selectAllState = !selectAllState;
-			foreach (var pt in ViewModel.ProtectionTools)
-				pt.Select = selectAllState;
+			ViewModel.SelectUnselectAll();
 		}
 	}
 }

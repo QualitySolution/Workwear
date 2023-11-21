@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.Views;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {

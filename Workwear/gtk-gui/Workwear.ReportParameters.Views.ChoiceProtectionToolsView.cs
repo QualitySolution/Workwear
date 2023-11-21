@@ -51,7 +51,6 @@ namespace Workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.ycheckbuttonChoiseAllProtectionTools.Clicked += new global::System.EventHandler(this.OnYcheckbuttonChoiseAllProtectionToolsClicked);
 		}
 	}
 }

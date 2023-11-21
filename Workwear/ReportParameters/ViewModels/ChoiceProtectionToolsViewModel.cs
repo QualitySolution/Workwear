@@ -7,7 +7,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
 using Workwear.Domain.Regulations;
 
-namespace workwear.ReportParameters.ViewModels {
+namespace Workwear.ReportParameters.ViewModels {
 	public class ChoiceProtectionToolsViewModel : ViewModelBase {
 		
 		private readonly IUnitOfWork UoW;
@@ -47,8 +47,15 @@ namespace workwear.ReportParameters.ViewModels {
 				return new int[] { -2 };
 			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
+
+		private bool selectAllState = true; 
+		public void SelectUnselectAll() {
+			selectAllState = !selectAllState;
+			foreach (var pt in ProtectionTools)
+				pt.Select = selectAllState;
+		}
 	}
-	
+
 	public class SelectedProtectionTools : PropertyChangedBase
 	{
 		private bool select;

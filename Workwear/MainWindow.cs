@@ -865,4 +865,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
 	}
+
+	protected void OnActionProvisionActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ProvisionReportViewModel));
+	}
 }
