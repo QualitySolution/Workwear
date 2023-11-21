@@ -62,6 +62,7 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
+using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 
