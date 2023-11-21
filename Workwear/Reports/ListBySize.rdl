@@ -679,7 +679,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         </TableGroups>
       </Table>
     </ReportItems>
-    <Height>87.9pt</Height>
+    <Height>83.9pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
