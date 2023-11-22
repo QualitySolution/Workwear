@@ -42,8 +42,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime? ReportDate {
 			get => reportDate;
-			set {SetField(ref reportDate, value);
-			}
+			set => SetField(ref reportDate, value);
 		}
 
 		private bool showSex;
