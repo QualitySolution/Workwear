@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
@@ -27,12 +26,9 @@ namespace Workwear.ReportParameters.Views {
 			
 			ytreeChoiseProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
 			
-			ycheckbuttonChoiseAllProtectionTools.Sensitive = ViewModel.ProtectionTools.Any();
-			ycheckbuttonChoiseAllProtectionTools.Clicked += OnYcheckbuttonChoiseAllProtectionToolsClicked;
-		}
-
-		protected void OnYcheckbuttonChoiseAllProtectionToolsClicked(object sender, EventArgs e) {
-			ViewModel.SelectUnselectAll();
+			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.ProtectionTools.Any();
+			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
+			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();
 		}
 	}
 }

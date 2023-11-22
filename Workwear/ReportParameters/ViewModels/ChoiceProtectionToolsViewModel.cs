@@ -12,7 +12,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private readonly IUnitOfWork UoW;
 		
-		public ChoiceProtectionToolsViewModel(IUnitOfWorkFactory uowFactory, IUnitOfWork uow)
+		public ChoiceProtectionToolsViewModel(IUnitOfWork uow)
 		{
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
@@ -48,11 +48,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
 
-		private bool selectAllState = true; 
-		public void SelectUnselectAll() {
-			selectAllState = !selectAllState;
+		public void SelectAll() {
 			foreach (var pt in ProtectionTools)
-				pt.Select = selectAllState;
+				pt.Select = true;
+		}
+		 
+		public void UnSelectAll() {
+			foreach (var pt in ProtectionTools)
+				pt.Select = false;
 		}
 	}
 

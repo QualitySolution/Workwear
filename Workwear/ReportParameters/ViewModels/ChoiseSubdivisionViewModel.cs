@@ -12,7 +12,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private readonly IUnitOfWork UoW;
 		
-		public ChoiceSubdivisionViewModel(IUnitOfWorkFactory uowFactory, IUnitOfWork uow)
+		public ChoiceSubdivisionViewModel(IUnitOfWork uow)
 		{
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
@@ -48,11 +48,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			return Subdivisions.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
 		}
 		
-		private bool selectAllState = true; 
-		public void SelectUnselectAll() {
-			selectAllState = !selectAllState;
+		public void SelectAll() {
 			foreach (var s in Subdivisions)
-				s.Select = selectAllState;
+				s.Select = true;
+		}
+		 
+		public void UnSelectAll() {
+			foreach (var s in Subdivisions)
+				s.Select = false;
 		}
 	}
 	

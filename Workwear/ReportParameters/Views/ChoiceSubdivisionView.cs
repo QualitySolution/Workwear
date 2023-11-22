@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
@@ -9,8 +8,6 @@ namespace Workwear.ReportParameters.Views {
 			this.Build();
 		}
 
-		protected void OnYcheckbuttonAllChoiceSubdivisionClicked(object sender, EventArgs e) {
-		}
 		private ChoiceSubdivisionViewModel viewModel;
 		public ChoiceSubdivisionViewModel ViewModel {
 			get => viewModel;
@@ -25,14 +22,11 @@ namespace Workwear.ReportParameters.Views {
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Название").AddTextRenderer(x => x.Name)
 				.Finish();
-
 			ytreeChoiseSubdivision.ItemsDataSource = ViewModel.Subdivisions;
-			ycheckbuttonChoiseAllSubdivisions.Sensitive = ViewModel.Subdivisions.Any();
-			ycheckbuttonChoiseAllSubdivisions.Clicked += OnYcheckbuttonAllSubdivisionClicked;
-		}
 
-		protected void OnYcheckbuttonAllSubdivisionClicked(object sender, EventArgs e) {
-			ViewModel.SelectUnselectAll();
+			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.Subdivisions.Any();
+			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
+			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();
 		}
 	}
 }

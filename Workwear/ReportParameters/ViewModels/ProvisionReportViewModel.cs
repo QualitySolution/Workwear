@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
-using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class ProvisionReportViewModel : ReportParametersViewModelBase {
@@ -11,15 +11,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
 			: base(rdlViewerViewModel) {
-			
-			Title = $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy")}";
-			Identifier = "ProvisionReport";
-
 			UoW = uowFactory.CreateWithoutRoot();
-			reportDate = DateTime.Today;
 			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW);
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(uowFactory,UoW);
+			Identifier = "ProvisionReport";
+			
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -33,18 +30,20 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		IUnitOfWork UoW;
-		private readonly FeaturesService featuresService;
 		public bool SensetiveLoad => ReportDate != null;
-		
+		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 		
 		#region Свойства
 		private DateTime? reportDate = DateTime.Today;
+		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime? ReportDate {
 			get => reportDate;
-			set => SetField(ref reportDate, value);
+			set {SetField(ref reportDate, value);
+			}
 		}
 
 		private bool showSex;

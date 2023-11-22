@@ -228,8 +228,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox5">
-                      <Value>=Iif({?show_sex}, "Пол",null)
-</Value>
+                      <Value>Пол</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -245,7 +244,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>=Iif({?show_size}, "Размер",null)</Value>
+                      <Value>Размер</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -261,8 +260,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>=Iif({?show_size}, "Рост",null)
-</Value>
+                      <Value>Рост</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -571,7 +569,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="employee_sex">
-                      <Value>=Iif({?show_sex}, Fields!employee_sex.Value,null)</Value>
+                      <Value>=Fields!employee_sex.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -588,7 +586,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="size">
-                      <Value>=Iif({?show_sex}, Fields!size.Value,null)</Value>
+                      <Value>=Fields!size.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -605,7 +603,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="height">
-                      <Value>=Iif({?show_size}, Fields!height.Value,null)
+                      <Value>=Fields!height.Value
 </Value>
                       <CanGrow>true</CanGrow>
                       <Style>
@@ -676,7 +674,7 @@ FROM (SELECT
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>31.7pt</Top>
+        <Top>28.0pt</Top>
         <Footer>
           <TableRows>
             <TableRow>
@@ -798,7 +796,7 @@ FROM (SELECT
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>106.4pt</Height>
+    <Height>100.8pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>

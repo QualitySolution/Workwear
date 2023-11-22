@@ -6,7 +6,11 @@ namespace Workwear.ReportParameters.Views
 	{
 		private global::Gtk.VBox vbox1;
 
-		private global::Gamma.GtkWidgets.yButton ycheckbuttonChoiseAllProtectionTools;
+		private global::Gtk.HBox hbox1;
+
+		private global::Gamma.GtkWidgets.yButton ycheckbuttonChooseAll;
+
+		private global::Gamma.GtkWidgets.yButton ycheckbuttonUnChooseAll;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
@@ -23,16 +27,36 @@ namespace Workwear.ReportParameters.Views
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.ycheckbuttonChoiseAllProtectionTools = new global::Gamma.GtkWidgets.yButton();
-			this.ycheckbuttonChoiseAllProtectionTools.CanFocus = true;
-			this.ycheckbuttonChoiseAllProtectionTools.Name = "ycheckbuttonChoiseAllProtectionTools";
-			this.ycheckbuttonChoiseAllProtectionTools.UseUnderline = true;
-			this.ycheckbuttonChoiseAllProtectionTools.Label = global::Mono.Unix.Catalog.GetString("Выделить/снять выделение");
-			this.vbox1.Add(this.ycheckbuttonChoiseAllProtectionTools);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckbuttonChoiseAllProtectionTools]));
+			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonChooseAll = new global::Gamma.GtkWidgets.yButton();
+			this.ycheckbuttonChooseAll.CanFocus = true;
+			this.ycheckbuttonChooseAll.Name = "ycheckbuttonChooseAll";
+			this.ycheckbuttonChooseAll.UseUnderline = true;
+			this.ycheckbuttonChooseAll.Label = global::Mono.Unix.Catalog.GetString("Выделить всё");
+			this.hbox1.Add(this.ycheckbuttonChooseAll);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ycheckbuttonChooseAll]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonUnChooseAll = new global::Gamma.GtkWidgets.yButton();
+			this.ycheckbuttonUnChooseAll.CanFocus = true;
+			this.ycheckbuttonUnChooseAll.Name = "ycheckbuttonUnChooseAll";
+			this.ycheckbuttonUnChooseAll.UseUnderline = true;
+			this.ycheckbuttonUnChooseAll.Label = global::Mono.Unix.Catalog.GetString("Снять выделение");
+			this.hbox1.Add(this.ycheckbuttonUnChooseAll);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ycheckbuttonUnChooseAll]));
+			w2.Position = 1;
+			w2.Expand = false;
+			w2.Fill = false;
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -43,8 +67,8 @@ namespace Workwear.ReportParameters.Views
 			this.ytreeChoiseProtectionTools.Name = "ytreeChoiseProtectionTools";
 			this.GtkScrolledWindow.Add(this.ytreeChoiseProtectionTools);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w3.Position = 1;
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w5.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
