@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.Views;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
@@ -20,7 +17,13 @@ namespace workwear.ReportParameters.ViewModels {
 	{
 		private readonly FeaturesService featuresService;
 
-		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
+		public RequestSheetViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			IUnitOfWorkFactory uowFactory,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService)
+			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
@@ -28,14 +31,14 @@ namespace workwear.ReportParameters.ViewModels {
 			Identifier = "RequestSheet";
 
 			uow = uowFactory.CreateWithoutRoot();
-			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, AutofacScope);
+			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, autofacScope);
 
 			EntrySubdivisionViewModel = builder.ForEntity<Subdivision>().MakeByType().Finish();
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,uow); //AutofacScope.Resolve<ChoiceProtectionToolsViewModel>();
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
 		}
 
 		private readonly IUnitOfWork uow;
