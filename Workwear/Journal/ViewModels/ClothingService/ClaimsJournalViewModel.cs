@@ -97,8 +97,10 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
 				var claim = uow.GetById<ServiceClaim>(selected.First().Id);
-				if(claim.States.Count != 1)
+				if(claim.States.Count != 1) {
 					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
+					return;
+				}
 				uow.Delete(claim.States.First());
 				uow.Delete(claim);
 				uow.Commit();
