@@ -7,6 +7,7 @@ using Gtk;
 using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -59,7 +60,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
 				.AddColumn("Послед. получения")
-					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null)
+					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => ((EmployeeIssueOperation)x.item.IssueOperation).ManualOperation) ? handIcon : null)
 					.AddTextRenderer(node => MakeLastIssuedText(node), useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(node => node.AmountText)
 					.AddSetter((w, node) => w.Foreground = node.AmountColor)

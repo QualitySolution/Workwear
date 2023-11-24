@@ -3,6 +3,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 
@@ -18,7 +19,7 @@ namespace Workwear.ViewModels.Stock
             ProtectionTools protectionTools) : base(navigation)
         {
             using (var unitOfWork = factory.CreateWithoutRoot())
-                Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
+                Intervals = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
             Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
         }
     }

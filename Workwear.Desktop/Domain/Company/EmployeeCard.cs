@@ -443,7 +443,7 @@ namespace Workwear.Domain.Company
 			if(Id == 0) {
 				// Нет смысла лезть в базу, так как сотрудник еще не сохранен.
 				foreach(var item in WorkwearItems) {
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph<EmployeeIssueOperation>();
 				}
 				return;
 			}
@@ -455,7 +455,7 @@ namespace Workwear.Domain.Company
 		/// </summary>
 		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
 			foreach(var item in WorkwearItems) {
-				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+				item.Graph = new IssueGraph<EmployeeIssueOperation>();
 			}
 			
 			var protectionGroups = 
@@ -468,7 +468,7 @@ namespace Workwear.Domain.Company
 			foreach (var item in WorkwearItems) {
 				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
 					continue;
-				item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+				item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[item.ProtectionTools.Id].ToList());
 				protectionGroups.Remove(item.ProtectionTools.Id);
 			}
 			
@@ -479,7 +479,7 @@ namespace Workwear.Domain.Company
 					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
 				if(matched == null)
 					continue;
-				item.Graph = new IssueGraph(protectionGroups[matched.Id].ToList());
+				item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[matched.Id].ToList());
 				protectionGroups.Remove(matched.Id);
 			}
 		}
@@ -510,7 +510,7 @@ namespace Workwear.Domain.Company
 			var operations = employeeIssueRepository.AllOperationsForEmployee(this, q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools), uow);
 			var toRecalculate = operations.Where(x => x.IsTouchDates(begin, end)).ToList();
 			foreach (var typeGroup in toRecalculate.GroupBy(o => o.ProtectionTools)) {
-				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList());
+				var graph = new IssueGraph<EmployeeIssueOperation>(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList());
 				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);

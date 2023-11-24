@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -140,6 +140,8 @@ namespace Workwear.Domain.Operations
 			get => issuedOperation;
 			set => SetField(ref issuedOperation, value);
 		}
+		
+		IGraphIssueOperation IGraphIssueOperation.IssuedOperation => issuedOperation;
 
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Сопутствующая складская операция")]
@@ -306,7 +308,7 @@ namespace Workwear.Domain.Operations
 				item.ExpenseDoc.Items
 					.Where(x => x.EmployeeIssueOperation != null && DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))
 					.Select(x => x.EmployeeIssueOperation).ToArray();
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
+			var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
@@ -338,7 +340,7 @@ namespace Workwear.Domain.Operations
 			if(item.EmployeeCardItem?.ProtectionTools != null)
 				ProtectionTools = item.EmployeeCardItem.ProtectionTools;
 				
-			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
+			var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
@@ -397,7 +399,7 @@ namespace Workwear.Domain.Operations
 		#endregion
 		#region Пересчет выдачи
 
-		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+		public virtual void RecalculateDatesOfIssueOperation(IssueGraph<EmployeeIssueOperation> graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			RecalculateStartOfUse(graph, baseParameters, askUser);
 			RecalculateExpiryByNorm(baseParameters, askUser);
 		}
@@ -426,19 +428,19 @@ namespace Workwear.Domain.Operations
 			return true;
 		}
 
-		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+		public virtual void RecalculateStartOfUse(IssueGraph<EmployeeIssueOperation> graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			if(!CheckRecalculateCondition())
 				return;
 			
 			StartOfUse = operationTime;
 
-			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
+			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, (IGraphIssueOperation)this);
 			if(amountAtEndDay >= NormItem.Amount) {
 				//Ищем первый интервал где числящееся меньше нормы.
 				var firstLessNorm = graph.Intervals
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
-					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
+					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, (IGraphIssueOperation)this) < NormItem.Amount);
 				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
