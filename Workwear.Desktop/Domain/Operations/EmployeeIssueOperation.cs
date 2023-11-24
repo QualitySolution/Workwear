@@ -168,7 +168,7 @@ namespace Workwear.Domain.Operations
 			get => signTimestamp;
 			set => SetField(ref signTimestamp, value);
 		}
-
+		
 		private bool overrideBefore;
 		[Display(Name = "Сбрасывает предыдущие движения")]
 		public virtual bool OverrideBefore {
