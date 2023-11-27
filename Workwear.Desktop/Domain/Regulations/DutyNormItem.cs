@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Utilities;
+using QS.Utilities.Text;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative (Gender = GrammaticalGender.Feminine,
@@ -13,6 +14,9 @@ namespace Workwear.Domain.Regulations {
 	public class DutyNormItem : PropertyChangedBase, IDomainObject {
 		#region Свойства
 		public virtual int Id { get; set; }
+
+		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
+			 ""{ProtectionTools.Name}"" на {PeriodCount} {LifeText}";
 		
 		private DutyNorm dutyNorm;
 		[Display (Name = "Норма")]
@@ -40,7 +44,7 @@ namespace Workwear.Domain.Regulations {
 		public virtual NormPeriodType NormPeriod {
 			get { return normPeriod; }
 			set { SetField (ref normPeriod, value, () => NormPeriod);
-				if(value == NormPeriodType.Wearout || value == NormPeriodType.Duty)
+				if(value == NormPeriodType.Wearout)
 					PeriodCount = 0;
 			}
 		}

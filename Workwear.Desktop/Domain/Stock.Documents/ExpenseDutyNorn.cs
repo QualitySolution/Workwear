@@ -16,9 +16,13 @@ namespace Workwear.Domain.Stock.Documents {
 	)]
 	[HistoryTrace]
 
-	public class ExpenseDutyNorn : StockDocument/*, IValidatableObject*/{
-
-		#region Сввойства
+	public class ExpenseDutyNorn : StockDocument{
+		
+		#region Генерирумые Сввойства
+		public virtual string Title => $"Выдачча по деж. норме №{Id} от {Date:d}";
+		#endregion
+		
+		#region Хранимые Сввойства
 
 		private EmployeeCard responsibleEmployee;
 		[Display (Name = "Ответственый сотрудник")]

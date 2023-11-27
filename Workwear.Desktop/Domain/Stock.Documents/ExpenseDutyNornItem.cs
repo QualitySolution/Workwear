@@ -15,6 +15,10 @@ namespace Workwear.Domain.Stock.Documents {
 	[HistoryTrace]
 	public class ExpenseDutyNornItem : PropertyChangedBase, IDomainObject
 	{
+		#region Генерирумые Сввойства
+		public virtual string Title => $"Строка {Nomenclature?.Name ?? ProtectionTools.Name} в {Document.Title}";
+		#endregion
+		
 		#region Хранимые свойства
 
 		public virtual int Id { get; set; }

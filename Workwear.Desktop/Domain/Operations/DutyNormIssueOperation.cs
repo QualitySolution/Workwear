@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.HistoryLog;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
@@ -9,8 +10,22 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Operations {
+	[Appellative(Gender = GrammaticalGender.Feminine,
+		NominativePlural = "операции выдачи по дежурной норме",
+		Nominative = "операция выдачи по дежурной норме",
+		Genitive ="операции выдачи по дежурной норме"
+	)]
+	[HistoryTrace]
 	public class DutyNormIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject {
-		#region Свойства
+		
+		
+		#region Генерируемые Свойства
+		public virtual string Title => Issued > Returned
+			? $"Выдача {DutyNorm.Name} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
+			: $"Списание {DutyNorm.Name} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
+		#endregion
+		
+		#region Хранимые Свойства
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public virtual int Id { get; set; }
@@ -147,12 +162,20 @@ namespace Workwear.Domain.Operations {
         public DutyNormIssueOperation() {
         }
 
-        
-        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			throw new NotImplementedException();
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(OperationTime < new DateTime(1990, 1, 1))
+				yield return new ValidationResult("Можно сохранить дату операции только после 1990г.");
+			if(Issued < 0 || Returned < 0)
+				yield return new ValidationResult("Количество не должно быть меньше 0.");
+			if(!(Issued > 0 || Returned > 0))
+				yield return new ValidationResult("Количество посступления или возврата должно быть больше 0.");
+			if(ProtectionTools == null)
+				yield return new ValidationResult("Номенклатура нормы должна быть задана.");
+			if(Nomenclature == null)
+				yield return new ValidationResult("Номенклатура должна быть задана.");
 		}
-
-		public virtual void Update(ExpenseDutyNornItem item) {
+        
+        public virtual void Update(ExpenseDutyNornItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if (item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;

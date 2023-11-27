@@ -135,12 +135,12 @@ namespace Workwear.Domain.Operations
 		}
 
 		private EmployeeIssueOperation issuedOperation;
-		[Display(Name = "Операция выдачи")]
+		[Display(Name = "Списать операцию выдачи")]
 		public virtual EmployeeIssueOperation IssuedOperation {
 			get => issuedOperation;
 			set => SetField(ref issuedOperation, value);
 		}
-		
+
 		IGraphIssueOperation IGraphIssueOperation.IssuedOperation => issuedOperation;
 
 		private WarehouseOperation warehouseOperation;
