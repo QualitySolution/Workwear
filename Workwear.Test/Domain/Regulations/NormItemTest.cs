@@ -1,4 +1,5 @@
 ﻿using System;
+using NSubstitute;
 using NUnit.Framework;
 using Workwear.Domain.Regulations;
 
@@ -36,6 +37,23 @@ namespace Workwear.Test.Domain.Regulations
 			item.PeriodCount = periodCount;
 
 			return item.CalculateExpireDate(startdate, amount);
+		}
+
+		[Test]
+		[TestCase(2, NormPeriodType.Year, 1, "2018-01-01", 0.5, ExpectedResult = "2018-07-02")]
+		public DateTime? CalculateExpireDateWearPercentTest(
+			int normAmount,
+			NormPeriodType normPeriod, 
+			int periodCount, 
+			DateTime startdate,
+			decimal wearPercent) {
+			var item = new NormItem();
+			item.NormPeriod = normPeriod;
+			item.PeriodCount = periodCount;
+
+			var date = item.CalculateExpireDate(startdate, wearPercent);
+
+			return date;
 		}
 	}
 }

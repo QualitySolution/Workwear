@@ -213,12 +213,13 @@ namespace Workwear.ViewModels.Operations
 
 		private decimal wearPercent;
 		public decimal WearPercent {
-			get => wearPercent;
+			get => wearPercent * 100;
 			set {
 				wearPercent = value / 100;
 				
 				if(SelectOperation != null) {
 					SelectOperation.WearPercent = wearPercent;
+					RecalculateDatesOfSelectedOperationWithWearPercent();
 				}
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
@@ -330,6 +331,17 @@ namespace Workwear.ViewModels.Operations
 			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(IssueDate, SelectOperation.Issued);
 			if(SelectOperation.UseAutoWriteoff)
 				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
+		}
+
+		void RecalculateDatesOfSelectedOperationWithWearPercent() {
+			SelectOperation.OperationTime = IssueDate;
+			SelectOperation.StartOfUse = IssueDate;
+			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(IssueDate, SelectOperation.WearPercent);
+
+			if(SelectOperation.UseAutoWriteoff) 
+			{
+				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;	
+			}
 		}
 
 		#endregion
