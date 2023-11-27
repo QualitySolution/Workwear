@@ -202,7 +202,7 @@ namespace Workwear.Test.Integration.Tools
 				expenseOp.NormItem = normItem;
 				expenseOp.Issued = 1;
 				expenseOp.WarehouseOperation = warehouseOperation;
-				var graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
+				var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, employee, protectionTools);
 				expenseOp.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 				uow.Save(expenseOp);
 
@@ -219,7 +219,7 @@ namespace Workwear.Test.Integration.Tools
 				expenseOp2.NormItem = normItem;
 				expenseOp2.Issued = 1;
 				expenseOp2.WarehouseOperation = warehouseOperation2;
-				graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
+				graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, employee, protectionTools);
 				expenseOp2.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 				uow.Save(expenseOp2);
 				uow.Commit();

@@ -41,6 +41,11 @@ namespace Workwear.Domain.Operations.Graph
 		public IssueGraph(IList<TGraphOperation> issues) {
 			operations = issues.Select(x => (IGraphIssueOperation)x).ToList(); 
 			Refresh();
+		} 
+		//Пока только для тестов	
+		public IssueGraph(IList<IGraphIssueOperation> issues) {
+			operations = issues; 
+			Refresh();
 		}
 
 		/// <summary>

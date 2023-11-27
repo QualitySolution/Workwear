@@ -29,7 +29,7 @@ namespace Workwear.Test.Domain.Company
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -57,7 +57,7 @@ namespace Workwear.Test.Domain.Company
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -85,7 +85,7 @@ namespace Workwear.Test.Domain.Company
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -108,18 +108,18 @@ namespace Workwear.Test.Domain.Company
 		                    "Следующая выдача должна быть первой датой когда стало меньше нормы, то есть в день списания.")]
 		public void UpdateNextIssue_FirstNotEnoughCase()
 		{
-			var operation1 = Substitute.For<EmployeeIssueOperation>();
+			var operation1 = Substitute.For<IGraphIssueOperation>();
 			operation1.OperationTime.Returns(new DateTime(2018, 1, 1));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2018, 3, 1));
 			operation1.Issued.Returns(10);
 
-			var operation2 = Substitute.For<EmployeeIssueOperation>();
+			var operation2 = Substitute.For<IGraphIssueOperation>();
 			operation2.IssuedOperation.Returns(operation1);
 			operation2.OperationTime.Returns(new DateTime(2018, 1, 15));
 			operation2.Returned.Returns(2);
 
-			var list = new List<EmployeeIssueOperation> { operation1, operation2 };
-			var graph = new IssueGraph(list);
+			var list = new List<IGraphIssueOperation> { operation1, operation2 };
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -142,7 +142,7 @@ namespace Workwear.Test.Domain.Company
 		public void UpdateNextIssue_WithoutIssuesNextDateEqualCreateItemDate()
 		{
 			var uow = Substitute.For<IUnitOfWork>();
-			var graph = Substitute.For<IssueGraph>();
+			var graph = Substitute.For<IssueGraph<EmployeeIssueOperation>>();
 			var employee = Substitute.For<EmployeeCard>();
 			var normItem = Substitute.For<NormItem>();
 
@@ -168,7 +168,7 @@ namespace Workwear.Test.Domain.Company
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 			var employee = Substitute.For<EmployeeCard>();
 			employee.Id.Returns(777); //Необходимо чтобы было более 0, для запроса имеющихся операций.
 
@@ -194,7 +194,7 @@ namespace Workwear.Test.Domain.Company
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -228,7 +228,7 @@ namespace Workwear.Test.Domain.Company
 			operation1.Issued.Returns(10);
 
 			var list = new List<EmployeeIssueOperation> { operation1 };
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph<EmployeeIssueOperation>(list);
 
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
@@ -267,7 +267,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>()),
 				NextIssue = DateTime.Today.AddDays(30)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, DateTime.Today), Is.EqualTo(5));
@@ -285,7 +285,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-30),
 						StartOfUse = DateTime.Today.AddDays(-30),
@@ -311,7 +311,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-30),
 						StartOfUse = DateTime.Today.AddDays(-30),
@@ -337,7 +337,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-30),
 						StartOfUse = DateTime.Today.AddDays(-30),
@@ -363,7 +363,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddMonths(-30),
 						StartOfUse = DateTime.Today.AddMonths(-30),
@@ -390,7 +390,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddDays(-40),
 						StartOfUse = DateTime.Today.AddDays(-40),
@@ -416,7 +416,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = DateTime.Today.AddMonths(-5),
 						StartOfUse = DateTime.Today.AddMonths(-5),
@@ -449,7 +449,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation>()),
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>()),
 				NextIssue = new DateTime(2022, 5, 20)
 			};
 			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2022, 9, 20)), Is.EqualTo(0));
@@ -479,7 +479,7 @@ namespace Workwear.Test.Domain.Company
 			var item = new EmployeeCardItem {
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
-				Graph = new IssueGraph(new List<EmployeeIssueOperation> {
+				Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 					new EmployeeIssueOperation {
 						OperationTime = new DateTime(2021, 5, 20),
 						StartOfUse = new DateTime(2021, 5, 20),
@@ -662,7 +662,7 @@ namespace Workwear.Test.Domain.Company
 		public void LastIssued_IssuesExistCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation { //Старая выдача не отображаем
 					Id = 1,
 					OperationTime = new DateTime(2020, 1, 1),
@@ -727,7 +727,7 @@ namespace Workwear.Test.Domain.Company
 				Issued = 10
 			};
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				issue,
 				new EmployeeIssueOperation { //Списание
 					OperationTime = new DateTime(2022, 2, 1),
@@ -786,7 +786,7 @@ namespace Workwear.Test.Domain.Company
 				AutoWriteoffDate = new DateTime(2024, 1, 13),
 				Issued = 1
 			};
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				firstIssue,
 				new EmployeeIssueOperation { //Выдали заново
 					OperationTime = new DateTime(2023, 2, 13),
@@ -825,7 +825,7 @@ namespace Workwear.Test.Domain.Company
 				AutoWriteoffDate = new DateTime(2024, 1, 13),
 				Issued = 1
 			};
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				firstIssue
 			});
 			
@@ -845,7 +845,7 @@ namespace Workwear.Test.Domain.Company
 		[Category("real case")]
 		public void LastIssued_AllIssueInFutureCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -883,7 +883,7 @@ namespace Workwear.Test.Domain.Company
 		public void LastIssued_AllInFutureCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -944,7 +944,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 1;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -986,7 +986,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -1026,7 +1026,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -1066,7 +1066,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -1106,7 +1106,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -1146,7 +1146,7 @@ namespace Workwear.Test.Domain.Company
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					Id = 1,
 					OperationTime = new DateTime(2023, 3, 13),
@@ -1192,7 +1192,7 @@ namespace Workwear.Test.Domain.Company
 		public void LastIssueOperation_IssuesExistCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 				new EmployeeIssueOperation {
 					//Первая отображаемая
 					OperationTime = new DateTime(2022, 1, 1),
@@ -1223,7 +1223,7 @@ namespace Workwear.Test.Domain.Company
 		public void LastIssueOperation_NotExistCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
 			
-			var graph = new IssueGraph(new List<EmployeeIssueOperation> {
+			var graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation> {
 			});
 
 			var item = new EmployeeCardItem {

@@ -44,7 +44,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { operation1, operation2 };
 
-			var graph = new IssueGraph(operations);
+			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.ProtectionTools = protectionTools;
 			issue.Employee = employee;
@@ -85,7 +85,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { operation1 };
 
-			var graph = new IssueGraph(operations);
+			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
@@ -144,7 +144,7 @@ namespace Workwear.Test.Domain.Operations
 			};
 
 			var operations = new List<EmployeeIssueOperation>() { operation1, issue };
-			var graph = new IssueGraph(operations);
+			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(Arg.Any<string>()).ReturnsForAnyArgs(false);
@@ -186,7 +186,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { };
 
-			var graph = new IssueGraph(operations);
+			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
@@ -240,7 +240,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { };
 
-			var graph = new IssueGraph(operations);
+			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;

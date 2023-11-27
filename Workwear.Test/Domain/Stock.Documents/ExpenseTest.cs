@@ -33,8 +33,8 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.NormItem = norm;
 			operation.IssuedOperation = incomeOperation;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation });
-
+			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = (e, t) => new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>() { operation });
+			
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
 			expenseItem.EmployeeIssueOperation = operation;
@@ -77,7 +77,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.OperationTime = new DateTime(2019, 1, 15);
 			operation.NormItem = norm;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationBeforeAndEnough });
+			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = (e, t) => new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>() { operation, operationBeforeAndEnough });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -128,7 +128,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.OperationTime = new DateTime(2019, 1, 15);
 			operation.NormItem = norm;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationIssue, operationWriteoff });
+			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = (e, t) => new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>() { operation, operationIssue, operationWriteoff });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -169,7 +169,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var warehouse = Substitute.For<Warehouse>();
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { });
+			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = (e, t) => new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>() { });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -201,7 +201,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 		[TearDown]
 		public void RemoveStaticGaps()
 		{
-			IssueGraph.MakeIssueGraphTestGap = null;
+			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = null;
 		}
 	}
 }
