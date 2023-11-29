@@ -24,7 +24,7 @@ namespace Workwear.Views.Operations
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
 				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
-				.AddColumn("Процент износа").AddTextRenderer(x => x.WearPercent.ToString())
+				.AddColumn("Процент износа").AddTextRenderer(x => x.WearPercent.ToString("P0"))
 				.Finish();
 			
 			ytreeviewOperations.Binding
