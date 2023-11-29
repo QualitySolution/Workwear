@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog;
@@ -119,7 +120,11 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
-			
+
+			foreach(var item in Entity.Items) 
+				if(item.ProtectionTools != null) 
+					item.DutyNormItem = Entity.DutyNorm.Items.First(x => x.ProtectionTools == item.ProtectionTools);
+
 			Entity.UpdateOperations(UoW, interactive);
 			UoW.Session.SaveOrUpdate(Entity);
 			UoW.Commit();

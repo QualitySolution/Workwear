@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map (x => x.Amount).Column ("amount");
 			Map (x => x.NormPeriod).Column ("period_type");
 			Map (x => x.PeriodCount).Column ("period_count");
+			Map (x => x.NextIssue).Column ("next_issue");
 			Map(x => x.NormParagraph).Column("norm_paragraph");
 			Map(x => x.Comment).Column("comment");
 			

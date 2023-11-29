@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NLog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 
@@ -109,6 +110,13 @@ namespace Workwear.Domain.Regulations {
 		}
 		#endregion
 
+		#region Методы
+
+		public virtual void UpdateNextIssues(IUnitOfWork uow) {
+			foreach (var item in items)
+				item.UpdateNextIssue(uow);
+		}
+		#endregion
 		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
 	}
 }

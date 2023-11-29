@@ -19,6 +19,7 @@ namespace Workwear.HibernateMapping.Stock {
 			Map(x => x.AutoWriteoffDate).Column("auto_writeoff_date");
 			Map(x => x.StartOfUse).Column("start_of_use");
 			Map(x => x.ExpiryByNorm).Column("expiry_by_norm");
+			Map(x => x.OverrideBefore).Column("override_before");
 			Map(x => x.Comment).Column("comment");
 
 			References(x => x.Nomenclature).Column("nomenclature_id");
@@ -26,6 +27,7 @@ namespace Workwear.HibernateMapping.Stock {
 			References(x => x.DutyNormItem).Column("duty_norm_item_id");
 			References(x => x.ProtectionTools).Column("protection_tools_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
+			References(x => x.IssuedOperation).Column("issued_operation_id");
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 		}

@@ -8,9 +8,9 @@ using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "строки выдачи",
-		Nominative = "строка выдачи",
-		Genitive = "строки выдачи"
+		NominativePlural = "строки выдачи дежурной нормы",
+		Nominative = "строка выдачи дежурной нормы",
+		Genitive = "строки выдачи дежурной нормы"
 		)]
 	[HistoryTrace]
 	public class ExpenseDutyNornItem : PropertyChangedBase, IDomainObject
@@ -80,9 +80,14 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref height, value);
 		}
 		#endregion
-
+//не думаю, что нужно хранить в базе, это поле хранися в операции
+		private DutyNormItem dutyNormItem;
 		[Display(Name = "Строка дежурной нормы")]
-		public virtual DutyNormItem DutyNormItem => Operation.DutyNormItem;
+		[IgnoreHistoryTrace]
+		public virtual DutyNormItem DutyNormItem {
+			get => dutyNormItem;
+			set => SetField(ref dutyNormItem, value);
+		}
 
 		public virtual void UpdateOperation(IUnitOfWork uow) {
 			if (Operation == null) 

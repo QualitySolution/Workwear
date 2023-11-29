@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using QS.Utilities.Numeric;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -16,7 +17,7 @@ namespace Workwear.Domain.Operations {
 		Genitive ="операции выдачи по дежурной норме"
 	)]
 	[HistoryTrace]
-	public class DutyNormIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject {
+	public class DutyNormIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation {
 		
 		
 		#region Генерируемые Свойства
@@ -147,6 +148,22 @@ namespace Workwear.Domain.Operations {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
+		
+		private DutyNormIssueOperation issuedOperation;
+		[Display(Name = "Списать операцию выдачи")]
+		public virtual DutyNormIssueOperation IssuedOperation {
+			get => issuedOperation;
+			set => SetField(ref issuedOperation, value);
+		}
+
+		IGraphIssueOperation IGraphIssueOperation.IssuedOperation => issuedOperation;
+
+		private bool overrideBefore = false; 
+		[Display(Name = "Не учитывать прошлые")]
+		public virtual bool OverrideBefore {
+			get => overrideBefore;
+			set => SetField(ref overrideBefore, value);
+		}
 
 		private string comment;
         [Display(Name = "Комментарий")]
@@ -190,6 +207,20 @@ namespace Workwear.Domain.Operations {
 			Returned = 0;
 			WarehouseOperation = item.WarehouseOperation;
 			ProtectionTools = item.ProtectionTools;
-		}
+
+			RecalculateExpiryByNorm();
+        }
+        
+        public virtual void RecalculateExpiryByNorm(){
+	        if(StartOfUse == null)
+		        StartOfUse = OperationTime;
+			
+	        ExpiryByNorm = DutyNormItem.CalculateExpireDate(StartOfUse.Value, WearPercent);
+			
+	        if(Issued > DutyNormItem.Amount && DutyNormItem.Amount > 0)
+		        ExpiryByNorm = DutyNormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+	        
+	        AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
+        }
 	}
 }

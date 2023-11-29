@@ -127,7 +127,8 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<DutyNormIssueOperation>()
 				.RequiredCascadeDeletion()
-				.AddDeleteDependence<ExpenseDutyNornItem>(x => x.Operation);
+				.AddDeleteDependence<ExpenseDutyNornItem>(x => x.Operation)
+				.AddDeleteDependence<DutyNormIssueOperation>(x => x.IssuedOperation);
 				
 			DeleteConfig.AddHibernateDeleteInfo<SubdivisionIssueOperation>()
 				.RequiredCascadeDeletion()

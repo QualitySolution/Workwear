@@ -18,9 +18,11 @@ namespace Workwear.ViewModels.Regulations {
 			INavigationManager navigation,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null) 
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
+			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider){
 
 			currentTab = Entity.Id == 0 ? 0 : 1;
+//Пока обновление при открытии нормы			
+			Entity.UpdateNextIssues(UoW);
 		}
 
 		#region Свойства
@@ -45,10 +47,6 @@ namespace Workwear.ViewModels.Regulations {
 			 .Where(o => o.DutyNorm.Id == Entity.Id).List();
 
 		 #endregion
-		
-		
-		#region Дочерние ViewModels
-		#endregion
 		
 		#region Действия View
 		public void AddItem() {

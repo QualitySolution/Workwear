@@ -1,8 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Utilities;
-using QS.Utilities.Text;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
+using Workwear.Tools;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative (Gender = GrammaticalGender.Feminine,
@@ -12,11 +16,11 @@ namespace Workwear.Domain.Regulations {
 		Genitive = "нормы выдачи"
 	)]
 	public class DutyNormItem : PropertyChangedBase, IDomainObject {
-		#region Свойства
+		#region Хранимые Свойства
 		public virtual int Id { get; set; }
 
 		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
-			 ""{ProtectionTools.Name}"" на {PeriodCount} {LifeText}";
+			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
 		
 		private DutyNorm dutyNorm;
 		[Display (Name = "Норма")]
@@ -34,6 +38,7 @@ namespace Workwear.Domain.Regulations {
 
 		private int amount;
 		[Display (Name = "Количество")]
+		[PropertyChangedAlso(nameof(AmountUnitText))]
 		public virtual int Amount {
 			get { return amount; }
 			set { SetField (ref amount, value, () => Amount); }
@@ -63,6 +68,13 @@ namespace Workwear.Domain.Regulations {
 			set => SetField(ref normParagraph, value); 
 		}
 		
+		private DateTime? nextIssue;
+		[Display (Name = "Дата следующей выдачи")]
+		public virtual DateTime? NextIssue {
+			get => nextIssue;
+			set => SetField (ref nextIssue, value);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
@@ -71,6 +83,87 @@ namespace Workwear.Domain.Regulations {
 		}
 		#endregion
 
+		#region Методы
+
+		/// <summary>
+		/// Рассчитывает дату износа пропорционально количеству выданного.
+		/// </summary>
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate, int amount)
+		{
+			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
+				return null;
+			//TODO Некорректно считаем смены
+			double oneItemByMonths = (double)PeriodInMonths / Amount;
+			double months = amount * oneItemByMonths;
+			int wholeMonths = (int)months;
+			int addintionDays = (int)Math.Round((months - wholeMonths) * 30);
+
+			return issueDate.AddMonths(wholeMonths).AddDays(addintionDays);
+		}
+		/// <summary>
+		/// Рассчитывает дату износа по норме.
+		/// </summary>
+		public virtual DateTime? CalculateExpireDate(DateTime issueDate, decimal wearPercent = 0.0m)
+		{
+			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
+				return null;
+			//TODO Некорректно считаем смены
+			var maxWriteofDate = issueDate.AddMonths(PeriodInMonths);
+			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
+		}
+		#endregion
+		#region Граф
+
+		public virtual IssueGraph<DutyNormIssueOperation> Graph { get; set; }
+		
+		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
+		
+		/// <summary>
+		/// Необходимое к выдачи количество.
+		/// </summary>
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
+			
+			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
+		}
+
+		/// <summary>
+		/// Обновляет дату следующей выдачи.
+		/// </summary>
+		public virtual void UpdateNextIssue(IUnitOfWork uow) {
+			if(Graph == null) {
+//Пока по простому
+				if(Id == 0)
+					Graph = new IssueGraph<DutyNormIssueOperation>();
+				else {
+					var query = uow.Session.QueryOver<DutyNormIssueOperation>()
+						.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
+					Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
+				}
+			}
+
+			DateTime? wantIssue = new DateTime();
+			if(Graph.Intervals.Any()) {
+				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
+				wantIssue = listReverse.First().StartDate;
+				//Ищем первый с конца интервал где не хватает выданного до нормы.
+				
+				foreach(var interval in listReverse) {
+					if(interval.CurrentCount < Amount)
+						wantIssue = interval.StartDate;
+					else
+						break;
+				}
+			}
+//Дата создания, если нужна. Пока в базе дата для строки не хранится	
+			if(wantIssue == default(DateTime)) 
+				wantIssue = DutyNorm.DateFrom;
+			nextIssue = wantIssue;
+		}
+
+		#endregion
+		
 		#region Вывод
 		public virtual double AmountPerYear
 		{
@@ -114,15 +207,15 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 
-		public virtual string LifeText{
+		public virtual string PeriodText{
 			get{
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
+						return NumberToTextRus.FormatCase (PeriodCount, "год", "года", "лет");
 					case NormPeriodType.Month:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
+						return NumberToTextRus.FormatCase (PeriodCount, "месяц", "месяца", "месяцев");
 					case NormPeriodType.Shift:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+						return NumberToTextRus.FormatCase (PeriodCount, "сменy", "смены", "смен");
 					case NormPeriodType.Wearout:
 						return "До износа";
 					default:
@@ -130,6 +223,47 @@ namespace Workwear.Domain.Regulations {
 				}
 			}
 		}
+
+		public virtual string AmountUnitText(int a) {
+			switch(ProtectionTools?.Type?.Units?.OKEI) {
+				case "796":
+					return NumberToTextRus.FormatCase(a, "штука", "штуки", "штук");
+				case "715":
+					return NumberToTextRus.FormatCase(a, "пара", "пары", "пар");
+				case "839":
+					return NumberToTextRus.FormatCase(a, "компл.", "компл.", "компл.");
+				case "704":
+					return NumberToTextRus.FormatCase(a, "набор", "набора", "наборов");
+				default:
+					return String.Empty;
+			}
+		}
+
+		public virtual string AmountColor {
+			get {
+				var amount = Issued(DateTime.Today);
+				if (Amount == amount)
+					return "darkgreen";
+				if (Amount < amount)
+					return "blue";
+				if (amount == 0)
+					return "red";
+				else
+					return "orange";
+			}
+		}
+
+		public virtual string NextIssueColor {
+			get {
+				if(DateTime.Today >= NextIssue)
+					return "red";
+				if(DateTime.Today > NextIssue)
+					return "darkgreen";
+				else
+					return "black";
+			}
+		}
+
 		#endregion
 	}
 }
