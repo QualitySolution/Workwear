@@ -21,6 +21,7 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 			{"report_date", ReportDate },
+			{"exclude_in_vacation", ExcludeInVacation },
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
@@ -43,6 +44,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual DateTime? ReportDate {
 			get => reportDate;
 			set => SetField(ref reportDate, value);
+		}
+		
+		private bool excludeInVacation;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
 		}
 
 		private bool showSex;

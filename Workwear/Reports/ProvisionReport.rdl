@@ -19,7 +19,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
@@ -78,6 +78,13 @@ FROM (SELECT
         wear_cards.dismiss_date IS NULL
         AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
         AND ('-1' IN (@subdivision_ids) OR wear_cards.object_id IN (@subdivision_ids))
+        AND (@exclude_in_vacation = false 
+            OR (wear_cards_vacations.begin_date IS NULL 
+                OR (CONVERT(@report_date, DATE) BETWEEN
+                    wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
+                    )
+                )
+            )
     GROUP BY 
         wear_cards_item.protection_tools_id,
         IF(@show_sex, employee_sex, NULL),
@@ -109,9 +116,12 @@ FROM (SELECT
           <QueryParameter Name="group_by_subdivision">
             <Value>=Parameters!group_by_subdivision</Value>
           </QueryParameter>
+          <QueryParameter Name="exclude_in_vacation">
+            <Value>=Parameters!exclude_in_vacation</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -150,7 +160,7 @@ FROM (SELECT
         </Field>
         <Field Name="provision_percent">
           <DataField>provision_percent</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -824,7 +834,7 @@ FROM (SELECT
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>2023-11-21</Value>
+          <Value>2023-11-27</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -836,7 +846,7 @@ FROM (SELECT
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>true</Value>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -848,7 +858,7 @@ FROM (SELECT
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>true</Value>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -860,7 +870,7 @@ FROM (SELECT
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>22</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -872,7 +882,7 @@ FROM (SELECT
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>1</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -881,6 +891,18 @@ FROM (SELECT
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="group_by_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
