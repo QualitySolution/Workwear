@@ -31,7 +31,6 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		IUnitOfWork UoW;
-		public bool SensetiveLoad => ReportDate != null;
 		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
@@ -40,10 +39,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		#region Свойства
 		private DateTime? reportDate = DateTime.Today;
-		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime? ReportDate {
 			get => reportDate;
-			set => SetField(ref reportDate, value);
 		}
 		
 		private bool excludeInVacation;
