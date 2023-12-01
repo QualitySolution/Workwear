@@ -2,6 +2,7 @@
 set -e
 
 echo "Что делаем?"
+echo "0) Собрать и запустить"
 echo "1) git pull"
 echo "2) nuget restore"
 echo "3) cleanup packages directories"
@@ -64,6 +65,10 @@ cp -r ~/.nuget/packages/nunit.consolerunner/3.16.3/tools/* .
 mono nunit3-console.exe WorkwearTest.dll --framework=mono-4.0
 cd "$(dirname "$0")"
 ;;&
+    *0*)
+msbuild /p:Configuration=Debug /p:Platform=x86 Workwear.sln
+cd Workwear/bin/Debug/
+mono workwear.exe
 esac
 
 read -p "Press enter to exit"
