@@ -67,6 +67,8 @@ namespace Workwear.Domain.ClothingService {
 		InWashing,
 		[Display(Name = "Ожидает выдачи")]
 		AwaitIssue,
+		[Display(Name = "В терминале выдачи")]
+		InDispenseTerminal,
 		[Display(Name = "Возвращена")]
 		Returned,
 	}

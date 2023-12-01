@@ -49,7 +49,7 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','Returned') NOT NULL,
+	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
 	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
