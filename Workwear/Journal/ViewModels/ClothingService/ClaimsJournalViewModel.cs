@@ -80,18 +80,18 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				selected => true,
 				selected => Receive());
 			NodeActionsList.Add(receiveAction);
+
+			var changeStateAction = new JournalAction("Выполнить движение",
+				selected => true,
+				selected => true,
+				selected => ChangeState());
+			NodeActionsList.Add(changeStateAction);
 			
 			var cancelAction = new JournalAction("Отменить получение",
 				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService,
 				selected => true,
 				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
 			NodeActionsList.Add(cancelAction);
-			
-			var changeStateAction = new JournalAction("Выполнить движение",
-				selected => true,
-				selected => true,
-				selected => ChangeState());
-			NodeActionsList.Add(changeStateAction);
 		}
 
 		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
