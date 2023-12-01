@@ -51,7 +51,9 @@ namespace Workwear.Views.Stock {
 			 entityWarehouseExpense.Visible = entityWarehouseReceipt.Visible = labelResult.Visible = labelSource.Visible = ViewModel.ShowWarehouses;
 			 #region TreeSource
 			 ytreeExpenseItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionSourceItem>()
-				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				 .AddColumn ("Наименование")
+					.ToolTipText(x => $"ИД номенклатуры: {x.Nomenclature.Id}")
+					.AddTextRenderer (e => e.Nomenclature.Name)
 					.WrapWidth(500)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
@@ -80,7 +82,9 @@ namespace Workwear.Views.Stock {
 			 #endregion
 			 #region TreeResult
 			 ytreeReceiptItems.ColumnsConfig = ColumnsConfigFactory.Create<CompletionResultItem>()
-				 .AddColumn ("Наименование").AddTextRenderer (e => e.Nomenclature.Name)
+				 .AddColumn("Наименование")
+					.ToolTipText(x => $"ИД номенклатуры: {x.Nomenclature.Id}")
+					.AddTextRenderer (e => e.Nomenclature.Name)
 					.WrapWidth(500)
 				 .AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
