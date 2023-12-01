@@ -330,6 +330,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
 				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
+					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssuanceSheetId}").SearchHighlight()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").Resizable().AddTextRenderer(node => node.DocumentText)
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()
