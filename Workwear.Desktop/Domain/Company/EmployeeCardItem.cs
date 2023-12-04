@@ -118,7 +118,7 @@ namespace Workwear.Domain.Company
 				if(StockBalanceModel == null)
 					return StockStateInfo.NotLoaded;
 
-				if(!ProtectionTools.MatchedNomenclatures.Any())
+				if(!ProtectionTools.Nomenclatures.Any())
 					return StockStateInfo.UnknownNomenclature;
 
 				if(InStock.Any(x => x.Amount >= ActiveNormItem.Amount))
@@ -225,7 +225,7 @@ namespace Workwear.Domain.Company
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {
-			if (ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
+			if (ProtectionTools.Nomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)
 				return false;
@@ -364,8 +364,8 @@ namespace Workwear.Domain.Company
 				throw new ArgumentNullException();
 			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
-			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
-			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
+			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
+			var yMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
 				return xMatchedNomenclature.CompareTo(yMatchedNomenclature);
 			if(x.Position.WearPercent != y.Position.WearPercent)

@@ -49,8 +49,9 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InTransit','InRepair','InWashing','AwaitIssue','Returned') NOT NULL,
+	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
+	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
@@ -405,6 +406,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
+  `washable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Можно отдать в стирку',
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
@@ -1958,11 +1960,13 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   UNIQUE INDEX `value_UNIQUE` (`title` ASC),
   INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
   INDEX `fk_barcodes_2_idx` (`size_id` ASC),
@@ -2207,7 +2211,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.11');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.12');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

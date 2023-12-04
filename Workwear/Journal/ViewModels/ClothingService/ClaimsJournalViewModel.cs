@@ -80,25 +80,27 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				selected => true,
 				selected => Receive());
 			NodeActionsList.Add(receiveAction);
+
+			var changeStateAction = new JournalAction("Выполнить движение",
+				selected => true,
+				selected => true,
+				selected => ChangeState());
+			NodeActionsList.Add(changeStateAction);
 			
 			var cancelAction = new JournalAction("Отменить получение",
 				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService,
 				selected => true,
 				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
 			NodeActionsList.Add(cancelAction);
-			
-			var changeStateAction = new JournalAction("Выполнить движение",
-				selected => true,
-				selected => true,
-				selected => ChangeState());
-			NodeActionsList.Add(changeStateAction);
 		}
 
 		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
 				var claim = uow.GetById<ServiceClaim>(selected.First().Id);
-				if(claim.States.Count != 1)
+				if(claim.States.Count != 1) {
 					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
+					return;
+				}
 				uow.Delete(claim.States.First());
 				uow.Delete(claim);
 				uow.Commit();

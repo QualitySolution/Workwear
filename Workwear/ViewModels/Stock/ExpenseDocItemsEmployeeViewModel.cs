@@ -64,7 +64,6 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 		}
 
 		#region Хелперы
@@ -134,7 +133,7 @@ namespace Workwear.ViewModels.Stock
 		{
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				var stockPosition = node.GetStockPosition(expenseEmployeeViewModel.UoW);
-				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.MatchedNomenclatures
+				var normItem = Entity.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.Nomenclatures
 							.Contains(stockPosition.Nomenclature))?.ActiveNormItem;
 				var item = expenseEmployeeViewModel.Entity.AddItem(stockPosition);
 				if(normItem != null
@@ -281,15 +280,9 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-		}
-
-		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{ 
-			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
-				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
-				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
-				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
-			}
+			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
+			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 		#endregion
 	}

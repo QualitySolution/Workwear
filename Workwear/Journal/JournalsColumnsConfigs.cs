@@ -303,6 +303,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
+					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
@@ -329,6 +330,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
 				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
+					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssuanceSheetId}").SearchHighlight()
 					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").Resizable().AddTextRenderer(node => node.DocumentText)
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()
@@ -360,11 +362,12 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
 				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())
-					.AddColumn("Значение").AddTextRenderer(node => node.Value)
+					.AddColumn("Значение").AddTextRenderer(node => node.Value).SearchHighlight()
 					.AddColumn("Создан").AddReadOnlyTextRenderer(x => x.CreateDate.ToShortDateString())
-					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature)
+					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)
 					.AddColumn("Рост").AddTextRenderer(node => node.Height)
+					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FullName).SearchHighlight()
 					.Finish()
 				);
 			#endregion

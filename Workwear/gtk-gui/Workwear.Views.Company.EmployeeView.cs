@@ -142,7 +142,7 @@ namespace Workwear.Views.Company
 
 		private global::Workwear.Views.Company.EmployeeChildren.EmploeeInGroupsView emploeeingroupsview1;
 
-		private global::Gtk.Label label8;
+		private global::Gtk.Label labelTabEmploeeingroupsview;
 
 		private global::Gtk.VBox vbox5;
 
@@ -937,11 +937,11 @@ namespace Workwear.Views.Company
 			global::Gtk.Notebook.NotebookChild w71 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.emploeeingroupsview1]));
 			w71.Position = 5;
 			// Notebook tab
-			this.label8 = new global::Gtk.Label();
-			this.label8.Name = "label8";
-			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Группы");
-			this.notebook1.SetTabLabel(this.emploeeingroupsview1, this.label8);
-			this.label8.ShowAll();
+			this.labelTabEmploeeingroupsview = new global::Gtk.Label();
+			this.labelTabEmploeeingroupsview.Name = "labelTabEmploeeingroupsview";
+			this.labelTabEmploeeingroupsview.LabelProp = global::Mono.Unix.Catalog.GetString("Группы");
+			this.notebook1.SetTabLabel(this.emploeeingroupsview1, this.labelTabEmploeeingroupsview);
+			this.labelTabEmploeeingroupsview.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox5 = new global::Gtk.VBox();
 			this.vbox5.Name = "vbox5";

@@ -57,6 +57,8 @@ namespace Workwear.Domain.ClothingService {
 	public enum ClaimState {
 		[Display(Name = "Принята")]
 		WaitService,
+		[Display(Name = "Принят терминалом")]
+		InReceiptTerminal,
 		[Display(Name = "В пути")]
 		InTransit,
 		[Display(Name = "В ремонте")]
@@ -65,6 +67,8 @@ namespace Workwear.Domain.ClothingService {
 		InWashing,
 		[Display(Name = "Ожидает выдачи")]
 		AwaitIssue,
+		[Display(Name = "В терминале выдачи")]
+		InDispenseTerminal,
 		[Display(Name = "Возвращена")]
 		Returned,
 	}

@@ -58,11 +58,6 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#endregion
-		#region Sensetive
-
-		public bool SensetiveFillBuhDoc => Entity.Items.Count > 0;
-
-		#endregion
 
 		public void AddItem()
 		{

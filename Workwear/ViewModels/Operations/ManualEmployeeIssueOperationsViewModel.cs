@@ -33,7 +33,6 @@ namespace Workwear.ViewModels.Operations
 		private readonly IInteractiveQuestion interactive;
 		private readonly ProtectionTools protectionTools;
 		private readonly EmployeeCard employee;
-		
 		public ManualEmployeeIssueOperationsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
@@ -177,6 +176,8 @@ namespace Workwear.ViewModels.Operations
 		public Nomenclature Nomenclature {
 			get => SelectOperation?.Nomenclature;
 			set {
+				if(SelectOperation == null)
+					return;
 				SelectOperation.Nomenclature = value;
 				if(Size != null && !Size.SizeType.IsSame(Nomenclature?.Type?.SizeType))
 					Size = null;
@@ -209,6 +210,21 @@ namespace Workwear.ViewModels.Operations
 			set {
 				SelectOperation.Height = value;
 				OnPropertyChanged();
+			}
+		}
+
+		private decimal wearPercent;
+		public decimal WearPercent {
+			get => wearPercent * 100;
+			set {
+				wearPercent = value / 100;
+				
+				if(SelectOperation != null) {
+					SelectOperation.WearPercent = wearPercent;
+					RecalculateDatesOfSelectedOperationWithWearPercent();
+				}
+				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			}
 		}
 
@@ -319,6 +335,17 @@ namespace Workwear.ViewModels.Operations
 				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;
 		}
 
+		void RecalculateDatesOfSelectedOperationWithWearPercent() {
+			SelectOperation.OperationTime = IssueDate;
+			SelectOperation.StartOfUse = IssueDate;
+			SelectOperation.ExpiryByNorm = SelectOperation.NormItem?.CalculateExpireDate(IssueDate, SelectOperation.WearPercent);
+
+			if(SelectOperation.UseAutoWriteoff) 
+			{
+				SelectOperation.AutoWriteoffDate = SelectOperation.ExpiryByNorm;	
+			}
+		}
+
 		#endregion
 
 		public override bool Save() {
@@ -344,7 +371,7 @@ namespace Workwear.ViewModels.Operations
 				NormItem = EmployeeCardItem?.ActiveNormItem,
 				ProtectionTools = protectionTools,
 				Returned = 0,
-				WearPercent = 0m,
+				WearPercent = wearPercent,
 				UseAutoWriteoff = true,
 				OperationTime =  startDate,
 				StartOfUse = startDate,

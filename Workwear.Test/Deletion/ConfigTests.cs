@@ -33,7 +33,6 @@ namespace Workwear.Test.Deletion
 			AddIgnoredProperty<IssuanceSheetItem>(x => x.IssueOperation, "Является дополнительной ссылкой на операцию, а не основной, поэтому не должно удалять операцию.");
 			
 			AddIgnoredCollection<ProtectionTools>(x => x.Nomenclatures, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
-			AddIgnoredCollection<ProtectionTools>(x => x.Analogs, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Nomenclature>(x => x.ProtectionTools, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Size>(x => x.SuitableSizes, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Size>(x => x.SizesWhereIsThisSizeAsSuitable, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");

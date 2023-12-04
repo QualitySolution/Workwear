@@ -8,6 +8,7 @@ using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
@@ -17,7 +18,13 @@ namespace workwear.ReportParameters.ViewModels
 		private readonly FeaturesService featuresService;
 		IUnitOfWork UoW;
 
-		public NotIssuedSheetSummaryViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
+		public NotIssuedSheetSummaryViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			IUnitOfWorkFactory uowFactory,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService)
+			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
@@ -28,7 +35,7 @@ namespace workwear.ReportParameters.ViewModels
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,UoW); 
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW); 
 
 			excludeInVacation = true;
 			condition = true;

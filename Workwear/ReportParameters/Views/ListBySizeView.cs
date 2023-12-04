@@ -10,6 +10,7 @@ namespace workwear.ReportParameters.Views
 		{
 			this.Build();
 			buttonRun.Clicked += OnButtonRunClicked;
+			ycheckbuttongroupbysubdivision.Binding.AddBinding(viewModel, w => w.GroupBySubdivision, v => v.Active).InitializeFromSource(); 
 		}
 		protected void OnButtonRunClicked(object sender, EventArgs e) => ViewModel.LoadReport();
 	}
