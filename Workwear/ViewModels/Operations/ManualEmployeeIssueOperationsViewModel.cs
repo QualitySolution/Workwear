@@ -176,6 +176,8 @@ namespace Workwear.ViewModels.Operations
 		public Nomenclature Nomenclature {
 			get => SelectOperation?.Nomenclature;
 			set {
+				if(SelectOperation == null)
+					return;
 				SelectOperation.Nomenclature = value;
 				if(Size != null && !Size.SizeType.IsSame(Nomenclature?.Type?.SizeType))
 					Size = null;
