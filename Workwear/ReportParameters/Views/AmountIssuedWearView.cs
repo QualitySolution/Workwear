@@ -30,16 +30,6 @@ namespace workwear.ReportParameters.Views {
 			checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
 
-			ycheckAll.Binding.AddSource(viewModel)
-				.AddBinding(v => v.SelectAll, w => w.Active)
-				.InitializeFromSource();
-			
-			ytreeSubdivisions.CreateFluentColumnsConfig<SelectedSubdivision>()
-				.AddColumn("Показ").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Подразделение").AddTextRenderer(x => x.Name)
-				.Finish();
-			ytreeSubdivisions.ItemsDataSource = ViewModel.Subdivisions;
-
 			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
@@ -72,6 +62,8 @@ namespace workwear.ReportParameters.Views {
 			checkShowCostCenter.Binding.AddBinding(ViewModel, v => v.ShowCostCenter, w => w.Active).InitializeFromSource();
 			
 			checkShowOnlyWithoutNorm.Binding.AddBinding(ViewModel, v => v.ShowOnlyWithoutNorm, w => w.Active).InitializeFromSource();
+			
+			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)

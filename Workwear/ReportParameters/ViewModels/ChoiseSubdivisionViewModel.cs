@@ -16,7 +16,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		{
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
-		
+
 		private IObservableList<SelectedChoiceSubdivision> subdivisions;
 		public IObservableList<SelectedChoiceSubdivision> Subdivisions {
 			get {
@@ -25,8 +25,8 @@ namespace Workwear.ReportParameters.ViewModels {
 				return subdivisions;
 			}
 		}
-
-		void FillSubdivision(){
+		
+		private void FillSubdivision(){
 			SelectedChoiceSubdivision resultAlias = null;
 
 			subdivisions = new ObservableList<SelectedChoiceSubdivision>(UoW.Session.QueryOver<Subdivision>()
@@ -34,18 +34,43 @@ namespace Workwear.ReportParameters.ViewModels {
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(() => true).WithAlias(() => resultAlias.Select)
-				).OrderBy(x => x.Name).Asc
-				.TransformUsing(Transformers.AliasToBean<SelectedChoiceSubdivision>())
+				).TransformUsing(Transformers.AliasToBean<SelectedChoiceSubdivision>())
 				.List<SelectedChoiceSubdivision>());
+			
+			
+			subdivisions.Insert(0, new SelectedChoiceSubdivision() {
+				Id = -1,
+				Name = " Без подразделения",
+				Select = true
+			} );
 		}
 
-		public int[] SelectedChoiceSubdivisionIds()
-		{
-			if(Subdivisions.All(x => x.Select))
-				return new int[] { -1 };
-			if(Subdivisions.All(x => !x.Select))
-				return new int[] { -2 };
-			return Subdivisions.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
+		/// <summary>
+		///  Массив id подразделений 
+		/// </summary>
+		public int[] SelectedChoiceSubdivisionIds {
+			get => Subdivisions.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		/// <summary>
+		///  Выбраны все подразделение включая "Без подразделения"
+		/// </summary>
+		public bool AllSelected {
+			get => Subdivisions.All(x => x.Select);
+		}
+		
+		/// <summary>
+		///  Не выбрано ни одно подразделение в том числе "Без подразделения"
+		/// </summary>
+		public bool AllUnSelected {
+			get => Subdivisions.All(x => !x.Select);
+		}
+		
+		/// <summary>
+		/// В списке выбрано "Без подразделенния"
+		/// </summary>
+		public bool NullIsSelected {
+			get => Subdivisions.Any(x => x.Select && x.Id == -1);
 		}
 		
 		public void SelectAll() {

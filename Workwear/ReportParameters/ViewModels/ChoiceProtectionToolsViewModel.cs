@@ -39,13 +39,26 @@ namespace Workwear.ReportParameters.ViewModels {
 				.List<SelectedProtectionTools>());
 		}
 
-		public int[] SelectedProtectionToolsIds()
-		{
-			if(ProtectionTools.All(x => x.Select))
-				return new int[] { -1 };
-			if(ProtectionTools.All(x => !x.Select))
-				return new int[] { -2 };
-			return ProtectionTools.Where(x => x.Select).Select(x => x.Id).Distinct().ToArray();
+		
+		/// <summary>
+		///  Массив id Номенклатур нормы 
+		/// </summary>
+		public int[] SelectedProtectionToolsIds {
+			get => ProtectionTools.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		/// <summary>
+		///  Выбраны все Номенклатуры нормы 
+		/// </summary>
+		public bool AllSelected {
+			get => ProtectionTools.All(x => x.Select);
+		}
+		
+		/// <summary>
+		///  Не выбрано ни одна номенклатура нормы 
+		/// </summary>
+		public bool AllUnSelected {
+			get => ProtectionTools.All(x => !x.Select);
 		}
 
 		public void SelectAll() {

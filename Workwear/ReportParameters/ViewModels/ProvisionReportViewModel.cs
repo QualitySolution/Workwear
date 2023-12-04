@@ -25,8 +25,13 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
-			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds() },
-			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
+			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
+				new [] {-1} : 
+				ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
+			{"without_subdivision", ChoiceSubdivisionViewModel.NullIsSelected },
+			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
+				new [] {-1} :
+				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
 		};
 
 		#region Параметры

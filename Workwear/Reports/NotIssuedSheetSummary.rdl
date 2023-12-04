@@ -920,8 +920,8 @@ LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
 WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
-    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
+    AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND protection_tools.id IN (@protection_tools_ids)
     AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),

@@ -4,14 +4,6 @@
   <Author></Author>
   <PageHeight>11in</PageHeight>
   <PageWidth>8.5in</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=IVCbn2X2aHoJumE</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -76,8 +68,8 @@ FROM (SELECT
         JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
     WHERE
         wear_cards.dismiss_date IS NULL
-        AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
-        AND ('-1' IN (@subdivision_ids) OR wear_cards.object_id IN (@subdivision_ids))
+        AND protection_tools.id IN (@protection_tools_ids)
+        AND ((@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))        
         AND (NOT @exclude_in_vacation
             OR (wear_cards_vacations.begin_date IS NULL 
                 OR (CONVERT(@report_date, DATE) BETWEEN
@@ -118,6 +110,9 @@ FROM (SELECT
           </QueryParameter>
           <QueryParameter Name="exclude_in_vacation">
             <Value>=Parameters!exclude_in_vacation</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_subdivision">
+            <Value>=Parameters!without_subdivision</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -174,7 +169,7 @@ FROM (SELECT
     <ReportItems>
       <Table Name="Table1">
         <DataSetName>Data</DataSetName>
-        <NoRows>Query returned no rows!</NoRows>
+        <NoRows>Нет потребностей соответствующих заданным условиям.</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
@@ -354,7 +349,7 @@ FROM (SELECT
                               <Default>None</Default>
                               <Left>Solid</Left>
                               <Right>None</Right>
-                              <Top>Solid</Top>
+                              <Top>None</Top>
                               <Bottom>None</Bottom>
                             </BorderStyle>
                             <FontWeight>Bold</FontWeight>
@@ -829,6 +824,15 @@ FROM (SELECT
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=pSjgcylLpz07R5</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>DateTime</DataType>
@@ -866,28 +870,16 @@ FROM (SELECT
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="subdivision_ids">
-      <DataType>Integer</DataType>
+    <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>22</Value>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
-      <MultiValue>true</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-    <ReportParameter Name="protection_tools_ids">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>1</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>true</MultiValue>
+      <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="group_by_subdivision">
@@ -902,7 +894,19 @@ FROM (SELECT
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="exclude_in_vacation">
+    <ReportParameter Name="subdivision_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>22</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_subdivision">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
@@ -912,6 +916,18 @@ FROM (SELECT
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
