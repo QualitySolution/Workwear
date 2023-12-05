@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -15,15 +16,25 @@ using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
+using Workwear.Journal.Filter.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
-		private IInteractiveService interactive; 
-		public ClaimsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		private IInteractiveService interactive;
+		
+		public ClaimsJournalFilterViewModel Filter { get; set; }
+		public ClaimsJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
+			IDeleteEntityService deleteEntityService = null,
+			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			Title = "Обслуживание одежды";
+			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
 			CreateActions();
 		}
@@ -63,7 +74,11 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Select(x => x.OperationTime)
 				.Take(1);
 
-			return uow.Session.QueryOver<ServiceClaim>(() => serviceClaimAlias)
+			var query = uow.Session.QueryOver(() => serviceClaimAlias);
+			if(!Filter.ShowClosed)
+				query.Where(x => x.IsClosed == false);
+
+			return query
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Name,
 					() => barcodeAlias.Title
