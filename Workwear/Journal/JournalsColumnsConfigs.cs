@@ -24,7 +24,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
 				() => FluentColumnsConfig<ClaimsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
