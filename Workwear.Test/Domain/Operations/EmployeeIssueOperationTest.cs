@@ -308,7 +308,7 @@ namespace Workwear.Test.Domain.Operations
 				Norm = Substitute.For<Norm>()
 			};
 
-			var date = norm.CalculateExpireDate(startOfUse!.Value, beginWearPercent);
+			var date = norm.CalculateExpireDate(startOfUse.Value, beginWearPercent);
 			
 			employee.Id.Returns(777);
 			operation1.Employee.Returns(employee);
@@ -339,7 +339,7 @@ namespace Workwear.Test.Domain.Operations
 			
 			item.UpdateNextIssue(uow);
 
-			Assert.That(item.NextIssue!.Value.Date, Is.EqualTo(expectedWriteOffDate!.Value.Date));
+			Assert.That(item.NextIssue.Value.Date, Is.EqualTo(expectedWriteOffDate.Value.Date));
 		}
 
 		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]
