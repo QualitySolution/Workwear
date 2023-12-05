@@ -753,7 +753,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -837,7 +837,7 @@ WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
+    AND protection_tools.id IN (@protection_tools_ids)
     AND (@condition = false OR norm_conditions.issuance_start is null OR
         IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
             SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -880,7 +880,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -984,7 +984,7 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
@@ -993,7 +993,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1048,7 +1048,7 @@ ORDER BY
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>True</Value>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

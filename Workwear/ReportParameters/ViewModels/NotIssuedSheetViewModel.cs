@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -35,6 +36,7 @@ namespace workwear.ReportParameters.ViewModels
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
 			condition = true;
@@ -43,7 +45,9 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
-					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
+						new [] {-1} :
+						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", ExcludeInVacation },
@@ -92,7 +96,12 @@ namespace workwear.ReportParameters.ViewModels
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
-		public bool SensetiveLoad => ReportDate != null;
+		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
+		
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+		}
 		#endregion
 
 		#region ViewModels
