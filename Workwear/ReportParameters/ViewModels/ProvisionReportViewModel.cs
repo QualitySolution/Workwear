@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using QS.DomainModel.Entity;
+using System.ComponentModel;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 
@@ -16,7 +16,17 @@ namespace Workwear.ReportParameters.ViewModels {
 			Identifier = "ProvisionReport";
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+		}
+
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			//Двойная проверка страхует от несинхронных изменений незваний полей в разных классах.
+			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName 
+			   || nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -25,13 +35,21 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
-			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds() },
-			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
+			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
+				new [] {-1} : 
+				ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
+			{"without_subdivision", ChoiceSubdivisionViewModel.NullIsSelected },
+			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
+				new [] {-1} :
+				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
 		};
 
 		#region Параметры
 		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+
+		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
+		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
 
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;

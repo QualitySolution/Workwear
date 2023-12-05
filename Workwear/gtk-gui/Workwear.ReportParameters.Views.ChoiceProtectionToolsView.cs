@@ -24,7 +24,6 @@ namespace Workwear.ReportParameters.Views
 			this.Name = "Workwear.ReportParameters.Views.ChoiceProtectionToolsView";
 			// Container child Workwear.ReportParameters.Views.ChoiceProtectionToolsView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
@@ -63,6 +62,7 @@ namespace Workwear.ReportParameters.Views
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 			this.ytreeChoiseProtectionTools = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeChoiseProtectionTools.WidthRequest = 400;
 			this.ytreeChoiseProtectionTools.CanFocus = true;
 			this.ytreeChoiseProtectionTools.Name = "ytreeChoiseProtectionTools";
 			this.GtkScrolledWindow.Add(this.ytreeChoiseProtectionTools);

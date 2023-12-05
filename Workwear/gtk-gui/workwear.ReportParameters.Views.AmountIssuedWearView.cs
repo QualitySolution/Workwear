@@ -48,11 +48,11 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckChild;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckAll;
+		private global::Gtk.Expander expander1;
 
-		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		private global::Workwear.ReportParameters.Views.ChoiceSubdivisionView choicesubdivisionview1;
 
-		private global::Gamma.GtkWidgets.yTreeView ytreeSubdivisions;
+		private global::Gtk.Label GtkLabel12;
 
 		private global::Gamma.GtkWidgets.yButton buttonPrintReport;
 
@@ -330,29 +330,23 @@ namespace workwear.ReportParameters.Views
 			w21.Expand = false;
 			w21.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
-			this.ycheckAll = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckAll.CanFocus = true;
-			this.ycheckAll.Name = "ycheckAll";
-			this.ycheckAll.Label = global::Mono.Unix.Catalog.GetString("Все подразделения");
-			this.ycheckAll.DrawIndicator = true;
-			this.ycheckAll.UseUnderline = true;
-			this.vbox2.Add(this.ycheckAll);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckAll]));
-			w22.Position = 9;
-			w22.Expand = false;
-			w22.Fill = false;
-			// Container child vbox2.Gtk.Box+BoxChild
-			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
-			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.ytreeSubdivisions = new global::Gamma.GtkWidgets.yTreeView();
-			this.ytreeSubdivisions.CanFocus = true;
-			this.ytreeSubdivisions.Name = "ytreeSubdivisions";
-			this.GtkScrolledWindow.Add(this.ytreeSubdivisions);
-			this.vbox2.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.GtkScrolledWindow]));
-			w24.Position = 10;
+			this.expander1 = new global::Gtk.Expander(null);
+			this.expander1.CanFocus = true;
+			this.expander1.Name = "expander1";
+			this.expander1.Expanded = true;
+			// Container child expander1.Gtk.Container+ContainerChild
+			this.choicesubdivisionview1 = new global::Workwear.ReportParameters.Views.ChoiceSubdivisionView();
+			this.choicesubdivisionview1.Events = ((global::Gdk.EventMask)(256));
+			this.choicesubdivisionview1.Name = "choicesubdivisionview1";
+			this.expander1.Add(this.choicesubdivisionview1);
+			this.GtkLabel12 = new global::Gtk.Label();
+			this.GtkLabel12.Name = "GtkLabel12";
+			this.GtkLabel12.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
+			this.GtkLabel12.UseUnderline = true;
+			this.expander1.LabelWidget = this.GtkLabel12;
+			this.vbox2.Add(this.expander1);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander1]));
+			w23.Position = 9;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;
@@ -361,10 +355,10 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.UseUnderline = true;
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
-			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
-			w25.Position = 11;
-			w25.Expand = false;
-			w25.Fill = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w24.Position = 10;
+			w24.Expand = false;
+			w24.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

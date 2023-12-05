@@ -24,7 +24,6 @@ namespace Workwear.ReportParameters.Views
 			this.Name = "Workwear.ReportParameters.Views.ChoiceSubdivisionView";
 			// Container child Workwear.ReportParameters.Views.ChoiceSubdivisionView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
@@ -63,6 +62,7 @@ namespace Workwear.ReportParameters.Views
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
 			this.ytreeChoiseSubdivision = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeChoiseSubdivision.WidthRequest = 400;
 			this.ytreeChoiseSubdivision.CanFocus = true;
 			this.ytreeChoiseSubdivision.Name = "ytreeChoiseSubdivision";
 			this.GtkScrolledWindow.Add(this.ytreeChoiseSubdivision);

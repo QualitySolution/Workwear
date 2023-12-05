@@ -14631,7 +14631,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 676">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="414 676">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -15051,35 +15051,29 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAll">
+          <widget class="Gtk.Expander" id="expander1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Все подразделения</property>
-            <property name="DrawIndicator">True</property>
-            <property name="HasLabel">True</property>
-            <property name="UseUnderline">True</property>
-          </widget>
-          <packing>
-            <property name="Position">9</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
-            <property name="MemberName" />
-            <property name="ShadowType">In</property>
+            <property name="Expanded">True</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeSubdivisions">
+              <widget class="Workwear.ReportParameters.Views.ChoiceSubdivisionView" id="choicesubdivisionview1">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="ShowScrollbars">True</property>
+                <property name="Events">ButtonPressMask</property>
               </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel12">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Подразделение:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
             </child>
           </widget>
           <packing>
-            <property name="Position">10</property>
+            <property name="Position">9</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -15094,7 +15088,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
-            <property name="Position">11</property>
+            <property name="Position">10</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -26193,7 +26187,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" design-size="300 300">
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" design-size="414 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -26249,6 +26243,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeChoiseProtectionTools">
                 <property name="MemberName" />
+                <property name="WidthRequest">400</property>
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
               </widget>
@@ -26262,7 +26257,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceSubdivisionView" design-size="300 300">
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceSubdivisionView" design-size="414 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -26318,6 +26313,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeChoiseSubdivision">
                 <property name="MemberName" />
+                <property name="WidthRequest">400</property>
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
               </widget>
@@ -26331,7 +26327,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ProvisionReportView" design-size="399 493">
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ProvisionReportView" design-size="414 493">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
