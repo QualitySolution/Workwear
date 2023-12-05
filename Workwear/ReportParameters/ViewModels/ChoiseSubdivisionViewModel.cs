@@ -37,13 +37,15 @@ namespace Workwear.ReportParameters.ViewModels {
 					.Select(() => true).WithAlias(() => resultAlias.Select)
 				).TransformUsing(Transformers.AliasToBean<SelectedChoiceSubdivision>())
 				.List<SelectedChoiceSubdivision>());
-			
-			
-			subdivisions.Insert(0, new SelectedChoiceSubdivision() {
-				Id = -1,
-				Name = " Без подразделения",
-				Select = true
-			} );
+
+			if(ShowNullValue) {
+				subdivisions.Insert(0, new SelectedChoiceSubdivision() {
+					Id = -1,
+					Name = " Без подразделения",
+					Select = true
+				});
+			}
+
 			subdivisions.PropertyOfElementChanged += OnPropertyOfElementChanged;
 		}
 
@@ -52,6 +54,16 @@ namespace Workwear.ReportParameters.ViewModels {
 			OnPropertyChanged(nameof(AllUnSelected));
 		}
 
+		/// <summary>
+		/// Показывать в списке строку "Без подразделения"
+		/// Результат в спец. поле NullIsSelected
+		/// </summary>
+		private bool showNullValue = true;
+		public bool ShowNullValue {
+			get => showNullValue;
+			set => SetField(ref showNullValue, value);
+		}
+		
 		/// <summary>
 		///  Массив id подразделений 
 		/// </summary>
