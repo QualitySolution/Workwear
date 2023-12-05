@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -39,9 +40,14 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginYear = EndYear = defaultMonth.Year;
 
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
 		private readonly IUnitOfWork uow;
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensitiveRunReport));
+		}
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
@@ -102,7 +108,8 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
-		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
+		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1)
+		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {

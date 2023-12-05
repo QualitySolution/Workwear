@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using QS.DomainModel.Entity;
+using System.ComponentModel;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 
@@ -16,7 +16,17 @@ namespace Workwear.ReportParameters.ViewModels {
 			Identifier = "ProvisionReport";
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+		}
+
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			//Двойная проверка страхует от несинхронных изменений незваний полей в разных классах.
+			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName 
+			   || nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -37,6 +47,9 @@ namespace Workwear.ReportParameters.ViewModels {
 		#region Параметры
 		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+
+		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
+		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
 
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
@@ -37,8 +38,14 @@ namespace Workwear.ReportParameters.ViewModels {
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
 				.List<SelectedProtectionTools>());
+			
+			protectionTools.PropertyOfElementChanged += OnPropertyOfElementChanged;
 		}
 
+		private void OnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) {
+			OnPropertyChanged(nameof(AllSelected));
+			OnPropertyChanged(nameof(AllUnSelected));
+		}
 		
 		/// <summary>
 		///  Массив id Номенклатур нормы 

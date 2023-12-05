@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate.Transform;
 using QS.DomainModel.Entity;
@@ -43,6 +44,12 @@ namespace Workwear.ReportParameters.ViewModels {
 				Name = " Без подразделения",
 				Select = true
 			} );
+			subdivisions.PropertyOfElementChanged += OnPropertyOfElementChanged;
+		}
+
+		private void OnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) {
+			OnPropertyChanged(nameof(AllSelected));
+			OnPropertyChanged(nameof(AllUnSelected));
 		}
 
 		/// <summary>

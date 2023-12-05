@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
@@ -28,6 +29,7 @@ namespace workwear.ReportParameters.ViewModels {
 			Title = "Справка о выданной спецодежде";
 
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -74,14 +76,14 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 
 		private DateTime? startDate;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 
 		private DateTime? endDate;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -167,6 +169,12 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
+		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && startDate <= endDate;
+		
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+		}
 		#endregion
 
 		private string matchString;
