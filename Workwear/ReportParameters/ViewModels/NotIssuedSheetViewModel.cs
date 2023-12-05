@@ -149,7 +149,7 @@ namespace workwear.ReportParameters.ViewModels
 		[Display(Name = "Форматировано")]
 		Common,
 		[ReportIdentifier("NotIssuedSheetFlat")]
-		[Display(Name = "Только данные)")]
+		[Display(Name = "Только данные")]
 		Flat
 	}
 }
