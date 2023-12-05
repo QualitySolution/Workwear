@@ -77,6 +77,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					.Select(x => x.NeedForRepair).WithAlias(() => resultAlias.NeedForRepair)
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
+					.Select(x => x.IsClosed).WithAlias(() => resultAlias.IsClosed)
 					.SelectSubQuery(subqueryLastEmployee).WithAlias(() => resultAlias.Employee)
 					.SelectSubQuery(subqueryLastState).WithAlias(() => resultAlias.State)
 					.SelectSubQuery(subqueryLastOperationTime).WithAlias(() => resultAlias.OperationTime)
@@ -136,9 +137,12 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		public string Barcode { get; set; }
 		public string Employee { get; set; }
 		public bool NeedForRepair { get; set; }
+		public bool IsClosed { get; set; }
 		public ClaimState State { get; set; }
 		public DateTime OperationTime { get; set; }
 		public string Nomenclature { get; set; }
 		public string Defect { get; set; }
+		
+		public string RowColor => IsClosed ? "grey" : null;
 	}
 }
