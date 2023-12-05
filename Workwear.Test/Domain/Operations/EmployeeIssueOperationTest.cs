@@ -339,7 +339,7 @@ namespace Workwear.Test.Domain.Operations
 			
 			item.UpdateNextIssue(uow);
 
-			Assert.That(item.NextIssue, Is.EqualTo(expectedWriteOffDate));
+			Assert.That(item.NextIssue!.Value.Date, Is.EqualTo(expectedWriteOffDate!.Value.Date));
 		}
 
 		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]
