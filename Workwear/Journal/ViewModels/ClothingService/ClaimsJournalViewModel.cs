@@ -51,22 +51,35 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					Projections.Constant(" "),
 					Projections.Property(() => employeeAlias.Patronymic)));
 			
-			var query = uow.Session.QueryOver<ServiceClaim>(() => serviceClaimAlias);
+			var subqueryLastState = QueryOver.Of<StateOperation>(() => stateOperationAlias)
+				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
+				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.Select(x => x.State)
+				.Take(1);
+			
+			var subqueryLastOperationTime = QueryOver.Of<StateOperation>(() => stateOperationAlias)
+				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
+				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.Select(x => x.OperationTime)
+				.Take(1);
 
-			return query
-				.Left.JoinAlias(x => x.States, () => stateOperationAlias)
+			return uow.Session.QueryOver<ServiceClaim>(() => serviceClaimAlias)
+				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Name,
+					() => barcodeAlias.Title
+					))
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
-				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.OrderBy(() => serviceClaimAlias.Id).Desc
 				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => barcodeAlias.Title).WithAlias(() => resultAlias.Barcode)
 					.Select(x => x.NeedForRepair).WithAlias(() => resultAlias.NeedForRepair)
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
-					.Select(() => stateOperationAlias.State).WithAlias(() => resultAlias.State)
-					.Select(() => stateOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.SelectSubQuery(subqueryLastEmployee).WithAlias(() => resultAlias.Employee)
+					.SelectSubQuery(subqueryLastState).WithAlias(() => resultAlias.State)
+					.SelectSubQuery(subqueryLastOperationTime).WithAlias(() => resultAlias.OperationTime)
 				)
 				.TransformUsing(Transformers.AliasToBean<ClaimsJournalNode>());
 		}
