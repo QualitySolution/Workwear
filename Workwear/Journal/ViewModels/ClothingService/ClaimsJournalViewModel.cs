@@ -64,6 +64,10 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Take(1);
 
 			return uow.Session.QueryOver<ServiceClaim>(() => serviceClaimAlias)
+				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Name,
+					() => barcodeAlias.Title
+					))
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
 				.OrderBy(() => serviceClaimAlias.Id).Desc
