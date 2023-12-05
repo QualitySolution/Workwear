@@ -24,13 +24,18 @@ namespace workwear.ReportParameters.Views
 			buttonRun.Binding.AddBinding(viewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			
 			ycheckCondition.Binding.AddBinding(viewModel, w => w.Condition, v => v.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(viewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			ylabelcheckCondition.Binding.AddBinding(viewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
+			
 			ycheckShowStock.Binding.AddBinding(viewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
 			checkDontShowZeroStock.Binding.AddBinding(viewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
 			checkDontShowZeroStock.Binding.AddBinding(viewModel, v => v.DontShowZeroStockVisible, w => w.Sensitive).InitializeFromSource();
 			ylabelDontShowZeroStock.Binding.AddBinding(viewModel, v => v.DontShowZeroStockVisible, w => w.Sensitive).InitializeFromSource();
+			
+			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 				
 			entitySubdivision.ViewModel = viewModel.SubdivisionEntry;
 			choiceprotectiontoolsview1.ViewModel = viewModel.ChoiceProtectionToolsViewModel;

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Autofac;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
@@ -29,8 +32,7 @@ namespace workwear.ReportParameters.ViewModels
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Справка по невыданному (Детально)";
-			Identifier = "NotIssuedSheet";
-
+			
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
@@ -57,6 +59,18 @@ namespace workwear.ReportParameters.ViewModels
 				 };
 
 		#region Параметры
+		
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+		
+		private NotIssuedSheetReportType reportType;
+		public virtual NotIssuedSheetReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+		
 		private DateTime? reportDate = DateTime.Today;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? ReportDate {
@@ -128,5 +142,14 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			UoW.Dispose();
 		}
+	}
+	
+	public enum NotIssuedSheetReportType {
+		[ReportIdentifier("NotIssuedSheet")]
+		[Display(Name = "Форматировано")]
+		Common,
+		[ReportIdentifier("NotIssuedSheetFlat")]
+		[Display(Name = "Только данные)")]
+		Flat
 	}
 }
