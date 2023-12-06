@@ -12,6 +12,12 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yButton ycheckbuttonUnChooseAll;
 
+		private global::Gtk.HBox hbox2;
+
+		private global::Gamma.GtkWidgets.yImage yimage1;
+
+		private global::Gamma.GtkWidgets.yEntry yentrySearch;
+
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeChoiseSubdivision;
@@ -24,6 +30,7 @@ namespace Workwear.ReportParameters.Views
 			this.Name = "Workwear.ReportParameters.Views.ChoiceSubdivisionView";
 			// Container child Workwear.ReportParameters.Views.ChoiceSubdivisionView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
@@ -57,6 +64,33 @@ namespace Workwear.ReportParameters.Views
 			w3.Expand = false;
 			w3.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox2 = new global::Gtk.HBox();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.yimage1 = new global::Gamma.GtkWidgets.yImage();
+			this.yimage1.Name = "yimage1";
+			this.yimage1.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-find", global::Gtk.IconSize.Menu);
+			this.hbox2.Add(this.yimage1);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.yimage1]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.yentrySearch = new global::Gamma.GtkWidgets.yEntry();
+			this.yentrySearch.CanFocus = true;
+			this.yentrySearch.Name = "yentrySearch";
+			this.yentrySearch.IsEditable = true;
+			this.yentrySearch.InvisibleChar = '•';
+			this.hbox2.Add(this.yentrySearch);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.yentrySearch]));
+			w5.Position = 1;
+			this.vbox1.Add(this.hbox2);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox2]));
+			w6.Position = 1;
+			w6.Expand = false;
+			w6.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
@@ -67,8 +101,8 @@ namespace Workwear.ReportParameters.Views
 			this.ytreeChoiseSubdivision.Name = "ytreeChoiseSubdivision";
 			this.GtkScrolledWindow.Add(this.ytreeChoiseSubdivision);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w5.Position = 1;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w8.Position = 2;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
