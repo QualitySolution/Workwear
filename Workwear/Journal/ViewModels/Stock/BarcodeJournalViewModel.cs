@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentNHibernate.Data;
+using Mono.Unix.Native;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -6,6 +10,8 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -25,6 +31,10 @@ namespace workwear.Journal.ViewModels.Stock
 		{
 			UseSlider = true;
 			VisibleCreateAction = false;
+			
+			TableSelectionMode = JournalSelectionMode.Multiple;
+
+			CreateFunctionPrintBarcodes();
 		}
 
 		protected override IQueryOver<Barcode> ItemsQuery(IUnitOfWork uow) 
@@ -48,6 +58,31 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
 				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
+		}
+		
+		#region Actions
+
+		public void CreateFunctionPrintBarcodes() {
+
+			NodeActionsList.Add(new JournalAction("Печать",
+				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(),
+				(arg) => true,
+				PrintBarcodes));
+		}
+
+		#endregion
+
+		public void PrintBarcodes(object[] nodes) {
+			
+			var reportInfo = new ReportInfo {
+				Title = "Штрихкод",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> {
+					{"barcodes", nodes.Cast<BarcodeJournalNode>().Select(x => x.Id).ToList()}
+				}
+			};
+			
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
 	}
 
