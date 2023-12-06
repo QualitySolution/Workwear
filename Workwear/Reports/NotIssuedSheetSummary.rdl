@@ -424,7 +424,7 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Right>Solid</Right>
+                              <Right>None</Right>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -434,7 +434,25 @@
                           <Value>= Iif(Fields!subdivision_id.IsMissing, "      Без подразделения", {subdivision_name})</Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>7</ColSpan>
+                      <ColSpan>6</ColSpan>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox2">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left >None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>11pt</FontSize>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -443,7 +461,7 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Left>Solid</Left>
+                              <Left>None</Left>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />

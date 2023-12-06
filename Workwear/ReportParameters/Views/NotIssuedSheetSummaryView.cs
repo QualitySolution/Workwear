@@ -30,6 +30,9 @@ namespace workwear.ReportParameters.Views
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
 			
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+			
+			comboReportType.ItemsEnum = typeof(NotIssuedSheetSummaryReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 			choiceprotectiontoolsview2.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
