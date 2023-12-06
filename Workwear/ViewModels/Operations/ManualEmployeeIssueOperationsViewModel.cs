@@ -302,7 +302,7 @@ namespace Workwear.ViewModels.Operations
 				Title = "Штрихкоды",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
 				Parameters = new Dictionary<string, object> {
-					{"operations", new int[] {SelectOperation.Id}}
+					{"barcodes", new int[] {SelectOperation.BarcodeOperations.Last().Barcode.Id}}
 				}
 			};
 
