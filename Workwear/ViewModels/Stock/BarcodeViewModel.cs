@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.Stock
 				Title = "Штрихкод",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
 				Parameters = new Dictionary<string, object> {
-					{"barcodes", Entity.BarcodeOperations.Select(x => x.Barcode.Id).ToArray()}
+					{"barcodes", Entity.Id}
 				}
 			};
 

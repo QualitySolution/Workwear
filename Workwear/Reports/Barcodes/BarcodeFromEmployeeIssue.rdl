@@ -192,7 +192,8 @@ LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
 LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
 LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
 WHERE operation_barcodes.barcode_id IN (@barcodes)
-ORDER BY operation_time DESC</CommandText>
+GROUP BY operation_barcodes.barcode_id
+ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
         <QueryParameters>
           <QueryParameter Name="barcodes">
             <Value>={?barcodes}</Value>
@@ -252,7 +253,7 @@ ORDER BY operation_time DESC</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <DefaultValue>

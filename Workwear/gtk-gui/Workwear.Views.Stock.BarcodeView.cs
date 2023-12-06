@@ -93,7 +93,7 @@ namespace Workwear.Views.Stock
 			this.buttonPrintBarcode.CanFocus = true;
 			this.buttonPrintBarcode.Name = "buttonPrintBarcode";
 			this.buttonPrintBarcode.UseUnderline = true;
-			this.buttonPrintBarcode.Label = global::Mono.Unix.Catalog.GetString("Печать штрихкодов");
+			this.buttonPrintBarcode.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			this.yhbox1.Add(this.buttonPrintBarcode);
 			
 			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonPrintBarcode]));
