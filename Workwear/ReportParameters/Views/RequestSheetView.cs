@@ -34,12 +34,12 @@ namespace workwear.ReportParameters.Views {
 			comboEndMonth.Binding.AddBinding(ViewModel, v => v.EndMonth, w => w.SelectedItem).InitializeFromSource();
 
 			ycheckChild.Binding
-				.AddBinding(viewModel, vm => vm.AddChildSubdivisions, w => w.Active)
+				.AddBinding(ViewModel, vm => vm.AddChildSubdivisions, w => w.Active)
 				.InitializeFromSource();
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			
 			ycheckExcludeInVacation.Binding
-				.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active)
+				.AddBinding(ViewModel, w => w.ExcludeInVacation, v => v.Active)
 				.InitializeFromSource();
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveRunReport, w => w.Sensitive).InitializeFromSource();
