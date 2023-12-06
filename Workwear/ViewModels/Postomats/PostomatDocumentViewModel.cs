@@ -22,7 +22,7 @@ using CellLocation = Workwear.Domain.Postomats.CellLocation;
 namespace Workwear.ViewModels.Postomats {
 	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument> {
 		private readonly PostomatManagerService postomatService;
-		private readonly UserService userService;
+		private readonly IUserService userService;
 
 		public PostomatDocumentViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -30,7 +30,7 @@ namespace Workwear.ViewModels.Postomats {
 			INavigationManager navigation,
 			PostomatManagerService postomatService,
 			ILifetimeScope autofacScope,
-			UserService userService,
+			IUserService userService,
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
