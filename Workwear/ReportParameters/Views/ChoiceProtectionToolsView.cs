@@ -21,11 +21,16 @@ namespace Workwear.ReportParameters.Views {
 		private void CreateTable(){
 			ytreeChoiseProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Название").AddTextRenderer(x => x.Name)
+				.AddColumn("Название").AddTextRenderer(x => x.Name).SearchHighlight()
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Sensitive = x.Highlighted)
 				.Finish();
-			
 			ytreeChoiseProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
 			
+			yentrySearch.Changed += delegate {
+				ytreeChoiseProtectionTools.SearchHighlightText = yentrySearch.Text;
+				ViewModel.SelectLike(yentrySearch.Text);
+				ytreeChoiseProtectionTools.YTreeModel.EmitModelChanged();
+			};
 			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.ProtectionTools.Any();
 			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
 			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();

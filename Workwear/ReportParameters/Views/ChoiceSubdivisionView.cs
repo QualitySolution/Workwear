@@ -20,10 +20,16 @@ namespace Workwear.ReportParameters.Views {
 		private void CreateTable() {
 			ytreeChoiseSubdivision.CreateFluentColumnsConfig<SelectedChoiceSubdivision>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Название").AddTextRenderer(x => x.Name)
+				.AddColumn("Название").AddTextRenderer(x => x.Name).SearchHighlight()
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Sensitive = x.Highlighted)
 				.Finish();
 			ytreeChoiseSubdivision.ItemsDataSource = ViewModel.Subdivisions;
-
+			
+			yentrySearch.Changed += delegate {
+				ytreeChoiseSubdivision.SearchHighlightText = yentrySearch.Text;
+				ViewModel.SelectLike(yentrySearch.Text);
+				ytreeChoiseSubdivision.YTreeModel.EmitModelChanged();
+			};
 			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.Subdivisions.Any();
 			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
 			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();

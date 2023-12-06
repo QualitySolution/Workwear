@@ -821,6 +821,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="icon\buttons\select-all.png" />
+    <EmbeddedResource Include="icon\buttons\unselect-all.png" />
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
