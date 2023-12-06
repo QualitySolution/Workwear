@@ -15,5 +15,13 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			set => SetField(ref showClosed, value);
 		}
 		#endregion
+
+		#region Sensetive
+		private bool sensitiveShowClosed = true;
+		public virtual bool SensitiveShowClosed {
+			get => sensitiveShowClosed;
+			set => SetField(ref sensitiveShowClosed, value);
+		}
+		#endregion
 	}
 }

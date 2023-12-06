@@ -27,9 +27,13 @@ namespace Workwear.Views.Postomats {
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Id} {p.Name}({p.Location})");
 			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.CanChangePostomat, w => w.Sensitive)
 				.AddBinding(v => v.Postomats, w => w.ItemsList)
 				.AddBinding(v => v.Postomat, w => w.SelectedItem)
 				.InitializeFromSource();
+			
+			//FIXME Временно
+			entityWarehouseExpense.Visible = false;
 
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentItem>()
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
@@ -44,6 +48,7 @@ namespace Workwear.Views.Postomats {
 			treeItems.Selection.Changed += SelectionOnChanged;
 			
 			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
+			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {

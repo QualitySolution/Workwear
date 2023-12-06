@@ -8,7 +8,10 @@ namespace Workwear.Journal.Filter.Views.ClothingService {
 			this.Build();
 
 			checkShowClosed.Binding
-				.AddBinding(ViewModel, v => v.ShowClosed, w => w.Active).InitializeFromSource();
+				.AddSource(ViewModel)
+				.AddBinding(v => v.ShowClosed, w => w.Active)
+				.AddBinding(v => v.SensitiveShowClosed, w => w.Sensitive)
+				.InitializeFromSource();
 		}
 	}
 }
