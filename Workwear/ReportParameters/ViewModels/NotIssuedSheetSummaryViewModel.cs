@@ -55,7 +55,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", ExcludeInVacation },
 					{"condition", Condition },
-					{"exclude_before", ExcludeBefore }
+					{"exclude_before", ExcludeBefore },
+					{"show_stock", ShowStock},
 				 };
 
 		#region Параметры
@@ -102,6 +103,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref showSex, value);
 		}
 
+		private bool showStock;
+		public virtual bool ShowStock {
+			get => showStock;
+			set => SetField(ref showStock, value);
+		}
+		
 		private bool showEmployees;
 		public virtual bool ShowEmployees {
 			get => showEmployees;

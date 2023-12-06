@@ -55,6 +55,9 @@
           </TableColumn>
           <TableColumn>
             <Width>55.5pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -363,7 +366,7 @@
                         <BorderStyle>
                           <Default>Solid</Default>
                           <Left>Solid</Left>
-                          <Right>None</Right>
+                          <Right>Solid</Right>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -421,7 +424,7 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Right>None</Right>
+                              <Right>Solid</Right>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -440,7 +443,7 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Left>None</Left>
+                              <Left>Solid</Left>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -873,33 +876,35 @@
     heightAlias.name AS growth,
     measurement_units.name AS unit,
     SUM(norms_item.amount) AS amount,
-    (
-        SELECT
-            (
-                SUM(
-                    CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+    IF(@show_stock,        
+        (
+            SELECT
+                (
+                    SUM(
+                        CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                    END
+                ) - SUM(
+                    CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
                 END
-            ) - SUM(
-                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-            END
-    )
-    ) AS SUM
-    FROM
-        operation_warehouse
-    WHERE
-        operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
-        SELECT
-            protection_tools_nomenclature.nomenclature_id
-        FROM
-            protection_tools_nomenclature
-        JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
-        WHERE
-            (@show_sex = 0 OR n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
         )
-        AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
-        AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
-    ) AS in_stock
+        ) AS SUM
+        FROM
+            operation_warehouse
+        WHERE
+            operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+            SELECT
+                protection_tools_nomenclature.nomenclature_id
+            FROM
+                protection_tools_nomenclature
+            JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+            WHERE
+                (@show_sex = 0 OR n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+                AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+            )
+            AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+            AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+        )
+        , null) AS in_stock
 FROM
     wear_cards_item
 JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -967,6 +972,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@condition">
             <Value>={?condition}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_stock">
+            <Value>={?show_stock}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1046,7 +1054,7 @@ ORDER BY
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YfS/r4j6*VRkX4Nw;</ConnectString>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YX4dmWuM4UcPOk</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
@@ -1056,7 +1064,7 @@ ORDER BY
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2023-10-27</Value>
+          <Value>2023-11-10</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1164,13 +1172,25 @@ ORDER BY
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>TRUE</Value>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>

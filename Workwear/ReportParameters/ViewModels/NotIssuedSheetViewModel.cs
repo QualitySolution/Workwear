@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Autofac;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
@@ -29,8 +32,7 @@ namespace workwear.ReportParameters.ViewModels
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Справка по невыданному (Детально)";
-			Identifier = "NotIssuedSheet";
-
+			
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
@@ -52,10 +54,23 @@ namespace workwear.ReportParameters.ViewModels
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", ExcludeInVacation },
 					{"condition", Condition },
+					{"show_stock", ShowStock},
 					{"exclude_zero_stock", ExcludeZeroStock},
 				 };
 
 		#region Параметры
+		
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+		
+		private NotIssuedSheetReportType reportType;
+		public virtual NotIssuedSheetReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+		
 		private DateTime? reportDate = DateTime.Today;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? ReportDate {
@@ -86,10 +101,22 @@ namespace workwear.ReportParameters.ViewModels
 			get => condition;
 			set => SetField(ref condition, value);
 		}
+		
+		private bool showStock;
+		[PropertyChangedAlso(nameof(DontShowZeroStockVisible))]
+		public virtual bool ShowStock {
+			get => showStock;
+			set {
+				SetField(ref showStock, value);
+				if(!value) //Сброс при снятии
+					ExcludeZeroStock = false;
+			} 
+			
+		}
 
 		private bool excludeZeroStock;
 		public virtual bool ExcludeZeroStock {
-			get => excludeZeroStock;
+			get => showStock && excludeZeroStock;
 			set => SetField(ref excludeZeroStock, value);
 		}
 		#endregion
@@ -97,7 +124,8 @@ namespace workwear.ReportParameters.ViewModels
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
-		
+		public object DontShowZeroStockVisible => ShowStock;
+
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
@@ -114,5 +142,14 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			UoW.Dispose();
 		}
+	}
+	
+	public enum NotIssuedSheetReportType {
+		[ReportIdentifier("NotIssuedSheet")]
+		[Display(Name = "Форматировано")]
+		Common,
+		[ReportIdentifier("NotIssuedSheetFlat")]
+		[Display(Name = "Только данные")]
+		Flat
 	}
 }
