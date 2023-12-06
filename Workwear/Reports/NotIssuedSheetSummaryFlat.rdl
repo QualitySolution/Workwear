@@ -15,7 +15,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>44.5pt</Height>
+    <Height>32.9pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -29,133 +29,55 @@
           <BorderWidth />
         </Style>
         <TableColumns>
-          <TableColumn>
-            <Width>76.6pt</Width>
+          <TableColumn >
+            <Width>321.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>211.7pt</Width>
+            <Width>631.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>217.9pt</Width>
+            <Width>25.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_sex}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>348.2pt</Width>
+            <Width>52.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>323.3pt</Width>
+            <Width>62.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>477.1pt</Width>
+            <Width>127.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>43.2pt</Width>
+            <Width>25.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>45.4pt</Width>
+            <Width>40.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>119.7pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>28.9pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>77.9pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>129.2pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>151.6pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>108.9pt</Width>
+            <Width>109.1pt</Width>
             <Visibility>
               <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>962.1pt</Width>
+            <Visibility>
+              <Hidden>={?show_employees}</Hidden>
             </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>24.4pt</Height>
+              <Height>13.6pt</Height>
               <TableCells>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox39">
-                      <Value>Табельный</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox27">
-                      <Value>ФИО Сотрудника </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox50">
-                      <Value>Должность</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox21">
+                    <Textbox Name="Textbox69">
                       <Value>Подразделение</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox6">
-                      <Value>Отдел</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -175,6 +97,24 @@
                     <Textbox Name="Textbox13">
                       <Value>Номенклатура нормы</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox3">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -226,7 +166,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox12">
+                    <Textbox Name="Textbox18">
                       <Value>Оценочная стоимость</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
@@ -244,7 +184,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox17">
+                    <Textbox Name="Textbox31">
                       <Value>Ед.</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
@@ -263,43 +203,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Количество</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox31">
-                      <Value>Дата выдачи по сроку</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox34">
-                      <Value>Количество дней просрочки</Value>
+                      <Value>Коли-чество</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -333,6 +237,24 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox2">
+                      <Value>Сотрудники</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -343,53 +265,9 @@
             <TableRow>
               <Height>12 pt</Height>
               <TableCells>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox40">
-                      <Value>={personnel_number}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox29">
-                      <Value>={employee} </Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <CanGrow >true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox51">
-                      <Value>={post_name}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <CanGrow >true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox22">
+                    <Textbox Name="Textbox70">
                       <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -398,22 +276,7 @@
                         <BorderColor />
                         <BorderWidth />
                       </Style>
-                      <CanGrow >true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value>=Fields!department_name.Value</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -434,8 +297,24 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>=Switch({sex} = 'F', 'Ж', {sex} = 'M', 'М', true, '')</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox10">
-                      <Value>=Iif(Fields!size.IsMissing and not Fields!sizeTypeId.IsMissing, 'не указан', {size})</Value>
+                      <Value>=Iif((Fields!size.IsMissing and not Fields!sizeTypeId.IsMissing), 'не указан', {size})</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -462,13 +341,12 @@
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
-                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
+                    <Textbox Name="Textbox19">
                       <Value>={protection_tools_assessed_cost}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -485,7 +363,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox18">
+                    <Textbox Name="Textbox32">
                       <Value>={unit}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -496,7 +374,6 @@
                         <TextAlign>Center</TextAlign>
                         <Format>0.00</Format>
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -504,7 +381,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox30">
-                      <Value>={amount_by_norm}</Value>
+                      <Value>={amount}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -514,43 +391,6 @@
                         <TextAlign>Center</TextAlign>
                         <Format>0</Format>
                         <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox33">
-                      <Value>={next_issue}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                        <Format>d</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <BackgroundColor>=Iif(Fields!last_issue.IsMissing, "#CCCCFF", "")</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox36">
-                      <Value>={delay}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <TextAlign>Center</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                        <BackgroundColor></BackgroundColor>
-                        <Color>Black</Color>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -573,11 +413,29 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>={employees}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.0pt</Left>
+        <Left>0.8pt</Left>
         <Top>0.0pt</Top>
       </Table>
     </ReportItems>
@@ -595,49 +453,39 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
-    wear_cards.id as employee_id,
-    CONCAT_WS(
-        ' ',
-        wear_cards.last_name,
-        wear_cards.first_name,
-        wear_cards.patronymic_name
-    ) AS employee,
-    wear_cards.personnel_number,
-    wear_cards_item.next_issue,
-    (SELECT MAX(operation_issued_by_employee.operation_time) FROM operation_issued_by_employee WHERE operation_issued_by_employee.employee_id = wear_cards.id AND protection_tools.id = operation_issued_by_employee.protection_tools_id AND operation_issued_by_employee.issued &gt; 0) as last_issue,
-    IF(
-        wear_cards_item.next_issue &lt;= CONVERT(@report_date, DATE),
-        DATEDIFF(
-            CONVERT(@report_date, DATE),
-            wear_cards_item.next_issue
-        ),
-        NULL
-    ) AS delay,
     protection_tools.name AS protection_tools_name,
-    protection_tools.assessed_cost * norms_item.amount AS protection_tools_assessed_cost,
+    protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
-    objects.id as subdivision_id,
+    if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
+    if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
     objects.name as subdivision_name,
-    posts.id as post_id,
-    posts.name as post_name,
-    departments.id as department_id,
-    departments.name as department_name,
+    GROUP_CONCAT( CONCAT_WS('',
+            CONCAT(wear_cards.last_name, ' '),
+            IF(wear_cards.first_name = '',
+                NULL,
+                CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+            IF(wear_cards.patronymic_name = '',
+                NULL,
+                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500) AS employees,
+    wear_cards.sex,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
     sizeAlias.name AS size,
-	heightAlias.name AS growth,
+    heightAlias.name AS growth,
     measurement_units.name AS unit,
-    norms_item.amount AS amount_by_norm,
-    IF(@show_stock,
-        (SELECT
-            (
-                SUM(
-                    CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+    SUM(norms_item.amount) AS amount,
+    IF(@show_stock,        
+        (
+            SELECT
+                (
+                    SUM(
+                        CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                    END
+                ) - SUM(
+                    CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
                 END
-            ) - SUM(
-                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-            END
-        )) AS SUM
+        )
+        ) AS SUM
         FROM
             operation_warehouse
         WHERE
@@ -648,51 +496,53 @@
                 protection_tools_nomenclature
             JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
             WHERE
-                (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+                (@show_sex = 0 OR n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
                 AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
             )
-            AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
-            AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+            AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
         )
-        ,null) AS in_stock
+        , null) AS in_stock
 FROM
     wear_cards_item
-    JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-    JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-    LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-    LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-    JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-    LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
-    LEFT JOIN departments ON wear_cards.department_id = departments.id
-    LEFT JOIN posts ON wear_cards.post_id = posts.id
-    LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
-    LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-    LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-    LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-    LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-    LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-    LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
-    LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+LEFT JOIN posts ON wear_cards.post_id = posts.id
+LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
+JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
 WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
-    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
     AND protection_tools.id IN (@protection_tools_ids)
     AND (@condition = false OR norm_conditions.issuance_start is null OR
-        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
-            SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
-            SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
+       IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
+          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
     AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-    AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; wear_cards_item.next_issue)
+    AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
 GROUP BY
-    wear_cards_item.wear_card_id,
-    wear_cards_item.protection_tools_id
-HAVING
-    (@exclude_zero_stock = false OR in_stock &gt; 0)
+    IF(@group_by_subdivision, objects.id, NULL),
+    wear_cards_item.protection_tools_id,
+    IF(@show_sex, wear_cards.sex, NULL),
+    size,
+    growth
 ORDER BY
-    employee,
-    protection_tools_name;</CommandText>
+    protection_tools_name,
+    IF(@show_sex, wear_cards.sex, NULL),
+    size,
+    growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
@@ -703,17 +553,20 @@ ORDER BY
           <QueryParameter Name="@issue_type">
             <Value>={?issue_type}</Value>
           </QueryParameter>
-          <QueryParameter Name="@exclude_before">
-            <Value>={?exclude_before}</Value>
+          <QueryParameter Name="@show_sex">
+            <Value>={?show_sex}</Value>
           </QueryParameter>
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
           </QueryParameter>
-          <QueryParameter Name="@exclude_zero_stock">
-            <Value>={?exclude_zero_stock}</Value>
+          <QueryParameter Name="@exclude_before">
+            <Value>={?exclude_before}</Value>
           </QueryParameter>
           <QueryParameter Name="@protection_tools_ids">
             <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@group_by_subdivision">
+            <Value>={?group_by_subdivision}</Value>
           </QueryParameter>
           <QueryParameter Name="@condition">
             <Value>={?condition}</Value>
@@ -724,30 +577,6 @@ ORDER BY
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="employee_id">
-          <DataField>employee_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="employee">
-          <DataField>employee</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="next_issue">
-          <DataField>next_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="last_issue">
-          <DataField>last_issue</DataField>
-          <TypeName>System.DateTime</TypeName>
-        </Field>
-        <Field Name="delay">
-          <DataField>delay</DataField>
-          <TypeName>System.Int32</TypeName>
-        </Field>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -768,20 +597,12 @@ ORDER BY
           <DataField>subdivision_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="post_id">
-          <DataField>post_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="post_name">
-          <DataField>post_name</DataField>
+        <Field Name="employees">
+          <DataField>employees</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="department_id">
-          <DataField>department_id</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
-        <Field Name="department_name">
-          <DataField>department_name</DataField>
+        <Field Name="sex">
+          <DataField>sex</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="sizeTypeId">
@@ -804,9 +625,9 @@ ORDER BY
           <DataField>unit</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="amount_by_norm">
-          <DataField>amount_by_norm</DataField>
-          <TypeName>System.UInt16</TypeName>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <TypeName>System.Decimal</TypeName>
         </Field>
         <Field Name="in_stock">
           <DataField>in_stock</DataField>
@@ -836,12 +657,12 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2023-12-01</Value>
+          <Value>2023-11-10</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -853,37 +674,47 @@ ORDER BY
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>25</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-    <ReportParameter Name="protection_tools_ids">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>1,10,11,12,13,14,15</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="issue_type">
       <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Collrctive</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="exclude_before">
-      <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
+    <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_employees">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
@@ -899,7 +730,31 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="exclude_zero_stock">
+    <ReportParameter Name="exclude_before">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2000-1-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>53</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_subdivision">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
