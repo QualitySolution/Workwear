@@ -161,6 +161,7 @@ CREATE TABLE `postomat_document_items` (
    `document_id` int(10) unsigned NOT NULL,
    `nomenclature_id` int(10) unsigned NOT NULL,
    `barcode_id` int(10) unsigned DEFAULT NULL,
+   `claim_id` INT UNSIGNED NULL DEFAULT NULL,
    `delta` int(11) NOT NULL,
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
@@ -168,8 +169,10 @@ CREATE TABLE `postomat_document_items` (
    PRIMARY KEY (`id`),
    KEY `fk_postomat_document_id` (`document_id`),
    KEY `fk_barcode_id` (`barcode_id`),
+   KEY `fk_claim_id` (`claim_id`),
    KEY `fk_nomenclature_id` (`nomenclature_id`),
    CONSTRAINT `fk_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
+   CONSTRAINT `fk_claim_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT `fk_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
    CONSTRAINT `fk_postomat_document_id` FOREIGN KEY (`document_id`) REFERENCES `postomat_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
