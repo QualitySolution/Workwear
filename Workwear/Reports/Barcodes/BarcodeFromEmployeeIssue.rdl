@@ -15,7 +15,7 @@
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>91.9pt</Height>
+    <Height>123.9pt</Height>
     <ReportItems>
       <List Name="List1">
         <Height>79.93pt</Height>
@@ -170,7 +170,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
 operation_issued_by_employee.operation_time,
@@ -191,14 +191,16 @@ LEFT JOIN objects ON objects.id = wear_cards.object_id
 LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
 LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
 LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
-WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
+WHERE operation_barcodes.barcode_id IN (@barcodes)
+GROUP BY operation_barcodes.barcode_id
+ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
         <QueryParameters>
-          <QueryParameter Name="operations">
-            <Value>={?operations}</Value>
+          <QueryParameter Name="barcodes">
+            <Value>={?barcodes}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="number_system">
           <DataField>number_system</DataField>
           <TypeName>System.String</TypeName>
@@ -242,8 +244,17 @@ WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=;user=;database=dev_cloud_osmbt_copy;port=3306;password=;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
-    <ReportParameter Name="operations">
+    <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -256,13 +267,4 @@ WHERE operation_issued_by_employee.id IN (@operations)</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=;user=;database=dev_cloud_osmbt_copy;port=3306;password=;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
