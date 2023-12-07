@@ -18,8 +18,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		private IObservableList<SelectedChoiceSubdivision> subdivisions;
-		public IObservableList<SelectedChoiceSubdivision> Subdivisions {
+		private ObservableList<SelectedChoiceSubdivision> subdivisions;
+		public ObservableList<SelectedChoiceSubdivision> Subdivisions {
 			get {
 				if(subdivisions == null)
 					FillSubdivision();
@@ -35,14 +35,17 @@ namespace Workwear.ReportParameters.ViewModels {
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(() => true).WithAlias(() => resultAlias.Select)
-				).TransformUsing(Transformers.AliasToBean<SelectedChoiceSubdivision>())
+					.Select(() => true).WithAlias(() => resultAlias.Highlighted)
+				).OrderBy(x => x.Name).Asc
+				.TransformUsing(Transformers.AliasToBean<SelectedChoiceSubdivision>())
 				.List<SelectedChoiceSubdivision>());
 
 			if(ShowNullValue) {
 				subdivisions.Insert(0, new SelectedChoiceSubdivision() {
 					Id = -1,
 					Name = " Без подразделения",
-					Select = true
+					Select = true,
+					Highlighted = true,
 				});
 			}
 
@@ -101,17 +104,36 @@ namespace Workwear.ReportParameters.ViewModels {
 			foreach (var s in Subdivisions)
 				s.Select = false;
 		}
+		
+		public void SelectLike(string maskLike) {
+			foreach(var line in Subdivisions)
+				line.Highlighted = line.Name.ToLower().Contains(maskLike.ToLower());
+			Subdivisions.Sort(Comparison);
+		}
+
+		private int Comparison(SelectedChoiceSubdivision x, SelectedChoiceSubdivision y) {
+			if(x.Highlighted == y.Highlighted)
+				return x.Name.CompareTo(y.Name);
+			return x.Highlighted ? -1 : 1;
+		}
 	}
-	
-	public class SelectedChoiceSubdivision : PropertyChangedBase
-	{
+
+	public class SelectedChoiceSubdivision : PropertyChangedBase {
+		public int Id { get; set; }
+		public string Name { get; set; }
+
 		private bool select;
+
 		public virtual bool Select {
 			get => select;
 			set => SetField(ref select, value);
 		}
 
-		public int Id { get; set; }
-		public string Name { get; set; }
+		private bool highlighted;
+
+		public bool Highlighted {
+			get => highlighted;
+			set => SetField(ref highlighted, value);
+		}
 	}
 }
