@@ -24,14 +24,15 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
 				() => FluentColumnsConfig<ClaimsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
 					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
-					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
+					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee)
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
-					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature)
+					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
 					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
-					.AddColumn("Дефект").AddTextRenderer(node => node.Defect).SearchHighlight()
+					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
 

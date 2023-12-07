@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -15,15 +16,25 @@ using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
+using Workwear.Journal.Filter.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
-		private IInteractiveService interactive; 
-		public ClaimsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		private IInteractiveService interactive;
+		
+		public ClaimsJournalFilterViewModel Filter { get; set; }
+		public ClaimsJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
+			IDeleteEntityService deleteEntityService = null,
+			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			Title = "Обслуживание одежды";
+			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
 			CreateActions();
 		}
@@ -51,22 +62,40 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					Projections.Constant(" "),
 					Projections.Property(() => employeeAlias.Patronymic)));
 			
-			var query = uow.Session.QueryOver<ServiceClaim>(() => serviceClaimAlias);
+			var subqueryLastState = QueryOver.Of<StateOperation>(() => stateOperationAlias)
+				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
+				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.Select(x => x.State)
+				.Take(1);
+			
+			var subqueryLastOperationTime = QueryOver.Of<StateOperation>(() => stateOperationAlias)
+				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
+				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.Select(x => x.OperationTime)
+				.Take(1);
+
+			var query = uow.Session.QueryOver(() => serviceClaimAlias);
+			if(!Filter.ShowClosed)
+				query.Where(x => x.IsClosed == false);
 
 			return query
-				.Left.JoinAlias(x => x.States, () => stateOperationAlias)
+				.Where(GetSearchCriterion(
+					() => nomenclatureAlias.Name,
+					() => barcodeAlias.Title
+					))
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
-				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.OrderBy(() => serviceClaimAlias.Id).Desc
 				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => barcodeAlias.Title).WithAlias(() => resultAlias.Barcode)
 					.Select(x => x.NeedForRepair).WithAlias(() => resultAlias.NeedForRepair)
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
-					.Select(() => stateOperationAlias.State).WithAlias(() => resultAlias.State)
-					.Select(() => stateOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
+					.Select(x => x.IsClosed).WithAlias(() => resultAlias.IsClosed)
 					.SelectSubQuery(subqueryLastEmployee).WithAlias(() => resultAlias.Employee)
+					.SelectSubQuery(subqueryLastState).WithAlias(() => resultAlias.State)
+					.SelectSubQuery(subqueryLastOperationTime).WithAlias(() => resultAlias.OperationTime)
 				)
 				.TransformUsing(Transformers.AliasToBean<ClaimsJournalNode>());
 		}
@@ -123,9 +152,12 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		public string Barcode { get; set; }
 		public string Employee { get; set; }
 		public bool NeedForRepair { get; set; }
+		public bool IsClosed { get; set; }
 		public ClaimState State { get; set; }
 		public DateTime OperationTime { get; set; }
 		public string Nomenclature { get; set; }
 		public string Defect { get; set; }
+		
+		public string RowColor => IsClosed ? "grey" : null;
 	}
 }

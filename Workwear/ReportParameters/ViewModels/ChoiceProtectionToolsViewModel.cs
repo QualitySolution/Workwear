@@ -18,8 +18,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 		
-		private IObservableList<SelectedProtectionTools> protectionTools;
-		public IObservableList<SelectedProtectionTools> ProtectionTools {
+		private ObservableList<SelectedProtectionTools> protectionTools;
+		public ObservableList<SelectedProtectionTools> ProtectionTools {
 			get {
 				if(protectionTools == null)
 					FillProtectionTools();
@@ -35,6 +35,7 @@ namespace Workwear.ReportParameters.ViewModels {
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(() => true).WithAlias(() => resultAlias.Select)
+					.Select(() => true).WithAlias(() => resultAlias.Highlighted)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
 				.List<SelectedProtectionTools>());
@@ -77,17 +78,35 @@ namespace Workwear.ReportParameters.ViewModels {
 			foreach (var pt in ProtectionTools)
 				pt.Select = false;
 		}
+		
+		public void SelectLike(string maskLike) {
+			foreach(var line in ProtectionTools)
+				line.Highlighted = line.Name.ToLower().Contains(maskLike.ToLower());
+			ProtectionTools.Sort(Comparison);
+		}
+
+		private int Comparison(SelectedProtectionTools x, SelectedProtectionTools y) {
+			if(x.Highlighted == y.Highlighted)
+				return x.Name.CompareTo(y.Name);
+			return x.Highlighted ? -1 : 1;
+		}
 	}
 
 	public class SelectedProtectionTools : PropertyChangedBase
 	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+		
 		private bool select;
 		public virtual bool Select {
 			get => select;
-			set => SetField(ref select, value);
+			set => SetField(ref select, value); 
 		}
 
-		public int Id { get; set; }
-		public string Name { get; set; }
+		private bool highlighted;
+		public bool Highlighted {
+			get => highlighted;
+			set => SetField(ref highlighted, value);
+		}
 	}
 }

@@ -238,7 +238,11 @@ namespace Workwear.ViewModels.Stock
 				Title = "Штрихкоды",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
 				Parameters = new Dictionary<string, object> {
-					{"operations", Entity.Items.Where(x => x.EmployeeIssueOperation.BarcodeOperations.Any()).Select(x => x.EmployeeIssueOperation.Id).ToArray()}
+					{
+						"barcodes", Entity.Items
+							.SelectMany(x => x.EmployeeIssueOperation.BarcodeOperations.Select(b => b.Barcode.Id))
+							.ToList()
+					}
 				}
 			};
 

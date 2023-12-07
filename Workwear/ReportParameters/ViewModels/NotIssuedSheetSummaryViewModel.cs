@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Autofac;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
@@ -30,8 +33,6 @@ namespace workwear.ReportParameters.ViewModels
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Справка по невыданному (Суммарно)";
-			Identifier = "NotIssuedSheetSummary";
-
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
@@ -55,10 +56,23 @@ namespace workwear.ReportParameters.ViewModels
 					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", ExcludeInVacation },
 					{"condition", Condition },
-					{"exclude_before", ExcludeBefore }
+					{"exclude_before", ExcludeBefore },
+					{"show_stock", ShowStock},
 				 };
 
 		#region Параметры
+		
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+		
+		private NotIssuedSheetSummaryReportType reportType;
+		public virtual NotIssuedSheetSummaryReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+		
 		private DateTime? reportDate = DateTime.Today;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? ReportDate {
@@ -102,6 +116,12 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref showSex, value);
 		}
 
+		private bool showStock;
+		public virtual bool ShowStock {
+			get => showStock;
+			set => SetField(ref showStock, value);
+		}
+		
 		private bool showEmployees;
 		public virtual bool ShowEmployees {
 			get => showEmployees;
@@ -128,5 +148,14 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			UoW.Dispose();
 		}
+	}
+	
+	public enum NotIssuedSheetSummaryReportType {
+		[ReportIdentifier("NotIssuedSheetSummary")]
+		[Display(Name = "Форматировано")]
+		Common,
+		[ReportIdentifier("NotIssuedSheetSummaryFlat")]
+		[Display(Name = "Только данные")]
+		Flat
 	}
 }

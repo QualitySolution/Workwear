@@ -42,6 +42,13 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref user, value);
 		}
 		
+		private uint? terminalId;
+		[Display(Name = "Терминал")]
+		public virtual uint? TerminalId {
+			get => terminalId;
+			set => SetField(ref terminalId, value);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {

@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using QS.Project.Domain;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.ClothingService {
@@ -50,6 +52,20 @@ namespace Workwear.Domain.ClothingService {
 		}
 		#endregion
 
+		#region Статусы
+		public virtual void ChangeState(ClaimState state, uint? terminalId = null, UserBase user = null, string comment = null) {
+			var stateOperation = new StateOperation {
+				Claim = this,
+				OperationTime = DateTime.Now,
+				State = state,
+				TerminalId = terminalId,
+				User = user,
+				Comment = comment
+			};
+			States.Add(stateOperation);
+		}
+		#endregion
+		
 		#region Вычисляемые
 		public virtual string Title => $"Заявка на обслуживание №{Id}";
 

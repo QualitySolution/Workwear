@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Journal\Filter.ViewModels\ClothingService\ClaimsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionBalanceFilterViewModel.cs" />
@@ -463,6 +464,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceSubdivisionView.cs" />
     <Compile Include="ReportParameters\Views\ProvisionReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ProvisionReportView.cs" />
+    <Compile Include="Journal\Filter.Views\ClothingService\ClaimsJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -657,8 +660,6 @@
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\" />
-    <Folder Include="Journal\Filter.ViewModels\" />
-    <Folder Include="Journal\Filter.Views\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
@@ -715,6 +716,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\ListBySize.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\NotIssuedSheetSummaryFlat.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\StockAllWear.rdl">
@@ -817,6 +821,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="icon\buttons\select-all.png" />
+    <EmbeddedResource Include="icon\buttons\unselect-all.png" />
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -824,6 +830,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew2.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotIssuedSheetFlat.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Reports\ProvisionReport.rdl">
