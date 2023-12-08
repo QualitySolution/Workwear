@@ -13,6 +13,7 @@ message GetPostomatListRequest {
 
 message GetPostomatListResponse {
 	repeated PostomatInfo postomats = 1;
+	repeated PostomatFullness postomatsFullness = 2;
 }
 
 message PostomatInfo {
@@ -23,12 +24,8 @@ message PostomatInfo {
 }
 
 message PostomatFullness {
- 	uint32 id = 1;
- 	bool is_active = 2;
- 	string name = 3;
- 	string location = 4;
- 	uint32 contain = 5;
- 	uint32 capacity = 6;
+ 	uint32 contain = 2;
+ 	uint32 capacity = 3;
  }
 
 //GetPostomat
@@ -41,6 +38,7 @@ message GetPostomatResponse {
 	string name = 2;
 	string location = 3;
 	repeated CellInfo cells = 4;
+	repeated PostomatFullness fullness = 5;
 }
 
 message CellInfo {
