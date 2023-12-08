@@ -27,7 +27,7 @@ message PostomatFullness {
  	bool is_active = 2;
  	string name = 3;
  	string location = 4;
- 	uint32 contain = 5
+ 	uint32 contain = 5;
  	uint32 capacity = 6;
  }
 
