@@ -185,6 +185,8 @@ CREATE TABLE `postomat_documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `create_time` datetime NOT NULL,
+  `confirm_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выполнения(done) документа на постомате.',
+  `confirm_user` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Пользователь системы постоматов проводивший документ.',
   `status` enum('New','Done','Deleted','') NOT NULL DEFAULT 'New',
   `type` enum('Income','Outgo','Correction','') NOT NULL,
   `terminal_id` int(11) unsigned NOT NULL,
