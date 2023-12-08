@@ -22,6 +22,15 @@ message PostomatInfo {
 	string location = 4;
 }
 
+message PostomatFullness {
+ 	uint32 id = 1;
+ 	bool is_active = 2;
+ 	string name = 3;
+ 	string location = 4;
+ 	uint32 contain = 5
+ 	uint32 capacity = 6;
+ }
+
 //GetPostomat
 message GetPostomatRequest {
 	uint32 id = 1;
