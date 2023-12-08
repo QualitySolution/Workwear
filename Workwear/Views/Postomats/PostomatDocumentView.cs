@@ -34,6 +34,7 @@ namespace Workwear.Views.Postomats {
 			
 			//FIXME Временно
 			entityWarehouseExpense.Visible = false;
+			comboTypeDoc.Sensitive = false;
 
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentItem>()
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
