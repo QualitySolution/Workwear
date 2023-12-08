@@ -103,6 +103,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		#region Действия
 		private void CreateActions() {
 			NodeActionsList.Clear();
+			CreateDefaultSelectAction();
 			
 			var receiveAction = new JournalAction("Принять в стирку",
 				selected => true,

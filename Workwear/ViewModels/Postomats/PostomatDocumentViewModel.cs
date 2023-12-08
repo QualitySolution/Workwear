@@ -6,6 +6,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -58,6 +59,7 @@ namespace Workwear.ViewModels.Postomats {
 					Entity.TerminalId = value?.Id ?? 0;
 					Entity.Postomat = postomat;
 					AllCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
+					OnPropertyChanged(nameof(CanAddItem));
 				}
 			}
 		}
@@ -84,6 +86,10 @@ namespace Workwear.ViewModels.Postomats {
 		}
 		#endregion
 
+		#region Свойства View
+		public bool CanAddItem => Entity.Postomat != null;
+		#endregion
+
 		#region Команды View
 		public void ReturnFromService() {
 			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave);
@@ -95,11 +101,17 @@ namespace Workwear.ViewModels.Postomats {
 
 		private void ViewModel_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var serviceClaimsIds = e.GetSelectedObjects<ClaimsJournalNode>().Select(x => x.Id).ToArray();
+
+			UoW.Session.QueryOver<ServiceClaim>()
+				.Where(x => x.Id.IsIn(serviceClaimsIds))
+				.Fetch(SelectMode.Skip, x => x)
+				.Fetch(SelectMode.Fetch, x => x.States)
+				.Future();
+			
 			var serviceClaims = UoW.Session.QueryOver<ServiceClaim>()
 				.Where(x => x.Id.IsIn(serviceClaimsIds))
 				.Fetch(SelectMode.Fetch, x => x.Barcode)
 				.Fetch(SelectMode.Fetch, x => x.Barcode.Nomenclature)
-				.Fetch(SelectMode.Fetch, x => x.States)
 				.List();
 			foreach(var claim in serviceClaims) {
 				Entity.AddItem(claim, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
