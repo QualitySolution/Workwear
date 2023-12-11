@@ -2016,7 +2016,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   CONSTRAINT `fk_operation_barcodes_2`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_operation_barcodes_3`
     FOREIGN KEY (`warehouse_operation_id`)
