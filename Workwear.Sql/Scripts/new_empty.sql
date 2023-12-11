@@ -1965,6 +1965,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
+  `comment` text null,
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
@@ -1976,6 +1977,7 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
   INDEX `fk_barcodes_2_idx` (`size_id` ASC),
   INDEX `fk_barcodes_3_idx` (`height_id` ASC),
+  INDEX `fk_barcodes_4_idx`	(`comment` ASC),
   CONSTRAINT `fk_barcodes_1`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
