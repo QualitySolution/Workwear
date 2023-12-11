@@ -353,8 +353,19 @@ namespace Workwear.ViewModels.Operations
 			Validations.AddRange(Operations.Select(x => new ValidationRequest(x)));
 			if(!Validate())
 				return false;
-			foreach(var operation in Operations)
+			
+			foreach(var operation in Operations) {
+				foreach(var baracode in operation.BarcodeOperations.Select(x => x.Barcode)) {
+					if(!DomainHelper.EqualDomainObjects(baracode.Nomenclature, operation.Nomenclature))
+						baracode.Nomenclature = operation.Nomenclature;
+					if(!DomainHelper.EqualDomainObjects(baracode.Size, operation.WearSize))
+						baracode.Size = operation.WearSize;
+					if(!DomainHelper.EqualDomainObjects(baracode.Height, operation.Height))
+						baracode.Height = operation.Height;
+				}
 				UoW.Save(operation);
+			}
+
 			UoW.Commit();
 			SaveChanged?.Invoke(protectionTools);
 			Close(false, CloseSource.Save);
