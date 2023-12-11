@@ -58,7 +58,8 @@ namespace workwear.Journal.ViewModels.Stock
 					() => nomenclatureAlias.Name,
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
-					() => employeeAlias.Patronymic
+					() => employeeAlias.Patronymic,
+					() => barcodeAlias.Comment
 				))
 				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
