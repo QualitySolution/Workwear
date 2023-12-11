@@ -5,4 +5,3 @@ ALTER TABLE `postomat_documents` ADD `confirm_user` INT UNSIGNED NULL DEFAULT NU
 -- Комментарий к штрихкоду
 ALTER TABLE `barcodes` 
     add `comment` text null;
-	create index `barcodes_4_idx`	on barcodes (`comment`);

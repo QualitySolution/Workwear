@@ -1977,7 +1977,6 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
   INDEX `fk_barcodes_2_idx` (`size_id` ASC),
   INDEX `fk_barcodes_3_idx` (`height_id` ASC),
-  INDEX `barcodes_4_idx`	(`comment` ASC),
   CONSTRAINT `fk_barcodes_1`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
