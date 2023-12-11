@@ -6,7 +6,6 @@ using NHibernate;
 using NHibernate.Criterion;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
-using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;

@@ -166,6 +166,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
+   `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `fk_postomat_document_id` (`document_id`),
    KEY `fk_barcode_id` (`barcode_id`),
