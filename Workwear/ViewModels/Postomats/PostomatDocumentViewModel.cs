@@ -56,6 +56,8 @@ namespace Workwear.ViewModels.Postomats {
 		}
 		#endregion
 
+		public bool CanEdit => Entity.Status == DocumentStatus.New;
+
 		#region Команды View
 
 		public void RemoveItem(PostomatDocumentItem item) {
