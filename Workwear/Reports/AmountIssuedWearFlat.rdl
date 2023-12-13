@@ -3,7 +3,7 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>22in</PageWidth>
+  <PageWidth>25in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.20in</TopMargin>
   <LeftMargin>.20in</LeftMargin>
@@ -33,6 +33,12 @@
             <Width>177.6pt</Width>
             <Visibility>
               <Hidden>={?summary}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>179.2pt</Width>
+            <Visibility>
+              <Hidden>=!{?showCostCenter}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
@@ -118,6 +124,22 @@
                         <TextAlign>Left</TextAlign>
                       </Style>
                       <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox8">
+                      <Value>={cost_center_name}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -345,6 +367,22 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>Место вознникновения затрат</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox35">
@@ -555,12 +593,13 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select 
     if(@summary, NULL, objects.id) as subdivision_id, 
     if(@summary, NULL, objects.name) as object,
     if(@summary, NULL, objects.code) as subdivision_code, 
+    if(@showCostCenter, CONCAT_WS(' ', cost_center.code, cost_center.name), NULL) as cost_center_name, 
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
@@ -581,6 +620,7 @@ FROM operation_issued_by_employee
 LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
 LEFT JOIN objects on objects.id = wear_cards.object_id
 LEFT JOIN posts ON posts.id = wear_cards.post_id
+LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
 LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
@@ -649,9 +689,12 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <QueryParameter Name="showOnlyWithoutNorm">
             <Value>={?showOnlyWithoutNorm}</Value>
           </QueryParameter>
+          <QueryParameter Name="showCostCenter">
+            <Value>={?showCostCenter}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -716,10 +759,23 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>wearing_period</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
+        <Field Name="cost_center_name">
+          <DataField>cost_center_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
@@ -844,14 +900,17 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="showCostCenter">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
