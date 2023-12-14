@@ -186,7 +186,8 @@ namespace workwear.Journal.ViewModels.Stock
 					() => employeeCardAlias.FirstName,
 					() => employeeCardAlias.LastName,
 					() => employeeCardAlias.Patronymic,
-					() => issuanceSheetItem.IssuanceSheet.Id
+					() => issuanceSheetItem.IssuanceSheet.Id,
+					() => nomenclatureAlias.Name
 				));
 
 			if(Filter.CollapseOperationItems) {
