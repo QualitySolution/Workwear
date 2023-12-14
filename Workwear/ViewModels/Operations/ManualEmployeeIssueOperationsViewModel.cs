@@ -167,9 +167,12 @@ namespace Workwear.ViewModels.Operations
 		public DateTime? AutoWriteoffDate {
 			get => autoWriteoffDate;
 			set {
-				if(SetField(ref autoWriteoffDate, value))
-					if(SelectOperation != null)
+				if(SetField(ref autoWriteoffDate, value)) {
+					if(SelectOperation != null) {
 						SelectOperation.AutoWriteoffDate = value;
+						SelectOperation.UseAutoWriteoff = !(value is null);
+					}
+				}
 			}
 		}
 
@@ -344,7 +347,9 @@ namespace Workwear.ViewModels.Operations
 
 		#region private
 		void RecalculateDatesOfSelectedOperation() {
-			if(EmployeeCardItem.Graph is null)
+			if(EmployeeCardItem is null)
+				return;
+			if(EmployeeCardItem.Graph is null) 
 				issueModel.FillWearReceivedInfo(new[] { SelectOperation.Employee });
 			SelectOperation.RecalculateDatesOfIssueOperation( EmployeeCardItem.Graph, baseParameters, interactive);
 			AutoWriteoffDate = SelectOperation.AutoWriteoffDate;

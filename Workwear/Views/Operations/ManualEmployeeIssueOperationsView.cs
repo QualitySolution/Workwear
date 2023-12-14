@@ -23,7 +23,7 @@ namespace Workwear.Views.Operations
 				.AddColumn("ИД").AddReadOnlyTextRenderer(x => x.Id.ToString())
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
-				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
+				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.AutoWriteoffDate:d}")
 				.AddColumn("Процент износа").AddTextRenderer(x => x.WearPercent.ToString("P0"))
 				.Finish();
 			
