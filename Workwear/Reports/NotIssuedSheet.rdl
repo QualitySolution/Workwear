@@ -433,7 +433,7 @@
                       </ReportItems>
                       <ColSpan>8</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox1">
                           <Value></Value>
@@ -579,7 +579,7 @@
                       </ReportItems>
                       <ColSpan>2</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox20">
                           <Value></Value>
@@ -689,7 +689,7 @@
                       </ReportItems>
                       <ColSpan>8</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
                           <Value></Value>
@@ -810,7 +810,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -872,6 +872,7 @@
             )
             AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
             AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            AND ((NOT @hide_worn) OR (operation_warehouse.wear_percent = 0.0))
         )
         ,null) AS in_stock
 FROM
@@ -940,9 +941,12 @@ ORDER BY
           <QueryParameter Name="@show_stock">
             <Value>={?show_stock}</Value>
           </QueryParameter>
+          <QueryParameter Name="@hide_worn">
+            <Value>={?hide_worn}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -1143,6 +1147,18 @@ ORDER BY
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hide_worn">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>

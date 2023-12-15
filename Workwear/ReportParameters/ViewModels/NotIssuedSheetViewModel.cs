@@ -56,6 +56,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"condition", Condition },
 					{"show_stock", ShowStock},
 					{"exclude_zero_stock", ExcludeZeroStock},
+					{"hide_worn", HideWorn},
 				 };
 
 		#region Параметры
@@ -103,13 +104,13 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		
 		private bool showStock;
-		[PropertyChangedAlso(nameof(DontShowZeroStockVisible))]
+		[PropertyChangedAlso(nameof(StockElementsVisible))]
 		public virtual bool ShowStock {
 			get => showStock;
 			set {
 				SetField(ref showStock, value);
 				if(!value) //Сброс при снятии
-					ExcludeZeroStock = false;
+					ExcludeZeroStock = HideWorn = false;
 			} 
 			
 		}
@@ -119,12 +120,18 @@ namespace workwear.ReportParameters.ViewModels
 			get => showStock && excludeZeroStock;
 			set => SetField(ref excludeZeroStock, value);
 		}
+		
+		private bool hideWorn;
+		public virtual bool HideWorn {
+			get => showStock && hideWorn;
+			set => SetField(ref hideWorn, value);
+		}
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
-		public object DontShowZeroStockVisible => ShowStock;
+		public object StockElementsVisible => ShowStock;
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)

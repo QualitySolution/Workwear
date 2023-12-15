@@ -30,9 +30,12 @@ namespace workwear.ReportParameters.Views
 			ylabelcheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
-			checkDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
-			checkDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.DontShowZeroStockVisible, w => w.Sensitive).InitializeFromSource();
-			ylabelDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.DontShowZeroStockVisible, w => w.Sensitive).InitializeFromSource();
+			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
+			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ylabelDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.HideWorn, w => w.Active).InitializeFromSource();
+			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ylabelHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();

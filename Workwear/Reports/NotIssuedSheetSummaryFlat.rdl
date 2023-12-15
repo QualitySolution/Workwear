@@ -29,7 +29,7 @@
           <BorderWidth />
         </Style>
         <TableColumns>
-          <TableColumn >
+          <TableColumn>
             <Width>321.1pt</Width>
           </TableColumn>
           <TableColumn>
@@ -62,7 +62,7 @@
               <Hidden>=!{?show_stock}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>962.1pt</Width>
             <Visibility>
               <Hidden>={?show_employees}</Hidden>
@@ -74,7 +74,7 @@
             <TableRow>
               <Height>13.6pt</Height>
               <TableCells>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox69">
                       <Value>Подразделение</Value>
@@ -237,7 +237,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
                       <Value>Сотрудники</Value>
@@ -265,7 +265,7 @@
             <TableRow>
               <Height>12 pt</Height>
               <TableCells>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox70">
                       <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
@@ -413,7 +413,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
                       <Value>={employees}</Value>
@@ -449,7 +449,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -501,6 +501,7 @@
             )
             AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
             AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            AND ((NOT @hide_worn) OR (operation_warehouse.wear_percent = 0.0))
         )
         , null) AS in_stock
 FROM
@@ -574,9 +575,12 @@ ORDER BY
           <QueryParameter Name="@show_stock">
             <Value>={?show_stock}</Value>
           </QueryParameter>
+          <QueryParameter Name="@hide_worn">
+            <Value>={?hide_worn}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -779,6 +783,18 @@ ORDER BY
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hide_worn">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
