@@ -426,6 +426,8 @@ namespace Workwear.Domain.Operations
 			return true;
 		}
 
+		private bool? lastAnswaerRecalculateStartOfUse;
+		
 		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			if(!CheckRecalculateCondition())
 				return;
@@ -442,10 +444,12 @@ namespace Workwear.Domain.Operations
 				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
-							if(askUser.Question(
-								   $"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
-								   $"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
-								   $"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?"))
+							if(lastAnswaerRecalculateStartOfUse == null)
+								lastAnswaerRecalculateStartOfUse = askUser.Question(
+									$"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
+									$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
+									$"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?");
+							if(lastAnswaerRecalculateStartOfUse.Value)
 								StartOfUse = firstLessNorm.StartDate;
 							break;
 						case AnswerOptions.Yes:
@@ -460,6 +464,8 @@ namespace Workwear.Domain.Operations
 			}
 		}
 
+		private bool? lastAnswaerRecalculateExpiryByNorm;
+		
 		public virtual void RecalculateExpiryByNorm(BaseParameters baseParameters, IInteractiveQuestion askUser){
 			if(!CheckRecalculateCondition())
 				return;
@@ -473,12 +479,14 @@ namespace Workwear.Domain.Operations
 			{
 				switch(baseParameters.ExtendPeriod) {
 					case AnswerOptions.Ask:
-						if(askUser.Question(
-							$"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} " +
-							$"это больше чем положено по норме {NormItem.Amount}. " +
-							$"Увеличить период эксплуатации выданного пропорционально количеству?")) {
+						if(lastAnswaerRecalculateExpiryByNorm == null)
+							lastAnswaerRecalculateExpiryByNorm = askUser.Question(
+								$"Сотруднику {Employee.ShortName} за раз выдается {Issued} x {ProtectionTools.Name} " +
+								$"это больше чем положено по норме {NormItem.Amount}. " +
+								$"Увеличить период эксплуатации выданного пропорционально количеству?");
+						
+						if(lastAnswaerRecalculateExpiryByNorm.Value) 
 							ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
-						}
 						break;
 					case AnswerOptions.Yes:
 						ExpiryByNorm = NormItem.CalculateExpireDate(StartOfUse.Value, Issued);
