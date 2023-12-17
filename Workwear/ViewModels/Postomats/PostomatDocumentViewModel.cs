@@ -86,6 +86,7 @@ namespace Workwear.ViewModels.Postomats {
 		#endregion
 
 		#region Свойства View
+		public bool CanEdit => Entity.Status == DocumentStatus.New;
 		public bool CanAddItem => Entity.Postomat != null;
 		#endregion
 
