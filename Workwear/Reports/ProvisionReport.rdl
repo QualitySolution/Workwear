@@ -79,6 +79,7 @@ FROM (SELECT
             )
     GROUP BY 
         wear_cards_item.protection_tools_id,
+        IF(@group_by_subdivision, subdivision_id, NULL),
         IF(@show_sex, employee_sex, NULL),
         IF(@show_size, employeeSizeAlias.size_id, NULL),
         IF(@show_size, employeeHeightAlias.size_id, NULL)

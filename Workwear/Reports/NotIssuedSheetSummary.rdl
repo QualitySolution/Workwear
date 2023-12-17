@@ -436,7 +436,7 @@
                       </ReportItems>
                       <ColSpan>6</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
                           <Value></Value>
@@ -444,7 +444,7 @@
                             <BorderStyle>
                               <Default>Solid</Default>
                               <Right>None</Right>
-                              <Left >None</Left>
+                              <Left>None</Left>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -869,7 +869,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -921,6 +921,7 @@
             )
             AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
             AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            AND ((NOT @hide_worn) OR (operation_warehouse.wear_percent = 0.0))
         )
         , null) AS in_stock
 FROM
@@ -994,9 +995,12 @@ ORDER BY
           <QueryParameter Name="@show_stock">
             <Value>={?show_stock}</Value>
           </QueryParameter>
+          <QueryParameter Name="@hide_worn">
+            <Value>={?hide_worn}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1209,6 +1213,18 @@ ORDER BY
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hide_worn">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

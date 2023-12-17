@@ -42,6 +42,8 @@ namespace Workwear.Views.Stock
 				.AddColumn("Операция").AddTextRenderer(x => x.OperationTitle)
 				.Finish();
 
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			
 			buttonPrintBarcode.Clicked += (sender, args) => ViewModel.PrintBarcodes();
 			
 			treeviewOperations.ItemsDataSource = Entity.BarcodeOperations;

@@ -34,6 +34,7 @@ namespace Workwear.Views.Postomats {
 			
 			//FIXME Временно
 			entityWarehouseExpense.Visible = false;
+			comboTypeDoc.Sensitive = false;
 
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentItem>()
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
@@ -47,12 +48,24 @@ namespace Workwear.Views.Postomats {
 			treeItems.Binding.AddBinding(Entity, e => e.Items, w => w.ItemsDataSource).InitializeFromSource();
 			treeItems.Selection.Changed += SelectionOnChanged;
 			
+			SetEditableWindow();
+			
 			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
+			buttonAdd.Binding.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {
 			buttonDel.Sensitive = treeItems.Selection.CountSelectedRows() > 0;
+		}
+
+		private void SetEditableWindow() {
+			comboPostomat.Sensitive = 
+				buttonAdd.Sensitive = 
+					comboTypeDoc.Sensitive = 
+						ytextComment.Sensitive = 
+							treeItems.Sensitive = 
+								ydateDoc.Sensitive = ViewModel.CanEdit;
 		}
 	}
 }

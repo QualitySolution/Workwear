@@ -159,6 +159,7 @@ ENGINE = InnoDB;
 CREATE TABLE `postomat_document_items` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `document_id` int(10) unsigned NOT NULL,
+   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
    `nomenclature_id` int(10) unsigned NOT NULL,
    `barcode_id` int(10) unsigned DEFAULT NULL,
    `claim_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -166,7 +167,9 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
+   `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
+   KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
    KEY `fk_barcode_id` (`barcode_id`),
    KEY `fk_claim_id` (`claim_id`),
@@ -185,6 +188,8 @@ CREATE TABLE `postomat_documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `create_time` datetime NOT NULL,
+  `confirm_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выполнения(done) документа на постомате.',
+  `confirm_user` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Пользователь системы постоматов проводивший документ.',
   `status` enum('New','Done','Deleted','') NOT NULL DEFAULT 'New',
   `type` enum('Income','Outgo','Correction','') NOT NULL,
   `terminal_id` int(11) unsigned NOT NULL,
@@ -1963,6 +1968,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
+  `comment` text null,
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
@@ -2013,7 +2019,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   CONSTRAINT `fk_operation_barcodes_2`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_operation_barcodes_3`
     FOREIGN KEY (`warehouse_operation_id`)
