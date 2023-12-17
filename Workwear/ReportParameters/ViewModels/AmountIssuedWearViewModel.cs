@@ -1,48 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using Gamma.Widgets;
-using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Report;
 using QS.Report.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
-using Workwear.Repository.Company;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
 	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase
 	{
 		public readonly FeaturesService FeaturesService;
+		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
+		
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
 			IUnitOfWorkFactory uowFactory, 
-			SubdivisionRepository subdivisionRepository,
 			FeaturesService featuresService) : base(rdlViewerViewModel, uowFactory) 
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
-			using(var uow = uowFactory.CreateWithoutRoot()) {
-				SelectedSubdivision resultAlias = null;
-				Subdivisions = new ObservableList<SelectedSubdivision>(subdivisionRepository.ActiveQuery(uow) 
-					.SelectList(list => list
-					   .Select(x => x.Id).WithAlias(() => resultAlias.Id)
-					   .Select(x => x.Name).WithAlias(() => resultAlias.Name)
-				)
-				.TransformUsing(Transformers.AliasToBean<SelectedSubdivision>())
-				.List<SelectedSubdivision>());
-			}
-			Subdivisions.Insert(0, 
-				new SelectedSubdivision {
-					Id = -1,
-					Name = "Без подразделения" 
-			});
-			Subdivisions.PropertyOfElementChanged += (sender, e) => OnPropertyChanged(nameof(SensitiveLoad));
+
+			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -58,8 +45,10 @@ namespace workwear.ReportParameters.ViewModels {
 					{"dateEnd", EndDate},
 					{"summary", !BySubdivision},
 					{"bySize", BySize},
-					{"withoutsub", Subdivisions.First(x =>x.Id == -1).Select },
-					{"subdivisions", SelectSubdivisions() },
+					{"withoutsub", ChoiceSubdivisionViewModel.NullIsSelected },
+					{"subdivisions",  ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
+						new [] {-1} : 
+						ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},
@@ -87,14 +76,14 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 
 		private DateTime? startDate;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 
 		private DateTime? endDate;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -167,33 +156,25 @@ namespace workwear.ReportParameters.ViewModels {
 
 		#region Свойства
 
-		private bool selectAll = true;
-		public virtual bool SelectAll {
-			get => selectAll;
-			set {
-				SetField(ref selectAll, value);
-				{
-					foreach(var item in Subdivisions) {
-						item.Select = value;
-					}
-				}
-			}
-		}
-
-		public IObservableList<SelectedSubdivision> Subdivisions;
-
 		private IList<Owner> owners;
 		public IList<Owner> Owners {
 			get => owners;
 			set => SetField(ref owners, value);
 		}
 
-		public bool SensitiveLoad => StartDate != null && EndDate != null && Subdivisions.Any(x => x.Select);
+		public bool SensitiveLoad => StartDate != null 
+		                             && EndDate != null;
 
 		#region Visible
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
+		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && startDate <= endDate;
+		
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+		}
 		#endregion
 
 		private string matchString;
@@ -212,35 +193,6 @@ namespace workwear.ReportParameters.ViewModels {
 			}
 		}
 		#endregion
-
-		private int[] SelectSubdivisions() {
-			var selectedId = Subdivisions
-				.Where(x => x.Select).Select(x => x.Id).ToList();
-			
-			if (!AddChildSubdivisions) return selectedId.ToArray();
-
-			var parents = UoW.Session.QueryOver<Subdivision>()
-				.WhereRestrictionOn(c => c.Id).IsIn(selectedId)
-				.List();
-
-			return parents
-				.SelectMany(x => x.AllGenerationsSubdivisions).Take(500)
-				.Select(x => x.Id)
-				.Distinct()
-				.ToArray();
-		}
-	}
-
-	public class SelectedSubdivision : PropertyChangedBase
-	{
-		private bool select;
-		public virtual bool Select {
-			get => select;
-			set => SetField(ref select, value);
-		}
-		 
-		public int Id { get; set; }
-		public string Name { get; set; }
 	}
 
 	public enum AmountIssuedWearReportType {

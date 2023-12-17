@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Autofac;
-using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.Views;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
@@ -20,7 +18,13 @@ namespace workwear.ReportParameters.ViewModels {
 	{
 		private readonly FeaturesService featuresService;
 
-		public RequestSheetViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope AutofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
+		public RequestSheetViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			IUnitOfWorkFactory uowFactory,
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService)
+			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
@@ -28,17 +32,22 @@ namespace workwear.ReportParameters.ViewModels {
 			Identifier = "RequestSheet";
 
 			uow = uowFactory.CreateWithoutRoot();
-			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, AutofacScope);
+			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, autofacScope);
 
 			EntrySubdivisionViewModel = builder.ForEntity<Subdivision>().MakeByType().Finish();
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uowFactory,uow); //AutofacScope.Resolve<ChoiceProtectionToolsViewModel>();
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
 		private readonly IUnitOfWork uow;
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensitiveRunReport));
+		}
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
@@ -99,7 +108,8 @@ namespace workwear.ReportParameters.ViewModels {
 		}
 
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
-		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1);
+		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1)
+		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -109,7 +119,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"end_year", EndYear},
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds() },
+					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
+						new [] {-1} :
+						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation }

@@ -64,7 +64,6 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			Entity.Items.ToList().ForEach(item => item.PropertyChanged += Item_PropertyChanged);
 		}
 
 		#region Хелперы
@@ -239,7 +238,11 @@ namespace Workwear.ViewModels.Stock
 				Title = "Штрихкоды",
 				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
 				Parameters = new Dictionary<string, object> {
-					{"operations", Entity.Items.Where(x => x.EmployeeIssueOperation.BarcodeOperations.Any()).Select(x => x.EmployeeIssueOperation.Id).ToArray()}
+					{
+						"barcodes", Entity.Items
+							.SelectMany(x => x.EmployeeIssueOperation.BarcodeOperations.Select(b => b.Barcode.Id))
+							.ToList()
+					}
 				}
 			};
 
@@ -281,15 +284,9 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-		}
-
-		private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{ 
-			if(e.PropertyName == nameof(ExpenseItem.Amount) || e.PropertyName == nameof(ExpenseItem.Nomenclature)) {
-				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
-				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
-				OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
-			}
+			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
+			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 		#endregion
 	}

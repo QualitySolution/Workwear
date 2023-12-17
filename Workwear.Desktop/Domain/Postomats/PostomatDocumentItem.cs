@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using NPOI.SS.Formula.Functions;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
@@ -27,6 +27,13 @@ namespace Workwear.Domain.Postomats {
 		public virtual Barcode Barcode {
 			get => barcode;
 			set => SetField(ref barcode, value);
+		}
+		
+		private ServiceClaim serviceClaim;
+		[Display(Name = "Заявка на обслуживание")]
+		public virtual ServiceClaim ServiceClaim {
+			get => serviceClaim;
+			set => SetField(ref serviceClaim, value);
 		}
 		
 		private int delta;

@@ -55,6 +55,9 @@
           </TableColumn>
           <TableColumn>
             <Width>51.9pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -428,7 +431,23 @@
                           <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>9</ColSpan>
+                      <ColSpan>8</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox1">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>12pt</FontSize>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -558,7 +577,26 @@
                           <Value>="Видов СИЗ: " + Countdistinct({protection_tools_id})</Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>3</ColSpan>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox20">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -649,7 +687,26 @@
                           <CanGrow>true</CanGrow>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>9</ColSpan>
+                      <ColSpan>8</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox2">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Left</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#EFEFEF</BackgroundColor>
+                            <PaddingLeft>5pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -790,31 +847,34 @@
 	heightAlias.name AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
-    (SELECT
-        (
-            SUM(
-                CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+    IF(@show_stock,
+        (SELECT
+            (
+                SUM(
+                    CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                END
+            ) - SUM(
+                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
             END
-        ) - SUM(
-            CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-        END
-    )) AS SUM
-    FROM
-        operation_warehouse
-    WHERE
-        operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
-        SELECT
-            protection_tools_nomenclature.nomenclature_id
+        )) AS SUM
         FROM
-            protection_tools_nomenclature
-        JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+            operation_warehouse
         WHERE
-            (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+            operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+            SELECT
+                protection_tools_nomenclature.nomenclature_id
+            FROM
+                protection_tools_nomenclature
+            JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+            WHERE
+                (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+                AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+            )
+            AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+            AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            AND ((NOT @hide_worn) OR (operation_warehouse.wear_percent = 0.0))
         )
-        AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
-        AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
-    ) AS in_stock
+        ,null) AS in_stock
 FROM
     wear_cards_item
     JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -837,7 +897,7 @@ WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND ('-1' IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids))
+    AND protection_tools.id IN (@protection_tools_ids)
     AND (@condition = false OR norm_conditions.issuance_start is null OR
         IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
             SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -877,6 +937,12 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@condition">
             <Value>={?condition}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_stock">
+            <Value>={?show_stock}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@hide_worn">
+            <Value>={?hide_worn}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -984,21 +1050,21 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YfS/r4j6*VRkX4Nw;</ConnectString>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YX4dmWuM4UcPOk</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>2023-10-01</Value>
+          <Value>2023-12-01</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1022,7 +1088,7 @@ ORDER BY
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>1,10,11,12,13,14,15</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1048,7 +1114,7 @@ ORDER BY
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>True</Value>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1060,7 +1126,7 @@ ORDER BY
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>False</Value>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
@@ -1072,7 +1138,31 @@ ORDER BY
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
-          <Value>TRUE</Value>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hide_worn">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

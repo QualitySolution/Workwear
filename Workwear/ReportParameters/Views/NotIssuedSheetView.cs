@@ -23,12 +23,23 @@ namespace workwear.ReportParameters.Views
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
-			ycheckExcludeInVacation.Binding.AddBinding(viewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
-			ycheckCondition.Binding.AddBinding(viewModel, w => w.Condition, v => v.Active).InitializeFromSource();
+			ycheckExcludeInVacation.Binding.AddBinding(ViewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			
+			ycheckCondition.Binding.AddBinding(ViewModel, w => w.Condition, v => v.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			ylabelcheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
-			checkDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
-
+			
+			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
+			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
+			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ylabelDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.HideWorn, w => w.Active).InitializeFromSource();
+			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ylabelHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			
+			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
+				
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 		}

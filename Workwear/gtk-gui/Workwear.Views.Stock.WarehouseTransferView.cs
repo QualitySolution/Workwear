@@ -128,6 +128,7 @@ namespace Workwear.Views.Stock
 			this.datepicker.Date = new global::System.DateTime(0);
 			this.datepicker.IsEditable = true;
 			this.datepicker.AutoSeparation = true;
+			this.datepicker.HideButtonClearDate = false;
 			this.table2.Add(this.datepicker);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2[this.datepicker]));
 			w7.TopAttach = ((uint)(2));

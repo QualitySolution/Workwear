@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Manage;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using QS.Project.Domain;
+using Workwear.Domain.ClothingService;
 
 namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, 
@@ -61,6 +64,26 @@ namespace Workwear.Domain.Postomats {
 
 		#region Расчетные
 		public virtual string Title => $"{Type.GetEnumTitle()} постомата №{Id} от {CreateTime:d}";
+
+		#endregion
+
+		#region Рантайм онли
+		public virtual PostomatInfo Postomat { get; set; }
+		#endregion
+
+		#region Строки документа
+		public virtual void AddItem(ServiceClaim claim, CellLocation location, UserBase user) {
+			var newItem = new PostomatDocumentItem {
+				Document = this,
+				Nomenclature = claim.Barcode.Nomenclature,
+				Barcode = claim.Barcode,
+				ServiceClaim = claim,
+				Delta = 1,
+				Location = location,
+			};
+			Items.Add(newItem);
+			claim.ChangeState(ClaimState.InTransit, TerminalId, user, $"Перемещение в постомат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
+		}
 
 		#endregion
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
