@@ -159,6 +159,7 @@ ENGINE = InnoDB;
 CREATE TABLE `postomat_document_items` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `document_id` int(10) unsigned NOT NULL,
+   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
    `nomenclature_id` int(10) unsigned NOT NULL,
    `barcode_id` int(10) unsigned DEFAULT NULL,
    `claim_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -168,6 +169,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_cell` int(11) unsigned NOT NULL,
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
+   KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
    KEY `fk_barcode_id` (`barcode_id`),
    KEY `fk_claim_id` (`claim_id`),
