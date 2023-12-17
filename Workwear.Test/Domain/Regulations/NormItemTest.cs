@@ -53,7 +53,7 @@ namespace Workwear.Test.Domain.Regulations
 
 			var date = item.CalculateExpireDate(startdate, wearPercent);
 
-			return date;
+			return date.Value.Date;
 		}
 	}
 }
