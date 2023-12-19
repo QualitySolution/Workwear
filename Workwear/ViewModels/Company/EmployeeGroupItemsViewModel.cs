@@ -26,7 +26,7 @@ namespace Workwear.ViewModels.Company {
 		private readonly EmployeeGroupViewModel employeeGroupViewModel;
 		private readonly INavigationManager navigation;
 		
-		public IObservableList<EmployeeGroupItem> Items => employeeGroupViewModel.Entity.Items;
+		public ObservableList<EmployeeGroupItem> Items => employeeGroupViewModel.Entity.Items;
 
 		#region Действия View
 
@@ -38,6 +38,12 @@ namespace Workwear.ViewModels.Company {
 		void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var selectedIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id);
 			employeeGroupViewModel.Entity.AddEmployees(employeeGroupViewModel.UoW.GetById<EmployeeCard>(selectedIds));
+			
+			Items.Sort(Comparison);
+		}
+		
+		private int Comparison(EmployeeGroupItem x, EmployeeGroupItem y) {
+			return int.Parse(x.CardNumberText).CompareTo(int.Parse(y.CardNumberText));
 		}
 		
 		public void Remove(EmployeeGroupItem[] items) {

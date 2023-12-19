@@ -36,9 +36,9 @@ namespace Workwear.Domain.Company {
 		#endregion
 		
 		#region Коллеции
-		private IObservableList<EmployeeGroupItem> items = new ObservableList<EmployeeGroupItem>();
+		private ObservableList<EmployeeGroupItem> items = new ObservableList<EmployeeGroupItem>();
 		[Display (Name = "Члены группы")]
-		public virtual IObservableList<EmployeeGroupItem> Items {
+		public virtual ObservableList<EmployeeGroupItem> Items {
 			get => items;
 			set => SetField (ref items, value);
 		}
