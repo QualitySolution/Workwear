@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using QS.Cloud.Client;
 using QS.Cloud.Postomat.Manage;
 
@@ -12,6 +13,12 @@ namespace QS.Cloud.Postomat.Client {
 			var client = new PostomatManager.PostomatManagerClient(Channel);
 			var request = new GetPostomatListRequest();
 			return client.GetPostomatList(request, Headers).Postomats;
+		}
+		
+		public IList<FullnessInfo> GetFullness(CancellationToken token) {
+			var client = new PostomatManager.PostomatManagerClient(Channel);
+			var request = new GetFullnessRequest();
+			return client.GetFullness(request, Headers, cancellationToken: token).Fullness;
 		}
 		
 		public GetPostomatResponse GetPostomat(uint id) {

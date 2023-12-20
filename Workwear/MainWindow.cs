@@ -241,6 +241,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
@@ -869,5 +870,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionProvisionActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ProvisionReportViewModel));
+	}
+
+	protected void OnActionFullnessPostomatsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<FullnessJournalViewModel>(null);
 	}
 }

@@ -6321,6 +6321,12 @@
         <property name="ShortLabel" translatable="yes">Обеспеченность сотрудников</property>
         <signal name="Activated" handler="OnActionProvisionActivated" />
       </action>
+      <action id="ActionFullnessPostomats">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Заполненность постоматов</property>
+        <property name="ShortLabel" translatable="yes">Заполненность постоматов</property>
+        <signal name="Activated" handler="OnActionFullnessPostomatsActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6382,6 +6388,8 @@
                 <node type="Menuitem" action="ActionMenuNotification" />
                 <node type="Menuitem" action="ActionMenuClaims" />
                 <node type="Menuitem" action="ActionMenuRatings" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionFullnessPostomats" />
                 <node type="Menuitem" action="ActionPostomatDocs" />
               </node>
               <node type="Menu" action="Action39">
