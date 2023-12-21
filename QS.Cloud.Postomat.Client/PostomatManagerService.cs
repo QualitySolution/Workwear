@@ -9,9 +9,10 @@ namespace QS.Cloud.Postomat.Client {
 			: base(sessionInfoProvider, "postomat.cloud.qsolution.ru", 4204) { }
 		
 		#region Запросы
-		public IList<PostomatInfo> GetPostomatList() {
+		public IList<PostomatInfo> GetPostomatList(PostomatListType listType) {
 			var client = new PostomatManager.PostomatManagerClient(Channel);
 			var request = new GetPostomatListRequest();
+			request.ListType = listType;
 			return client.GetPostomatList(request, Headers).Postomats;
 		}
 		

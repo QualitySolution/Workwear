@@ -34,7 +34,7 @@ namespace Workwear.ViewModels.Postomats {
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-			Postomats = postomatService.GetPostomatList();
+			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 			if(Entity.TerminalId > 0)
 				AllCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
 			

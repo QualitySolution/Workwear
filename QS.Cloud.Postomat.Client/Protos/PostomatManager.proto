@@ -1,4 +1,4 @@
-﻿syntax = "proto3";
+syntax = "proto3";
 
 package QS.Cloud.Postomat.Manage;
 
@@ -10,6 +10,13 @@ service PostomatManager {
 
 //GetPostomatList
 message GetPostomatListRequest {
+	PostomatListType list_type = 1;
+}
+
+enum PostomatListType{
+	POSTOMAT_LIST_TYPE_ALL = 0;
+	POSTOMAT_LIST_TYPE_ASO = 1;
+	POSTOMAT_LIST_TYPE_LAUNDRY = 2;
 }
 
 message GetPostomatListResponse {
