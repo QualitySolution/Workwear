@@ -63,9 +63,8 @@ namespace Workwear.Views.Postomats {
 			comboPostomat.Sensitive = 
 				buttonAdd.Sensitive = 
 					comboTypeDoc.Sensitive = 
-						ytextComment.Sensitive = 
-							treeItems.Sensitive = 
-								ydateDoc.Sensitive = ViewModel.CanEdit;
+						treeItems.Sensitive = 
+							ydateDoc.Sensitive = ViewModel.CanEdit;
 		}
 	}
 }
