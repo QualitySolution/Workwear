@@ -44,7 +44,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("ИД").AddTextRenderer(p => p.ProtectionTools.Id.ToString())
 				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("Количество")
-				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, 65535, 1, 10, 10))
+				.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, int.MaxValue, 1, 10, 10))
 				.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 				.AddColumn("Период")
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
