@@ -114,7 +114,10 @@ namespace Workwear.ViewModels.Stock
 			var items = new List<TransferItem>();
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				var position = node.GetStockPosition(UoW);
-				items.Add(Entity.AddItem(position, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount)));
+				var item = Entity.AddItem(position,
+					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
+				if (item != null)
+					items.Add(item);
 			}
 			stockBalanceModel.AddNomenclatures(items.Select(x => x.Nomenclature));
 			foreach(var item in items) {
