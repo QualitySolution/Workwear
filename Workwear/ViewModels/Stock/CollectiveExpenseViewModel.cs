@@ -148,7 +148,7 @@ namespace Workwear.ViewModels.Stock
 			UoW.Commit();
 			performance.CheckPoint("Обновление карточек сотрудников...");
 			if(changedOperations.Any()) {
-				//progressCreator.UpdateMax(6 + changedOperations.Length + 1);
+				progressCreator.UpdateMax(6 + changedOperations.Length + 1);
 				issueModel.UpdateNextIssue(changedOperations, progressCreator);
 			}
 			
