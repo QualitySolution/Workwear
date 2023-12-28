@@ -102,7 +102,7 @@ namespace Workwear.ViewModels.Operations
 					operation.NormItem = EmployeeCardItem.ActiveNormItem;
 			
 			SelectOperation = selectOperation != null 
-				? Operations.First(x => x.Id == selectOperation.Id) 
+				? Operations.FirstOrDefault(x => x.Id == selectOperation.Id) 
 				: Operations.FirstOrDefault();
 		}
 
