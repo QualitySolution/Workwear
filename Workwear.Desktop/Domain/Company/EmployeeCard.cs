@@ -265,12 +265,11 @@ namespace Workwear.Domain.Company
 		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
-			if (!string.IsNullOrWhiteSpace(str)) {
-				var ti = CultureInfo.CurrentCulture.TextInfo;
-				return ti.ToTitleCase(str.Trim().ToLower());
-			}
-
-			return string.Empty;
+			if (string.IsNullOrWhiteSpace(str))
+				return null;
+			
+			var ti = CultureInfo.CurrentCulture.TextInfo;
+			return ti.ToTitleCase(str.Trim().ToLower());
 		}
 
 		#endregion
