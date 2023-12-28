@@ -22,6 +22,7 @@ namespace workwear.Journal.ViewModels.Company {
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			UpdateOnChanges(typeof(EmployeeGroup), typeof(EmployeeGroupItem));
 		}
 
 		protected override IQueryOver<EmployeeGroup> ItemsQuery(IUnitOfWork uow) {
