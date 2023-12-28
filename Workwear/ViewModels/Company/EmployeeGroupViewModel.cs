@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Linq;
+using Autofac;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -17,6 +18,11 @@ namespace Workwear.ViewModels.Company {
 			UnitOfWorkProvider unitOfWorkProvider = null
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
+			if(!UoW.IsNew) {
+				var employeeIds = Entity.Items.Select(x => x.Employee.Id);
+				UoW.GetById<EmployeeCard>(employeeIds);
+			}
+			
 			var thisViewModel = new TypedParameter(typeof(EmployeeGroupViewModel), this);
 			ItemsViewModel = autofacScope.Resolve<EmployeeGroupItemsViewModel>(thisViewModel);
 		}
