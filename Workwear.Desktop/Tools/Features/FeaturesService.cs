@@ -151,6 +151,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.Inspection:
 				case WorkwearFeature.LoadExcel:
+				case WorkwearFeature.ExportExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
@@ -175,6 +176,8 @@ namespace Workwear.Tools.Features
 		Inspection,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
+		[Display(Name = "Выгрузка в Excel")]
+		ExportExcel,
 		[Display(Name = "Групповая обработка")]
 		BatchProcessing,
 		[Display(Name = "История изменений")]
