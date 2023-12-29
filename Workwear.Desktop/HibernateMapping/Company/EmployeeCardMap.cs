@@ -9,12 +9,13 @@ namespace Workwear.HibernateMapping.Company
 		{
 			Table("wear_cards");
 
-			if (Workwear.HibernateMapping.MappingParams.UseIdsForTest)
+			if (MappingParams.UseIdsForTest)
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
-			else
+			else {
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
-			
-			Version(x => x.LastUpdate).Column("last_update").Generated.Always();
+				//Версионирование используем только в рабочей версии. В тестах вызывает ошибки.
+				Version(x => x.LastUpdate).Column("last_update").Generated.Always();
+			}
 
 			Map(x => x.CardNumber).Column("card_number");
 			Map(x => x.PersonnelNumber).Column("personnel_number");
