@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using Workwear.Domain.Company;
 
 namespace Workwear.HibernateMapping.Company
@@ -14,8 +14,7 @@ namespace Workwear.HibernateMapping.Company
 			else
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
 			
-			//OptimisticLock.Version();
-			//Version(x => x.LastUpdate).Column("last_update");
+			Version(x => x.LastUpdate).Column("last_update").Generated.Always();
 
 			Map(x => x.CardNumber).Column("card_number");
 			Map(x => x.PersonnelNumber).Column("personnel_number");

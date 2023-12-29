@@ -34,9 +34,9 @@ namespace Workwear.ViewModels.Postomats {
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-			Postomats = postomatService.GetPostomatList();
+			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 			if(Entity.TerminalId > 0)
-				AllCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
+				allCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<PostomatDocument>(this, Entity, UoW, navigation, autofacScope);
 	
@@ -57,13 +57,13 @@ namespace Workwear.ViewModels.Postomats {
 				if(SetField(ref postomat, value)) {
 					Entity.TerminalId = value?.Id ?? 0;
 					Entity.Postomat = postomat;
-					AllCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
+					allCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
 					OnPropertyChanged(nameof(CanAddItem));
 				}
 			}
 		}
 
-		private IList<CellInfo> AllCells = new List<CellInfo>();
+		private IList<CellInfo> allCells = new List<CellInfo>();
 
 		public IEnumerable<CellLocation> AvailableCellsFor(PostomatDocumentItem item) {
 			if(!item.Location.IsEmpty)
@@ -76,7 +76,9 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanChangePostomat => Entity.Items.Count == 0;
 		
 		public IEnumerable<CellLocation> AvailableCells() {
-			foreach(var cell in AllCells) {
+			foreach(var cell in allCells) {
+				if(!cell.IsEmpty && cell.DocumentId != Entity.Id)
+					continue; //Пропускаем занятые другими документами ячейки.
 				if(!Entity.Items.Any(x => x.LocationStorage == cell.Location.Storage 
 				                          && x.LocationShelf == cell.Location.Shelf 
 				                          && x.LocationCell == cell.Location.Cell))

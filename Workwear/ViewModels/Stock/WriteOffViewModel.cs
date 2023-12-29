@@ -50,6 +50,7 @@ namespace Workwear.ViewModels.Stock
             INavigationManager navigation,
             IInteractiveService interactive,
             ILifetimeScope autofacScope,
+            IUserService userService,
             SizeService sizeService,
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
@@ -65,6 +66,10 @@ namespace Workwear.ViewModels.Stock
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
+            
+            if (UoW.IsNew) {
+	            Entity.CreatedbyUser = userService.GetCurrentUser();
+            }
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
             else if (subdivision != null)

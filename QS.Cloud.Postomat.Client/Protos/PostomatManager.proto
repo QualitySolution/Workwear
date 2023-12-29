@@ -5,10 +5,18 @@ package QS.Cloud.Postomat.Manage;
 service PostomatManager {
 	rpc GetPostomatList(GetPostomatListRequest) returns (GetPostomatListResponse) {}
 	rpc GetPostomat(GetPostomatRequest) returns (GetPostomatResponse) {}
+	rpc GetFullness(GetFullnessRequest) returns (GetFullnessResponse) {}
 }
 
 //GetPostomatList
 message GetPostomatListRequest {
+	PostomatListType list_type = 1;
+}
+
+enum PostomatListType{
+	POSTOMAT_LIST_TYPE_ALL = 0;
+	POSTOMAT_LIST_TYPE_ASO = 1;
+	POSTOMAT_LIST_TYPE_LAUNDRY = 2;
 }
 
 message GetPostomatListResponse {
@@ -36,6 +44,9 @@ message GetPostomatResponse {
 
 message CellInfo {
 	CellLocation location = 1;
+	bool IsEmpty = 2;
+	//Номер документа который занимает ячейку
+	uint32 document_id = 3;
 }
 
 message CellLocation {
@@ -43,3 +54,26 @@ message CellLocation {
 	uint32 shelf = 2;
 	uint32 cell = 3;
 }
+
+//GetFullness
+message GetFullnessRequest {
+}
+
+message GetFullnessResponse {
+	repeated FullnessInfo fullness = 1;
+}
+
+message FullnessInfo{
+	uint32 id = 1;
+	string name = 2;
+	string location = 3;
+	PostomatType type = 4;
+	uint32 filling = 5;
+	uint32 capacity = 6;
+}
+
+enum PostomatType{
+	POSTOMAT_TYPE_ASO = 0;
+	POSTOMAT_TYPE_LAUNDRY = 1;
+}
+

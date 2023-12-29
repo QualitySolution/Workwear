@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
 using workwear.Journal.ViewModels.ClothingService;
@@ -201,6 +202,18 @@ namespace workwear.Journal
 						.AddReadOnlyTextRenderer(x => x.TerminalId.ToString()).XAlign(0.5f)
 						.AddTextRenderer(x => jvm.GetTerminalName(x.TerminalId))
 					.AddColumn("Размещение постомата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
+					.Finish()
+				);
+			
+			TreeViewColumnsConfigFactory.Register<FullnessJournalViewModel>(
+				() => FluentColumnsConfig<FullnessInfo>.Create()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString())
+					.AddColumn("Название").AddReadOnlyTextRenderer(n => n.Name)
+					.AddColumn("Размещение").AddReadOnlyTextRenderer(n => n.Location)
+					.AddColumn("Тип").AddReadOnlyTextRenderer(n => n.Type.ToString())
+					.AddColumn("Заполненность")
+						.AddProgressRenderer(n => n.Capacity == 0 ? 0 : (int)(100f * n.Filling / n.Capacity))
+						.Text(x => $"{x.Filling} из {x.Capacity}")
 					.Finish()
 				);
 			#endregion

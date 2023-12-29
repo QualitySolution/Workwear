@@ -102,7 +102,7 @@ namespace Workwear.ViewModels.Operations
 					operation.NormItem = EmployeeCardItem.ActiveNormItem;
 			
 			SelectOperation = selectOperation != null 
-				? Operations.First(x => x.Id == selectOperation.Id) 
+				? Operations.FirstOrDefault(x => x.Id == selectOperation.Id) 
 				: Operations.FirstOrDefault();
 		}
 
@@ -145,19 +145,21 @@ namespace Workwear.ViewModels.Operations
 					OnPropertyChanged(nameof(Issued));
 					OnPropertyChanged(nameof(WearPercent));
 					OnPropertyChanged(nameof(IssueDate));
+					OnPropertyChanged(nameof(AutoWriteoffDate));
 				}
 			}
 		}
 		
 		public EntityEntryViewModel<Nomenclature> NomenclatureEntryViewModel { get; private set; } 
 		#endregion
-		#region Проброс свойст операции
+		#region Проброс свойств операции
 		
 		private DateTime issueDate;
 		public DateTime IssueDate {
 			get => issueDate;
 			set {
-				if(SetField(ref issueDate, value) && SelectOperation.StartOfUse != value) {
+				if(SetField(ref issueDate, value) && SelectOperation.OperationTime != value) {
+					SelectOperation.OperationTime = value;
 					RecalculateDatesOfSelectedOperation();
 				}
 			}

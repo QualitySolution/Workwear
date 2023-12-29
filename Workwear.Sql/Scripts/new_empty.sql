@@ -728,7 +728,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
-  `amount` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `amount` INT UNSIGNED NOT NULL DEFAULT 1,
   `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1647,7 +1647,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
-  `amount` SMALLINT UNSIGNED NOT NULL,
+  `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2220,7 +2220,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.13');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.14');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

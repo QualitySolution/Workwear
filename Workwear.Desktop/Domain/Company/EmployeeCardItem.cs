@@ -232,10 +232,8 @@ namespace Workwear.Domain.Company
 
 			var employeeSize = EmployeeCard.Sizes.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType)?.Size;
 
-			if (employeeSize is null && stockPosition.WearSize != null) {
-				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
+			if (employeeSize is null && stockPosition.WearSize != null) 
 				return false;
-			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
 				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes
@@ -251,10 +249,8 @@ namespace Workwear.Domain.Company
 			
 			var employeeHeight = employeeCard.Sizes
 				.FirstOrDefault(x => x.SizeType == stockPosition.Height.SizeType)?.Size;
-			if (employeeHeight is null) {
-				logger.Warn($"В карточке сотрудника не указан {stockPosition.Height.Name}");
+			if (employeeHeight is null)
 				return false;
-			}
 
 			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes
 					.Union(stockPosition.Height.SizesWhereIsThisSizeAsSuitable)
