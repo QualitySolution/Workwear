@@ -728,7 +728,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
-  `amount` INT UNSIGNED NOT NULL DEFAULT 1,
+  `amount` INT NOT NULL DEFAULT 1,
   `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
