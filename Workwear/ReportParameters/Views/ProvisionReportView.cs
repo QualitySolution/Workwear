@@ -15,6 +15,15 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.ShowSize, w => w.Active).InitializeFromSource();
 			ycheckbuttonGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupBySubdivision, w => w.Active).InitializeFromSource();
+			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
+			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
+			ylabelShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
+			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Active).InitializeFromSource();
+			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			ylabelShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			
+			comboReportType.ItemsEnum = typeof(ProvisionReportViewModel.ProvisionReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 			
 			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 		}

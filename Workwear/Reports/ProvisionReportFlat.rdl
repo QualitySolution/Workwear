@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author></Author>
+  <PageHeight>11in</PageHeight>
+  <PageWidth>30in</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT *,
+       ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
+FROM (SELECT
+          IF(@group_by_subdivision, wear_cards.object_id, NULL) AS subdivision_id,
+          IF(@group_by_subdivision, objects.name, NULL) AS subdivision_name,
+          protection_tools.id AS 'protection_tools_id',
+          protection_tools.name AS 'protection_tools_name',
+          if(@show_sex,
+             IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
+             null)
+          AS 'employee_sex',
+          if(@show_stock, sizeAlias.name, null) as size,
+          if(@show_size, heightAlias.name, null) as height,
+          SUM(norms_item.amount) AS 'need',
+          SUM(
+                  LEAST(
+                      norms_item.amount,
+                      IFNULL(
+                              (SELECT
+                                   SUM(
+                                       o.issued - IFNULL(
+                                           (SELECT SUM(ret.returned)
+                                            FROM operation_issued_by_employee ret
+                                            WHERE ret.issued_operation_id = o.id),
+                                           0)
+                                   )
+                              FROM operation_issued_by_employee o
+                              WHERE o.employee_id = wear_cards_item.wear_card_id
+                                AND o.protection_tools_id = wear_cards_item.protection_tools_id
+                                AND o.auto_writeoff_date &gt;= @report_date),
+                              0)
+                      )
+              ) as balance,
+          IF(@show_stock,
+              IFNULL(
+                   (SELECT(
+                      SUM(
+                         CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                                END
+                         ) - SUM(
+                             CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                                END
+                         ))
+                   FROM
+                       operation_warehouse
+                   WHERE  
+                           CONVERT(operation_warehouse.operation_time, DATE) &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+                       SELECT
+                           protection_tools_nomenclature.nomenclature_id
+                       FROM
+                           protection_tools_nomenclature
+                               JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+                       WHERE 
+                           (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+                         AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+                   )
+                     AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+                     AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+                  
+                    )    
+                , 0)
+              ,null) AS in_stock,
+          IF(@show_employees,
+          GROUP_CONCAT( CONCAT_WS('',
+              CONCAT(wear_cards.last_name, ' '),
+              IF(wear_cards.first_name = '',
+                 NULL,
+                 CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+              IF(wear_cards.patronymic_name = '',
+                 NULL,
+                 CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 1000)
+          ,null) AS employees
+      FROM wear_cards_item
+               JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+               LEFT JOIN objects ON wear_cards.object_id = objects.id
+               JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+               LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+               LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+               LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+               LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+               LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+               LEFT JOIN wear_cards_sizes AS employeeSizeAlias
+                         ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND
+                             employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+               LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+               LEFT JOIN wear_cards_sizes AS employeeHeightAlias
+                         ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
+                             employeeHeightAlias.size_type_id = heightTypeAlias.id)
+               LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+               JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+      WHERE
+          wear_cards.dismiss_date IS NULL
+        #AND protection_tools.id IN (@protection_tools_ids)
+        #AND ((@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
+        AND (NOT @exclude_in_vacation
+          OR (wear_cards_vacations.begin_date IS NULL
+              OR (CONVERT(@report_date, DATE) BETWEEN
+                  wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
+                  )
+                 )
+          )
+      GROUP BY
+          wear_cards_item.protection_tools_id,
+          IF(@group_by_subdivision, subdivision_id, NULL), 
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, employeeSizeAlias.size_id, NULL),
+          IF(@show_size, employeeHeightAlias.size_id, NULL)
+      ORDER BY
+          IF(@group_by_subdivision, subdivision_name, NULL),
+          protection_tools.name,
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, size, NULL),
+          IF(@show_size, height, NULL)
+     ) as tabel</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="report_date">
+            <Value>=Parameters!report_date</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_sex">
+            <Value>=Parameters!show_sex</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_size">
+            <Value>=Parameters!show_size</Value>
+          </QueryParameter>
+          <QueryParameter Name="subdivision_ids">
+            <Value>=Parameters!subdivision_ids</Value>
+          </QueryParameter>
+          <QueryParameter Name="protection_tools_ids">
+            <Value>=Parameters!protection_tools_ids</Value>
+          </QueryParameter>
+          <QueryParameter Name="group_by_subdivision">
+            <Value>=Parameters!group_by_subdivision</Value>
+          </QueryParameter>
+          <QueryParameter Name="exclude_in_vacation">
+            <Value>=Parameters!exclude_in_vacation</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_subdivision">
+            <Value>=Parameters!without_subdivision</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_stock">
+            <Value>=Parameters!show_stock</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_employees">
+            <Value>=Parameters!show_employees</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="subdivision_name">
+          <DataField>subdivision_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="protection_tools_id">
+          <DataField>protection_tools_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="employee_sex">
+          <DataField>employee_sex</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="size">
+          <DataField>size</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="height">
+          <DataField>height</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="need">
+          <DataField>need</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="balance">
+          <DataField>balance</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="in_stock">
+          <DataField>in_stock</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="employees">
+          <DataField>employees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="provision_percent">
+          <DataField>provision_percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <ReportItems>
+      <Table Name="Table2">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>390.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>36.3pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_sex}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>48.9pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_size}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>47.9pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_size}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>309.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?group_by_subdivision}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>1in</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>59.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>94.5pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>1in</Width>
+            <Visibility>
+              <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>991.5pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_employees}</Hidden>
+            </Visibility>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>16.0pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox40">
+                      <Value>= "                                   Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+                      <Style>
+                        <TextAlign>Left</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>12pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>9</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>12pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>Номеклатура нормы</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox24">
+                      <Value>Пол</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox26">
+                      <Value>Размер</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox27">
+                      <Value>Рост</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>Подразделение</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value>Потребность</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>Числится</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value>Обеспеченность</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox48">
+                      <Value>На складе</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox50">
+                      <Value> Сотрудники</Value>
+                      <Style>
+                        <TextAlign>Left</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>16.9pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox32">
+                      <Value>=Fields!protection_tools_name.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
+                      <Value>=Fields!employee_sex.Value</Value>
+                      <CanGrow>false</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>=Fields!size.Value</Value>
+                      <CanGrow>false</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox35">
+                      <Value>=Fields!height.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox36">
+                      <Value>=Fields!subdivision_name.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox37">
+                      <Value>=Fields!need.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox38">
+                      <Value>=Fields!balance.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox39">
+                      <Value>=Fields!provision_percent.Value + "%"</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign >Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox49">
+                      <Value>=Fields!in_stock.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox51">
+                      <Value>=Fields!employees.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>0.0pt</Left>
+        <Top>0.0pt</Top>
+      </Table>
+    </ReportItems>
+    <Height>50.5pt</Height>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>15.5pt</Height>
+    <ReportItems>
+      <Textbox Name="Textbox16">
+        <Top>1pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Style>
+          <FontSize>10pt</FontSize>
+          <FontWeight>Normal</FontWeight>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=VMvwqDdWZBQCbm</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="report_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2023-11-27</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_sex">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_size">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>22</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_employees">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QS.Report.ViewModels;
 
 namespace Workwear.ReportParameters.ViewModels {
@@ -12,8 +15,6 @@ namespace Workwear.ReportParameters.ViewModels {
 			IUnitOfWorkFactory uowFactory)
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
-			
-			Identifier = "ProvisionReport";
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
@@ -42,12 +43,20 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
 				new [] {-1} :
 				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+			{"show_employees", ShowEmployees },
+			{"show_stock", ShowStock },
 		};
 
 		#region Параметры
 		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
 
+		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
+		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
 
@@ -84,6 +93,35 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => groupBySubdivision;
 			set => SetField(ref groupBySubdivision, value);
 		}
+		private ProvisionReportType reportType;
+		public virtual ProvisionReportType ReportType {
+			get => reportType;
+			set {
+				SetField(ref reportType, value); 
+				OnPropertyChanged(nameof(VisibleShowStock));
+				OnPropertyChanged(nameof(VisibleShowEmployee));
+			}
+		}
+
+		private bool showStock;
+		public virtual bool ShowStock {
+			get => showStock;
+			set => SetField(ref showStock, value);
+		}
+		private bool showEmployees;
+		public virtual bool ShowEmployees {
+			get => showEmployees;
+			set => SetField(ref showEmployees, value);
+		}
 		#endregion
+		
+		public enum ProvisionReportType {
+			[ReportIdentifier("ProvisionReport")]
+			[Display(Name = "Форматировано")]
+			Common,
+			[ReportIdentifier("ProvisionReportFlat")]
+			[Display(Name = "Только данные")]
+			Flat
+		}
 	}
 }
