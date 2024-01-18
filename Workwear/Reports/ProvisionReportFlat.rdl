@@ -287,7 +287,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox40">
-                      <Value>= "                                   Отчёт по обеспечености сотрудников на " + Format({?report_date}, "dd.MM.yyyy")</Value>
+                      <Value>= "                                   Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -612,6 +612,7 @@ FROM (SELECT
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
