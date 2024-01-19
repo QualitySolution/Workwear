@@ -203,6 +203,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionFullnessPostomats;
 
+	private global::Gtk.Action ActionBarcodeCompletenessReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -546,6 +548,9 @@ public partial class MainWindow
 		this.ActionFullnessPostomats = new global::Gtk.Action("ActionFullnessPostomats", global::Mono.Unix.Catalog.GetString("Заполненность постоматов"), null, null);
 		this.ActionFullnessPostomats.ShortLabel = global::Mono.Unix.Catalog.GetString("Заполненность постоматов");
 		w1.Add(this.ActionFullnessPostomats, null);
+		this.ActionBarcodeCompletenessReport = new global::Gtk.Action("ActionBarcodeCompletenessReport", global::Mono.Unix.Catalog.GetString("Покрытие маркировки"), null, null);
+		this.ActionBarcodeCompletenessReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Покрытие маркировки");
+		w1.Add(this.ActionBarcodeCompletenessReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -553,7 +558,6 @@ public partial class MainWindow
 		this.Icon = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.logo.ico");
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox();
-		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.UIManager.AddUiFromString("<ui><menubar name=\'menubar1\'><menu name=\'ActionBase\' action=\'ActionBase\'><menuite" +
@@ -615,20 +619,22 @@ public partial class MainWindow
 				"ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><menui" +
 				"tem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><me" +
 				"nuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/><menuitem " +
-				"name=\'ActionProvision\' action=\'ActionProvision\'/></menu><menu name=\'ActionHelp\' " +
-				"action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem n" +
-				"ame=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'Ac" +
-				"tionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'Ac" +
-				"tionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCu" +
-				"rrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></men" +
-				"u><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem nam" +
-				"e=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'" +
-				"ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'Act" +
-				"ionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdno" +
-				"klasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name" +
-				"=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'Acti" +
-				"onPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separat" +
-				"or/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"name=\'ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCo" +
+				"mpletenessReport\' action=\'ActionBarcodeCompletenessReport\'/></menu><menu name=\'A" +
+				"ctionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/>" +
+				"<menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuit" +
+				"em name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\'" +
+				" action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'Acti" +
+				"onChannelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelSta" +
+				"ble\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><m" +
+				"enuitem name=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReforma" +
+				"l\' action=\'ActionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuite" +
+				"m name=\'ActionVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=" +
+				"\'ActionOdnoklasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><me" +
+				"nuitem name=\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem" +
+				" name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN" +
+				"\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menub" +
+				"ar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -842,5 +848,6 @@ public partial class MainWindow
 		this.ActionClothingService.Activated += new global::System.EventHandler(this.OnActionClothingServiceActivated);
 		this.ActionProvision.Activated += new global::System.EventHandler(this.OnActionProvisionActivated);
 		this.ActionFullnessPostomats.Activated += new global::System.EventHandler(this.OnActionFullnessPostomatsActivated);
+		this.ActionBarcodeCompletenessReport.Activated += new global::System.EventHandler(this.OnActionBarcodeCompletenessReportActivated);
 	}
 }
