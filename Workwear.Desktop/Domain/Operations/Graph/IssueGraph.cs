@@ -73,9 +73,7 @@ namespace Workwear.Domain.Operations.Graph
 					resetDate = date;
 				var activeItems = graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date &&
 				                                        (x.IssueOperation.AutoWriteoffDate == null || x.IssueOperation.AutoWriteoffDate >= date) &&
-				                                        (x.IssueOperation.OperationTime.Date > resetDate ||
-				                                         (x.IssueOperation.OperationTime.Date == resetDate &&
-				                                          x.IssueOperation.OverrideBefore)));
+				                                        (x.IssueOperation.OperationTime.Date >= resetDate));
 				foreach (var item in activeItems)
 				{
 					if (item.AmountAtBeginOfDay(date) <= 0)
