@@ -219,8 +219,10 @@ namespace Workwear.Models.Operations {
 			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
 			if(notSavedOperations != null)
 				operations.AddRange(notSavedOperations);
+			var employeeGroups = operations.GroupBy(x => x.Employee.Id).ToDictionary(x => x.Key, x => x.ToList());
 			foreach(var employee in employees) {
-				employee.FillWearReceivedInfo(operations.Where(x => x.Employee.IsSame(employee)).ToList());
+				var ops = employeeGroups.ContainsKey(employee.Id) ? employeeGroups[employee.Id] : new List<EmployeeIssueOperation>();
+				employee.FillWearReceivedInfo(ops);
 			}
 		}
 		
