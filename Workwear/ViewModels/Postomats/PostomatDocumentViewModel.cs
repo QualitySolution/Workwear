@@ -35,8 +35,16 @@ namespace Workwear.ViewModels.Postomats {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
-			if(Entity.TerminalId > 0)
+			if(Entity.TerminalId > 0) {
 				allCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
+				foreach(var item in Entity.Items) {
+					var cell = allCells.FirstOrDefault(x => x.Location.Storage == item.LocationStorage
+					                                       && x.Location.Shelf == item.LocationShelf
+					                                       && x.Location.Cell == item.LocationCell);
+					if(cell != null)
+						item.Location = new CellLocation(cell.CellTitle, cell.Location);
+				}
+			}
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<PostomatDocument>(this, Entity, UoW, navigation, autofacScope);
 	
@@ -67,7 +75,7 @@ namespace Workwear.ViewModels.Postomats {
 
 		public IEnumerable<CellLocation> AvailableCellsFor(PostomatDocumentItem item) {
 			if(!item.Location.IsEmpty)
-				yield return new CellLocation(0,0, 0);
+				yield return new CellLocation(null, 0, 0, 0);
 			yield return item.Location;
 			foreach(var cell in AvailableCells()) 
 				yield return cell;
@@ -82,7 +90,7 @@ namespace Workwear.ViewModels.Postomats {
 				if(!Entity.Items.Any(x => x.LocationStorage == cell.Location.Storage 
 				                          && x.LocationShelf == cell.Location.Shelf 
 				                          && x.LocationCell == cell.Location.Cell))
-					yield return new CellLocation(cell.Location);
+					yield return new CellLocation(cell.CellTitle, cell.Location);
 			}
 		}
 		#endregion

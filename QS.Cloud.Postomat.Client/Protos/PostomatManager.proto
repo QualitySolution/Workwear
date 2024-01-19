@@ -44,9 +44,10 @@ message GetPostomatResponse {
 
 message CellInfo {
 	CellLocation location = 1;
-	bool IsEmpty = 2;
+	bool is_empty = 2;
 	//Номер документа который занимает ячейку
 	uint32 document_id = 3;
+	string cell_title = 4;
 }
 
 message CellLocation {

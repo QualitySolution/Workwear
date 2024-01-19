@@ -69,7 +69,7 @@ namespace Workwear.Domain.Postomats {
 
 		private CellLocation? location;
 		public virtual CellLocation Location {
-			get => location ?? new CellLocation(LocationStorage, LocationShelf, LocationCell);
+			get => location ?? new CellLocation("???", LocationStorage, LocationShelf, LocationCell);
 			set {
 				location = value;
 				LocationStorage = location?.Storage ?? 0;
@@ -89,21 +89,24 @@ namespace Workwear.Domain.Postomats {
 		public readonly uint Storage;
 		public readonly uint Shelf;
 		public readonly uint Cell;
+		public readonly string Number;
 
-		public CellLocation(uint storage, uint shelf, uint cell) {
+		public CellLocation(string number, uint storage, uint shelf, uint cell) {
+			Number = number;
 			Storage = storage;
 			Shelf = shelf;
 			Cell = cell;
 		}
 		
-		public CellLocation(QS.Cloud.Postomat.Manage.CellLocation location) {
+		public CellLocation(string number, QS.Cloud.Postomat.Manage.CellLocation location) {
+			Number = number;
 			Storage = location.Storage;
 			Shelf = location.Shelf;
 			Cell = location.Cell;
 		}
 
 		public bool IsEmpty => Storage == 0 && Shelf == 0 && Cell == 0;
-		public string Title => IsEmpty ? null : $"{Storage}-{Shelf}-{Cell}";
+		public string Title => IsEmpty ? null : $"{Number} ({Storage}-{Shelf}-{Cell})";
 		
 		public bool Equals(CellLocation other) {
 			return Storage == other.Storage && Shelf == other.Shelf && Cell == other.Cell;
