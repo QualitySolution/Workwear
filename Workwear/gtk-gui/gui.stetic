@@ -16116,7 +16116,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="notebookSteps">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">2</property>
+            <property name="CurrentPage">0</property>
             <property name="ShowBorder">False</property>
             <child>
               <widget class="Gtk.VBox" id="vbox2">
@@ -26867,7 +26867,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Export.FutureIssueExportView" design-size="388 300">
+  <widget class="Gtk.Bin" id="Workwear.Views.Export.FutureIssueExportView" design-size="404 208">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
