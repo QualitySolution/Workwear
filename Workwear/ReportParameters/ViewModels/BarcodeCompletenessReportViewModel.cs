@@ -18,6 +18,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceProtectionToolsViewModel.UnSelectAll();
 			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
@@ -55,7 +56,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => throw new InvalidOperationException();
 		}
 
-		public bool VisibleShowEmployee => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowEmployee => false; // ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSize => false; // ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSex => false; // ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleGroupBySubdivision => false; // ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleReportType => false; // Удалить из Вью
+		
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
 
@@ -115,12 +121,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		#endregion
 		
 		public enum BarcodeCompletenessType {
-			[ReportIdentifier("BarcodeCompleteness")]
+			[ReportIdentifier("BarcodeCompletenessReport")]
 			[Display(Name = "Форматировано")]
 			Common,
-			[ReportIdentifier("BarcodeCompletenessFlat")]
-			[Display(Name = "Только данные")]
-			Flat
+			//[ReportIdentifier("BarcodeCompletenessReportFlat")]
+			//[Display(Name = "Только данные")]
+			//Flat
 		}
 	}
 }
