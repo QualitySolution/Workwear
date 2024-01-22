@@ -451,10 +451,10 @@ namespace Workwear.ViewModels.Company
 			[Display(Name = "Оборотная сторона (Приказ №28н от 27.01.2010г.)")]
 			[ReportIdentifier("Employee.PersonalCardPage2")]
 			PersonalCardPage2,
-			[Display(Name = "Лицевая сторона (Приказ №776н от 29.10.2021г.)")]
+			[Display(Name = "Лицевая сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew1")]
 			PersonalCardPageNew1,
-			[Display(Name = "Оборотная сторона (Приказ №776н от 29.10.2021г.)")]
+			[Display(Name = "Оборотная сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew2")]
 			PersonalCardPageNew2,
 		}

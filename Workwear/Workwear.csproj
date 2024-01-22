@@ -822,6 +822,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Reports\ProvisionReportFlat.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <EmbeddedResource Include="icon\buttons\select-all.png" />
     <EmbeddedResource Include="icon\buttons\unselect-all.png" />
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
