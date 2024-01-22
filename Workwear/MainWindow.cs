@@ -224,6 +224,7 @@ public partial class MainWindow : Gtk.Window {
 	#region Workwear featrures
 	private void DisableFeatures() {
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
+		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
@@ -879,5 +880,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionFullnessPostomatsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<FullnessJournalViewModel>(null);
+	}
+
+	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
 	}
 }
