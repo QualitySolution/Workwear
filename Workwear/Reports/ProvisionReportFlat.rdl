@@ -231,7 +231,10 @@ FROM (SELECT
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>390.1pt</Width>
+            <Width>309.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?group_by_subdivision}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>36.3pt</Width>
@@ -252,10 +255,8 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>309.6pt</Width>
-            <Visibility>
-              <Hidden>=!{?group_by_subdivision}</Hidden>
-            </Visibility>
+            <Width>390.1pt</Width>
+            <Visibility></Visibility>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -335,7 +336,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>Номеклатура нормы</Value>
+                      <Value>Подразделение</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -399,7 +400,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Подразделение</Value>
+                      <Value>Номеклатура нормы</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -505,7 +506,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
-                      <Value>=Fields!protection_tools_name.Value</Value>
+                      <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", {subdivision_name})</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -563,7 +564,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox36">
-                      <Value>=Fields!subdivision_name.Value</Value>
+                      <Value>=Fields!protection_tools_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -612,7 +613,7 @@ FROM (SELECT
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
