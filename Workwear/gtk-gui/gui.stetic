@@ -27253,7 +27253,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelGroupBySubdivision">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Группировать по подразделениям</property>
+                <property name="LabelProp" translatable="yes">Детализировать по подразделениям</property>
               </widget>
               <packing>
                 <property name="TopAttach">4</property>
