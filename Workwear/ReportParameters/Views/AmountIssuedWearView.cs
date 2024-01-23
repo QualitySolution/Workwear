@@ -14,7 +14,7 @@ namespace workwear.ReportParameters.Views {
 			comboReportType.ItemsEnum = typeof(AmountIssuedWearReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 
-			ydateperiodpicker.Binding.AddSource(viewModel)
+			ydateperiodpicker.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
 				.InitializeFromSource();
@@ -26,27 +26,17 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
 				.InitializeFromSource();
 
-			checkBySubdivision.Binding.AddBinding(viewModel, v => v.BySubdivision, w => w.Active).InitializeFromSource();
+			checkBySubdivision.Binding.AddBinding(ViewModel, v => v.BySubdivision, w => w.Active).InitializeFromSource();
 			checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
 
-			ycheckAll.Binding.AddSource(viewModel)
-				.AddBinding(v => v.SelectAll, w => w.Active)
-				.InitializeFromSource();
-			
-			ytreeSubdivisions.CreateFluentColumnsConfig<SelectedSubdivision>()
-				.AddColumn("Показ").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Подразделение").AddTextRenderer(x => x.Name)
-				.Finish();
-			ytreeSubdivisions.ItemsDataSource = ViewModel.Subdivisions;
+			buttonPrintReport.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
-			buttonPrintReport.Binding.AddBinding(viewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
-
-			yentryMatch.Binding.AddBinding(viewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
-			yentryNoMatch.Binding.AddBinding(viewModel, v => v.NoMatchString, w => w.Text).InitializeFromSource();
+			yentryMatch.Binding.AddBinding(ViewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
+			yentryNoMatch.Binding.AddBinding(ViewModel, v => v.NoMatchString, w => w.Text).InitializeFromSource();
 			
 			ycheckChild.Binding
-				.AddSource(viewModel)
+				.AddSource(ViewModel)
 				.AddBinding(vm => vm.AddChildSubdivisions, w => w.Active)
 				.InitializeFromSource();
 			checkUseAlterName.Binding
@@ -72,6 +62,8 @@ namespace workwear.ReportParameters.Views {
 			checkShowCostCenter.Binding.AddBinding(ViewModel, v => v.ShowCostCenter, w => w.Active).InitializeFromSource();
 			
 			checkShowOnlyWithoutNorm.Binding.AddBinding(ViewModel, v => v.ShowOnlyWithoutNorm, w => w.Active).InitializeFromSource();
+			
+			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)

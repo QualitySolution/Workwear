@@ -1106,6 +1106,8 @@ namespace Workwear.Models.Company
 		};
 
 		public Sex GetSexByName(string name) {
+			if(String.IsNullOrWhiteSpace(name))
+				return Sex.None;
 			name = name.ToUpper().Replace("Ё", "Е");
 			if(MaleNames.Contains(name))
 				return Sex.M;

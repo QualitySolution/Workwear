@@ -22,11 +22,6 @@ namespace Workwear.HibernateMapping.Regulations
 
 			References(x => x.Type).Column("item_types_id");
 
-			HasManyToMany<ProtectionTools>(x => x.Analogs)
-			.Table("protection_tools_replacement")
-			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("protection_tools_analog_id");
-
 			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
 			.Table("protection_tools_nomenclature")
 			.ParentKeyColumn("protection_tools_id")

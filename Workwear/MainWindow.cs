@@ -62,6 +62,7 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
+using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 
@@ -223,6 +224,7 @@ public partial class MainWindow : Gtk.Window {
 	#region Workwear featrures
 	private void DisableFeatures() {
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
+		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
@@ -240,6 +242,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
@@ -864,5 +867,17 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
+	}
+
+	protected void OnActionProvisionActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ProvisionReportViewModel));
+	}
+
+	protected void OnActionFullnessPostomatsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<FullnessJournalViewModel>(null);
+	}
+
+	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
 	}
 }

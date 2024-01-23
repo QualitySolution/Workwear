@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -27,7 +28,7 @@ namespace workwear.Journal.ViewModels.Postomats {
 			
 			VisibleDeleteAction = false;
 			
-			var terminals = this.postomatManagerService.GetPostomatList();
+			var terminals = this.postomatManagerService.GetPostomatList(PostomatListType.All);
 			foreach (var terminal in terminals) {
 				Terminals.Add(terminal.Id, (terminal.Name, terminal.Location));
 			}

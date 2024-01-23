@@ -133,6 +133,7 @@ namespace workwear.Dialogs.Regulations
 			this.ydateDocDate.Date = new global::System.DateTime(0);
 			this.ydateDocDate.IsEditable = true;
 			this.ydateDocDate.AutoSeparation = true;
+			this.ydateDocDate.HideButtonClearDate = false;
 			this.table1.Add(this.ydateDocDate);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateDocDate]));
 			w9.TopAttach = ((uint)(1));

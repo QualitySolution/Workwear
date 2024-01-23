@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -280,6 +281,65 @@ namespace Workwear.Test.Domain.Operations
 
 			var atDate = calcDate;
 			return issue.CalculatePercentWear(atDate);
+		}
+
+		[Test(Description = "Проверка даты списания при условии, что выданная по номенклатуре спецодежда имеет процент износа")]
+		
+		[TestCase(2, NormPeriodType.Year, "2023-07-02 18:00:00", "2023-01-01", 0.75)]
+		[TestCase(12, NormPeriodType.Month, "2023-12-31", "2023-07-01", 0.5)]
+		[TestCase(12, NormPeriodType.Month, "2024-04-11", "2023-10-11", 0.5)]
+		public void CalculatePercentWear_WriteOff_With_WearPercent(
+			int periodCount,
+			NormPeriodType periodType,
+			DateTime? expectedWriteOffDate, 
+			DateTime? startOfUse,
+			decimal beginWearPercent) 
+		{
+			var employee = Substitute.For<EmployeeCard>();
+			var uow = Substitute.For<IUnitOfWork>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var operation1 = Substitute.For<EmployeeIssueOperation>();
+
+			var norm = new NormItem() {
+				Amount = 1,
+				NormPeriod = periodType,
+				PeriodCount = periodCount,
+				ProtectionTools = protectionTools,
+				Norm = Substitute.For<Norm>()
+			};
+
+			var date = norm.CalculateExpireDate(startOfUse.Value, beginWearPercent);
+			
+			employee.Id.Returns(777);
+			operation1.Employee.Returns(employee);
+			operation1.NormItem.Returns(norm);
+
+			operation1.ExpiryByNorm.Returns(date);
+
+			operation1.Issued.Returns(1);
+			operation1.WearPercent.Returns(beginWearPercent);
+			operation1.StartOfUse.Returns(startOfUse);
+
+			var list = new List<EmployeeIssueOperation> { operation1 };
+
+			var graphInterval = new GraphInterval 
+			{
+				StartDate = date!.Value,
+				CurrentCount = norm.Amount,
+				ActiveItems = { new GraphItem(operation1) }
+			};
+			
+			var graph = new IssueGraph(list);
+			graph.Intervals.Add(graphInterval);
+
+			var item = new EmployeeCardItem();
+			item.EmployeeCard = employee;
+			item.Graph = graph;
+			item.ActiveNormItem = norm;
+			
+			item.UpdateNextIssue(uow);
+
+			Assert.That(item.NextIssue.Value.Date, Is.EqualTo(expectedWriteOffDate.Value.Date));
 		}
 
 		[Test(Description = "Не падаем в OverflowException при конвертировании в Decimal(реальный кейс при некоторых значениях)")]

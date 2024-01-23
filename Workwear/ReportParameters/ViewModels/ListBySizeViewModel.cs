@@ -22,6 +22,7 @@ namespace workwear.ReportParameters.ViewModels
 			var parameters = new Dictionary<string, object>();
 			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var sizes = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
+				parameters.Add($"group_by_subdivision", GroupBySubdivision);
 				for (var count = 0; count < sizes.Count; count++)
 				{
 					parameters.Add($"type_id_{count}", sizes[count].Id);
@@ -29,6 +30,12 @@ namespace workwear.ReportParameters.ViewModels
 				}
 			}
 			return parameters;
+		}
+		
+		private bool groupBySubdivision = false;
+		public virtual bool GroupBySubdivision {
+			get => groupBySubdivision;
+			set => SetField(ref groupBySubdivision, value);
 		}
 	}
 }

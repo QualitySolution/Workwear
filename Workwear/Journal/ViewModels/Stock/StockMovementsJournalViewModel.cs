@@ -16,6 +16,7 @@ using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -67,6 +68,7 @@ namespace workwear.Journal.ViewModels.Stock
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			CompletionResultItem completionResultItemAlias = null;
 			CompletionSourceItem completionSourceItemAlias = null;
+			IssuanceSheetItem issuanceSheetItem = null;
 
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemTypesAlias = null;
@@ -154,7 +156,6 @@ namespace workwear.Journal.ViewModels.Stock
 					Projections.Constant(true),
 					Projections.Constant(false)
 				);
-
 				switch(Filter.Direction) {
 					case DirectionOfOperation.expense:
 						queryStock.Where(x => x.ReceiptWarehouse == null);
@@ -177,14 +178,17 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeOffItemAlias, () => writeOffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => issuanceSheetItem, () => issuanceSheetItem.IssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionResultItemAlias, () => completionResultItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionSourceItemAlias, () => completionSourceItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.Where(GetSearchCriterion(
 					() => employeeCardAlias.FirstName,
 					() => employeeCardAlias.LastName,
-					() => employeeCardAlias.Patronymic
-					));
+					() => employeeCardAlias.Patronymic,
+					() => issuanceSheetItem.IssuanceSheet.Id,
+					() => nomenclatureAlias.Name
+				));
 
 			if(Filter.CollapseOperationItems) {
 				queryStock.SelectList(list => list
@@ -198,7 +202,6 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
-
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
@@ -209,7 +212,6 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
-
 					.SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
 					.SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
@@ -235,6 +237,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => resultAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
+					.Select(() => issuanceSheetItem.IssuanceSheet.Id).WithAlias(() => resultAlias.IssuanceSheetId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferItemId)
@@ -279,6 +282,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockMovementsJournalNode : OperationToDocumentReference
 	{
 		public int Id { get; set; }
+		public int? IssuanceSheetId { get; set; }
 		public DateTime OperationTime { get; set; }
 		public string UnitsName { get; set; }
 		public bool Receipt { get; set; }

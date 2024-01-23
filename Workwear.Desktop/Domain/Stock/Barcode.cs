@@ -52,6 +52,13 @@ namespace Workwear.Domain.Stock
 			get => height;
 			set => SetField(ref height, value);
 		}
+		
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
 
 		#region Списки
 

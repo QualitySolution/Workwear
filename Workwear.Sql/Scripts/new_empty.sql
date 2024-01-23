@@ -49,8 +49,9 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InTransit','InRepair','InWashing','AwaitIssue','Returned') NOT NULL,
+	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
+	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
@@ -158,17 +159,23 @@ ENGINE = InnoDB;
 CREATE TABLE `postomat_document_items` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
    `document_id` int(10) unsigned NOT NULL,
+   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
    `nomenclature_id` int(10) unsigned NOT NULL,
    `barcode_id` int(10) unsigned DEFAULT NULL,
+   `claim_id` INT UNSIGNED NULL DEFAULT NULL,
    `delta` int(11) NOT NULL,
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
+   `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
+   KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
    KEY `fk_barcode_id` (`barcode_id`),
+   KEY `fk_claim_id` (`claim_id`),
    KEY `fk_nomenclature_id` (`nomenclature_id`),
    CONSTRAINT `fk_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
+   CONSTRAINT `fk_claim_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT `fk_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
    CONSTRAINT `fk_postomat_document_id` FOREIGN KEY (`document_id`) REFERENCES `postomat_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -181,6 +188,8 @@ CREATE TABLE `postomat_documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `create_time` datetime NOT NULL,
+  `confirm_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выполнения(done) документа на постомате.',
+  `confirm_user` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Пользователь системы постоматов проводивший документ.',
   `status` enum('New','Done','Deleted','') NOT NULL DEFAULT 'New',
   `type` enum('Income','Outgo','Correction','') NOT NULL,
   `terminal_id` int(11) unsigned NOT NULL,
@@ -405,6 +414,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
+  `washable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Можно отдать в стирку',
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
   INDEX `fk_nomenclature_type_idx` (`type_id` ASC),
@@ -718,7 +728,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
-  `amount` SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+  `amount` INT UNSIGNED NOT NULL DEFAULT 1,
   `period_type` ENUM('Year', 'Month', 'Shift', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year',
   `period_count` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1637,7 +1647,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
-  `amount` SMALLINT UNSIGNED NOT NULL,
+  `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1936,11 +1946,14 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `title` VARCHAR(13) NULL DEFAULT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
+  `comment` text null,
   PRIMARY KEY (`id`),
+  INDEX `last_update` (`last_update` ASC),
   UNIQUE INDEX `value_UNIQUE` (`title` ASC),
   INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
   INDEX `fk_barcodes_2_idx` (`size_id` ASC),
@@ -1984,7 +1997,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   CONSTRAINT `fk_operation_barcodes_2`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_operation_barcodes_3`
     FOREIGN KEY (`warehouse_operation_id`)
@@ -2185,7 +2198,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.11');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.14');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

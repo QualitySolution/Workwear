@@ -710,7 +710,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.NomenclatureView" design-size="478 426">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.NomenclatureView" design-size="478 430">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -781,7 +781,7 @@
         <child>
           <widget class="Gtk.Table" id="table2">
             <property name="MemberName" />
-            <property name="NRows">9</property>
+            <property name="NRows">10</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -790,6 +790,39 @@
             </child>
             <child>
               <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkWashable">
+                <property name="MemberName" />
+                <property name="WidthRequest">0</property>
+                <property name="HeightRequest">0</property>
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Можно сдать в стирку</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
             </child>
             <child>
               <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
@@ -806,8 +839,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -828,8 +861,8 @@
                 <property name="LabelProp" translatable="yes">Комментарий:</property>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -1097,8 +1130,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -1119,8 +1152,8 @@
                 <property name="LabelProp" translatable="yes">Средняя оценка:</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -6282,6 +6315,24 @@
         <property name="ShortLabel" translatable="yes">Обслуживание одежды</property>
         <signal name="Activated" handler="OnActionClothingServiceActivated" />
       </action>
+      <action id="ActionProvision">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Обеспеченность сотрудников</property>
+        <property name="ShortLabel" translatable="yes">Обеспеченность сотрудников</property>
+        <signal name="Activated" handler="OnActionProvisionActivated" />
+      </action>
+      <action id="ActionFullnessPostomats">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Заполненность постоматов</property>
+        <property name="ShortLabel" translatable="yes">Заполненность постоматов</property>
+        <signal name="Activated" handler="OnActionFullnessPostomatsActivated" />
+      </action>
+      <action id="ActionBarcodeCompletenessReport">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Покрытие маркировки</property>
+        <property name="ShortLabel" translatable="yes">Покрытие маркировки</property>
+        <signal name="Activated" handler="OnActionBarcodeCompletenessReportActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6343,6 +6394,8 @@
                 <node type="Menuitem" action="ActionMenuNotification" />
                 <node type="Menuitem" action="ActionMenuClaims" />
                 <node type="Menuitem" action="ActionMenuRatings" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionFullnessPostomats" />
                 <node type="Menuitem" action="ActionPostomatDocs" />
               </node>
               <node type="Menu" action="Action39">
@@ -6390,6 +6443,8 @@
                 </node>
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
+                <node type="Menuitem" action="ActionProvision" />
+                <node type="Menuitem" action="ActionBarcodeCompletenessReport" />
               </node>
               <node type="Menu" action="ActionHelp">
                 <node type="Menuitem" action="helpAction" />
@@ -7150,7 +7205,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="511 555">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="580 564">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7159,25 +7214,23 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">8</property>
+            <property name="NRows">11</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkDontShowZeroStock">
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboIssueType">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes" />
-                <property name="DrawIndicator">True</property>
-                <property name="HasLabel">True</property>
-                <property name="UseUnderline">True</property>
-                <property name="FocusOnClick">False</property>
-                <property name="Xalign">0</property>
-                <property name="Yalign">0</property>
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7192,18 +7245,18 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yEnumComboBox" id="comboIssueType">
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
                 <property name="MemberName" />
                 <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
-                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateAll">False</property>
                 <property name="ShowSpecialStateNot">False</property>
                 <property name="UseShortTitle">False</property>
-                <property name="DefaultFirst">False</property>
+                <property name="DefaultFirst">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7229,8 +7282,8 @@
                 <property name="HideButtonClearDate">False</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7250,8 +7303,8 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7272,8 +7325,8 @@
                 <property name="LabelProp" translatable="yes">Дата отчета:</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7314,8 +7367,8 @@
                 <property name="LabelProp" translatable="yes">Подразделение:</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7334,8 +7387,8 @@
                 <property name="LabelProp" translatable="yes">Тип выдачи:</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7358,8 +7411,36 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckDontShowZeroStock">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7384,8 +7465,61 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">5</property>
-                <property name="BottomAttach">6</property>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckHideWorn">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowStock">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7409,33 +7543,13 @@
                 <property name="AutoSeparation">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">True</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
-                <property name="MemberName" />
-                <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Только при наличии на складе:</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -7450,8 +7564,8 @@
                 <property name="LabelProp" translatable="yes">Исключать сотрудников в отпуске:</property>
               </widget>
               <packing>
-                <property name="TopAttach">5</property>
-                <property name="BottomAttach">6</property>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7470,8 +7584,48 @@
                 <property name="LabelProp" translatable="yes">Исключить невыданное до:</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показывать количество на складе:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel5">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Вид отчета:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7490,8 +7644,48 @@
                 <property name="LabelProp" translatable="yes">Учитывать период выдачи:</property>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDontShowZeroStock">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Не учитывать при отсутствии на складе:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelHideWorn">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Не учитывать позиции с износом:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7542,7 +7736,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetSummaryView" design-size="512 669">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetSummaryView" design-size="554 669">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7551,43 +7745,19 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">10</property>
+            <property name="NRows">13</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkGroupBySubdivision">
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboIssueType">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes" />
-                <property name="DrawIndicator">True</property>
-                <property name="HasLabel">True</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowEmployees">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes" />
-                <property name="DrawIndicator">True</property>
-                <property name="HasLabel">True</property>
-                <property name="UseUnderline">True</property>
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">False</property>
               </widget>
               <packing>
                 <property name="TopAttach">5</property>
@@ -7606,43 +7776,18 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowSex">
-                <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes">Да</property>
-                <property name="DrawIndicator">True</property>
-                <property name="HasLabel">True</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">9</property>
-                <property name="BottomAttach">10</property>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.yEnumComboBox" id="comboIssueType">
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
                 <property name="MemberName" />
                 <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
-                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateAll">False</property>
                 <property name="ShowSpecialStateNot">False</property>
                 <property name="UseShortTitle">False</property>
-                <property name="DefaultFirst">False</property>
+                <property name="DefaultFirst">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7668,8 +7813,8 @@
                 <property name="HideButtonClearDate">False</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7689,8 +7834,8 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7711,8 +7856,8 @@
                 <property name="LabelProp" translatable="yes">Дата отчета:</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7753,8 +7898,8 @@
                 <property name="LabelProp" translatable="yes">Подразделение:</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7773,8 +7918,8 @@
                 <property name="LabelProp" translatable="yes">Показывать список сотрудников:</property>
               </widget>
               <packing>
-                <property name="TopAttach">5</property>
-                <property name="BottomAttach">6</property>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7793,8 +7938,8 @@
                 <property name="LabelProp" translatable="yes">Группировать по подразделениям:</property>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7813,8 +7958,8 @@
                 <property name="LabelProp" translatable="yes">Тип выдачи:</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7840,8 +7985,8 @@
                 <property name="Yalign">0</property>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7866,8 +8011,136 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckGroupBySubdivision">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
                 <property name="TopAttach">7</property>
                 <property name="BottomAttach">8</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckHideWorn">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+                <property name="FocusOnClick">False</property>
+                <property name="Xalign">0</property>
+                <property name="Yalign">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">12</property>
+                <property name="BottomAttach">13</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowEmployees">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowSex">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes">Да</property>
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowStock">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">11</property>
+                <property name="BottomAttach">12</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -7891,8 +8164,8 @@
                 <property name="AutoSeparation">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -7912,8 +8185,8 @@
                 <property name="LabelProp" translatable="yes">Учитывать пол:</property>
               </widget>
               <packing>
-                <property name="TopAttach">9</property>
-                <property name="BottomAttach">10</property>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7932,8 +8205,8 @@
                 <property name="LabelProp" translatable="yes">Исключать сотрудников в отпуске:</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7952,8 +8225,48 @@
                 <property name="LabelProp" translatable="yes">Исключить невыданное до:</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel5">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показывать количество на складе:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">11</property>
+                <property name="BottomAttach">12</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel6">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Вид отчета:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -7972,8 +8285,28 @@
                 <property name="LabelProp" translatable="yes">Учитывать период выдачи:</property>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelHideWorn">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Не учитывать позиции с износом:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">12</property>
+                <property name="BottomAttach">13</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -8236,7 +8569,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.RequestSheetView" design-size="418 440">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.RequestSheetView" design-size="423 422">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -13760,80 +14093,6 @@
                 <property name="AutoSize">False</property>
               </packing>
             </child>
-            <child>
-              <widget class="Gtk.VBox" id="vbox1">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
-                    <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeNormAnalog">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.HBox" id="hbox6">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonAddNormAnalog">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">Добавить</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonAddNormAnalogClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Button" id="buttonRemoveNormAnalog">
-                        <property name="MemberName" />
-                        <property name="Sensitive">False</property>
-                        <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-remove Menu</property>
-                        <property name="Label" translatable="yes">Убрать</property>
-                        <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonRemoveNormAnalogClicked" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">False</property>
-              </packing>
-            </child>
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -14455,7 +14714,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="403 676">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.AmountIssuedWearView" design-size="414 676">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14875,35 +15134,29 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAll">
+          <widget class="Gtk.Expander" id="expander1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Все подразделения</property>
-            <property name="DrawIndicator">True</property>
-            <property name="HasLabel">True</property>
-            <property name="UseUnderline">True</property>
-          </widget>
-          <packing>
-            <property name="Position">9</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
-            <property name="MemberName" />
-            <property name="ShadowType">In</property>
+            <property name="Expanded">True</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeSubdivisions">
+              <widget class="Workwear.ReportParameters.Views.ChoiceSubdivisionView" id="choicesubdivisionview1">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="ShowScrollbars">True</property>
+                <property name="Events">ButtonPressMask</property>
               </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel12">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Подразделение:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
             </child>
           </widget>
           <packing>
-            <property name="Position">10</property>
+            <property name="Position">9</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -14918,7 +15171,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
-            <property name="Position">11</property>
+            <property name="Position">10</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -20774,10 +21027,44 @@
               <placeholder />
             </child>
             <child>
-              <placeholder />
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttongroupbysubdivision">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Группировать по подразделениям</property>
+              </widget>
+              <packing>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -21442,10 +21729,13 @@
         <child>
           <widget class="Gamma.GtkWidgets.yTable" id="ytable2">
             <property name="MemberName" />
-            <property name="NRows">10</property>
+            <property name="NRows">11</property>
             <property name="NColumns">3</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <placeholder />
             </child>
@@ -21575,8 +21865,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">9</property>
-                <property name="BottomAttach">10</property>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">3</property>
                 <property name="AutoSize">False</property>
@@ -21627,8 +21917,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">8</property>
-                <property name="BottomAttach">9</property>
+                <property name="TopAttach">9</property>
+                <property name="BottomAttach">10</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">3</property>
                 <property name="AutoSize">True</property>
@@ -21722,13 +22012,32 @@
               </packing>
             </child>
             <child>
+              <widget class="Gtk.Label" id="label3">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Процент износа</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="labelBarcodes">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">ylabel5</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">3</property>
                 <property name="AutoSize">True</property>
@@ -21792,8 +22101,8 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">3</property>
                 <property name="AutoSize">True</property>
@@ -21915,8 +22224,8 @@
                 <property name="LabelProp" translatable="yes">Штрих коды:</property>
               </widget>
               <packing>
-                <property name="TopAttach">7</property>
-                <property name="BottomAttach">8</property>
+                <property name="TopAttach">8</property>
+                <property name="BottomAttach">9</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -21936,8 +22245,8 @@
                 <property name="LabelProp" translatable="yes">Комментарий:</property>
               </widget>
               <packing>
-                <property name="TopAttach">9</property>
-                <property name="BottomAttach">10</property>
+                <property name="TopAttach">10</property>
+                <property name="BottomAttach">11</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -21964,6 +22273,34 @@
               <packing>
                 <property name="TopAttach">5</property>
                 <property name="BottomAttach">6</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.ySpinButton" id="yspinbuttonWearPercent">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Upper">999</property>
+                <property name="PageIncrement">10</property>
+                <property name="StepIncrement">1</property>
+                <property name="ClimbRate">1</property>
+                <property name="Numeric">True</property>
+                <property name="ValueAsDecimal">0</property>
+                <property name="ValueAsInt">0</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -22472,7 +22809,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.BarcodeView" design-size="589 300">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.BarcodeView" design-size="671 414">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -22516,7 +22853,20 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonPrintBarcode">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-print Menu</property>
+                <property name="Label" translatable="yes">Печать</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -22529,7 +22879,7 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">4</property>
+            <property name="NRows">5</property>
             <property name="NColumns">4</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
@@ -22538,6 +22888,37 @@
             </child>
             <child>
               <placeholder />
+            </child>
+            <child>
+              <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
+                <property name="MemberName" />
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yTextView" id="ytextComment">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                    <property name="AcceptsTab">False</property>
+                    <property name="Text" translatable="yes" />
+                    <property name="WrapMode">WordChar</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">4</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
             </child>
             <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="labelCreateDate">
@@ -22673,8 +23054,9 @@
                 <property name="LeftAttach">2</property>
                 <property name="RightAttach">3</property>
                 <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
-                <property name="XExpand">True</property>
+                <property name="XExpand">False</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -22691,6 +23073,27 @@
               <packing>
                 <property name="TopAttach">2</property>
                 <property name="BottomAttach">3</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel6">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="Yalign">0</property>
+                <property name="LabelProp" translatable="yes">Комментарий:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -22754,8 +23157,9 @@
               </widget>
               <packing>
                 <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
-                <property name="XExpand">True</property>
+                <property name="XExpand">False</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -22771,10 +23175,9 @@
               <packing>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
+                <property name="AutoSize">False</property>
                 <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
+                <property name="XExpand">True</property>
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
@@ -25933,7 +26336,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" design-size="300 300">
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" design-size="431 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -25941,13 +26344,65 @@
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
-          <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonAllProtectionTools">
+          <widget class="Gtk.HBox" id="hbox2">
             <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">Выделить/снять выделение</property>
-            <property name="UseUnderline">True</property>
-            <signal name="Clicked" handler="OnYcheckbuttonAllProtectionToolsClicked" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonChooseAll">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.select-all.png</property>
+                <property name="Label" translatable="yes" />
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonUnChooseAll">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.unselect-all.png</property>
+                <property name="Label" translatable="yes" />
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yEntry" id="yentrySearch">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="IsEditable">True</property>
+                <property name="InvisibleChar">•</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yImage" id="yimage1">
+                <property name="MemberName" />
+                <property name="Pixbuf">stock:gtk-find Menu</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="Position">0</property>
@@ -25961,8 +26416,9 @@
             <property name="MemberName" />
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeProtectionTools">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeChoiseProtectionTools">
                 <property name="MemberName" />
+                <property name="WidthRequest">400</property>
                 <property name="CanFocus">True</property>
                 <property name="ShowScrollbars">True</property>
               </widget>
@@ -25971,6 +26427,1002 @@
           <packing>
             <property name="Position">1</property>
             <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ChoiceSubdivisionView" design-size="414 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox2">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonChooseAll">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.select-all.png</property>
+                <property name="Label" translatable="yes" />
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ycheckbuttonUnChooseAll">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.unselect-all.png</property>
+                <property name="Label" translatable="yes" />
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yEntry" id="yentrySearch">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="IsEditable">True</property>
+                <property name="InvisibleChar">•</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yImage" id="yimage1">
+                <property name="MemberName" />
+                <property name="Pixbuf">stock:gtk-find Menu</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+            <property name="MemberName" />
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeChoiseSubdivision">
+                <property name="MemberName" />
+                <property name="WidthRequest">400</property>
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ProvisionReportView" design-size="414 550">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.Table" id="table1">
+            <property name="MemberName" />
+            <property name="NRows">7</property>
+            <property name="NColumns">2</property>
+            <property name="RowSpacing">6</property>
+            <property name="ColumnSpacing">6</property>
+            <child>
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
+                <property name="MemberName" />
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">False</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">True</property>
+              </widget>
+              <packing>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">True</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label2">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Детализировать по полу</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label3">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Детализировать по размерам</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label5">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Исключить сотрудников в отпуске</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonExcludeInVacation">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonGroupBySubdivision">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowSex">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowSize">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowEmployees">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowStock">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel5">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Вид отчета</property>
+              </widget>
+              <packing>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="ylabelGroupBySubdivision">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Группировать по подразделениям</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowEmployees">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показывать списки сотрудников</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowStock">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показывать количество на складе</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander1">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <signal name="Activated" handler="OnExpander1Activated" />
+            <child>
+              <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel7">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Номенклатура нормы:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander2">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <signal name="Activated" handler="OnExpander2Activated" />
+            <child>
+              <widget class="Workwear.ReportParameters.Views.ChoiceSubdivisionView" id="choicesubdivisionview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel10">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Подразделение:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yButton" id="ybuttonRun">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Построить отчёт</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnYbuttonRunClicked" />
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.Table" id="table1">
+        <property name="MemberName" />
+        <property name="NRows">3</property>
+        <property name="NColumns">3</property>
+        <property name="RowSpacing">6</property>
+        <property name="ColumnSpacing">6</property>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <placeholder />
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowClosed">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Показывать закрытые</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.BarcodeCompletenessReportView" design-size="469 583">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.Table" id="table1">
+            <property name="MemberName" />
+            <property name="NRows">7</property>
+            <property name="NColumns">2</property>
+            <property name="RowSpacing">6</property>
+            <property name="ColumnSpacing">6</property>
+            <child>
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
+                <property name="MemberName" />
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">False</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">True</property>
+              </widget>
+              <packing>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">True</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.HBox" id="hbox1">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.ySpinButton" id="yspinbuttonBarcodeLag">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Upper">100</property>
+                    <property name="PageIncrement">10</property>
+                    <property name="StepIncrement">1</property>
+                    <property name="ClimbRate">1</property>
+                    <property name="Numeric">True</property>
+                    <property name="ValueAsDecimal">0</property>
+                    <property name="ValueAsInt">0</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabel7">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">дней.</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label5">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Исключить сотрудников в отпуске</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonExcludeInVacation">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonGroupBySubdivision">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowSex">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowSize">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowEmployees">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Label" translatable="yes" />
+                <property name="DrawIndicator">True</property>
+                <property name="HasLabel">True</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel6">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показать прирост за </property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelGroupBySubdivision">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Группировать по подразделениям</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelReportType">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Вид отчета</property>
+              </widget>
+              <packing>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowEmployees">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Показывать списки сотрудников</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowSex">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Детализировать по полу</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowSize">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Детализировать по размерам</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander1">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel8">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Номенклатура нормы:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander2">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="Workwear.ReportParameters.Views.ChoiceSubdivisionView" id="choicesubdivisionview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel11">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Подразделение:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yButton" id="ybuttonRun">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Построить отчёт</property>
+            <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnYbuttonRunClicked" />
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>

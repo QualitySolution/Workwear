@@ -27,9 +27,14 @@ namespace Workwear.Views.Postomats {
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Id} {p.Name}({p.Location})");
 			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.CanChangePostomat, w => w.Sensitive)
 				.AddBinding(v => v.Postomats, w => w.ItemsList)
 				.AddBinding(v => v.Postomat, w => w.SelectedItem)
 				.InitializeFromSource();
+			
+			//FIXME Временно
+			entityWarehouseExpense.Visible = false;
+			comboTypeDoc.Sensitive = false;
 
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentItem>()
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
@@ -43,11 +48,23 @@ namespace Workwear.Views.Postomats {
 			treeItems.Binding.AddBinding(Entity, e => e.Items, w => w.ItemsDataSource).InitializeFromSource();
 			treeItems.Selection.Changed += SelectionOnChanged;
 			
+			SetEditableWindow();
+			
 			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
+			buttonAdd.Binding.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {
 			buttonDel.Sensitive = treeItems.Selection.CountSelectedRows() > 0;
+		}
+
+		private void SetEditableWindow() {
+			comboPostomat.Sensitive = 
+				buttonAdd.Sensitive = 
+					comboTypeDoc.Sensitive = 
+						treeItems.Sensitive = 
+							ydateDoc.Sensitive = ViewModel.CanEdit;
 		}
 	}
 }

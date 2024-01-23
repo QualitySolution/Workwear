@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using workwear.ReportParameters.ViewModels;
+﻿using System.Linq;
+using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
 	[System.ComponentModel.ToolboxItem(true)]
@@ -20,22 +19,21 @@ namespace Workwear.ReportParameters.Views {
 		}
 
 		private void CreateTable(){
-			ytreeProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
+			ytreeChoiseProtectionTools.CreateFluentColumnsConfig<SelectedProtectionTools>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
-				.AddColumn("Название").AddTextRenderer(x => x.Name)
+				.AddColumn("Название").AddTextRenderer(x => x.Name).SearchHighlight()
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Sensitive = x.Highlighted)
 				.Finish();
+			ytreeChoiseProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
 			
-			ytreeProtectionTools.ItemsDataSource = ViewModel.ProtectionTools;
-			
-			ycheckbuttonAllProtectionTools.Sensitive = ViewModel.ProtectionTools.Any();
-			ycheckbuttonAllProtectionTools.Clicked += OnYcheckbuttonAllProtectionToolsClicked;
-		}
-
-		private bool selectAllState = true;
-		protected void OnYcheckbuttonAllProtectionToolsClicked(object sender, EventArgs e) {
-			selectAllState = !selectAllState;
-			foreach (var pt in ViewModel.ProtectionTools)
-				pt.Select = selectAllState;
+			yentrySearch.Changed += delegate {
+				ytreeChoiseProtectionTools.SearchHighlightText = yentrySearch.Text;
+				ViewModel.SelectLike(yentrySearch.Text);
+				ytreeChoiseProtectionTools.YTreeModel.EmitModelChanged();
+			};
+			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.ProtectionTools.Any();
+			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
+			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();
 		}
 	}
 }

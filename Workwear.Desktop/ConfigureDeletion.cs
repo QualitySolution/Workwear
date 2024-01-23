@@ -25,7 +25,8 @@ namespace Workwear
 
 			#region Обслуживание спецодежды
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
-				.AddDeleteDependence<StateOperation>(x => x.Claim);
+				.AddDeleteDependence<StateOperation>(x => x.Claim)
+				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
 			#endregion

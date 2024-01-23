@@ -265,12 +265,11 @@ namespace Workwear.Domain.Company
 		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
-			if (!string.IsNullOrWhiteSpace(str)) {
-				var ti = CultureInfo.CurrentCulture.TextInfo;
-				return ti.ToTitleCase(str.Trim().ToLower());
-			}
-
-			return string.Empty;
+			if (string.IsNullOrWhiteSpace(str))
+				return null;
+			
+			var ti = CultureInfo.CurrentCulture.TextInfo;
+			return ti.ToTitleCase(str.Trim().ToLower());
 		}
 
 		#endregion
@@ -420,7 +419,7 @@ namespace Workwear.Domain.Company
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
-				if(wearItem.ProtectionTools.MatchedProtectionTools.Any(x => ids.Contains(x.Id)))
+				if(ids.Contains(wearItem.ProtectionTools.Id))
 					wearItem.UpdateNextIssue(UoW);
 			}
 		}
@@ -454,33 +453,17 @@ namespace Workwear.Domain.Company
 		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
 		/// </summary>
 		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
-			foreach(var item in WorkwearItems) {
-				item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
-			}
-			
 			var protectionGroups = 
 				operations
 					.Where(x => x.ProtectionTools != null)
 					.GroupBy(x => x.ProtectionTools.Id)
 					.ToDictionary(g => g.Key, g => g);
-
-			//Основное заполнение выдачи
-			foreach (var item in WorkwearItems) {
-				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
-					continue;
-				item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
-				protectionGroups.Remove(item.ProtectionTools.Id);
-			}
 			
-			//Дополнительно ищем по аналогам.
 			foreach (var item in WorkwearItems) {
-			 	var matched = 
-				    item.ProtectionTools.MatchedProtectionTools
-					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
-				if(matched == null)
-					continue;
-				item.Graph = new IssueGraph(protectionGroups[matched.Id].ToList());
-				protectionGroups.Remove(matched.Id);
+				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
+					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+				else 
+					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
 			}
 		}
 

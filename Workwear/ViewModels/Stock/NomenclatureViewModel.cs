@@ -8,18 +8,18 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Stock;
-using workwear.Journal.ViewModels.Stock;
-using Workwear.Tools;
-using Workwear.Tools.Features;
-using Workwear.ViewModels.Communications;
-using QS.Utilities;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Models.Sizes;
+using Workwear.Tools.Features;
+using Workwear.Tools;
+using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Stock.NomenclatureChildren;
+using workwear.Journal.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -80,6 +80,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
+		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
