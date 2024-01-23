@@ -30,10 +30,8 @@ namespace Workwear.ReportParameters.Views {
 
 			yspinbuttonBarcodeLag.Binding.AddBinding(ViewModel, e => e.BarcodeLag, w=> w.ValueAsInt).InitializeFromSource();
 			
-			comboReportType.ItemsEnum = typeof(ProvisionReportViewModel.ProvisionReportType);
+			comboReportType.ItemsEnum = typeof(BarcodeCompletenessReportViewModel.BarcodeCompletenessType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
-			comboReportType.Binding.AddBinding(ViewModel, v => v.VisibleReportType, w => w.Visible).InitializeFromSource(); //Можно удалить после добавления второго
-			ylabelReportType.Binding.AddBinding(ViewModel, v => v.VisibleReportType, w => w.Visible).InitializeFromSource(); //Можно удалить после добавления второго
 			
 			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 		}
