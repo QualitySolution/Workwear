@@ -186,7 +186,7 @@ WHERE tabel.balance != 0 </CommandText>
           </TableColumn>
           <TableColumn>
             <Width>32.8pt</Width>
-            <Visibility >
+            <Visibility>
               <Hidden>=({?barcode_lag} = 0)</Hidden>
             </Visibility>
           </TableColumn>
@@ -386,7 +386,7 @@ WHERE tabel.balance != 0 </CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
-                      <Value>=Iif(Fields!barcode_new_percent.Value = 0, "0%", Iif(Fields!barcode_new_percent.Value &lt; 1, "&lt;1%", (Round(Fields!barcode_new_percent.Value,0))))</Value>
+                      <Value>=Iif(Fields!barcode_new_percent.Value = 0, "0%", Iif(Fields!barcode_new_percent.Value &lt; 1, "&lt;1%", (Round(Fields!barcode_new_percent.Value,0) + "%")))</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
