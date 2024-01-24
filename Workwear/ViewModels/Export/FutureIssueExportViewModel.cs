@@ -31,6 +31,8 @@ namespace Workwear.ViewModels.Export {
 		private readonly EmployeeIssueModel issueModel;
 		private readonly BaseParameters baseParameters;
 		private readonly IProgressBarDisplayable progress;
+		private readonly ModalProgressCreator localProgress;
+		
 		private readonly SizeService _sizeService;
 
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
@@ -47,7 +49,7 @@ namespace Workwear.ViewModels.Export {
 				"МВЗ" , FillCell = (cell, item)  
 				=> { cell.SetCellValue(item.Subdivision?.Name ?? ""); } },
   			new ColumnInfo() { Label = 
-				"Профессия.Код" , FillCell = (cell, item)  => { cell.SetCellValue(item.Post.Code); }
+				"Профессия.Код" , FillCell = (cell, item)  => { cell.SetCellValue(item.Post?.Code ?? ""); }
 				}, 
 			new ColumnInfo() { Label =
 				"Профессия" , FillCell = (cell, item)  
@@ -127,6 +129,7 @@ namespace Workwear.ViewModels.Export {
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			IProgressBarDisplayable progress,
+			ModalProgressCreator progressCreator,
 			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
 			SizeService sizeService,
@@ -138,6 +141,7 @@ namespace Workwear.ViewModels.Export {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
+			this.localProgress = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			_sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
@@ -208,8 +212,10 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var performance = new ProgressPerformanceHelper(progress, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
-				performance.StartGroup("Загрузка данных");
+				var globlProgress = new ProgressPerformanceHelper(progress, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
+				
+				globlProgress.StartGroup("Загрузка общих данных");
+				localProgress.Title = "Загрузка данных"; localProgress.Start(1);
 
 				_sizeService.RefreshSizes(UoW);
 				var employes = UoW.Session.QueryOver<EmployeeCard>()
@@ -224,18 +230,25 @@ namespace Workwear.ViewModels.Export {
 					.Future();
 				UoW.Session.QueryOver<NormItem>()
 					.Future();
+				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
-				performance.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
+				globlProgress.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
+				localProgress.Title = "Подготовка сотрудников"; localProgress.Start(1);
 				issueModel.PreloadEmployeeInfo(employeeIds);
+				localProgress.Add(text:"Загружено");  localProgress.Close();
 
-				performance.StartGroup(nameof(issueModel.PreloadWearItems));
+				globlProgress.StartGroup(nameof(issueModel.PreloadWearItems));
+				localProgress.Title = "Подготовка потребностей"; localProgress.Start(1);
 				issueModel.PreloadWearItems(employeeIds);
+				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
-				performance.StartGroup(nameof(issueModel.FillWearReceivedInfo));
-				issueModel.FillWearReceivedInfo(employes.ToArray());
+				globlProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
+				localProgress.Title = "Загрузка выдач"; 
+				issueModel.FillWearReceivedInfo(employes.ToArray(), progress: localProgress);
 
-				performance.StartGroup("Создание документа");
-				var wearCardsItem = employes.SelectMany(x => x.WorkwearItems);
+				globlProgress.StartGroup("Создание документа");
+				localProgress.Title = "Создание документа"; localProgress.Start(1);
+				var wearCardsItems = employes.SelectMany(x => x.WorkwearItems);
 				
 				IWorkbook workbook = new XSSFWorkbook();
 				ISheet sheet = workbook.CreateSheet("Планируемые выдачи");
@@ -251,10 +264,14 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(column.Label);
 					cell.CellStyle = cellStyleHead;
 				}
+				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
-				performance.StartGroup("Перебор потребностей");
+				globlProgress.StartGroup("Перебор потребностей");
 				int i = 1;
-				foreach(var item in wearCardsItem) {
+				localProgress.Title = "Обход потребностей";
+				localProgress.Start(wearCardsItems.Count());
+				foreach(var item in wearCardsItems) {
+					localProgress?.Add(text: "Потребности " + item.EmployeeCard.ShortName);
 					//номенклатура с максимальной стоимостью
 					Nomenclature nomenclature = null;
 					if(item.ProtectionTools?.Nomenclatures.Count > 0)
@@ -303,10 +320,11 @@ namespace Workwear.ViewModels.Export {
 						item.UpdateNextIssue(null);
 					}
 				}
-				performance.StartGroup("Сохранение документа");
+				localProgress.Close();
+				globlProgress.StartGroup("Сохранение документа");
 				workbook.Write(fileStream);
 				workbook.Close();
-				performance.End();
+				globlProgress.End();
 			}
 			RunSensetive = true;
 		}
