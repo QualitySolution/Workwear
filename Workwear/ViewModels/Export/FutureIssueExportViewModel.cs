@@ -215,8 +215,6 @@ namespace Workwear.ViewModels.Export {
 				var globlProgress = new ProgressPerformanceHelper(progress, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
 				
 				globlProgress.StartGroup("Загрузка общих данных");
-				localProgress.Title = "Загрузка данных"; localProgress.Start(1);
-
 				_sizeService.RefreshSizes(UoW);
 				var employes = UoW.Session.QueryOver<EmployeeCard>()
 					.Fetch(SelectMode.Fetch, x => x.Subdivision)
@@ -230,24 +228,18 @@ namespace Workwear.ViewModels.Export {
 					.Future();
 				UoW.Session.QueryOver<NormItem>()
 					.Future();
-				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
 				globlProgress.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
-				localProgress.Title = "Подготовка сотрудников"; localProgress.Start(1);
 				issueModel.PreloadEmployeeInfo(employeeIds);
-				localProgress.Add(text:"Загружено");  localProgress.Close();
-
+				
 				globlProgress.StartGroup(nameof(issueModel.PreloadWearItems));
-				localProgress.Title = "Подготовка потребностей"; localProgress.Start(1);
 				issueModel.PreloadWearItems(employeeIds);
-				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
 				globlProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
 				localProgress.Title = "Загрузка выдач"; 
 				issueModel.FillWearReceivedInfo(employes.ToArray(), progress: localProgress);
 
 				globlProgress.StartGroup("Создание документа");
-				localProgress.Title = "Создание документа"; localProgress.Start(1);
 				var wearCardsItems = employes.SelectMany(x => x.WorkwearItems);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -264,7 +256,6 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(column.Label);
 					cell.CellStyle = cellStyleHead;
 				}
-				localProgress.Add(text:"Загружено");  localProgress.Close();
 				
 				globlProgress.StartGroup("Перебор потребностей");
 				int i = 1;
