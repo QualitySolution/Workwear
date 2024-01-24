@@ -8,9 +8,9 @@ using QS.Report;
 using QS.Report.ViewModels;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ProvisionReportViewModel : ReportParametersViewModelBase {
+	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase {
 		
-		public ProvisionReportViewModel(
+		public BarcodeCompletenessReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
 			: base(rdlViewerViewModel) {
@@ -18,6 +18,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceProtectionToolsViewModel.UnSelectAll();
 			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
@@ -44,19 +45,22 @@ namespace Workwear.ReportParameters.ViewModels {
 				new [] {-1} :
 				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
 			{"show_employees", ShowEmployees },
-			{"show_stock", ShowStock },
+			{"barcode_lag", BarcodeLag },
 		};
 
 		#region Параметры
 		IUnitOfWork UoW;
-		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+		public override string Title => $"Отчёт по маркированной спецодежде от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 			set => throw new InvalidOperationException();
 		}
 
-		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
-		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
+		public bool VisibleShowEmployee => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSize => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSex => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleGroupBySubdivision => ReportType == BarcodeCompletenessType.Flat;
+		
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
 
@@ -93,21 +97,24 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => groupBySubdivision;
 			set => SetField(ref groupBySubdivision, value);
 		}
-		private ProvisionReportType reportType;
-		public virtual ProvisionReportType ReportType {
+		private BarcodeCompletenessType reportType;
+		public virtual BarcodeCompletenessType ReportType {
 			get => reportType;
 			set {
 				SetField(ref reportType, value); 
-				OnPropertyChanged(nameof(VisibleShowStock));
 				OnPropertyChanged(nameof(VisibleShowEmployee));
+				OnPropertyChanged(nameof(VisibleShowSize));
+				OnPropertyChanged(nameof(VisibleShowSex));
+				OnPropertyChanged(nameof(VisibleGroupBySubdivision));
 			}
 		}
 
-		private bool showStock;
-		public virtual bool ShowStock {
-			get => showStock;
-			set => SetField(ref showStock, value);
-		}
+		private int barcodeLag; 
+			public virtual int BarcodeLag {
+        		get => barcodeLag;
+        		set => SetField(ref barcodeLag, value);
+        	}	
+			
 		private bool showEmployees;
 		public virtual bool ShowEmployees {
 			get => showEmployees;
@@ -115,11 +122,11 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 		#endregion
 		
-		public enum ProvisionReportType {
-			[ReportIdentifier("ProvisionReport")]
+		public enum BarcodeCompletenessType {
+			[ReportIdentifier("BarcodeCompletenessReport")]
 			[Display(Name = "Форматировано")]
 			Common,
-			[ReportIdentifier("ProvisionReportFlat")]
+			[ReportIdentifier("BarcodeCompletenessReportFlat")]
 			[Display(Name = "Только данные")]
 			Flat
 		}

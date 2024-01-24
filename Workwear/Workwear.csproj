@@ -142,6 +142,7 @@
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
@@ -468,6 +469,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ProvisionReportView.cs" />
     <Compile Include="Journal\Filter.Views\ClothingService\ClaimsJournalFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.cs" />
+    <Compile Include="ReportParameters\Views\BarcodeCompletenessReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
     <Compile Include="Views\Export\FutureIssueExportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
   </ItemGroup>
@@ -826,8 +829,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Reports\ProvisionReportFlat.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <EmbeddedResource Include="icon\buttons\select-all.png" />
     <EmbeddedResource Include="icon\buttons\unselect-all.png" />
+    <Content Include="Reports\BarcodeCompletenessReport.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Reports\BarcodeCompletenessReportFlat.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

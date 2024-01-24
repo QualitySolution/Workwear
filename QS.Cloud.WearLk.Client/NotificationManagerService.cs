@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
@@ -22,6 +23,18 @@ namespace QS.Cloud.WearLk.Client
             var request = new SendMessageRequest();
             request.Messages.Add(messages);
             return client.SendMessage(request, Headers).Results;
+        }
+        
+        public async Task<string> SendMessagesAsync(IEnumerable<OutgoingMessage> messages)
+        {
+	        if (!messages.Any())
+		        throw new ArgumentException("Должно быть передано хотя бы одно сообщение", nameof(messages));
+            
+	        var client = new NotificationManager.NotificationManagerClient(Channel);
+	        var request = new SendMessageRequest();
+	        request.Messages.Add(messages);
+	        var results = await client.SendMessageAsync(request, Headers);
+	        return results.Results;
         }
 
 		public IList<UserStatusInfo> GetStatuses(IEnumerable<string> phones)

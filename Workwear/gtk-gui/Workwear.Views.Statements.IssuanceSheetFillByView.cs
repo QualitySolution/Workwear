@@ -165,6 +165,7 @@ namespace Workwear.Views.Statements
 			this.radioByExpense = new global::Gtk.RadioButton(global::Mono.Unix.Catalog.GetString("Выданного"));
 			this.radioByExpense.CanFocus = true;
 			this.radioByExpense.Name = "radioByExpense";
+			this.radioByExpense.Active = true;
 			this.radioByExpense.DrawIndicator = true;
 			this.radioByExpense.UseUnderline = true;
 			this.radioByExpense.Group = new global::GLib.SList(global::System.IntPtr.Zero);

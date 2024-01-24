@@ -111,8 +111,7 @@ namespace workwear.ReportParameters.ViewModels
 				SetField(ref showStock, value);
 				if(!value) //Сброс при снятии
 					ExcludeZeroStock = HideWorn = false;
-			} 
-			
+			}
 		}
 
 		private bool excludeZeroStock;
