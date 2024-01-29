@@ -40,4 +40,6 @@ include::import.adoc[]
 
 include::mobile-app.adoc[]
 
+include::postomat.adoc[]
+
 :leveloffset: 0
