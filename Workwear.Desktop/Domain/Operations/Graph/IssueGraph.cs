@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using NHibernate.Criterion;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
@@ -73,7 +72,9 @@ namespace Workwear.Domain.Operations.Graph
 					resetDate = date;
 				var activeItems = graphItems.Where(x => x.IssueOperation.OperationTime.Date <= date &&
 				                                        (x.IssueOperation.AutoWriteoffDate == null || x.IssueOperation.AutoWriteoffDate >= date) &&
-				                                        (x.IssueOperation.OperationTime.Date >= resetDate));
+				                                        (x.IssueOperation.OperationTime.Date > resetDate ||
+				                                         (x.IssueOperation.OperationTime.Date == resetDate &&
+				                                          x.IssueOperation.OverrideBefore)));
 				foreach (var item in activeItems)
 				{
 					if (item.AmountAtBeginOfDay(date) <= 0)

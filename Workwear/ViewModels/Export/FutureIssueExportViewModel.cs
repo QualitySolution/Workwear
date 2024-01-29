@@ -7,8 +7,10 @@ using NHibernate;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Services;
 using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -19,6 +21,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
+using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
@@ -30,10 +33,12 @@ namespace Workwear.ViewModels.Export {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly EmployeeIssueModel issueModel;
 		private readonly BaseParameters baseParameters;
-		private readonly IProgressBarDisplayable progress;
 		private readonly ModalProgressCreator localProgress;
-		
 		private readonly SizeService _sizeService;
+		
+		public IProgressBarDisplayable ProgressLocal;
+		public IProgressBarDisplayable ProgressGlobal;
+		public bool SensetiveLoad => startDate <= endDate;
 
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 
@@ -83,16 +88,11 @@ namespace Workwear.ViewModels.Export {
 				=> { cell.SetCellValue(""); } },
 			new ColumnInfo() { Label = 
 				"Количество\nпо норме", FillCell = (cell, item)  
-				=> { cell.SetCellValue(item.NormItem.Amount); } , 
+				=> { cell.SetCellValue(item.NormItem.Amount + " " + item.NormItem.ProtectionTools.Type.Units.Name); } , 
 				Type = CellType.Numeric},
 			new ColumnInfo() { Label = 
-				"Срок\nиспользования", FillCell = (cell, item)  
-				=> { cell.SetCellValue(item.NormItem.Amount + 
-				                       item.NormItem.ProtectionTools.Type.Units.Name + 
-				                       (item.NormItem.NormPeriod == NormPeriodType.Wearout ||
-				                        item.NormItem.NormPeriod == NormPeriodType.Wearout ||
-										item.NormItem.NormPeriod == NormPeriodType.Wearout? " на " : "")+
-				                       item.NormItem.LifeText); } },
+				"Срок\nиспользования", FillCell = (cell, item)
+					=> { cell.SetCellValue(item.NormItem.LifeText); } },
 			new ColumnInfo() { Label = 
 				"Последняя выдача" , FillCell = (cell, item)  
 				=> { cell.SetCellValue(item?.LasatIssueOperation?.OperationTime.ToShortDateString() ?? ""); } }, 
@@ -128,11 +128,10 @@ namespace Workwear.ViewModels.Export {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			IProgressBarDisplayable progress,
-			ModalProgressCreator progressCreator,
 			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
 			SizeService sizeService,
+			OrganizationRepository organizationRepository,
 			
 			IValidator validator = null,
 			string UoWTitle = null,
@@ -140,9 +139,9 @@ namespace Workwear.ViewModels.Export {
 			: base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider) {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
-			this.localProgress = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			_sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			
+			Title = "Предстоящие вылачи";
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -153,6 +152,7 @@ namespace Workwear.ViewModels.Export {
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
 
+			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 			int i = 0;
 			foreach(var col in ColumnMap) 
 				col.Index = i++;
@@ -166,17 +166,20 @@ namespace Workwear.ViewModels.Export {
 		
 		private Organization exportOrganization;
             public virtual Organization ExportOrganization {
-                get => exportOrganization;
-                set => SetField(ref exportOrganization, value);
+	            get => exportOrganization;
+	            set => SetField(ref exportOrganization, value);
+	            
             }
 
-		private DateTime startDate = DateTime.Today;
+		private DateTime startDate = DateTime.Today.Date;
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
-		private DateTime endDate = DateTime.Today.AddYears(1);
+		private DateTime endDate = DateTime.Today.AddMonths(1);
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -212,8 +215,7 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globlProgress = new ProgressPerformanceHelper(progress, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
-				
+				var globlProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
 				globlProgress.StartGroup("Загрузка общих данных");
 				_sizeService.RefreshSizes(UoW);
 				var employes = UoW.Session.QueryOver<EmployeeCard>()
@@ -236,8 +238,8 @@ namespace Workwear.ViewModels.Export {
 				issueModel.PreloadWearItems(employeeIds);
 				
 				globlProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
-				localProgress.Title = "Загрузка выдач"; 
-				issueModel.FillWearReceivedInfo(employes.ToArray(), progress: localProgress);
+				ProgressLocal.Close(); 
+				issueModel.FillWearReceivedInfo(employes.ToArray(), progress: ProgressLocal);
 
 				globlProgress.StartGroup("Создание документа");
 				var wearCardsItems = employes.SelectMany(x => x.WorkwearItems);
@@ -257,12 +259,13 @@ namespace Workwear.ViewModels.Export {
 					cell.CellStyle = cellStyleHead;
 				}
 				
-				globlProgress.StartGroup("Перебор потребностей");
+				globlProgress.StartGroup("Перебор потребностей");				
+				ProgressLocal.Start(wearCardsItems.Count());
 				int i = 1;
-				localProgress.Title = "Обход потребностей";
-				localProgress.Start(wearCardsItems.Count());
+				
 				foreach(var item in wearCardsItems) {
-					localProgress?.Add(text: "Потребности " + item.EmployeeCard.ShortName);
+					ProgressLocal.Add(text:"Потребность " + item.EmployeeCard.ShortName);
+					GtkHelper.WaitRedraw();
 					//номенклатура с максимальной стоимостью
 					Nomenclature nomenclature = null;
 					if(item.ProtectionTools?.Nomenclatures.Count > 0)
@@ -274,7 +277,7 @@ namespace Workwear.ViewModels.Export {
 
 					item.UpdateNextIssue(null);
 					while(item.NextIssue.HasValue && item.NextIssue < EndDate) {
-						int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
+						 int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
 						if(need == 0 && !creditNeed)
 							break;
 						//создаём следующую выдачу
@@ -306,12 +309,20 @@ namespace Workwear.ViewModels.Export {
 							lastIsssue = null; // Будет только в первой строке. 
 							creditNeed = false;
 						}
-						
+
+						var resetOperations = item.Graph.Intervals.Where(gi=> gi.StartDate == item.NextIssue)
+							.Select(ai => ai.ActiveItems)
+							.Select(x => x.Select(y => y.IssueOperation).Where(o => o.OverrideBefore));
+						if(op.Issued < op.NormItem.Amount && resetOperations.Any())
+							foreach (var opR in resetOperations.SelectMany(x => x).Select(y => y))
+								if(opR != null)
+									opR.Issued = op.NormItem.Amount;
+
 						item.Graph.AddOperations(new List<EmployeeIssueOperation> { op });
 						item.UpdateNextIssue(null);
 					}
 				}
-				localProgress.Close();
+				ProgressLocal.Close();
 				globlProgress.StartGroup("Сохранение документа");
 				workbook.Write(fileStream);
 				workbook.Close();

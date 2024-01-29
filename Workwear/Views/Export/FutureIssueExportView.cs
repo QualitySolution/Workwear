@@ -8,11 +8,18 @@ namespace Workwear.Views.Export {
 			this.Build();
 			
 			ydateperiodpicker.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
-				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
+				.AddBinding(v => v.StartDate, w => w.StartDate)
+				.AddBinding(v => v.EndDate, w => w.EndDate)
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
 			ycheckbuttonShowCredit.Binding.AddBinding(ViewModel, v => v.ShowCredit, w => w.Active);
+
+			yprogressTotal.Visible = false;
+			yprogressLocal.Visible = false;
+			ViewModel.ProgressGlobal = yprogressTotal;
+			ViewModel.ProgressLocal = yprogressLocal;
+
+			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {

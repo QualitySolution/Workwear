@@ -656,6 +656,8 @@ public partial class MainWindow : Gtk.Window {
 			.Where(x => x.User.Id == user.CurrentUserId)
 			.Select(x => x.Id)
 			.SingleOrDefault<int>();
+			if(idSetting == null || idSetting == 0) {
+			}
 		}
 		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(idSetting));
 	}
