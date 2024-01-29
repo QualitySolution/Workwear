@@ -52,6 +52,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
 						new [] {-1} :
 						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds.Length == 0 ? 
 						new [] {-1} :
 						ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds },
@@ -72,6 +73,7 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		
 		private NotIssuedSheetReportType reportType;
+		[PropertyChangedAlso(nameof(VisibleChoiceEmployeeGroup))]
 		public virtual NotIssuedSheetReportType ReportType {
 			get => reportType;
 			set => SetField(ref reportType, value);
@@ -134,7 +136,7 @@ namespace workwear.ReportParameters.ViewModels
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
-		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups) || ReportType == NotIssuedSheetReportType.Flat;
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public object StockElementsVisible => ShowStock;
 
