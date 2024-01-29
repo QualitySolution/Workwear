@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.ClothingService {
@@ -15,6 +16,13 @@ namespace Workwear.Domain.ClothingService {
 	public class ServiceClaim : PropertyChangedBase, IDomainObject {
 		#region Cвойства
 		public virtual int Id { get; set; }
+		
+		private EmployeeCard employee;
+		[Display(Name = "Сотрудник")]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
 		
 		private Barcode barcode;
 		[Display(Name = "Штрихкод")]

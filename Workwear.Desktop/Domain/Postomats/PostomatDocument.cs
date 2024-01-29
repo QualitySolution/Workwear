@@ -75,6 +75,7 @@ namespace Workwear.Domain.Postomats {
 		public virtual void AddItem(ServiceClaim claim, CellLocation location, UserBase user) {
 			var newItem = new PostomatDocumentItem {
 				Document = this,
+				Employee = claim.Employee,
 				Nomenclature = claim.Barcode.Nomenclature,
 				Barcode = claim.Barcode,
 				ServiceClaim = claim,
