@@ -39,6 +39,8 @@ namespace workwear.ReportParameters.ViewModels
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
 			condition = true;
@@ -50,6 +52,9 @@ namespace workwear.ReportParameters.ViewModels
 					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
 						new [] {-1} :
 						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds.Length == 0 ? 
+						new [] {-1} :
+						ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds },
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", ExcludeInVacation },
@@ -129,6 +134,7 @@ namespace workwear.ReportParameters.ViewModels
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public object StockElementsVisible => ShowStock;
 
@@ -141,6 +147,7 @@ namespace workwear.ReportParameters.ViewModels
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
 
@@ -149,7 +156,7 @@ namespace workwear.ReportParameters.ViewModels
 			UoW.Dispose();
 		}
 	}
-	
+
 	public enum NotIssuedSheetReportType {
 		[ReportIdentifier("NotIssuedSheet")]
 		[Display(Name = "Форматировано")]
