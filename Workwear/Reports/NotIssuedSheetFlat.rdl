@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>37in</PageWidth>
+  <PageWidth>33in</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -37,10 +37,6 @@
           </TableColumn>
           <TableColumn>
             <Width>217.9pt</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>228.1pt</Width>
-            <Visibility></Visibility>
           </TableColumn>
           <TableColumn>
             <Width>348.2pt</Width>
@@ -124,24 +120,6 @@
                   <ReportItems>
                     <Textbox Name="Textbox50">
                       <Value>Должность</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox1">
-                      <Value>Группа</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -356,6 +334,7 @@
                   </ReportItems>
                 </TableCell>
               </TableCells>
+              <Visibility></Visibility>
             </TableRow>
           </TableRows>
           <RepeatOnNewPage>true</RepeatOnNewPage>
@@ -406,21 +385,6 @@
                         <BorderWidth />
                       </Style>
                       <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox2">
-                      <Value>={employee_group}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -628,7 +592,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -653,7 +617,6 @@
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * norms_item.amount AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
-    IF(-1 NOT IN (@employee_groups_ids),employee_groups.name, NULL) AS employee_group,
     objects.id as subdivision_id,
     objects.name as subdivision_name,
     posts.id as post_id,
@@ -713,7 +676,6 @@ FROM
     LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
     LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
     LEFT JOIN employee_group_items ON wear_cards.id = employee_group_items.employee_id
-    LEFT JOIN employee_groups ON employee_group_items.employee_group_id = employee_groups.id
 WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
@@ -774,7 +736,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -862,10 +824,6 @@ ORDER BY
         <Field Name="in_stock">
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
-        </Field>
-        <Field Name="employee_group">
-          <DataField>employee_group</DataField>
-          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
