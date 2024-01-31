@@ -143,6 +143,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
+    <Compile Include="ViewModels\Export\FutureIssueExportViewModel.cs" />
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
@@ -470,6 +472,10 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.cs" />
     <Compile Include="ReportParameters\Views\BarcodeCompletenessReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
+    <Compile Include="Views\Export\FutureIssueExportView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
+    <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -708,6 +714,7 @@
     <Folder Include="Views\Regulations\NormChildren\" />
     <Folder Include="Views\Postomats\" />
     <Folder Include="Views\ClothingService\" />
+    <Folder Include="Views\Export\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
