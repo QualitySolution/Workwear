@@ -42,11 +42,22 @@ namespace workwear.ReportParameters.Views
 				
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
 			ViewModel.LoadReport();
+		}
+		
+		protected void OnExpander1Activated(object sender, EventArgs e) {
+			(dialog1_VBox[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
+		}
+
+		protected void OnExpander2Activated(object sender, EventArgs e) {
+			(dialog1_VBox[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
 		}
 	}
 }
