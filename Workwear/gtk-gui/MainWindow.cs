@@ -361,7 +361,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);

@@ -8,13 +8,12 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.Utilities.Text;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
@@ -45,22 +44,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			StateOperation stateOperationAlias = null;
 			Barcode barcodeAlias = null;
 			Nomenclature nomenclatureAlias = null;
-			
-			BarcodeOperation barcodeOperationAlias = null;
-			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			EmployeeCard employeeAlias = null;
-
-			var subqueryLastEmployee = QueryOver.Of<BarcodeOperation>(() => barcodeOperationAlias)
-				.Where(() => barcodeOperationAlias.Barcode.Id == barcodeAlias.Id)
-				.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => employeeIssueOperationAlias)
-				.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
-				.OrderBy(() => employeeIssueOperationAlias.OperationTime).Desc
-				.Select(CustomProjections.Concat(
-					Projections.Property(() => employeeAlias.LastName),
-					Projections.Constant(" "),
-					Projections.Property(() => employeeAlias.FirstName),
-					Projections.Constant(" "),
-					Projections.Property(() => employeeAlias.Patronymic)));
 			
 			var subqueryLastState = QueryOver.Of<StateOperation>(() => stateOperationAlias)
 				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
@@ -85,6 +69,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					))
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
+				.Left.JoinAlias( x => x.Employee, () => employeeAlias)
 				.OrderBy(() => serviceClaimAlias.Id).Desc
 				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
@@ -93,7 +78,6 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.Select(x => x.IsClosed).WithAlias(() => resultAlias.IsClosed)
-					.SelectSubQuery(subqueryLastEmployee).WithAlias(() => resultAlias.Employee)
 					.SelectSubQuery(subqueryLastState).WithAlias(() => resultAlias.State)
 					.SelectSubQuery(subqueryLastOperationTime).WithAlias(() => resultAlias.OperationTime)
 				)
@@ -151,14 +135,17 @@ namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalNode {
 		public int Id { get; set; }
 		public string Barcode { get; set; }
-		public string Employee { get; set; }
+		public string EmployeeFirstName { get; set; }
+		public string EmployeeLastName { get; set; }
+		public string EmployeePatronymic { get; set; }
 		public bool NeedForRepair { get; set; }
 		public bool IsClosed { get; set; }
 		public ClaimState State { get; set; }
 		public DateTime OperationTime { get; set; }
 		public string Nomenclature { get; set; }
 		public string Defect { get; set; }
-		
+
+		public string Employee => PersonHelper.PersonFullName(EmployeeLastName, EmployeeFirstName, EmployeePatronymic);
 		public string RowColor => IsClosed ? "grey" : null;
 	}
 }

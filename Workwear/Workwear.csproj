@@ -143,6 +143,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
@@ -473,6 +474,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
     <Compile Include="Views\Export\FutureIssueExportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
+    <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

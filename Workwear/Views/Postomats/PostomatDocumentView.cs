@@ -37,6 +37,7 @@ namespace Workwear.Views.Postomats {
 			comboTypeDoc.Sensitive = false;
 
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentItem>()
+				.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.Employee?.ShortName)
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
 				.AddColumn("Штрихкод").AddReadOnlyTextRenderer(x => x.Barcode?.Title)
 				.AddColumn("Количество").AddNumericRenderer(x => x.Delta)

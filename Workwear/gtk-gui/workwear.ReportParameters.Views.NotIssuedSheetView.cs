@@ -50,7 +50,17 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabelHideWorn;
 
+		private global::Gtk.Expander expander1;
+
 		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+
+		private global::Gtk.Label GtkLabel14;
+
+		private global::Gtk.Expander expander2;
+
+		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview2;
+
+		private global::Gtk.Label GtkLabel15;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -358,12 +368,41 @@ namespace workwear.ReportParameters.Views
 			w22.Expand = false;
 			w22.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.expander1 = new global::Gtk.Expander(null);
+			this.expander1.CanFocus = true;
+			this.expander1.Name = "expander1";
+			this.expander1.Expanded = true;
+			// Container child expander1.Gtk.Container+ContainerChild
 			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
 			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
-			this.dialog1_VBox.Add(this.choiceprotectiontoolsview1);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.choiceprotectiontoolsview1]));
-			w23.Position = 1;
+			this.expander1.Add(this.choiceprotectiontoolsview1);
+			this.GtkLabel14 = new global::Gtk.Label();
+			this.GtkLabel14.Name = "GtkLabel14";
+			this.GtkLabel14.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатуры нормы");
+			this.GtkLabel14.UseUnderline = true;
+			this.expander1.LabelWidget = this.GtkLabel14;
+			this.dialog1_VBox.Add(this.expander1);
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander1]));
+			w24.Position = 1;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.expander2 = new global::Gtk.Expander(null);
+			this.expander2.CanFocus = true;
+			this.expander2.Name = "expander2";
+			// Container child expander2.Gtk.Container+ContainerChild
+			this.choiceemployeegroupview2 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
+			this.choiceemployeegroupview2.Events = ((global::Gdk.EventMask)(256));
+			this.choiceemployeegroupview2.Name = "choiceemployeegroupview2";
+			this.expander2.Add(this.choiceemployeegroupview2);
+			this.GtkLabel15 = new global::Gtk.Label();
+			this.GtkLabel15.Name = "GtkLabel15";
+			this.GtkLabel15.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
+			this.GtkLabel15.UseUnderline = true;
+			this.expander2.LabelWidget = this.GtkLabel15;
+			this.dialog1_VBox.Add(this.expander2);
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
+			w26.Position = 2;
+			w26.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.Sensitive = false;
@@ -372,17 +411,19 @@ namespace workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w24.PackType = ((global::Gtk.PackType)(1));
-			w24.Position = 2;
-			w24.Expand = false;
-			w24.Fill = false;
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w27.PackType = ((global::Gtk.PackType)(1));
+			w27.Position = 3;
+			w27.Expand = false;
+			w27.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Show();
+			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.buttonRun.Clicked += new global::System.EventHandler(this.OnButtonRunClicked);
 		}
 	}
