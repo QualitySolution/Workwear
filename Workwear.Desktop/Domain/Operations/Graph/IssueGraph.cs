@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using NHibernate.Criterion;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
@@ -91,6 +90,13 @@ namespace Workwear.Domain.Operations.Graph
 
 		#region Методы
 
+		public void AddOperations(IList<EmployeeIssueOperation> operations) {
+			foreach(var op in operations) 
+				this.operations.Add(op);
+			if(operations.Any())
+				Refresh();
+		}
+		
 		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{
 			var interval = IntervalOfDate(date);
