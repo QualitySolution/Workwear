@@ -847,20 +847,27 @@
 	heightAlias.name AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
-    IF(@show_stock,
-        (SELECT
-            (
-                SUM(
-                    CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+    IF(@show_stock,(
+        SELECT(
+            SUM(
+                CASE WHEN (operation_warehouse.warehouse_receipt_id IS NOT NULL
+                    AND(@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id) )
+                THEN operation_warehouse.amount  
+                ELSE 0
                 END
             ) - SUM(
-                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-            END
-        )) AS SUM
+                CASE WHEN (operation_warehouse.warehouse_expense_id IS NOT NULL
+                    AND(@all_warehouse OR operation_warehouse.warehouse_expense_id = @warehouse_id) )
+                THEN operation_warehouse.amount
+                ELSE 0
+                END
+            )) AS SUM
         FROM
             operation_warehouse
         WHERE
-            operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+            (@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id OR operation_warehouse.warehouse_expense_id = @warehouse_id)
+            AND operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) 
+            AND operation_warehouse.nomenclature_id IN(
             SELECT
                 protection_tools_nomenclature.nomenclature_id
             FROM
@@ -951,6 +958,12 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@employee_groups_ids">
             <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@all_warehouse">
+            <Value>={?all_warehouse}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@warehouse_id">
+            <Value>={?warehouse_id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1058,7 +1071,16 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=VMvwqDdWZBQCbm</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1193,14 +1215,29 @@ ORDER BY
       <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="warehouse_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="all_warehouse">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=VMvwqDdWZBQCbm</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

@@ -46,7 +46,7 @@ FROM (SELECT
                     AND o.auto_writeoff_date &gt;= @report_date),
                 0)
             )
-        ) as balance
+        ) as 'balance'
 
     FROM wear_cards_item
         JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -788,7 +788,7 @@ FROM (SELECT
       <Textbox Name="Textbox1">
         <Height>20.30pt</Height>
         <Width>576.68pt</Width>
-        <Value>= "Отчёт по обеспечености сотрудников на " + Format({?report_date}, "dd.MM.yyyy")</Value>
+        <Value>= "Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>3.80pt</Top>
@@ -836,7 +836,7 @@ FROM (SELECT
   </DataSources>
   <ReportParameters>
     <ReportParameter Name="report_date">
-      <DataType>DateTime</DataType>
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>2023-11-27</Value>
