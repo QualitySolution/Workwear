@@ -11,21 +11,21 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
 FROM (SELECT
-    IF(@group_by_subdivision, wear_cards.object_id, NULL) AS subdivision_id,
-    IF(@group_by_subdivision, objects.name, NULL) AS subdivision_name,
+    IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
+    IF(@group_by_subdivision, objects.name, NULL) AS 'subdivision_name',
     protection_tools.id AS 'protection_tools_id',
     protection_tools.name AS 'protection_tools_name',
     if(@show_sex,
         IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
         null)
         AS 'employee_sex',
-    if(@show_size, sizeAlias.name, null) as size,
-    if(@show_size, heightAlias.name, null) as height,
+    if(@show_size, sizeAlias.name, null) as 'size',
+    if(@show_size, heightAlias.name, null) as 'height',
     SUM(norms_item.amount) AS 'need',
     SUM(
         LEAST(
@@ -117,7 +117,7 @@ FROM (SELECT
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
