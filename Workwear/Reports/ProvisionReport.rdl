@@ -11,85 +11,91 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT *,
+        <CommandText>
+SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
 FROM (SELECT
-    IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
-    IF(@group_by_subdivision, objects.name, NULL) AS 'subdivision_name',
-    protection_tools.id AS 'protection_tools_id',
-    protection_tools.name AS 'protection_tools_name',
-    if(@show_sex,
-        IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
-        null)
-        AS 'employee_sex',
-    if(@show_size, sizeAlias.name, null) as 'size',
-    if(@show_size, heightAlias.name, null) as 'height',
-    SUM(norms_item.amount) AS 'need',
-    SUM(
-        LEAST(
-            norms_item.amount,
-            IFNULL(
-                (SELECT 
-                    SUM(
-                        o.issued - IFNULL(
-                            (SELECT SUM(ret.returned)
-                            FROM operation_issued_by_employee ret
-                            WHERE ret.issued_operation_id = o.id),
-                        0)
-                    )
-                FROM operation_issued_by_employee o
-                WHERE
-                    o.employee_id = wear_cards_item.wear_card_id
-                    AND o.protection_tools_id = wear_cards_item.protection_tools_id
-                    AND o.auto_writeoff_date &gt;= @report_date),
-                0)
-            )
-        ) as 'balance'
+          COUNT(*) AS 'count_employee',
+          IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
+          IF(@group_by_subdivision, objects.name, NULL) AS 'subdivision_name',
+          protection_tools.id AS 'protection_tools_id',
+          protection_tools.name AS 'protection_tools_name',
+          if(@show_sex,
+             IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
+             null)
+                                                                AS 'employee_sex',
+          if(@show_size, sizeAlias.name, null) as 'size',
+          if(@show_size, heightAlias.name, null) as 'height',
+          if(@group_by_norm_amount, norms_item.amount, null) as 'norm_amount',
+          SUM(norms_item.amount) AS 'need',
+          SUM(
+                  LEAST(
+                          norms_item.amount,
+                          IFNULL(
+                                  (SELECT
+                                       SUM(
+                                                   o.issued - IFNULL(
+                                                       (SELECT SUM(ret.returned)
+                                                        FROM operation_issued_by_employee ret
+                                                        WHERE ret.issued_operation_id = o.id),
+                                                       0)
+                                           )
+                                   FROM operation_issued_by_employee o
+                                   WHERE
+                                           o.employee_id = wear_cards_item.wear_card_id
+                                     AND o.protection_tools_id = wear_cards_item.protection_tools_id
+                                     AND o.auto_writeoff_date &gt;= @report_date),
+                                  0)
+                      )
+              ) as 'balance'
 
-    FROM wear_cards_item
-        JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-        LEFT JOIN objects ON wear_cards.object_id = objects.id
-        JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-        LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-        LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-        LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-        LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-        LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-        LEFT JOIN wear_cards_sizes AS employeeSizeAlias
-             ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND
-                 employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-        LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-        LEFT JOIN wear_cards_sizes AS employeeHeightAlias
-             ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
-                 employeeHeightAlias.size_type_id = heightTypeAlias.id)
-        LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-        JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-    WHERE
-        wear_cards.dismiss_date IS NULL
-        AND protection_tools.id IN (@protection_tools_ids)
-        AND ((@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))        
+      FROM wear_cards_item
+               JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+               LEFT JOIN employee_group_items ON wear_cards.id = employee_group_items.employee_id
+               LEFT JOIN objects ON wear_cards.object_id = objects.id
+               JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+               LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+               LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+               LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+               LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+               LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+               LEFT JOIN wear_cards_sizes AS employeeSizeAlias
+                         ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND
+                             employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+               LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+               LEFT JOIN wear_cards_sizes AS employeeHeightAlias
+                         ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
+                             employeeHeightAlias.size_type_id = heightTypeAlias.id)
+               LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+               JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+      WHERE
+          wear_cards.dismiss_date IS NULL
+        AND ((-1 IN (@employee_groups_ids)) OR (@without_groups AND employee_group_items.id IS NULL) OR (employee_group_items.employee_group_id IN (@employee_groups_ids)))
+        AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
+        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
-            OR (wear_cards_vacations.begin_date IS NULL 
-                OR (CONVERT(@report_date, DATE) BETWEEN
-                    wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
-                    )
-                )
-            )
-    GROUP BY 
-        wear_cards_item.protection_tools_id,
-        IF(@group_by_subdivision, subdivision_id, NULL),
-        IF(@show_sex, employee_sex, NULL),
-        IF(@show_size, employeeSizeAlias.size_id, NULL),
-        IF(@show_size, employeeHeightAlias.size_id, NULL)
-    ORDER BY
-        IF(@group_by_subdivision, subdivision_name, NULL),
-        protection_tools.name,
-        IF(@show_sex, employee_sex, NULL),
-        IF(@show_size, size, NULL),
-        IF(@show_size, height, NULL)
-    ) as tabel</CommandText>
+          OR (wear_cards_vacations.begin_date IS NULL
+              OR (CONVERT(@report_date, DATE) BETWEEN
+                  wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
+                  )
+                 )
+          )
+      GROUP BY
+          wear_cards_item.protection_tools_id,
+          IF(@group_by_subdivision, subdivision_id, NULL),
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, employeeSizeAlias.size_id, NULL),
+          IF(@show_size, employeeHeightAlias.size_id, NULL),
+          IF(@group_by_norm_amount, norms_item.amount, NULL)
+      ORDER BY
+          IF(@group_by_subdivision, subdivision_name, NULL),
+          protection_tools.name,
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, size, NULL),
+          IF(@show_size, height, NULL)
+     ) as tabel</CommandText>
         <QueryParameters>
           <QueryParameter Name="report_date">
             <Value>=Parameters!report_date</Value>
@@ -115,9 +121,18 @@ FROM (SELECT
           <QueryParameter Name="without_subdivision">
             <Value>=Parameters!without_subdivision</Value>
           </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>=Parameters!without_groups</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>=Parameters!employee_groups_ids</Value>
+          </QueryParameter>
+          <QueryParameter Name="group_by_norm_amount">
+            <Value>=Parameters!group_by_norm_amount</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -158,6 +173,14 @@ FROM (SELECT
           <DataField>provision_percent</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="count_employee">
+          <DataField>count_employee</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="norm_amount">
+          <DataField>norm_amount</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -195,25 +218,34 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>49.0pt</Width>
+            <Width>46.7pt</Width>
             <Visibility>
               <Hidden>=!{?show_size}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn >
+            <Width>29.3pt</Width>
+            <Visibility>
+              <Hidden>=!{?group_by_norm_amount}</Hidden>
+            </Visibility>
+          </TableColumn>
           <TableColumn>
-            <Width>70.7pt</Width>
+            <Width>46.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>60.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>82.8pt</Width>
+            <Width>51.9pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>30.0pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>12pt</Height>
+              <Height>26.9pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -279,10 +311,26 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox27">
+                      <Value>Нор-ма</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
-                      <Value>Потребность</Value>
+                      <Value>Потреб-ность</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -314,8 +362,24 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox10">
-                      <Value>Обеспеченость</Value>
+                      <Value>Обеспе-ченость</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>чел.</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -340,7 +404,7 @@ FROM (SELECT
                   <Height>17.5pt</Height>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>4</ColSpan>
+                      <ColSpan>5</ColSpan>
                       <ReportItems>
                         <Textbox Name="Textbox11">
                           <Value>=Iif({?group_by_subdivision},Iif(Fields!subdivision_id.IsMissing, "      Без подразделения", {subdivision_name}),"По всем выбранным подразделениям")</Value>
@@ -406,6 +470,27 @@ FROM (SELECT
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox15">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>Solid</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <FontWeight>Bold</FontWeight>
+                            <BorderColor />
+                            <BorderWidth />
+                            <VerticalAlign>Bottom</VerticalAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox26">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <PaddingLeft>2pt</PaddingLeft>
@@ -516,6 +601,27 @@ FROM (SELECT
                       </ReportItems>
                       <ColSpan>1</ColSpan>
                     </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox30">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <PaddingRight>2pt</PaddingRight>
+                            <TextAlign>Right</TextAlign>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox25">
@@ -537,7 +643,7 @@ FROM (SELECT
                           </Style>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>3</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -624,6 +730,22 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>=Fields!norm_amount.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="need">
@@ -675,6 +797,22 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox24">
+                      <Value>=Fields!count_employee.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -684,7 +822,7 @@ FROM (SELECT
         <Footer>
           <TableRows>
             <TableRow>
-              <Height>.2in</Height>
+              <Height>13.7pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -758,6 +896,24 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
@@ -778,7 +934,7 @@ FROM (SELECT
                       <Value>= "Общее среднее: " + Round(Avg(Fields!provision_percent.Value), 0) + "%"</Value>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>3</ColSpan>
+                  <ColSpan>4</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -802,7 +958,7 @@ FROM (SELECT
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>100.8pt</Height>
+    <Height>122.5pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -834,7 +990,7 @@ FROM (SELECT
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -930,6 +1086,42 @@ FROM (SELECT
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_norm_amount">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

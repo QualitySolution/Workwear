@@ -6,21 +6,30 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class ProvisionReportViewModel : ReportParametersViewModelBase {
 		
+		private readonly FeaturesService featuresService;
+		
 		public ProvisionReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
-			IUnitOfWorkFactory uowFactory)
+			IUnitOfWorkFactory uowFactory,
+			FeaturesService featuresService)
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
+			
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -36,6 +45,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
+			{"group_by_norm_amount", GroupByNormAmount },
 			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
 				new [] {-1} : 
 				ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
@@ -43,6 +53,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
 				new [] {-1} :
 				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+			{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
+			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds.Length == 0 ? 
+				new [] {-1} :
+				ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds },
 			{"show_employees", ShowEmployees },
 			{"show_stock", ShowStock },
 		};
@@ -57,11 +71,14 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
 		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
-		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
+		                                                && !ChoiceSubdivisionViewModel.AllUnSelected 
+		                                                && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		#endregion
 		
 		#region Свойства
@@ -93,6 +110,13 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => groupBySubdivision;
 			set => SetField(ref groupBySubdivision, value);
 		}
+		
+		private bool groupByNormAmount;
+		public virtual bool GroupByNormAmount {
+			get => groupByNormAmount;
+			set => SetField(ref groupByNormAmount, value);
+		}
+		
 		private ProvisionReportType reportType;
 		public virtual ProvisionReportType ReportType {
 			get => reportType;
