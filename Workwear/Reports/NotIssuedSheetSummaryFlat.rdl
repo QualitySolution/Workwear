@@ -65,7 +65,7 @@
           <TableColumn>
             <Width>962.1pt</Width>
             <Visibility>
-              <Hidden>={?show_employees}</Hidden>
+              <Hidden>=!{?show_employees}</Hidden>
             </Visibility>
           </TableColumn>
         </TableColumns>
@@ -449,7 +449,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>300</Timeout>
         <CommandText>SELECT
@@ -459,14 +459,17 @@
     if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
     if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
     objects.name as subdivision_name,
-    GROUP_CONCAT( CONCAT_WS('',
-            CONCAT(wear_cards.last_name, ' '),
-            IF(wear_cards.first_name = '',
-                NULL,
-                CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-            IF(wear_cards.patronymic_name = '',
-                NULL,
-                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500) AS employees,
+    if(@show_employees,
+        GROUP_CONCAT( CONCAT_WS('',
+                CONCAT(wear_cards.last_name, ' '),
+                IF(wear_cards.first_name = '',
+                    NULL,
+                    CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+                IF(wear_cards.patronymic_name = '',
+                    NULL,
+                    CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500),
+        null)
+        AS employees,
     wear_cards.sex,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
@@ -525,13 +528,18 @@ LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employ
 LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
-LEFT JOIN employee_group_items ON wear_cards.id = employee_group_items.employee_id
 WHERE
     wear_cards.dismiss_date IS NULL
-    AND ((@without_groups AND employee_group_items.id IS NULL) OR (employee_group_items.employee_group_id IN (@employee_groups_ids)))
+    AND ((-1 IN (@employee_groups_ids)) 
+         OR(@without_groups AND NOT EXISTS
+             (SELECT * FROM employee_group_items as gi 
+               WHERE gi.employee_id = wear_cards_item.wear_card_id) ) 
+         OR (EXISTS (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = wear_cards_item.wear_card_id
+                 AND gi.employee_group_id IN (@employee_groups_ids))) )
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND protection_tools.id IN (@protection_tools_ids)
+    AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
     AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -596,9 +604,12 @@ ORDER BY
           <QueryParameter Name="@employee_groups_ids">
             <Value>={?employee_groups_ids}</Value>
           </QueryParameter>
+          <QueryParameter Name="@show_employees">
+            <Value>={?show_employees}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>

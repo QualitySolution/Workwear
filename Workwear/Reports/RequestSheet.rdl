@@ -941,7 +941,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
@@ -981,7 +981,7 @@ WHERE
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-    AND protection_tools.id IN (@protectionTools)
+    AND ((-1 IN (@protectionTools)) OR (protection_tools.id IN (@protectionTools)))
     AND (@exclude_in_vacation = false OR (CURRENT_DATE() NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
 GROUP BY
     protection_tools.id,
@@ -1024,7 +1024,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="type_name">
           <DataField>type_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1168,7 +1168,7 @@ ORDER BY
       <Prompt />
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

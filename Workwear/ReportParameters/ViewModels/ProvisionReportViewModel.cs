@@ -46,17 +46,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
 			{"group_by_norm_amount", GroupByNormAmount },
-			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
-				new [] {-1} : 
-				ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
+			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedIdsMod},
 			{"without_subdivision", ChoiceSubdivisionViewModel.NullIsSelected },
-			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
-				new [] {-1} :
-				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod},
 			{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
-			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds.Length == 0 ? 
-				new [] {-1} :
-				ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds },
+			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 			{"show_employees", ShowEmployees },
 			{"show_stock", ShowStock },
 		};

@@ -25,7 +25,7 @@ FROM (SELECT
           if(@show_sex,
              IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
              null)
-                                                                AS 'employee_sex',
+                AS 'employee_sex',
           if(@show_size, sizeAlias.name, null) as 'size',
           if(@show_size, heightAlias.name, null) as 'height',
           if(@group_by_norm_amount, norms_item.amount, null) as 'norm_amount',
@@ -53,7 +53,6 @@ FROM (SELECT
 
       FROM wear_cards_item
                JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-               LEFT JOIN employee_group_items ON wear_cards.id = employee_group_items.employee_id
                LEFT JOIN objects ON wear_cards.object_id = objects.id
                JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
@@ -72,7 +71,13 @@ FROM (SELECT
                JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
       WHERE
           wear_cards.dismiss_date IS NULL
-        AND ((-1 IN (@employee_groups_ids)) OR (@without_groups AND employee_group_items.id IS NULL) OR (employee_group_items.employee_group_id IN (@employee_groups_ids)))
+                AND ((-1 IN (@employee_groups_ids)) 
+                 OR (@without_groups AND (NOT EXISTS
+                     (SELECT * FROM employee_group_items as gi 
+                       WHERE gi.employee_id = wear_cards_item.wear_card_id))) 
+                 OR (EXISTS (SELECT * FROM employee_group_items as gi2
+                       WHERE gi2.employee_id = wear_cards_item.wear_card_id
+                         AND gi2.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
@@ -80,7 +85,7 @@ FROM (SELECT
               OR (CONVERT(@report_date, DATE) BETWEEN
                   wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
                   )
-                 )
+             )
           )
       GROUP BY
           wear_cards_item.protection_tools_id,
@@ -1121,7 +1126,7 @@ FROM (SELECT
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
