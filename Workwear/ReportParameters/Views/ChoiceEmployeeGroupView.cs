@@ -23,14 +23,14 @@ namespace Workwear.ReportParameters.Views {
 				.AddColumn("Название").AddTextRenderer(x => x.Name).SearchHighlight()
 				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Sensitive = x.Highlighted)
 				.Finish();
-			ytreeChoiseEmployeeGroups.ItemsDataSource = ViewModel.EmployeeGroups;
+			ytreeChoiseEmployeeGroups.ItemsDataSource = ViewModel.Items;
 			
 			yentrySearch.Changed += delegate {
 				ytreeChoiseEmployeeGroups.SearchHighlightText = yentrySearch.Text;
 				ViewModel.SelectLike(yentrySearch.Text);
 				ytreeChoiseEmployeeGroups.YTreeModel.EmitModelChanged();
 			};
-			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.EmployeeGroups.Any();
+			ycheckbuttonChooseAll.Sensitive = ycheckbuttonUnChooseAll.Sensitive = ViewModel.Items.Any();
 			ycheckbuttonChooseAll.Clicked += (s,e) => ViewModel.SelectAll();
 			ycheckbuttonUnChooseAll.Clicked += (s,e) => ViewModel.UnSelectAll();
 		}

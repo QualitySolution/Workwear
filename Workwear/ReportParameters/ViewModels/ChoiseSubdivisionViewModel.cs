@@ -18,19 +18,19 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		private ObservableList<SelectedChoiceSubdivision> subdivisions;
-		public ObservableList<SelectedChoiceSubdivision> Subdivisions {
+		private ObservableList<SelectedChoiceSubdivision> items;
+		public ObservableList<SelectedChoiceSubdivision> Items {
 			get {
-				if(subdivisions == null)
-					FillSubdivision();
-				return subdivisions;
+				if(items == null)
+					FillItems();
+				return items;
 			}
 		}
 		
-		private void FillSubdivision(){
+		private void FillItems(){
 			SelectedChoiceSubdivision resultAlias = null;
 
-			subdivisions = new ObservableList<SelectedChoiceSubdivision>(UoW.Session.QueryOver<Subdivision>()
+			items = new ObservableList<SelectedChoiceSubdivision>(UoW.Session.QueryOver<Subdivision>()
 				.SelectList(list => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
@@ -41,7 +41,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				.List<SelectedChoiceSubdivision>());
 
 			if(ShowNullValue) {
-				subdivisions.Insert(0, new SelectedChoiceSubdivision() {
+				items.Insert(0, new SelectedChoiceSubdivision() {
 					Id = -1,
 					Name = " Без подразделения",
 					Select = true,
@@ -49,7 +49,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				});
 			}
 
-			subdivisions.PropertyOfElementChanged += OnPropertyOfElementChanged;
+			items.PropertyOfElementChanged += OnPropertyOfElementChanged;
 		}
 
 		private void OnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) {
@@ -70,45 +70,63 @@ namespace Workwear.ReportParameters.ViewModels {
 		/// <summary>
 		///  Массив id подразделений 
 		/// </summary>
-		public int[] SelectedChoiceSubdivisionIds {
-			get => Subdivisions.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		public int[] SelectedIds {
+			get => Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		/// <summary>
+		/// Массив id со спецзначениями
+		/// Выводит массив id если что-то выбрано, либо массив с одним значением
+		/// -1 если выбрано всё втом числе  null элемент
+		/// -2 если выбран только null элемет
+		/// Никогда не возвращает пустой массив.
+		/// </summary>
+		public int[] SelectedIdsMod {
+			get {
+				if(AllSelected)
+					return new[] { -1 };
+				var ids = Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+				if(ids.Length == 0 && NullIsSelected)
+					return new[] { -2 };
+				return ids;
+			} 
 		}
 		
 		/// <summary>
 		///  Выбраны все подразделение включая "Без подразделения"
 		/// </summary>
 		public bool AllSelected {
-			get => Subdivisions.All(x => x.Select);
+			get => Items.All(x => x.Select);
 		}
 		
 		/// <summary>
 		///  Не выбрано ни одно подразделение в том числе "Без подразделения"
 		/// </summary>
 		public bool AllUnSelected {
-			get => Subdivisions.All(x => !x.Select);
+			get => Items.All(x => !x.Select);
 		}
 		
 		/// <summary>
 		/// В списке выбрано "Без подразделенния"
 		/// </summary>
 		public bool NullIsSelected {
-			get => Subdivisions.Any(x => x.Select && x.Id == -1);
+			get => Items.Any(x => x.Select && x.Id == -1);
 		}
 		
 		public void SelectAll() {
-			foreach (var s in Subdivisions)
+			foreach (var s in Items)
 				s.Select = true;
 		}
 		 
 		public void UnSelectAll() {
-			foreach (var s in Subdivisions)
+			foreach (var s in Items)
 				s.Select = false;
 		}
 		
 		public void SelectLike(string maskLike) {
-			foreach(var line in Subdivisions)
+			foreach(var line in Items)
 				line.Highlighted = line.Name.ToLower().Contains(maskLike.ToLower());
-			Subdivisions.Sort(Comparison);
+			Items.Sort(Comparison);
 		}
 
 		private int Comparison(SelectedChoiceSubdivision x, SelectedChoiceSubdivision y) {

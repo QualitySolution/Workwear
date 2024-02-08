@@ -46,9 +46,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"summary", !BySubdivision},
 					{"bySize", BySize},
 					{"withoutsub", ChoiceSubdivisionViewModel.NullIsSelected },
-					{"subdivisions",  ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
-						new [] {-1} : 
-						ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
+					{"subdivisions",  ChoiceSubdivisionViewModel.SelectedIdsMod},
 					{"issue_type", IssueType?.ToString() },
 					{"matchString", MatchString},
 					{"noMatchString", NoMatchString},

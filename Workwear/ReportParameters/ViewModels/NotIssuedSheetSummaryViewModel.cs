@@ -60,13 +60,11 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity == null ? -1 : SubdivisionEntry.Entity.Id },
-					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIds.Length == 0 ? 
 						new [] {-1} :
-						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+						ChoiceProtectionToolsViewModel.SelectedIds },
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds.Length == 0 ? 
-						new [] {-1} :
-						ChoiceEmployeeGroupViewModel.SelectedChoiceEmployeeGroupsIds },
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 					{"issue_type", IssueType?.ToString() },
 					{"group_by_subdivision", GroupBySubdivision },
 					{"show_sex", ShowSex },

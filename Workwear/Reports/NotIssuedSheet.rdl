@@ -900,13 +900,18 @@ FROM
     LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
     LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
     LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-    LEFT JOIN employee_group_items ON wear_cards.id = employee_group_items.employee_id
 WHERE
     wear_cards.dismiss_date IS NULL
-    AND ((@without_groups AND employee_group_items.id IS NULL) OR (employee_group_items.employee_group_id IN (@employee_groups_ids)))
+    AND ((-1 IN (@employee_groups_ids)) 
+    OR(@without_groups AND NOT EXISTS
+        (SELECT * FROM employee_group_items as gi 
+        WHERE gi.employee_id = wear_cards_item.wear_card_id) ) 
+    OR (EXISTS (SELECT * FROM employee_group_items as gi
+        WHERE gi.employee_id = wear_cards_item.wear_card_id
+            AND gi.employee_group_id IN (@employee_groups_ids))) )
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND protection_tools.id IN (@protection_tools_ids)
+    AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
     AND (@condition = false OR norm_conditions.issuance_start is null OR
         IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
             SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -1080,7 +1085,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>

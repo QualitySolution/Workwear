@@ -1465,7 +1465,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select 
     if(@summary, NULL, objects.id) as subdivision_id, 
@@ -1501,7 +1501,7 @@ WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND operation_issued_by_employee.returned = 0 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
-AND ((@withoutsub AND objects.id IS NULL) OR objects.id IN (@subdivisions))
+AND ((-1 IN (@subdivisions)) OR (@withoutsub AND objects.id IS NULL) OR (objects.id IN (@subdivisions)))
 AND (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 AND (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
@@ -1562,7 +1562,7 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -1763,7 +1763,7 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
