@@ -107,7 +107,7 @@ FROM (SELECT
       WHERE
           wear_cards.dismiss_date IS NULL
           AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
-          AND ((-1 IN (@subdivisions)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivisions)))          
+          AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))          
           AND (NOT @exclude_in_vacation
               OR (wear_cards_vacations.begin_date IS NULL
               OR (CONVERT(@report_date, DATE) BETWEEN
