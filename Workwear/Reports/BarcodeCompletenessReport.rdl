@@ -56,7 +56,7 @@ FROM (SELECT
             GROUP BY op.employee_id, op.protection_tools_id
            ) as bar_op on bar_op.pt = wear_cards_item.protection_tools_id AND bar_op.emp = wear_cards_item.wear_card_id
       WHERE
-        wear_cards.dismiss_date IS NULL
+          wear_cards.dismiss_date IS NULL
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
@@ -64,7 +64,7 @@ FROM (SELECT
               OR (CONVERT(@report_date, DATE) BETWEEN
                   wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
                   )
-              )
+                 )
           )
       GROUP BY
           subdivision_id
