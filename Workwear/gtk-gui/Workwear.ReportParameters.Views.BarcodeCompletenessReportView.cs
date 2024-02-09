@@ -325,6 +325,8 @@ namespace Workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.ybuttonRun.Clicked += new global::System.EventHandler(this.OnYbuttonRunClicked);
 		}
 	}
