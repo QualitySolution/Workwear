@@ -14,7 +14,7 @@ namespace Workwear.Sql
 			return new CreationScript(
 				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
 				"Workwear.Sql.Scripts.new_empty.sql",
-				new Version(2, 8, 14)
+				new Version(2, 8, 15)
 			);
 		}
 
@@ -176,6 +176,11 @@ namespace Workwear.Sql
 				new Version(2, 8, 13),
 				new Version(2, 8, 14),
 				"Workwear.Sql.Scripts.2.8.14.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 14),
+				new Version(2, 8, 15),
+				"Workwear.Sql.Scripts.2.8.15.sql"
 			);
 			return configuration;
 		}

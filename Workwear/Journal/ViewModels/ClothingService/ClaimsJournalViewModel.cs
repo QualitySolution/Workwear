@@ -36,6 +36,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
 			CreateActions();
+			UpdateOnChanges(typeof(ServiceClaim), typeof(StateOperation));
 		}
 
 		protected override IQueryOver<ServiceClaim> ItemsQuery(IUnitOfWork uow) {

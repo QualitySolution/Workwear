@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *,
           (tabel.barcodes / tabel.balance * 100)
@@ -106,8 +106,8 @@ FROM (SELECT
                ) as bar_op on bar_op.pt = wear_cards_item.protection_tools_id AND bar_op.emp = wear_cards_item.wear_card_id
       WHERE
           wear_cards.dismiss_date IS NULL
-          AND protection_tools.id IN (@protection_tools_ids)
-          AND ((@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
+          AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
+          AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))          
           AND (NOT @exclude_in_vacation
               OR (wear_cards_vacations.begin_date IS NULL
               OR (CONVERT(@report_date, DATE) BETWEEN
@@ -161,7 +161,7 @@ FROM (SELECT
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>

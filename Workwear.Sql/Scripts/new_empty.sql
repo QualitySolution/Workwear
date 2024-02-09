@@ -43,8 +43,8 @@ CREATE TABLE `clothing_service_claim` (
   `defect` text DEFAULT NULL COMMENT 'Описание дефекта при сдаче, который нужно починить.',
   PRIMARY KEY (`id`),
   KEY `barcode_id` (`barcode_id`),
-  KEY `fk_employee_id` (`employee_id`),
-  constraint `fk_employee_id` foreign key (employee_id) references wear_cards (id),
+  KEY `fk_clothing_service_claim_employee_id` (`employee_id`),
+  constraint `fk_clothing_service_claim_employee_id` foreign key (employee_id) references wear_cards (id),
   CONSTRAINT `fk_claim_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -175,11 +175,11 @@ CREATE TABLE `postomat_document_items` (
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
-   KEY `fk_employee_id` (`employee_id`),
+   KEY `fk_postomat_document_items_employee_id` (`employee_id`),
    KEY `fk_barcode_id` (`barcode_id`),
    KEY `fk_claim_id` (`claim_id`),
    KEY `fk_nomenclature_id` (`nomenclature_id`),
-   constraint `fk_employee_id` foreign key (employee_id) references wear_cards (id),
+   constraint `fk_postomat_document_items_employee_id` foreign key (employee_id) references wear_cards (id),
    CONSTRAINT `fk_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
    CONSTRAINT `fk_claim_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT `fk_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
@@ -769,6 +769,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `employee_id` INT UNSIGNED NOT NULL,
   `operation_time` DATETIME NOT NULL,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -792,6 +793,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `fixed_operation` TINYINT(1) NOT NULL DEFAULT 0,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `operation_issued_by_employee_last_update_idx` (`last_update` DESC),
   INDEX `fk_operation_issued_by_employee_1_idx` (`employee_id` ASC),
   INDEX `fk_operation_issued_by_employee_2_idx` (`nomenclature_id` ASC),
   INDEX `fk_operation_issued_by_employee_3_idx` (`issued_operation_id` ASC),
@@ -2226,7 +2228,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.14');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.15');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

@@ -10,11 +10,14 @@ namespace Workwear.ReportParameters.Views {
 			
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
+			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			
 			ycheckbuttonExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.ShowSize, w => w.Active).InitializeFromSource();
 			ycheckbuttonGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupBySubdivision, w => w.Active).InitializeFromSource();
+			ycheckbuttonGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.GroupByNormAmount, w => w.Active).InitializeFromSource();
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
 			ylabelShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
@@ -38,6 +41,10 @@ namespace Workwear.ReportParameters.Views {
 
 		protected void OnExpander2Activated(object sender, EventArgs e) {
 			(vbox1[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
+		}
+
+		protected void OnExpander3Activated(object sender, EventArgs e) {
+			(vbox1[expander3] as Gtk.Box.BoxChild).Expand = expander3.Expanded;
 		}
 	}
 }

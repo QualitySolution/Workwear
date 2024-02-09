@@ -18,19 +18,19 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		private ObservableList<SelectedChoiceEmployeeGroups> employeeGroups;
-		public ObservableList<SelectedChoiceEmployeeGroups> EmployeeGroups {
+		private ObservableList<SelectedChoiceEmployeeGroups> items;
+		public ObservableList<SelectedChoiceEmployeeGroups> Items {
 			get {
-				if(employeeGroups == null)
-					FillEmployeeGroup();
-				return employeeGroups;
+				if(items == null)
+					FillItems();
+				return items;
 			}
 		}
 		
-		private void FillEmployeeGroup(){
+		private void FillItems(){
 			SelectedChoiceEmployeeGroups resultAlias = null;
 
-			employeeGroups = new ObservableList<SelectedChoiceEmployeeGroups>(UoW.Session.QueryOver<EmployeeGroup>()
+			items = new ObservableList<SelectedChoiceEmployeeGroups>(UoW.Session.QueryOver<EmployeeGroup>()
 				.SelectList(list => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
@@ -41,7 +41,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				.List<SelectedChoiceEmployeeGroups>());
 
 			if(ShowNullValue) {
-				employeeGroups.Insert(0, new SelectedChoiceEmployeeGroups() {
+				items.Insert(0, new SelectedChoiceEmployeeGroups() {
 					Id = -1,
 					Name = " Без группы",
 					Select = true,
@@ -49,7 +49,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				});
 			}
 
-			employeeGroups.PropertyOfElementChanged += OnPropertyOfElementChanged;
+			items.PropertyOfElementChanged += OnPropertyOfElementChanged;
 		}
 
 		private void OnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) {
@@ -70,45 +70,63 @@ namespace Workwear.ReportParameters.ViewModels {
 		/// <summary>
 		///  Массив id групп 
 		/// </summary>
-		public int[] SelectedChoiceEmployeeGroupsIds {
-			get => EmployeeGroups.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		public int[] SelectedIds {
+			get => Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		/// <summary>
+		/// Массив id со спецзначениями
+		/// Выводит массив id если что-то выбрано, либо массив с одним значением
+		/// -1 если выбрано всё втом числе  null элемент
+		/// -2 если выбран только null элемет
+		/// Никогда не возвращает пустой массив.
+		/// </summary>
+		public int[] SelectedIdsMod {
+			get {
+				if(AllSelected)
+					return new[] { -1 };
+				var ids = Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+				if(ids.Length == 0 && NullIsSelected)
+					return new[] { -2 };
+				return ids;
+			} 
 		}
 		
 		/// <summary>
 		///  Выбраны все подразделение включая "Без группы"
 		/// </summary>
 		public bool AllSelected {
-			get => EmployeeGroups.All(x => x.Select);
+			get => Items.All(x => x.Select);
 		}
 		
 		/// <summary>
 		///  Не выбрано ни одно подразделение в том числе "Без группы"
 		/// </summary>
 		public bool AllUnSelected {
-			get => EmployeeGroups.All(x => !x.Select);
+			get => Items.All(x => !x.Select);
 		}
 		
 		/// <summary>
 		/// В списке выбрано "Без группы"
 		/// </summary>
 		public bool NullIsSelected {
-			get => EmployeeGroups.Any(x => x.Select && x.Id == -1);
+			get => Items.Any(x => x.Select && x.Id == -1);
 		}
 		
 		public void SelectAll() {
-			foreach (var s in EmployeeGroups)
+			foreach (var s in Items)
 				s.Select = true;
 		}
 		 
 		public void UnSelectAll() {
-			foreach (var s in EmployeeGroups)
+			foreach (var s in Items)
 				s.Select = false;
 		}
 		
 		public void SelectLike(string maskLike) {
-			foreach(var line in EmployeeGroups)
+			foreach(var line in Items)
 				line.Highlighted = line.Name.ToLower().Contains(maskLike.ToLower());
-			EmployeeGroups.Sort(Comparison);
+			Items.Sort(Comparison);
 		}
 
 		private int Comparison(SelectedChoiceEmployeeGroups x, SelectedChoiceEmployeeGroups y) {

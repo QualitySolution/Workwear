@@ -65,7 +65,7 @@
           <TableColumn>
             <Width>962.1pt</Width>
             <Visibility>
-              <Hidden>={?show_employees}</Hidden>
+              <Hidden>=!{?show_employees}</Hidden>
             </Visibility>
           </TableColumn>
         </TableColumns>
@@ -459,14 +459,17 @@
     if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
     if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
     objects.name as subdivision_name,
-    GROUP_CONCAT( CONCAT_WS('',
-            CONCAT(wear_cards.last_name, ' '),
-            IF(wear_cards.first_name = '',
-                NULL,
-                CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-            IF(wear_cards.patronymic_name = '',
-                NULL,
-                CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500) AS employees,
+    if(@show_employees,
+        GROUP_CONCAT( CONCAT_WS('',
+                CONCAT(wear_cards.last_name, ' '),
+                IF(wear_cards.first_name = '',
+                    NULL,
+                    CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+                IF(wear_cards.patronymic_name = '',
+                    NULL,
+                    CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500),
+        null)
+        AS employees,
     wear_cards.sex,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
@@ -474,22 +477,26 @@
     heightAlias.name AS growth,
     measurement_units.name AS unit,
     SUM(norms_item.amount) AS amount,
-    IF(@show_stock,        
-        (
-            SELECT
-                (
-                    SUM(
-                        CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-                    END
-                ) - SUM(
-                    CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+    IF(@show_stock,(
+        SELECT(
+            SUM(CASE WHEN (operation_warehouse.warehouse_receipt_id IS NOT NULL
+                    AND(@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id) )
+                THEN operation_warehouse.amount  
+                ELSE 0
                 END
-        )
-        ) AS SUM
+            ) - SUM(
+                CASE WHEN (operation_warehouse.warehouse_expense_id IS NOT NULL
+                    AND(@all_warehouse OR operation_warehouse.warehouse_expense_id = @warehouse_id) )
+                THEN operation_warehouse.amount
+                ELSE 0
+                END
+        )) AS SUM
         FROM
             operation_warehouse
         WHERE
-            operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
+            (@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id OR operation_warehouse.warehouse_expense_id = @warehouse_id)
+            AND operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) 
+            AND operation_warehouse.nomenclature_id IN(
             SELECT
                 protection_tools_nomenclature.nomenclature_id
             FROM
@@ -523,9 +530,16 @@ JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
 LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
 WHERE
     wear_cards.dismiss_date IS NULL
+    AND ((-1 IN (@employee_groups_ids)) 
+         OR(@without_groups AND NOT EXISTS
+             (SELECT * FROM employee_group_items as gi 
+               WHERE gi.employee_id = wear_cards_item.wear_card_id) ) 
+         OR (EXISTS (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = wear_cards_item.wear_card_id
+                 AND gi.employee_group_id IN (@employee_groups_ids))) )
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND protection_tools.id IN (@protection_tools_ids)
+    AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
     AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -577,6 +591,21 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@hide_worn">
             <Value>={?hide_worn}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@warehouse_id">
+            <Value>={?warehouse_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@all_warehouse">
+            <Value>={?all_warehouse}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_employees">
+            <Value>={?show_employees}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -656,12 +685,12 @@ ORDER BY
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=YX4dmWuM4UcPOk</ConnectString>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_1138;user id=SpMob;password=fPfNKLkbJYM85Rxm</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -804,6 +833,54 @@ ORDER BY
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="all_warehouse">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1, 2</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
