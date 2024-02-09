@@ -141,7 +141,7 @@ namespace Workwear.ViewModels.Export {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			_sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
-			Title = "Предстоящие вылачи";
+			Title = "Прогноз выдач";
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
