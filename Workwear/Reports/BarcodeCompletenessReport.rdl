@@ -23,22 +23,7 @@ FROM (SELECT
               AS subdivision_id,
           objects.name
               AS subdivision_name,
-          SUM(
-              IFNULL(
-                  (SELECT
-                       SUM(
-                           o.issued - IFNULL(
-                               (SELECT SUM(ret.returned)
-                                FROM operation_issued_by_employee ret
-                                WHERE ret.issued_operation_id = o.id),
-                               0)
-                           )
-                  FROM operation_issued_by_employee o
-                  WHERE o.employee_id = wear_cards_item.wear_card_id
-                     AND o.protection_tools_id = wear_cards_item.protection_tools_id
-                     AND o.auto_writeoff_date &gt; @report_date),
-                  0)
-              )              
+          SUM(bar_op.emp_ballance)
               as balance,
           SUM(bar_op.num_all)
               AS 'barcodes',
@@ -57,7 +42,8 @@ FROM (SELECT
                 op.employee_id as emp,
                 op.protection_tools_id as pt,
                 COUNT(all_bar.id) as num_all,
-                COUNT(new_bar.id) as num_new
+                COUNT(new_bar.id) as num_new,
+                (SUM(op.issued) - SUM(op.returned)) as emp_ballance
             FROM operation_issued_by_employee as op
                      LEFT JOIN operation_barcodes on op.id = operation_barcodes.employee_issue_operation_id
                      LEFT JOIN barcodes as all_bar on all_bar.id = operation_barcodes.barcode_id
@@ -70,7 +56,7 @@ FROM (SELECT
             GROUP BY op.employee_id, op.protection_tools_id
            ) as bar_op on bar_op.pt = wear_cards_item.protection_tools_id AND bar_op.emp = wear_cards_item.wear_card_id
       WHERE
-        wear_cards.dismiss_date IS NULL
+          wear_cards.dismiss_date IS NULL
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
@@ -78,7 +64,7 @@ FROM (SELECT
               OR (CONVERT(@report_date, DATE) BETWEEN
                   wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
                   )
-              )
+                 )
           )
       GROUP BY
           subdivision_id
