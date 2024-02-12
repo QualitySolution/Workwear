@@ -98,6 +98,13 @@ namespace Workwear.Domain.Company
 			get => phoneNumber;
 			set => SetField(ref phoneNumber, value);
 		}
+		
+		private string email;
+		[Display(Name = "Электроная почта")]
+		public virtual string Email {
+			get => email;
+			set => SetField(ref email, value);
+		}
 
 		private bool lkRegistered;
 		[Display(Name = "Зарегистрирован мобильный кабинет?")]
@@ -302,6 +309,11 @@ namespace Workwear.Domain.Company
 				yield return new ValidationResult(
 					$"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}",
 					new[] { nameof(PhoneNumber) });
+			
+			if(!EmailHelper.Validate(Email, true))
+				yield return new ValidationResult(
+					$"Некорректный формат email адреса",
+					new[] { nameof(Email) });
 
 			if(!String.IsNullOrEmpty(PersonnelNumber)) {
 
