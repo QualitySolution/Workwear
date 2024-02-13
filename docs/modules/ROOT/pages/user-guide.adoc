@@ -38,6 +38,8 @@ include::history-log.adoc[]
 
 include::import.adoc[]
 
+include::export.adoc[]
+
 include::mobile-app.adoc[]
 
 include::postomat.adoc[]
