@@ -40,7 +40,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
-			{"report_date", ReportDate },
 			{"exclude_in_vacation", ExcludeInVacation },
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
