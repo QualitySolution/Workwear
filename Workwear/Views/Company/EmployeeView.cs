@@ -10,6 +10,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
+using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company.EmployeeChildren;
@@ -97,6 +98,9 @@ namespace Workwear.Views.Company {
 			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
 			ViewModel.Performance.CheckPoint("Телефоны");
+
+			yentryEMail.ValidationMode = ValidationType.email;
+			yentryEMail.Binding.AddBinding(Entity, e => e.Email, w => w.Text).InitializeFromSource();
 			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
