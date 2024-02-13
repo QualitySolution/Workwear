@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -16,8 +17,10 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Operations;
 
@@ -31,20 +34,30 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly FeaturesService featuresService;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly BaseParameters baseParameters;
 		private readonly ITdiCompatibilityNavigation navigation;
+		private readonly IInteractiveService interactive;
 		List<EmployeeMovementItem> movements;
 
 		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
 			OpenStockDocumentsModel openStockDocumentsModel,  
 			EmployeeIssueRepository employeeIssueRepository,  
 			FeaturesService featuresService, 
+			EmployeeIssueModel issueModel,
+			BaseParameters baseParameters,
+			
+			IInteractiveService interactive,
 			ITdiCompatibilityNavigation navigation)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
 			this.employeeIssueRepository.RepoUow = UoW;
 		}
@@ -75,6 +88,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 		#endregion
 		#region Контекстное меню
+		
+		public void RecalculateIssue(EmployeeMovementItem item) {
+			issueModel.RecalculateDateOfIssue(new List<EmployeeIssueOperation>() {item.Operation}, baseParameters, interactive);
+		}
+
 		public void OpenDoc(EmployeeMovementItem item) {
 			var cardItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == item.Operation.ProtectionTools);
 			if(item.Operation.ManualOperation) {
