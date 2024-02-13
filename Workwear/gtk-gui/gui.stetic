@@ -6329,8 +6329,8 @@
       </action>
       <action id="Action40">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Предстоящие выдачи</property>
-        <property name="ShortLabel" translatable="yes">Предстоящие выдачи</property>
+        <property name="Label" translatable="yes">Прогноз выдач</property>
+        <property name="ShortLabel" translatable="yes">Прогноз</property>
         <signal name="Activated" handler="OnFutureIssueActionActivated" />
       </action>
       <action id="ActionFullnessPostomats">
