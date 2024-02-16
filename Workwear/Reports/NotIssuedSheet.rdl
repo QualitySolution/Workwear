@@ -812,7 +812,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <Timeout>300</Timeout>
+        <Timeout>1500</Timeout>
         <CommandText>SELECT
     wear_cards.id as employee_id,
     CONCAT_WS(
