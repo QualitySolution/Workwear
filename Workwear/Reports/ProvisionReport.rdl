@@ -13,6 +13,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
+        <Timeout>1500</Timeout>
         <CommandText>SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
 FROM (SELECT
@@ -222,7 +223,7 @@ FROM (SELECT
               <Hidden>=!{?show_size}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>29.3pt</Width>
             <Visibility>
               <Hidden>=!{?group_by_norm_amount}</Hidden>
@@ -237,7 +238,7 @@ FROM (SELECT
           <TableColumn>
             <Width>51.9pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>30.0pt</Width>
           </TableColumn>
         </TableColumns>
@@ -310,7 +311,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox27">
                       <Value>Нор-ма</Value>
@@ -374,7 +375,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
                       <Value>чел.</Value>
@@ -487,7 +488,7 @@ FROM (SELECT
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox26">
                           <Value></Value>
@@ -600,7 +601,7 @@ FROM (SELECT
                       </ReportItems>
                       <ColSpan>1</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox30">
                           <Value></Value>
@@ -729,7 +730,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
                       <Value>=Fields!norm_amount.Value</Value>
@@ -796,7 +797,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox24">
                       <Value>=Fields!count_employee.Value</Value>
@@ -895,7 +896,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox29">
                       <Value></Value>
