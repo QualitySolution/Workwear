@@ -451,7 +451,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <Timeout>300</Timeout>
+        <Timeout>1500</Timeout>
         <CommandText>SELECT
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,

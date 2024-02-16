@@ -51,9 +51,13 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemOpenLastIssue.ID = selected;
 				itemOpenLastIssue.Sensitive = selected?.EmployeeIssueReference?.DocumentType != null 
 				                              || selected?.Operation.ManualOperation == true;
-				
 				itemOpenLastIssue.Activated += (sender, e) => ViewModel.OpenDoc(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
+				
+				var itemRecalculateIssue = new MenuItemId<EmployeeMovementItem>("Пересчитать срок носки");
+				itemRecalculateIssue.ID = selected;
+				itemRecalculateIssue.Activated += (sender, e) => ViewModel.RecalculateIssue(((MenuItemId<EmployeeMovementItem>)sender).ID);
+				menu.Add(itemRecalculateIssue);
 
 				var itemRemoveOperation = new MenuItemId<EmployeeMovementItem>("Удалить операцию");
 				itemRemoveOperation.ID = selected;

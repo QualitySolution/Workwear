@@ -13,8 +13,8 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>
-SELECT *,
+        <Timeout>1500</Timeout>
+        <CommandText>SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
 FROM (SELECT
           COUNT(*) AS 'count_employee',
@@ -25,31 +25,30 @@ FROM (SELECT
           if(@show_sex,
              IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
              null)
-                AS 'employee_sex',
+              AS 'employee_sex',
           if(@show_size, sizeAlias.name, null) as 'size',
           if(@show_size, heightAlias.name, null) as 'height',
           if(@group_by_norm_amount, norms_item.amount, null) as 'norm_amount',
           SUM(norms_item.amount) AS 'need',
           SUM(
-                  LEAST(
-                          norms_item.amount,
-                          IFNULL(
-                                  (SELECT
-                                       SUM(
-                                                   o.issued - IFNULL(
-                                                       (SELECT SUM(ret.returned)
-                                                        FROM operation_issued_by_employee ret
-                                                        WHERE ret.issued_operation_id = o.id),
-                                                       0)
-                                           )
-                                   FROM operation_issued_by_employee o
-                                   WHERE
-                                           o.employee_id = wear_cards_item.wear_card_id
-                                     AND o.protection_tools_id = wear_cards_item.protection_tools_id
-                                     AND o.auto_writeoff_date &gt;= @report_date),
-                                  0)
-                      )
-              ) as 'balance'
+              LEAST(
+                  norms_item.amount,
+                  IFNULL(
+                      (SELECT
+                           SUM(
+                               o.issued - IFNULL(
+                                   (SELECT SUM(ret.returned)
+                                    FROM operation_issued_by_employee ret
+                                    WHERE ret.issued_operation_id = o.id),
+                                   0)
+                               )
+                       FROM operation_issued_by_employee o
+                       WHERE o.employee_id = wear_cards_item.wear_card_id
+                         AND o.protection_tools_id = wear_cards_item.protection_tools_id
+                         AND (o.auto_writeoff_date IS NULL OR o.auto_writeoff_date &gt;= CURRENT_DATE)),
+                      0)
+                  )
+          ) as 'balance'
 
       FROM wear_cards_item
                JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -57,7 +56,6 @@ FROM (SELECT
                JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-               LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
                LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
                LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
                LEFT JOIN wear_cards_sizes AS employeeSizeAlias
@@ -69,23 +67,23 @@ FROM (SELECT
                              employeeHeightAlias.size_type_id = heightTypeAlias.id)
                LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
                JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-      WHERE
-          wear_cards.dismiss_date IS NULL
-                AND ((-1 IN (@employee_groups_ids)) 
-                 OR (@without_groups AND (NOT EXISTS
-                     (SELECT * FROM employee_group_items as gi 
-                       WHERE gi.employee_id = wear_cards_item.wear_card_id))) 
-                 OR (EXISTS (SELECT * FROM employee_group_items as gi2
-                       WHERE gi2.employee_id = wear_cards_item.wear_card_id
-                         AND gi2.employee_group_id IN (@employee_groups_ids))) )
+      WHERE wear_cards.dismiss_date IS NULL
+        AND ((-1 IN (@employee_groups_ids))
+         OR (@without_groups AND (NOT EXISTS
+              (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = wear_cards_item.wear_card_id)))
+         OR (EXISTS (SELECT * FROM employee_group_items as gi2
+                      WHERE gi2.employee_id = wear_cards_item.wear_card_id
+                        AND gi2.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
-          OR (wear_cards_vacations.begin_date IS NULL
-              OR (CONVERT(@report_date, DATE) BETWEEN
-                  wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
-                  )
-             )
+              OR (NOT EXISTS(SELECT * 
+                         FROM wear_cards_vacations AS vac 
+                         WHERE vac.wear_card_id = wear_cards_item.wear_card_id
+                           AND (CURRENT_DATE BETWEEN vac.begin_date AND vac.end_date)
+                         )
+              )                 
           )
       GROUP BY
           wear_cards_item.protection_tools_id,
@@ -102,9 +100,6 @@ FROM (SELECT
           IF(@show_size, height, NULL)
      ) as tabel</CommandText>
         <QueryParameters>
-          <QueryParameter Name="report_date">
-            <Value>=Parameters!report_date</Value>
-          </QueryParameter>
           <QueryParameter Name="show_sex">
             <Value>=Parameters!show_sex</Value>
           </QueryParameter>
@@ -228,7 +223,7 @@ FROM (SELECT
               <Hidden>=!{?show_size}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>29.3pt</Width>
             <Visibility>
               <Hidden>=!{?group_by_norm_amount}</Hidden>
@@ -243,7 +238,7 @@ FROM (SELECT
           <TableColumn>
             <Width>51.9pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>30.0pt</Width>
           </TableColumn>
         </TableColumns>
@@ -316,7 +311,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox27">
                       <Value>Нор-ма</Value>
@@ -380,7 +375,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
                       <Value>чел.</Value>
@@ -493,7 +488,7 @@ FROM (SELECT
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox26">
                           <Value></Value>
@@ -606,7 +601,7 @@ FROM (SELECT
                       </ReportItems>
                       <ColSpan>1</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox30">
                           <Value></Value>
@@ -735,7 +730,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
                       <Value>=Fields!norm_amount.Value</Value>
@@ -802,7 +797,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox24">
                       <Value>=Fields!count_employee.Value</Value>
@@ -901,7 +896,7 @@ FROM (SELECT
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox29">
                       <Value></Value>
@@ -949,7 +944,7 @@ FROM (SELECT
       <Textbox Name="Textbox1">
         <Height>20.30pt</Height>
         <Width>576.68pt</Width>
-        <Value>= "Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+        <Value>= "Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>3.80pt</Top>
@@ -995,19 +990,7 @@ FROM (SELECT
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
-    <ReportParameter Name="report_date">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>2023-11-27</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
+  <ReportParameters>
     <ReportParameter Name="show_sex">
       <DataType>Boolean</DataType>
       <DefaultValue>
