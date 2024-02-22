@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
@@ -23,7 +24,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		public NotIssuedSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
-			IUnitOfWorkFactory uowFactory,
+			IUnitOfWorkFactory uowFactory, 
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService)
@@ -36,25 +37,39 @@ namespace workwear.ReportParameters.ViewModels
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
+			
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
 			condition = true;
+			warehousesList.Add(new Warehouse(){Id = -2, Name = "Не показывать"}); //По умолчанию
+			var whs = UoW.GetAll<Warehouse>().ToList();
+			if(!featuresService.Available(WorkwearFeature.Warehouses) || whs.Count == 1) 
+				warehousesList.Add(new Warehouse(){Id = -1, Name = "Показать"});
+			else {
+				warehousesList.AddRange(whs);
+				warehousesList.Add(new Warehouse(){Id = -1, Name = "На всех складах"});
+			}
+			warehouse = warehousesList.First();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
-					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
-						new [] {-1} :
-						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod},
+					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", ExcludeInVacation },
 					{"condition", Condition },
-					{"show_stock", ShowStock},
+					{"show_stock", Warehouse.Id != -2},
+					{"all_warehouse", Warehouse.Id == -1},
+					{"warehouse_id", Warehouse.Id },
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
 				 };
@@ -67,6 +82,7 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		
 		private NotIssuedSheetReportType reportType;
+		[PropertyChangedAlso(nameof(VisibleChoiceEmployeeGroup))]
 		public virtual NotIssuedSheetReportType ReportType {
 			get => reportType;
 			set => SetField(ref reportType, value);
@@ -103,34 +119,37 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref condition, value);
 		}
 		
-		private bool showStock;
-		[PropertyChangedAlso(nameof(StockElementsVisible))]
-		public virtual bool ShowStock {
-			get => showStock;
-			set {
-				SetField(ref showStock, value);
-				if(!value) //Сброс при снятии
-					ExcludeZeroStock = HideWorn = false;
-			}
+		private Warehouse warehouse;
+		[PropertyChangedAlso(nameof(StockElementsSensetive))]
+		public virtual Warehouse Warehouse {
+			get { return warehouse; }
+			set { SetField(ref warehouse, value); }
+		}
+
+		private List<Warehouse> warehousesList = new List<Warehouse>();
+		public virtual List<Warehouse> WarehousesList {
+			get { return warehousesList; }
+			set { SetField(ref warehousesList, value); }
 		}
 
 		private bool excludeZeroStock;
 		public virtual bool ExcludeZeroStock {
-			get => showStock && excludeZeroStock;
+			get =>  warehouse.Id != -2 && excludeZeroStock;
 			set => SetField(ref excludeZeroStock, value);
 		}
 		
 		private bool hideWorn;
 		public virtual bool HideWorn {
-			get => showStock && hideWorn;
+			get =>  warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
 		}
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
-		public object StockElementsVisible => ShowStock;
+		public object StockElementsSensetive => warehouse.Id != -2;
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
@@ -141,6 +160,7 @@ namespace workwear.ReportParameters.ViewModels
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
 
@@ -149,7 +169,7 @@ namespace workwear.ReportParameters.ViewModels
 			UoW.Dispose();
 		}
 	}
-	
+
 	public enum NotIssuedSheetReportType {
 		[ReportIdentifier("NotIssuedSheet")]
 		[Display(Name = "Форматировано")]

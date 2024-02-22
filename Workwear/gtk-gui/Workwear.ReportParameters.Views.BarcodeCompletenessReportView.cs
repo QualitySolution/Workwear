@@ -66,6 +66,7 @@ namespace Workwear.ReportParameters.Views
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(7)), ((uint)(2)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -217,7 +218,7 @@ namespace Workwear.ReportParameters.Views
 			this.ylabelGroupBySubdivision = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelGroupBySubdivision.Name = "ylabelGroupBySubdivision";
 			this.ylabelGroupBySubdivision.Xalign = 1F;
-			this.ylabelGroupBySubdivision.LabelProp = global::Mono.Unix.Catalog.GetString("Группировать по подразделениям");
+			this.ylabelGroupBySubdivision.LabelProp = global::Mono.Unix.Catalog.GetString("Детализировать по подразделениям");
 			this.table1.Add(this.ylabelGroupBySubdivision);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelGroupBySubdivision]));
 			w12.TopAttach = ((uint)(4));
@@ -324,6 +325,8 @@ namespace Workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.ybuttonRun.Clicked += new global::System.EventHandler(this.OnYbuttonRunClicked);
 		}
 	}

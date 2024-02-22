@@ -119,9 +119,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"end_year", EndYear},
 					{"subdivisions", SelectSubdivisions() },
 					{"issue_type", IssueTypeOptions?.ToString() },
-					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
-						new [] {-1} :
-						ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedIdsMod},
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation }

@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>30in</PageWidth>
+  <PageWidth>33in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -11,87 +11,102 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
+        <Timeout>1500</Timeout>
         <CommandText>SELECT *,
        ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
 FROM (SELECT
-          IF(@group_by_subdivision, wear_cards.object_id, NULL) AS subdivision_id,
-          IF(@group_by_subdivision, objects.name, NULL) AS subdivision_name,
+          COUNT(*) AS 'count_employee',
+          IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
+          IF(@group_by_subdivision, objects.name, NULL) AS 'subdivision_name',
           protection_tools.id AS 'protection_tools_id',
           protection_tools.name AS 'protection_tools_name',
           if(@show_sex,
              IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')),
              null)
-          AS 'employee_sex',
-          if(@show_stock, sizeAlias.name, null) as size,
-          if(@show_size, heightAlias.name, null) as height,
+              AS 'employee_sex',
+          if(@show_size, sizeAlias.name, null) as 'size',
+          if(@show_size, heightAlias.name, null) as 'height',
+          if(@group_by_norm_amount, norms_item.amount, null) as 'norm_amount',
           SUM(norms_item.amount) AS 'need',
           SUM(
-                  LEAST(
-                      norms_item.amount,
-                      IFNULL(
-                              (SELECT
-                                   SUM(
-                                       o.issued - IFNULL(
-                                           (SELECT SUM(ret.returned)
-                                            FROM operation_issued_by_employee ret
-                                            WHERE ret.issued_operation_id = o.id),
-                                           0)
-                                   )
-                              FROM operation_issued_by_employee o
-                              WHERE o.employee_id = wear_cards_item.wear_card_id
-                                AND o.protection_tools_id = wear_cards_item.protection_tools_id
-                                AND o.auto_writeoff_date &gt;= @report_date),
-                              0)
-                      )
-              ) as balance,
+              LEAST(
+                  norms_item.amount,
+                  IFNULL(
+                      (SELECT
+                           SUM(
+                               o.issued - IFNULL(
+                                   (SELECT SUM(ret.returned)
+                                    FROM operation_issued_by_employee ret
+                                    WHERE ret.issued_operation_id = o.id),
+                                   0)
+                               )
+                       FROM operation_issued_by_employee o
+                       WHERE o.employee_id = wear_cards_item.wear_card_id
+                         AND o.protection_tools_id = wear_cards_item.protection_tools_id
+                         AND (o.auto_writeoff_date IS NULL OR o.auto_writeoff_date &gt;= CURRENT_DATE)),
+                      0)
+                  )
+              ) as 'balance',
           IF(@show_stock,
-              IFNULL(
-                   (SELECT(
-                      SUM(
-                         CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-                                END
-                         ) - SUM(
-                             CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
-                                END
-                         ))
-                   FROM
-                       operation_warehouse
-                   WHERE  
-                           CONVERT(operation_warehouse.operation_time, DATE) &lt;= CONVERT(@report_date, DATE) AND operation_warehouse.nomenclature_id IN(
-                       SELECT
-                           protection_tools_nomenclature.nomenclature_id
-                       FROM
-                           protection_tools_nomenclature
-                               JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
-                       WHERE 
-                           (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-                         AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-                   )
-                     AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
-                     AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
-                  
-                    )    
-                , 0)
-              ,null) AS in_stock,
+             IFNULL(
+                     (SELECT(
+                        SUM(
+                                CASE WHEN operation_warehouse.warehouse_receipt_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                                    END
+                            ) - SUM(
+                                CASE WHEN operation_warehouse.warehouse_expense_id IS NOT NULL THEN operation_warehouse.amount ELSE 0
+                                    END
+                            ))
+                      FROM
+                          operation_warehouse
+                      WHERE
+                              operation_warehouse.operation_time &lt;= CURRENT_DATE AND operation_warehouse.nomenclature_id IN(
+                          SELECT
+                              protection_tools_nomenclature.nomenclature_id
+                          FROM
+                              protection_tools_nomenclature
+                                  JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
+                          WHERE
+                              (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
+                            AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
+                      )
+                        AND (sizeTypeAlias.id IS NULL 
+                                 OR operation_warehouse.size_id IS NULL 
+                                 OR operation_warehouse.size_id = employeeSizeAlias.size_id 
+                                 OR operation_warehouse.size_id IN (
+                                    SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) 
+                                    FROM `size_suitable` 
+                                    WHERE size_suitable.`size_id` = employeeSizeAlias.size_id 
+                                       OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+                        AND (heightTypeAlias.id IS NULL 
+                                 OR operation_warehouse.height_id IS NULL 
+                                 OR operation_warehouse.height_id = employeeHeightAlias.size_id 
+                                 OR operation_warehouse.height_id IN (
+                                    SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id)
+                                    FROM `size_suitable` 
+                                    WHERE size_suitable.`size_id` = employeeHeightAlias.size_id 
+                                       OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+                      )
+                 , 0)
+              ,null) AS 'in_stock',
           IF(@show_employees,
-          GROUP_CONCAT( CONCAT_WS('',
-              CONCAT(wear_cards.last_name, ' '),
-              IF(wear_cards.first_name = '',
-                 NULL,
-                 CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-              IF(wear_cards.patronymic_name = '',
-                 NULL,
-                 CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 1000)
-          ,null) AS employees
+             GROUP_CONCAT( CONCAT_WS('',
+                                     CONCAT(wear_cards.last_name, ' '),
+                                     IF(wear_cards.first_name = '',
+                                        NULL,
+                                        CONCAT(LEFT(wear_cards.first_name, 1), '.')),
+                                     IF(wear_cards.patronymic_name = '',
+                                        NULL,
+                                        CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 1000)
+              ,null) AS 'employees'
       FROM wear_cards_item
                JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
                LEFT JOIN objects ON wear_cards.object_id = objects.id
                JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-               LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
                LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
                LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
                LEFT JOIN wear_cards_sizes AS employeeSizeAlias
@@ -103,23 +118,31 @@ FROM (SELECT
                              employeeHeightAlias.size_type_id = heightTypeAlias.id)
                LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
                JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-      WHERE
-          wear_cards.dismiss_date IS NULL
-        #AND protection_tools.id IN (@protection_tools_ids)
-        #AND ((@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
+      WHERE wear_cards.dismiss_date IS NULL
+        AND ((-1 IN (@employee_groups_ids))
+            OR(@without_groups AND NOT EXISTS
+              (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = wear_cards_item.wear_card_id) )
+          OR (EXISTS (SELECT * FROM employee_group_items as gi
+                      WHERE gi.employee_id = wear_cards_item.wear_card_id
+                        AND gi.employee_group_id IN (@employee_groups_ids))) )
+        AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
         AND (NOT @exclude_in_vacation
-          OR (wear_cards_vacations.begin_date IS NULL
-              OR (CONVERT(@report_date, DATE) BETWEEN
-                  wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
-                  )
-                 )
+          OR (NOT EXISTS(SELECT *
+                         FROM wear_cards_vacations AS vac
+                         WHERE vac.wear_card_id = wear_cards_item.wear_card_id
+                           AND (CURRENT_DATE BETWEEN vac.begin_date AND vac.end_date)
+                         )
+              )
           )
       GROUP BY
           wear_cards_item.protection_tools_id,
-          IF(@group_by_subdivision, subdivision_id, NULL), 
+          IF(@group_by_subdivision, subdivision_id, NULL),
           IF(@show_sex, employee_sex, NULL),
           IF(@show_size, employeeSizeAlias.size_id, NULL),
-          IF(@show_size, employeeHeightAlias.size_id, NULL)
+          IF(@show_size, employeeHeightAlias.size_id, NULL),
+          IF(@group_by_norm_amount, norms_item.amount, NULL)
       ORDER BY
           IF(@group_by_subdivision, subdivision_name, NULL),
           protection_tools.name,
@@ -128,9 +151,6 @@ FROM (SELECT
           IF(@show_size, height, NULL)
      ) as tabel</CommandText>
         <QueryParameters>
-          <QueryParameter Name="report_date">
-            <Value>=Parameters!report_date</Value>
-          </QueryParameter>
           <QueryParameter Name="show_sex">
             <Value>=Parameters!show_sex</Value>
           </QueryParameter>
@@ -158,9 +178,18 @@ FROM (SELECT
           <QueryParameter Name="show_employees">
             <Value>=Parameters!show_employees</Value>
           </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>=Parameters!employee_groups_ids</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>=Parameters!without_groups</Value>
+          </QueryParameter>
+          <QueryParameter Name="group_by_norm_amount">
+            <Value>=Parameters!group_by_norm_amount</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -209,6 +238,14 @@ FROM (SELECT
           <DataField>provision_percent</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="count_employee">
+          <DataField>count_employee</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="norm_amount">
+          <DataField>norm_amount</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -231,7 +268,10 @@ FROM (SELECT
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>390.1pt</Width>
+            <Width>309.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?group_by_subdivision}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>36.3pt</Width>
@@ -252,9 +292,13 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>309.6pt</Width>
+            <Width>390.1pt</Width>
+            <Visibility></Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>81.8pt</Width>
             <Visibility>
-              <Hidden>=!{?group_by_subdivision}</Hidden>
+              <Hidden>=!{?group_by_norm_amount}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
@@ -273,6 +317,9 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
+            <Width>1in</Width>
+          </TableColumn>
+          <TableColumn>
             <Width>991.5pt</Width>
             <Visibility>
               <Hidden>=!{?show_employees}</Hidden>
@@ -287,7 +334,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox40">
-                      <Value>= "                                   Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+                      <Value>= "                                   Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -304,7 +351,7 @@ FROM (SELECT
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>9</ColSpan>
+                  <ColSpan>11</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -335,7 +382,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox23">
-                      <Value>Номеклатура нормы</Value>
+                      <Value>Подразделение</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -399,8 +446,24 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Подразделение</Value>
+                      <Value>Номеклатура нормы</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>По норме</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -478,8 +541,24 @@ FROM (SELECT
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>Сотрудников</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value> Сотрудники</Value>
+                      <Value>ФИО сотрудников</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -505,7 +584,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
-                      <Value>=Fields!protection_tools_name.Value</Value>
+                      <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", {subdivision_name})</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -563,9 +642,23 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox36">
-                      <Value>=Fields!subdivision_name.Value</Value>
+                      <Value>=Fields!protection_tools_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>=Fields!norm_amount.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -584,6 +677,8 @@ FROM (SELECT
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -612,7 +707,7 @@ FROM (SELECT
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -622,6 +717,20 @@ FROM (SELECT
                     <Textbox Name="Textbox49">
                       <Value>=Fields!in_stock.Value</Value>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>=Fields!count_employee.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -687,18 +796,6 @@ FROM (SELECT
     </DataSource>
   </DataSources>
   <ReportParameters>
-    <ReportParameter Name="report_date">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>2023-11-27</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
     <ReportParameter Name="show_sex">
       <DataType>Boolean</DataType>
       <DefaultValue>
@@ -805,6 +902,42 @@ FROM (SELECT
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_by_norm_amount">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

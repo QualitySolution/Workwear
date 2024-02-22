@@ -37,13 +37,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_sex", ShowSex },
 			{"show_size", ShowSize },
 			{"group_by_subdivision", GroupBySubdivision },
-			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds.Length == 0 ? 
-				new [] {-1} : 
-				ChoiceSubdivisionViewModel.SelectedChoiceSubdivisionIds},
+			{"subdivision_ids", ChoiceSubdivisionViewModel.SelectedIdsMod},
 			{"without_subdivision", ChoiceSubdivisionViewModel.NullIsSelected },
-			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds.Length == 0 ? 
-				new [] {-1} :
-				ChoiceProtectionToolsViewModel.SelectedProtectionToolsIds },
+			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod },
 			{"show_employees", ShowEmployees },
 			{"barcode_lag", BarcodeLag },
 		};
@@ -56,11 +52,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => throw new InvalidOperationException();
 		}
 
-		public bool VisibleShowEmployee => false; // ReportType == BarcodeCompletenessType.Flat;
-		public bool VisibleShowSize => false; // ReportType == BarcodeCompletenessType.Flat;
-		public bool VisibleShowSex => false; // ReportType == BarcodeCompletenessType.Flat;
-		public bool VisibleGroupBySubdivision => false; // ReportType == BarcodeCompletenessType.Flat;
-		public bool VisibleReportType => false; // Удалить из Вью
+		public bool VisibleShowEmployee => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSize => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleShowSex => ReportType == BarcodeCompletenessType.Flat;
+		public bool VisibleGroupBySubdivision => ReportType == BarcodeCompletenessType.Flat;
 		
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
@@ -104,6 +99,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			set {
 				SetField(ref reportType, value); 
 				OnPropertyChanged(nameof(VisibleShowEmployee));
+				OnPropertyChanged(nameof(VisibleShowSize));
+				OnPropertyChanged(nameof(VisibleShowSex));
+				OnPropertyChanged(nameof(VisibleGroupBySubdivision));
 			}
 		}
 
@@ -124,9 +122,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			[ReportIdentifier("BarcodeCompletenessReport")]
 			[Display(Name = "Форматировано")]
 			Common,
-			//[ReportIdentifier("BarcodeCompletenessReportFlat")]
-			//[Display(Name = "Только данные")]
-			//Flat
+			[ReportIdentifier("BarcodeCompletenessReportFlat")]
+			[Display(Name = "Только данные")]
+			Flat
 		}
 	}
 }

@@ -213,15 +213,32 @@ namespace Workwear.Models.Operations {
 		#endregion
 
 		#region Заполение данных в сотрудников
-		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null) {
+		/// <summary>
+		/// Заполняет графы и обновлят дату последней выдачи .
+		/// </summary>
+		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 2</param>
+		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {
+			bool needClose = false;
+			if(progress != null && !progress.IsStarted) {
+				progress.Start(employees.Length + 2);
+				needClose = true;
+			}
+			progress?.Add(text: "Подгружаем операции");
 			if(!employees.Any())
 				return;
 			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
+			progress?.Add(text: "Добавляем несохранённые");
 			if(notSavedOperations != null)
 				operations.AddRange(notSavedOperations);
+			var employeeGroups = operations.GroupBy(x => x.Employee.Id).ToDictionary(x => x.Key, x => x.ToList());
 			foreach(var employee in employees) {
-				employee.FillWearReceivedInfo(operations.Where(x => x.Employee.IsSame(employee)).ToList());
+				progress?.Add(text: $"Заполняем {employee.ShortName}");
+				var ops = employeeGroups.ContainsKey(employee.Id) ? employeeGroups[employee.Id] : new List<EmployeeIssueOperation>();
+				employee.FillWearReceivedInfo(ops);
 			}
+			progress?.Add(text: "Готово");
+			if(needClose)
+				progress.Close();
 		}
 		
 		public void PreloadWearItems(params int[] employeeIds) {

@@ -54,7 +54,7 @@
 |+
 |+
 
-|<<import.adoc#import,Импорт из Excel(1С)>>
+|<<import.adoc#import,Импорт>>/<<export.adoc#export,Экспорт>> (Excel, 1С)
 |-
 |+
 |+

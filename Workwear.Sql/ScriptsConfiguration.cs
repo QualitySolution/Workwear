@@ -177,9 +177,14 @@ namespace Workwear.Sql
 				new Version(2, 8, 14),
 				"Workwear.Sql.Scripts.2.8.14.sql"
 			);
+			configuration.AddUpdate(
+				new Version(2, 8, 14),
+				new Version(2, 8, 15),
+				"Workwear.Sql.Scripts.2.8.15.sql"
+			);
 
 			configuration.AddUpdate(
-				new Version(2, 8, 9),//FIXME
+				new Version(2, 8, 15),//FIXME
 				new Version(2, 9, 0),
 				"Workwear.Sql.Scripts.2.9.sql"
 			);

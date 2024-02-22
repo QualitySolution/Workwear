@@ -143,6 +143,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
     <Compile Include="ViewModels\Company\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Company\VacationTypeViewModel.cs" />
+    <Compile Include="ViewModels\Export\FutureIssueExportViewModel.cs" />
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
@@ -470,6 +472,10 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.cs" />
     <Compile Include="ReportParameters\Views\BarcodeCompletenessReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
+    <Compile Include="Views\Export\FutureIssueExportView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
+    <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -708,10 +714,11 @@
     <Folder Include="Views\Regulations\NormChildren\" />
     <Folder Include="Views\Postomats\" />
     <Folder Include="Views\ClothingService\" />
+    <Folder Include="Views\Export\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Documents\InspectionSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -720,16 +727,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\ListBySize.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\NotIssuedSheetSummaryFlat.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\StockAllWear.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\WearStatement.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -738,13 +745,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\NotIssuedSheet.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AverageAnnualNeed.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\RequestSheet.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="RdlEngineConfig.Linux.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -774,7 +781,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountIssuedWear.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="App.config" />
     <None Condition=" '$(TargetOS)' == 'Linux' " Include="$(Home)\.nuget\packages\grpc.core\2.46.6\runtimes\linux-x64\native\libgrpc_csharp_ext.x64.so">
@@ -789,7 +796,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\NotIssuedSheetSummary.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -826,13 +833,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\ProvisionReportFlat.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="icon\buttons\select-all.png" />
     <EmbeddedResource Include="icon\buttons\unselect-all.png" />
     <Content Include="Reports\BarcodeCompletenessReport.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\BarcodeCompletenessReportFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -843,10 +853,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\NotIssuedSheetFlat.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Reports\ProvisionReport.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ProjectExtensions>

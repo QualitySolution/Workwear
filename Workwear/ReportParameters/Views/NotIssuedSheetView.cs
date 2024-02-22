@@ -29,24 +29,37 @@ namespace workwear.ReportParameters.Views
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			ylabelcheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			
-			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
 			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.ExcludeZeroStock, w => w.Active).InitializeFromSource();
-			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
-			ylabelDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.HideWorn, w => w.Active).InitializeFromSource();
-			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
-			ylabelHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsVisible, w => w.Sensitive).InitializeFromSource();
+			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
-				
+			ycomboboxWarehouse.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wm => wm.WarehousesList, w => w.ItemsList)
+				.AddBinding(wm => wm.Warehouse, w => w.SelectedItem)
+				.InitializeFromSource();
+			
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)
 		{
 			ViewModel.LoadReport();
+		}
+		
+		protected void OnExpander1Activated(object sender, EventArgs e) {
+			(dialog1_VBox[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
+		}
+
+		protected void OnExpander2Activated(object sender, EventArgs e) {
+			(dialog1_VBox[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
 		}
 	}
 }

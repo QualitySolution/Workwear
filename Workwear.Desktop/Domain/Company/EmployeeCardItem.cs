@@ -265,7 +265,6 @@ namespace Workwear.Domain.Company
 		/// Перед вызовом метода Graph должен быть заполнен!
 		/// </summary>
 		/// <param name="uow">Необходим для сохранения строки.</param>
-		/// <exception cref="NullReferenceException"></exception>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета UpdateNextIssue, Graph должен быть заполнен!");
@@ -319,7 +318,7 @@ namespace Workwear.Domain.Company
 
 			if(NextIssue != wantIssue) {
 				NextIssue = wantIssue;
-				uow.Save (this);
+				uow?.Save (this);
 			}
 
 			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout && ActiveNormItem.NormPeriod != NormPeriodType.Duty){

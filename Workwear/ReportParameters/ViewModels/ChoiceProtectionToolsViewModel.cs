@@ -18,19 +18,19 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.UoW = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 		
-		private ObservableList<SelectedProtectionTools> protectionTools;
-		public ObservableList<SelectedProtectionTools> ProtectionTools {
+		private ObservableList<SelectedProtectionTools> items;
+		public ObservableList<SelectedProtectionTools> Items {
 			get {
-				if(protectionTools == null)
-					FillProtectionTools();
-				return protectionTools;
+				if(items == null)
+					FillItems();
+				return items;
 			}
 		}
 
-		void FillProtectionTools(){
+		void FillItems(){
 			SelectedProtectionTools resultAlias = null;
 
-			protectionTools = new ObservableList<SelectedProtectionTools>(UoW.Session.QueryOver<ProtectionTools>()
+			items = new ObservableList<SelectedProtectionTools>(UoW.Session.QueryOver<ProtectionTools>()
 				.SelectList(list => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
@@ -40,7 +40,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				.TransformUsing(Transformers.AliasToBean<SelectedProtectionTools>())
 				.List<SelectedProtectionTools>());
 			
-			protectionTools.PropertyOfElementChanged += OnPropertyOfElementChanged;
+			items.PropertyOfElementChanged += OnPropertyOfElementChanged;
 		}
 
 		private void OnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) {
@@ -51,38 +51,56 @@ namespace Workwear.ReportParameters.ViewModels {
 		/// <summary>
 		///  Массив id Номенклатур нормы 
 		/// </summary>
-		public int[] SelectedProtectionToolsIds {
-			get => ProtectionTools.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		public int[] SelectedIds {
+			get => Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+		}
+		
+		/// <summary>
+		/// Массив id со спецзначениями
+		/// Выводит массив id если что-то выбрано, либо массив с одним значением
+		/// -1 если выбрано всё втом числе  null элемент
+		/// -2 если ничего не выбрано
+		/// Никогда не возвращает пустой массив.
+		/// </summary>
+		public int[] SelectedIdsMod {
+			get {
+				if(AllSelected)
+					return new[] { -1 };
+				var ids = Items.Where(x => x.Select && x.Id > 0).Select(x => x.Id).Distinct().ToArray();
+				if(ids.Length != 0)
+					return ids;
+				else return new[] { -2 };
+			} 
 		}
 		
 		/// <summary>
 		///  Выбраны все Номенклатуры нормы 
 		/// </summary>
 		public bool AllSelected {
-			get => ProtectionTools.All(x => x.Select);
+			get => Items.All(x => x.Select);
 		}
 		
 		/// <summary>
 		///  Не выбрано ни одна номенклатура нормы 
 		/// </summary>
 		public bool AllUnSelected {
-			get => ProtectionTools.All(x => !x.Select);
+			get => Items.All(x => !x.Select);
 		}
 
 		public void SelectAll() {
-			foreach (var pt in ProtectionTools)
+			foreach (var pt in Items)
 				pt.Select = true;
 		}
 		 
 		public void UnSelectAll() {
-			foreach (var pt in ProtectionTools)
+			foreach (var pt in Items)
 				pt.Select = false;
 		}
 		
 		public void SelectLike(string maskLike) {
-			foreach(var line in ProtectionTools)
+			foreach(var line in Items)
 				line.Highlighted = line.Name.ToLower().Contains(maskLike.ToLower());
-			ProtectionTools.Sort(Comparison);
+			Items.Sort(Comparison);
 		}
 
 		private int Comparison(SelectedProtectionTools x, SelectedProtectionTools y) {

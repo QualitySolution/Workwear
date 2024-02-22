@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.ClothingService;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
@@ -14,6 +15,13 @@ namespace Workwear.Domain.Postomats {
 		
 		[IgnoreHistoryTrace]
 		public virtual PostomatDocument Document { get; set; }
+		
+		private EmployeeCard employee;
+		[Display(Name = "Сотрудник")]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
 		
 		private Nomenclature nomenclature;
 		[Display(Name = "Номенклатура")]
