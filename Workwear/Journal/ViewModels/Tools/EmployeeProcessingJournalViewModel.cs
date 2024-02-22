@@ -21,6 +21,7 @@ using QS.Services;
 using QS.Utilities;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
@@ -210,12 +211,19 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			recalculateAction.ChildActionsList.Add(updateNextIssueAction);
 
-			var updateLastIssueAction = new JournalAction("Сроки носки у полученного",
+			var updateLastIssueAction = new JournalAction("Сроки носки у последего полученного",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => CatchExceptionAndCloseProgress(UpdateLastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
+			
+			var update2LastIssueAction = new JournalAction("Сроки носки у 2 последих получений",
+				(selected) => selected.Any(),
+				(selected) => true,
+				(selected) => CatchExceptionAndCloseProgress(Update2LastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+			);
+			recalculateAction.ChildActionsList.Add(update2LastIssueAction);
 			#endregion
 
 			#region Заменить
@@ -414,16 +422,19 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.Close();
 		}
 
-		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
+		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLastIssueOperationsForEmployee);
+		void Update2LastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee);
+		
+		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc)
 		{
-			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
 			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
 			progressCreator.Add(text: "Получаем последние выдачи");
-			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
+			var operations = repoFunc(employees);
 
 			progressCreator.Update("Проверка выданного");
 			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
