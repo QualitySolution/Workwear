@@ -486,10 +486,10 @@ namespace Workwear.Domain.Company
 			Vacations.Add(vacation);
 		}
 		public virtual bool OnVacation(DateTime date) {
-			foreach(var vacation in Vacations) 
-				if(vacation.BeginDate <= date && vacation.EndDate.AddDays(1) > date)
-					return true;
-			return false;
+			return CurrentVacation(date) != null;
+		}
+		public virtual EmployeeVacation CurrentVacation(DateTime date) {
+			return Vacations.FirstOrDefault(v => v.BeginDate <= date && v.EndDate.AddDays(1) > date);
 		}
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
 			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,
