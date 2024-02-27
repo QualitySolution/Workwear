@@ -96,6 +96,16 @@ namespace Workwear.Domain.Operations.Graph
 			if(operations.Any())
 				Refresh();
 		}
+
+		/// <summary>
+		///  Возвращает операцию с указанной датой автосписания, если такая есть.
+		///  Не учитывает ручные списания
+		/// </summary>
+		/// <param name="date"></param>
+		/// <returns></returns>
+		public EmployeeIssueOperation GetWrittenOffOperation(DateTime date) {
+			return operations.FirstOrDefault(o => o.AutoWriteoffDate.GetValueOrDefault().Date == date.Date );
+		}
 		
 		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
 		{

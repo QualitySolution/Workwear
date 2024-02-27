@@ -127,6 +127,8 @@ namespace Workwear.Repository.Operations
 			return query.OrderBy(x => x.OperationTime).Asc.List();
 		}
 
+		public IList<EmployeeIssueOperation> GetLastIssueOperationsForEmployee(IEnumerable<EmployeeCard> employees) =>
+			GetLastIssueOperationsForEmployee(employees,null,null);
 		public IList<EmployeeIssueOperation> GetLastIssueOperationsForEmployee(
 			IEnumerable<EmployeeCard> employees, 
 			Action<IQueryOver<EmployeeIssueOperation, 
@@ -149,6 +151,29 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 
 			return query.List();
+		}
+
+		public IList<EmployeeIssueOperation> GetLast2IssueOperationsForEmployee(
+			IEnumerable<EmployeeCard> employees) => GetLast2IssueOperationsForEmployee(employees,null);
+		public IList<EmployeeIssueOperation> GetLast2IssueOperationsForEmployee(
+			IEnumerable<EmployeeCard> employees, IUnitOfWork uow = null) {
+			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			var ids = employees.Select(x => x.Id).Distinct().ToArray();
+
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
+				.Where(o => o.Employee.IsIn(ids))
+				.Where(() => employeeIssueOperationAlias.Issued > 0)
+				.OrderBy(o => o.Employee.Id).Asc
+				.ThenBy(o => o.ProtectionTools.Id).Asc
+				.ThenBy(o => o.OperationTime).Desc
+				.List();
+
+			IList<EmployeeIssueOperation> result = new List<EmployeeIssueOperation>();
+			foreach(var employeeGroup in query.GroupBy(x => x.Employee)) 
+				foreach(var protectionToolsGroup in employeeGroup.GroupBy(x => x.ProtectionTools)) 
+					foreach(var op in protectionToolsGroup.Take(2)) 
+						result.Add(op);
+			return result;
 		}
 
 		/// <summary>

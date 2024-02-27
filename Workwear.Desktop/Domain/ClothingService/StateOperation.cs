@@ -60,23 +60,4 @@ namespace Workwear.Domain.ClothingService {
 		public virtual string Title => $"Операция {State.GetEnumTitle()} заявки №{Claim.Id} от {OperationTime:d}";
 		#endregion
 	}
-
-	public enum ClaimState {
-		[Display(Name = "Принята")]
-		WaitService,
-		[Display(Name = "Принят терминалом")]
-		InReceiptTerminal,
-		[Display(Name = "В пути")]
-		InTransit,
-		[Display(Name = "В ремонте")]
-		InRepair,
-		[Display(Name = "В стирке")]
-		InWashing,
-		[Display(Name = "Ожидает выдачи")]
-		AwaitIssue,
-		[Display(Name = "В терминале выдачи")]
-		InDispenseTerminal,
-		[Display(Name = "Возвращена")]
-		Returned,
-	}
 }

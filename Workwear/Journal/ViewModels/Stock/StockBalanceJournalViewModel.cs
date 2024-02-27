@@ -73,7 +73,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
-				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
+				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id
 				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
 				                 || warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
 				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
@@ -93,7 +93,7 @@ namespace workwear.Journal.ViewModels.Stock
 									.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id 
 				             && (warehouseIncomeOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
 				                 || warehouseIncomeOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
 				             && (warehouseIncomeOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
@@ -153,7 +153,7 @@ namespace workwear.Journal.ViewModels.Stock
 					() => heightAlias.Name))
 
 				.SelectList(list => list
-			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.Id)
+			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.Id)
 			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
@@ -161,7 +161,6 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
 			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
-			   .SelectGroup(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
 			   .SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
 			   .SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
 			   .SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
