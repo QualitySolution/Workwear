@@ -24,7 +24,7 @@ CREATE TABLE `clothing_service_states` (
    CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Постоматы
+-- Постаматы
 
 CREATE TABLE `postomat_documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

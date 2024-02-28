@@ -180,7 +180,7 @@ namespace Workwear.Views.Postomats
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
-			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Постомат:");
+			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Постамат:");
 			this.table2.Add(this.ylabel2);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabel2]));
 			w11.TopAttach = ((uint)(2));

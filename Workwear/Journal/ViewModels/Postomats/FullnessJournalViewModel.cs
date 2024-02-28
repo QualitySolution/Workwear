@@ -17,7 +17,7 @@ namespace workwear.Journal.ViewModels.Postomats {
 			PostomatManagerService postomatService
 			) : base(unitOfWorkFactory, interactiveService, navigation) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
-			Title = "Заполненность постоматов";
+			Title = "Заполненность постаматов";
 			SearchEnabled = false;
 			
 			DataLoader = new AnyDataLoader<FullnessInfo>(postomatService.GetFullness);

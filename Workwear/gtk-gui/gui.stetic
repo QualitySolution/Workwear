@@ -6342,8 +6342,8 @@
       </action>
       <action id="ActionPostomatDocs">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Документы постоматов</property>
-        <property name="ShortLabel" translatable="yes">Документы постоматов</property>
+        <property name="Label" translatable="yes">Документы постаматов</property>
+        <property name="ShortLabel" translatable="yes">Документы постаматов</property>
         <signal name="Activated" handler="OnActionPostomatDocsActivated" />
       </action>
       <action id="ActionClothingService">
@@ -6372,8 +6372,8 @@
       </action>
       <action id="ActionFullnessPostomats">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Заполненность постоматов</property>
-        <property name="ShortLabel" translatable="yes">Заполненность постоматов</property>
+        <property name="Label" translatable="yes">Заполненность постаматов</property>
+        <property name="ShortLabel" translatable="yes">Заполненность постаматов</property>
         <signal name="Activated" handler="OnActionFullnessPostomatsActivated" />
       </action>
       <action id="ActionBarcodeCompletenessReport">
@@ -25222,7 +25222,7 @@
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Постомат:</property>
+                    <property name="LabelProp" translatable="yes">Постамат:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>

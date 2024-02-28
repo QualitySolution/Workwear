@@ -55,7 +55,7 @@ namespace Workwear.ViewModels.Postomats {
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
-		#region Постомат
+		#region Постамат
 		public IList<PostomatInfo> Postomats { get; }
 		
 		private PostomatInfo postomat;

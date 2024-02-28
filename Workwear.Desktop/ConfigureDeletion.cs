@@ -148,7 +148,7 @@ namespace Workwear
 				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation);
 
 			#endregion
-			#region Постоматы
+			#region Постаматы
 			DeleteConfig.AddHibernateDeleteInfo<PostomatDocument>()
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Document);
 

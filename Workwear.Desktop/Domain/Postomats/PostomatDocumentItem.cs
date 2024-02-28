@@ -7,7 +7,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
-	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постомата", Nominative = "строка документа постомата")]
+	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постамата", Nominative = "строка документа постамата")]
 	[HistoryTrace]
 	public class PostomatDocumentItem : PropertyChangedBase, IDomainObject{
 		#region Cвойства

@@ -198,10 +198,10 @@ namespace workwear.Journal
 					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortDateString()).XAlign(0.5f)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(x => x.Type.GetEnumTitle()).XAlign(0.5f)
 					.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.Status.GetEnumTitle()).XAlign(0.5f)
-					.AddColumn("Постомат")
+					.AddColumn("Постамат")
 						.AddReadOnlyTextRenderer(x => x.TerminalId.ToString()).XAlign(0.5f)
 						.AddTextRenderer(x => jvm.GetTerminalName(x.TerminalId))
-					.AddColumn("Размещение постомата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
+					.AddColumn("Размещение постамата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
 					.Finish()
 				);
 			
