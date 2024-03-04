@@ -33,7 +33,7 @@ namespace workwear.ReportParameters.ViewModels
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
-			Title = $"Справка по невыданному (Суммарно)";
+			Title = "Справка по невыданному (Суммарно)";
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
@@ -90,6 +90,7 @@ namespace workwear.ReportParameters.ViewModels
 			get => reportType;
 			set {
 				SetField(ref reportType, value);
+				OnPropertyChanged(nameof(VisibleShowEmployees));
 			}
 		}
 
