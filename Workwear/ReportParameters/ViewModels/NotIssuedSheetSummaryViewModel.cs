@@ -88,16 +88,19 @@ namespace workwear.ReportParameters.ViewModels
 		private NotIssuedSheetSummaryReportType reportType;
 		public virtual NotIssuedSheetSummaryReportType ReportType {
 			get => reportType;
-			set => SetField(ref reportType, value);
+			set {
+				SetField(ref reportType, value);
+				OnPropertyChanged(nameof(VisibleShowEmployees));
+			}
 		}
-		
+
 		private DateTime? reportDate = DateTime.Today;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? ReportDate {
 			get => reportDate;
 			set => SetField(ref reportDate, value);
 		}
-		
+
 		private DateTime? excludeBefore;
 		public virtual DateTime? ExcludeBefore {
 			get => excludeBefore;
@@ -165,7 +168,8 @@ namespace workwear.ReportParameters.ViewModels
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
-		public object StockElementsSensetive => warehouse.Id != -2;
+		public bool VisibleShowEmployees => ReportType == NotIssuedSheetSummaryReportType.Flat;
+		public bool StockElementsSensetive => warehouse.Id != -2;
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)

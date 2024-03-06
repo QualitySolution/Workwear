@@ -540,8 +540,8 @@ public partial class MainWindow
 		this.ActionEmployeeGroup = new global::Gtk.Action("ActionEmployeeGroup", global::Mono.Unix.Catalog.GetString("Группы сотрудников "), null, null);
 		this.ActionEmployeeGroup.ShortLabel = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
 		w1.Add(this.ActionEmployeeGroup, null);
-		this.ActionPostomatDocs = new global::Gtk.Action("ActionPostomatDocs", global::Mono.Unix.Catalog.GetString("Документы постоматов"), null, null);
-		this.ActionPostomatDocs.ShortLabel = global::Mono.Unix.Catalog.GetString("Документы постоматов");
+		this.ActionPostomatDocs = new global::Gtk.Action("ActionPostomatDocs", global::Mono.Unix.Catalog.GetString("Документы постаматов"), null, null);
+		this.ActionPostomatDocs.ShortLabel = global::Mono.Unix.Catalog.GetString("Документы постаматов");
 		w1.Add(this.ActionPostomatDocs, null);
 		this.ActionClothingService = new global::Gtk.Action("ActionClothingService", global::Mono.Unix.Catalog.GetString("Обслуживание одежды"), null, null);
 		this.ActionClothingService.ShortLabel = global::Mono.Unix.Catalog.GetString("Обслуживание одежды");
@@ -555,8 +555,8 @@ public partial class MainWindow
 		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Прогноз выдач"), null, null);
 		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Прогноз");
 		w1.Add(this.Action40, null);
-		this.ActionFullnessPostomats = new global::Gtk.Action("ActionFullnessPostomats", global::Mono.Unix.Catalog.GetString("Заполненность постоматов"), null, null);
-		this.ActionFullnessPostomats.ShortLabel = global::Mono.Unix.Catalog.GetString("Заполненность постоматов");
+		this.ActionFullnessPostomats = new global::Gtk.Action("ActionFullnessPostomats", global::Mono.Unix.Catalog.GetString("Заполненность постаматов"), null, null);
+		this.ActionFullnessPostomats.ShortLabel = global::Mono.Unix.Catalog.GetString("Заполненность постаматов");
 		w1.Add(this.ActionFullnessPostomats, null);
 		this.ActionBarcodeCompletenessReport = new global::Gtk.Action("ActionBarcodeCompletenessReport", global::Mono.Unix.Catalog.GetString("Покрытие маркировки"), null, null);
 		this.ActionBarcodeCompletenessReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Покрытие маркировки");

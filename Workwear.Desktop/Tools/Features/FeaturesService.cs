@@ -216,7 +216,7 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Отзывы")]
 		Ratings,
 		[IsCloudFeature]
-		[Display(Name = "Постоматы")]
+		[Display(Name = "Постаматы")]
 		Postomats,
 		#endregion
 		#endregion

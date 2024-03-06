@@ -198,10 +198,10 @@ namespace workwear.Journal
 					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortDateString()).XAlign(0.5f)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(x => x.Type.GetEnumTitle()).XAlign(0.5f)
 					.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.Status.GetEnumTitle()).XAlign(0.5f)
-					.AddColumn("Постомат")
+					.AddColumn("Постамат")
 						.AddReadOnlyTextRenderer(x => x.TerminalId.ToString()).XAlign(0.5f)
 						.AddTextRenderer(x => jvm.GetTerminalName(x.TerminalId))
-					.AddColumn("Размещение постомата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
+					.AddColumn("Размещение постамата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
 					.Finish()
 				);
 			
@@ -308,6 +308,8 @@ namespace workwear.Journal
 						.AddTextRenderer(node => node.RatingText)
 					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
+					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
+						.AddTextRenderer(n => n.WashableText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);

@@ -22,6 +22,8 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 			ycheckShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Active).InitializeFromSource();
+			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployees, w => w.Visible).InitializeFromSource();
+			ylabelShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployees, w => w.Visible).InitializeFromSource();
 			ycheckExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.Condition, w => w.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();

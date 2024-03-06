@@ -724,7 +724,7 @@
       <Textbox Name="Textbox50">
         <Height>20.21pt</Height>
         <Width>561.64pt</Width>
-        <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D")</Value>
+        <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D") + " от " + Format(Today(), "D")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>5.70pt</Top>
@@ -847,41 +847,7 @@
 	heightAlias.name AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
-    IF(@show_stock,(
-        SELECT(
-            SUM(
-                CASE WHEN (operation_warehouse.warehouse_receipt_id IS NOT NULL
-                    AND(@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id) )
-                THEN operation_warehouse.amount  
-                ELSE 0
-                END
-            ) - SUM(
-                CASE WHEN (operation_warehouse.warehouse_expense_id IS NOT NULL
-                    AND(@all_warehouse OR operation_warehouse.warehouse_expense_id = @warehouse_id) )
-                THEN operation_warehouse.amount
-                ELSE 0
-                END
-            )) AS SUM
-        FROM
-            operation_warehouse
-        WHERE
-            (@all_warehouse OR operation_warehouse.warehouse_receipt_id = @warehouse_id OR operation_warehouse.warehouse_expense_id = @warehouse_id)
-            AND operation_warehouse.operation_time &lt;= CONVERT(@report_date, DATE) 
-            AND operation_warehouse.nomenclature_id IN(
-            SELECT
-                protection_tools_nomenclature.nomenclature_id
-            FROM
-                protection_tools_nomenclature
-            JOIN nomenclature n ON n.id = protection_tools_nomenclature.nomenclature_id
-            WHERE
-                (n.sex = 'Universal' OR (n.sex = 'Men' AND wear_cards.sex = 'M') OR (n.sex = 'Women' AND wear_cards.sex = 'F'))
-                AND protection_tools_nomenclature.protection_tools_id = wear_cards_item.protection_tools_id
-            )
-            AND (sizeTypeAlias.id IS NULL OR operation_warehouse.size_id IS NULL OR operation_warehouse.size_id = employeeSizeAlias.size_id OR operation_warehouse.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
-            AND (heightTypeAlias.id IS NULL OR operation_warehouse.height_id IS NULL OR operation_warehouse.height_id = employeeHeightAlias.size_id OR operation_warehouse.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
-            AND ((NOT @hide_worn) OR (operation_warehouse.wear_percent = 0.0))
-        )
-        ,null) AS in_stock
+    IF(@show_stock, ballance.SUM, null) AS in_stock
 FROM
     wear_cards_item
     JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -900,6 +866,31 @@ FROM
     LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
     LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
     LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+    LEFT JOIN (SELECT spt.id AS ptid, sn.sex, sopwh.size_id, sopwh.height_id,
+           (SUM(CASE WHEN (sopwh.warehouse_receipt_id IS NOT NULL AND(@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id) )
+                         THEN sopwh.amount ELSE 0
+               END)
+               - SUM(CASE WHEN (sopwh.warehouse_expense_id IS NOT NULL AND(@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id) )
+                              THEN sopwh.amount ELSE 0
+               END)
+           ) AS SUM
+        FROM protection_tools AS spt
+                 LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
+                 LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
+                 LEFT JOIN operation_warehouse AS sopwh on (sopwh.operation_time &lt; ADDDATE(@report_date, INTERVAL 1 DAY )
+            AND sopwh.nomenclature_id = sptn.nomenclature_id
+            AND (@all_warehouse
+                OR sopwh.warehouse_receipt_id = @warehouse_id
+                OR sopwh.warehouse_expense_id = @warehouse_id) )
+                 LEFT JOIN sizes s on sopwh.size_id = s.id
+        WHERE ((-1 IN (@protection_tools_ids)) OR spt.id IN (@protection_tools_ids))
+        GROUP BY spt.id, sn.sex, sopwh.size_id, sopwh.height_id) 
+        AS ballance 
+            ON (wear_cards_item.protection_tools_id = ballance.ptid
+            AND (ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND wear_cards.sex = 'M') OR (ballance.sex = 'Women' AND wear_cards.sex = 'F'))
+            AND (sizeTypeAlias.id IS NULL OR ballance.size_id IS NULL OR ballance.size_id = employeeSizeAlias.size_id OR ballance.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
+            AND (heightTypeAlias.id IS NULL OR ballance.height_id IS NULL OR ballance.height_id = employeeHeightAlias.size_id OR ballance.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
+            )
 WHERE
     wear_cards.dismiss_date IS NULL
     AND ((-1 IN (@employee_groups_ids)) 

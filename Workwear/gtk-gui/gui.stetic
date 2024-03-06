@@ -6342,8 +6342,8 @@
       </action>
       <action id="ActionPostomatDocs">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Документы постоматов</property>
-        <property name="ShortLabel" translatable="yes">Документы постоматов</property>
+        <property name="Label" translatable="yes">Документы постаматов</property>
+        <property name="ShortLabel" translatable="yes">Документы постаматов</property>
         <signal name="Activated" handler="OnActionPostomatDocsActivated" />
       </action>
       <action id="ActionClothingService">
@@ -6372,8 +6372,8 @@
       </action>
       <action id="ActionFullnessPostomats">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Заполненность постоматов</property>
-        <property name="ShortLabel" translatable="yes">Заполненность постоматов</property>
+        <property name="Label" translatable="yes">Заполненность постаматов</property>
+        <property name="ShortLabel" translatable="yes">Заполненность постаматов</property>
         <signal name="Activated" handler="OnActionFullnessPostomatsActivated" />
       </action>
       <action id="ActionBarcodeCompletenessReport">
@@ -7981,26 +7981,6 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label4">
-                <property name="MemberName" />
-                <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Показывать список сотрудников:</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
               <widget class="Gtk.Label" id="label5">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
@@ -8358,6 +8338,25 @@
               <packing>
                 <property name="TopAttach">9</property>
                 <property name="BottomAttach">10</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowEmployees">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Показывать список сотрудников:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -25222,7 +25221,7 @@
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Постомат:</property>
+                    <property name="LabelProp" translatable="yes">Постамат:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>
