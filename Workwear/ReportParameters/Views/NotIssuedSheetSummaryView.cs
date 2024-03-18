@@ -43,6 +43,7 @@ namespace workwear.ReportParameters.Views
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			entityDepartment.ViewModel = ViewModel.DepartmentEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;

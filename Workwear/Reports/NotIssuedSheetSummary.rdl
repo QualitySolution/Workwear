@@ -463,7 +463,7 @@
                             <BorderWidth />
                             <TextAlign>Right</TextAlign>
                           </Style>
-                          <Value>По подразделеию:</Value>
+                          <Value>По подразделению:</Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>2</ColSpan>
