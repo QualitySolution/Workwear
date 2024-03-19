@@ -15,6 +15,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
@@ -33,12 +34,17 @@ namespace workwear.ReportParameters.ViewModels
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Справка по невыданному (Детально)";
-			
 			UoW = uowFactory.CreateWithoutRoot();
-
-			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
+			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 			
-			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
+				.MakeByType()
+				.Finish();
+			DepartmentEntry = builder.ForProperty(x => x.Department)
+				.MakeByType()
+				.Finish();
+			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, SubdivisionEntry);
+			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
@@ -59,7 +65,8 @@ namespace workwear.ReportParameters.ViewModels
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
-					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
+					{"subdivision_id", Subdivision?.Id ?? -1 },
+					{"department_id", Department?.Id ?? -1},
 					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod},
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
@@ -144,6 +151,7 @@ namespace workwear.ReportParameters.ViewModels
 			set => SetField(ref hideWorn, value);
 		}
 		#endregion
+		
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
@@ -155,10 +163,31 @@ namespace workwear.ReportParameters.ViewModels
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
+		
+		private Subdivision subdivision;
+		public virtual Subdivision Subdivision {
+			get => subdivision;
+			set {
+				SetField(ref subdivision, value);
+				if(Department != null && Department.Subdivision != Subdivision)
+					Department = null;
+			}
+		}
+		
+		private Department department;
+		public virtual Department Department {
+			get => department;
+			set {
+				if(SetField(ref department, value))
+					if(department != null && !DomainHelper.EqualDomainObjects(Subdivision, department?.Subdivision))
+						Subdivision = department?.Subdivision;
+			}
+		}
 		#endregion
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public EntityEntryViewModel<Department> DepartmentEntry;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;

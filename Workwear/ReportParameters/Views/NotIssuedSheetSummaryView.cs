@@ -36,6 +36,7 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(wm => wm.Warehouse, w => w.SelectedItem)
 				.InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupByElementSensetive, w => w.Sensitive).InitializeFromSource();
 			
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 			
@@ -43,6 +44,7 @@ namespace workwear.ReportParameters.Views
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
+			entityDepartment.ViewModel = ViewModel.DepartmentEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
