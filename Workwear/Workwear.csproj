@@ -476,6 +476,9 @@
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
     <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Postomats\PostomatDocumentsJournalFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Postomats\PostomatDocumentsJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Postomats.PostomatDocumentsJournalFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -715,6 +718,8 @@
     <Folder Include="Views\Postomats\" />
     <Folder Include="Views\ClothingService\" />
     <Folder Include="Views\Export\" />
+    <Folder Include="Journal\Filter.ViewModels\Postomats\" />
+    <Folder Include="Journal\Filter.Views\Postomats\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
