@@ -77,13 +77,13 @@
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>17.6pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox1">
-                      <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D") + " от " + Format(CDate(Today()), "D")</Value>
+                      <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D") + " от " + Format(Today(), "D")</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -760,7 +760,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT
@@ -845,6 +845,7 @@ WHERE
     wear_cards.dismiss_date IS NULL
     AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
     AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND (@department_id = -1 OR wear_cards.department_id = @department_id)
     AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
     AND ((-1 IN (@employee_groups_ids)) 
          OR(@without_groups AND NOT EXISTS
@@ -911,9 +912,12 @@ ORDER BY
           <QueryParameter Name="@all_warehouse">
             <Value>={?all_warehouse}</Value>
           </QueryParameter>
+          <QueryParameter Name="@department_id">
+            <Value>={?department_id}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -1026,7 +1030,7 @@ ORDER BY
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1184,6 +1188,18 @@ ORDER BY
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="department_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

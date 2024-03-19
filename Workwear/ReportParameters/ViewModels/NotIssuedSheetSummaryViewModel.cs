@@ -69,6 +69,8 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", Subdivision?.Id ?? -1 },
+					{"department_id", Department?.Id ?? -1},
+					{"department_name", Department?.Name},
 					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIds.Length == 0 ? 
 						new [] {-1} :
 						ChoiceProtectionToolsViewModel.SelectedIds },
@@ -159,7 +161,6 @@ namespace workwear.ReportParameters.ViewModels
 			set { SetField(ref warehousesList, value); }
 		}
 
-
 		private bool hideWorn;
 		public virtual bool HideWorn {
 			get => warehouse.Id != -2 && hideWorn;
@@ -173,10 +174,12 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		
 		private Subdivision subdivision;
+		[PropertyChangedAlso(nameof(GroupByElementSensetive))]
 		public virtual Subdivision Subdivision {
 			get => subdivision;
 			set {
 				SetField(ref subdivision, value);
+				GroupBySubdivision = Subdivision != null;
 				if(Department != null && Department.Subdivision != Subdivision)
 					Department = null;
 			}
@@ -186,9 +189,10 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual Department Department {
 			get => department;
 			set {
-				if(SetField(ref department, value))
+				if(SetField(ref department, value)) {
 					if(department != null && !DomainHelper.EqualDomainObjects(Subdivision, department?.Subdivision))
 						Subdivision = department?.Subdivision;
+				}
 			}
 		}
 		#endregion
@@ -200,6 +204,9 @@ namespace workwear.ReportParameters.ViewModels
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public bool VisibleShowEmployees => ReportType == NotIssuedSheetSummaryReportType.Flat;
 		public bool StockElementsSensetive => warehouse.Id != -2;
+
+		public bool GroupByElementSensetive => Subdivision == null;
+		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));

@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>33in</PageWidth>
+  <PageWidth>38in</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -30,6 +30,9 @@
         </Style>
         <TableColumns>
           <TableColumn>
+            <Width>321.1pt</Width>
+          </TableColumn>
+          <TableColumn >
             <Width>321.1pt</Width>
           </TableColumn>
           <TableColumn>
@@ -91,7 +94,7 @@
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>5</ColSpan>
+                  <ColSpan>6</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -192,6 +195,24 @@
                   <ReportItems>
                     <Textbox Name="Textbox69">
                       <Value>Подразделение</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>Отдел</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -394,6 +415,20 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value>=Iif(Fields!department_name.IsMissing, "", Fields!department_name.Value)</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
@@ -563,7 +598,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*
@@ -574,6 +609,7 @@ FROM(SELECT
          wear_cards_item.protection_tools_id,
          if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
          if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
+         if(@department_id, (SELECT name from departments as d where d.id = @department_id), NULL) as department_name,
          objects.name as subdivision_name,
          if(@show_employees,
             GROUP_CONCAT( CONCAT_WS('',
@@ -623,6 +659,7 @@ FROM(SELECT
                        AND gi.employee_group_id IN (@employee_groups_ids))) )
        AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
        AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+       AND (@department_id = -1 OR wear_cards.department_id = @department_id)
        AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
        AND (@condition = false OR norm_conditions.issuance_start is null OR
             IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
@@ -719,9 +756,12 @@ FROM(SELECT
           <QueryParameter Name="@show_employees">
             <Value>={?show_employees}</Value>
           </QueryParameter>
+          <QueryParameter Name="@department_id">
+            <Value>={?department_id}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -778,6 +818,10 @@ FROM(SELECT
           <DataField>in_stock</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
+        <Field Name="department_name">
+          <DataField>department_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="One">
@@ -802,7 +846,7 @@ FROM(SELECT
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -993,6 +1037,30 @@ FROM(SELECT
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="department_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="department_name">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>""</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

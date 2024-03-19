@@ -36,6 +36,7 @@ namespace workwear.ReportParameters.Views
 				.AddBinding(wm => wm.Warehouse, w => w.SelectedItem)
 				.InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupByElementSensetive, w => w.Sensitive).InitializeFromSource();
 			
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 			
