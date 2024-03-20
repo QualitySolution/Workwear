@@ -26,10 +26,15 @@ namespace workwear.ReportParameters.Views {
 				.AddBinding(v => v.VisibleIssueType, w => w.Visible)
 				.InitializeFromSource();
 
+			checkByOperation.Binding.AddBinding(ViewModel, v => v.VisibleByOperation, w => w.Visible).InitializeFromSource();
+			checkByOperation.Binding.AddBinding(ViewModel, v => v.ByOperation, w => w.Active).InitializeFromSource();
+			checkBySubdivision.Binding.AddBinding(ViewModel, v => v.SensetiveBySubdiviion, w => w.Sensitive).InitializeFromSource();
 			checkBySubdivision.Binding.AddBinding(ViewModel, v => v.BySubdivision, w => w.Active).InitializeFromSource();
-			checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
+			checkByEmployee.Binding.AddBinding(ViewModel, v => v.SensetiveByEmployee, w => w.Sensitive).InitializeFromSource();
+            checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
+			checkBySize.Binding.AddBinding(ViewModel, v => v.SensetiveBySize, w => w.Sensitive).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
-
+			
 			buttonPrintReport.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			yentryMatch.Binding.AddBinding(ViewModel, v => v.MatchString, w => w.Text).InitializeFromSource();
