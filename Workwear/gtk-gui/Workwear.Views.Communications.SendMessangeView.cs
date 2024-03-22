@@ -55,7 +55,7 @@ namespace Workwear.Views.Communications
 			this.ypushCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ypushCheckBox.CanFocus = true;
 			this.ypushCheckBox.Name = "ypushCheckBox";
-			this.ypushCheckBox.Label = global::Mono.Unix.Catalog.GetString("Push увомление");
+			this.ypushCheckBox.Label = global::Mono.Unix.Catalog.GetString("Push уведомление");
 			this.ypushCheckBox.DrawIndicator = true;
 			this.ypushCheckBox.UseUnderline = true;
 			this.yvbox2.Add(this.ypushCheckBox);

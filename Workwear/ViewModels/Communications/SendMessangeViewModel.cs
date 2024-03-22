@@ -92,31 +92,46 @@ namespace Workwear.ViewModels.Communications
 		#endregion
 
 		#region Действия View
-		public void SendMessage()
-		{
+		public void SendMessage() {
+			List<string> responseMessages = new List<string>();
 			if (PushNotificationSelected)
 			{
-				SendPushNotificationMessage();
+				responseMessages.Add(SendPushNotificationMessage());
 			}
 			if (EmailNotificationSelected) 
 			{
-				SendEmailNotificationMessage();
+				responseMessages.Add(SendEmailNotificationMessage());
 			}
-		}
-
-		private void SendPushNotificationMessage() {
-			IEnumerable<OutgoingMessage> messages = employees.Select(MakeNotificationMessage);
-			string result = notificationManager.SendMessages(messages);
-			interactive.ShowMessage(ImportanceLevel.Info, result);
+			
+			interactive.ShowMessage(ImportanceLevel.Info, string.Join("\n", responseMessages));
 			Close(false, CloseSource.Self);
 		}
 
-		private void SendEmailNotificationMessage()
+		private string SendPushNotificationMessage() {
+			IEnumerable<OutgoingMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.PhoneNumber))
+				.Select(MakeNotificationMessage);
+
+			string result = $"Отправлено 0 сообщений.";  
+			if (messages.Any()) 
+			{
+				result = notificationManager.SendMessages(messages);
+			}
+
+			return result;
+		}
+
+		private string SendEmailNotificationMessage()
 		{
-			IEnumerable<EmailMessage> messages = employees.Select(MakeEmailMessage);
-			string result = emailManagerService.SendMessages(messages);
-			interactive.ShowMessage(ImportanceLevel.Info, result);
-			Close(false, CloseSource.Self);
+			IEnumerable<EmailMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.Email))
+				.Select(MakeEmailMessage);
+			
+			string result = "Отправлено 0 сообщений.";  
+			if (messages.Any()) 
+			{
+				result = emailManagerService.SendMessages(messages);
+			}
+
+			return result;
 		}
 		#endregion
 
