@@ -25,6 +25,8 @@
 		<Protobuf Include="Protos\ClaimManager.proto" />
 		<None Remove="Protos\RatingManager.proto" />
 		<Protobuf Include="Protos\RatingManager.proto" />
+		<None Remove="Protos\SpecCoinsManager.proto" />
+		<Protobuf Include="Protos\SpecCoinsManager.proto" />
     </ItemGroup>
 
     <ItemGroup>
