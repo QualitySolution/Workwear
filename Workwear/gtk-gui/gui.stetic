@@ -3060,14 +3060,16 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonPrint">
+              <widget class="QS.Widgets.EnumMenuButton" id="enumPrint">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-print Menu</property>
                 <property name="Label" translatable="yes">Печать</property>
                 <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnPrintClicked" />
+                <property name="UseMarkup">False</property>
+                <property name="LabelXAlign">0</property>
+                <signal name="EnumItemClicked" handler="OnEnumPrintEnumItemClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
