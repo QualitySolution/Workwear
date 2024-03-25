@@ -481,7 +481,7 @@
     <Compile Include="Journal\Filter.Views\Postomats\PostomatDocumentsJournalFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Postomats.PostomatDocumentsJournalFilterView.cs" />
     <Compile Include="Views\Communications\DeductSpecCoinsView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Communications.DeductCoinsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.DeductSpecCoinsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

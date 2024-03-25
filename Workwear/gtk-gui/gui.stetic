@@ -28133,7 +28133,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Communications.DeductCoinsView" design-size="411 351">
+  <widget class="Gtk.Bin" id="Workwear.Views.Communications.DeductSpecCoinsView" design-size="411 351">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -28169,7 +28169,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.ySpinButton" id="ycoinsAmountSpint">
+              <widget class="Gamma.GtkWidgets.ySpinButton" id="ycoinsAmountSpin">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Upper">100</property>

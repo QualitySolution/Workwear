@@ -31,10 +31,10 @@ namespace Workwear.Views.Communications
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
-			// Widget Workwear.Views.Communications.DeductCoinsView
+			// Widget Workwear.Views.Communications.DeductSpecCoinsView
 			global::Stetic.BinContainer.Attach(this);
-			this.Name = "Workwear.Views.Communications.DeductCoinsView";
-			// Container child Workwear.Views.Communications.DeductCoinsView.Gtk.Container+ContainerChild
+			this.Name = "Workwear.Views.Communications.DeductSpecCoinsView";
+			// Container child Workwear.Views.Communications.DeductSpecCoinsView.Gtk.Container+ContainerChild
 			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
 			this.yvbox1.Name = "yvbox1";
 			this.yvbox1.Spacing = 6;
@@ -63,7 +63,7 @@ namespace Workwear.Views.Communications
 			// Container child yvbox2.Gtk.Box+BoxChild
 			this.ycoinsAmountSpin = new global::Gamma.GtkWidgets.ySpinButton(0D, 100D, 1D);
 			this.ycoinsAmountSpin.CanFocus = true;
-			this.ycoinsAmountSpin.Name = "ycoinsAmountSpint";
+			this.ycoinsAmountSpin.Name = "ycoinsAmountSpin";
 			this.ycoinsAmountSpin.Adjustment.PageIncrement = 10D;
 			this.ycoinsAmountSpin.ClimbRate = 1D;
 			this.ycoinsAmountSpin.Numeric = true;
