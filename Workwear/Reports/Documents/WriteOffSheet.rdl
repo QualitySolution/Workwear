@@ -1601,21 +1601,21 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_test_training;user=gurynych;password=6028;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=omIV5tuXi]49jQnF;</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>36</Value>
+          <Value>32</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
