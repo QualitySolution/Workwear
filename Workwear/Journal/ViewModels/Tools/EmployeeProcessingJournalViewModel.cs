@@ -585,7 +585,7 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.Close();
 			if (cancellation.IsCancellationRequested)
 				return;
-			progressCreator.Start(operations.Count + 4, text: "Пересчет даты последней выдачи");
+			progressCreator.Start(operations.Count + 4, text: "Замена норм");
 			cancellation = progressCreator.CancellationToken;
 
 			var changes = new Dictionary<int, int>();
@@ -593,17 +593,27 @@ namespace workwear.Journal.ViewModels.Tools
 				if(!changes.ContainsKey(operation.Employee.Id))
 					changes[operation.Employee.Id] = 0;
 				progressCreator.Add(text: $"Обработка {operation.Employee.ShortName}");
-				if(operation.Employee.WorkwearItems.Select(wc => wc.ActiveNormItem)
+				if(operation.ProtectionTools != null //подбор по номенклатуре не делаю, но проставляем если не было norm item
+					&& operation.Employee.WorkwearItems.Select(wc => wc.ActiveNormItem)
 				   .Any(ni => DomainHelper.EqualDomainObjects(ni, operation.NormItem))) {
 					continue;
 				}else {
 					var normItem = operation.Employee.WorkwearItems.Select(n => n.ActiveNormItem) 
 						.FirstOrDefault(p => DomainHelper.EqualDomainObjects(p.ProtectionTools, operation.ProtectionTools));
 					if(normItem != null) {
+						loggerProcessing.Info($"У Сотрудника |{operation.Employee.Id}|{operation.Employee.ShortName}|" +
+						                      $" меняем norm item c |{operation.NormItem?.Id}| на |{normItem.Id}|" +
+						                      $" нормы с |{operation.NormItem?.Norm.Id}| на |{normItem.Norm.Id}|" +
+						                      $" в операции |{operation.Id}|{operation.ProtectionTools?.Name}");
 						operation.NormItem = normItem;
 						changes[operation.Employee.Id]++;
 						UoW.Save(operation);
 					}
+				}
+				if(cancellation.IsCancellationRequested) {
+					loggerProcessing.Info("Прервано пользователем");
+					progressCreator.Close();
+					return;
 				}
 			}
 
@@ -614,8 +624,11 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[change.Key] = ($"Отредактировано {change.Value} выдач", "orange");
 			}
 			progressCreator.Add(text: "Завершаем...");
-			if(UoW.HasChanges)
+			loggerProcessing.Info("Переустановка норм завершена");
+			if(UoW.HasChanges) {
 				UoW.Commit();
+				loggerProcessing.Info("Сохранено в базу");
+			}
 			progressCreator.Add(text: "Обновляем журнал");
 			Refresh();
 			progressCreator.Close();
