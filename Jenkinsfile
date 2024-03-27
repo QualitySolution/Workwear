@@ -25,6 +25,7 @@ node {
          sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear.Test/Workwear.Test.csproj'
       } catch (e) {}
       finally{
+      	 discoverGitReferenceBuild()
          recordCoverage ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: '**/coverage.cobertura.xml']]
          mstest testResultsFile:"**/*.trx", keepLongStdio: true
       }

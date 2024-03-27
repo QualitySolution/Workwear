@@ -16,14 +16,16 @@ namespace Workwear.ViewModels.Communications
 {
 	public class SendMessangeViewModel: WindowDialogViewModelBase
 	{
+		private readonly EmailManagerService emailManagerService;
 		private readonly NotificationManagerService notificationManager;
 		private readonly IInteractiveMessage interactive;
 
 		readonly IUnitOfWork uow;
 		readonly IList<EmployeeCard> employees;
 			
-		public SendMessangeViewModel(IUnitOfWorkFactory unitOfWorkFactory, int[] employeeIds, NotificationManagerService notificationManager, IInteractiveMessage interactive, INavigationManager navigation): base(navigation)
+		public SendMessangeViewModel(IUnitOfWorkFactory unitOfWorkFactory, int[] employeeIds, EmailManagerService emailManagerService, NotificationManagerService notificationManager, IInteractiveMessage interactive, INavigationManager navigation): base(navigation)
 		{
+			this.emailManagerService = emailManagerService ?? throw new ArgumentNullException(nameof(emailManagerService));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			Title = "Отправка уведомлений " + NumberToTextRus.FormatCase(employeeIds.Length, "{0} сотруднику", "{0} сотрудникам", "{0} сотрудникам");
@@ -36,7 +38,8 @@ namespace Workwear.ViewModels.Communications
 
 		#region Sensetive
 		public bool SensitiveSendButton {
-			get => !String.IsNullOrWhiteSpace(MessageText) && !String.IsNullOrWhiteSpace(MessageTitle);
+			get => !String.IsNullOrWhiteSpace(MessageText) && !String.IsNullOrWhiteSpace(MessageTitle) &&
+			       (PushNotificationSelected || EmailNotificationSelected);
 		}
 		#endregion
 
@@ -63,6 +66,20 @@ namespace Workwear.ViewModels.Communications
 			}
 		}
 
+		private bool pushNotificationSelected;
+		[PropertyChangedAlso(nameof(SensitiveSendButton))]
+		public bool PushNotificationSelected {
+			get => pushNotificationSelected;
+			set => SetField(ref pushNotificationSelected, value);
+		}
+
+		private bool emailNotificationSelected;
+		[PropertyChangedAlso(nameof(SensitiveSendButton))]
+		public bool EmailNotificationSelected {
+			get => emailNotificationSelected;
+			set => SetField(ref emailNotificationSelected, value);
+		}
+		
 		private string messageText;
 
 		[PropertyChangedAlso(nameof(SensitiveSendButton))]
@@ -75,25 +92,65 @@ namespace Workwear.ViewModels.Communications
 		#endregion
 
 		#region Действия View
-		public void SendMessage()
-		{
-			var messages = new List<OutgoingMessage>();
-			foreach (var employee in employees) {
-				messages.Add(MakeMessage(employee));
+		public void SendMessage() {
+			List<string> responseMessages = new List<string>();
+			if (PushNotificationSelected)
+			{
+				responseMessages.Add(SendPushNotificationMessage());
+			}
+			if (EmailNotificationSelected) 
+			{
+				responseMessages.Add(SendEmailNotificationMessage());
 			}
 			
-			var result = notificationManager.SendMessages(messages);
-			interactive.ShowMessage(ImportanceLevel.Info, result);
-			
+			interactive.ShowMessage(ImportanceLevel.Info, string.Join("\n", responseMessages));
 			Close(false, CloseSource.Self);
+		}
+
+		private string SendPushNotificationMessage() {
+			IEnumerable<OutgoingMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.PhoneNumber))
+				.Select(MakeNotificationMessage);
+
+			string result = $"Отправлено 0 сообщений.";  
+			if (messages.Any()) 
+			{
+				result = notificationManager.SendMessages(messages);
+			}
+
+			return result;
+		}
+
+		private string SendEmailNotificationMessage()
+		{
+			IEnumerable<EmailMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.Email))
+				.Select(MakeEmailMessage);
+			
+			string result = "Отправлено 0 сообщений.";  
+			if (messages.Any()) 
+			{
+				result = emailManagerService.SendMessages(messages);
+			}
+
+			return result;
 		}
 		#endregion
 
-		private OutgoingMessage MakeMessage(EmployeeCard employee)
+		private OutgoingMessage MakeNotificationMessage(EmployeeCard employee)
 		{
-			var message = new OutgoingMessage {
+			OutgoingMessage message = new OutgoingMessage {
 				Phone = employee.PhoneNumber,
 				Title = MessageTitle,
+				Text = MessageText
+			};
+
+			return message;
+		}
+		
+		private EmailMessage MakeEmailMessage(EmployeeCard employee)
+		{
+			EmailMessage message = new EmailMessage {
+				Address = employee.Email,
+				Subject = MessageTitle,
 				Text = MessageText
 			};
 

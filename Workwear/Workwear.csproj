@@ -172,6 +172,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
+    <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
@@ -476,6 +477,11 @@
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
     <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Postomats\PostomatDocumentsJournalFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.Views\Postomats\PostomatDocumentsJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Postomats.PostomatDocumentsJournalFilterView.cs" />
+    <Compile Include="Views\Communications\DeductSpecCoinsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.DeductSpecCoinsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -705,7 +711,6 @@
     <Folder Include="Journal\Filter.ViewModels\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />
-    <Folder Include="ViewModels\Communications\" />
     <Folder Include="Views\Communications\" />
     <Folder Include="Journal\ViewModels\Communications\" />
     <Folder Include="Views\Sizes\" />
@@ -715,6 +720,8 @@
     <Folder Include="Views\Postomats\" />
     <Folder Include="Views\ClothingService\" />
     <Folder Include="Views\Export\" />
+    <Folder Include="Journal\Filter.ViewModels\Postomats\" />
+    <Folder Include="Journal\Filter.Views\Postomats\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
@@ -731,6 +738,9 @@
     </None>
     <None Include="Reports\NotIssuedSheetSummaryFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Statements\ReturnStatementVertical.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\StockAllWear.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -843,6 +853,9 @@
     <None Include="Reports\BarcodeCompletenessReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\Documents\PostomatIssueSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Documents\WriteOffSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

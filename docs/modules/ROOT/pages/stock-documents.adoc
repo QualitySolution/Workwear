@@ -45,11 +45,16 @@ image::stock-documents_stock-income_sizes.png[]
 
 image::stock-documents_employee-return.png[]
 
-Документ имеет печатную форму «Лист учета возврата выданной спецодежды».
+Документ имеет две печатные формы:
 
 .Лист учета возврата выданной спецодежды
 ****
 image::stock-documents_employee-return_print.png[]
+****
+
+.Ведомость возврата
+****
+image::stock-documents_employee-return_print-statment.png[]
 ****
 
 [#subdivision-return]

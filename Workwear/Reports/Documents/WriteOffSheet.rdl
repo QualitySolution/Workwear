@@ -11,35 +11,36 @@
   <BottomMargin>.15in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    CONCAT_WS(' ', n.name, NULLIF(CONCAT('(', CONCAT_WS('\\', size.name, height.name) ,')'), '()')) as nomenclature_name,
+    CONCAT_WS(' ', IFNULL(n.name, pt.name), NULLIF(CONCAT('(', CONCAT_WS('\\', size.name, height.name) ,')'), '()')) as nomenclature_name,
     items.quantity as amount,
     mu.name as unit,
     IF(items.employee_issue_operation_id is not null,
-        CONCAT_WS(' ',
+       CONCAT_WS(' ',
                  wc.last_name,
                  CONCAT(LEFT(wc.first_name, 1), '.'),
                  CONCAT(LEFT(wc.patronymic_name, 1), '.')
-        ),
-        IF(items.warehouse_operation_id is not null,
-            w.name,
-            ''
-        )
+       ),
+       IF(items.warehouse_operation_id is not null,
+          w.name,
+          ''
+       )
     ) as subject_name,
     items.cause
 FROM stock_write_off_detail as items
-    LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
-    LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
-    LEFT JOIN operation_warehouse as opwarh on opwarh.id = items.warehouse_operation_id
-    LEFT JOIN wear_cards as wc on wc.id = opissue.employee_id
-    LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
-    LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
-    LEFT JOIN item_types as it on n.type_id = it.id
-    LEFT JOIN measurement_units as mu on it.units_id = mu.id
-    LEFT JOIN sizes as size on size.id = opwarh.size_id
-    LEFT JOIN sizes as height on height.id = opwarh.height_id
+         LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
+         LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
+         LEFT JOIN protection_tools as pt ON pt.id = opissue.protection_tools_id
+         LEFT JOIN operation_warehouse as opwarh on opwarh.id = items.warehouse_operation_id
+         LEFT JOIN wear_cards as wc on wc.id = opissue.employee_id
+         LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
+         LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
+         LEFT JOIN item_types as it on (n.type_id = it.id or it.id = pt.item_types_id)
+         LEFT JOIN measurement_units as mu on it.units_id = mu.id
+         LEFT JOIN sizes as size on size.id = opwarh.size_id
+         LEFT JOIN sizes as height on height.id = opwarh.height_id
 
 WHERE doc.id = @id</CommandText>
         <QueryParameters>
@@ -48,7 +49,7 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_name">
           <DataField>nomenclature_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1589,9 +1590,9 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -1600,7 +1601,16 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=omIV5tuXi]49jQnF;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -1614,13 +1624,4 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=omIV5tuXi]49jQnF;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

@@ -100,7 +100,7 @@ namespace Workwear.Domain.Company
 		}
 		
 		private string email;
-		[Display(Name = "Электроная почта")]
+		[Display(Name = "Электронная почта")]
 		public virtual string Email {
 			get => email;
 			set => SetField(ref email, value);

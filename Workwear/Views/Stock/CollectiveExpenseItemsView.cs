@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Gamma.GtkWidgets;
 using Gtk;
+using QS.Dialog.GtkUI;
 using QSWidgetLib;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
@@ -188,6 +189,19 @@ namespace Workwear.Views.Stock
 			var iter = ytreeItems.YTreeModel.IterFromNode(ViewModel.SelectedItem);
 			var path = ytreeItems.YTreeModel.GetPath(iter);
 			ytreeItems.ScrollToCell(path, ytreeItems.Columns.First(), false, 0.5f, 0);
+		}
+		#endregion
+		
+		#region События кнопок
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
+		{
+			MessageDialogHelper.RunInfoDialog(
+				"<span color='black'>●</span> — обычная выдача\n" +
+				"<span color='gray'>●</span> — выдача не требуется\n" +
+				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
+				"<span color='red'>●</span> — отсутствует номенклатура\n" +
+				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n"
+			);
 		}
 		#endregion
 	}
