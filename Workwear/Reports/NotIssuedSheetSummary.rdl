@@ -801,7 +801,7 @@
       <Textbox Name="Textbox50">
         <Height>20.21pt</Height>
         <Width>561.64pt</Width>
-        <Value>="Справка по невыданному на " + Format(CDate({?report_date}), "D") + " от " + Format(Today(), "D")</Value>
+        <Value>="Справка по невыданному на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy") + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.8pt</Left>
         <Top>5.7pt</Top>
@@ -828,8 +828,9 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
-        <CommandText>SELECT tabel.*
-       ,IF(@show_stock,ballance.SUM, null) AS in_stock
+        <CommandText>
+SELECT tabel.*,
+       IFNULL(ballance.SUM, 0) AS in_stock
 FROM(SELECT
         protection_tools.name AS protection_tools_name,
         protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
@@ -837,15 +838,7 @@ FROM(SELECT
         if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
         if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
         objects.name as subdivision_name,
-        GROUP_CONCAT( CONCAT_WS('',
-                                CONCAT(wear_cards.last_name, ' '),
-                                IF(wear_cards.first_name = '',
-                                   NULL,
-                                   CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-                                IF(wear_cards.patronymic_name = '',
-                                   NULL,
-                                   CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500) AS employees,
-        wear_cards.sex,
+        IF(@show_sex, wear_cards.sex, NULL) as sex,
         sizeTypeAlias.id as sizeTypeId,
         heightTypeAlias.id as heightTypeId,
         sizeAlias.id as sizeId,
@@ -902,39 +895,54 @@ FROM(SELECT
         IF(@show_sex, wear_cards.sex, NULL),
         size,
         growth
-        ) as tabel
-    LEFT JOIN (SELECT spt.id AS ptid, sn.sex, sopwh.size_id, sopwh.height_id,
-                          (SUM(CASE WHEN (sopwh.warehouse_receipt_id IS NOT NULL AND(@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id) )
-                                        THEN sopwh.amount ELSE 0
-                              END)
-                              - SUM(CASE WHEN (sopwh.warehouse_expense_id IS NOT NULL AND(@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id) )
-                                             THEN sopwh.amount ELSE 0
-                                  END)
-                              ) AS SUM
-                   FROM protection_tools AS spt
-                            LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
-                            LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
-                            LEFT JOIN operation_warehouse AS sopwh on (sopwh.operation_time &lt; ADDDATE(@report_date, INTERVAL 1 DAY )
-                               AND sopwh.nomenclature_id = sptn.nomenclature_id
-                               AND (@all_warehouse
-                                   OR sopwh.warehouse_receipt_id = @warehouse_id
-                                   OR sopwh.warehouse_expense_id = @warehouse_id) )
-                            #LEFT JOIN sizes s on sopwh.size_id = s.id
-                            #LEFT JOIN sizes h on sopwh.height_id = s.id
-                            #LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = tabel.sizeTypeId
-                   WHERE ((-1 IN (@protection_tools_ids)) OR spt.id IN (@protection_tools_ids))
-                   GROUP BY spt.id, sopwh.size_id, sopwh.height_id, IF(@show_sex, sn.sex, NULL))
-                   #GROUP BY IF(@group_by_subdivision, objects.id, NULL),wear_cards_item.protection_tools_id,IF(@show_sex, wear_cards.sex, NULL),size,growth
-        AS ballance
+   ) as tabel
+       LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
+                          IF(sex_const.sex = 'A',  sex_b.SUM_M + sex_b.SUM_U + sex_b.SUM_F,
+                             IF(sex_const.sex = 'M', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U)) AS SUM
+                   FROM (
+#Универсальый зарос
+                            SELECT spt.id AS ptid, sopwh.size_id, sopwh.height_id,
+                                   (SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                                     (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
+                                       - SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                          (@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id)), sopwh.amount, 0))
+                                       )  AS SUM_U,
+                                   (SUM(IF(sn.sex = 'Men' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                               (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
+                                       - SUM(IF(sn.sex = 'Men' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                    (@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id)), sopwh.amount, 0))
+                                       )  AS SUM_M,
+                                   (SUM(IF(sn.sex = 'Women' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                                 (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
+                                       - SUM(IF(sn.sex = 'Women' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                      (@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id)), sopwh.amount, 0))
+                                       )  AS SUM_F
+                            FROM protection_tools AS spt
+                                     LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
+                                     LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
+                                     LEFT JOIN operation_warehouse AS sopwh
+                                               on (sopwh.operation_time &lt; ADDDATE(@report_date, INTERVAL 1 DAY)
+                                                   AND(!@hide_worn OR sopwh.wear_percent = 0.00)
+                                                   AND sopwh.nomenclature_id = sptn.nomenclature_id
+                                                   AND (@all_warehouse
+                                                       OR sopwh.warehouse_receipt_id = @warehouse_id
+                                                       OR sopwh.warehouse_expense_id = @warehouse_id))
+                            WHERE ((-1 IN (@protection_tools_ids)) OR spt.id IN (@protection_tools_ids))
+                            GROUP BY spt.id, sopwh.size_id, sopwh.height_id
+#Конец универсального зарпроса      
+                        ) AS sex_b
+                            JOIN (SELECT IF(const.seq = 0,'A', IF(const.seq = 1,'M','F'))  as sex FROM seq_0_to_2 as const) AS sex_const
+                   GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
+    AS ballance
                   ON (tabel.protection_tools_id = ballance.ptid
-                      AND (NOT @show_sex OR ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND tabel.sex = 'M') OR (ballance.sex = 'Women' AND tabel.sex = 'F'))
+                      AND (@show_sex AND tabel.sex = ballance.sex OR NOT @show_sex AND ballance.sex = 'A')
                       AND ((tabel.sizeId IS NULL AND ballance.size_id IS NULL)
                           OR ballance.size_id = tabel.sizeId
                           OR ballance.size_id IN (SELECT IF(size_suitable.size_id = tabel.sizeId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.sizeId OR size_suitable.`size_suitable_id` = tabel.sizeId))
-                      AND ((tabel.heightId IS NULL AND ballance.height_id IS NULL) 
-                          OR ballance.height_id = tabel.heightId 
+                      AND ((tabel.heightId IS NULL AND ballance.height_id IS NULL)
+                          OR ballance.height_id = tabel.heightId
                           OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
-                 )</CommandText>
+                      )</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
@@ -1067,7 +1075,7 @@ FROM(SELECT
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
