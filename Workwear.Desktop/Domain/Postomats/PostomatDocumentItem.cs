@@ -87,6 +87,12 @@ namespace Workwear.Domain.Postomats {
 			}
 		}
 
+		public virtual uint CellNumber 
+		{
+			get => Location.Cell;
+			set => _ = value;
+		}
+		
 		public virtual string Title => Delta > 0 
 			? $"Загрузка {Nomenclature.Name} х {Delta} в ячейку {Location.Title}"
 		    : $"Выдача {Nomenclature.Name} х {-Delta} из ячейки {Location.Title}";
