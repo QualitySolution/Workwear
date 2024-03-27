@@ -32,7 +32,13 @@ namespace Workwear.Domain.Postomats {
 			get => terminalId;
 			set => SetField(ref terminalId, value);
 		}
-
+		
+		[Display(Name = "Размещение постамата")]
+		public virtual string TerminalLocation {
+			get => Postomat?.Location;
+			set => _ = value;
+		}
+		
 		private DocumentStatus status;
 		[Display(Name = "Статус")]
 		public virtual DocumentStatus Status {

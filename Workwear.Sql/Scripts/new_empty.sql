@@ -171,6 +171,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
+   `cell_number` int(11) unsigned NULL, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
@@ -200,6 +201,7 @@ CREATE TABLE `postomat_documents` (
   `type` enum('Income','Outgo','Correction','') NOT NULL,
   `terminal_id` int(11) unsigned NOT NULL,
   `comment` text DEFAULT NULL,
+  `terminal_location` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `last_update` (`last_update`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
