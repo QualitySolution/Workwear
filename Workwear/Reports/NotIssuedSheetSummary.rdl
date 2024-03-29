@@ -1015,10 +1015,6 @@ FROM(SELECT
           <DataField>subdivision_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="employees">
-          <DataField>employees</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="sex">
           <DataField>sex</DataField>
           <TypeName>System.String</TypeName>
