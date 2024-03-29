@@ -34,7 +34,7 @@ namespace workwear.Journal.ViewModels.Postomats {
 
 			VisibleDeleteAction = false;
 			
-			var terminals = this.postomatManagerService.GetPostomatList(PostomatListType.All);
+			var terminals = this.postomatManagerService.GetPostomatList(PostomatListType.Aso);
 			foreach (var terminal in terminals) {
 				Terminals.Add(terminal.Id, (terminal.Name, terminal.Location));
 			}
