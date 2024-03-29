@@ -130,6 +130,9 @@ namespace Workwear.ViewModels.Export {
 					"ФИО", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Employee.FullName);}},
 				new ColumnInfo() {Label =
+					"Пол", FillCell = (cell, item) => {
+					cell.SetCellValue(item.Employee.Sex == Sex.M ? "М" : item.Employee.Sex == Sex.F ? "Ж" : "-");}},
+				new ColumnInfo() {Label =
 					"Норма.Код", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Norm?.Id ?? 0);}},
 				new ColumnInfo() {Label =
