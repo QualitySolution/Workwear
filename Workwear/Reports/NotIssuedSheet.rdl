@@ -810,7 +810,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT
@@ -984,7 +984,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="employee_id">
           <DataField>employee_id</DataField>
           <TypeName>System.UInt32</TypeName>
