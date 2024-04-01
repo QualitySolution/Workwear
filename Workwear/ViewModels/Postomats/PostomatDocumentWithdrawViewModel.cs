@@ -87,37 +87,7 @@ namespace Workwear.ViewModels.Postomats {
 			DbDataReader rdr = null;
 			try 
 			{
-				rdr = FillData();
-
-				DateTime lastCreateTime = UoW.Session.Query<PostomatDocumentWithdraw>().Max(x => x.CreateTime);
-				PostomatDocumentWithdraw lastDoc = UoW.Session.QueryOver<PostomatDocumentWithdraw>()
-					.Where(x => x.CreateTime == lastCreateTime)
-					.SingleOrDefault();
-
-				foreach(PostomatDocumentWithdrawItem item in lastDoc.Items) 
-				{
-					if(Entity.Items.Any(x => x.Barcode.Title == item.Barcode.Title)) 
-					{
-						Entity.Items.Clear();
-						interactive.ShowMessage(ImportanceLevel.Info, "Нет данных для заполнения");
-						break;
-					}
-				}
-			}
-			catch(Exception ex) 
-			{
-				logger.Error(ex, "Ошибка получения информации для ведомости забора спецоджды на стирку!");
-				interactive.ShowMessage(ImportanceLevel.Error, "Ошибка автозаполнения");
-			}
-			finally 
-			{
-				rdr?.Close();
-			}
-		}
-
-		private DbDataReader FillData() 
-		{
-			string sql = @"
+				string sql = @"
 			             select terminal_id,
 			             CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as fio,
 			             nomenclature.name,
@@ -133,10 +103,26 @@ namespace Workwear.ViewModels.Postomats {
 			             			  where cs.claim_id = clothing_service_states.claim_id AND
 			             			   cs.id != clothing_service_states.id);
 			             ";
-			QSMain.CheckConnectionAlive();
-			DbCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
-			DbDataReader rdr = cmd.ExecuteReader();
-			
+				QSMain.CheckConnectionAlive();
+				DbCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
+				rdr = cmd.ExecuteReader();
+				FillData(rdr);
+			}
+			catch(Exception ex) 
+			{
+				logger.Error(ex, "Ошибка получения информации для ведомости забора спецоджды на стирку");
+				interactive.ShowMessage(ImportanceLevel.Error, 
+					"Ошибка получения информации для ведомости забора спецоджды на стирку!", 
+					"Ошибка автозаполнения");
+			}
+			finally 
+			{
+				rdr?.Close();
+			}
+		}
+
+		private void FillData(DbDataReader rdr) 
+		{
 			while(rdr.Read())
 			{
 				uint claimId = (uint)rdr["claim_id"];
@@ -152,8 +138,6 @@ namespace Workwear.ViewModels.Postomats {
 				PostomatInfo postomat = postomats.FirstOrDefault(x => x.Id == terminalId);
 				Entity.AddItem(serviceClaim, postomat, userService.GetCurrentUser());
 			}
-
-			return rdr;
 		}
 		#endregion
 		
@@ -182,7 +166,8 @@ namespace Workwear.ViewModels.Postomats {
 			var reportInfo = new ReportInfo {
 				Title = $"Ведомость на забор №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = "Documents.PostomatWithdrawSheet",
-				Parameters = new Dictionary<string, object> {
+				Parameters = new Dictionary<string, object> 
+				{
 					{ "id",  Entity.Id }
 				}
 			};
