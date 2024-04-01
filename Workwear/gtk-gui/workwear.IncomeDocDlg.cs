@@ -12,7 +12,7 @@ namespace workwear
 
 		private global::Gtk.Button buttonCancel;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonPrint;
+		private global::QS.Widgets.EnumMenuButton enumPrint;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonReadInFile;
 
@@ -105,16 +105,18 @@ namespace workwear
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.ybuttonPrint = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonPrint.CanFocus = true;
-			this.ybuttonPrint.Name = "ybuttonPrint";
-			this.ybuttonPrint.UseUnderline = true;
-			this.ybuttonPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QS.Widgets.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w5 = new global::Gtk.Image();
 			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.ybuttonPrint.Image = w5;
-			this.hbox4.Add(this.ybuttonPrint);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.ybuttonPrint]));
+			this.enumPrint.Image = w5;
+			this.hbox4.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.enumPrint]));
 			w6.Position = 2;
 			w6.Expand = false;
 			w6.Fill = false;
@@ -395,7 +397,7 @@ namespace workwear
 				this.Child.ShowAll();
 			}
 			this.Show();
-			this.ybuttonPrint.Clicked += new global::System.EventHandler(this.OnPrintClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.ycomboOperation.Changed += new global::System.EventHandler(this.OnYcomboOperationChanged);
 		}
 	}

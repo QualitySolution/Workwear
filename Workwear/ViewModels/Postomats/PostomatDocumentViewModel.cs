@@ -10,6 +10,8 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -35,9 +37,11 @@ namespace Workwear.ViewModels.Postomats {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
+			Entity.Postomat = Postomats.FirstOrDefault(x => x.Id == Entity.TerminalId);
 			if(Entity.TerminalId > 0) {
-				allCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
-				foreach(var item in Entity.Items) {
+				GetPostomatResponse postomatResponse = postomatService.GetPostomat(Entity.TerminalId);
+				allCells = postomatResponse.Cells;
+				foreach(PostomatDocumentItem item in Entity.Items) {
 					var cell = allCells.FirstOrDefault(x => x.Location.Storage == item.LocationStorage
 					                                       && x.Location.Shelf == item.LocationShelf
 					                                       && x.Location.Cell == item.LocationCell);
@@ -132,7 +136,8 @@ namespace Workwear.ViewModels.Postomats {
 			Entity.Items.Remove(item);
 		}
 		#endregion
-		
+
+		#region Save and Print
 		public override bool Save() {
 			if(!Validate())
 				return false;
@@ -143,5 +148,18 @@ namespace Workwear.ViewModels.Postomats {
 			UoW.Commit();
 			return true;
 		}
+		
+		public void Print() 
+		{
+			var reportInfo = new ReportInfo {
+				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Identifier = "Documents.PostomatIssueSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		#endregion
 	}
 }

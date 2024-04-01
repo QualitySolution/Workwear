@@ -19,6 +19,8 @@ namespace Workwear.Views.Communications
 			yentryTitle.Binding.AddBinding(viewModel, v => v.MessageTitle, w => w.Text).InitializeFromSource();
 			ytextTemplate.Binding.AddBinding(viewModel, v => v.MessageText, w => w.Buffer.Text).InitializeFromSource();
 			ybuttonSend.Binding.AddBinding(viewModel, v => v.SensitiveSendButton, w => w.Sensitive).InitializeFromSource();
+			ypushCheckBox.Binding.AddBinding(viewModel, v => v.PushNotificationSelected, w => w.Active).InitializeFromSource();
+			yemailCheckBox.Binding.AddBinding(viewModel, v => v.EmailNotificationSelected, w => w.Active).InitializeFromSource();
 		}
 
 		protected void OnButtonCancel(object sender, System.EventArgs e)
