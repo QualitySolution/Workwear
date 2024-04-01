@@ -39,11 +39,11 @@ namespace Workwear.ViewModels.Postomats {
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 			Entity.Postomat = Postomats.FirstOrDefault(x => x.Id == Entity.TerminalId);
 			if(Entity.TerminalId > 0) 
 			{
-				this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 				GetPostomatResponse postomatResponse = postomatService.GetPostomat(Entity.TerminalId);
 				allCells = postomatResponse.Cells;
 				foreach(PostomatDocumentItem item in Entity.Items) {
@@ -158,10 +158,11 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			if(!Entity.Items.Any()) 
 			{
-				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните и сохраните документ");
+				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните документ");
 				return;
 			}
 			
+			Save();
 			var reportInfo = new ReportInfo {
 				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = "Documents.PostomatIssueSheet",

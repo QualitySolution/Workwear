@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.Cloud.Postomat.Manage;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
@@ -15,7 +16,7 @@ namespace Workwear.Domain.Postomats
 		Nominative = "документ постамата на забор",
 		Genitive = "документ постамата на забор")]
 	[HistoryTrace]
-	public class PostomatDocumentWithdraw : PropertyChangedBase, IDomainObject, IValidatableObject 
+	public class PostomatDocumentWithdraw : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		#region Db Properties
 		
@@ -74,9 +75,9 @@ namespace Workwear.Domain.Postomats
 			Items.Add(newItem);
 		}
 		
-		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) 
 		{
-			if (Items.Count == 0) 
+			if(!Items.Any()) 
 			{
 				yield return new ValidationResult("Не заполнены строки документа.", new[] { nameof(Items) });
 			}

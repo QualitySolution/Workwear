@@ -107,6 +107,11 @@ namespace Workwear.ViewModels.Postomats {
 				DbCommand cmd = new MySqlCommand(sql, QSMain.connectionDB);
 				rdr = cmd.ExecuteReader();
 				FillData(rdr);
+
+				if(!Entity.Items.Any()) 
+				{
+					interactive.ShowMessage(ImportanceLevel.Info, "Нет данных для автозаполнения");	
+				}
 			}
 			catch(Exception ex) 
 			{
@@ -159,10 +164,11 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			if(!Entity.Items.Any()) 
 			{
-				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните и сохраните документ");
+				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните документ");
 				return;
 			}
 			
+			Save();
 			var reportInfo = new ReportInfo {
 				Title = $"Ведомость на забор №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = "Documents.PostomatWithdrawSheet",

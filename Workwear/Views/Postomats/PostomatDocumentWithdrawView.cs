@@ -5,8 +5,8 @@ using QS.Views.Dialog;
 using Workwear.Domain.Postomats;
 using Workwear.ViewModels.Postomats;
 
-namespace Workwear.Views.Postomats {
-	[System.ComponentModel.ToolboxItem(true)]
+namespace Workwear.Views.Postomats 
+{
 	public partial class PostomatDocumentWithdrawView : EntityDialogViewBase<PostomatDocumentWithdrawViewModel, PostomatDocumentWithdraw>  
 	{
 		public PostomatDocumentWithdrawView(PostomatDocumentWithdrawViewModel viewModel) : base(viewModel) 
