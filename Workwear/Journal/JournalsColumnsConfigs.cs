@@ -205,6 +205,14 @@ namespace workwear.Journal
 					.Finish()
 				);
 			
+			TreeViewColumnsConfigFactory.Register<PostomatDocumentsWithdrawJournalViewModel>(jvm =>
+				FluentColumnsConfig<PostomatDocumentWithdrawJournalNode>.Create()
+					.AddColumn("Номер").AddReadOnlyTextRenderer(x => x.Id.ToString()).XAlign(0.5f)
+					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortDateString()).XAlign(0.5f)
+					.AddColumn("Пользователь").AddReadOnlyTextRenderer(x => x.User?.Name)
+					.Finish()
+				);
+			
 			TreeViewColumnsConfigFactory.Register<FullnessJournalViewModel>(
 				() => FluentColumnsConfig<FullnessInfo>.Create()
 					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString())

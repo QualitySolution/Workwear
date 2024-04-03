@@ -6,6 +6,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -25,20 +26,24 @@ namespace Workwear.ViewModels.Postomats {
 	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument> {
 		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
+		private readonly IInteractiveService interactive;
 
 		public PostomatDocumentViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			PostomatManagerService postomatService,
+			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			IUserService userService,
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 			Entity.Postomat = Postomats.FirstOrDefault(x => x.Id == Entity.TerminalId);
-			if(Entity.TerminalId > 0) {
+			if(Entity.TerminalId > 0) 
+			{
 				GetPostomatResponse postomatResponse = postomatService.GetPostomat(Entity.TerminalId);
 				allCells = postomatResponse.Cells;
 				foreach(PostomatDocumentItem item in Entity.Items) {
@@ -151,6 +156,13 @@ namespace Workwear.ViewModels.Postomats {
 		
 		public void Print() 
 		{
+			if(!Entity.Items.Any()) 
+			{
+				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните документ");
+				return;
+			}
+			
+			Save();
 			var reportInfo = new ReportInfo {
 				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = "Documents.PostomatIssueSheet",

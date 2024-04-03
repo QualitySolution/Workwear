@@ -812,4 +812,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
 	}
+
+	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
+	}
 }
