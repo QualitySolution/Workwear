@@ -59,7 +59,7 @@
               <Hidden>=!{?byEmployee}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>24.8pt</Width>
           </TableColumn>
           <TableColumn>
@@ -83,13 +83,13 @@
           <TableColumn>
             <Width>60.4pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>91.8pt</Width>
             <Visibility>
               <Hidden>=!{?byOperation}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>91.2pt</Width>
             <Visibility>
               <Hidden>=!{?byOperation}</Hidden>
@@ -127,7 +127,7 @@
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox1">
+                    <Textbox Name="Textbox4">
                       <Value>={object}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -177,7 +177,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox4">
+                    <Textbox Name="Textbox6">
                       <Value>={personnel_number}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -209,7 +209,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
                       <Value>={sex}</Value>
@@ -260,7 +260,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox3">
+                    <Textbox Name="Textbox13">
                       <Value>={size} + Iif(Fields!growth.IsMissing, "", "/" + {growth})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -292,7 +292,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox13" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                    <Textbox Name="Textbox15" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>={amount}</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
@@ -307,9 +307,9 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox14">
+                    <Textbox Name="Textbox20">
                       <Value>={operation_date}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -323,9 +323,9 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox20">
+                    <Textbox Name="Textbox21">
                       <Value>={date_need}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -341,7 +341,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
+                    <Textbox Name="Textbox23">
                       <Value>={owner_name}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -357,7 +357,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox6">
+                    <Textbox Name="Textbox24">
                       <Value>={cost}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -373,7 +373,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox21">
+                    <Textbox Name="Textbox25">
                       <Value>={cost_sum}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -411,7 +411,7 @@
         <Top>7.6pt</Top>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>16.8pt</Height>
               <TableCells>
                 <TableCell>
@@ -421,10 +421,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -442,10 +442,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -462,10 +462,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -482,10 +482,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -502,10 +502,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -522,10 +522,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -542,10 +542,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -562,10 +562,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -582,10 +582,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -602,10 +602,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -622,10 +622,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -720,7 +720,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox9">
                       <Value>Пол</Value>
@@ -817,9 +817,9 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox9">
+                    <Textbox Name="Textbox1">
                       <Value>Дата выдачи</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -833,9 +833,9 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox19">
+                    <Textbox Name="Textbox3">
                       <Value>Плановая дата выдачи</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -936,7 +936,12 @@
     if(@summary, NULL, objects.id) as subdivision_id,
     if(@summary, NULL, objects.name) as object,
     if(@summary, NULL, objects.code) as subdivision_code,
-    if(@showCostCenter, CONCAT_WS(' ', cost_center.code, cost_center.name), NULL) as cost_center_name,
+    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)  
+                               FROM wear_cards_cost_allocation as wcca 
+                                   JOIN cost_center as cc on wcca.cost_center_id = cc.id 
+                               WHERE wear_cards.id = wcca.wear_card_id
+                               LIMIT 1),
+                             CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
@@ -1137,7 +1142,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="dateStart">
       <DataType>DateTime</DataType>
       <Nullable>false</Nullable>
