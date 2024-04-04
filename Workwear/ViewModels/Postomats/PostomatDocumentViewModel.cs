@@ -55,12 +55,6 @@ namespace Workwear.ViewModels.Postomats {
 				}
 			}
 			
-			var entryBuilder = new CommonEEVMBuilderFactory<PostomatDocument>(this, Entity, UoW, navigation, autofacScope);
-	
-			// if(Entity.Warehouse == null)
-			// 	Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			//
-			// WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
@@ -167,7 +161,9 @@ namespace Workwear.ViewModels.Postomats {
 				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = "Documents.PostomatIssueSheet",
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{ "postomat_location", Postomat?.Location },
+					{ "responsible_person", userService.GetCurrentUser().Name }
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
