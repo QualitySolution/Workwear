@@ -11,7 +11,7 @@
   <BottomMargin>.15in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT postomat.create_time as date,
        postomat.terminal_location, 
@@ -32,7 +32,7 @@ WHERE postomat.id = @id;
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="terminal_location">
           <DataField>terminal_location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -177,7 +177,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           <TableColumn>
             <Width>93.0pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>91.1pt</Width>
           </TableColumn>
           <TableColumn>
@@ -210,7 +210,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
                       <Value>Номер ячейки</Value>
@@ -285,12 +285,12 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
                       <Value>={cell_number}</Value>
@@ -302,7 +302,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign >Center</TextAlign>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -320,7 +320,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign >General</TextAlign>
+                        <TextAlign>General</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -338,7 +338,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <TextAlign >General</TextAlign>
+                        <TextAlign>General</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -353,7 +353,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <Textbox Name="Textbox3" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>35.97pt</Height>
         <Width>553.85pt</Width>
-        <Value>= "Ведомость на выдачу спецодежды через постамат № " + {?id}</Value>
+        <Value>= "Ведомость на выдачу спецодежды" + " № " + {?id}+ " через постамат " + {?postomat_location}</Value>
         <ZIndex>0</ZIndex>
         <Left>10.7pt</Left>
         <Top>2.1pt</Top>
@@ -364,10 +364,10 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           <TextAlign>Center</TextAlign>
           <FontWeight>Bold</FontWeight>
           <FontSize>14pt</FontSize>
-          <VerticalAlign >Middle</VerticalAlign>
+          <VerticalAlign>Middle</VerticalAlign>
         </Style>
       </Textbox>
-      <Table Name="Table1" >
+      <Table Name="Table1">
         <DataSetName>Data</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
@@ -415,8 +415,81 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Left>444.2pt</Left>
         <Top>45.4pt</Top>
       </Table>
+      <Table Name="Table3" >
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>298.0pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>269.4pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value>Ответственный</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox8">
+                      <Value>={?responsible_person}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontStyle>Italic</FontStyle>
+                        <FontSize>10pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Left>5.3pt</Left>
+        <Top>155.4pt</Top>
+      </Table>
     </ReportItems>
-    <Height>351.8pt</Height>
+    <Height>191.4pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -435,7 +508,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -447,6 +520,20 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="postomat_location">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="responsible_person">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
