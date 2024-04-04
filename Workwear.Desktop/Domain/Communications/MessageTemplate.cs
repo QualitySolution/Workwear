@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using QS.DomainModel.Entity;
 
 namespace Workwear.Domain.Communications
@@ -20,7 +21,7 @@ namespace Workwear.Domain.Communications
 
 		private string messageTitle;
 		[Required(ErrorMessage = "Заголовок должен быть заполнен.")]
-		[StringLength(200, ErrorMessage = "Заголовок не может превышать 200 символов.")]
+		[StringLength(200, ErrorMessage = "Заголовок сообщения не может превышать 200 символов.")]
 		public virtual string MessageTitle {
 			get { return messageTitle; }
 			set { SetField(ref messageTitle, value, () => MessageTitle); }
@@ -28,10 +29,23 @@ namespace Workwear.Domain.Communications
 
 		private string messageText;
 		[Required(ErrorMessage = "Сообщение не может быть пустым")]
-		[StringLength(400, ErrorMessage = "Текст сообщения не может превышать 400 символов.")]
 		public virtual string MessageText {
 			get { return messageText; }
 			set { SetField(ref messageText, value, () => messageText); }
+		}
+		
+		private string linkTitleText;
+		[StringLength(100, ErrorMessage = "Заголовок ссылки не может превышать 100 символов.")]
+		public virtual string LinkTitleText {
+			get { return linkTitleText; }
+			set { SetField(ref linkTitleText, value, () => linkTitleText); }
+		}
+		
+		private string linkText;
+		[StringLength(100, ErrorMessage = "Ссылка не может превышать 100 символов.")]
+		public virtual string LinkText {
+			get { return linkText; }
+			set { SetField(ref linkText, value, () => linkText); }
 		}
 	}
 }

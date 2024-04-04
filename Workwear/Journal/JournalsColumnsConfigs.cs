@@ -63,6 +63,8 @@ namespace workwear.Journal
 					.AddColumn("Имя").AddTextRenderer(node => node.Name)
 					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)
 					.AddColumn("Текст").AddTextRenderer(node => node.MessageText)
+					.AddColumn("Заголовок ссылки").AddTextRenderer(node => node.LinkTitleText)
+					.AddColumn("Ссылка").AddTextRenderer(node => node.LinkText)
 					.Finish()
 			);
 			#endregion

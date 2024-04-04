@@ -493,6 +493,10 @@
       <Project>{9c9ecaca-0deb-4517-8cf1-02c3d3eb128e}</Project>
       <Name>RdlCri</Name>
     </ProjectReference>
+    <ProjectReference Include="..\My-FyiReporting\RdlEngine\RdlEngine.csproj">
+      <Project>{c97e91f4-b310-44e2-9b6c-96775395722d}</Project>
+      <Name>RdlEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QS.Cloud.Postomat.Client\QS.Cloud.Postomat.Client.csproj">
       <Project>{2983a1a1-9b12-48bd-8211-1745049d5a00}</Project>
       <Name>QS.Cloud.Postomat.Client</Name>
@@ -668,7 +672,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
-    <Folder Include="Reports\" />
     <Folder Include="Dialogs\" />
     <Folder Include="Representations\" />
     <Folder Include="Dialogs\Stock\" />
@@ -869,6 +872,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew2.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\IssuedSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\NotIssuedSheetFlat.rdl">
