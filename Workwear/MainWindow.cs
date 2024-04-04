@@ -244,6 +244,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
