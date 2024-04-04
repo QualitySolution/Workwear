@@ -1881,7 +1881,9 @@ CREATE TABLE IF NOT EXISTS `message_templates` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `message_title` VARCHAR(200) NOT NULL,
-  `message_text` VARCHAR(400) NOT NULL,
+  `message_text` text NOT NULL,
+  `link_title` varchar(100) NULL,
+  `link` varchar(100) NULL
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 

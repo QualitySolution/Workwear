@@ -17,6 +17,8 @@ namespace Workwear.HibernateMapping.Communications
 			Map(x => x.Name).Column("name");
 			Map(x => x.MessageText).Column("message_text");
 			Map(x => x.MessageTitle).Column("message_title");
+			Map(x => x.LinkTitleText).Column("link_title");
+			Map(x => x.LinkText).Column("link");
 		}
 	}
 }
