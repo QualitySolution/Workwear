@@ -20,7 +20,7 @@
     <ReportItems>
       <Table Name="Table1">
         <DataSetName>Data</DataSetName>
-        <NoRows>123</NoRows>
+        <NoRows>Нет данных</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
@@ -271,14 +271,14 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS protection_tools_name,
     norms_item.amount -
     (SELECT IFNULL(SUM(op.issued) - SUM(op.returned), 0)
      FROM operation_issued_by_employee as op
-     WHERE op.employee_id = @employee_id
+     WHERE op.employee_id = @id
        AND op.protection_tools_id = wear_cards_item.protection_tools_id
        AND (NOT op.auto_writeoff OR op.auto_writeoff_date &gt; CURDATE())
        AND op.operation_time &lt; CURDATE()
@@ -293,15 +293,15 @@ FROM
         JOIN item_types ON item_types.id = protection_tools.item_types_id
         JOIN measurement_units ON item_types.units_id = measurement_units.id
         JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-WHERE wear_cards_item.wear_card_id = @employee_id
+WHERE wear_cards_item.wear_card_id = @id
   AND wear_cards_item.next_issue &lt; CONVERT(CURDATE(), DATE)</CommandText>
         <QueryParameters>
-          <QueryParameter Name="@employee_id">
-            <Value>={?employee_id}</Value>
+          <QueryParameter Name="@id">
+            <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -325,8 +325,17 @@ WHERE wear_cards_item.wear_card_id = @employee_id
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
-    <ReportParameter Name="employee_id">
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=VMvwqDdWZBQCbm</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
+    <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -339,13 +348,4 @@ WHERE wear_cards_item.wear_card_id = @employee_id
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=VMvwqDdWZBQCbm</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

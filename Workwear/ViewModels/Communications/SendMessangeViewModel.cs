@@ -249,7 +249,7 @@ namespace Workwear.ViewModels.Communications
 
 			byte[] bytes;
 			using(MemoryStream ms =
-			      ReportExporter.ExportToMemoryStream(reportInfo.GetReportUri(), $"employee_id={employee.Id}", connectionStringBuilder.ConnectionString, OutputPresentationType.PDF))
+			      ReportExporter.ExportToMemoryStream(reportInfo.GetReportUri(), $"id={employee.Id}", connectionStringBuilder.ConnectionString, OutputPresentationType.PDF))
 			{
 				bytes = ms.ToArray();
 			}
@@ -276,7 +276,7 @@ namespace Workwear.ViewModels.Communications
 	public enum EmailDocument
 	{
 		[Display(Name = "СИЗ к получению")]
-		[ReportIdentifier("IssuedSheet")]
+		[ReportIdentifier("Employee.IssuedSheet")]
 		IssuedSheet
 	}
 }
