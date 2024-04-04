@@ -8,25 +8,51 @@ namespace Workwear.Views.Communications
 
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
-		private global::Gamma.GtkWidgets.yVBox yvbox2;
+		private global::Gamma.GtkWidgets.yTable ytable2;
 
-		private global::Gamma.GtkWidgets.yCheckButton ypushCheckBox;
+		private global::Gamma.GtkWidgets.yCheckButton emailCheckBox;
 
-		private global::Gamma.GtkWidgets.yCheckButton yemailCheckBox;
+		private global::Gamma.GtkWidgets.yEntry entryFilename;
 
-		private global::Gamma.Widgets.yListComboBox ylistcomboboxTemplates;
+		private global::Gamma.GtkWidgets.yEntry entryLink;
 
-		private global::Gamma.GtkWidgets.yEntry yentryTitle;
+		private global::Gamma.GtkWidgets.yEntry entryLinkTitle;
 
-		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		private global::Gamma.GtkWidgets.yEntry entryTitle;
 
-		private global::Gamma.GtkWidgets.yTextView ytextTemplate;
+		private global::Gamma.GtkWidgets.yCheckButton fileAttachCheckBox;
+
+		private global::Gtk.ScrolledWindow GtkScrolledWindow2;
+
+		private global::Gamma.GtkWidgets.yTextView textTemplate;
+
+		private global::Gamma.GtkWidgets.yLabel labelFilename;
+
+		private global::Gamma.GtkWidgets.yLabel labelLink;
+
+		private global::Gamma.GtkWidgets.yLabel labelLinkTitle;
+
+		private global::Gamma.GtkWidgets.yCheckButton linkAttachCheckBox;
+
+		private global::Gamma.Widgets.yListComboBox listcomboboxTemplates;
+
+		private global::Gamma.GtkWidgets.yCheckButton pushCheckBox;
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonSend;
+		private global::Gamma.Widgets.yListComboBox listComboBoxReports;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonCancel;
+		private global::Gamma.GtkWidgets.yLabel ylabel14;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel15;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel16;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox2;
+
+		private global::Gamma.GtkWidgets.yButton buttonSend;
+
+		private global::Gamma.GtkWidgets.yButton buttonCancel;
 
 		protected virtual void Build()
 		{
@@ -36,133 +62,315 @@ namespace Workwear.Views.Communications
 			this.Name = "Workwear.Views.Communications.SendMessangeView";
 			// Container child Workwear.Views.Communications.SendMessangeView.Gtk.Container+ContainerChild
 			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox1.WidthRequest = 800;
 			this.yvbox1.Name = "yvbox1";
 			this.yvbox1.Spacing = 6;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Отправка сообщений");
+			this.ylabel2.Justify = ((global::Gtk.Justification)(2));
 			this.yvbox1.Add(this.ylabel2);
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabel2]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
-			this.yvbox2 = new global::Gamma.GtkWidgets.yVBox();
-			this.yvbox2.Name = "yvbox2";
-			this.yvbox2.Spacing = 6;
-			// Container child yvbox2.Gtk.Box+BoxChild
-			this.ypushCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ypushCheckBox.CanFocus = true;
-			this.ypushCheckBox.Name = "ypushCheckBox";
-			this.ypushCheckBox.Label = global::Mono.Unix.Catalog.GetString("Push уведомление");
-			this.ypushCheckBox.DrawIndicator = true;
-			this.ypushCheckBox.UseUnderline = true;
-			this.yvbox2.Add(this.ypushCheckBox);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.ypushCheckBox]));
-			w2.Position = 0;
-			w2.Expand = false;
-			w2.Fill = false;
-			// Container child yvbox2.Gtk.Box+BoxChild
-			this.yemailCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
-			this.yemailCheckBox.CanFocus = true;
-			this.yemailCheckBox.Name = "yemailCheckBox";
-			this.yemailCheckBox.Label = global::Mono.Unix.Catalog.GetString("Email уведомление");
-			this.yemailCheckBox.DrawIndicator = true;
-			this.yemailCheckBox.UseUnderline = true;
-			this.yvbox2.Add(this.yemailCheckBox);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yemailCheckBox]));
-			w3.Position = 1;
-			w3.Expand = false;
-			w3.Fill = false;
-			this.yvbox1.Add(this.yvbox2);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox2]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			// Container child yvbox1.Gtk.Box+BoxChild
-			this.ylistcomboboxTemplates = new global::Gamma.Widgets.yListComboBox();
-			this.ylistcomboboxTemplates.Name = "ylistcomboboxTemplates";
-			this.ylistcomboboxTemplates.AddIfNotExist = false;
-			this.ylistcomboboxTemplates.DefaultFirst = false;
-			this.yvbox1.Add(this.ylistcomboboxTemplates);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylistcomboboxTemplates]));
-			w5.Position = 2;
-			w5.Expand = false;
-			w5.Fill = false;
-			// Container child yvbox1.Gtk.Box+BoxChild
-			this.yentryTitle = new global::Gamma.GtkWidgets.yEntry();
-			this.yentryTitle.WidthRequest = 400;
-			this.yentryTitle.CanFocus = true;
-			this.yentryTitle.Name = "yentryTitle";
-			this.yentryTitle.IsEditable = true;
-			this.yentryTitle.MaxLength = 200;
-			this.yentryTitle.InvisibleChar = '•';
-			this.yvbox1.Add(this.yentryTitle);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yentryTitle]));
-			w6.Position = 3;
-			w6.Expand = false;
-			w6.Fill = false;
-			// Container child yvbox1.Gtk.Box+BoxChild
-			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow.HeightRequest = 100;
-			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
-			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.ytextTemplate = new global::Gamma.GtkWidgets.yTextView();
-			this.ytextTemplate.CanFocus = true;
-			this.ytextTemplate.Name = "ytextTemplate";
-			this.GtkScrolledWindow.Add(this.ytextTemplate);
-			this.yvbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
-			w8.Position = 4;
-			// Container child yvbox1.Gtk.Box+BoxChild
+			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
+			this.ytable2.Name = "ytable2";
+			this.ytable2.NRows = ((uint)(11));
+			this.ytable2.NColumns = ((uint)(2));
+			this.ytable2.RowSpacing = ((uint)(12));
+			this.ytable2.ColumnSpacing = ((uint)(6));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.emailCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
+			this.emailCheckBox.CanFocus = true;
+			this.emailCheckBox.Name = "emailCheckBox";
+			this.emailCheckBox.Label = global::Mono.Unix.Catalog.GetString("Email уведомление");
+			this.emailCheckBox.DrawIndicator = true;
+			this.emailCheckBox.UseUnderline = true;
+			this.ytable2.Add(this.emailCheckBox);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable2[this.emailCheckBox]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.entryFilename = new global::Gamma.GtkWidgets.yEntry();
+			this.entryFilename.CanFocus = true;
+			this.entryFilename.Name = "entryFilename";
+			this.entryFilename.IsEditable = true;
+			this.entryFilename.MaxLength = 100;
+			this.entryFilename.InvisibleChar = '•';
+			this.ytable2.Add(this.entryFilename);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entryFilename]));
+			w3.TopAttach = ((uint)(9));
+			w3.BottomAttach = ((uint)(10));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.entryLink = new global::Gamma.GtkWidgets.yEntry();
+			this.entryLink.CanFocus = true;
+			this.entryLink.Name = "entryLink";
+			this.entryLink.IsEditable = true;
+			this.entryLink.MaxLength = 100;
+			this.entryLink.InvisibleChar = '•';
+			this.ytable2.Add(this.entryLink);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entryLink]));
+			w4.TopAttach = ((uint)(7));
+			w4.BottomAttach = ((uint)(8));
+			w4.LeftAttach = ((uint)(1));
+			w4.RightAttach = ((uint)(2));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.entryLinkTitle = new global::Gamma.GtkWidgets.yEntry();
+			this.entryLinkTitle.CanFocus = true;
+			this.entryLinkTitle.Name = "entryLinkTitle";
+			this.entryLinkTitle.IsEditable = true;
+			this.entryLinkTitle.MaxLength = 100;
+			this.entryLinkTitle.InvisibleChar = '•';
+			this.ytable2.Add(this.entryLinkTitle);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entryLinkTitle]));
+			w5.TopAttach = ((uint)(6));
+			w5.BottomAttach = ((uint)(7));
+			w5.LeftAttach = ((uint)(1));
+			w5.RightAttach = ((uint)(2));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.entryTitle = new global::Gamma.GtkWidgets.yEntry();
+			this.entryTitle.CanFocus = true;
+			this.entryTitle.Name = "entryTitle";
+			this.entryTitle.IsEditable = true;
+			this.entryTitle.MaxLength = 200;
+			this.entryTitle.InvisibleChar = '•';
+			this.ytable2.Add(this.entryTitle);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.entryTitle]));
+			w6.TopAttach = ((uint)(3));
+			w6.BottomAttach = ((uint)(4));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.fileAttachCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
+			this.fileAttachCheckBox.CanFocus = true;
+			this.fileAttachCheckBox.Name = "fileAttachCheckBox";
+			this.fileAttachCheckBox.Label = global::Mono.Unix.Catalog.GetString("Прикрепить файл");
+			this.fileAttachCheckBox.DrawIndicator = true;
+			this.fileAttachCheckBox.UseUnderline = true;
+			this.ytable2.Add(this.fileAttachCheckBox);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable2[this.fileAttachCheckBox]));
+			w7.TopAttach = ((uint)(8));
+			w7.BottomAttach = ((uint)(9));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow2.Name = "GtkScrolledWindow2";
+			this.GtkScrolledWindow2.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow2.Gtk.Container+ContainerChild
+			this.textTemplate = new global::Gamma.GtkWidgets.yTextView();
+			this.textTemplate.CanFocus = true;
+			this.textTemplate.Name = "textTemplate";
+			this.GtkScrolledWindow2.Add(this.textTemplate);
+			this.ytable2.Add(this.GtkScrolledWindow2);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable2[this.GtkScrolledWindow2]));
+			w9.TopAttach = ((uint)(4));
+			w9.BottomAttach = ((uint)(5));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.labelFilename = new global::Gamma.GtkWidgets.yLabel();
+			this.labelFilename.Name = "labelFilename";
+			this.labelFilename.Xalign = 1F;
+			this.labelFilename.Yalign = 0F;
+			this.labelFilename.LabelProp = global::Mono.Unix.Catalog.GetString("Название:");
+			this.labelFilename.Wrap = true;
+			this.ytable2.Add(this.labelFilename);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelFilename]));
+			w10.TopAttach = ((uint)(9));
+			w10.BottomAttach = ((uint)(10));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.labelLink = new global::Gamma.GtkWidgets.yLabel();
+			this.labelLink.Name = "labelLink";
+			this.labelLink.Xalign = 1F;
+			this.labelLink.Yalign = 0F;
+			this.labelLink.LabelProp = global::Mono.Unix.Catalog.GetString("Ссылка:");
+			this.ytable2.Add(this.labelLink);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelLink]));
+			w11.TopAttach = ((uint)(7));
+			w11.BottomAttach = ((uint)(8));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.labelLinkTitle = new global::Gamma.GtkWidgets.yLabel();
+			this.labelLinkTitle.Name = "labelLinkTitle";
+			this.labelLinkTitle.Xalign = 1F;
+			this.labelLinkTitle.Yalign = 0F;
+			this.labelLinkTitle.LabelProp = global::Mono.Unix.Catalog.GetString("Название:");
+			this.labelLinkTitle.Wrap = true;
+			this.ytable2.Add(this.labelLinkTitle);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelLinkTitle]));
+			w12.TopAttach = ((uint)(6));
+			w12.BottomAttach = ((uint)(7));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.linkAttachCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
+			this.linkAttachCheckBox.CanFocus = true;
+			this.linkAttachCheckBox.Name = "linkAttachCheckBox";
+			this.linkAttachCheckBox.Label = global::Mono.Unix.Catalog.GetString("Прикрепить ссылку");
+			this.linkAttachCheckBox.DrawIndicator = true;
+			this.linkAttachCheckBox.UseUnderline = true;
+			this.ytable2.Add(this.linkAttachCheckBox);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable2[this.linkAttachCheckBox]));
+			w13.TopAttach = ((uint)(5));
+			w13.BottomAttach = ((uint)(6));
+			w13.LeftAttach = ((uint)(1));
+			w13.RightAttach = ((uint)(2));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.listcomboboxTemplates = new global::Gamma.Widgets.yListComboBox();
+			this.listcomboboxTemplates.Name = "listcomboboxTemplates";
+			this.listcomboboxTemplates.AddIfNotExist = false;
+			this.listcomboboxTemplates.DefaultFirst = false;
+			this.ytable2.Add(this.listcomboboxTemplates);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable2[this.listcomboboxTemplates]));
+			w14.TopAttach = ((uint)(2));
+			w14.BottomAttach = ((uint)(3));
+			w14.LeftAttach = ((uint)(1));
+			w14.RightAttach = ((uint)(2));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.pushCheckBox = new global::Gamma.GtkWidgets.yCheckButton();
+			this.pushCheckBox.CanFocus = true;
+			this.pushCheckBox.Name = "pushCheckBox";
+			this.pushCheckBox.Label = global::Mono.Unix.Catalog.GetString("Push уведомление");
+			this.pushCheckBox.DrawIndicator = true;
+			this.pushCheckBox.UseUnderline = true;
+			this.ytable2.Add(this.pushCheckBox);
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable2[this.pushCheckBox]));
+			w15.LeftAttach = ((uint)(1));
+			w15.RightAttach = ((uint)(2));
+			w15.XOptions = ((global::Gtk.AttachOptions)(4));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.ybuttonSend = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonSend.CanFocus = true;
-			this.ybuttonSend.Name = "ybuttonSend";
-			this.ybuttonSend.UseUnderline = true;
-			this.ybuttonSend.Label = global::Mono.Unix.Catalog.GetString("Отправить");
-			global::Gtk.Image w9 = new global::Gtk.Image();
-			w9.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.send.png");
-			this.ybuttonSend.Image = w9;
-			this.yhbox1.Add(this.ybuttonSend);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonSend]));
-			w10.PackType = ((global::Gtk.PackType)(1));
-			w10.Position = 0;
-			w10.Expand = false;
-			w10.Fill = false;
-			// Container child yhbox1.Gtk.Box+BoxChild
-			this.ybuttonCancel = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonCancel.CanFocus = true;
-			this.ybuttonCancel.Name = "ybuttonCancel";
-			this.ybuttonCancel.UseUnderline = true;
-			this.ybuttonCancel.Label = global::Mono.Unix.Catalog.GetString("Отменить");
-			global::Gtk.Image w11 = new global::Gtk.Image();
-			w11.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-cancel", global::Gtk.IconSize.Menu);
-			this.ybuttonCancel.Image = w11;
-			this.yhbox1.Add(this.ybuttonCancel);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonCancel]));
-			w12.PackType = ((global::Gtk.PackType)(1));
-			w12.Position = 1;
-			w12.Expand = false;
-			w12.Fill = false;
-			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w13.Position = 5;
-			w13.Expand = false;
-			w13.Fill = false;
+			this.listComboBoxReports = new global::Gamma.Widgets.yListComboBox();
+			this.listComboBoxReports.Name = "listComboBoxReports";
+			this.listComboBoxReports.AddIfNotExist = false;
+			this.listComboBoxReports.DefaultFirst = true;
+			this.yhbox1.Add(this.listComboBoxReports);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.listComboBoxReports]));
+			w16.Position = 0;
+			this.ytable2.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox1]));
+			w17.TopAttach = ((uint)(10));
+			w17.BottomAttach = ((uint)(11));
+			w17.LeftAttach = ((uint)(1));
+			w17.RightAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.ylabel14 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel14.Name = "ylabel14";
+			this.ylabel14.Xalign = 1F;
+			this.ylabel14.Yalign = 0F;
+			this.ylabel14.LabelProp = global::Mono.Unix.Catalog.GetString("Текст:");
+			this.ytable2.Add(this.ylabel14);
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel14]));
+			w18.TopAttach = ((uint)(4));
+			w18.BottomAttach = ((uint)(5));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.ylabel15 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel15.Name = "ylabel15";
+			this.ylabel15.Xalign = 1F;
+			this.ylabel15.LabelProp = global::Mono.Unix.Catalog.GetString("Заголовок:");
+			this.ytable2.Add(this.ylabel15);
+			global::Gtk.Table.TableChild w19 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel15]));
+			w19.TopAttach = ((uint)(3));
+			w19.BottomAttach = ((uint)(4));
+			w19.XOptions = ((global::Gtk.AttachOptions)(4));
+			w19.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.ylabel16 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel16.Name = "ylabel16";
+			this.ylabel16.Xalign = 1F;
+			this.ylabel16.LabelProp = global::Mono.Unix.Catalog.GetString("Шаблон:");
+			this.ytable2.Add(this.ylabel16);
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel16]));
+			w20.TopAttach = ((uint)(2));
+			w20.BottomAttach = ((uint)(3));
+			w20.XOptions = ((global::Gtk.AttachOptions)(4));
+			w20.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.yvbox1.Add(this.ytable2);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable2]));
+			w21.Position = 1;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.yhbox2 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox2.Name = "yhbox2";
+			this.yhbox2.Spacing = 6;
+			// Container child yhbox2.Gtk.Box+BoxChild
+			this.buttonSend = new global::Gamma.GtkWidgets.yButton();
+			this.buttonSend.CanFocus = true;
+			this.buttonSend.Name = "buttonSend";
+			this.buttonSend.UseUnderline = true;
+			this.buttonSend.Label = global::Mono.Unix.Catalog.GetString("Отправить");
+			global::Gtk.Image w22 = new global::Gtk.Image();
+			w22.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.send.png");
+			this.buttonSend.Image = w22;
+			this.yhbox2.Add(this.buttonSend);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.buttonSend]));
+			w23.PackType = ((global::Gtk.PackType)(1));
+			w23.Position = 1;
+			w23.Expand = false;
+			w23.Fill = false;
+			// Container child yhbox2.Gtk.Box+BoxChild
+			this.buttonCancel = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCancel.CanFocus = true;
+			this.buttonCancel.Name = "buttonCancel";
+			this.buttonCancel.UseUnderline = true;
+			this.buttonCancel.Label = global::Mono.Unix.Catalog.GetString("Отменить");
+			global::Gtk.Image w24 = new global::Gtk.Image();
+			w24.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-cancel", global::Gtk.IconSize.Menu);
+			this.buttonCancel.Image = w24;
+			this.yhbox2.Add(this.buttonCancel);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.buttonCancel]));
+			w25.PackType = ((global::Gtk.PackType)(1));
+			w25.Position = 2;
+			w25.Expand = false;
+			w25.Fill = false;
+			this.yvbox1.Add(this.yhbox2);
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox2]));
+			w26.PackType = ((global::Gtk.PackType)(1));
+			w26.Position = 2;
+			w26.Expand = false;
+			w26.Fill = false;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.ybuttonCancel.Clicked += new global::System.EventHandler(this.OnButtonCancel);
-			this.ybuttonSend.Clicked += new global::System.EventHandler(this.OnButtonSend);
+			this.buttonCancel.Clicked += new global::System.EventHandler(this.OnButtonCancel);
+			this.buttonSend.Clicked += new global::System.EventHandler(this.OnButtonSend);
 		}
 	}
 }

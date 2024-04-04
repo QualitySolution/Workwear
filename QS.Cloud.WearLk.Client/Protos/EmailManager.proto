@@ -3,20 +3,25 @@
 package QS.Cloud.WearLk.Manage;
 
 service EmailManager {
-    rpc SendEmail (SendEmailRequest) returns (SendEmailResponse);
+	rpc SendEmail (stream SendEmailRequest) returns (SendEmailResponse);
 }
 
 // Отправка
 message SendEmailRequest {
-    repeated EmailMessage messages = 1;
+	EmailMessage messages = 1;
 }
 
 message EmailMessage {
-    string address = 1;
-    string subject = 2;
-    string text = 3;
+	string address = 1;
+	string subject = 2;
+	string text = 3;
+	repeated Attachment files = 4;
 }
 
 message SendEmailResponse {
-    string results = 1;
+	string results = 1;
+}
+message Attachment{
+	bytes file = 1;
+	string file_name = 2;
 }
