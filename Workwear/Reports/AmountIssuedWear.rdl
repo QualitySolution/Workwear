@@ -1471,7 +1471,12 @@
     if(@summary, NULL, objects.id) as subdivision_id, 
     if(@summary, NULL, objects.name) as object, 
     if(@summary, NULL, objects.code) as subdivision_code,
-    if(@showCostCenter, CONCAT_WS(' ', cost_center.code, cost_center.name), NULL) as cost_center_name,
+    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)  
+                               FROM wear_cards_cost_allocation as wcca 
+                                   JOIN cost_center as cc on wcca.cost_center_id = cc.id 
+                               WHERE wear_cards.id = wcca.wear_card_id
+                               LIMIT 1),    
+                             CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
     IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
