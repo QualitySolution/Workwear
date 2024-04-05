@@ -1883,7 +1883,7 @@ CREATE TABLE IF NOT EXISTS `message_templates` (
   `message_title` VARCHAR(200) NOT NULL,
   `message_text` text NOT NULL,
   `link_title` varchar(100) NULL,
-  `link` varchar(100) NULL
+  `link` varchar(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -2278,7 +2278,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.16');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.17');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

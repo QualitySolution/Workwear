@@ -2,7 +2,7 @@
 	add `terminal_location` text null;
 
 alter table `postomat_document_items`
-	add `cell_number` int(11) UNSIGNED null;
+	add `cell_number` int(11) UNSIGNED null after loc_cell;
 
 create table if not exists `postomat_documents_withdraw`
 (
