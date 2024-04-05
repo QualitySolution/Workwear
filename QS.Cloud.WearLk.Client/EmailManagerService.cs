@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Grpc.Core;
 using QS.Cloud.Client;
 using QS.Cloud.WearLk.Manage;
 
@@ -19,22 +20,38 @@ namespace QS.Cloud.WearLk.Client {
 				throw new ArgumentException("Должно быть передано хотя бы одно сообщение", nameof(messages));
             
 			EmailManager.EmailManagerClient client = new EmailManager.EmailManagerClient(Channel);
-			SendEmailRequest request = new SendEmailRequest();
-			request.Messages.Add(messages);
-			return client.SendEmail(request, Headers).Results;
+			using(AsyncClientStreamingCall<SendEmailRequest, SendEmailResponse> call = client.SendEmail(Headers)) 
+			{
+				foreach(EmailMessage message in messages) 
+				{
+					call.RequestStream.WriteAsync(new SendEmailRequest() { Messages = message }).ConfigureAwait(false).GetAwaiter().GetResult();
+				}
+
+				call.RequestStream.CompleteAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+				SendEmailResponse response = call.ConfigureAwait(false).GetAwaiter().GetResult();
+				return response.Results;
+			}
 		}
-        
+
 		public async Task<string> SendMessagesAsync(IEnumerable<EmailMessage> messages)
 		{
-			if (!messages.Any())
+			if(!messages.Any())
 				throw new ArgumentException("Должно быть передано хотя бы одно сообщение", nameof(messages));
-            
+
 			EmailManager.EmailManagerClient client = new EmailManager.EmailManagerClient(Channel);
-			SendEmailRequest request = new SendEmailRequest();
-			request.Messages.Add(messages);
-			var results = await client.SendEmailAsync(request, Headers).ConfigureAwait(false);
-			return results.Results;
+			using(AsyncClientStreamingCall<SendEmailRequest, SendEmailResponse> call = client.SendEmail(Headers)) 
+			{
+				foreach(EmailMessage message in messages) 
+				{
+					await call.RequestStream.WriteAsync(new SendEmailRequest() { Messages = message }).ConfigureAwait(false);
+				}
+				
+				await call.RequestStream.CompleteAsync().ConfigureAwait(false);
+				SendEmailResponse response = await call.ConfigureAwait(false);
+				return response.Results;
+			}
 		}
-		#endregion 
 	}
+		#endregion 
 }
+

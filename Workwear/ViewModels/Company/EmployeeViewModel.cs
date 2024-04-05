@@ -506,6 +506,9 @@ namespace Workwear.ViewModels.Company
 			[Display(Name = "Оборотная сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew2")]
 			PersonalCardPageNew2,
+			[Display(Name = "СИЗ к получению")]
+			[ReportIdentifier("Employee.IssuedSheet")]
+			IssuedSheet
 		}
 
 		public void Print(PersonalCardPrint doc)

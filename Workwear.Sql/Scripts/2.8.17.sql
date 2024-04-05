@@ -2,14 +2,14 @@
 	add `terminal_location` text null;
 
 alter table `postomat_document_items`
-	add `cell_number` int(11) UNSIGNED null;
+	add `cell_number` int(11) UNSIGNED null after loc_cell;
 
 create table if not exists `postomat_documents_withdraw`
 (
-	`id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
-	`create_time`  datetime         NOT NULL,
-	`comment` text DEFAULT NULL,
-	`user_id`     int unsigned null,
+	`id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`create_time` datetime         NOT NULL,
+	`comment`     text DEFAULT NULL,
+	`user_id`     int unsigned     null,
 	PRIMARY KEY (`id`),
 	constraint `fk_postomat_documents_withdraw_user_id`
 		foreign key (user_id) references users (id)
@@ -20,13 +20,13 @@ create table if not exists `postomat_documents_withdraw`
 
 create table if not exists `postomat_document_withdraw_items`
 (
-	`id`                 int(11) unsigned NOT NULL AUTO_INCREMENT,
-	`terminal_id`  		 int(11) unsigned NOT NULL,
-	`terminal_location`  text 				   DEFAULT NULL,
+	`id`                   int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`terminal_id`          int(11) unsigned NOT NULL,
+	`terminal_location`    text             DEFAULT NULL,
 	`document_withdraw_id` int(11) unsigned NOT NULL,
-	`employee_id`        int UNSIGNED     NOT NULL,
-	`nomenclature_id`    int(10) unsigned NOT NULL,
-	`barcode_id`         int(10) unsigned      DEFAULT NULL,
+	`employee_id`          int UNSIGNED     NOT NULL,
+	`nomenclature_id`      int(10) unsigned NOT NULL,
+	`barcode_id`           int(10) unsigned DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `fk_postomat_document_withdraw_items_documents_withdraw_id` (`document_withdraw_id`),
 	KEY `fk_postomat_document_withdraw_items_employee_id` (`employee_id`),
@@ -39,3 +39,11 @@ create table if not exists `postomat_document_withdraw_items`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
+
+alter table message_templates
+	modify message_text text NOT NULL;
+alter table message_templates
+	add column (
+		link_title varchar(100) NULL,
+		link varchar(100) NULL
+		);

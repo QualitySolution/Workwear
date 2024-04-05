@@ -43,21 +43,23 @@ namespace Workwear
 				.AddClearDependence<EmployeeCard>(x => x.Department);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
+				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
 				.AddDeleteDependence<EmployeeGroupItem>(x => x.Employee)
-				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
-				.AddDeleteDependence<Expense>(x => x.Employee)
-				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
-				.AddDeleteDependence<Income>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee)
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
+				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
+				.AddDeleteDependence<Expense>(x => x.Employee)
+				.AddDeleteDependence<Income>(x => x.EmployeeCard)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
-				.AddDeleteDependence<ServiceClaim>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Employee)
-				.AddClearDependence<Leader>(x => x.Employee)
+				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)
+				.AddDeleteDependence<ServiceClaim>(x => x.Employee)
+				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
 				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
-				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent);
+				.AddClearDependence<Leader>(x => x.Employee)
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
 
@@ -153,6 +155,11 @@ namespace Workwear
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<PostomatDocumentItem>();
+
+			DeleteConfig.AddHibernateDeleteInfo<PostomatDocumentWithdraw>()
+				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.DocumentWithdraw);
+
+			DeleteConfig.AddHibernateDeleteInfo<PostomatDocumentWithdrawItem>();
 			#endregion
 			#region Нормы выдачи
 
@@ -230,7 +237,9 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<Barcode>()
 				.AddDeleteDependence<BarcodeOperation>(x => x.Barcode)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Barcode)
-				.AddDeleteDependence<ServiceClaim>(x => x.Barcode);
+				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Barcode)
+				.AddDeleteDependence<ServiceClaim>(x => x.Barcode)
+				;
 			
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType>()
 				.AddDeleteDependence<Nomenclature>(x => x.Type)
@@ -261,6 +270,7 @@ namespace Workwear
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
+				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
 				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
 				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
@@ -339,6 +349,7 @@ namespace Workwear
 				.AddClearDependence<Expense>(x => x.CreatedbyUser)
 				.AddClearDependence<Income>(x => x.CreatedbyUser)
 				.AddClearDependence<Inspection>(x => x.CreatedbyUser)
+				.AddClearDependence<PostomatDocumentWithdraw>(x => x.User)
 				.AddClearDependence<StateOperation>(x => x.User)
 				.AddClearDependence<Transfer>(x => x.CreatedbyUser)
 				.AddClearDependence<Writeoff>(x => x.CreatedbyUser)

@@ -174,7 +174,8 @@ namespace Workwear.ViewModels.Postomats {
 				Identifier = "Documents.PostomatWithdrawSheet",
 				Parameters = new Dictionary<string, object> 
 				{
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{ "responsible_person", Entity.User.Name }
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);

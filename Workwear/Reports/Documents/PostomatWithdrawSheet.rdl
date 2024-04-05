@@ -11,7 +11,7 @@
   <BottomMargin>.15in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select items.terminal_location,
        doc.create_time                                                                         as date,
@@ -30,7 +30,7 @@ where doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="terminal_location">
           <DataField>terminal_location</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -168,7 +168,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           <BorderWidth />
         </Style>
         <TableColumns>
-          <TableColumn >
+          <TableColumn>
             <Width>93.0pt</Width>
           </TableColumn>
           <TableColumn>
@@ -186,7 +186,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <TableRow>
               <Height>28.6pt</Height>
               <TableCells>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox1">
                       <Value>Постамат Вятка</Value>
@@ -267,7 +267,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <TableRow>
               <Height>20pt</Height>
               <TableCells>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
                       <Value>={terminal_location}</Value>
@@ -349,8 +349,8 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Width>553.85pt</Width>
         <Value>= "Ведомость забора спецодежды на стирку № " + {?id}</Value>
         <ZIndex>0</ZIndex>
-        <Left>10.7pt</Left>
-        <Top>2.1pt</Top>
+        <Left>10.70pt</Left>
+        <Top>2.10pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -409,8 +409,81 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Left>444.2pt</Left>
         <Top>45.4pt</Top>
       </Table>
+      <Table Name="Table3" >
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>291.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>276.0pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>Ответственный</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>={?responsible_person}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>Solid</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontStyle>Italic</FontStyle>
+                        <FontSize>10pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Left>2.8pt</Left>
+        <Top>155.9pt</Top>
+      </Table>
     </ReportItems>
-    <Height>351.8pt</Height>
+    <Height>186.9pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -429,7 +502,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -441,6 +514,13 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="responsible_person">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
