@@ -68,6 +68,10 @@ namespace Workwear.Domain.Postomats
 		
 		#endregion
 
+		#region Вычисляемые
+		public virtual string Title => $"Строка ведомости забора {Barcode.Title} из постамата {TerminalId}:{TerminalLocation}";
+		#endregion
+
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) 
 		{
 			if (TerminalId == 0) 
