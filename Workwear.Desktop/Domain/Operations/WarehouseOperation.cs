@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -84,6 +85,13 @@ namespace Workwear.Domain.Operations
 		public virtual Owner Owner {
 			get => owner;
 			set => SetField(ref owner, value);
+		}
+		
+		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+		[Display(Name = "Операции")]
+		public virtual IList<BarcodeOperation> BarcodeOperations {
+			get => barcodeOperations;
+			set => SetField(ref barcodeOperations, value);
 		}
 
 		#region Расчетные

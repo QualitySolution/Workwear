@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -25,6 +26,25 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
+		public void CreateBarcodesInWarehouse(IUnitOfWork unitOfWork, Warehouse warehouse, StockPosition stockPosition, int amount) 
+		{
+			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+			if(warehouse == null) throw new ArgumentNullException(nameof(warehouse));
+			if(stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
+			if(amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
+
+			IList<Barcode> barcodes = Create(unitOfWork, amount, stockPosition.Nomenclature, stockPosition.WearSize, stockPosition.Height);
+			foreach(Barcode barcode in barcodes) 
+			{
+				BarcodeOperation barcodeOperation = new BarcodeOperation()
+				{
+					Barcode = barcode,
+					Warehouse = warehouse
+				};
+				unitOfWork.Save(barcodeOperation, false);
+			}
+		}
+		
 		public void CreateOrRemove(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
 			foreach(var operation in employeeIssueOperations) {
 				if(operation.Issued == operation.BarcodeOperations.Count)
@@ -72,6 +92,18 @@ namespace Workwear.Tools.Barcodes
 			return barCodeList;
 		}
 
+		public int GetBarcodesCount(IUnitOfWork unitOfWork, int nomenclatureId) 
+		{
+			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+			if(nomenclatureId <= 0) throw new ArgumentOutOfRangeException(nameof(nomenclatureId));
+			
+			return unitOfWork.Session.QueryOver<BarcodeOperation>()
+				.JoinQueryOver(bo => bo.Barcode)
+				.Where(b => b.Nomenclature.Id == nomenclatureId)
+				.Select(Projections.RowCount())
+				.SingleOrDefault<int>();
+		}
+		
 		#endregion
 
 		#region Private Methods

@@ -2064,7 +2064,8 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `barcode_id` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
-  PRIMARY KEY (`id`),
+  `warehouse_id` INT UNSIGNED NULL,
+	PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
@@ -2083,7 +2084,12 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
     FOREIGN KEY (`warehouse_operation_id`)
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE
+  CONSTRAINT `FK_operation_barcodes_warehouse`
+	FOREIGN KEY (`warehouse_id`) 
+	REFERENCES `warehouse` (`id`)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
