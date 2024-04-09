@@ -26,6 +26,14 @@ namespace Workwear.Views.Communications
 
 			ConfigureLinkGroup();
 			ConfigureFileGroup();
+
+			entryMessageTextToLongError.ForegroundColor = "#F00";
+			entryMessageTextToLongError.Binding.AddBinding(ViewModel, vm => vm.MessageTextToLongError, w => w.Text).InitializeFromSource();
+			
+			entryMessageTextLengthHint.Binding.AddSource(ViewModel)
+			   .AddBinding(vm => vm.MessageTextToLongHint, w => w.Text)
+			   .AddBinding(vm => vm.ColorMessageTextToLongHint, w => w.ForegroundColor)
+			   .InitializeFromSource();
 		}
 
 		private void ConfigureLinkGroup()
