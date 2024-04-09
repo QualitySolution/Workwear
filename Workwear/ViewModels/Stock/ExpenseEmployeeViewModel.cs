@@ -9,6 +9,7 @@ using NHibernate;
 using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -154,6 +155,16 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		public string DocNumber {
+			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
 		#endregion
 
 		#region Заполение документа

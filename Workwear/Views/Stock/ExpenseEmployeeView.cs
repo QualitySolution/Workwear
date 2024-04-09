@@ -23,7 +23,13 @@ namespace Workwear.Views.Stock
 		private void ConfigureDlg()
 		{
 			expensedocitememployeeview1.ViewModel = ViewModel.DocItemsEmployeeViewModel;
-			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource();
+//**********************************			
+			//ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource();
+			entryId.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocNumber, w => w.Text)
+				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource();
 
 			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 
