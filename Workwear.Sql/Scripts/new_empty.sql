@@ -742,6 +742,14 @@ CREATE TABLE IF NOT EXISTS `norms` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+--
+-- Table `protection_tools_category_for_analytics`
+--
+create table if not exists `protection_tools_category_for_analytics` (
+	`id`   int(11) unsigned not null auto_increment primary key,
+	`name` varchar(100)     not null,
+	`comment` text null default null)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `protection_tools`
@@ -752,13 +760,19 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL DEFAULT NULL,
+  `category_for_analytics_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
     FOREIGN KEY (`item_types_id`)
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  ONSTRAINT `FK_protection_tools_category_for_analytics`
+	FOREIGN KEY (`category_for_analytics_id`)
+	REFERENCES `protection_tools_category_for_analytics` (`id`)
+	ON DELETE SET NULL
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
