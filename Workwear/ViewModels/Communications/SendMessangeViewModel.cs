@@ -54,18 +54,17 @@ namespace Workwear.ViewModels.Communications
 		}
 
 		#region View Properties
-
 		public bool SensitiveSendButton =>
 			!string.IsNullOrWhiteSpace(MessageText) && !string.IsNullOrWhiteSpace(MessageTitle) &&
-			(PushNotificationSelected || EmailNotificationSelected) &&
+			(PushNotificationSelected || EmailNotificationSelected) && ValidMessageTextLength() &&
 			((LinkAttachSelected == false && fileAttachSelected == false) || 
 			 (LinkAttachSelected && !string.IsNullOrWhiteSpace(LinkTitleText) && !string.IsNullOrWhiteSpace(LinkText)) || 
 			 (FileAttachSelected && !string.IsNullOrWhiteSpace(Filename)));
-
+		
 		public bool VisibleLinkAttach => PushNotificationSelected && !EmailNotificationSelected;
 
 		public bool VisibleFileAttach => !PushNotificationSelected && EmailNotificationSelected;
-
+		
 		#endregion
 
 		#region Parametrs
@@ -109,6 +108,9 @@ namespace Workwear.ViewModels.Communications
 		[PropertyChangedAlso(nameof(SensitiveSendButton))]
 		[PropertyChangedAlso(nameof(VisibleLinkAttach))]
 		[PropertyChangedAlso(nameof(VisibleFileAttach))]
+		[PropertyChangedAlso(nameof(MessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(ColorMessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(MessageTextToLongError))]
 		public bool PushNotificationSelected 
 		{
 			get => pushNotificationSelected;
@@ -122,6 +124,9 @@ namespace Workwear.ViewModels.Communications
 		[PropertyChangedAlso(nameof(SensitiveSendButton))]
 		[PropertyChangedAlso(nameof(VisibleLinkAttach))]
 		[PropertyChangedAlso(nameof(VisibleFileAttach))]
+		[PropertyChangedAlso(nameof(MessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(ColorMessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(MessageTextToLongError))]
 		public bool EmailNotificationSelected
 		{
 			get => emailNotificationSelected;
@@ -150,6 +155,9 @@ namespace Workwear.ViewModels.Communications
 
 		private string messageText;
 		[PropertyChangedAlso(nameof(SensitiveSendButton))]
+		[PropertyChangedAlso(nameof(MessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(ColorMessageTextToLongHint))]
+		[PropertyChangedAlso(nameof(MessageTextToLongError))]
 		public string MessageText 
 		{
 			get => messageText;
@@ -179,7 +187,31 @@ namespace Workwear.ViewModels.Communications
 			get => filename;
 			set => SetField(ref filename, value);
 		}
+		
+		public string MessageTextToLongHint  => $"{MessageText?.Length ?? 0}/{GetMaxMessageTextLength()}";
 
+		public string ColorMessageTextToLongHint => ValidMessageTextLength() ? 
+			"#000" : "#F00";
+		
+		public string MessageTextToLongError 
+		{
+			get 
+			{
+				if (ValidMessageTextLength()) return string.Empty;
+
+				int max = GetMaxMessageTextLength();
+				if (PushNotificationSelected) 
+				{
+					return $"Длина текста в push уведомелнии не должна превышать {max} символов";
+				}
+				if (EmailNotificationSelected) 
+				{
+					return $"Длина текста в email уведомелнии не должна превышать {max} символов";
+				}
+
+				return null;
+			}
+		}
 		#endregion
 
 		#region Commands
@@ -187,11 +219,12 @@ namespace Workwear.ViewModels.Communications
 		public void SendMessage()
 		{
 			List<string> responseMessages = new List<string>();
-			if(PushNotificationSelected) {
+			if (PushNotificationSelected) 
+			{
 				responseMessages.Add(SendPushNotificationMessage());
 			}
-
-			if(EmailNotificationSelected) {
+			if (EmailNotificationSelected) 
+			{
 				responseMessages.Add(SendEmailNotificationMessage());
 			}
 
@@ -218,7 +251,8 @@ namespace Workwear.ViewModels.Communications
 				.Select(MakeEmailMessage);
 
 			string result = "Отправлено 0 сообщений.";
-			if(messages.Any()) {
+			if(messages.Any()) 
+			{
 				result = emailManagerService.SendMessages(messages);
 			}
 
@@ -227,6 +261,8 @@ namespace Workwear.ViewModels.Communications
 
 		#endregion
 
+		#region Private Methods
+		
 		private OutgoingMessage MakeNotificationMessage(EmployeeCard employee)
 		{
 			OutgoingMessage message = new OutgoingMessage {
@@ -271,6 +307,25 @@ namespace Workwear.ViewModels.Communications
 
 			return message;
 		}
+
+		private bool ValidMessageTextLength() 
+		{
+			int length = MessageText?.Length ?? 0;
+			return length <= GetMaxMessageTextLength();
+		}
+		
+		private int GetMaxMessageTextLength() 
+		{
+			int result = 400;
+			if(!PushNotificationSelected && EmailNotificationSelected) 
+			{
+				result = 65535;
+			}
+
+			return result;
+		}
+		#endregion
+
 	}
 	
 	public enum EmailDocument
