@@ -1,6 +1,7 @@
 using QS.BusinessCommon.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Communications;
 using Workwear.Domain.Company;
@@ -357,6 +358,10 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
+			#endregion
+			#region Analytics
+			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsCategory>()
+				.AddClearDependence<ProtectionTools>(x => x.CategoryForAnalytic);
 			#endregion
 			
 			logger.Info ("Ок");

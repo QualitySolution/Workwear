@@ -119,6 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Journal\Analytics\ProtectionToolsCategoryJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\ClothingService\ClaimsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
+    <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
@@ -487,6 +489,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.DeductSpecCoinsView.cs" />
     <Compile Include="Views\Postomats\PostomatDocumentWithdrawView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentWithdrawView.cs" />
+    <Compile Include="Views\Analytics\ProtectionToolsCategoryView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
     <Compile Include="Views\Stock\Widgets\StockReleaseBarcodesView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.StockReleaseBarcodesView.cs" />
   </ItemGroup>
@@ -685,7 +689,6 @@
     <Folder Include="Views\Company\" />
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
-    <Folder Include="Journal\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
@@ -728,6 +731,7 @@
     <Folder Include="Views\ClothingService\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Journal\Filter.Views\Postomats\" />
+    <Folder Include="Views\Analytics\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
