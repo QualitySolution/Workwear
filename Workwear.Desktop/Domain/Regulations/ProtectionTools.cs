@@ -3,6 +3,7 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Regulations
@@ -51,6 +52,13 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref assessedCost, value); }
 		}
 
+		private ProtectionToolsCategory categoryForAnalytic;
+		[Display(Name = "Категория номенклатуры нормы для аналитики")]
+		public virtual ProtectionToolsCategory CategoryForAnalytic 
+		{
+			get => categoryForAnalytic;
+			set => SetField(ref categoryForAnalytic, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string GetAmountAndUnitsText(int amount) => this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();

@@ -5,6 +5,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
+using Workwear.Journal.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -21,6 +22,18 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			#region Analytics
+
+			TreeViewColumnsConfigFactory.Register<ProtectionToolsCategoryJournalViewModel>(
+				() => FluentColumnsConfig<ProtectionToolsCategoryNode>.Create()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString()).XAlign(0.5f).SearchHighlight()
+					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Name).XAlign(0.5f).SearchHighlight()
+					.AddColumn("Комментарий").AddReadOnlyTextRenderer(node => node.Comment)
+					.Finish()
+				);
+
+			#endregion
+			
 			#region ClothingService
 
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
