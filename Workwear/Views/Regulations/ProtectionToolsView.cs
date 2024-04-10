@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using Gtk;
 using QS.Views.Dialog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Regulations;
@@ -26,6 +28,8 @@ namespace Workwear.Views.Regulations
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
+
+			entryCategories.ViewModel = ViewModel.CategoriesEntryViewModel;
 
 			yspinAssessedCost.Binding.AddBinding(Entity, e => e.AssessedCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
 

@@ -65,6 +65,7 @@ using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
+using Workwear.Journal.Analytics;
 using Workwear.ViewModels.Export;
 
 public partial class MainWindow : Gtk.Window {
@@ -816,5 +817,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
+	}
+
+	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) 
+	{
+		NavigationManager.OpenViewModel<ProtectionToolsCategoryJournalViewModel>(null);
 	}
 }
