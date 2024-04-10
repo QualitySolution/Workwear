@@ -35,6 +35,13 @@ namespace Workwear.Domain.Operations {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
+		
+		private Warehouse warehouse;
+		[Display(Name = "Склад")]
+		public virtual Warehouse Warehouse {
+			get => warehouse;
+			set => SetField(ref warehouse, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";

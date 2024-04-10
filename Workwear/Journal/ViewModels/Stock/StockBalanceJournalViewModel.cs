@@ -17,6 +17,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -24,7 +25,7 @@ namespace workwear.Journal.ViewModels.Stock
 	/// Stock balance journal view model. Для подробного отображения баланса склада
 	/// </summary>
 	public class StockBalanceJournalViewModel : JournalViewModelBase
-	{
+	{		
 		public bool ShowSummary;
 		public readonly FeaturesService FeaturesService;
 
@@ -70,7 +71,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			Owner ownerAlias = null;
-
+			
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
 				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id
@@ -154,10 +155,12 @@ namespace workwear.Journal.ViewModels.Stock
 
 				.SelectList(list => list
 			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.Id)
+			   .Select(() => warehouseOperationAlias.ReceiptWarehouse.Id).WithAlias(() => resultAlias.WarehouseId)
 			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
+			   .Select(() => nomenclatureAlias.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
 			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
@@ -193,23 +196,40 @@ namespace workwear.Journal.ViewModels.Stock
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+			
+			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
+				(selected) => selected.Any(x => {
+					StockBalanceJournalNode node = (x as StockBalanceJournalNode);
+					return node != null && node.UseBarcode && node.Amount > 0;
+				}),
+				(selected) => true,
+				(selected) => OpenReleaseBarcodesWindow(selected.First() as StockBalanceJournalNode)
+			);
+			
+			NodeActionsList.Add(releaseBarcodesAction);
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
 		{
 			foreach(var node in nodes) {
-				var journal = NavigationManager
+				IPage<StockMovmentsJournalViewModel> journal = NavigationManager
 					.OpenViewModel<StockMovmentsJournalViewModel>(this);
 				journal.ViewModel.Filter.SetAndRefilterAtOnce(
 					filter => filter.Warehouse = Filter.Warehouse, 
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+
+		private void OpenReleaseBarcodesWindow(StockBalanceJournalNode node) 
+		{
+			NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode>(this, node);
+		}
 	}
 
 	public class StockBalanceJournalNode
 	{
 		public int Id { get; set; }
+		public int WarehouseId { get; set; }
 		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
@@ -224,9 +244,11 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Amount { get; set; }
 		public int OwnerId { get; set; }
 		public string OwnerName { get; set; }
+		public bool UseBarcode { get; set; }
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");
+
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
 			uow.GetById<Nomenclature>(Id), 
 			WearPercent, 

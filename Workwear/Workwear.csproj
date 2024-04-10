@@ -196,6 +196,7 @@
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureProtectionToolsViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\StockReleaseBarcodesViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
@@ -486,6 +487,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.DeductSpecCoinsView.cs" />
     <Compile Include="Views\Postomats\PostomatDocumentWithdrawView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentWithdrawView.cs" />
+    <Compile Include="Views\Stock\Widgets\StockReleaseBarcodesView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.StockReleaseBarcodesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -684,11 +687,8 @@
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
-    <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
-    <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
-    <Folder Include="Views\Stock\Widgets\" />
     <Folder Include="ViewModels\Tools\" />
     <Folder Include="Views\Tools\" />
     <Folder Include="Journal\ViewModels\Company\" />
