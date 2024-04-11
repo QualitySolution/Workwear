@@ -411,226 +411,168 @@
         <Top>7.6pt</Top>
         <Header>
           <TableRows>
-            <TableRow>
-              <Height>16.8pt</Height>
+            <TableRow >
+              <Height>16.4pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox19">
+                    <Textbox Name="Textbox27">
                       <Value>="Справка по выданному на " + Format(Convert.ToDateTime({?dateStart}), "dd.MM.yyyy") + "-" + Format(Convert.ToDateTime({?dateEnd}), "dd.MM.yyyy")  + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Left</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                        <FontWeight >Bold</FontWeight>
+                        <FontSize >12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>5</ColSpan>
+                  <ColSpan>10</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox49">
+                    <Textbox Name="Textbox56">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <BackgroundColor></BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox48">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <BackgroundColor></BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox47">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <BackgroundColor></BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox46">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <BackgroundColor></BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox34">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox37">
+                    <Textbox Name="Textbox57">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox38">
+                    <Textbox Name="Textbox58">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox43">
+                    <Textbox Name="Textbox59">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox44">
+                    <Textbox Name="Textbox60">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox45">
+                    <Textbox Name="Textbox61">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <BackgroundColor></BackgroundColor>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox62">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left >None</Left>
+                          <Right >None</Right>
+                          <Top >None</Top>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -930,7 +872,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select
     if(@summary, NULL, objects.id) as subdivision_id,
@@ -1049,7 +991,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
