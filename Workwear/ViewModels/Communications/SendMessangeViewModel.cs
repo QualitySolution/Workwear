@@ -278,34 +278,42 @@ namespace Workwear.ViewModels.Communications
 
 		private EmailMessage MakeEmailMessage(EmployeeCard employee) 
 		{
-			ReportInfo reportInfo = new ReportInfo {
-				Title = $"Карточка {employee.ShortName} - {selectedDocument.GetEnumTitle()}",
-				Identifier = selectedDocument.GetAttribute<ReportIdentifierAttribute>().Identifier
-			};
-
-			byte[] bytes;
-			using(MemoryStream ms =
-			      ReportExporter.ExportToMemoryStream(reportInfo.GetReportUri(), $"id={employee.Id}", connectionStringBuilder.ConnectionString, OutputPresentationType.PDF))
-			{
-				bytes = ms.ToArray();
-			}
-
 			EmailMessage message = new EmailMessage()
 			{
 				Address = employee.Email,
 				Subject = MessageTitle,
-				Text = MessageText,
-				Files = 
-				{
-					new Attachment() 
-					{
-						FileName = FileAttachSelected ? $"{Filename}.pdf" : "",
-						File = FileAttachSelected ? ByteString.CopyFrom(bytes) : ByteString.Empty
-					}
-				}
+				Text = MessageText
 			};
 
+			if(!FileAttachSelected) return message;
+			
+			ReportInfo reportInfo = new ReportInfo
+			{
+				Title = $"Карточка {employee.ShortName} - {selectedDocument.GetEnumTitle()}",
+				Identifier = selectedDocument.GetAttribute<ReportIdentifierAttribute>().Identifier
+			};
+
+			byte[] bytes = ConvertReportToByte(reportInfo, new Dictionary<string, object>() { { "id", employee.Id } });
+			message.Files.Add(new Attachment() 
+				{
+					FileName = $"{Filename}.pdf",
+					File = ByteString.CopyFrom(bytes)
+				}
+			);
+			
 			return message;
+		}
+
+		private byte[] ConvertReportToByte(ReportInfo reportInfo, Dictionary<string, object> parameters) 
+		{
+			IEnumerable<string> strings = parameters.Select(p => $"{p.Key}={p.Value}");
+			string stringParameters = string.Join("&", strings);
+			using(MemoryStream ms =
+			      ReportExporter.ExportToMemoryStream(reportInfo.GetReportUri(), stringParameters, 
+				      connectionStringBuilder.ConnectionString, OutputPresentationType.PDF))
+			{
+				return ms.ToArray();
+			}
 		}
 
 		private bool ValidMessageTextLength() 
