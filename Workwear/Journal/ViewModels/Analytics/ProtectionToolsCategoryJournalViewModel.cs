@@ -9,7 +9,7 @@ using QS.Services;
 using Workwear.Domain.Analytics;
 using Workwear.ViewModels.Analytics;
 
-namespace Workwear.Journal.Analytics 
+namespace Workwear.Journal.ViewModels.Analytics 
 {
 	public class ProtectionToolsCategoryJournalViewModel : EntityJournalViewModelBase<ProtectionToolsCategory, ProtectionToolsCategoryViewModel, ProtectionToolsCategoryNode> 
 	{

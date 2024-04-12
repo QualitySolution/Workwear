@@ -6434,10 +6434,10 @@
         <property name="ShortLabel" translatable="yes">Документы постаматов на забор</property>
         <signal name="Activated" handler="OnActionPostomatDocsWithdrawActivated" />
       </action>
-      <action id="Action41">
+      <action id="Action43">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Категории номенклатуы</property>
-        <property name="ShortLabel" translatable="yes">Категории номенклатуы</property>
+        <property name="Label" translatable="yes">Категории номенклатуры</property>
+        <property name="ShortLabel" translatable="yes">Категории номенклатуры</property>
         <signal name="Activated" handler="OnProtectionToolsCategoriesActivated" />
       </action>
     </action-group>
@@ -6521,7 +6521,7 @@
                 <node type="Menuitem" action="ActionNorms" />
                 <node type="Menuitem" action="ActionConditionNorm" />
                 <node type="Separator" />
-                <node type="Menuitem" action="Action41" />
+                <node type="Menuitem" action="Action43" />
                 <node type="Menuitem" action="Action42" />
                 <node type="Menuitem" action="Action6" />
                 <node type="Menuitem" action="ActionWarehouse" />
