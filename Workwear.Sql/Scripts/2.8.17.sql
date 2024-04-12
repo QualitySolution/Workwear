@@ -47,7 +47,3 @@ alter table message_templates
 		link_title varchar(100) NULL,
 		link varchar(100) NULL
 		);
-
-ALTER TABLE `operation_barcodes`
-	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
-	ADD CONSTRAINT `FK_operation_barcodes_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

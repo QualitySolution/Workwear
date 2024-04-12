@@ -2045,6 +2045,7 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
+  `label` varchar(50) null default null,	
   `comment` text null,
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),

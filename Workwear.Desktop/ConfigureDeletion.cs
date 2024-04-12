@@ -258,7 +258,8 @@ namespace Workwear
 				.AddClearDependence<Subdivision>(x => x.Warehouse)
 				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse)
 				.AddDeleteDependence<Completion>(x => x.ResultWarehouse)
-				.AddDeleteDependence<Completion>(x => x.SourceWarehouse);
+				.AddDeleteDependence<Completion>(x => x.SourceWarehouse)
+				.AddDeleteDependence<BarcodeOperation>(x => x.Warehouse);
 
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
 				.AddClearDependence<ItemsType>(x => x.Units);

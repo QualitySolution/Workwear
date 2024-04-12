@@ -13,3 +13,8 @@ alter table `protection_tools`
 			references `protection_tools_category_for_analytics` (`id`)
 			on delete set null
 			on update cascade 
+
+ALTER TABLE `operation_barcodes`
+	ADD COLUMN `label` varchar(50) null default null,
+	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
+	ADD CONSTRAINT `FK_operation_barcodes_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

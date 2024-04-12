@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Gamma.ColumnConfig;
+using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
@@ -18,17 +24,20 @@ namespace Workwear.ViewModels.Stock.Widgets
 		public StockReleaseBarcodesViewModel(INavigationManager navigation, IUnitOfWorkFactory unitOfWorkFactory,
 			BarcodeService barcodeService, StockBalanceJournalNode node) : base(navigation) 
 		{
-			uow = unitOfWorkFactory?.CreateWithoutRoot() ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+			this.uow = unitOfWorkFactory?.CreateWithoutRoot() ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.node = node ?? throw new ArgumentNullException(nameof(node));
-			int barcodesAmount = barcodeService.GetBarcodesCount(uow, node.NomeclatureId);
-			MaxAmount = node.Amount - barcodesAmount;
+			WithoutBarcodesAmount = node.Amount - AllBarcodesAmount;
 			Title = node.NomenclatureName;
+			Labels = uow.Session.QueryOver<Barcode>()
+				.Select(b => b.Label)
+				.Where(b => b.Label != null)
+				.List<string>()
+				.Distinct()
+				.ToList();
 		}
 
 		#region View Properties
-		public int MaxAmount { get; }
-
 		private int selectedAmount;
 		[PropertyChangedAlso(nameof(ConfirmButtonSensetive))]
 		public int SelectedAmount 
@@ -37,21 +46,58 @@ namespace Workwear.ViewModels.Stock.Widgets
 			set => SetField(ref selectedAmount, value);
 		}
 
+		private string label = string.Empty;
+		[PropertyChangedAlso(nameof(ConfirmButtonSensetive))]
+		public string Label 
+		{
+			get => label;
+			set => SetField(ref label, value);
+		}
+		
+		public int WithoutBarcodesAmount { get; }
+		
+		public int AllBarcodesAmount => barcodeService.GetAllBarcodesAmount(uow, node.NomeclatureId);
+
+		public int StockBarcodeAmount => barcodeService.GetStockBarcodesAmount(uow, node.NomeclatureId);
+
+		public IList<string> Labels { get; }
 		#endregion
 
 		#region Sensetive
-		public bool ConfirmButtonSensetive => SelectedAmount > 0 && SelectedAmount <= MaxAmount;
+		public bool ConfirmButtonSensetive => IsValidForm();
 		#endregion
 		
 		#region Commands
 		public void CreateBarcodes() 
 		{
-			Warehouse warehouse = uow.GetById<Warehouse>(node.WarehouseId);
+			if (!IsValidForm()) return;
+ 			Warehouse warehouse = uow.GetById<Warehouse>(node.WarehouseId);
 			StockPosition stockPosition = node.GetStockPosition(uow);
-			barcodeService.CreateBarcodesInWarehouse(uow, warehouse, stockPosition, SelectedAmount);
+			IList<Barcode> barcodes = barcodeService.CreateBarcodesInWarehouse(uow, warehouse, stockPosition, Label, SelectedAmount);
 			uow.Commit();
+			
+			ReportInfo reportInfo = new ReportInfo() 
+			{
+				Title = "Штрихкод",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> 
+				{
+					{ "barcodes", barcodes.Select(x => x.Id).ToList() }
+				}
+			};
+			
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 			Close(false, CloseSource.Self);
 		}
+		#endregion
+
+		#region Private Methods
+
+		private bool IsValidForm() 
+		{
+			return SelectedAmount > 0 && SelectedAmount <= WithoutBarcodesAmount && !string.IsNullOrWhiteSpace(Label);
+		}
+
 		#endregion
 	}
 }

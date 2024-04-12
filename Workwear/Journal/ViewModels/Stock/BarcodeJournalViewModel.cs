@@ -71,6 +71,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
+					.Select(x => x.Label).WithAlias(() => resultAlias.Label)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.Size)
@@ -116,6 +117,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Size { get; set; }
 		public string Height { get; set; }
 		public DateTime CreateDate { get; set; }
+		public string Label { get; set; }
 		public string Comment { get; set; }
 		public string LastName { get; set; }
 		public string FirstName { get; set; }

@@ -26,16 +26,18 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
-		public void CreateBarcodesInWarehouse(IUnitOfWork unitOfWork, Warehouse warehouse, StockPosition stockPosition, int amount) 
+		public IList<Barcode> CreateBarcodesInWarehouse(IUnitOfWork unitOfWork, Warehouse warehouse, StockPosition stockPosition, string label, int amount) 
 		{
 			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
 			if(warehouse == null) throw new ArgumentNullException(nameof(warehouse));
 			if(stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
+			if(string.IsNullOrWhiteSpace(label)) throw new ArgumentNullException(nameof(label));
 			if(amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
 
 			IList<Barcode> barcodes = Create(unitOfWork, amount, stockPosition.Nomenclature, stockPosition.WearSize, stockPosition.Height);
 			foreach(Barcode barcode in barcodes) 
 			{
+				barcode.Label = label;
 				BarcodeOperation barcodeOperation = new BarcodeOperation()
 				{
 					Barcode = barcode,
@@ -43,6 +45,8 @@ namespace Workwear.Tools.Barcodes
 				};
 				unitOfWork.Save(barcodeOperation, false);
 			}
+
+			return barcodes;
 		}
 		
 		public void CreateOrRemove(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
@@ -91,8 +95,11 @@ namespace Workwear.Tools.Barcodes
 			}
 			return barCodeList;
 		}
+		#endregion
 
-		public int GetBarcodesCount(IUnitOfWork unitOfWork, int nomenclatureId) 
+		#region Barcodes Info
+
+		public int GetAllBarcodesAmount(IUnitOfWork unitOfWork, int nomenclatureId) 
 		{
 			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
 			if(nomenclatureId <= 0) throw new ArgumentOutOfRangeException(nameof(nomenclatureId));
@@ -100,12 +107,26 @@ namespace Workwear.Tools.Barcodes
 			return unitOfWork.Session.QueryOver<BarcodeOperation>()
 				.JoinQueryOver(bo => bo.Barcode)
 				.Where(b => b.Nomenclature.Id == nomenclatureId)
-				.Select(Projections.RowCount())
+				.SelectList(list => list
+					.SelectCountDistinct(bo => bo.Barcode.Id))
 				.SingleOrDefault<int>();
 		}
-		
-		#endregion
 
+		public int GetStockBarcodesAmount(IUnitOfWork unitOfWork, int nomenclatureId) 
+		{
+			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+			if(nomenclatureId <= 0) throw new ArgumentOutOfRangeException(nameof(nomenclatureId));
+			
+			return unitOfWork.Session.QueryOver<BarcodeOperation>()
+				.Where(bo => bo.Warehouse != null)
+				.JoinQueryOver(bo => bo.Barcode)
+				.Where(b => b.Nomenclature.Id == nomenclatureId)
+				.SelectList(list => list
+					.SelectCountDistinct(bo => bo.Barcode.Id))
+				.SingleOrDefault<int>();
+		}
+		#endregion
+		
 		#region Private Methods
 
 		static int CheckSum(string upccode)
