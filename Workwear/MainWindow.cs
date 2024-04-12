@@ -65,7 +65,7 @@ using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
-using Workwear.Journal.Analytics;
+using Workwear.Journal.ViewModels.Analytics;
 using Workwear.ViewModels.Export;
 
 public partial class MainWindow : Gtk.Window {

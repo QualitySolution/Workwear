@@ -5,7 +5,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
-using Workwear.Journal.Analytics;
+using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -277,6 +277,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(900).SearchHighlight()
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
+					.AddColumn("Категория для аналитики").AddTextRenderer(node => node.CategoryForAnalytic)
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(
