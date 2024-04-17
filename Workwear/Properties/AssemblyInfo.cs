@@ -4,12 +4,12 @@ using QS.Project.Versioning;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
-[assembly: AssemblyTitle("QS: Спецаутсорсинг")]
+[assembly: AssemblyTitle("QS: Aros аутсорсинг")]
 #if DEBUG
 [assembly: AssemblyBetaBuild]
 #endif
-[assembly: AssemblyDescription("Программа выдачи и обслуживания спецодежды по договорам «Спецаутсорсинг».")]
-[assembly: AssemblyModification("sposhiv", HideFromUser = true)]
+[assembly: AssemblyDescription("Программа выдачи и обслуживания спецодежды по договорам «Aros».")]
+[assembly: AssemblyModification("aros", HideFromUser = true)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]

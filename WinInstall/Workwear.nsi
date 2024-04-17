@@ -3,12 +3,12 @@ Unicode true
 !define PRODUCT_VERSION "2.8.18"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
-!define PRODUCT_NAME "QS: Спецаутсорсинг"
-!define SHORTCUT_NAME "Спецаутсорсинг"
-!define MENU_DIR_NAME "Спецаутсорсинг"
-!define APP_DIR_NAME "Спецаутсорсинг"
-!define UNINSTAL_KEY "workwear-sposhiv"
-!define SETUP_POSTFIX "-sposhiv"
+!define PRODUCT_NAME "QS: Aros аутсорсинг"
+!define SHORTCUT_NAME "Aros аутсорсинг"
+!define MENU_DIR_NAME "Aros аутсорсинг"
+!define APP_DIR_NAME "Aros аутсорсинг"
+!define UNINSTAL_KEY "workwear-aros"
+!define SETUP_POSTFIX "-aros"
 
 !ifdef BETA
 	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
@@ -195,19 +195,6 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe" "" "$INSTDIR\${EXE_NAME}.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство пользователя.lnk" "$INSTDIR\user-guide.pdf"
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство администратора.lnk" "$INSTDIR\admin-guide.pdf"
-  
-  ; Удяляем файлы до ребрендинга в Спецаутсорсинг
-  RMDir /r "$PROGRAMFILES\Спецпошив Аутсорсинг"
-  RMDir /r "$SMPROGRAMS\Спецпошив Аутсорсинг"
-  Delete "$DESKTOP\Спецпошив Аутсорсинг.lnk"
-
-  ; Удаляем файлы используемые до 2.8
-  Delete $INSTDIR\Nini.dll
-  Delete $INSTDIR\MySql.Data.dll
-  Delete $INSTDIR\MySql.Data.xml
-  
-  ;Удаляем файлы не используемые после 2.8.9
-  Delete $INSTDIR\System.Data.Bindings.dll
 
 SectionEnd
 
