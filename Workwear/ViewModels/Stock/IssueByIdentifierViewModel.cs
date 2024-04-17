@@ -398,7 +398,6 @@ namespace Workwear.ViewModels.Stock
 				return;
 			Expense = new Expense();
 			Expense.CreatedbyUser = userService.GetCurrentUser();
-			Expense.Operation = ExpenseOperations.Employee;
 			Expense.Employee = Employee;
 			Expense.Warehouse = Warehouse;
 			Expense.Items.Clear();

@@ -69,11 +69,7 @@ namespace workwear
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
-		//Конструктор используется при возврате c подразделения
-		public IncomeDocDlg(Subdivision subdivision) : this () {
-			Entity.Operation = IncomeOperations.Object;
-			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
-		}
+		
 		//Конструктор используется в журнале документов
 		public IncomeDocDlg (Income item) : this (item.Id) {}
 		public IncomeDocDlg (int id) {
@@ -130,11 +126,7 @@ namespace workwear
 						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 						.UseViewModelDialog<EmployeeViewModel>()
 						.Finish();
-
-			entrySubdivision.ViewModel = builder.ForProperty(x => x.Subdivision)
-				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
-				.UseViewModelDialog<SubdivisionViewModel>()
-				.Finish();
+			
 			//Метод отключает модули спецодежды, которые недоступны для пользователя
 			DisableFeatures();
 
@@ -265,7 +257,6 @@ namespace workwear
 		private void OnYcomboOperationChanged (object sender, EventArgs e) {
 			labelTTN.Visible = yentryNumber.Visible = ybuttonReadInFile.Visible = Entity.Operation == IncomeOperations.Enter;
 			labelWorker.Visible = yentryEmployee.Visible = enumPrint.Visible = Entity.Operation == IncomeOperations.Return;
-			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
 			
 			if (UoWGeneric.IsNew)
 				switch (Entity.Operation)
@@ -275,9 +266,6 @@ namespace workwear
 						break;
 					case IncomeOperations.Return:
 						TabName = "Новый возврат от работника";
-						break;
-					case IncomeOperations.Object:
-						TabName = "Новый возврат c подразделения";
 						break;
 				}
 		}
@@ -323,7 +311,6 @@ namespace workwear
 			[Display(Name = "Лист возврата")]
 			[ReportIdentifier("Documents.ReturnSheet")]
 			ReturnSheet,
-			
 			[Display(Name = "Ведомость возврата книжная")]
 			[ReportIdentifier("Statements.ReturnStatementVertical")]
 			ReturnStatementVertical

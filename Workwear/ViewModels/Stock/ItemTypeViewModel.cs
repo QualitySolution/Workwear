@@ -39,7 +39,6 @@ namespace Workwear.ViewModels.Stock
 			this.progressCreator = progressCreator;
 			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
 			SizeService = sizeService;
-			Entity.PropertyChanged += Entity_PropertyChanged;
 			lastSizeType = Entity.SizeType;
 			lastHeightType = Entity.HeightType;
 		}
@@ -48,20 +47,10 @@ namespace Workwear.ViewModels.Stock
 		private SizeType lastHeightType;
 
 		#region Visible
-		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense) && Entity.Category == ItemTypeCategory.wear;
-		public bool VisibleWearCategory => Entity.Category == ItemTypeCategory.wear;
-		public bool VisibleSize => Entity.Category == ItemTypeCategory.wear;
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
+		public bool VisibleWearCategory => true;
+		public bool VisibleSize => true;
 		#endregion
-
-		void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			switch(e.PropertyName) {
-				case nameof(Entity.Category):
-					OnPropertyChanged(nameof(VisibleWearCategory));
-					OnPropertyChanged(nameof(VisibleIssueType));
-					OnPropertyChanged(nameof(VisibleSize));
-					break;
-			}
-		}
 
 		public override bool Save() {
 			if(!Validate())

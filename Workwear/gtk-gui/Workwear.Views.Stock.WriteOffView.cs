@@ -82,8 +82,6 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Button buttonAddWorker;
 
-		private global::Gtk.Button buttonAddObject;
-
 		private global::Gamma.GtkWidgets.yButton buttonDel;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
@@ -350,7 +348,6 @@ namespace Workwear.Views.Stock
 			w27.LeftAttach = ((uint)(1));
 			w27.RightAttach = ((uint)(2));
 			w27.XOptions = ((global::Gtk.AttachOptions)(4));
-			w27.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.label26 = new global::Gtk.Label();
 			this.label26.Name = "label26";
@@ -498,20 +495,6 @@ namespace Workwear.Views.Stock
 			w43.Expand = false;
 			w43.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
-			this.buttonAddObject = new global::Gtk.Button();
-			this.buttonAddObject.CanFocus = true;
-			this.buttonAddObject.Name = "buttonAddObject";
-			this.buttonAddObject.UseUnderline = true;
-			this.buttonAddObject.Label = global::Mono.Unix.Catalog.GetString("С подразделения");
-			global::Gtk.Image w44 = new global::Gtk.Image();
-			w44.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddObject.Image = w44;
-			this.hbox8.Add(this.buttonAddObject);
-			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonAddObject]));
-			w45.Position = 2;
-			w45.Expand = false;
-			w45.Fill = false;
-			// Container child hbox8.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
@@ -519,26 +502,26 @@ namespace Workwear.Views.Stock
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = "gtk-remove";
 			this.hbox8.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w46 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
-			w46.Position = 3;
-			w46.Expand = false;
-			w46.Fill = false;
+			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
+			w44.Position = 2;
+			w44.Expand = false;
+			w44.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w47 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w47.Position = 4;
+			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w45.Position = 3;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w48 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w48.Position = 2;
-			w48.Expand = false;
-			w48.Fill = false;
+			global::Gtk.Box.BoxChild w46 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w46.Position = 2;
+			w46.Expand = false;
+			w46.Fill = false;
 			this.dialog1_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
-			w49.Position = 2;
+			global::Gtk.Box.BoxChild w47 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
+			w47.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

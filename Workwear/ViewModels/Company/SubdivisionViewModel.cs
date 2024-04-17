@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autofac;
-using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -49,62 +44,15 @@ namespace Workwear.ViewModels.Company
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
-
-			NotifyConfiguration.Instance.BatchSubscribe(SubdivisionOperationChanged)
-				.IfEntity<SubdivisionIssueOperation>()
-				.AndWhere(x => x.Subdivision.Id == Entity.Id);
 		}
-
-		#region Свойства
-
-		public IList<SubdivisionRecivedInfo> Items => SubdivisionRepository.ItemsBalance(UoW, Entity);
-
-		#endregion
 
 		#region Visible
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
 		#endregion
 
 		#region Controls
-
 		public EntityEntryViewModel<Warehouse> EntryWarehouse;
 		public EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
-
 		#endregion
-
-		#region Обработка событий
-
-		void SubdivisionOperationChanged(EntityChangeEvent[] changeEvents)
-		{
-			OnPropertyChanged(nameof(Items));
-		}
-
-		#endregion
-
-		#region Действия View
-
-		public void GiveItem()
-		{
-			if(UoW.IsNew && !Save())
-				return;
-			navigation.OpenViewModel<ExpenseObjectViewModel, IEntityUoWBuilder, Subdivision>(this, EntityUoWBuilder.ForCreate(), Entity);
-		}
-
-		public void ReturnItem()
-		{
-			navigation.OpenTdiTab<IncomeDocDlg, Subdivision>(this, Entity);
-		}
-
-		public void WriteOffItem()
-		{
-			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, Subdivision>(this, EntityUoWBuilder.ForCreate(), Entity);
-		}
-
-		#endregion
-		public override void Dispose()
-		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
-			base.Dispose();
-		}
 	}
 }

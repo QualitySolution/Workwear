@@ -182,19 +182,7 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
 					.Finish ()
 			);
-
-			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
-				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
-					.AddColumn("Подразделение").Resizable().Visible(jwm.Filter.Subdivision is null)
-					.AddTextRenderer(e => e.SubdivisionName)
-					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
-					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
-					.AddColumn("Срок службы").AddProgressRenderer(e => 
-						(int) (100 - e.Percentage * 100))
-					.AddSetter((w, e) => 
-						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
-					.Finish()
-			);
+			
 			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
 					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
 						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
