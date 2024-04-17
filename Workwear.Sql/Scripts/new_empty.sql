@@ -420,11 +420,9 @@ CREATE TABLE IF NOT EXISTS `item_types` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `name` VARCHAR(240) NOT NULL,
-  `category` ENUM('wear', 'property') NULL DEFAULT 'wear',
   `wear_category` ENUM('Wear', 'Shoes', 'WinterShoes', 'Headgear', 'Gloves', 'Mittens', 'PPE') NULL DEFAULT NULL,
   `issue_type` ENUM('Personal', 'Collective') NOT NULL DEFAULT 'Personal',
   `units_id` INT UNSIGNED NULL DEFAULT NULL,
-  `norm_life` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `size_type_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_type_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -562,30 +560,23 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_income` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation` ENUM('Enter','Return','Object') NOT NULL,
+  `operation` ENUM('Enter','Return') NOT NULL,
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
-  `object_id` INT UNSIGNED NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_income_wear_card_idx` (`wear_card_id` ASC),
   INDEX `fk_stock_income_user_idx` (`user_id` ASC),
-  INDEX `fk_stock_income_object_idx` (`object_id` ASC),
   INDEX `fk_stock_income_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_income_date` (`date` ASC),
   CONSTRAINT `fk_stock_income_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_object`
-    FOREIGN KEY (`object_id`)
-    REFERENCES `objects` (`id`)
-    ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_income_wear_card`
     FOREIGN KEY (`wear_card_id`)
@@ -846,8 +837,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `ExpiryByNorm` DATE NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  `buh_document` VARCHAR(80) NULL DEFAULT NULL,
-  `operation_write_off_id` INT UNSIGNED NULL DEFAULT NULL,
   `sign_key` VARCHAR(16) NULL DEFAULT NULL,
   `sign_timestamp` DATETIME NULL DEFAULT NULL,
   `manual_operation` TINYINT(1) NOT NULL DEFAULT 0,
@@ -864,7 +853,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
   INDEX `index10` (`wear_percent` ASC),
   INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC),
-  INDEX `fk_operation_issued_by_employee_6_idx` (`operation_write_off_id` ASC),
   INDEX `fk_operation_issued_by_employee_7_idx` (`size_id` ASC),
   INDEX `fk_operation_issued_by_employee_8_idx` (`height_id` ASC),
   CONSTRAINT `fk_operation_issued_by_employee_1`
@@ -897,11 +885,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
     REFERENCES `protection_tools` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_by_employee_6`
-    FOREIGN KEY (`operation_write_off_id`)
-    REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_operation_issued_by_employee_7`
     FOREIGN KEY (`size_id`)
     REFERENCES `sizes` (`id`)
@@ -915,93 +898,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
--- -----------------------------------------------------
--- Table `object_places`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `object_places` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
-  `object_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_object_places_object_id_idx` (`object_id` ASC),
-  CONSTRAINT `fk_object_places_object_id`
-    FOREIGN KEY (`object_id`)
-    REFERENCES `objects` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
-
--- -----------------------------------------------------
--- Table `operation_issued_in_subdivision`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `operation_issued_in_subdivision` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation_time` DATETIME NOT NULL,
-  `subdivision_id` INT(10) UNSIGNED NOT NULL,
-  `subdivision_place_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  `nomenclature_id` INT(10) UNSIGNED NOT NULL,
-  `size_id` INT UNSIGNED NULL DEFAULT NULL,
-  `height_id` INT UNSIGNED NULL DEFAULT NULL,
-  `wear_percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 0.00,
-  `issued` INT(11) NOT NULL DEFAULT 0,
-  `returned` INT(11) NOT NULL DEFAULT 0,
-  `auto_writeoff` TINYINT(1) NOT NULL DEFAULT 1,
-  `auto_writeoff_date` DATE NULL DEFAULT NULL,
-  `start_of_use` DATE NULL DEFAULT NULL,
-  `expiry_on` DATE NULL DEFAULT NULL,
-  `issued_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `operation_issued_by_employee_date` (`operation_time` ASC),
-  INDEX `index10` (`wear_percent` ASC),
-  INDEX `fk_operation_issued_in_subdivision_1_idx` (`subdivision_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_2_idx` (`nomenclature_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_3_idx` (`issued_operation_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_4_idx` (`warehouse_operation_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_5_idx` (`subdivision_place_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_6_idx` (`size_id` ASC),
-  INDEX `fk_operation_issued_in_subdivision_7_idx` (`height_id` ASC),
-  CONSTRAINT `fk_operation_issued_in_subdivision_1`
-    FOREIGN KEY (`subdivision_id`)
-    REFERENCES `objects` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_in_subdivision_2`
-    FOREIGN KEY (`nomenclature_id`)
-    REFERENCES `nomenclature` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_operation_issued_in_subdivision_3`
-    FOREIGN KEY (`issued_operation_id`)
-    REFERENCES `operation_issued_in_subdivision` (`id`)
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_in_subdivision_4`
-    FOREIGN KEY (`warehouse_operation_id`)
-    REFERENCES `operation_warehouse` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_in_subdivision_5`
-    FOREIGN KEY (`subdivision_place_id`)
-    REFERENCES `object_places` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_in_subdivision_6`
-    FOREIGN KEY (`size_id`)
-    REFERENCES `sizes` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_operation_issued_in_subdivision_7`
-    FOREIGN KEY (`height_id`)
-    REFERENCES `sizes` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
 -- -----------------------------------------------------
 -- Table `stock_income_detail`
 -- -----------------------------------------------------
@@ -1013,7 +909,6 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
   `cost` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0,
   `certificate` VARCHAR(40) NULL DEFAULT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
-  `subdivision_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1023,7 +918,6 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
   INDEX `fk_stock_income_detail_nomenclature_idx` (`nomenclature_id` ASC),
   INDEX `fk_stock_income_detail_1_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_stock_income_detail_2_idx` (`warehouse_operation_id` ASC),
-  INDEX `fk_stock_income_detail_3_idx` (`subdivision_issue_operation_id` ASC),
   INDEX `fk_stock_income_detail_4_idx` (`size_id` ASC),
   INDEX `fk_stock_income_detail_5_idx` (`height_id` ASC),
   CONSTRAINT `fk_stock_income_detail_1`
@@ -1036,11 +930,6 @@ CREATE TABLE IF NOT EXISTS `stock_income_detail` (
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_income_detail_3`
-    FOREIGN KEY (`subdivision_issue_operation_id`)
-    REFERENCES `operation_issued_in_subdivision` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_income_detail_nomenclature`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
@@ -1127,32 +1016,21 @@ create table stock_write_off_members(
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation` ENUM('Employee','Object') NOT NULL DEFAULT 'Employee',
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
-  `object_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
-  `write_off_doc` INT UNSIGNED NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_wear_card_idx` (`wear_card_id` ASC),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
-  INDEX `fk_stock_expense_object_id_idx` (`object_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
-  INDEX `fk_stock_expense_2_idx` (`write_off_doc` ASC),
   INDEX `index_stock_expense_date` (`date` ASC),
-  INDEX `index_stock_expense_operation` (`operation` ASC),
   CONSTRAINT `fk_stock_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_expense_object_id`
-    FOREIGN KEY (`object_id`)
-    REFERENCES `objects` (`id`)
-    ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_expense_wear_card`
     FOREIGN KEY (`wear_card_id`)
@@ -1163,12 +1041,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_expense_2`
-    FOREIGN KEY (`write_off_doc`)
-    REFERENCES `stock_write_off` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
@@ -1182,9 +1055,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
   `stock_expense_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `quantity` INT UNSIGNED NOT NULL,
-  `object_place_id` INT UNSIGNED NULL DEFAULT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
-  `subdivision_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NULL DEFAULT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1192,10 +1063,8 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
   PRIMARY KEY (`id`),
   INDEX `fk_stock_expense_detail_stock_expense_idx` (`stock_expense_id` ASC),
   INDEX `fk_stock_expense_detail_nomenclature_idx` (`nomenclature_id` ASC),
-  INDEX `fk_stock_expense_detail_placement_idx` (`object_place_id` ASC),
   INDEX `fk_stock_expense_detail_1_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_stock_expense_detail_2_idx` (`warehouse_operation_id` ASC),
-  INDEX `fk_stock_expense_detail_3_idx` (`subdivision_issue_operation_id` ASC),
   INDEX `fk_stock_expense_detail_4_idx` (`protection_tools_id` ASC),
   INDEX `fk_stock_expense_detail_5_idx` (`size_id` ASC),
   INDEX `fk_stock_expense_detail_6_idx` (`height_id` ASC),
@@ -1209,20 +1078,10 @@ CREATE TABLE IF NOT EXISTS `stock_expense_detail` (
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_expense_detail_3`
-    FOREIGN KEY (`subdivision_issue_operation_id`)
-    REFERENCES `operation_issued_in_subdivision` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_expense_detail_nomenclature`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_expense_detail_placement`
-    FOREIGN KEY (`object_place_id`)
-    REFERENCES `object_places` (`id`)
-    ON DELETE SET NULL
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_expense_detail_stock_expense`
     FOREIGN KEY (`stock_expense_id`)
@@ -1258,12 +1117,10 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `nomenclature_id` INT UNSIGNED NULL DEFAULT NULL,
   `quantity` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
-  `subdivision_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
-  `akt_number` VARCHAR(45) NULL DEFAULT NULL,
   `cause` text null, 
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
@@ -1271,7 +1128,6 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   INDEX `fk_stock_write_off_detail_1_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_stock_write_off_detail_2_idx` (`warehouse_operation_id` ASC),
   INDEX `fk_stock_write_off_detail_3_idx` (`warehouse_id` ASC),
-  INDEX `fk_stock_write_off_detail_4_idx` (`subdivision_issue_operation_id` ASC),
   INDEX `fk_stock_write_off_detail_5_idx` (`size_id` ASC),
   INDEX `fk_stock_write_off_detail_6_idx` (`height_id` ASC),
   CONSTRAINT `fk_stock_write_off_detail_1`
@@ -1289,11 +1145,6 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_write_off_detail_4`
-    FOREIGN KEY (`subdivision_issue_operation_id`)
-    REFERENCES `operation_issued_in_subdivision` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_write_off_detail_nomenclature`
     FOREIGN KEY (`nomenclature_id`)
     REFERENCES `nomenclature` (`id`)
@@ -2270,7 +2121,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.17');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
@@ -2321,14 +2172,14 @@ COMMIT;
 -- Data for table `item_types`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Одежда', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 2, 1);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Обувь', 'wear', 'Shoes', 'Personal', 2, NULL, NULL, 4, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя обувь', 'wear', 'WinterShoes', 'Personal', 2, NULL, NULL, 5, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Головные уборы', 'wear', 'Headgear', 'Personal', 1, NULL, NULL, 6, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Перчатки', 'wear', 'Gloves', 'Personal', 2, NULL, NULL, 7, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Варежки', 'wear', 'Mittens', 'Personal', 2, NULL, NULL, 8, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'СИЗ', 'wear', 'PPE', 'Personal', 1, NULL, NULL, NULL, NULL);
-INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя одежда', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 2, 1);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Одежда', 'Wear', 'Personal', 1, NULL, 2, 1);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Обувь', 'Shoes', 'Personal', 2, NULL, 4, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя обувь', 'WinterShoes', 'Personal', 2, NULL, 5, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Головные уборы', 'Headgear', 'Personal', 1, NULL, 6, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Перчатки', 'Gloves', 'Personal', 2, NULL, 7, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Варежки', 'Mittens', 'Personal', 2, NULL, 8, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'СИЗ', 'PPE', 'Personal', 1, NULL, NULL, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя одежда', 'Wear', 'Personal', 1, NULL, 2, 1);
 
 COMMIT;
 
