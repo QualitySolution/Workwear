@@ -774,7 +774,7 @@ FROM (SELECT
         <Left>10pt</Left>
         <Height>12pt</Height>
         <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Value>=Globals!PageNumber + '  из ' + Globals!TotalPages</Value>
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>

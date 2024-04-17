@@ -11,9 +11,9 @@ using Workwear.Domain.ClothingService;
 
 namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, 
-		NominativePlural = "документы постомата",
-		Nominative = "документ постомата",
-		Genitive = "документ постомата")]
+		NominativePlural = "документы постамата",
+		Nominative = "документ постамата",
+		Genitive = "документ постамата")]
 	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
@@ -27,12 +27,18 @@ namespace Workwear.Domain.Postomats {
 		}
 		
 		private uint terminalId;
-		[Display(Name = "Постомат")]
+		[Display(Name = "Постамат")]
 		public virtual uint TerminalId {
 			get => terminalId;
 			set => SetField(ref terminalId, value);
 		}
-
+		
+		[Display(Name = "Размещение постамата")]
+		public virtual string TerminalLocation {
+			get => Postomat?.Location;
+			set => _ = value;
+		}
+		
 		private DocumentStatus status;
 		[Display(Name = "Статус")]
 		public virtual DocumentStatus Status {
@@ -63,7 +69,7 @@ namespace Workwear.Domain.Postomats {
 		#endregion
 
 		#region Расчетные
-		public virtual string Title => $"{Type.GetEnumTitle()} постомата №{Id} от {CreateTime:d}";
+		public virtual string Title => $"{Type.GetEnumTitle()} постамата №{Id} от {CreateTime:d}";
 
 		#endregion
 
@@ -83,13 +89,13 @@ namespace Workwear.Domain.Postomats {
 				Location = location,
 			};
 			Items.Add(newItem);
-			claim.ChangeState(ClaimState.InTransit, TerminalId, user, $"Перемещение в постомат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
+			claim.ChangeState(ClaimState.InTransit, TerminalId, user, $"Перемещение в постамат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
 		}
 
 		#endregion
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if(TerminalId == 0)
-				yield return new ValidationResult("Не выбран постомат.", new[] { nameof(TerminalId) });
+				yield return new ValidationResult("Не выбран постамат.", new[] { nameof(TerminalId) });
 			if(Items.Count == 0)
 				yield return new ValidationResult("Не заполнены строки документа.", new[] { nameof(Items) });
 			foreach(var item in Items) {

@@ -161,6 +161,16 @@ image::employees_print-wearcard1-766.png[]
 image::employees_print-wearcard2-766.png[]
 ****
 
+[#print-issued-sheet]
+==== СИЗ к получению
+
+Не полученные СИЗ-ы на текущий момент.
+
+.СИЗ к получению
+****
+image::employees_print_issued-sheet.png[]
+****
+
 [#identity-cards]
 == Выдача по бесконтактным картам
 

@@ -342,10 +342,10 @@ namespace Workwear.ViewModels.Stock
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
-			if(requiredIssue > 0 && item.Amount == 0)
-				return "blue";
 			if(requiredIssue <= 0 && item.Amount == 0)
 				return "gray";
+			if(requiredIssue > item.Amount)
+				return "blue";
 			return null;
 		}
 

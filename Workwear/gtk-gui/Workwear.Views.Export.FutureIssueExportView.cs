@@ -12,11 +12,7 @@ namespace Workwear.Views.Export
 
 		private global::Gtk.Label labelPeriod;
 
-		private global::Gtk.Label labelShowCredit;
-
 		private global::Gamma.GtkWidgets.yButton ybuttonRun;
-
-		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowCredit;
 
 		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker;
 
@@ -33,7 +29,7 @@ namespace Workwear.Views.Export
 			// Container child Workwear.Views.Export.FutureIssueExportView.Gtk.Container+ContainerChild
 			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable2.Name = "ytable2";
-			this.ytable2.NRows = ((uint)(6));
+			this.ytable2.NRows = ((uint)(5));
 			this.ytable2.NColumns = ((uint)(2));
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
@@ -68,43 +64,17 @@ namespace Workwear.Views.Export
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
-			this.labelShowCredit = new global::Gtk.Label();
-			this.labelShowCredit.Name = "labelShowCredit";
-			this.labelShowCredit.Xalign = 1F;
-			this.labelShowCredit.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать долг:");
-			this.ytable2.Add(this.labelShowCredit);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelShowCredit]));
-			w4.TopAttach = ((uint)(2));
-			w4.BottomAttach = ((uint)(3));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable2.Gtk.Table+TableChild
 			this.ybuttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonRun.CanFocus = true;
 			this.ybuttonRun.Name = "ybuttonRun";
 			this.ybuttonRun.UseUnderline = true;
 			this.ybuttonRun.Label = global::Mono.Unix.Catalog.GetString("Выгрузить");
 			this.ytable2.Add(this.ybuttonRun);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ybuttonRun]));
-			w5.TopAttach = ((uint)(5));
-			w5.BottomAttach = ((uint)(6));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable2.Gtk.Table+TableChild
-			this.ycheckbuttonShowCredit = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckbuttonShowCredit.CanFocus = true;
-			this.ycheckbuttonShowCredit.Name = "ycheckbuttonShowCredit";
-			this.ycheckbuttonShowCredit.Label = "";
-			this.ycheckbuttonShowCredit.DrawIndicator = true;
-			this.ycheckbuttonShowCredit.UseUnderline = true;
-			this.ytable2.Add(this.ycheckbuttonShowCredit);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ycheckbuttonShowCredit]));
-			w6.TopAttach = ((uint)(2));
-			w6.BottomAttach = ((uint)(3));
-			w6.LeftAttach = ((uint)(1));
-			w6.RightAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ybuttonRun]));
+			w4.TopAttach = ((uint)(4));
+			w4.BottomAttach = ((uint)(5));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.ydateperiodpicker = new global::Gamma.Widgets.yDatePeriodPicker();
 			this.ydateperiodpicker.Events = ((global::Gdk.EventMask)(256));
@@ -112,33 +82,33 @@ namespace Workwear.Views.Export
 			this.ydateperiodpicker.StartDate = new global::System.DateTime(0);
 			this.ydateperiodpicker.EndDate = new global::System.DateTime(0);
 			this.ytable2.Add(this.ydateperiodpicker);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ydateperiodpicker]));
-			w7.TopAttach = ((uint)(1));
-			w7.BottomAttach = ((uint)(2));
-			w7.LeftAttach = ((uint)(1));
-			w7.RightAttach = ((uint)(2));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ydateperiodpicker]));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
+			w5.LeftAttach = ((uint)(1));
+			w5.RightAttach = ((uint)(2));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.yprogressLocal = new global::QS.Widgets.ProgressWidget();
 			this.yprogressLocal.Name = "yprogressLocal";
 			this.ytable2.Add(this.yprogressLocal);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressLocal]));
-			w8.TopAttach = ((uint)(3));
-			w8.BottomAttach = ((uint)(4));
-			w8.RightAttach = ((uint)(2));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressLocal]));
+			w6.TopAttach = ((uint)(2));
+			w6.BottomAttach = ((uint)(3));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.yprogressTotal = new global::QS.Widgets.ProgressWidget();
 			this.yprogressTotal.Name = "yprogressTotal";
 			this.ytable2.Add(this.yprogressTotal);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressTotal]));
-			w9.TopAttach = ((uint)(4));
-			w9.BottomAttach = ((uint)(5));
-			w9.RightAttach = ((uint)(2));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
-			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressTotal]));
+			w7.TopAttach = ((uint)(3));
+			w7.BottomAttach = ((uint)(4));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable2);
 			if ((this.Child != null))
 			{

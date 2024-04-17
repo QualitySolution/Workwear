@@ -13,7 +13,7 @@
 * xref:import.adoc[Импорт данных]
 * xref:export.adoc[Экспорт данных]
 * xref:mobile-app.adoc[Кабинет сотрудника]
-* xref:postomat.adoc[Постоматы]
+* xref:postomat.adoc[Постаматы]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]

@@ -60,6 +60,7 @@ namespace WorkwearTest.ViewModels.Company {
 			var featureService = Substitute.For<FeaturesService>();
 			var sessionInfoProvider = Substitute.For<ISessionInfoProvider>();
 			var lkUserManagerService = Substitute.For<LkUserManagerService>(sessionInfoProvider);
+			var lkSpecCoinManagerService = Substitute.For<SpecCoinManagerService>(sessionInfoProvider);
 			var tdiCompatibilityNavigation = Substitute.For<ITdiCompatibilityNavigation>();
 			var openStockDocumentsModel = Substitute.For<OpenStockDocumentsModel>(tdiCompatibilityNavigation);
 			var progress = Substitute.For<IProgressBarDisplayable>();
@@ -95,6 +96,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.Register(x => featureService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => lkUserManagerService).As<LkUserManagerService>();
+			builder.Register(x => lkSpecCoinManagerService).As<SpecCoinManagerService>();
 			builder.Register(x => openStockDocumentsModel).As<OpenStockDocumentsModel>();
 			builder.Register(x => progress).As<IProgressBarDisplayable>();
 			builder.Register(x => sizeService).As<SizeService>();

@@ -75,6 +75,9 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => barcodeAlias.Title).WithAlias(() => resultAlias.Barcode)
+					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeLastName)
+					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeFirstName)
+					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 					.Select(x => x.NeedForRepair).WithAlias(() => resultAlias.NeedForRepair)
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)

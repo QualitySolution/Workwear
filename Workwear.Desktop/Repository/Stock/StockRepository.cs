@@ -61,7 +61,7 @@ namespace Workwear.Repository.Stock
 
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
-				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == nomenclatureAlias.Id
+				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id
 				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
 				                 || (warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
 				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
@@ -84,7 +84,7 @@ namespace Workwear.Repository.Stock
 									.Property(() => warehouseExpenseOperationAlias.Amount)));
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == nomenclatureAlias.Id 
+				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id 
 				             && (warehouseIncomeOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
 				                 || (warehouseIncomeOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
 				             && (warehouseIncomeOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
@@ -123,7 +123,7 @@ namespace Workwear.Repository.Stock
 				 .JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => warehouseOperationAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
-			   .SelectGroup(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
+			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.NomenclatureId)
 			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
 			   .SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
 			   .SelectGroup(() => warehouseOperationAlias.Owner).WithAlias(() => resultAlias.Owner)

@@ -54,6 +54,7 @@ namespace Workwear.Views.Postomats {
 			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
 			buttonAdd.Binding.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
+			buttonPrint.Clicked += OnButtonPrintClicked;
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {
@@ -66,6 +67,10 @@ namespace Workwear.Views.Postomats {
 					comboTypeDoc.Sensitive = 
 						treeItems.Sensitive = 
 							ydateDoc.Sensitive = ViewModel.CanEdit;
+		}
+
+		private void OnButtonPrintClicked(object sender, EventArgs e) {
+			ViewModel.Print();
 		}
 	}
 }

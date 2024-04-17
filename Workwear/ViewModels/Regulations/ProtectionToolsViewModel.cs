@@ -10,6 +10,7 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -36,8 +37,12 @@ namespace Workwear.ViewModels.Regulations
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
-			.MakeByType()
-			.Finish();
+				.MakeByType()
+				.Finish();
+			
+			CategoriesEntryViewModel = entryBuilder.ForProperty(x => x.CategoryForAnalytic)
+				.MakeByType()
+				.Finish();
 
 			Entity.Nomenclatures.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
@@ -60,6 +65,7 @@ namespace Workwear.ViewModels.Regulations
 
 		#region EntityViewModels
 		public readonly EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		public readonly EntityEntryViewModel<ProtectionToolsCategory> CategoriesEntryViewModel;
 		#endregion
 
 		#region Действия View

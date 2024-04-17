@@ -1,0 +1,27 @@
+﻿syntax = "proto3";
+
+package QS.Cloud.WearLk.Manage;
+
+service SpecCoinsManager{
+	rpc GetCoinsBalance(GetCoinsBalanceRequest) returns (GetCoinsBalanceResponse);
+	rpc CreateCoinsOperation(CreateCoinsOperationRequest) returns (CreateCoinsOperationResponse);
+}
+
+//Получение баланса
+message GetCoinsBalanceRequest{
+	string phone = 1;
+}
+
+message GetCoinsBalanceResponse{
+	int32 balance = 1;
+}
+
+//Списание монеток
+message CreateCoinsOperationRequest{
+	string phone = 1;
+	int32 amount = 2;
+	string description = 3;
+}
+message CreateCoinsOperationResponse{
+	string result = 1;
+}

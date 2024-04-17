@@ -12,7 +12,6 @@ namespace Workwear.Views.Export {
 				.AddBinding(v => v.EndDate, w => w.EndDate)
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
-			ycheckbuttonShowCredit.Binding.AddBinding(ViewModel, v => v.ShowCredit, w => w.Active);
 
 			yprogressTotal.Visible = false;
 			yprogressLocal.Visible = false;

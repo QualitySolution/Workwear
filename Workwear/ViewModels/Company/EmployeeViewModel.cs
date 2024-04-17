@@ -30,6 +30,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company.EmployeeChildren;
 using Workwear.ViewModels.IdentityCards;
 
@@ -48,6 +49,8 @@ namespace Workwear.ViewModels.Company
 		private readonly EmployeeRepository employeeRepository;
 		private readonly LkUserManagerService lkUserManagerService;
 		private readonly CommonMessages messages;
+		private readonly SpecCoinManagerService specCoinManagerService;
+		
 		public SizeService SizeService { get; }
 
 		public EmployeeViewModel(
@@ -66,7 +69,8 @@ namespace Workwear.ViewModels.Company
 			NormRepository normRepository,
 			LkUserManagerService lkUserManagerService,
 			SizeService sizeService,
-			CommonMessages messages) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
+			CommonMessages messages,
+			SpecCoinManagerService specCoinManagerService) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.personNames = personNames ?? throw new ArgumentNullException(nameof(personNames));
@@ -77,8 +81,18 @@ namespace Workwear.ViewModels.Company
 			NormRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
+			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
+
+			bool isCoinsAvailable = IsSpecCoinsAvailable();
+			VisibleSpecCoinsViews = isCoinsAvailable;
+			if (isCoinsAvailable)
+			{
+				SpecCoinsBalance =
+					specCoinManagerService.GetCoinsBalance(Entity.PhoneNumber);
+				VisibleSpecCoinsViews = SpecCoinsBalance != -1;
+			}
 			
 			SizeService.RefreshSizes(UoW);
 			Performance.CheckPoint("Загрузка основной информации о сотруднике");
@@ -181,12 +195,18 @@ namespace Workwear.ViewModels.Company
 			set => SetField(ref visiblePhoto, value);
 		}
 
+		private bool visibleSpecCoinsViews;
+		public bool VisibleSpecCoinsViews 
+		{
+			get => visibleSpecCoinsViews;
+			set => SetField(ref visibleSpecCoinsViews, value);
+		}
 		#endregion
 
 		#region Sensetive
-
 		public bool SensitiveCardNumber => !AutoCardNumber;
 
+		public bool SensitiveDeductSpecCoins => SpecCoinsBalance > 0;
 		#endregion
 
 		#region Свойства ViewModel
@@ -217,7 +237,21 @@ namespace Workwear.ViewModels.Company
 			String.IsNullOrEmpty(CardUid) || System.Text.RegularExpressions.Regex.IsMatch(CardUid, @"\A\b[0-9a-fA-F]+\b\Z") ? "black" : "red";
 
 		#endregion
+		
+		private int specCoinsBalance;
+		[PropertyChangedAlso(nameof(SensitiveDeductSpecCoins))]
+		public int SpecCoinsBalance 
+		{
+			get => specCoinsBalance;
+			set => SetField(ref specCoinsBalance, value);
+		}
 
+		private bool IsSpecCoinsAvailable() 
+		{
+			return featuresService.Available(WorkwearFeature.SpecCoinsLk) && 
+				Entity.LkRegistered && !string.IsNullOrWhiteSpace(Entity.PhoneNumber);
+		}
+		
 		#endregion
 
 		#region Личный кабинет
@@ -291,7 +325,6 @@ namespace Workwear.ViewModels.Company
 		//Пароль не менялся, проверяем не полное вхождение на случай случайного удаления части символов.
 		public bool LkPasswordNotChanged => unknownPassword.StartsWith(LkPassword, StringComparison.InvariantCulture)
 			|| LkPassword == lkLastPassword;
-
 		#endregion
 
 		#region Обработка событий
@@ -303,6 +336,22 @@ namespace Workwear.ViewModels.Company
 				if(sex != Sex.None)
 					Entity.Sex = sex;
 			}
+		}
+		
+		public void OpenDeductCoinsView() 
+		{
+			NavigationManager.OpenViewModel<DeductSpecCoinsViewModel, string, int, Action>
+			(
+				this,
+				Entity.PhoneNumber,
+				specCoinsBalance,
+				UpdateSpecCoinsBalance
+			);
+		}
+
+		private void UpdateSpecCoinsBalance() 
+		{
+			SpecCoinsBalance = specCoinManagerService.GetCoinsBalance(Entity.PhoneNumber);
 		}
 		#endregion
 
@@ -457,6 +506,9 @@ namespace Workwear.ViewModels.Company
 			[Display(Name = "Оборотная сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew2")]
 			PersonalCardPageNew2,
+			[Display(Name = "СИЗ к получению")]
+			[ReportIdentifier("Employee.IssuedSheet")]
+			IssuedSheet
 		}
 
 		public void Print(PersonalCardPrint doc)

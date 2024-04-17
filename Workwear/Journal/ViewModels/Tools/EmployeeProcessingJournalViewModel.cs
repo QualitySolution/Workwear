@@ -21,6 +21,7 @@ using QS.Services;
 using QS.Utilities;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
@@ -210,12 +211,19 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			recalculateAction.ChildActionsList.Add(updateNextIssueAction);
 
-			var updateLastIssueAction = new JournalAction("Сроки носки у полученного",
+			var updateLastIssueAction = new JournalAction("Сроки носки у последего полученного",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => CatchExceptionAndCloseProgress(UpdateLastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
+			
+			var update2LastIssueAction = new JournalAction("Сроки носки у 2 последих получений",
+				(selected) => selected.Any(),
+				(selected) => true,
+				(selected) => CatchExceptionAndCloseProgress(Update2LastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+			);
+			recalculateAction.ChildActionsList.Add(update2LastIssueAction);
 			#endregion
 
 			#region Заменить
@@ -244,7 +252,14 @@ namespace workwear.Journal.ViewModels.Tools
 					(selected) => true,
 					(selected) => ReplacePost(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
-			
+				
+			var replaceActiveNormItemAction = new JournalAction("Нормы на текущие у 2 последних выдач",
+					(selected) => selected.Any(),
+					(selected) => true,
+					(selected) => Active2LastNormItem(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
+					);
+			replaceAction.ChildActionsList.Add(replaceActiveNormItemAction);
+				
 			replaceAction.ChildActionsList.Add(replacePostAction);
 			#endregion
 			
@@ -414,16 +429,19 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.Close();
 		}
 
-		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes)
+		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLastIssueOperationsForEmployee);
+		void Update2LastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee);
+		
+		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc)
 		{
-			loggerProcessing.Info($"Пересчет сроков носки получного для {nodes.Length} сотрудников");
+			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
 			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
 			progressCreator.Add(text: "Получаем последние выдачи");
-			var operations = employeeIssueRepository.GetLastIssueOperationsForEmployee(employees);
+			var operations = repoFunc(employees);
 
 			progressCreator.Update("Проверка выданного");
 			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
@@ -436,7 +454,7 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.Close();
 			if (cancellation.IsCancellationRequested)
 				return;
-			progressCreator.Start(operations.Count + 3, text: "Пересчет даты последней выдачи");
+			progressCreator.Start(operations.Count + 4, text: "Пересчет даты последней выдачи");
 			cancellation = progressCreator.CancellationToken;
 			issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation, 
 				changeLog: (employee, changes) => {
@@ -451,6 +469,8 @@ namespace workwear.Journal.ViewModels.Tools
 				});
 			if (cancellation.IsCancellationRequested)
 				return;
+			progressCreator.Add(text: "Завершаем...");
+			UoW.Commit();
 			progressCreator.Add(text: "Обновляем журнал");
 			Refresh();
 			progressCreator.Close();
@@ -542,6 +562,76 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[node.Id] = ("ОК", "green");
 				Refresh();
 			};
+		}
+		
+		void Active2LastNormItem(EmployeeProcessingJournalNode[] nodes) {
+			loggerProcessing.Info($"Переустановка строк нормы в 2 последих опирациях на актуальные у {nodes.Length} сотрудников");
+			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
+			progressCreator.Start(3, text: "Загружаем сотрудников");
+			var cancellation = progressCreator.CancellationToken;
+			
+			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
+			progressCreator.Add(text: "Получаем последние выдачи");
+			var operations = employeeIssueRepository.GetLast2IssueOperationsForEmployee(employees);
+
+			progressCreator.Update("Проверка выданного");
+			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Employee.Id)); 
+			foreach(var employee in employees) {
+				progressCreator.Add();
+				if(!operationsEmployeeIds.Contains(employee.Id)) 
+					Results[employee.Id] = ("Нет выданного", "red");
+			}
+
+			progressCreator.Close();
+			if (cancellation.IsCancellationRequested)
+				return;
+			progressCreator.Start(operations.Count + 4, text: "Замена норм");
+			cancellation = progressCreator.CancellationToken;
+
+			var changes = new Dictionary<int, int>();
+			foreach(var operation in operations) {
+				if(!changes.ContainsKey(operation.Employee.Id))
+					changes[operation.Employee.Id] = 0;
+				progressCreator.Add(text: $"Обработка {operation.Employee.ShortName}");
+				if(operation.ProtectionTools != null //подбор по номенклатуре не делаю, но проставляем если не было norm item
+					&& operation.Employee.WorkwearItems.Select(wc => wc.ActiveNormItem)
+				   .Any(ni => DomainHelper.EqualDomainObjects(ni, operation.NormItem))) {
+					continue;
+				}else {
+					var normItem = operation.Employee.WorkwearItems.Select(n => n.ActiveNormItem) 
+						.FirstOrDefault(p => DomainHelper.EqualDomainObjects(p.ProtectionTools, operation.ProtectionTools));
+					if(normItem != null) {
+						loggerProcessing.Info($"У Сотрудника |{operation.Employee.Id}|{operation.Employee.ShortName}|" +
+						                      $" меняем norm item c |{operation.NormItem?.Id}| на |{normItem.Id}|" +
+						                      $" нормы с |{operation.NormItem?.Norm.Id}| на |{normItem.Norm.Id}|" +
+						                      $" в операции |{operation.Id}|{operation.ProtectionTools?.Name}");
+						operation.NormItem = normItem;
+						changes[operation.Employee.Id]++;
+						UoW.Save(operation);
+					}
+				}
+				if(cancellation.IsCancellationRequested) {
+					loggerProcessing.Info("Прервано пользователем");
+					progressCreator.Close();
+					return;
+				}
+			}
+
+			foreach(var change in changes) {
+				if(change.Value == 0)
+					Results[change.Key] = ("Без изменений", "gray");
+				else 
+					Results[change.Key] = ($"Отредактировано {change.Value} выдач", "orange");
+			}
+			progressCreator.Add(text: "Завершаем...");
+			loggerProcessing.Info("Переустановка норм завершена");
+			if(UoW.HasChanges) {
+				UoW.Commit();
+				loggerProcessing.Info("Сохранено в базу");
+			}
+			progressCreator.Add(text: "Обновляем журнал");
+			Refresh();
+			progressCreator.Close();
 		}
 		#endregion
 		

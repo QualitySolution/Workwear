@@ -28,13 +28,17 @@ namespace workwear.Journal.ViewModels.Communications
 					x => x.Id,
 					x => x.Name,
 					x => x.MessageTitle,
-					x => x.MessageText
+					x => x.MessageText,
+					x => x.LinkTitleText,
+					x => x.LinkText
  					))
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.MessageTitle).WithAlias(() => resultAlias.MessageTitle)
 					.Select(x => x.MessageText).WithAlias(() => resultAlias.MessageText)
+					.Select(x => x.LinkTitleText).WithAlias(() => resultAlias.LinkTitleText)
+					.Select(x => x.LinkText).WithAlias(() => resultAlias.LinkText)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NotificationTemplateJournalNode>());
 		}
@@ -45,5 +49,7 @@ namespace workwear.Journal.ViewModels.Communications
 		public string Name { get; internal set; }
 		public string MessageTitle { get; internal set; }
 		public string MessageText { get; internal set; }
+		public string LinkTitleText { get; internal set; }
+		public string LinkText { get; internal set; }
 	}
 }

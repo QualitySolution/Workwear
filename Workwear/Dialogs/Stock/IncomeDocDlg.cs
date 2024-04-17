@@ -112,6 +112,8 @@ namespace workwear
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();
+			
+			enumPrint.ItemsEnum = typeof(IncomeDocReportEnum);
 
 			ItemsTable.IncomeDoc = Entity;
 			ItemsTable.SizeService = sizeService;
@@ -213,22 +215,6 @@ namespace workwear
 			else
 				interactiveService.ShowMessage(ImportanceLevel.Info, "Указанный файл не содержит строк поступления");
 		}
-		
-		protected void OnPrintClicked(object sender, EventArgs e) {
-			if(UoW.HasChanges && !interactiveService.Question("Перед печатью документ будет сохранён. Продолжить?"))
-				return;
-			if (!Save())
-				return;
-			
-			var reportInfo = new ReportInfo {
-				Title = String.Format("Документ №{0}", Entity.Id),
-				Identifier = IncomeDocReport.ReturnSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
-				}
-			};
-			tdiNavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
-		}
 
 		private string Open1CFile() {
 			var param = new object[] { "Cancel", Gtk.ResponseType.Cancel, "Open", Gtk.ResponseType.Accept};
@@ -278,7 +264,7 @@ namespace workwear
 
 		private void OnYcomboOperationChanged (object sender, EventArgs e) {
 			labelTTN.Visible = yentryNumber.Visible = ybuttonReadInFile.Visible = Entity.Operation == IncomeOperations.Enter;
-			labelWorker.Visible = yentryEmployee.Visible = ybuttonPrint.Visible = Entity.Operation == IncomeOperations.Return;
+			labelWorker.Visible = yentryEmployee.Visible = enumPrint.Visible = Entity.Operation == IncomeOperations.Return;
 			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
 			
 			if (UoWGeneric.IsNew)
@@ -314,11 +300,33 @@ namespace workwear
 		}
 		#endregion
 		
-		public enum IncomeDocReport
+		private void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) 
 		{
-			[Display(Name = "Документ возврата")]
+			IncomeDocReportEnum docType = (IncomeDocReportEnum)e.ItemEnum;
+			if (UoW.HasChanges && !interactiveService.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.Id}" : $"Ведомость №{Entity.Id}",
+				Identifier = docType.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			tdiNavigationManager.OpenViewModelOnTdi<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		
+		public enum IncomeDocReportEnum
+		{
+			[Display(Name = "Лист возврата")]
 			[ReportIdentifier("Documents.ReturnSheet")]
 			ReturnSheet,
+			
+			[Display(Name = "Ведомость возврата книжная")]
+			[ReportIdentifier("Statements.ReturnStatementVertical")]
+			ReturnStatementVertical
 		}
 	}
 }
