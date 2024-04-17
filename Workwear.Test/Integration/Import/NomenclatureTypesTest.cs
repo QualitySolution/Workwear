@@ -33,7 +33,7 @@ namespace Workwear.Test.Integration.Import {
 		[Test(Description = "Проверяем подбор типа номенклатуры")]
 		[TestCase("Рукавицы, утепленные", "Рукавицы")] //Реальный кейс, тут важным является наличие запятой.
 		[TestCase("Изделия трикотажные перчаточные ", "Перчатки")]
-		[TestCase("Фильтра для полумасок/для зачисток/Фильтра ФГ-5М марки А2", "Имущество")] //Тут возможно надо будет сменить категорию на СИЗОД, данных кейс просто фиксирует что номенклатура попадает в какой то тип.
+		[TestCase("Фильтра для полумасок/для зачисток/Фильтра ФГ-5М марки А2", "СИЗОД")]
 		public void ParseNomenclatureName_Cases(string nomenclatureName, string typeName) {
 			var nomenclatureTypes = new NomenclatureTypes(Uow, new SizeService(), false);
 			var type = nomenclatureTypes.ParseNomenclatureName(nomenclatureName);

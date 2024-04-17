@@ -71,7 +71,7 @@ namespace Workwear.Models.Import
 			AddType("Привязи", СlothesType.PPE, sht, new[] { "привязь" });
 			AddType("Полотенца", СlothesType.PPE, sht, new[] { "Полотенце" });
 			AddType("Щитки", СlothesType.PPE, sht, new[] { "ЩИТОК" });
-			AddType("СИЗОД", СlothesType.PPE, sht, new[] { "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон", "дыхания", "Противогаз" });
+			AddType("СИЗОД", СlothesType.PPE, sht, new[] { "СИЗОД", "Респиратор", "РЕСПИРАТОРЫ", "РЕСПИРАТОРА", "ПАТРОН", "ПРЕДФИЛЬТР", "КОРОБКА", "Капюшон", "дыхания", "Противогаз", "Фильтр", "Фильтра" });
 			AddType("Беруши", СlothesType.PPE, pair, new[] { "Беруши", "противошумные" });
 			AddType("Очки", СlothesType.PPE, sht, new[] { "ОЧКИ" });
 			AddType("Наушники", СlothesType.PPE, sht, new[] { "НАУШНИКИ" });
@@ -81,10 +81,7 @@ namespace Workwear.Models.Import
 			AddType("Крема", СlothesType.PPE, sht, new[] { "крем", "МАЗЬ", "Паста" });
 			AddType("Защита", СlothesType.PPE, pair, new[] { "НАРУКАВНИКИ", "Наколенники" });
 			AddType("Защита от поражения электрическим током", СlothesType.PPE, sht, new[] { "Диэлектрический" });
-			AddType("Имущество", sht, new[] { "ФИЛЬТР", "Фильтра", "ЗНАК", "ЭТИКЕТКА", "РЕДУКТОР", "УТЕПЛИТЕЛЬ", "ЛЕНТА", "ШТОРЫ", 
-				"ФЛАГ", "ЧЕХОЛ", "РУКАВ", "ПЛОМБА", "КОЖА", "ПОЛОГ", "СУКНО" });
-			AddType("Инструмент", sht, new[] { "НОЖ", "НОЖНИЦЫ", "СИГНАЛЬНЫЙ", "МАНОМЕТР", "Щетка" });
-			AddType("Неизвестный тип", sht, new string[] { });
+			AddType("Неизвестный тип", СlothesType.PPE, sht, new string[] { });
 		}
 		private void AddType(string name, СlothesType category, MeasurementUnits units, string[] keyWords, СlothesType? category2 = null, string[] keywords2 = null)
 		{
@@ -92,7 +89,6 @@ namespace Workwear.Models.Import
 			if(type == null) {
 				type = new ItemsType {
 					Name = name,
-					Category = ItemTypeCategory.wear,
 					WearCategory = category,
 					Units = units,
 				};
@@ -123,7 +119,6 @@ namespace Workwear.Models.Import
 			if(category2 != null) {
 				var type2 = new ItemsType {
 					Name = name,
-					Category = ItemTypeCategory.wear,
 					WearCategory = category2.Value,
 					Units = units
 				};
@@ -152,24 +147,6 @@ namespace Workwear.Models.Import
 			}
 			else
 				desc = new TypeDescription(type); 
-
-			foreach(var word in keyWords) {
-				KeyWords.Add(word.ToLower(), desc);
-			}
-		}
-
-		private void AddType(string name, MeasurementUnits units, string[] keyWords)
-		{
-			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
-			if(type == null) {
-				type = new ItemsType {
-					Name = name,
-					Category = ItemTypeCategory.property,
-					Units = units
-				};
-				ItemsTypes.Add(type);
-			}
-			TypeDescription desc = new TypeDescription(type);
 
 			foreach(var word in keyWords) {
 				KeyWords.Add(word.ToLower(), desc);

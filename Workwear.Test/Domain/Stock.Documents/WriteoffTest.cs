@@ -40,40 +40,6 @@ namespace Workwear.Test.Domain.Stock.Documents
 		}
 
 		[Test(Description = "Мы должны иметь возможность изменять процент износа.")]
-		public void UpdateOperations_SubdivisionWriteoffOperation_CanChangeWearPercentTest()
-		{
-			var uow = Substitute.For<IUnitOfWork>();
-
-			var nomenclature = Substitute.For<Nomenclature>();
-
-			var subdivision = Substitute.For<Subdivision>();
-
-			var issueOperation = new SubdivisionIssueOperation {
-				OperationTime = new DateTime(2019, 1, 1),
-				StartOfUse = new DateTime(2019, 1, 1),
-				Issued = 10,
-				Nomenclature = nomenclature,
-				WearPercent = 0,
-				ExpiryOn = new DateTime(2019, 1, 15),
-				Subdivision = subdivision
-			};
-
-			var writeoff = new Writeoff {
-				Date = new DateTime(2019, 1, 15)
-			};
-			writeoff.AddItem(issueOperation, 2);
-
-			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(1));
-			//Меняем значение процента износа
-			writeoff.Items[0].WearPercent = 2;
-
-			//Выполняем
-			writeoff.UpdateOperations(uow);
-
-			Assert.That(writeoff.Items[0].WearPercent, Is.EqualTo(2));
-		}
-
-		[Test(Description = "Мы должны иметь возможность изменять процент износа.")]
 		public void UpdateOperations_EmployeeIssueOperation_CanChangeWearPercentTest()
 		{
 			var uow = Substitute.For<IUnitOfWork>();

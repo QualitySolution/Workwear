@@ -214,7 +214,6 @@ namespace Workwear.Repository.Operations
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
 					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
-					.Select(() => expenseAlias.Operation).WithAlias(() => docAlias.ExpenseOperation)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
