@@ -768,7 +768,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  ONSTRAINT `FK_protection_tools_category_for_analytics`
+  CONSTRAINT `FK_protection_tools_category_for_analytics`
 	FOREIGN KEY (`category_for_analytic_id`)
 	REFERENCES `protection_tools_category_for_analytics` (`id`)
 	ON DELETE SET NULL
