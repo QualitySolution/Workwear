@@ -45,13 +45,6 @@ namespace Workwear.Domain.Company
 			set => SetField (ref address, value);
 		}
 
-		private IList<SubdivisionPlace> places = new List<SubdivisionPlace>();
-		[Display (Name = "Места размещения")]
-		public virtual IList<SubdivisionPlace> Places {
-			get => places;
-			set => SetField (ref places, value);
-		}
-
 		private Warehouse warehouse;
 		[Display(Name = "Склад подразделения")]
 		public virtual Warehouse Warehouse {

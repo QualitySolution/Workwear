@@ -332,7 +332,9 @@ namespace workwear
 			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
 			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();
+			builder.RegisterType<EmailManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<SpecCoinManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();

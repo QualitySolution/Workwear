@@ -55,13 +55,6 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
 		}
 
-		private Subdivision subdivision;
-		[Display (Name = "Подразделение")]
-		public virtual Subdivision Subdivision {
-			get => subdivision;
-			set { SetField (ref subdivision, value, () => Subdivision); }
-		}
-
 		private IObservableList<IncomeItem> items = new ObservableList<IncomeItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<IncomeItem> Items {
@@ -76,8 +69,6 @@ namespace Workwear.Domain.Stock.Documents
 					return $"Приходная накладная №{Id} от {Date:d}";
 				case IncomeOperations.Return:
 					return $"Возврат от работника №{Id} от {Date:d}";
-				case IncomeOperations.Object:
-					return $"Возврат c подразделения №{Id} от {Date:d}";
 				default:
 					return null;
 				}
@@ -88,10 +79,6 @@ namespace Workwear.Domain.Stock.Documents
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
-
-			if(Operation == IncomeOperations.Object && Subdivision == null)
-				yield return new ValidationResult ("Подразделение должно быть указано", 
-					new[] { this.GetPropertyName (o => o.Subdivision)});
 
 			if(Operation == IncomeOperations.Return && EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
@@ -117,13 +104,6 @@ namespace Workwear.Domain.Stock.Documents
 							new[] { nameof(Items) });
 				}
 			
-			if(Operation == IncomeOperations.Object && Subdivision != null)
-				foreach (var item in items) {
-					if(item.IssuedSubdivisionOnOperation == null || item.IssuedSubdivisionOnOperation.Subdivision != Subdivision)
-						yield return new ValidationResult(
-							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным подразделением", 
-							new[] { nameof(Items) });
-				}
 			if(Operation == IncomeOperations.Return)
 				foreach (var item in items) {
 					if(item.Nomenclature == null)
@@ -137,24 +117,6 @@ namespace Workwear.Domain.Stock.Documents
 		public Income () { }
 
 		#region Строки документа
-		public virtual void AddItem(SubdivisionIssueOperation issuedOperation, int count) {
-			if(issuedOperation.Issued == 0)
-				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
-
-			if(Items.Any (p => DomainHelper.EqualDomainObjects (p.IssuedSubdivisionOnOperation, issuedOperation))) {
-				logger.Warn ("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
-			}
-
-			var newItem = new IncomeItem(this) {
-				Amount = count,
-				Nomenclature = issuedOperation.Nomenclature,
-				IssuedSubdivisionOnOperation= issuedOperation,
-				Cost = issuedOperation.CalculatePercentWear(Date),
-				WearPercent = issuedOperation.CalculateDepreciationCost(Date)
-			};
-			Items.Add (newItem);
-		}
 		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
@@ -254,11 +216,6 @@ namespace Workwear.Domain.Stock.Documents
 		/// </summary>
 		[Display(Name = "Возврат от работника")]
 		Return,
-		/// <summary>
-		/// Возврат с подразделения
-		/// </summary>
-		[Display(Name = "Возврат с подразделения")]
-		Object
 	}
 }
 

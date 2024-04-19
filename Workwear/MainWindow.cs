@@ -65,6 +65,7 @@ using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
+using Workwear.Journal.ViewModels.Analytics;
 using Workwear.ViewModels.Export;
 
 public partial class MainWindow : Gtk.Window {
@@ -244,6 +245,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
@@ -806,5 +808,14 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
+	}
+
+	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
+	}
+
+	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) 
+	{
+		NavigationManager.OpenViewModel<ProtectionToolsCategoryJournalViewModel>(null);
 	}
 }

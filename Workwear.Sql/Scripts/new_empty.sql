@@ -171,6 +171,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
+   `cell_number` int(11) unsigned NULL, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
@@ -200,9 +201,55 @@ CREATE TABLE `postomat_documents` (
   `type` enum('Income','Outgo','Correction','') NOT NULL,
   `terminal_id` int(11) unsigned NOT NULL,
   `comment` text DEFAULT NULL,
+  `terminal_location` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `last_update` (`last_update`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `postomat_documents_export`
+--
+
+create table if not exists `postomat_documents_withdraw`
+(
+	`id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`create_time`  datetime         NOT NULL,
+	`comment` text DEFAULT NULL,
+	`user_id`      int unsigned null,
+	PRIMARY KEY (`id`),
+	constraint `fk_postomat_documents_withdraw_user_id`
+		foreign key (user_id) references users (id)
+			on update cascade on delete set null
+) ENGINE = InnoDB
+	DEFAULT CHARSET = utf8mb4
+	COLLATE = utf8mb4_general_ci;
+
+--
+-- Table structure for table `postomat_document_export_items`
+--
+
+create table if not exists `postomat_document_withdraw_items`
+(
+	`id`                 int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`terminal_id`  		 int(11) unsigned NOT NULL,
+	`terminal_location`  text 				   DEFAULT NULL,
+	`document_withdraw_id` int(11) unsigned NOT NULL,
+	`employee_id`        int UNSIGNED     NOT NULL,
+	`nomenclature_id`    int(10) unsigned NOT NULL,
+	`barcode_id`         int(10) unsigned      DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	KEY `fk_postomat_document_withdraw_items_documents_withdraw_id` (`document_withdraw_id`),
+	KEY `fk_postomat_document_withdraw_items_employee_id` (`employee_id`),
+	KEY `fk_postomat_document_withdraw_items_barcode_id` (`barcode_id`),
+	KEY `fk_postomat_document_withdraw_items_nomenclature_id` (`nomenclature_id`),
+	constraint `fk_postomat_document_withdraw_items_employee_id` foreign key (employee_id) references wear_cards (id),
+	CONSTRAINT `fk_postomat_document_withdraw_items_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
+	CONSTRAINT `fk_postomat_document_withdraw_items_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
+	CONSTRAINT `fk_postomat_document_withdraw_items_postomat_documents_export_id` FOREIGN KEY (`document_withdraw_id`) REFERENCES `postomat_documents_withdraw` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	) ENGINE = InnoDB
+	DEFAULT CHARSET = utf8mb4
+	COLLATE = utf8mb4_general_ci;
+
 
 -- -----------------------------------------------------
 -- Table `posts`
@@ -695,6 +742,14 @@ CREATE TABLE IF NOT EXISTS `norms` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+--
+-- Table `protection_tools_category_for_analytics`
+--
+create table if not exists `protection_tools_category_for_analytics` (
+	`id`   int(11) unsigned not null auto_increment primary key,
+	`name` varchar(100)     not null,
+	`comment` text null default null)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `protection_tools`
@@ -705,13 +760,19 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL DEFAULT NULL,
+  `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
     FOREIGN KEY (`item_types_id`)
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_protection_tools_category_for_analytics`
+	FOREIGN KEY (`category_for_analytic_id`)
+	REFERENCES `protection_tools_category_for_analytics` (`id`)
+	ON DELETE SET NULL
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -1834,7 +1895,9 @@ CREATE TABLE IF NOT EXISTS `message_templates` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `message_title` VARCHAR(200) NOT NULL,
-  `message_text` VARCHAR(400) NOT NULL,
+  `message_text` text NOT NULL,
+  `link_title` varchar(100) NULL,
+  `link` varchar(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -2229,7 +2292,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.15');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.17');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

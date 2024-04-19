@@ -24,13 +24,15 @@ using QS.Project.Versioning;
 
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 [assembly: AssemblyAuthor("Горячев Иван <space@qsolution.ru>")]
+[assembly: AssemblyAuthor("Покровский Михаил <gurynych@qsolution.ru>")]
+[assembly: AssemblyAuthor("Шеин Виталий <svm@qsolution.ru>")]
 [assembly: AssemblyAuthor("Мингалимов Ильяс 2022")]
 [assembly: AssemblyAuthor("Солдаткина Алина 2020")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyVersion("2.8.15")]
+[assembly: AssemblyVersion("2.8.17")]
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.
 //[assembly: AssemblyDelaySign(false)]

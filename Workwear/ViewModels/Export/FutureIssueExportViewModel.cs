@@ -19,6 +19,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
@@ -130,6 +131,9 @@ namespace Workwear.ViewModels.Export {
 					"ФИО", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Employee.FullName);}},
 				new ColumnInfo() {Label =
+					"Пол", FillCell = (cell, item) => {
+					cell.SetCellValue(item.Employee.Sex == Sex.M ? "М" : item.Employee.Sex == Sex.F ? "Ж" : "-");}},
+				new ColumnInfo() {Label =
 					"Норма.Код", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Norm?.Id ?? 0);}},
 				new ColumnInfo() {Label =
@@ -143,7 +147,7 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Nomenclature?.Name ?? "");}},
 				new ColumnInfo() {Label =
 					"Характеристика", FillCell = (cell, item) => {
-					cell.SetCellValue(item.LasatIssueOperation?.WearSize?.Name + "/" + item.LasatIssueOperation?.Height?.Name);}},
+					cell.SetCellValue(item.Size?.Name + (item.Height != null ? (" / " + item.Height.Name) : ""));}},
 				new ColumnInfo() {Label =
 					"Количество\nпо норме", FillCell = (cell, item) => {
 					cell.SetCellValue(item.NormItem.Amount + " " + item.NormItem.ProtectionTools.Type.Units.Name);},
@@ -462,6 +466,11 @@ namespace Workwear.ViewModels.Export {
 		public ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
 		public NormItem NormItem => EmployeeCardItem.ActiveNormItem;
 		public Norm Norm => NormItem.Norm;
+
+		public Size Size =>
+			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.SizeType))?.Size;
+		public Size Height =>
+			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.HeightType))?.Size;
 
 		public DateTime ? OperationDate { get; set; }
 		public DateTime ? LastIssueDate { get; set; }

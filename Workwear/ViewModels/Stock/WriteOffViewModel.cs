@@ -36,7 +36,6 @@ namespace Workwear.ViewModels.Stock
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
-        public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
         private OrganizationRepository organizationRepository;
@@ -72,8 +71,6 @@ namespace Workwear.ViewModels.Stock
             }
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
-            else if (subdivision != null)
-                Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
             Owners = UoW.GetAll<Owner>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
 	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -93,7 +90,6 @@ namespace Workwear.ViewModels.Stock
 	            .Finish();
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
-
         }
         
         #region ViewProperty
@@ -164,29 +160,7 @@ namespace Workwear.ViewModels.Stock
             
             CalculateTotal(null, null);
         }
-
-        public void AddFromObject() {
-            var selectJournal =
-                NavigationManager.OpenViewModel<SubdivisionBalanceJournalViewModel, Subdivision>(
-                    this,
-                    Subdivision,
-                    OpenPageOptions.AsSlave);
-            selectJournal.ViewModel.Filter.DateSensitive = false;
-            selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
-            selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
-            selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
-        }
-        private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
-            
-	        var operations = UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>().Select(x => x.Id));
-	        var addedAmount = ((SubdivisionBalanceJournalViewModel)sender).Filter.AddAmount;
-	        var balance = e.GetSelectedObjects<SubdivisionBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
-
-	        foreach (var operation in operations)
-		        Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
-            CalculateTotal(null, null);
-        }
+        
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);
             CalculateTotal(null, null);

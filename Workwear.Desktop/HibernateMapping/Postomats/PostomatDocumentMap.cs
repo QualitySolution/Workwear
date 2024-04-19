@@ -18,7 +18,8 @@ namespace Workwear.HibernateMapping.Postomats
 			Map (x => x.Status).Column ("status");
 			Map (x => x.Type).Column ("type");
 			Map(x => x.Comment).Column("comment");
-
+			Map(x => x.TerminalLocation).Column("terminal_location");
+			
 			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("document_id").Not.KeyNullable ()

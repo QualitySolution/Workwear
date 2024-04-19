@@ -15,9 +15,7 @@ namespace Workwear.HibernateMapping.Stock
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Name).Column ("name").Not.Nullable ();
-			Map(x => x.Category).Column("category");
 			Map(x => x.IssueType).Column("issue_type");
-			Map (x => x.LifeMonths).Column ("norm_life");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.WearCategory).Column("wear_category");
 

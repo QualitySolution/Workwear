@@ -45,7 +45,6 @@ namespace Workwear.Test.Integration.Organization
 
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature {
@@ -131,7 +130,6 @@ namespace Workwear.Test.Integration.Organization
 
 				var nomenclatureType = new ItemsType {
 					Name = "Тестовый тип номенклатуры",
-					Category = ItemTypeCategory.wear,
 					SizeType = sizeType,
 					HeightType = heightType
 				};
@@ -246,14 +244,12 @@ namespace Workwear.Test.Integration.Organization
 
 				var nomenclatureType = new ItemsType {
 					Name = "Обувь",
-					Category = ItemTypeCategory.wear,
 					SizeType = shoes
 				};
 				uow.Save(nomenclatureType);
 
 				var nomenclatureType2 = new ItemsType {
 					Name = "Зимняя обувь",
-					Category = ItemTypeCategory.wear,
 					SizeType = winterShoes
 				};
 				uow.Save(nomenclatureType2);
@@ -373,7 +369,6 @@ namespace Workwear.Test.Integration.Organization
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
@@ -458,7 +453,6 @@ namespace Workwear.Test.Integration.Organization
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
@@ -561,7 +555,6 @@ namespace Workwear.Test.Integration.Organization
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();
@@ -644,7 +637,6 @@ namespace Workwear.Test.Integration.Organization
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var nomenclatureType = new ItemsType();
 				nomenclatureType.Name = "Тестовый тип номенклатуры";
-				nomenclatureType.Category = ItemTypeCategory.wear;
 				uow.Save(nomenclatureType);
 
 				var nomenclature = new Nomenclature();

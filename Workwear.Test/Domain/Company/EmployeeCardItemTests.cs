@@ -576,7 +576,6 @@ namespace Workwear.Test.Domain.Company
 			employee.Sizes.Add(new EmployeeSize{Size = size52And54, SizeType = sizeType});
 
 			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);
@@ -615,7 +614,6 @@ namespace Workwear.Test.Domain.Company
 			employee.Sizes.Add(new EmployeeSize{Size = size52, SizeType = sizeType});
 
 			var itemType = Substitute.For<ItemsType>();
-			itemType.Category.Returns(ItemTypeCategory.wear);
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.Id.Returns(25);
 			nomenclature.Type.Returns(itemType);

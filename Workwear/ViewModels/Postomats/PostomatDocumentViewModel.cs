@@ -6,10 +6,13 @@ using NHibernate;
 using NHibernate.Criterion;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -23,21 +26,27 @@ namespace Workwear.ViewModels.Postomats {
 	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument> {
 		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
+		private readonly IInteractiveService interactive;
 
 		public PostomatDocumentViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			PostomatManagerService postomatService,
+			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			IUserService userService,
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
-			if(Entity.TerminalId > 0) {
-				allCells = postomatService.GetPostomat(Entity.TerminalId).Cells;
-				foreach(var item in Entity.Items) {
+			Entity.Postomat = Postomats.FirstOrDefault(x => x.Id == Entity.TerminalId);
+			if(Entity.TerminalId > 0) 
+			{
+				GetPostomatResponse postomatResponse = postomatService.GetPostomat(Entity.TerminalId);
+				allCells = postomatResponse.Cells;
+				foreach(PostomatDocumentItem item in Entity.Items) {
 					var cell = allCells.FirstOrDefault(x => x.Location.Storage == item.LocationStorage
 					                                       && x.Location.Shelf == item.LocationShelf
 					                                       && x.Location.Cell == item.LocationCell);
@@ -46,12 +55,6 @@ namespace Workwear.ViewModels.Postomats {
 				}
 			}
 			
-			var entryBuilder = new CommonEEVMBuilderFactory<PostomatDocument>(this, Entity, UoW, navigation, autofacScope);
-	
-			// if(Entity.Warehouse == null)
-			// 	Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			//
-			// WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
@@ -132,7 +135,8 @@ namespace Workwear.ViewModels.Postomats {
 			Entity.Items.Remove(item);
 		}
 		#endregion
-		
+
+		#region Save and Print
 		public override bool Save() {
 			if(!Validate())
 				return false;
@@ -143,5 +147,27 @@ namespace Workwear.ViewModels.Postomats {
 			UoW.Commit();
 			return true;
 		}
+		
+		public void Print() 
+		{
+			if(!Entity.Items.Any()) 
+			{
+				interactive.ShowMessage(ImportanceLevel.Warning, "Нет данных для печати. Заполните документ");
+				return;
+			}
+			
+			Save();
+			var reportInfo = new ReportInfo {
+				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Identifier = "Documents.PostomatIssueSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id },
+					{ "postomat_location", Postomat?.Location },
+					{ "responsible_person", userService.GetCurrentUser().Name }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		#endregion
 	}
 }

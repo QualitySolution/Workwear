@@ -5,6 +5,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
+using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -21,6 +22,18 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			#region Analytics
+
+			TreeViewColumnsConfigFactory.Register<ProtectionToolsCategoryJournalViewModel>(
+				() => FluentColumnsConfig<ProtectionToolsCategoryNode>.Create()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString()).XAlign(0.5f).SearchHighlight()
+					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Name).XAlign(0.5f).SearchHighlight()
+					.AddColumn("Комментарий").AddReadOnlyTextRenderer(node => node.Comment)
+					.Finish()
+				);
+
+			#endregion
+			
 			#region ClothingService
 
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
@@ -63,6 +76,8 @@ namespace workwear.Journal
 					.AddColumn("Имя").AddTextRenderer(node => node.Name)
 					.AddColumn("Заголовок").AddTextRenderer(node => node.MessageTitle)
 					.AddColumn("Текст").AddTextRenderer(node => node.MessageText)
+					.AddColumn("Заголовок ссылки").AddTextRenderer(node => node.LinkTitleText)
+					.AddColumn("Ссылка").AddTextRenderer(node => node.LinkText)
 					.Finish()
 			);
 			#endregion
@@ -167,19 +182,7 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
 					.Finish ()
 			);
-
-			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
-				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
-					.AddColumn("Подразделение").Resizable().Visible(jwm.Filter.Subdivision is null)
-					.AddTextRenderer(e => e.SubdivisionName)
-					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
-					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
-					.AddColumn("Срок службы").AddProgressRenderer(e => 
-						(int) (100 - e.Percentage * 100))
-					.AddSetter((w, e) => 
-						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
-					.Finish()
-			);
+			
 			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
 					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
 						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -202,6 +205,14 @@ namespace workwear.Journal
 						.AddReadOnlyTextRenderer(x => x.TerminalId.ToString()).XAlign(0.5f)
 						.AddTextRenderer(x => jvm.GetTerminalName(x.TerminalId))
 					.AddColumn("Размещение постамата").AddReadOnlyTextRenderer(x => jvm.GetTerminalLocation(x.TerminalId))
+					.Finish()
+				);
+			
+			TreeViewColumnsConfigFactory.Register<PostomatDocumentsWithdrawJournalViewModel>(jvm =>
+				FluentColumnsConfig<PostomatDocumentWithdrawJournalNode>.Create()
+					.AddColumn("Номер").AddReadOnlyTextRenderer(x => x.Id.ToString()).XAlign(0.5f)
+					.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.CreateTime.ToShortDateString()).XAlign(0.5f)
+					.AddColumn("Пользователь").AddReadOnlyTextRenderer(x => x.User?.Name)
 					.Finish()
 				);
 			
@@ -254,6 +265,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(900).SearchHighlight()
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
+					.AddColumn("Категория для аналитики").AddTextRenderer(node => node.CategoryForAnalytic)
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(
@@ -308,6 +320,8 @@ namespace workwear.Journal
 						.AddTextRenderer(node => node.RatingText)
 					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
+					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
+						.AddTextRenderer(n => n.WashableText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);

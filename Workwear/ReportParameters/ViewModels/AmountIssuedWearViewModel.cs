@@ -43,6 +43,7 @@ namespace workwear.ReportParameters.ViewModels {
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},
+					{"byOperation",  ByOperation},
 					{"summary", !BySubdivision},
 					{"bySize", BySize},
 					{"withoutsub", ChoiceSubdivisionViewModel.NullIsSelected },
@@ -68,6 +69,8 @@ namespace workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		private AmountIssuedWearReportType reportType;
+		[PropertyChangedAlso(nameof(VisibleByOperation))]
+		[PropertyChangedAlso(nameof(ByOperation))]
 		public virtual AmountIssuedWearReportType ReportType {
 			get => reportType;
 			set => SetField(ref reportType, value);
@@ -92,26 +95,38 @@ namespace workwear.ReportParameters.ViewModels {
 			get => issueType;
 			set => SetField(ref issueType, value);
 		}
+		
+		private bool byOperation = false;
+		[PropertyChangedAlso(nameof(SensetiveBySubdiviion))]
+		[PropertyChangedAlso(nameof(SensetiveByEmployee))]
+		[PropertyChangedAlso(nameof(SensetiveBySize))]
+		[PropertyChangedAlso(nameof(BySubdivision))]
+		[PropertyChangedAlso(nameof(ByEmployee))]
+		[PropertyChangedAlso(nameof(BySize))]
+		public virtual bool ByOperation {
+			get => byOperation;
+			set => SetField(ref byOperation, ReportType == AmountIssuedWearReportType.Flat && value);
+		}
 
 		private bool bySubdividion = true;
 		public virtual bool BySubdivision {
-			get => bySubdividion;
-			set => SetField(ref bySubdividion, value);
+			get => bySubdividion || ByOperation;
+			set { if(!ByOperation) SetField(ref bySubdividion, value); }
 		}
 
 		private bool byEmployee;
 		public virtual bool ByEmployee {
-			get => byEmployee;
-			set => SetField(ref byEmployee, value);
+			get => ByOperation || byEmployee;
+			set { if(!ByOperation) SetField(ref byEmployee, value); }
 		}
 
 		private bool bySize;
 		[PropertyChangedAlso(nameof(VisibleUseAlternative))]
 		public virtual bool BySize {
-			get => bySize;
-			set => SetField(ref bySize, value);
+			get => bySize || ByOperation;
+			set { if(!ByOperation) SetField(ref bySize, value); }
 		}
-		
+
 		private bool addChildSubdivisions;
 		public bool AddChildSubdivisions {
 			get => addChildSubdivisions;
@@ -160,14 +175,15 @@ namespace workwear.ReportParameters.ViewModels {
 			set => SetField(ref owners, value);
 		}
 
-		public bool SensitiveLoad => StartDate != null 
-		                             && EndDate != null;
-
-		#region Visible
+		#region Visible and Sensitive
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
-		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && startDate <= endDate;
+		public bool VisibleByOperation => ReportType == AmountIssuedWearReportType.Flat;
+		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate;
+		public bool SensetiveBySubdiviion => !ByOperation;
+		public bool SensetiveByEmployee => !ByOperation;
+		public bool SensetiveBySize => !ByOperation;
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)

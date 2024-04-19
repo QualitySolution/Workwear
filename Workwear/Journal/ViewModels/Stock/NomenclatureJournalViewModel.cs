@@ -93,6 +93,7 @@ namespace workwear.Journal.ViewModels.Stock
 				 	.Select(() => nomenclatureAlias.Archival).WithAlias(() => resultAlias.Archival)
 					.Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
 					.Select(x => x.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
+					.Select(x => x.Washable).WithAlias(() => resultAlias.Washable)
 					.Select(x => x.SaleCost).WithAlias(() => resultAlias.SaleCost)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
 					.Select(x => x.RatingCount).WithAlias(() => resultAlias.RatingCount)
@@ -182,6 +183,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string SexText => Sex.GetEnumShortTitle();
 		public bool Archival { get; set; }
 		public bool UseBarcode { get; set; }
+		public bool Washable { get; set; }
 		public decimal SaleCost { get; set; }
 		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
 		public float? Rating { get; set; }
@@ -189,5 +191,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string RatingText => Rating == null ? null : $"{Rating:F1} ({RatingCount})";
 		public string UseBarcodeText => UseBarcode ? "Используется" : String.Empty;
+		public string WashableText => Washable ? "Да" : String.Empty;
 	}
 }
