@@ -33,13 +33,6 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref showNegativeBalance, value);
 		}
 
-		private ItemTypeCategory? itemTypeCategory;
-
-		public virtual ItemTypeCategory? ItemTypeCategory {
-			get => itemTypeCategory;
-			set => SetField(ref itemTypeCategory, value);
-		}
-
 		private ProtectionTools protectionTools;
 		public virtual ProtectionTools ProtectionTools {
 			get => protectionTools;

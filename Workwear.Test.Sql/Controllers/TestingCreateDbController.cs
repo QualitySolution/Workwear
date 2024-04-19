@@ -31,9 +31,12 @@ namespace QS.DBScripts.Controllers
 		}
 
 		#region Взаимодействие с моделью
-		public void WasError(string text)
+		public void WasError(string text, string lastExecutedStatement)
 		{
-			throw new Exception(text);
+			if(String.IsNullOrEmpty(lastExecutedStatement))
+				throw new Exception(text);
+			else 
+				throw new Exception($"Ошибка: {text}\n Последняя успешная SQL команда: {lastExecutedStatement}");
 		}
 
 		public bool NeedDropDatabaseIfExists(string dbname)

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author></Author>
+  <PageHeight>60mm</PageHeight>
+  <PageWidth>57mm</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>1mm</TopMargin>
+  <LeftMargin>1mm</LeftMargin>
+  <RightMargin>1mm</RightMargin>
+  <BottomMargin>1mm</BottomMargin>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <Height>186.9pt</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <List Name="List1">
+        <Height>170.00pt</Height>
+        <Width>135.00pt</Width>
+        <Left>5.00pt</Left>
+        <Top>0.00pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <ReportItems>
+          <Textbox Name="Textbox2">
+            <Height>17.29pt</Height>
+            <Width>129.57pt</Width>
+            <Value>=КОРПУС + " " + {terminal_location}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>34.3pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>16pt</FontSize>
+              <FontWeight>Normal</FontWeight>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox3">
+            <Height>15.78pt</Height>
+            <Width>129.48pt</Width>
+            <Value>=ячейка + " " + {cell_number}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>54.2pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontWeight>Normal</FontWeight>
+              <FontSize>12pt</FontSize>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <Height>35.54pt</Height>
+            <Width>134.36pt</Width>
+            <Value>={nomenclature}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>67.60pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontWeight>Normal</FontWeight>
+              <FontSize>10pt</FontSize>
+              <VerticalAlign>Top</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox5">
+            <Height>41.43pt</Height>
+            <Width>136.33pt</Width>
+            <Value>={employee}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>103.49pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontWeight>Normal</FontWeight>
+              <FontSize>16pt</FontSize>
+              <VerticalAlign>Middle</VerticalAlign>
+              <BackgroundColor >White</BackgroundColor>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox6">
+            <Height>15.05pt</Height>
+            <Width>109.56pt</Width>
+            <Value>Приятного дня</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>146.47pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontStyle>Italic</FontStyle>
+              <FontFamily>Arial</FontFamily>
+              <FontSize>8pt</FontSize>
+              <VerticalAlign>Middle</VerticalAlign>
+              <BackgroundColor >White</BackgroundColor>
+              <TextAlign >Right</TextAlign>
+            </Style>
+          </Textbox>
+          <Image Name="Image1">
+            <Height>33.84pt</Height>
+            <Width>130.93pt</Width>
+            <Left>3.10pt</Left>
+            <Top>0.00pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+            <Source>Embedded</Source>
+            <Value>logo</Value>
+            <Sizing>Fit</Sizing>
+          </Image>
+          <Textbox Name="Textbox1">
+            <Height>24.05pt</Height>
+            <Width>24.81pt</Width>
+            <Value>☺</Value>
+            <ZIndex>1</ZIndex>
+            <Left>108.6pt</Left>
+            <Top>140.5pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>30pt</FontSize>
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+              <FontWeight>Normal</FontWeight>
+              <BackgroundColor >White</BackgroundColor>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <DataSetName >Data</DataSetName>
+      </List>
+    </ReportItems>
+  </Body>
+  <PageFooter>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=omIV5tuXi]49jQnF;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <EmbeddedImages>
+    <EmbeddedImage Name="logo">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT postomat.terminal_location,
+       cells.cell_number,
+       nomenclature.name as nomenclature,
+       CONCAT_WS('\n', employee.last_name, employee.first_name) as employee
+FROM postomat_documents as postomat
+         LEFT JOIN postomat_document_items as cells on cells.document_id = postomat.id
+         LEFT JOIN barcodes on barcodes.id = cells.barcode_id
+         LEFT JOIN nomenclature on nomenclature.id = barcodes.nomenclature_id
+         LEFT JOIN wear_cards as employee on employee.id = cells.employee_id
+WHERE postomat.id = @id;
+</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="terminal_location">
+          <DataField>terminal_location</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="cell_number">
+          <DataField>cell_number</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="nomenclature">
+          <DataField>nomenclature</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportParameters >
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>32</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

@@ -211,7 +211,7 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionPostomatDocsWithdraw;
 
-	private global::Gtk.Action Action41;
+	private global::Gtk.Action Action43;
 
 	private global::Gtk.VBox vbox1;
 
@@ -381,7 +381,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -568,9 +568,9 @@ public partial class MainWindow
 		this.ActionPostomatDocsWithdraw = new global::Gtk.Action("ActionPostomatDocsWithdraw", global::Mono.Unix.Catalog.GetString("Документы постаматов на забор"), null, null);
 		this.ActionPostomatDocsWithdraw.ShortLabel = global::Mono.Unix.Catalog.GetString("Документы постаматов на забор");
 		w1.Add(this.ActionPostomatDocsWithdraw, null);
-		this.Action41 = new global::Gtk.Action("Action41", global::Mono.Unix.Catalog.GetString("Категории номенклатуы"), null, null);
-		this.Action41.ShortLabel = global::Mono.Unix.Catalog.GetString("Категории номенклатуы");
-		w1.Add(this.Action41, null);
+		this.Action43 = new global::Gtk.Action("Action43", global::Mono.Unix.Catalog.GetString("Категории номенклатуры"), null, null);
+		this.Action43.ShortLabel = global::Mono.Unix.Catalog.GetString("Категории номенклатуры");
+		w1.Add(this.Action43, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -623,7 +623,7 @@ public partial class MainWindow
 				" action=\'ActionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'Ac" +
 				"tionProtectionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuit" +
 				"em name=\'ActionConditionNorm\' action=\'ActionConditionNorm\'/><separator/><menuite" +
-				"m name=\'Action41\' action=\'Action41\'/><menuitem name=\'Action42\' action=\'Action42\'" +
+				"m name=\'Action43\' action=\'Action43\'/><menuitem name=\'Action42\' action=\'Action42\'" +
 				"/><menuitem name=\'Action6\' action=\'Action6\'/><menuitem name=\'ActionWarehouse\' ac" +
 				"tion=\'ActionWarehouse\'/><menuitem name=\'ActionOwner\' action=\'ActionOwner\'/><menu" +
 				"item name=\'ActionBarcodes\' action=\'ActionBarcodes\'/><separator/><menuitem name=\'" +
@@ -874,6 +874,6 @@ public partial class MainWindow
 		this.ActionFullnessPostomats.Activated += new global::System.EventHandler(this.OnActionFullnessPostomatsActivated);
 		this.ActionBarcodeCompletenessReport.Activated += new global::System.EventHandler(this.OnActionBarcodeCompletenessReportActivated);
 		this.ActionPostomatDocsWithdraw.Activated += new global::System.EventHandler(this.OnActionPostomatDocsWithdrawActivated);
-		this.Action41.Activated += new global::System.EventHandler(this.OnProtectionToolsCategoriesActivated);
+		this.Action43.Activated += new global::System.EventHandler(this.OnProtectionToolsCategoriesActivated);
 	}
 }

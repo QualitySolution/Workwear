@@ -197,7 +197,6 @@ namespace Workwear.Test.Integration.Operations
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
 					Employee = employee,
-					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 				};
 
@@ -294,7 +293,7 @@ namespace Workwear.Test.Integration.Operations
 			}
 		}
 		
-		[Test(Description = "Проверяем получение ссылки на докумен возврата от сотрудника")]
+		[Test(Description = "Проверяем получение ссылки на документ возврата от сотрудника")]
 		[Category("Integrated")]
 		public void GetReferencedDocuments_ReturnTest()
 		{
@@ -323,7 +322,6 @@ namespace Workwear.Test.Integration.Operations
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
 					Employee = employee,
-					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 				};
 				
@@ -359,7 +357,7 @@ namespace Workwear.Test.Integration.Operations
 			}
 		}
 		
-		[Test(Description = "Проверяем получение ссылки на докумен списания от сотрудника")]
+		[Test(Description = "Проверяем получение ссылки на документ списания от сотрудника")]
 		[Category("Integrated")]
 		public void GetReferencedDocuments_WriteOffTest()
 		{
@@ -388,7 +386,6 @@ namespace Workwear.Test.Integration.Operations
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
 					Employee = employee,
-					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 				};
 				
