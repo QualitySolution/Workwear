@@ -852,7 +852,6 @@
     <None Include="Reports\BarcodeCompletenessReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Reports\Documents\logo.png" />
     <Content Include="Reports\Documents\PostomatIssueSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
