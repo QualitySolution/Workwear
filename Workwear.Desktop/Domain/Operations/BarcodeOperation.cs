@@ -42,6 +42,14 @@ namespace Workwear.Domain.Operations {
 			get => warehouse;
 			set => SetField(ref warehouse, value);
 		}
+
+		private  SubstituteFundOperation substituteFundOperation;
+		[Display(Name = "Оперерация на выдачу подменного фонда")]
+		public virtual SubstituteFundOperation SubstituteFundOperation 
+		{
+			get => substituteFundOperation;
+			set => SetField(ref substituteFundOperation, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";

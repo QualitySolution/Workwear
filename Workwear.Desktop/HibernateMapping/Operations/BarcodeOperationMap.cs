@@ -15,9 +15,10 @@ namespace Workwear.HibernateMapping.Stock
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			References(x => x.Barcode).Column("barcode_id").Not.Nullable();
-			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id");
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
-			References(x => x.Warehouse).Column("warehouse_id");
+			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Nullable();
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Nullable();
+			References(x => x.Warehouse).Column("warehouse_id").Nullable();
+			References(x => x.SubstituteFundOperation).Column("operation_substitute_id").Nullable();
 		}
 	}
 }

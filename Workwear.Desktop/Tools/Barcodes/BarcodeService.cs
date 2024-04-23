@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -103,13 +105,15 @@ namespace Workwear.Tools.Barcodes
 		{
 			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
 			if(nomenclatureId <= 0) throw new ArgumentOutOfRangeException(nameof(nomenclatureId));
-			
-			return unitOfWork.Session.QueryOver<BarcodeOperation>()
+
+			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
 				.JoinQueryOver(bo => bo.Barcode)
 				.Where(b => b.Nomenclature.Id == nomenclatureId)
 				.SelectList(list => list
-					.SelectCountDistinct(bo => bo.Barcode.Id))
+					.SelectCount(bo => bo.Barcode))
 				.SingleOrDefault<int>();
+
+			return barcodesInStock;
 		}
 
 		public int GetStockBarcodesAmount(IUnitOfWork unitOfWork, int nomenclatureId) 
@@ -117,13 +121,30 @@ namespace Workwear.Tools.Barcodes
 			if(unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
 			if(nomenclatureId <= 0) throw new ArgumentOutOfRangeException(nameof(nomenclatureId));
 			
-			return unitOfWork.Session.QueryOver<BarcodeOperation>()
-				.Where(bo => bo.Warehouse != null)
-				.JoinQueryOver(bo => bo.Barcode)
-				.Where(b => b.Nomenclature.Id == nomenclatureId)
-				.SelectList(list => list
-					.SelectCountDistinct(bo => bo.Barcode.Id))
-				.SingleOrDefault<int>();
+			BarcodeOperation barcodeOperationAlias = null;
+			Nomenclature nomenclatureAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
+			Barcode barcodeAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
+
+			IQueryOver<BarcodeOperation, BarcodeOperation> barcodesInStock =
+				unitOfWork.Session.QueryOver(() => barcodeOperationAlias)
+					.JoinAlias(bo => bo.Barcode, () => barcodeAlias, JoinType.InnerJoin)
+					.JoinAlias(bo => bo.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias, JoinType.InnerJoin)
+					.JoinAlias(() => barcodeAlias.Size, () => sizeAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => barcodeAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+					.Where(() => nomenclatureAlias.Id == nomenclatureId)
+					.Where(bo => bo.EmployeeIssueOperation == null)
+					.Where(bo => bo.WarehouseOperation == null || warehouseOperationAlias.ReceiptWarehouse != null)
+					.SelectList(list => list
+						.SelectGroup(() => nomenclatureAlias.Id)
+						.SelectGroup(() => sizeAlias.Id)
+						.SelectGroup(() => heightAlias.Id)
+					);
+
+			return barcodesInStock.RowCount();
 		}
 		#endregion
 		

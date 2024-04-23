@@ -63,6 +63,20 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 				}
 			}
 		}
+		
+		private bool onlyWithBarcode;
+        public bool OnlyWithBarcode 
+    	{
+        	get => onlyWithBarcode;
+        	set => SetField(ref onlyWithBarcode, value);
+        }
+
+        private ItemsType itemsType;
+        public ItemsType ItemsType 
+        {
+	        get => itemsType;
+	        set => SetField(ref itemsType, value);
+        }
 		#endregion
 
 		public readonly FeaturesService FeaturesService;

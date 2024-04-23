@@ -27,6 +27,8 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.uow = unitOfWorkFactory?.CreateWithoutRoot() ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.node = node ?? throw new ArgumentNullException(nameof(node));
+			AllBarcodesAmount = barcodeService.GetAllBarcodesAmount(uow, node.NomeclatureId);
+			StockBarcodeAmount = barcodeService.GetStockBarcodesAmount(uow, node.NomeclatureId);
 			WithoutBarcodesAmount = node.Amount - AllBarcodesAmount;
 			Title = node.NomenclatureName;
 			Labels = uow.Session.QueryOver<Barcode>()
@@ -55,10 +57,10 @@ namespace Workwear.ViewModels.Stock.Widgets
 		}
 		
 		public int WithoutBarcodesAmount { get; }
-		
-		public int AllBarcodesAmount => barcodeService.GetAllBarcodesAmount(uow, node.NomeclatureId);
 
-		public int StockBarcodeAmount => barcodeService.GetStockBarcodesAmount(uow, node.NomeclatureId);
+		public int AllBarcodesAmount { get; }
+
+		public int StockBarcodeAmount { get; }
 
 		public IList<string> Labels { get; }
 		#endregion
