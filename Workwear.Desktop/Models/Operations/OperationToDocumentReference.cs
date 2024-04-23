@@ -10,7 +10,6 @@ namespace Workwear.Models.Operations
 		public OperationType OperationType;
 		public int? ExpenceId;
 		public int? ExpenceItemId;
-		public ExpenseOperations? ExpenseOperation;
 		public int? IncomeId;
 		public int? IncomeItemId;
 		public int? CollectiveExpenseId;
@@ -30,7 +29,7 @@ namespace Workwear.Models.Operations
 		public StockDocumentType? DocumentType {
 			get {
 				if(ExpenceId.HasValue)
-					return ExpenseOperation == ExpenseOperations.Employee ? StockDocumentType.ExpenseEmployeeDoc : StockDocumentType.ExpenseObjectDoc;
+					return StockDocumentType.ExpenseEmployeeDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
 				if(IncomeId.HasValue)

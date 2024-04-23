@@ -92,16 +92,12 @@ namespace Workwear.ViewModels.Stock {
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				Entity.Operation = ExpenseOperations.Employee;
 			}
 			else {
 				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
 				PreloadingDoc();
 			}
 			performance.CheckPoint("Заполняем сотрудника");
-
-			if(Entity.Operation != ExpenseOperations.Employee)
-				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
 				Entity.Employee = UoW.Session.QueryOver<EmployeeCard>()

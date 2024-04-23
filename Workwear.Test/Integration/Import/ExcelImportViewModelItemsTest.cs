@@ -67,7 +67,6 @@ namespace Workwear.Test.Integration.Import
 
 				var glovesType = new ItemsType() {
 					Name = "Перчатки",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = glovesSizeType
 				};
@@ -75,7 +74,6 @@ namespace Workwear.Test.Integration.Import
 				
 				var bootsType = new ItemsType() {
 					Name = "Обувь",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = shoesType,
 				};
@@ -83,14 +81,12 @@ namespace Workwear.Test.Integration.Import
 				
 				var PPEType = new ItemsType() {
 					Name = "Сизод",
-					Category = ItemTypeCategory.wear,
 					Units = sht
 				};
 				uowPrepare.Save(PPEType);
 				
 				var suitType = new ItemsType() {
 					Name = "Костюмы",
-					Category = ItemTypeCategory.wear,
 					Units = sht,
 					HeightType = heightType,
 					SizeType = sizeType
@@ -237,7 +233,6 @@ namespace Workwear.Test.Integration.Import
 
 				var glovesType = new ItemsType() {
 					Name = "Перчатки",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = glovesSizeType
 				};
@@ -245,7 +240,6 @@ namespace Workwear.Test.Integration.Import
 				
 				var bootsType = new ItemsType() {
 					Name = "Обувь",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = shoesType,
 				};
@@ -253,7 +247,6 @@ namespace Workwear.Test.Integration.Import
 
 				var suitType = new ItemsType() {
 					Name = "Костюмы",
-					Category = ItemTypeCategory.wear,
 					Units = sht,
 					HeightType = heightType,
 					SizeType = sizeType
@@ -334,7 +327,6 @@ namespace Workwear.Test.Integration.Import
 
 				var glovesType = new ItemsType() {
 					Name = "Перчатки",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = glovesSizeType
 				};
@@ -342,7 +334,6 @@ namespace Workwear.Test.Integration.Import
 				
 				var bootsType = new ItemsType() {
 					Name = "Обувь",
-					Category = ItemTypeCategory.wear,
 					Units = pair,
 					SizeType = shoesType,
 				};
@@ -350,7 +341,6 @@ namespace Workwear.Test.Integration.Import
 
 				var suitType = new ItemsType() {
 					Name = "Костюмы",
-					Category = ItemTypeCategory.wear,
 					Units = sht,
 					HeightType = heightType,
 					SizeType = sizeType

@@ -105,20 +105,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Обработка строк
-
-		public virtual void AddItem(SubdivisionIssueOperation operation, int count)
-		{
-			if(operation.Issued == 0)
-				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.SubdivisionWriteoffOperation?.IssuedOperation, operation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
-			}
-
-			Items.Add(new WriteoffItem(this, operation, count));
-		}
-
 		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count)
 		{
 			if(operation.Issued == 0)

@@ -124,9 +124,6 @@ namespace workwear.Journal.ViewModels.Stock
 				? Restrictions.Not(Restrictions.Eq(projection, 0))
 				: Restrictions.Gt(projection, 0));
 
-			if(Filter.ItemTypeCategory != null)
-				queryStock.Where(() => itemTypesAlias.Category == Filter.ItemTypeCategory);
-
 			//Если у нас выключена способность показывать общие по всем складам остатки.
 			//Но не указан склад мы должны показывать пустую таблицу.
 			//Это заведомо ложное условие.

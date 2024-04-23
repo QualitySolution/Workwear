@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
@@ -25,7 +26,6 @@ namespace Workwear.ViewModels.Analytics
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			IInteractiveService interactive,
-			ILifetimeScope autofacScope,
 			IValidator validator = null, 
 			UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
 		{
@@ -38,7 +38,7 @@ namespace Workwear.ViewModels.Analytics
 			IPage<ProtectionToolsJournalViewModel> selectPage =
 				NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.OnSelectResult += Nomenclature_OnSelectResult;
+			selectPage.ViewModel.OnSelectResult += ProtectionTools_OnSelectResult;
 		}
 		
 		public void RemoveProtectionTools(ProtectionTools[] selected) 
@@ -52,11 +52,29 @@ namespace Workwear.ViewModels.Analytics
 		}
 		#endregion
 
-		private void Nomenclature_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		private void ProtectionTools_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			ProtectionTools[] tools = 
-				UoW.GetById<ProtectionTools>(e.SelectedObjects.Select(x => x.GetId())).ToArray();
-			Array.ForEach(tools, p => Entity.AddProtectionTools(p));
+			List<ProtectionTools> tools = 
+				UoW.GetById<ProtectionTools>(e.SelectedObjects.Select(x => x.GetId())).ToList();
+			
+			if (tools.Any(IsCategoryAlreadyUse)) 
+			{
+				string message = tools.Where(IsCategoryAlreadyUse).Take(2).Count() > 1 ? 
+					"У нескольких номенклатур нормы уже есть категории для аналитики. Заменить их?" : 
+					"У одной номенклатуры нормы уже есть категория для аналитики. Заменить её?";
+
+				if(!interactive.Question(message)) 
+				{
+					tools = tools.Where(p => !IsCategoryAlreadyUse(p)).ToList();
+				}
+			}
+			
+			tools.ForEach(p => Entity.AddProtectionTools(p));
+		}
+
+		private bool IsCategoryAlreadyUse(ProtectionTools tool) 
+		{
+			return tool.CategoryForAnalytic != null && (tool.CategoryForAnalytic.Id != Entity.Id || Entity.Id == 0);
 		}
 	}
 }

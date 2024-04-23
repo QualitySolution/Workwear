@@ -74,7 +74,6 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 
 				var expense = new Expense {
-					Operation = ExpenseOperations.Employee,
 					Warehouse = warehouse,
 					Employee = employee,
 					Date = new DateTime(2018, 10, 22)

@@ -49,12 +49,10 @@ namespace Workwear.Views.Stock
 				buttonDel.Binding
 					.AddBinding(ViewModel, vm => vm.DelSensitive, w => w.Sensitive)
 					.InitializeFromSource();
-				buttonAddObject.Sensitive = ViewModel.Employee is null;
-				buttonAddWorker.Sensitive = ViewModel.Subdivision is null;
-				buttonAddStore.Sensitive = ViewModel.Subdivision is null && ViewModel.Employee is null;
+
+				buttonAddStore.Sensitive = ViewModel.Employee is null;
 				buttonAddStore.Clicked += OnButtonAddStoreClicked;
 				buttonAddWorker.Clicked += OnButtonAddFromEmployeeClicked;
-				buttonAddObject.Clicked += OnButtonAddFromObjectClicked;
 				buttonDel.Clicked += OnButtonDelClicked;
 				
 				ytreeMembers.Selection.Changed += Members_Selection_Changed;
@@ -136,7 +134,6 @@ namespace Workwear.Views.Stock
 
 		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 		private void OnButtonAddFromEmployeeClicked(object sender, EventArgs e) => ViewModel.AddFromEmployee();
-		private void OnButtonAddFromObjectClicked(object sender, EventArgs e) => ViewModel.AddFromObject();
 		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
 		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
 		private void Members_Selection_Changed(object sender, EventArgs e){
