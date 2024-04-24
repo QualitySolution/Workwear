@@ -101,6 +101,7 @@ namespace Workwear.Views.Communications
 			w2.BottomAttach = ((uint)(2));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.entryFilename = new global::Gamma.GtkWidgets.yEntry();
