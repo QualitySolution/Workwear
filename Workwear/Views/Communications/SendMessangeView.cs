@@ -21,9 +21,11 @@ namespace Workwear.Views.Communications
 			textTemplate.Binding.AddBinding(ViewModel, vm => vm.MessageText, w => w.Buffer.Text).InitializeFromSource();
 			
 			buttonSend.Binding.AddBinding(ViewModel, vm => vm.SensitiveSendButton, w => w.Sensitive).InitializeFromSource();
+			pushCheckBox.Label += " " + ViewModel.AvailabelPushNotificationCount;
 			pushCheckBox.Binding.AddBinding(ViewModel, vm => vm.PushNotificationSelected, w => w.Active).InitializeFromSource();
+			emailCheckBox.Label += " " + ViewModel.AvailabelEmailNotificationCount;
 			emailCheckBox.Binding.AddBinding(ViewModel, vm => vm.EmailNotificationSelected, w => w.Active).InitializeFromSource();
-
+			
 			ConfigureLinkGroup();
 			ConfigureFileGroup();
 

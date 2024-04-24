@@ -41,8 +41,7 @@ namespace Workwear.ViewModels.Communications
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.connectionStringBuilder = connectionStringBuilder ?? throw new ArgumentNullException(nameof(connectionStringBuilder));
-			Title = "Отправка уведомлений " +
-			        NumberToTextRus.FormatCase(employeeIds.Length, "{0} сотруднику", "{0} сотрудникам", "{0} сотрудникам");
+			Title = "Отправка уведомлений " + EmployeesToText(employeeIds.Length);
 
 			uow = unitOfWorkFactory.CreateWithoutRoot();
 
@@ -65,6 +64,12 @@ namespace Workwear.ViewModels.Communications
 
 		public bool VisibleFileAttach => !PushNotificationSelected && EmailNotificationSelected;
 		
+		
+		public string AvailabelPushNotificationCount => 
+			$"(Возможно отправить {EmployeesToText(GetAvailableEmployeeWithPush().Count)})";
+
+		public string AvailabelEmailNotificationCount =>
+			$"(Возможно отправить {EmployeesToText(GetAvailableEmployeeWithEmail().Count)})";
 		#endregion
 
 		#region Parametrs
@@ -234,11 +239,10 @@ namespace Workwear.ViewModels.Communications
 
 		private string SendPushNotificationMessage() 
 		{
-			IEnumerable<OutgoingMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.PhoneNumber))
-				.Select(MakeNotificationMessage);
-
-			string result = $"Отправлено 0 сообщений.";
-			if(messages.Any()) {
+			IEnumerable<OutgoingMessage> messages = GetAvailableEmployeeWithPush().Select(MakeNotificationMessage);
+			string result = $"Отправлено 0 push уведомлений.";
+			if (messages.Any()) 
+			{
 				result = notificationManager.SendMessages(messages);
 			}
 
@@ -247,11 +251,9 @@ namespace Workwear.ViewModels.Communications
 
 		private string SendEmailNotificationMessage()
 		{
-			IEnumerable<EmailMessage> messages = employees.Where(e => !string.IsNullOrWhiteSpace(e.Email))
-				.Select(MakeEmailMessage);
-
-			string result = "Отправлено 0 сообщений.";
-			if(messages.Any()) 
+			IEnumerable<EmailMessage> messages = GetAvailableEmployeeWithEmail().Select(MakeEmailMessage);
+			string result = "Отправлено 0 email уведомлений.";
+			if (messages.Any()) 
 			{
 				result = emailManagerService.SendMessages(messages);
 			}
@@ -332,8 +334,22 @@ namespace Workwear.ViewModels.Communications
 
 			return result;
 		}
-		#endregion
 
+		private string EmployeesToText(int count) 
+		{
+			return NumberToTextRus.FormatCase(count, "{0} сотруднику", "{0} сотрудникам", "{0} сотрудникам");
+		}
+
+		private IList<EmployeeCard> GetAvailableEmployeeWithPush() 
+		{
+			return employees.Where(x => !string.IsNullOrWhiteSpace(x.PhoneNumber)).ToList();
+		}
+
+		private IList<EmployeeCard> GetAvailableEmployeeWithEmail() 
+		{
+			return employees.Where(x => !string.IsNullOrWhiteSpace(x.Email)).ToList();
+		}
+		#endregion
 	}
 	
 	public enum EmailDocument
