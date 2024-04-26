@@ -203,5 +203,115 @@ namespace Workwear.Test.Integration.Stock
 				Assert.That(itemWithoutSize.Amount, Is.EqualTo(10));
 			}
 		}
+		
+		[Test(Description = "Проверяем что правильно учитывается дата, на которую запрашиваются остатки")]
+		[Category("Integrated")]
+		[Category("Real case")]
+		public void StockBalances_DateFilter()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				warehouse.Name = "Единственный";
+				uow.Save(warehouse);
+
+				var nomenclature = new Nomenclature {
+					Name = "Тестовая номенклатура"
+				};
+				uow.Save(nomenclature);
+
+				var operation1 = new WarehouseOperation {
+					OperationTime = new DateTime(2022, 10, 1),
+					Nomenclature = nomenclature,
+					Amount = 10,
+					ReceiptWarehouse = warehouse,
+				};
+				uow.Save(operation1);
+				
+				var operation2 = new WarehouseOperation {
+					OperationTime = new DateTime(2024, 10, 2),
+					Nomenclature = nomenclature,
+					Amount = 5,
+					ReceiptWarehouse = warehouse
+				};
+				uow.Save(operation2);
+				
+				var operation3 = new WarehouseOperation {
+					OperationTime = new DateTime(2024, 10, 15),
+					Nomenclature = nomenclature,
+					Amount = 2,
+					ExpenseWarehouse = warehouse
+				};
+				uow.Save(operation3);
+
+				uow.Commit();
+
+				var balance1 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 1));
+				var item1 = balance1.First();
+				Assert.That(item1.Amount, Is.EqualTo(10));
+				var balance2 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 2));
+				var item2 = balance2.First();
+				Assert.That(item2.Amount, Is.EqualTo(15));
+				var balance3 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 3));
+				var item3 = balance3.First();
+				Assert.That(item3.Amount, Is.EqualTo(15));
+				var balance4 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 17));
+				var item4 = balance4.First();
+				Assert.That(item4.Amount, Is.EqualTo(13));
+			}
+		}
+				
+		[Test(Description = "Проверяем что исключаются операции, которые не нужно учитывать")]
+		[Category("Integrated")]
+		[Category("Real case")]
+		public void StockBalances_ExcludeOperation()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				warehouse.Name = "Единственный";
+				uow.Save(warehouse);
+
+				var nomenclature = new Nomenclature {
+					Name = "Тестовая номенклатура"
+				};
+				uow.Save(nomenclature);
+
+				var operation1 = new WarehouseOperation {
+					OperationTime = new DateTime(2024, 10, 1),
+					Nomenclature = nomenclature,
+					Amount = 1,
+					ReceiptWarehouse = warehouse,
+				};
+				uow.Save(operation1);
+				
+				var operation2 = new WarehouseOperation {
+					OperationTime = new DateTime(2024, 10, 2),
+					Nomenclature = nomenclature,
+					Amount = 3,
+					ReceiptWarehouse = warehouse
+				};
+				uow.Save(operation2);
+				
+				var operation3 = new WarehouseOperation {
+					OperationTime = new DateTime(2024, 10, 3),
+					Nomenclature = nomenclature,
+					Amount = 5,
+					ReceiptWarehouse = warehouse
+				};
+				uow.Save(operation3);
+
+				uow.Commit();
+
+				var balance1 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5));
+				Assert.That(balance1.First().Amount, Is.EqualTo(9));
+				
+				var balance2 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
+					new List<WarehouseOperation>(){operation1});
+				Assert.That(balance2.First().Amount, Is.EqualTo(8));
+				
+				var balance3 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
+					new List<WarehouseOperation>(){operation1,operation2,operation3});
+				Assert.That(balance3.FirstOrDefault(), Is.Null);
+			}
+		}
 	}
 }
