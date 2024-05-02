@@ -563,6 +563,7 @@ AUTO_INCREMENT = 1;
 CREATE TABLE IF NOT EXISTS `stock_income` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operation` ENUM('Enter','Return','Object') NOT NULL,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
@@ -1128,6 +1129,7 @@ create table stock_write_off_members(
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operation` ENUM('Employee','Object') NOT NULL DEFAULT 'Employee',
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
   `object_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1546,6 +1548,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1582,6 +1585,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `organization_id` INT UNSIGNED NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,

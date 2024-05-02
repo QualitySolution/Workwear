@@ -25,6 +25,13 @@ namespace Workwear.Domain.Statements
 
 		public virtual int Id { get; set; }
 
+		private string docNumber;
+		[StringLength(15)]
+		[Display (Name = "Номер Ведомости")]
+		public virtual string DocNumber {
+			get => docNumber;
+			set => SetField (ref docNumber, value);
+		}
 		private DateTime date = DateTime.Today;
 
 		[Display(Name = "Дата составления")]
@@ -99,7 +106,7 @@ namespace Workwear.Domain.Statements
 
 		#region Вычисляемые свойства
 
-		public virtual string Title => $"Ведомость №{Id}";
+		public virtual string Title => $"Ведомость №{DocNumber ?? Id.ToString()}";
 
 		#endregion
 

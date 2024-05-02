@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
-using Gamma.Binding.Converters;
+using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
@@ -81,13 +81,51 @@ namespace workwear
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			
+			if(UoW.IsNew) 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			ConfigureDlg ();
 		}
 
+		
+		#region Свойства View
+		//public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool autoDocNumber = true;
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set {
+				autoDocNumber = value;
+				entryId.Sensitive = !autoDocNumber;
+				checkAuto.Active = autoDocNumber;
+			}
+		}
+
+		//[PropertyChangedAlso(nameof(DocNumber))]
+		//[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		//public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		//public string DocNumber {
+	//		get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+	//		set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+	//	}
+		#endregion
+		
 		private void ConfigureDlg() {
-			ylabelId.Binding
-				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
-				.InitializeFromSource ();
+			//ylabelId.Binding
+			//	.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
+			//	.InitializeFromSource ();
+			yentryNumber.Binding
+				.AddBinding(Entity, e => e.DocNumber ?? e.Id.ToString(), w => w.Text)
+			//	.AddBinding(() => AutoDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			//entryId.Binding//.AddSource(Entity)
+			//	.AddFuncBinding(Entity, e => (e.DocNumber != null ? e.DocNumber : e.Id.ToString()), w => w.Text)
+			//	.InitializeFromSource ();
+
+			//checkAuto.Binding.AddFuncBinding(Entity, e => e,)
+				
+				//Binding.AddFuncBinding(Entity, AutoDocNumber, w => w.Active) //,  //(e => (e.DocNumber != null ? e.DocNumber : e.Id.ToString()), w => w.Active)
+				//.InitializeFromSource ();
+			
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
@@ -297,7 +335,8 @@ namespace workwear
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.Id}" : $"Ведомость №{Entity.Id}",
+				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.DocNumber ?? Entity.Id.ToString()}"
+					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = docType.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }

@@ -60,7 +60,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Расчетные
-		public virtual string Title => $"Коллективная выдача №{Id} от {Date:d}";
+		public virtual string Title => $"Коллективная выдача №{DocNumber ?? Id.ToString()} от {Date:d}";
 		public virtual IEnumerable<EmployeeCard> Employees => Items.Select(x => x.Employee).Distinct();
 		#endregion
 

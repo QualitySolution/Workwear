@@ -134,6 +134,14 @@ namespace Workwear.ViewModels.Stock {
 			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
+			
+			if(UoW.IsNew) {
+				Entity.CreatedbyUser = userService.GetCurrentUser();
+				logger.Info($"Создание Нового документа выдачи на {Entity.Employee.ShortName}");
+			}
+			else {
+				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			}
 
 			//Переопределяем параметры валидации
 			Validations.Clear();
@@ -309,7 +317,8 @@ namespace Workwear.ViewModels.Stock {
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.Id}" : $"Ведомость №{Entity.IssuanceSheet.Id} (МБ-7)",
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
+					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }
