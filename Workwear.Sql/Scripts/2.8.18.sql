@@ -26,3 +26,8 @@ alter table stock_income
 alter table issuance_sheet
 	add doc_number varchar(16) null after id;
 
+alter table stock_write_off
+	add doc_number varchar(16) null after id;
+
+alter table stock_inspection
+	add doc_number varchar(16) null after id;

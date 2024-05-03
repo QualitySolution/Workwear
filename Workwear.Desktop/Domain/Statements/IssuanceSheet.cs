@@ -172,7 +172,11 @@ namespace Workwear.Domain.Statements
 					yield return new ValidationResult($"Отсутствует сотрудник в строке [{item.Title}].",
 					new[] { nameof(Items) });
 			}
-
+			
+			if (DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер ведомости должен быть не более 15 символов", 
+					new[] { nameof(DocNumber)});
+			
 			if(Items.Any(i => i.Amount <= 0))
 				yield return new ValidationResult("Документ не должен содержать номенклатур с нулевым количеством.",
 					new[] { nameof(Items) });

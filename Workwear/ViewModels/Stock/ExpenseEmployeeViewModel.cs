@@ -138,11 +138,8 @@ namespace Workwear.ViewModels.Stock {
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info($"Создание Нового документа выдачи на {Entity.Employee.ShortName}");
-			}
-			else {
-				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-			}
-
+			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
