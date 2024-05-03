@@ -149,6 +149,7 @@ namespace workwear.Journal.ViewModels.Communications
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => employeeAlias.PhoneNumber,
+					() => employeeAlias.Email,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name
 				))
@@ -163,6 +164,7 @@ namespace workwear.Journal.ViewModels.Communications
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(x => x.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.PhoneNumber).WithAlias(() => resultAlias.Phone)
+					.Select(x => x.Email).WithAlias(() => resultAlias.Email)
 					.Select(x => x.LkRegistered).WithAlias(() => resultAlias.LkRegistered)
 					.SelectCount(() => itemAlias.Id).WithAlias(() => resultAlias.IssueCount)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
@@ -239,7 +241,7 @@ namespace workwear.Journal.ViewModels.Communications
 			RowActivatedAction = editAction;
 			
 			var showHistoryNotificationAction = new JournalAction("Показать сообщения",
-				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).LkRegistered),
+				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).CanSandNotification),
 				(selected) => VisibleEditAction,
 				(selected) => ShowHistoryNotificationAction(selected)
 			);
@@ -273,7 +275,7 @@ namespace workwear.Journal.ViewModels.Communications
 		{
 			var employeeNodes = nodes.Cast<EmployeeNotificationJournalNode>();
 			foreach(var node in employeeNodes) {
-				if(node.LkRegistered)
+				if(node.CanSandNotification)
 					NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, node.Id);
 			}
 		}
@@ -283,9 +285,9 @@ namespace workwear.Journal.ViewModels.Communications
 			if (Items.Count == 0)
 				return;
 			
-			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
+			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSandNotification).All(x => x.Selected);
 			foreach (EmployeeNotificationJournalNode node in Items)
-				node.Selected = node.CanSelect && setValue;
+				node.Selected = node.CanSandNotification && setValue;
 			Refresh();
 		}
 
@@ -294,9 +296,9 @@ namespace workwear.Journal.ViewModels.Communications
 			if(Items.Count == 0)
 				return;
 
-			bool setValue = !nodes.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
+			bool setValue = !nodes.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSandNotification).All(x => x.Selected);
 			foreach(EmployeeNotificationJournalNode node in nodes)
-				node.Selected = node.CanSelect && setValue;
+				node.Selected = node.CanSandNotification && setValue;
 			Refresh();
 		}
 		
@@ -342,6 +344,9 @@ namespace workwear.Journal.ViewModels.Communications
 		public string Phone { get; set; }
 		
 		[SearchHighlight]
+		public string Email { get; set; }
+		
+		[SearchHighlight]
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
@@ -366,7 +371,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSelect => LkRegistered;
+		public bool CanSandNotification => LkRegistered || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 

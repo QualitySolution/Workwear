@@ -12,7 +12,7 @@ namespace Workwear.Views.Postomats
 
 		private global::Gtk.Button buttonCancel;
 
-		private global::Gtk.Button buttonPrint;
+		private global::QSOrmProject.EnumMenuButton enumPrint;
 
 		private global::Gtk.HBox hbox1;
 
@@ -109,16 +109,18 @@ namespace Workwear.Views.Postomats
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.buttonPrint = new global::Gtk.Button();
-			this.buttonPrint.CanFocus = true;
-			this.buttonPrint.Name = "buttonPrint";
-			this.buttonPrint.UseUnderline = true;
-			this.buttonPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QSOrmProject.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w5 = new global::Gtk.Image();
 			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonPrint.Image = w5;
-			this.hbox4.Add(this.buttonPrint);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonPrint]));
+			this.enumPrint.Image = w5;
+			this.hbox4.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.enumPrint]));
 			w6.Position = 2;
 			w6.Expand = false;
 			w6.Fill = false;
@@ -129,6 +131,7 @@ namespace Workwear.Views.Postomats
 			w7.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -412,6 +415,7 @@ namespace Workwear.Views.Postomats
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QSOrmProject.EnumItemClickedEventArgs>(this.OnEnumPrintClicked);
 		}
 	}
 }

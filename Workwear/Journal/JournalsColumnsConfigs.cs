@@ -55,11 +55,12 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
 				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()
 					.AddColumn("☑").AddToggleRenderer(node => node.Selected)
-						.AddSetter((c, n) => c.Activatable = n.CanSelect)
+						.AddSetter((c, n) => c.Activatable = n.CanSandNotification)
 					.AddColumn("Номер").Resizable().AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").Resizable().AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").Resizable().AddTextRenderer(node => node.FIO)
 					.AddColumn("Телефон").Resizable().AddTextRenderer(node => node.Phone)
+					.AddColumn("Эл. почта").Resizable().AddTextRenderer(node => node.Email)
 					.AddColumn("Состояние личного кабинета").Resizable().AddTextRenderer(node => node.StatusText)
 					.AddColumn("Последний визит").Resizable().AddTextRenderer(node => node.LastVisit)
 					.AddColumn("Не прочитано").Resizable().AddTextRenderer(node => node.UnreadMessagesText)
