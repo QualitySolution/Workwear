@@ -26,8 +26,23 @@ namespace Workwear.Domain.Stock.Documents
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
+		//TODO При переводе диалога на VVMM перенести в VM
+		public virtual bool SensitiveDocNumber => !AutoDocNumber;
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public virtual bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+		public virtual string DocNumberText {
+			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
+			set => DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
+		
 		private IncomeOperations operation;
 		[Display (Name = "Тип операции")]
+		[PropertyChangedAlso (nameof(Title))]
 		public virtual IncomeOperations Operation {
 			get => operation;
 			set { SetField (ref operation, value, () => Operation); }
@@ -66,9 +81,9 @@ namespace Workwear.Domain.Stock.Documents
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return $"Приходная накладная №{Id} от {Date:d}";
+					return $"Приходная накладная №{DocNumber ?? Id.ToString()} от {Date:d}";
 				case IncomeOperations.Return:
-					return $"Возврат от работника №{Id} от {Date:d}";
+					return $"Возврат от работника №{DocNumber ?? Id.ToString()} от {Date:d}";
 				default:
 					return null;
 				}
@@ -79,6 +94,10 @@ namespace Workwear.Domain.Stock.Documents
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
+			
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] { this.GetPropertyName (o => o.DocNumber)});
 
 			if(Operation == IncomeOperations.Return && EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 

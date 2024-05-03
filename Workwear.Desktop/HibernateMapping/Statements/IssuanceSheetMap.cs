@@ -13,6 +13,7 @@ namespace Workwear.HibernateMapping.Statements
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+			Map(x => x.DocNumber).Column("doc_number");
 			
 			Map(x => x.Date).Column("date");
 

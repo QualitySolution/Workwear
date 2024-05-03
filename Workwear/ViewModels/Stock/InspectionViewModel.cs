@@ -38,7 +38,6 @@ namespace Workwear.ViewModels.Stock {
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
-			this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 				
 			if(UoW.IsNew)
@@ -60,13 +59,16 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
-
-			if(Entity.Id == 0)
+			
+			if(UoW.IsNew) {
 				Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.CreatedbyUser = userService.GetCurrentUser();
+				logger.Info($"Создание Нового документа Списания");
+			} else 
+				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 		}
 		
 		private IInteractiveService interactive;
-		private OrganizationRepository organizationRepository;
 		private BaseParameters baseParameters;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -75,6 +77,18 @@ namespace Workwear.ViewModels.Stock {
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 		public EmployeeCard Employee { get;}
 
+		#region Для View
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		public string DocNumber {
+			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
+		#endregion
 		
 		private string total;
 		public string Total {
@@ -168,7 +182,7 @@ namespace Workwear.ViewModels.Stock {
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Документ переоценки №{0}", Entity.Id),
+				Title = String.Format("Документ переоценки №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
 				Identifier = "Documents.InspectionSheet",
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }

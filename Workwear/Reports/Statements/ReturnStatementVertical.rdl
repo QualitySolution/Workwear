@@ -626,7 +626,7 @@
         <Width>571.94pt</Width>
         <Value>= "ВЕДОМОСТЬ ВОЗВРАТА НА СКЛАД
 СПЕЦОДЕЖДЫ, СПЕЦОБУВИ
-И ПРЕДОХРАНИТЕЛЬНЫХ ПРИСПОСОБЛЕНИЙ № " + {?id}</Value>
+И ПРЕДОХРАНИТЕЛЬНЫХ ПРИСПОСОБЛЕНИЙ № " +  First({doc_number}, 'Sheet')</Value>
         <ZIndex>0</ZIndex>
         <Left>0.00pt</Left>
         <Top>78.10pt</Top>
@@ -1693,9 +1693,11 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Sheet">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
+IFNULL(stock_income.doc_number, stock_income.id)
+        as doc_number,
 stock_income.date AS doc_date,
 CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
 objects.code as subdivision_code,
@@ -1723,7 +1725,7 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>
@@ -1746,6 +1748,10 @@ WHERE stock_income.id = @id</CommandText>
         </Field>
         <Field Name="organizations_name">
           <DataField>organizations_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="doc_number">
+          <DataField>doc_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>

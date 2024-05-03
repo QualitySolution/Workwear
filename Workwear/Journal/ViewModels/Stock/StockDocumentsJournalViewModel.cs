@@ -113,6 +113,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => incomeAlias.Operation).WithAlias(() => resultAlias.IncomeOperation)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
@@ -163,6 +164,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => expenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+						.Select(() => StockDocumentType.ExpenseEmployeeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 						.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
@@ -207,6 +210,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => collectiveExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => collectiveExpenseAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
@@ -299,6 +303,7 @@ namespace workwear.Journal.ViewModels.Stock
 			writeoffQuery
 			.SelectList(list => list
 			   			.SelectGroup(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => writeoffAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
@@ -364,6 +369,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => inspectionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.SelectGroup(() => inspectionAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => inspectionAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => inspectionAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => StockDocumentType.InspectionDoc).WithAlias(() => resultAlias.DocTypeEnum)
@@ -441,6 +447,10 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockDocumentsJournalNode
 	{
 		public int Id { get; set; }
+		
+		public string DocNumber { get; set; }
+
+		public string DocNumberText => DocNumber ?? Id.ToString();
 
 		public StockDocumentType DocTypeEnum { get; set; }
 

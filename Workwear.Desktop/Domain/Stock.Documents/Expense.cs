@@ -60,7 +60,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => $"Персональная выдача №{Id} от {Date:d}";
+		public virtual string Title => $"Персональная выдача №{DocNumber ?? Id.ToString()} от {Date:d}";
 
 		public Expense ()
 		{
@@ -72,7 +72,11 @@ namespace Workwear.Domain.Stock.Documents
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { nameof(Date)});
-
+			
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] { this.GetPropertyName (o => o.DocNumber)});
+			
 			if(Employee == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Employee)});

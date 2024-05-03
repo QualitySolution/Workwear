@@ -71,6 +71,9 @@ namespace Workwear.ViewModels.Statements
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 
+			if(!UoW.IsNew)
+				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
 		}
 
@@ -78,6 +81,17 @@ namespace Workwear.ViewModels.Statements
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 			$" Сотрудников: <u>{Entity.Items.Where(x => x.Employee != null).Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 			$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
+		
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		public string DocNumber {
+			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
 		#endregion
 
 		#region Таблица 
@@ -201,7 +215,8 @@ namespace Workwear.ViewModels.Statements
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.Id}" : $"Ведомость №{Entity.Id} (МБ-7)",
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.DocNumber ?? Entity.Id.ToString()}" 
+					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }
