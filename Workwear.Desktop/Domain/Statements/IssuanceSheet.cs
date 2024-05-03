@@ -173,7 +173,7 @@ namespace Workwear.Domain.Statements
 					new[] { nameof(Items) });
 			}
 			
-			if (DocNumber.Length > 15)
+			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер ведомости должен быть не более 15 символов", 
 					new[] { nameof(DocNumber)});
 			

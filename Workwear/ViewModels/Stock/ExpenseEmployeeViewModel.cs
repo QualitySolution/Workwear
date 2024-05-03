@@ -137,7 +137,7 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				logger.Info($"Создание Нового документа выдачи на {Entity.Employee.ShortName}");
+				logger.Info("Создание Нового документа выдачи");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			//Переопределяем параметры валидации
