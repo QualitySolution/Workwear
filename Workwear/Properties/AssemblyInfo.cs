@@ -10,6 +10,7 @@ using QS.Project.Versioning;
 #endif
 [assembly: AssemblyDescription("Программа выдачи и обслуживания спецодежды по договорам «Спецаутсорсинг».")]
 [assembly: AssemblyModification("sposhiv", HideFromUser = true)]
+[assembly: AssemblyCompatibleModification("aros")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
