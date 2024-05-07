@@ -74,7 +74,7 @@ namespace Workwear.Repository.Stock
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "CASE WHEN ?1 = ?2 THEN ?3 WHEN ?4 = ?2 THEN -?3 ELSE 0 END"),
 				NHibernateUtil.Int32,
 				Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse),
-				Projections.Constant(warehouse?.Id),
+				Projections.Constant(warehouse?.Id ?? 0), // Хак, потому что Хибернейт мудак
 				Projections.Property<WarehouseOperation>(x => x.Amount),
 				Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse)
 			);
