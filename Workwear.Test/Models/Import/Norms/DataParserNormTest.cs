@@ -106,7 +106,7 @@ namespace Workwear.Test.Models.Import.Norms {
 			
 			var parser = new DataParserNorm(normRepository, protectionToolsRepository, sizeService);
 			
-			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), false, true, String.Empty);
+			parser.SetOrMakePost(settings, postCombination, posts, new List<Subdivision>(), new List<Department>(), false, true, String.Empty);
 			Assert.That(postCombination.Posts.Count, Is.EqualTo(2));
 			Assert.That(postCombination.Posts.Any(x => x.Name == "Директор"), Is.False);
 			Assert.That(postCombination.Posts.Any(x => x.Name == "Мастер" && x.Subdivision == subdivision2), Is.False);
@@ -156,7 +156,7 @@ namespace Workwear.Test.Models.Import.Norms {
 			
 			var parser = new DataParserNorm(normRepository, protectionToolsRepository, sizeService);
 			
-			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), false, false, String.Empty);
+			parser.SetOrMakePost(settings, postCombination, posts, new List<Subdivision>(), new List<Department>(), false, false, String.Empty);
 			Assert.That(postCombination.Posts.Count, Is.EqualTo(1));
 			Assert.That(postCombination.Posts.Any(x => x.Name == "Мастер" && x.Subdivision == subdivision1 && x.Department == department1), Is.True);
 		}
@@ -206,10 +206,8 @@ namespace Workwear.Test.Models.Import.Norms {
 			
 			var parser = new DataParserNorm(normRepository, protectionToolsRepository, sizeService);
 			
-			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), true, true, String.Empty);
+			parser.SetOrMakePost(settings, postCombination, posts, new List<Subdivision>(), new List<Department>(), true, true, String.Empty);
 			Assert.That(postCombination.Posts.Count, Is.EqualTo(4));
 		}
-		
-		
 	}
 }
