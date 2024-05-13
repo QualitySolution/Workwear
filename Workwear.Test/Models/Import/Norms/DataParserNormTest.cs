@@ -57,7 +57,7 @@ namespace Workwear.Test.Models.Import.Norms {
 			
 			var parser = new DataParserNorm(normRepository, protectionToolsRepository, sizeService);
 			
-			parser.SetOrMakePost(postCombination, posts, new List<Subdivision>(), new List<Department>(), true, true, String.Empty);
+			parser.SetOrMakePost(settings, postCombination, posts, new List<Subdivision>(), new List<Department>(), true, true, String.Empty);
 			Assert.That(postCombination.Posts.Count, Is.EqualTo(3));
 			Assert.That(postCombination.Posts.Any(x => x.Name == "Директор"), Is.False);
 		}
