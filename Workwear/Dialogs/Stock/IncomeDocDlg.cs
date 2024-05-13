@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
-using Gamma.Binding.Converters;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
@@ -81,13 +80,20 @@ namespace workwear
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			
+			if(!UoW.IsNew) 
+				Entity.AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			ConfigureDlg ();
 		}
-
+		
 		private void ConfigureDlg() {
-			ylabelId.Binding
-				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
-				.InitializeFromSource ();
+			
+			entryId.Binding.AddSource(Entity)
+				.AddBinding(e => e.DocNumberText, w => w.Text)
+				.AddBinding(e => e.SensitiveDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			checkAuto.Binding.AddBinding(Entity, e => e.AutoDocNumber, w => w.Active).InitializeFromSource();
+			
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
@@ -297,7 +303,8 @@ namespace workwear
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.Id}" : $"Ведомость №{Entity.Id}",
+				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.DocNumber ?? Entity.Id.ToString()}"
+					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = docType.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }

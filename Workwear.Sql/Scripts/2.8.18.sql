@@ -12,4 +12,22 @@ alter table `protection_tools`
 		foreign key (`category_for_analytic_id`)
 			references `protection_tools_category_for_analytics` (`id`)
 			on delete set null
-			on update cascade 
+			on update cascade;
+
+alter table stock_collective_expense
+	add doc_number varchar(16) null after id;
+
+alter table stock_expense
+	add doc_number varchar(16) null after operation;
+
+alter table stock_income
+	add doc_number varchar(16) null after operation;
+
+alter table issuance_sheet
+	add doc_number varchar(16) null after id;
+
+alter table stock_write_off
+	add doc_number varchar(16) null after id;
+
+alter table stock_inspection
+	add doc_number varchar(16) null after id;

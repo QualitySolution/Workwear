@@ -47,8 +47,6 @@ namespace Workwear.Repository.Stock
 			IEnumerable<WarehouseOperation> excludeOperations = null)
 		{
 			StockBalanceDTO resultAlias = null;
-			WarehouseOperation warehouseExpenseOperationAlias = null;
-			WarehouseOperation warehouseIncomeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			Size sizeAlias = null;
@@ -58,78 +56,42 @@ namespace Workwear.Repository.Stock
 			var nextDay = onDate.AddDays(1);
 			var excludeIds = excludeOperations?.Select(x => x.Id).ToList();
 			var nomenclaturesDic = nomenclatures.ToDictionary(n => n.Id, n => n);
-
-			// null == null => null              null <=> null => true
-			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
-				.Where(() => warehouseExpenseOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id
-				             && (warehouseExpenseOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
-				                 || (warehouseExpenseOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
-				             && (warehouseExpenseOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
-				                 || (warehouseExpenseOperationAlias.Height == null && warehouseOperationAlias.Height == null))
-				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
-								 || (warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
-				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < nextDay);
-
-			if(warehouse == null)
-				expenseQuery.Where(x => x.ExpenseWarehouse != null);
-			else
-				expenseQuery.Where(x => x.ExpenseWarehouse == warehouse);
-
+			
+			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias)
+				.Where(e => e.OperationTime < nextDay)
+				.Where(() => warehouseOperationAlias.Nomenclature.Id.IsIn(nomenclaturesDic.Keys));
 			if(excludeIds != null && excludeIds.Count > 0)
-				expenseQuery.WhereNot(x => x.Id.IsIn(excludeIds));
-
-			expenseQuery.Select(Projections
-								.Sum(Projections
-									.Property(() => warehouseExpenseOperationAlias.Amount)));
-
-			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
-				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id 
-				             && (warehouseIncomeOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
-				                 || (warehouseIncomeOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null))
-				             && (warehouseIncomeOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
-				                 || (warehouseIncomeOperationAlias.Height == null && warehouseOperationAlias.Height == null))
-				             && (warehouseIncomeOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
-								 || (warehouseIncomeOperationAlias.Owner == null && warehouseOperationAlias.Owner == null))
-				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < nextDay);
-
-			if(warehouse == null)
-				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
-			else
-				incomeSubQuery.Where(x => x.ReceiptWarehouse == warehouse);
-
-			if(excludeIds != null && excludeIds.Count > 0)
-				incomeSubQuery.WhereNot(x => x.Id.IsIn(excludeIds));
-
-			incomeSubQuery.Select(Projections
-								.Sum(Projections
-									.Property(() => warehouseIncomeOperationAlias.Amount)));
-
-			var projection = Projections.SqlFunction(
-				new SQLFunctionTemplate(NHibernateUtil.Int32, "( IFNULL(?1, 0) - IFNULL(?2, 0) )"),
+				queryStock.WhereNot(x => x.Id.IsIn(excludeIds));
+			
+			var projectionAll = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "(CASE WHEN ?1 is null THEN ?2 WHEN ?3 is null THEN -(?2) END)"),
 				NHibernateUtil.Int32,
-				Projections.SubQuery(incomeSubQuery),
-				Projections.SubQuery(expenseQuery)
+				Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse),
+				Projections.Property<WarehouseOperation>(x => x.Amount),
+				Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse)
 			);
-
-			var queryStock = uow.Session.QueryOver(() => warehouseOperationAlias);
-			queryStock.Where(Restrictions.Not(Restrictions.Eq(projection, 0)));
-			queryStock.Where(() => warehouseOperationAlias.Nomenclature.Id.IsIn(nomenclaturesDic.Keys));
-
+			var projectionStock = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "CASE WHEN ?1 = ?2 THEN ?3 WHEN ?4 = ?2 THEN -?3 ELSE 0 END"),
+				NHibernateUtil.Int32,
+				Projections.Property<WarehouseOperation>(x => x.ReceiptWarehouse),
+				Projections.Constant(warehouse?.Id ?? 0), // Хак, потому что Хибернейт мудак
+				Projections.Property<WarehouseOperation>(x => x.Amount),
+				Projections.Property<WarehouseOperation>(x => x.ExpenseWarehouse)
+			);
+			
 			var result = queryStock
-				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
-				 .JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-				 .JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => warehouseOperationAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
-				.SelectList(list => list
-			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.NomenclatureId)
-			   .SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
-			   .SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
-			   .SelectGroup(() => warehouseOperationAlias.Owner).WithAlias(() => resultAlias.Owner)
-			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-			   .Select(projection).WithAlias(() => resultAlias.Amount)
-				)
+					.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
+					.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => warehouseOperationAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
+					.SelectList(list => list
+						.SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.NomenclatureId)
+						.SelectGroup(() => warehouseOperationAlias.WearSize).WithAlias(() => resultAlias.WearSize)
+						.SelectGroup(() => warehouseOperationAlias.Height).WithAlias(() => resultAlias.Height)
+						.SelectGroup(() => warehouseOperationAlias.Owner).WithAlias(() => resultAlias.Owner)
+						.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+						.Select(Projections.Sum(warehouse == null ? projectionAll : projectionStock)).WithAlias(() => resultAlias.Amount)
+					)
 				.TransformUsing(Transformers.AliasToBean<StockBalanceDTO>())
 				.List<StockBalanceDTO>();
 

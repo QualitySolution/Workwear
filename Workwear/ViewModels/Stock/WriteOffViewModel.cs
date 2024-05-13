@@ -90,6 +90,12 @@ namespace Workwear.ViewModels.Stock
 	            .Finish();
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
+
+            if(UoW.IsNew) {
+	            Entity.CreatedbyUser = userService.GetCurrentUser();
+	            logger.Info($"Создание Нового документа Списания");
+            } else 
+	            AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
         }
         
         #region ViewProperty
@@ -97,6 +103,16 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+        public bool SensitiveDocNumber => !AutoDocNumber;
+		
+        private bool autoDocNumber = true;
+        [PropertyChangedAlso(nameof(DocNumber))]
+        [PropertyChangedAlso(nameof(SensitiveDocNumber))]
+        public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+        public string DocNumber {
+	        get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+	        set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+        }
         
         private string total;
         public string Total {
@@ -216,7 +232,7 @@ namespace Workwear.ViewModels.Stock
 		        return;
 			
 	        var reportInfo = new ReportInfo {
-		        Title = String.Format("Акт списания №{0}", Entity.Id),
+		        Title = String.Format("Акт списания №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
 		        Identifier = "Documents.WriteOffSheet",
 		        Parameters = new Dictionary<string, object> {
 			        { "id",  Entity.Id }

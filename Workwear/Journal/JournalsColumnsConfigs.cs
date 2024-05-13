@@ -345,7 +345,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Номер").AddTextRenderer(node => node.DocNumberText).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Тип документа").Resizable().AddTextRenderer(node => node.DocTypeString)
 					.AddColumn("Дата").Resizable().AddTextRenderer(node => node.DateString).XAlign(0.5f)
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssueSheetId}").SearchHighlight().XAlign(0.5f)
