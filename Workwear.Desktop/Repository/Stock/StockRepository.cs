@@ -93,10 +93,13 @@ namespace Workwear.Repository.Stock
 						.Select(Projections.Sum(warehouse == null ? projectionAll : projectionStock)).WithAlias(() => resultAlias.Amount)
 					)
 				.TransformUsing(Transformers.AliasToBean<StockBalanceDTO>())
-				.List<StockBalanceDTO>();
+				.List<StockBalanceDTO>()
+				.ToList();
 
+			result.RemoveAll(x => x.Amount == 0);
 			//Проставляем номенклатуру.
-			result.ToList().ForEach(item => item.Nomenclature = nomenclaturesDic[item.NomenclatureId]);
+			result.ForEach(item => item.Nomenclature = nomenclaturesDic[item.NomenclatureId]);
+			
 			return result;
 		}
 	}
