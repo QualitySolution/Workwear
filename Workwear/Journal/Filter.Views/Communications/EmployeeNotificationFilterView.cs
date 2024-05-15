@@ -1,4 +1,5 @@
 ﻿using QS.Views;
+using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
 
 namespace workwear.Journal.Filter.Views.Communications
@@ -34,6 +35,20 @@ namespace workwear.Journal.Filter.Views.Communications
 				.AddBinding(v => v.StartDateBirth, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDateBirth, w => w.EndDateOrNull)
 				.AddBinding(vm => vm.SensitiveDateBirth, v => v.Sensitive)
+				.InitializeFromSource();
+			ycheckStockAvailability.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.CheckInStockAvailability, w => w.Active)
+				.AddBinding(vm => vm.PeriodSensitive, w => w.Sensitive)
+				.InitializeFromSource();
+			ycomboListWarehouses.SetRenderTextFunc<Warehouse>(w => w.Name);
+			ycomboListWarehouses.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.CheckInStockAvailability, w => w.Sensitive)
+				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
+				.AddBinding(vm => vm.SelectedWarehouse, w => w.SelectedItem)
+				.InitializeFromSource();
+			choiceProtectionToolsView.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			choiceProtectionToolsView.Binding
+				.AddBinding(ViewModel, vm => vm.PeriodSensitive, w => w.Sensitive)
 				.InitializeFromSource();
 		}
 	}

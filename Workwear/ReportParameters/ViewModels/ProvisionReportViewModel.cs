@@ -33,7 +33,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			//Двойная проверка страхует от несинхронных изменений незваний полей в разных классах.
+			//Двойная проверка страхует от несинхронных изменений названий полей в разных классах.
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName 
 			   || nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
@@ -56,7 +56,7 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		IUnitOfWork UoW;
-		public override string Title => $"Отчёт по обеспечености сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+		public override string Title => $"Отчёт по обеспеченности сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 			set => throw new InvalidOperationException();
