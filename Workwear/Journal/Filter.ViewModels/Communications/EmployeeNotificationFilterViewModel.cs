@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -7,6 +10,8 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.ReportParameters.ViewModels;
 
 namespace workwear.Journal.Filter.ViewModels.Communications
 {
@@ -65,6 +70,22 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			}
 		}
 
+		private bool checkInInStockAvailability;
+		public bool CheckInStockAvailability 
+		{
+			get => checkInInStockAvailability;
+			set => SetField(ref checkInInStockAvailability, value);
+		}
+
+		public List<Warehouse> Warehouses { get; set; }
+
+		private Warehouse selectedWarehouse;
+		public Warehouse SelectedWarehouse 
+		{
+			get => selectedWarehouse;
+			set => SetField(ref selectedWarehouse, value);
+		}
+		
 		public bool PeriodSensitive => ContainsPeriod;
 		public bool SensitiveDateBirth => ContainsDateBirthPeriod;
 		
@@ -90,11 +111,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			set => SetField(ref endDateBirth, value);
 		}
 
+		public List<int> SelectedProtectionToolsIds { get; set; }
 		#endregion
 
-		#region EntityModels
-
+		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		public EmployeeNotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
@@ -106,8 +128,51 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 				.Finish();
 			startDateIssue = startDateBirth = DateTime.Today;
 			endDateIssue = endDateBirth = startDateIssue.AddDays(14);
+			Warehouses = UoW.GetAll<Warehouse>().ToList();
+
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			SelectedProtectionToolsIds = new List<int>(ChoiceProtectionToolsViewModel.SelectedIds);
+		}
+		
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) 
+		{
+			if (SelectedProtectionToolsIds.SequenceEqual(ChoiceProtectionToolsViewModel.SelectedIds)) 
+			{
+				return;
+			}
+			
+			int val = ChoiceProtectionToolsViewModel.SelectedIdsMod.FirstOrDefault();
+			if (val == -1) 
+			{
+				SelectedProtectionToolsIds.Clear();
+				SelectedProtectionToolsIds.AddRange(ChoiceProtectionToolsViewModel.SelectedIds);
+				OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				return;
+			}
+			else if (val == -2) 
+			{
+				SelectedProtectionToolsIds.Clear();
+				OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				return;
+			}
+			
+			List<int> newIds = ChoiceProtectionToolsViewModel.SelectedIds.Except(SelectedProtectionToolsIds).ToList();
+			if (newIds.Any()) 
+			{
+				newIds.ForEach(id => SelectedProtectionToolsIds.Add(id));
+			}
+
+			List<int> exceptIds = SelectedProtectionToolsIds.Except(ChoiceProtectionToolsViewModel.SelectedIds).ToList();
+			if (exceptIds.Any()) 
+			{
+				exceptIds.ForEach(id => SelectedProtectionToolsIds.Remove(id));
+			}
+
+			OnPropertyChanged(nameof(SelectedProtectionToolsIds));
 		}
 	}
+	
 	public enum AskIssueType
 	{
 		[Display(Name = "Все")]

@@ -4,6 +4,8 @@ namespace workwear.Journal.Filter.Views.Communications
 {
 	public partial class EmployeeNotificationFilterView
 	{
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
 		private global::Gamma.GtkWidgets.yCheckButton checkLkEnabled;
@@ -22,6 +24,10 @@ namespace workwear.Journal.Filter.Views.Communications
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckShowOverdue;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckStockAvailability;
+
+		private global::Gamma.Widgets.yListComboBox ycomboListWarehouses;
+
 		private global::Gamma.Widgets.yEnumComboBox yIssueType;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
@@ -30,6 +36,8 @@ namespace workwear.Journal.Filter.Views.Communications
 
 		private global::Gamma.GtkWidgets.yLabel ylabel5;
 
+		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceProtectionToolsView;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -37,6 +45,10 @@ namespace workwear.Journal.Filter.Views.Communications
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView";
 			// Container child workwear.Journal.Filter.Views.Communications.EmployeeNotificationFilterView.Gtk.Container+ContainerChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
 			this.ytable1.NRows = ((uint)(5));
@@ -153,6 +165,34 @@ namespace workwear.Journal.Filter.Views.Communications
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.ycheckStockAvailability = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckStockAvailability.CanFocus = true;
+			this.ycheckStockAvailability.Name = "ycheckStockAvailability";
+			this.ycheckStockAvailability.Label = global::Mono.Unix.Catalog.GetString("Наличие на складе");
+			this.ycheckStockAvailability.DrawIndicator = true;
+			this.ycheckStockAvailability.UseUnderline = true;
+			this.ytable1.Add(this.ycheckStockAvailability);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycheckStockAvailability]));
+			w9.TopAttach = ((uint)(3));
+			w9.BottomAttach = ((uint)(4));
+			w9.LeftAttach = ((uint)(3));
+			w9.RightAttach = ((uint)(4));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ycomboListWarehouses = new global::Gamma.Widgets.yListComboBox();
+			this.ycomboListWarehouses.Name = "ycomboListWarehouses";
+			this.ycomboListWarehouses.AddIfNotExist = false;
+			this.ycomboListWarehouses.DefaultFirst = false;
+			this.ytable1.Add(this.ycomboListWarehouses);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycomboListWarehouses]));
+			w10.TopAttach = ((uint)(4));
+			w10.BottomAttach = ((uint)(5));
+			w10.LeftAttach = ((uint)(3));
+			w10.RightAttach = ((uint)(4));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.yIssueType = new global::Gamma.Widgets.yEnumComboBox();
 			this.yIssueType.Name = "yIssueType";
 			this.yIssueType.ShowSpecialStateAll = false;
@@ -160,51 +200,65 @@ namespace workwear.Journal.Filter.Views.Communications
 			this.yIssueType.UseShortTitle = false;
 			this.yIssueType.DefaultFirst = false;
 			this.ytable1.Add(this.yIssueType);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yIssueType]));
-			w9.TopAttach = ((uint)(4));
-			w9.BottomAttach = ((uint)(5));
-			w9.LeftAttach = ((uint)(2));
-			w9.RightAttach = ((uint)(3));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
-			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yIssueType]));
+			w11.TopAttach = ((uint)(4));
+			w11.BottomAttach = ((uint)(5));
+			w11.LeftAttach = ((uint)(2));
+			w11.RightAttach = ((uint)(3));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel3.Name = "ylabel3";
 			this.ylabel3.Xalign = 1F;
 			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.ytable1.Add(this.ylabel3);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
-			w10.LeftAttach = ((uint)(1));
-			w10.RightAttach = ((uint)(2));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
+			w12.LeftAttach = ((uint)(1));
+			w12.RightAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.Xalign = 1F;
 			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Период получения:");
 			this.ytable1.Add(this.ylabel4);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
-			w11.TopAttach = ((uint)(2));
-			w11.BottomAttach = ((uint)(3));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
+			w13.TopAttach = ((uint)(2));
+			w13.BottomAttach = ((uint)(3));
+			w13.LeftAttach = ((uint)(1));
+			w13.RightAttach = ((uint)(2));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel5 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel5.Name = "ylabel5";
 			this.ylabel5.Xalign = 1F;
 			this.ylabel5.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.ytable1.Add(this.ylabel5);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel5]));
-			w12.TopAttach = ((uint)(4));
-			w12.BottomAttach = ((uint)(5));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.Add(this.ytable1);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel5]));
+			w14.TopAttach = ((uint)(4));
+			w14.BottomAttach = ((uint)(5));
+			w14.LeftAttach = ((uint)(1));
+			w14.RightAttach = ((uint)(2));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.yhbox1.Add(this.ytable1);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ytable1]));
+			w15.Position = 0;
+			w15.Expand = false;
+			w15.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.choiceProtectionToolsView = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceProtectionToolsView.Events = ((global::Gdk.EventMask)(256));
+			this.choiceProtectionToolsView.Name = "choiceProtectionToolsView";
+			this.yhbox1.Add(this.choiceProtectionToolsView);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.choiceProtectionToolsView]));
+			w16.Position = 1;
+			w16.Expand = false;
+			w16.Fill = false;
+			this.Add(this.yhbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
