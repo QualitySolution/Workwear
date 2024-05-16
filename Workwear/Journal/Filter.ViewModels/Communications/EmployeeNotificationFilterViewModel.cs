@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
@@ -14,8 +12,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 
-namespace workwear.Journal.Filter.ViewModels.Communications
-{
+namespace workwear.Journal.Filter.ViewModels.Communications {
 	public class EmployeeNotificationFilterViewModel : JournalFilterViewModelBase<EmployeeNotificationFilterViewModel>
 	{
 		#region Ограничения
@@ -63,6 +60,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 
 		private bool containsPeriod;
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
 		public bool ContainsPeriod {
 			get => containsPeriod;
 			set {
@@ -72,6 +70,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 		}
 
 		private bool checkInInStockAvailability;
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
 		public bool CheckInStockAvailability 
 		{
 			get => checkInInStockAvailability;
@@ -89,7 +88,8 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 		
 		public bool PeriodSensitive => ContainsPeriod;
 		public bool SensitiveDateBirth => ContainsDateBirthPeriod;
-		
+		public bool WarehousesSensitive => PeriodSensitive && CheckInStockAvailability;
+
 		private bool containsDateBirthPeriod;
 		[PropertyChangedAlso(nameof(SensitiveDateBirth))]
 		public bool ContainsDateBirthPeriod {

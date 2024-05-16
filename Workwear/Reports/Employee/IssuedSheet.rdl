@@ -387,17 +387,17 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT protection_tools.id,
-       protection_tools.name                                                                  AS protection_tools_name,
+        <CommandText>SELECT protection_tools.name                                                                  AS protection_tools_name,
+       norms_item.amount -
        (SELECT IFNULL(SUM(op.issued) - SUM(op.returned), 0)
         FROM operation_issued_by_employee as op
         WHERE op.employee_id = @employee_id
           AND op.protection_tools_id = wear_cards_item.protection_tools_id
-          AND (NOT op.auto_writeoff OR op.auto_writeoff_date &gt; IF(@endDateIssue = '', CURDATE(), @endDateIssue))
-          AND op.operation_time &lt; IF(@endDateIssue = '', CURDATE(), @endDateIssue))           AS amount,
+          AND (NOT op.auto_writeoff OR op.auto_writeoff_date &gt; IFNULL(@endDateIssue, CURDATE()))
+          AND op.operation_time &lt; IFNULL(@endDateIssue, CURDATE()))           AS amount,
        measurement_units.name                                                                 AS unit,
        DATE_FORMAT(wear_cards_item.next_issue, '%d.%m.%Y')                                    AS need_date,
-       DATEDIFF(IF(@endDateIssue = '', CURDATE(), @endDateIssue), wear_cards_item.next_issue) AS delay,
+       DATEDIFF(IFNULL(@endDateIssue, CURDATE()), wear_cards_item.next_issue) AS delay,
        size.name                                                                              as size,
        height.name                                                                            as height,
        IFNULL(ballance.SUM, 0)                                                                as sum
@@ -449,7 +449,7 @@ FROM wear_cards_item
                                    LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
                                    LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
                                    LEFT JOIN operation_warehouse AS sopwh on (sopwh.operation_time &lt; ADDDATE(
-                                  IF(@endDateIssue = '', CURDATE(), @endDateIssue), INTERVAL 1 DAY)
+                                   IFNULL(@endDateIssue, CURDATE()), INTERVAL 1 DAY)
                               AND sopwh.nomenclature_id = sptn.nomenclature_id
                               AND sopwh.wear_percent = 0
                               AND (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id OR
@@ -469,11 +469,11 @@ FROM wear_cards_item
          LEFT JOIN sizes as size ON employeeSizeAlias.size_id = size.id
          LEFT JOIN sizes as height ON employeeHeightAlias.size_id = height.id
 WHERE wear_cards_item.wear_card_id = @employee_id
-  AND wear_cards_item.next_issue &lt; IF(@endDateIssue = '', CURDATE(), @endDateIssue)
+  AND wear_cards_item.next_issue &lt; IFNULL(@endDateIssue, CURDATE())
   AND (-1 IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids));</CommandText>
         <QueryParameters>
           <QueryParameter Name="@employee_id">
-            <Value>={?employee_id}</Value>
+            <Value>={?id}</Value>
           </QueryParameter>
           <QueryParameter Name="@warehouse_id">
             <Value>={?warehouse_id}</Value>
@@ -532,7 +532,7 @@ WHERE wear_cards_item.wear_card_id = @employee_id
     </DataSource>
   </DataSources>
   <ReportParameters >
-    <ReportParameter Name="employee_id">
+    <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -558,13 +558,8 @@ WHERE wear_cards_item.wear_card_id = @employee_id
     </ReportParameter>
     <ReportParameter Name="endDateIssue">
       <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>''</Value>
-        </Values>
-      </DefaultValue>
       <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
+      <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>

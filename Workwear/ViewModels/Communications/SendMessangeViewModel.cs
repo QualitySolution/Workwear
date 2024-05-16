@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -303,7 +303,7 @@ namespace Workwear.ViewModels.Communications
 			};
 
 			byte[] bytes = ConvertReportToByte(reportInfo, new Dictionary<string, object>() {
-				{ "employee_id", employee.Id },
+				{ "id", employee.Id },
 				{ "warehouse_id", warehouseId },
 				{ "endDateIssue", endDateIssue ?? DateTime.Now },
 				{ "protection_tools_ids", protectionToolsIds }
