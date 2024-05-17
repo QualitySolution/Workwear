@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -13,8 +12,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 
-namespace workwear.Journal.Filter.ViewModels.Communications
-{
+namespace workwear.Journal.Filter.ViewModels.Communications {
 	public class EmployeeNotificationFilterViewModel : JournalFilterViewModelBase<EmployeeNotificationFilterViewModel>
 	{
 		#region Ограничения
@@ -62,6 +60,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 
 		private bool containsPeriod;
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
 		public bool ContainsPeriod {
 			get => containsPeriod;
 			set {
@@ -71,10 +70,11 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 		}
 
 		private bool checkInInStockAvailability;
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
 		public bool CheckInStockAvailability 
 		{
 			get => checkInInStockAvailability;
-			set => SetField(ref checkInInStockAvailability, value);
+			set => SetField(ref checkInInStockAvailability, value); 
 		}
 
 		public List<Warehouse> Warehouses { get; set; }
@@ -88,7 +88,8 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 		
 		public bool PeriodSensitive => ContainsPeriod;
 		public bool SensitiveDateBirth => ContainsDateBirthPeriod;
-		
+		public bool WarehousesSensitive => PeriodSensitive && CheckInStockAvailability;
+
 		private bool containsDateBirthPeriod;
 		[PropertyChangedAlso(nameof(SensitiveDateBirth))]
 		public bool ContainsDateBirthPeriod {
@@ -128,48 +129,34 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 				.Finish();
 			startDateIssue = startDateBirth = DateTime.Today;
 			endDateIssue = endDateBirth = startDateIssue.AddDays(14);
-			Warehouses = UoW.GetAll<Warehouse>().ToList();
-
+			Warehouses = new List<Warehouse>() { new Warehouse() { Id = -1, Name = "Все" } };
+			Warehouses.AddRange(UoW.GetAll<Warehouse>());
+			SelectedWarehouse = Warehouses[0];
+			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
-			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceProtectionToolsViewModel.Items.PropertyOfElementChanged += ItemsOnPropertyOfElementChanged;
 			SelectedProtectionToolsIds = new List<int>(ChoiceProtectionToolsViewModel.SelectedIds);
 		}
-		
-		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) 
+
+		private void ItemsOnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) 
 		{
-			if (SelectedProtectionToolsIds.SequenceEqual(ChoiceProtectionToolsViewModel.SelectedIds)) 
+			SelectedProtectionTools protectionTools = sender as SelectedProtectionTools;
+			if (SelectedProtectionToolsIds.Contains(protectionTools.Id)) 
 			{
-				return;
+				if (!protectionTools.Select) 
+				{
+					SelectedProtectionToolsIds.Remove(protectionTools.Id);
+					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				}
 			}
-			
-			int val = ChoiceProtectionToolsViewModel.SelectedIdsMod.FirstOrDefault();
-			if (val == -1) 
+			else 
 			{
-				SelectedProtectionToolsIds.Clear();
-				SelectedProtectionToolsIds.AddRange(ChoiceProtectionToolsViewModel.SelectedIds);
-				OnPropertyChanged(nameof(SelectedProtectionToolsIds));
-				return;
+				if (protectionTools.Select) 
+				{
+					SelectedProtectionToolsIds.Add(protectionTools.Id);
+					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				}
 			}
-			else if (val == -2) 
-			{
-				SelectedProtectionToolsIds.Clear();
-				OnPropertyChanged(nameof(SelectedProtectionToolsIds));
-				return;
-			}
-			
-			List<int> newIds = ChoiceProtectionToolsViewModel.SelectedIds.Except(SelectedProtectionToolsIds).ToList();
-			if (newIds.Any()) 
-			{
-				newIds.ForEach(id => SelectedProtectionToolsIds.Add(id));
-			}
-
-			List<int> exceptIds = SelectedProtectionToolsIds.Except(ChoiceProtectionToolsViewModel.SelectedIds).ToList();
-			if (exceptIds.Any()) 
-			{
-				exceptIds.ForEach(id => SelectedProtectionToolsIds.Remove(id));
-			}
-
-			OnPropertyChanged(nameof(SelectedProtectionToolsIds));
 		}
 	}
 	
