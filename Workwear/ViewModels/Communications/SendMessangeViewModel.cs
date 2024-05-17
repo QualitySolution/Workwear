@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -24,19 +25,25 @@ namespace Workwear.ViewModels.Communications
 {
 	public class SendMessangeViewModel : WindowDialogViewModelBase 
 	{
+		private readonly IList<EmployeeCard> employees;
+		private readonly int? warehouseId;
+		private readonly DateTime? endDateIssue;
+		private readonly int[] protectionToolsIds;
 		private readonly EmailManagerService emailManagerService;
 		private readonly NotificationManagerService notificationManager;
 		private readonly IInteractiveMessage interactive;
 		private readonly MySqlConnectionStringBuilder connectionStringBuilder;
 
 		readonly IUnitOfWork uow;
-		readonly IList<EmployeeCard> employees;
 
-		public SendMessangeViewModel(IUnitOfWorkFactory unitOfWorkFactory, int[] employeeIds, EmailManagerService emailManagerService,
+		public SendMessangeViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
+			IUnitOfWorkFactory unitOfWorkFactory, EmailManagerService emailManagerService,
 			NotificationManagerService notificationManager, IInteractiveMessage interactive,
-			MySqlConnectionStringBuilder connectionStringBuilder,
-			INavigationManager navigation) : base(navigation)
+			MySqlConnectionStringBuilder connectionStringBuilder, INavigationManager navigation) : base(navigation)
 		{
+			this.warehouseId = warehouseId;
+			this.endDateIssue = endDateIssue;
+			this.protectionToolsIds = protectionToolsIds;
 			this.emailManagerService = emailManagerService ?? throw new ArgumentNullException(nameof(emailManagerService));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -295,7 +302,12 @@ namespace Workwear.ViewModels.Communications
 				Identifier = selectedDocument.GetAttribute<ReportIdentifierAttribute>().Identifier
 			};
 
-			byte[] bytes = ConvertReportToByte(reportInfo, new Dictionary<string, object>() { { "id", employee.Id } });
+			byte[] bytes = ConvertReportToByte(reportInfo, new Dictionary<string, object>() {
+				{ "id", employee.Id },
+				{ "warehouse_id", warehouseId },
+				{ "endDateIssue", endDateIssue ?? DateTime.Now },
+				{ "protection_tools_ids", protectionToolsIds }
+			});
 			message.Files.Add(new Attachment() 
 				{
 					FileName = $"{Filename}.pdf",
@@ -308,9 +320,9 @@ namespace Workwear.ViewModels.Communications
 
 		private byte[] ConvertReportToByte(ReportInfo reportInfo, Dictionary<string, object> parameters) 
 		{
-			IEnumerable<string> strings = parameters.Select(p => $"{p.Key}={p.Value}");
+			IEnumerable<string> strings = parameters.Select(p => $"{p.Key}={ConvertParameterToString(p.Value)}");
 			string stringParameters = string.Join("&", strings);
-			using(MemoryStream ms =
+				using(MemoryStream ms =
 			      ReportExporter.ExportToMemoryStream(reportInfo.GetReportUri(), stringParameters, 
 				      connectionStringBuilder.ConnectionString, OutputPresentationType.PDF))
 			{
@@ -318,6 +330,22 @@ namespace Workwear.ViewModels.Communications
 			}
 		}
 
+		private string ConvertParameterToString(object value) 
+		{
+			if (!(value is string) && value is IEnumerable values)
+			{
+				var valuesList = values.Cast<object>();
+				return String.Join(",", valuesList);
+			}
+
+			if(value is DateTime dateTime) 
+			{
+				return dateTime.ToString("u");
+			}
+			
+			return value.ToString();
+		}
+		
 		private bool ValidMessageTextLength() 
 		{
 			int length = MessageText?.Length ?? 0;

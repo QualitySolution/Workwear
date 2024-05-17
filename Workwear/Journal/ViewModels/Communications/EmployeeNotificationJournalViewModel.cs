@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
@@ -86,9 +87,9 @@ namespace workwear.Journal.ViewModels.Communications
 				item.StatusInfo = status;
 			}
 			
-			if (Filter.CheckInStockAvailability) 
+			if (Filter.ContainsPeriod && Filter.CheckInStockAvailability) 
 			{
-				stockBalanceModel.Warehouse = Filter.SelectedWarehouse;
+				stockBalanceModel.Warehouse = (Filter.SelectedWarehouse.Id == -1) ? null : Filter.SelectedWarehouse;
 				IEnumerable<EmployeeCard> employees = issueModel.PreloadEmployeeInfo(newItems.Select(x => x.Id).ToArray());
 				LoadSizes();
 				issueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
@@ -319,7 +320,18 @@ namespace workwear.Journal.ViewModels.Communications
 		void SendMessage(object[] nodes) 
 		{
 			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
-			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
+			DateTime? endDateIssue = null;
+			if (Filter.ContainsPeriod) 
+			{
+				endDateIssue = Filter.EndDateIssue;
+			}
+
+			NavigationManager.OpenViewModelNamedArgs<SendMessangeViewModel>(this, new Dictionary<string, object> {
+				{ "employeeIds", ids },
+				{ "warehouseId", Filter.SelectedWarehouse.Id },
+				{ "endDateIssue", endDateIssue },
+				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds.ToArray() }
+			});
 		}
 		void ShowHistoryNotificationAction(object[] nodes)
 		{

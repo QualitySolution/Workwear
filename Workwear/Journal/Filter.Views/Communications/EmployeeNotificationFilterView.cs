@@ -42,7 +42,7 @@ namespace workwear.Journal.Filter.Views.Communications
 				.InitializeFromSource();
 			ycomboListWarehouses.SetRenderTextFunc<Warehouse>(w => w.Name);
 			ycomboListWarehouses.Binding.AddSource(ViewModel)
-				.AddBinding(vm => vm.CheckInStockAvailability, w => w.Sensitive)
+				.AddBinding(vm => vm.WarehousesSensitive, w => w.Sensitive)
 				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
 				.AddBinding(vm => vm.SelectedWarehouse, w => w.SelectedItem)
 				.InitializeFromSource();
