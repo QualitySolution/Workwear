@@ -825,7 +825,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>
@@ -994,7 +994,7 @@ FROM(SELECT
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -7,9 +9,10 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.ReportParameters.ViewModels;
 
-namespace workwear.Journal.Filter.ViewModels.Communications
-{
+namespace workwear.Journal.Filter.ViewModels.Communications {
 	public class EmployeeNotificationFilterViewModel : JournalFilterViewModelBase<EmployeeNotificationFilterViewModel>
 	{
 		#region Ограничения
@@ -57,6 +60,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 
 		private bool containsPeriod;
 		[PropertyChangedAlso(nameof(PeriodSensitive))]
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
 		public bool ContainsPeriod {
 			get => containsPeriod;
 			set {
@@ -65,9 +69,27 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			}
 		}
 
+		private bool checkInInStockAvailability;
+		[PropertyChangedAlso(nameof(WarehousesSensitive))]
+		public bool CheckInStockAvailability 
+		{
+			get => checkInInStockAvailability;
+			set => SetField(ref checkInInStockAvailability, value); 
+		}
+
+		public List<Warehouse> Warehouses { get; set; }
+
+		private Warehouse selectedWarehouse;
+		public Warehouse SelectedWarehouse 
+		{
+			get => selectedWarehouse;
+			set => SetField(ref selectedWarehouse, value);
+		}
+		
 		public bool PeriodSensitive => ContainsPeriod;
 		public bool SensitiveDateBirth => ContainsDateBirthPeriod;
-		
+		public bool WarehousesSensitive => PeriodSensitive && CheckInStockAvailability;
+
 		private bool containsDateBirthPeriod;
 		[PropertyChangedAlso(nameof(SensitiveDateBirth))]
 		public bool ContainsDateBirthPeriod {
@@ -90,11 +112,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 			set => SetField(ref endDateBirth, value);
 		}
 
+		public List<int> SelectedProtectionToolsIds { get; set; }
 		#endregion
 
-		#region EntityModels
-
+		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
 		public EmployeeNotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
@@ -106,8 +129,37 @@ namespace workwear.Journal.Filter.ViewModels.Communications
 				.Finish();
 			startDateIssue = startDateBirth = DateTime.Today;
 			endDateIssue = endDateBirth = startDateIssue.AddDays(14);
+			Warehouses = new List<Warehouse>() { new Warehouse() { Id = -1, Name = "Все" } };
+			Warehouses.AddRange(UoW.GetAll<Warehouse>());
+			SelectedWarehouse = Warehouses[0];
+			
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.Items.PropertyOfElementChanged += ItemsOnPropertyOfElementChanged;
+			SelectedProtectionToolsIds = new List<int>(ChoiceProtectionToolsViewModel.SelectedIds);
+		}
+
+		private void ItemsOnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) 
+		{
+			SelectedProtectionTools protectionTools = sender as SelectedProtectionTools;
+			if (SelectedProtectionToolsIds.Contains(protectionTools.Id)) 
+			{
+				if (!protectionTools.Select) 
+				{
+					SelectedProtectionToolsIds.Remove(protectionTools.Id);
+					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				}
+			}
+			else 
+			{
+				if (protectionTools.Select) 
+				{
+					SelectedProtectionToolsIds.Add(protectionTools.Id);
+					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
+				}
+			}
 		}
 	}
+	
 	public enum AskIssueType
 	{
 		[Display(Name = "Все")]

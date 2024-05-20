@@ -6,6 +6,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 		public DataTypeAmount()
 		{
 			ColumnNameKeywords.Add("норма выдачи");
+			ColumnNameKeywords.Add("количество");
 			Data = DataTypeNorm.Amount;
 		}
 
