@@ -173,7 +173,7 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			ReportInfo reportInfo = new ReportInfo
 			{
-				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Title = $"Ведомость на загрузку №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> 
 				{
@@ -189,7 +189,7 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			ReportInfo reportInfo = new ReportInfo
 			{
-				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Title = $"Этикетки для загрузки №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> 
 				{
@@ -202,10 +202,10 @@ namespace Workwear.ViewModels.Postomats {
 
 		public enum PostomatPrintType 
 		{
-			[Display(Name = "Ведомость на выдачу")]
+			[Display(Name = "Ведомость на загрузку")]
 			[ReportIdentifier("Documents.PostomatIssueSheet")]
 			Document,
-			[Display(Name = "Наклейки")]
+			[Display(Name = "Этикетки")]
 			[ReportIdentifier("Documents.PostomatIssueStickers")]
 			Stickers
 		}
