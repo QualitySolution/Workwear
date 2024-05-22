@@ -494,18 +494,18 @@ namespace Workwear.ViewModels.Company
 
 		public enum PersonalCardPrint
 		{
-			[Display(Name = "Лицевая сторона (Приказ №28н от 27.01.2010г.)")]
+			[Display(Name = "Личная карточка")]
 			[ReportIdentifier("Employee.PersonalCardPage1")]
 			PersonalCardPage1,
-			[Display(Name = "Оборотная сторона (Приказ №28н от 27.01.2010г.)")]
+			[Display(Name = "Оборотная сторона личной карточки")]
 			[ReportIdentifier("Employee.PersonalCardPage2")]
 			PersonalCardPage2,
-			[Display(Name = "Лицевая сторона (Приказ №766н от 29.10.2021г.)")]
+			/*[Display(Name = "Лицевая сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew1")]
 			PersonalCardPageNew1,
 			[Display(Name = "Оборотная сторона (Приказ №766н от 29.10.2021г.)")]
 			[ReportIdentifier("Employee.PersonalCardPageNew2")]
-			PersonalCardPageNew2,
+			PersonalCardPageNew2,*/
 			[Display(Name = "СИЗ к получению")]
 			[ReportIdentifier("Employee.IssuedSheet")]
 			IssuedSheet
