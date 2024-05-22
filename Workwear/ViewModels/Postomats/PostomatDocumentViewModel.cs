@@ -6,7 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
-using NPOI.XWPF.UserModel;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
@@ -18,7 +17,6 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
-using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
@@ -85,9 +83,7 @@ namespace Workwear.ViewModels.Postomats {
 			yield return item.Location;
 			foreach(var cell in AvailableCells()) 
 				yield return cell;
-		}
-		
-		public bool CanChangePostomat => Entity.Items.Count == 0;
+		}		
 		
 		public IEnumerable<CellLocation> AvailableCells() {
 			foreach(var cell in allCells) {
@@ -104,6 +100,7 @@ namespace Workwear.ViewModels.Postomats {
 		#region Свойства View
 		public bool CanEdit => Entity.Status == DocumentStatus.New;
 		public bool CanAddItem => Entity.Postomat != null;
+		public bool CanChangePostomat => Entity.Items.Count == 0;
 		#endregion
 
 		#region Команды View
@@ -176,7 +173,7 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			ReportInfo reportInfo = new ReportInfo
 			{
-				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Title = $"Ведомость на загрузку №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> 
 				{
@@ -192,7 +189,7 @@ namespace Workwear.ViewModels.Postomats {
 		{
 			ReportInfo reportInfo = new ReportInfo
 			{
-				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
+				Title = $"Этикетки для загрузки №{Entity.Id} от {Entity.CreateTime:d}",
 				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> 
 				{
@@ -205,10 +202,10 @@ namespace Workwear.ViewModels.Postomats {
 
 		public enum PostomatPrintType 
 		{
-			[Display(Name = "Ведомость на выдачу")]
+			[Display(Name = "Ведомость на загрузку")]
 			[ReportIdentifier("Documents.PostomatIssueSheet")]
 			Document,
-			[Display(Name = "Наклейки")]
+			[Display(Name = "Этикетки")]
 			[ReportIdentifier("Documents.PostomatIssueStickers")]
 			Stickers
 		}

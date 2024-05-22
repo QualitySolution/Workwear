@@ -62,12 +62,12 @@ namespace Workwear.Views.Postomats {
 			buttonDel.Sensitive = treeItems.Selection.CountSelectedRows() > 0;
 		}
 
-		private void SetEditableWindow() {
-			comboPostomat.Sensitive = 
-				buttonAdd.Sensitive = 
-					comboTypeDoc.Sensitive = 
-						treeItems.Sensitive = 
-							ydateDoc.Sensitive = ViewModel.CanEdit;
+		private void SetEditableWindow() 
+		{
+			buttonAdd.Sensitive = 
+				comboTypeDoc.Sensitive = 
+					treeItems.Sensitive = 
+						ydateDoc.Sensitive = ViewModel.CanEdit;
 		}
 
 		protected void OnEnumPrintClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e) 

@@ -51,10 +51,11 @@ GROUP BY IFNULL(issuance_sheet_items.nomenclature_id, issuance_sheet_items.prote
       </Fields>
     </DataSet>
     <DataSet Name="document">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    issuance_sheet.id,
+    IFNULL(issuance_sheet.doc_number, issuance_sheet.id)
+        as doc_number,
     issuance_sheet.date,
     CONCAT_WS(
         '',
@@ -89,10 +90,10 @@ WHERE issuance_sheet.id = @id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="id">
-          <DataField>id</DataField>
-          <TypeName>System.UInt32</TypeName>
+      <Fields >
+        <Field Name="doc_number">
+          <DataField>doc_number</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="date">
           <DataField>date</DataField>
@@ -405,7 +406,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
       <Textbox Name="Textbox7">
         <Height>16.53pt</Height>
         <Width>560.13pt</Width>
-        <Value>='Задание на сборку №' + First({id}, 'document') + ' от ' + Format(First({date}, 'document'), "D")</Value>
+        <Value>='Задание на сборку №' +  First({doc_number}, 'document') + ' от ' + Format(First({date}, 'document'), "D")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
         <Top>4.60pt</Top>
@@ -695,7 +696,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

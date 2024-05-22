@@ -1117,7 +1117,7 @@
       <Textbox Name="Textbox47" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>21.67pt</Height>
         <Width>560.59pt</Width>
-        <Value>Лист учета возврата выданной спецодежды</Value>
+        <Value>="Лист учета возврата выданной спецодежды № " +  First({doc_number}, 'Sheet')</Value>
         <ZIndex>1</ZIndex>
         <Left>121.10pt</Left>
         <Top>5.90pt</Top>
@@ -1330,9 +1330,11 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="DocInfo">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
+IFNULL(stock_income.doc_number, stock_income.id)
+        as doc_number,
 stock_income.date AS doc_date,
 CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
 CONCAT(wear_cards.last_name, " ", wear_cards.first_name, " ", wear_cards.patronymic_name) AS fio
@@ -1357,7 +1359,7 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>
@@ -1368,6 +1370,10 @@ WHERE stock_income.id = @id</CommandText>
         </Field>
         <Field Name="fio">
           <DataField>fio</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="doc_number">
+          <DataField>doc_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1387,7 +1393,7 @@ WHERE stock_income.id = @id</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

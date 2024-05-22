@@ -815,7 +815,7 @@
       <Textbox Name="Textbox50">
         <Height>20.21pt</Height>
         <Width>808.39pt</Width>
-        <Value>= "Ведомость № " + {?id}</Value>
+        <Value>= "Ведомость № " +  First({doc_number}, 'Sheet')</Value>
         <ZIndex>0</ZIndex>
         <Left>0.0pt</Left>
         <Top>42.8pt</Top>
@@ -1544,7 +1544,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Bottom >Solid</Bottom>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1575,7 +1575,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Bottom >Solid</Bottom>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -1606,7 +1606,7 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Bottom >Solid</Bottom>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -2123,7 +2123,8 @@ WHERE
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    issuance_sheet.id,
+    IFNULL(issuance_sheet.doc_number, issuance_sheet.id)
+        as doc_number,
     issuance_sheet.date,
     organizations.name as organization,
     objects.name as subdivision,
@@ -2165,9 +2166,9 @@ WHERE
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="id">
-          <DataField>id</DataField>
-          <TypeName>System.UInt32</TypeName>
+        <Field Name="doc_number">
+          <DataField>doc_number</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="date">
           <DataField>date</DataField>
@@ -2226,11 +2227,11 @@ WHERE
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_dev;user=andrey;password=123;port=3306;server=office.qsolution.ru</ConnectString>
+        <ConnectString>database=;user=;password=;port=3306;server=office.qsolution.ru</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
