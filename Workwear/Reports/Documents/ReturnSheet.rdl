@@ -1117,7 +1117,7 @@
       <Textbox Name="Textbox47" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Height>21.67pt</Height>
         <Width>560.59pt</Width>
-        <Value>="Лист учета возврата выданной спецодежды № " +  First({doc_number}, 'Sheet')</Value>
+        <Value>="Лист учета возврата выданной спецодежды № " +  First({doc_number}, 'DocInfo')</Value>
         <ZIndex>1</ZIndex>
         <Left>121.10pt</Left>
         <Top>5.90pt</Top>
@@ -1177,12 +1177,12 @@
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox79" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Height>12pt</Height>
-            <Width>90pt</Width>
+            <Height>12.00pt</Height>
+            <Width>90.00pt</Width>
             <Value>=Format({doc_date}, "d") + " г. "</Value>
             <ZIndex>1</ZIndex>
-            <Left>710pt</Left>
-            <Top>40pt</Top>
+            <Left>710.00pt</Left>
+            <Top>40.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -1330,7 +1330,7 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="DocInfo">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 IFNULL(stock_income.doc_number, stock_income.id)
@@ -1359,7 +1359,7 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>

@@ -65,7 +65,7 @@ namespace Workwear.Test.Models.Import.Norms
 		[TestCase("0.5", 1, 2, NormPeriodType.Year, false, true)]
 		[TestCase("0,5", 1, 2, NormPeriodType.Year, false, true)]
 		[TestCase("0.33", 1, 3, NormPeriodType.Year, false, true)]
-		[TestCase("0,33", 1, 3, NormPeriodType.Year, false, true)]
+		[TestCase("0,33333", 1, 3, NormPeriodType.Year, false, true)]
 		public void TryParsePeriodAndCount_Test(string inputString, int expectedAmount, int expectedCount, NormPeriodType expectedPeriod, bool withWarning, bool expectedResult)
 		{
 			var settings = Substitute.For<IImportNormSettings>();
