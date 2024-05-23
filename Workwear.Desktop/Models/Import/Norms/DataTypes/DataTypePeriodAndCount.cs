@@ -138,13 +138,22 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 				return true;
 			}
 			//Только количество подразумевая в 1 год.
-			regexp = new Regex(@"^(\d+)\s*(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп\.?)?( (в|на) год\.?)?$");
+			regexp = new Regex(@"^(\d+)([,\.](5|3+))?\s*(пар|пара|пары|шт\.?|комплект.?|кмп|компл\.|комп\.?)?( (в|на) год\.?)?$");
 			match = regexp.Match(value);
 			if (match.Success)
 			{
-				periodType = NormPeriodType.Year;
-				amount = int.Parse(match.Groups[1].Value);
 				periods = 1;
+				periodType = NormPeriodType.Year;
+				if (match.Groups[2].Value.EndsWith("5")) {
+					periods = 2;
+					amount = 1;
+				}
+				else if (match.Groups[2].Value.EndsWith("3")) {
+					periods = 3;
+					amount = 1;
+				} else {
+					amount = int.Parse(match.Groups[1].Value);
+				}
 				return true;
 			}
 			return false;
