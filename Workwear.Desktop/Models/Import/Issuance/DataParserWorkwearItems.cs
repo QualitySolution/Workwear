@@ -34,7 +34,8 @@ namespace Workwear.Models.Import.Issuance
 			SizeService sizeService)
 		{
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
-				"Табельный номер"
+				"Табельный",
+				"Таб."
 				);
 			AddColumnName(DataTypeWorkwearItems.NameWithInitials);
 			AddColumnName(DataTypeWorkwearItems.Fio,
@@ -70,7 +71,8 @@ namespace Workwear.Models.Import.Issuance
 				"дата получения"
 				);
 			AddColumnName(DataTypeWorkwearItems.WriteoffDate,
-				"дата списания"
+				"дата списания",
+				"списние"
 			);
 			AddColumnName(DataTypeWorkwearItems.Count,
 				"Количество",
