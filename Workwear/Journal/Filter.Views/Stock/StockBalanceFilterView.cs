@@ -14,6 +14,14 @@ namespace workwear.Journal.Filter.Views.Stock
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
+			ylabelOwner.Binding.AddBinding(viewModel, v => v.VisibleOwners, w => w.Visible).InitializeFromSource();
+			yspeccomboboxOwners.Binding.AddBinding(viewModel, v => v.VisibleOwners, w => w.Visible).InitializeFromSource();
+			yspeccomboboxOwners.SelectedItemStrictTyped = false;
+			yspeccomboboxOwners.Binding
+				.AddBinding(viewModel, v => v.Owners, w => w.ItemsList)
+				.AddBinding(viewModel, v => v.SelectOwner, w => w.SelectedItem)
+				.InitializeFromSource();
+
 			ydateDate.Binding.AddBinding(viewModel, v=> v.Date, w => w.Date).InitializeFromSource();
 			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();

@@ -340,6 +340,9 @@ namespace workwear.Journal
 					.AddColumn("Собственник имущества")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddTextRenderer(e => e.OwnerName)
+					.AddColumn("Цена продажи")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(e => e.SaleCostText)
 					.Finish()
 			);
 
