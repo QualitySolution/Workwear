@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Autofac;
+using Gamma.Widgets;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
@@ -27,6 +30,18 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref warehouse, value);
 		}
 
+		private List<Owner> owners = new List<Owner>();
+		public List<Owner> Owners {
+			get => owners;
+			set => SetField(ref owners, value);
+		}
+		
+		private object selectOwner = SpecialComboState.All;
+		public object SelectOwner {
+			get => selectOwner;
+			set => SetField(ref selectOwner, value);
+		}
+		
 		private bool showNegativeBalance;
 		public virtual bool ShowNegativeBalance {
 			get => showNegativeBalance;
@@ -63,6 +78,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region Visible
 
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
 		private bool canChooseAmount = false;
 		public bool CanChooseAmount {
 			get => canChooseAmount;
@@ -89,9 +105,13 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			addAmount = currentUserSettings.Settings.DefaultAddedAmount;
 			
-			WarehouseEntry = builder.ForProperty(x => x.Warehouse).UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+			WarehouseEntry = builder.ForProperty(x => x.Warehouse)
+				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			
+			if(FeaturesService.Available(WorkwearFeature.Owners))
+				owners = UoW.GetAll<Owner>().ToList();
 		}
 	}
 }
