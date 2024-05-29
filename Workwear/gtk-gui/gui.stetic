@@ -22192,6 +22192,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="labelBarcodes">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">ylabel5</property>
+                <property name="Selectable">True</property>
               </widget>
               <packing>
                 <property name="TopAttach">8</property>

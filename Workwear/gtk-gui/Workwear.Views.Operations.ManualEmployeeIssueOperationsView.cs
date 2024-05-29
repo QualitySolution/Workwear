@@ -374,6 +374,7 @@ namespace Workwear.Views.Operations
 			this.labelBarcodes = new global::Gamma.GtkWidgets.yLabel();
 			this.labelBarcodes.Name = "labelBarcodes";
 			this.labelBarcodes.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel5");
+			this.labelBarcodes.Selectable = true;
 			this.ytable2.Add(this.labelBarcodes);
 			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.ytable2[this.labelBarcodes]));
 			w29.TopAttach = ((uint)(8));
