@@ -197,7 +197,7 @@ namespace Workwear.ViewModels.Operations
 		public Nomenclature Nomenclature {
 			get => SelectOperation?.Nomenclature;
 			set {
-				if(SelectOperation == null)
+				if(SelectOperation == null || DomainHelper.IsSame(SelectOperation.Nomenclature, value))
 					return;
 				SelectOperation.Nomenclature = value;
 				if(Size != null && !Size.SizeType.IsSame(Nomenclature?.Type?.SizeType))
