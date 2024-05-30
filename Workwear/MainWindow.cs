@@ -92,6 +92,7 @@ public partial class MainWindow : Gtk.Window {
 
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+		IInteractiveService interactive = AutofacScope.Resolve<IInteractiveService>();
 
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -207,6 +208,19 @@ public partial class MainWindow : Gtk.Window {
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
+			}
+		}
+		
+		//Уведомление о скором истечении срока действия серийного номера
+		if(FeaturesService.ExpiryDate != null) {
+			if(FeaturesService.ExpiryDate < DateTime.Now) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Срок действия серийного номера истек. Приложение будет закрыто");
+				Environment.Exit(0);
+			}
+			
+			int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
+			if(daysLeft < 14) {
+				interactive.ShowMessage(ImportanceLevel.Warning, $"Срок действия серийного номера истекает {FeaturesService.ExpiryDate.Value.ToString("d")}");
 			}
 		}
 	}
