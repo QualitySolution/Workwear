@@ -13,7 +13,7 @@ namespace Workwear.ViewModels.Import
 			subdivisionLevelEnable = parameters?.Dynamic.Import_SubdivisionLevelEnable(typeof(bool)) ?? false;
 			subdivisionLevelSeparator = parameters?.Dynamic.Import_SubdivisionLevelSeparator(typeof(string)) ?? "/";
 			subdivisionLevelReverse = parameters?.Dynamic.Import_SubdivisionLevelReverse(typeof(bool)) ?? false;
-			listSeparator = parameters?.Dynamic.Import_ListSeparator(typeof(string)) ?? "/";
+			listSeparator = parameters?.Dynamic.Import_ListSeparator(typeof(string)) ?? ",;";
 			wearoutToName = parameters?.Dynamic.Import_WearoutToName(typeof(bool)) ?? false;
 		}
 
