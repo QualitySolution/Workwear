@@ -19,6 +19,8 @@ namespace Workwear.Views.Operations
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
 			buttonCalculateExpence.Clicked += (sender, args) => ViewModel.CalculateExpense();
 
+			ytableSelectedOPeration.Binding.AddBinding(ViewModel, vm => vm.VisibleSelectOperation, w => w.Visible).InitializeFromSource();
+			
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(x => x.Id.ToString())
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
