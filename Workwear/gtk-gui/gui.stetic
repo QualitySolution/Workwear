@@ -21777,7 +21777,7 @@
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
-      <widget class="Gamma.GtkWidgets.yTable" id="ytable1">
+      <widget class="Gamma.GtkWidgets.yTable" id="ytableOperatonsList">
         <property name="MemberName" />
         <property name="NRows">3</property>
         <property name="NColumns">2</property>
@@ -21927,7 +21927,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yTable" id="ytable2">
+          <widget class="Gamma.GtkWidgets.yTable" id="ytableSelectedOPeration">
             <property name="MemberName" />
             <property name="NRows">11</property>
             <property name="NColumns">3</property>
