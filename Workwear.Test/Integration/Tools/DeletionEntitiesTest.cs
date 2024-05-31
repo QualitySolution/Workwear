@@ -135,6 +135,7 @@ namespace Workwear.Test.Integration.Tools
 					deletionService.PrepareDeletion(typeof(Expense), expense.Id, cancel.Token);
 					Assert.That(deletionService.TotalLinks, Is.GreaterThan(0));
 					deletionService.RunDeletion(cancel.Token);
+					uowDel.Commit();
 				}
 
 				//Проверяем удаление
