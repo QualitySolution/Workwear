@@ -31,8 +31,10 @@ namespace Workwear.Tools.Features
 
 		public byte ProductEdition { get; }
 		public ushort ClientId { get; }
+		
+		public DateTime? ExpiryDate { get; }
 
-		public string EditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
+		public string CurrentEditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
 
 		private bool failCloudConnection;
@@ -91,6 +93,7 @@ namespace Workwear.Tools.Features
 				        && serialNumberEncoder.EditionId <= 3) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
+					ExpiryDate = serialNumberEncoder.ExpiryDate;
 				}
 			}
 		}
@@ -102,6 +105,11 @@ namespace Workwear.Tools.Features
 		{
 		}
 
+		public string GetEditionName(int editionId) 
+		{
+			return SupportEditions.FirstOrDefault(x => x.Number == editionId)?.Name;
+		}
+		
 		public virtual bool Available(WorkwearFeature feature) 
 		{
 			if(feature.GetAttribute<IsCloudFeatureAttribute>() != null) {
