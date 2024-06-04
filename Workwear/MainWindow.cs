@@ -62,8 +62,11 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
+using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
+using Workwear.Journal.ViewModels.Analytics;
+using Workwear.ViewModels.Export;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -77,8 +80,7 @@ public partial class MainWindow : Gtk.Window {
 	public FeaturesService FeaturesService { get; private set; }
 
 
-	public MainWindow() : base(Gtk.WindowType.Toplevel)
-	{
+	public MainWindow() : base(Gtk.WindowType.Toplevel) {
 		Build();
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
@@ -96,7 +98,7 @@ public partial class MainWindow : Gtk.Window {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			checker.RunUpdate();
 		}
-		
+
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
@@ -113,7 +115,7 @@ public partial class MainWindow : Gtk.Window {
 			WinUser.Destroy();
 			return;
 		}
-		
+
 		var userService = AutofacScope.Resolve<IUserService>();
 		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
@@ -172,7 +174,7 @@ public partial class MainWindow : Gtk.Window {
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
-			
+
 			FeaturesService = AutofacScope.Resolve<FeaturesService>();
 			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
 			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
@@ -182,7 +184,7 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 		#endregion
-		
+
 		DisableFeatures();
 		if(FeaturesService.Available(WorkwearFeature.Claims)) {
 			var button = toolbarMain.Children.FirstOrDefault(x => x.Action == ActionClaims);
@@ -237,6 +239,7 @@ public partial class MainWindow : Gtk.Window {
 	#region Workwear featrures
 	private void DisableFeatures() {
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
+		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
@@ -247,6 +250,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
+		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
@@ -254,6 +258,8 @@ public partial class MainWindow : Gtk.Window {
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
@@ -268,12 +274,11 @@ public partial class MainWindow : Gtk.Window {
 		//Здесь пробуем исправить ошибку 35026 на нашем багтрекере.
 		//Предположил что проблема в этом https://github.com/dotnet/runtime/issues/28005
 		//Но проверить действительно ли это так негде.
-		ProcessStartInfo psi = new ProcessStartInfo
-		{
+		ProcessStartInfo psi = new ProcessStartInfo {
 			FileName = url,
 			UseShellExecute = true
 		};
-		Process.Start (psi);
+		Process.Start(psi);
 	}
 
 	void SetChannel(UpdateChannel channel) {
@@ -284,34 +289,29 @@ public partial class MainWindow : Gtk.Window {
 	}
 	#endregion
 
-	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e)
-	{
+	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
 		NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(id));
 	}
 
-	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-	{
+	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
 		Application.Quit();
 	}
 
-	public override void Destroy()
-	{
+	public override void Destroy() {
 		AutofacScope.Dispose();
 		UoW.Dispose();
 		base.Destroy();
 	}
 
-	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e)
-	{
+	protected void OnDialogAuthenticationActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("ChangeUserPassword");
 		QSMain.User.ChangeUserPassword(this);
 	}
 
-	protected void OnUsersActionActivated(object sender, EventArgs e)
-	{
+	protected void OnUsersActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUsers");
 		Users winUsers = new Users();
 		winUsers.Show();
@@ -319,41 +319,34 @@ public partial class MainWindow : Gtk.Window {
 		winUsers.Destroy();
 	}
 
-	protected void OnQuitActionActivated(object sender, EventArgs e)
-	{
+	protected void OnQuitActionActivated(object sender, EventArgs e) {
 		Application.Quit();
 	}
 
-	protected void OnAction7Activated(object sender, EventArgs e)
-	{
+	protected void OnAction7Activated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("MeasurementUnits");
 		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
 						() => new OrmReference(typeof(MeasurementUnits))
 					   );
 	}
 
-	protected void OnAction8Activated(object sender, EventArgs e)
-	{
+	protected void OnAction8Activated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<PostJournalViewModel>(null);
 	}
 
-	protected void OnAction9Activated(object sender, EventArgs e)
-	{
+	protected void OnAction9Activated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<LeadersJournalViewModel>(null);
 	}
 
-	protected void OnAction5Activated(object sender, EventArgs e)
-	{
+	protected void OnAction5Activated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ItemsTypeJournalViewModel>(null);
 	}
 
-	protected void OnAction6Activated(object sender, EventArgs e)
-	{
+	protected void OnAction6Activated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(null);
 	}
 
-	protected void OnAboutActionActivated(object sender, EventArgs e)
-	{
+	protected void OnAboutActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RunAboutDialog");
 		using(var local = AutofacScope.BeginLifetimeScope()) {
 			var about = local.Resolve<AboutView>();
@@ -362,8 +355,7 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnAction11Activated(object sender, EventArgs e)
-	{
+	protected void OnAction11Activated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("ReportStockAllWear");
 		workwear.ReportsDlg.StockAllWearDlg stockAllWearDlg = new workwear.ReportsDlg.StockAllWearDlg();
 		tdiMain.OpenTab(
@@ -372,8 +364,7 @@ public partial class MainWindow : Gtk.Window {
 		);
 	}
 
-	protected void OnAction10Activated(object sender, EventArgs e)
-	{
+	protected void OnAction10Activated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("ReportWearStatement");
 		WearStatement widget = new WearStatement();
 		tdiMain.OpenTab(
@@ -382,11 +373,10 @@ public partial class MainWindow : Gtk.Window {
 		);
 	}
 
-	protected void OnAction12Activated(object sender, EventArgs e) => 
+	protected void OnAction12Activated(object sender, EventArgs e) =>
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ListBySizeViewModel));
 
-	protected void OnHelpActionActivated(object sender, EventArgs e)
-	{
+	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
 			OpenUrl("user-guide.pdf");
@@ -398,14 +388,12 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionHistoryActivated(object sender, EventArgs e)
-	{
+	protected void OnActionHistoryActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RunChangeLogDlg");
 		QSMain.RunChangeLogDlg(this);
 	}
 
-	protected void OnActionUpdateActivated(object sender, EventArgs e)
-	{
+	protected void OnActionUpdateActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
@@ -413,64 +401,53 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionSNActivated(object sender, EventArgs e)
-	{
+	protected void OnActionSNActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("EditSerialNumber");
 		NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 	}
 
-	protected void OnActionNormsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionNormsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<NormJournalViewModel>(null);
 	}
 
-	protected void OnActionConditionNormsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionConditionNormsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<NormConditionJournalViewModel>(null);
 	}
 
-	protected void OnActionNotIssuedSheetDetailActivated(object sender, EventArgs e)
-	{
+	protected void OnActionNotIssuedSheetDetailActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedSheetViewModel));
 	}
 
-	protected void OnActionNotIssuedSheetSummaryActivated(object sender, EventArgs e)
-	{
+	protected void OnActionNotIssuedSheetSummaryActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedSheetSummaryViewModel));
 	}
 
-	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e)
-	{
+	protected void OnActionYearRequestSheetActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AverageAnnualNeedViewModel));
 	}
 
-	protected void OnActionStockBalanceActivated(object sender, EventArgs e)
-	{
+	protected void OnActionStockBalanceActivated(object sender, EventArgs e) {
 		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
 		page.ViewModel.ShowSummary = true;
 		page.ViewModel.Filter.ShowNegativeBalance = true;
 		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 	}
 
-	protected void OnActionStockDocsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionStockDocsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<StockDocumentsJournalViewModel>(null);
 	}
 
-	protected void OnActionEmployeesActivated(object sender, EventArgs e)
-	{
+	protected void OnActionEmployeesActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<EmployeeJournalViewModel>(null);
 	}
 
-	protected void OnActionObjectsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionObjectsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SubdivisionJournalViewModel>(null);
 	}
 
 	#region Панель инструментов
 
-	void ReadUserSettings()
-	{
+	void ReadUserSettings() {
 		switch(CurrentUserSettings.Settings.ToolbarStyle) {
 			case ToolbarType.Both:
 				ActionToolBarTextAndIcon.Activate();
@@ -502,19 +479,17 @@ public partial class MainWindow : Gtk.Window {
 		ActionMaxizizeOnStart.Active = CurrentUserSettings.Settings.MaximizeOnStart;
 	}
 
-	private void ToolBarMode(ToolbarType style)
-	{
+	private void ToolBarMode(ToolbarType style) {
 		if(CurrentUserSettings.Settings.ToolbarStyle != style) {
 			CurrentUserSettings.Settings.ToolbarStyle = style;
 			CurrentUserSettings.SaveSettings();
 		}
-		toolbarMain.ToolbarStyle = (ToolbarStyle)Enum.Parse(typeof(ToolbarStyle), style.ToString()) ;
+		toolbarMain.ToolbarStyle = (ToolbarStyle)Enum.Parse(typeof(ToolbarStyle), style.ToString());
 		ActionIconsExtraSmall.Sensitive = ActionIconsSmall.Sensitive = ActionIconsMiddle.Sensitive = ActionIconsLarge.Sensitive =
 			style != ToolbarType.Text;
 	}
 
-	private void ToolBarShow(bool show)
-	{
+	private void ToolBarShow(bool show) {
 		if(toolbarMain.Visible == show)
 			return;
 
@@ -528,8 +503,7 @@ public partial class MainWindow : Gtk.Window {
 			show;
 	}
 
-	private void ToolBarMode(IconsSize size)
-	{
+	private void ToolBarMode(IconsSize size) {
 		if(CurrentUserSettings.Settings.ToolBarIconsSize != size) {
 			CurrentUserSettings.Settings.ToolBarIconsSize = size;
 			CurrentUserSettings.SaveSettings();
@@ -550,162 +524,134 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e)
-	{
+	protected void OnActionToolBarTextOnlyToggled(object sender, EventArgs e) {
 		if(ActionToolBarTextOnly.Active)
 			ToolBarMode(ToolbarType.Text);
 	}
 
-	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e)
-	{
+	protected void OnActionToolBarIconOnlyToggled(object sender, EventArgs e) {
 		if(ActionToolBarIconOnly.Active)
 			ToolBarMode(ToolbarType.Icons);
 	}
 
-	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e)
-	{
+	protected void OnActionToolBarTextAndIconToggled(object sender, EventArgs e) {
 		if(ActionToolBarTextAndIcon.Active)
 			ToolBarMode(ToolbarType.Both);
 	}
 
-	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e)
-	{
+	protected void OnActionIconsExtraSmallToggled(object sender, EventArgs e) {
 		if(ActionIconsExtraSmall.Active)
 			ToolBarMode(IconsSize.ExtraSmall);
 	}
 
-	protected void OnActionIconsSmallToggled(object sender, EventArgs e)
-	{
+	protected void OnActionIconsSmallToggled(object sender, EventArgs e) {
 		if(ActionIconsSmall.Active)
 			ToolBarMode(IconsSize.Small);
 	}
 
-	protected void OnActionIconsMiddleToggled(object sender, EventArgs e)
-	{
+	protected void OnActionIconsMiddleToggled(object sender, EventArgs e) {
 		if(ActionIconsMiddle.Active)
 			ToolBarMode(IconsSize.Middle);
 	}
 
-	protected void OnActionIconsLargeToggled(object sender, EventArgs e)
-	{
+	protected void OnActionIconsLargeToggled(object sender, EventArgs e) {
 		if(ActionIconsLarge.Active)
 			ToolBarMode(IconsSize.Large);
 	}
 
-	protected void OnActionShowBarToggled(object sender, EventArgs e)
-	{
+	protected void OnActionShowBarToggled(object sender, EventArgs e) {
 		ToolBarShow(ActionShowBar.Active);
 	}
 
-	protected void OnActionBarObjectsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionBarObjectsActivated(object sender, EventArgs e) {
 		ActionObjects.Activate();
 	}
 
-	protected void OnActionBarEmployeesActivated(object sender, EventArgs e)
-	{
+	protected void OnActionBarEmployeesActivated(object sender, EventArgs e) {
 		ActionEmployees.Activate();
 	}
 
-	protected void OnActionBarStoreActivated(object sender, EventArgs e)
-	{
+	protected void OnActionBarStoreActivated(object sender, EventArgs e) {
 		ActionStockDocs.Activate();
 	}
 
-	protected void OnActionBarStoreBalanceActivated(object sender, EventArgs e)
-	{
+	protected void OnActionBarStoreBalanceActivated(object sender, EventArgs e) {
 		ActionStockBalance.Activate();
 	}
 
 	#endregion
 
-	protected void OnActionSiteActivated(object sender, EventArgs e)
-	{
+	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
 		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
-	protected void OnActionOpenReformalActivated(object sender, EventArgs e)
-	{
+	protected void OnActionOpenReformalActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenReformal.ru");
 		OpenUrl("http://qs-workwear.reformal.ru/");
 	}
 
-	protected void OnActionVKActivated(object sender, EventArgs e)
-	{
+	protected void OnActionVKActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("vk.com");
 		OpenUrl("https://vk.com/qualitysolution");
 	}
 
-	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e)
-	{
+	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("ok.ru");
 		OpenUrl("https://ok.ru/qualitysolution");
 	}
 
-	protected void OnActionTwitterActivated(object sender, EventArgs e)
-	{
+	protected void OnActionTwitterActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("twitter.com");
 		OpenUrl("https://twitter.com/QSolutionRu");
 	}
 
-	protected void OnActionYouTubeActivated(object sender, EventArgs e)
-	{
+	protected void OnActionYouTubeActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("youtube.com");
 		OpenUrl("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
-	protected void OnActionRegulationDocActivated(object sender, EventArgs e)
-	{
+	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RegulationDoc");
 		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
 						() => new OrmReference(typeof(RegulationDoc))
 			   );
 	}
 
-	protected void OnActionBaseSettingsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionBaseSettingsActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("DataBaseSettings");
 		NavigationManager.OpenViewModel<DataBaseSettingsViewModel>(null);
 	}
 
-	protected void OnActionVacationTypesActivated(object sender, EventArgs e)
-	{
+	protected void OnActionVacationTypesActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<VacationTypeJournalViewModel>(null);
 	}
 
-	protected void OnActionOrganizationsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionOrganizationsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<OrganizationJournalViewModel>(null);
 	}
 
-	protected void OnActionIssuanceSheetsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionIssuanceSheetsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<IssuanceSheetJournalViewModel>(null);
 	}
 
-	protected void OnActionWarehouseActivated(object sender, EventArgs e)
-	{
+	protected void OnActionWarehouseActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<WarehouseJournalViewModel>(null);
 	}
 
-	protected void OnActionDepartmentActivated(object sender, EventArgs e)
-	{
+	protected void OnActionDepartmentActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<DepartmentJournalViewModel>(null);
 	}
 
-	protected void OnActionProfessionActivated(object sender, EventArgs e)
-	{
+	protected void OnActionProfessionActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ProfessionJournalViewModel>(null);
 	}
 
-	protected void OnActionProtectionToolsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionProtectionToolsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel>(null);
 	}
 
-	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e)
-	{
+	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
 		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Количество сотрудников получивших СИЗ");
 		tdiMain.OpenTab(
@@ -714,13 +660,11 @@ public partial class MainWindow : Gtk.Window {
 		);
 	}
 
-	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e)
-	{
+	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedWearViewModel));
 	}
 
-	protected void OnActionUserSettingsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionUserSettingsActivated(object sender, EventArgs e) {
 		int idSetting;
 		using(IUnitOfWork uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 			var user = AutofacScope.Resolve<IUserService>();
@@ -732,61 +676,51 @@ public partial class MainWindow : Gtk.Window {
 		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(idSetting));
 	}
 
-	protected void OnActionCardIssueeActivated(object sender, EventArgs e)
-	{
+	protected void OnActionCardIssueeActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<IssueByIdentifierViewModel>(null);
 	}
 
-	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e)
-	{
+	protected void OnActionEmployeeLoadActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelEmployee>().As<IImportModel>());
 	}
 
-	protected void OnActionNormsLoadActivated(object sender, EventArgs e)
-	{
+	protected void OnActionNormsLoadActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelNorm>().As<IImportModel>());
 
 	}
 
-	protected void OnActionSetNormsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionSetNormsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<EmployeeProcessingJournalViewModel>(null);
 	}
 
-	protected void OnActionEditNotificationTemplateActivated(object sender, EventArgs e)
-	{
+	protected void OnActionEditNotificationTemplateActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<MessageTemplateJournalViewModel>(null);
 	}
 
-	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionImportWorkwearItemsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ExcelImportViewModel>(null,
 			addingRegistrations: c => c.RegisterType<ImportModelWorkwearItems>().As<IImportModel>());
 	}
 
-	protected void OnActionMaxizizeOnStartToggled(object sender, EventArgs e)
-	{
+	protected void OnActionMaxizizeOnStartToggled(object sender, EventArgs e) {
 		if(CurrentUserSettings.Settings.MaximizeOnStart != ActionMaxizizeOnStart.Active) {
 			CurrentUserSettings.Settings.MaximizeOnStart = ActionMaxizizeOnStart.Active;
 			CurrentUserSettings.SaveSettings();
 		}
 	}
 
-	protected void OnActionPayActivated(object sender, EventArgs e)
-	{
+	protected void OnActionPayActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("pay.qsolution.ru");
 		OpenUrl("https://pay.qsolution.ru/");
 	}
 
-	protected void OnActionRequestSheetActivated(object sender, EventArgs e)
-	{
+	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
 
-	protected void OnActionAdminGuideActivated(object sender, EventArgs e)
-	{
+	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
 			OpenUrl("admin-guide.pdf");
@@ -798,33 +732,27 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionReplaceEntityActivated(object sender, EventArgs e)
-	{
+	protected void OnActionReplaceEntityActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ReplaceEntityViewModel>(null);
 	}
 
-	protected void OnActionStockMovementsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionStockMovementsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
 	}
 
-	protected void OnActionConversatoinsActivated(object sender, EventArgs e)
-	{
+	protected void OnActionConversatoinsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<EmployeeNotificationJournalViewModel>(null);
 	}
 
-	protected void OnShowHistoryLogActivated(object sender, EventArgs e)
-	{
+	protected void OnShowHistoryLogActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<HistoryViewModel>(null);
 	}
 
-	protected void OnActionSizeActivated(object sender, EventArgs e)
-	{
+	protected void OnActionSizeActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SizeJournalViewModel>(null);
 	}
 
-	protected void OnActionSizeTypeActivated(object sender, EventArgs e) 
-	{
+	protected void OnActionSizeTypeActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SizeTypeJournalViewModel>(null);
 	}
 
@@ -851,7 +779,7 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<OwnerJournalViewModel>(null);
 	}
 
-	protected void BarcodeActivated(object sender, EventArgs e) => 
+	protected void BarcodeActivated(object sender, EventArgs e) =>
 		NavigationManager.OpenViewModel<BarcodeJournalViewModel>(null);
 
 	protected void OnActionCostCenterActivated(object sender, EventArgs e) {
@@ -882,5 +810,30 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionDutyNormActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(null);
+	}
+
+	protected void OnActionProvisionActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ProvisionReportViewModel));
+	}
+
+	protected void OnActionFullnessPostomatsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<FullnessJournalViewModel>(null);
+	}
+
+	protected void OnFutureIssueActionActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<FutureIssueExportViewModel>(null);
+	}
+
+	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
+	}
+
+	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
+	}
+
+	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) 
+	{
+		NavigationManager.OpenViewModel<ProtectionToolsCategoryJournalViewModel>(null);
 	}
 }

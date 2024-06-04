@@ -213,15 +213,32 @@ namespace Workwear.Models.Operations {
 		#endregion
 
 		#region Заполение данных в сотрудников
-		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null) {
+		/// <summary>
+		/// Заполняет графы и обновлят дату последней выдачи .
+		/// </summary>
+		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 2</param>
+		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {
+			bool needClose = false;
+			if(progress != null && !progress.IsStarted) {
+				progress.Start(employees.Length + 2);
+				needClose = true;
+			}
+			progress?.Add(text: "Подгружаем операции");
 			if(!employees.Any())
 				return;
 			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
+			progress?.Add(text: "Добавляем несохранённые");
 			if(notSavedOperations != null)
 				operations.AddRange(notSavedOperations);
+			var employeeGroups = operations.GroupBy(x => x.Employee.Id).ToDictionary(x => x.Key, x => x.ToList());
 			foreach(var employee in employees) {
-				employee.FillWearReceivedInfo(operations.Where(x => x.Employee.IsSame(employee)).ToList());
+				progress?.Add(text: $"Заполняем {employee.ShortName}");
+				var ops = employeeGroups.ContainsKey(employee.Id) ? employeeGroups[employee.Id] : new List<EmployeeIssueOperation>();
+				employee.FillWearReceivedInfo(ops);
 			}
+			progress?.Add(text: "Готово");
+			if(needClose)
+				progress.Close();
 		}
 		
 		public void PreloadWearItems(params int[] employeeIds) {
@@ -251,23 +268,7 @@ namespace Workwear.Models.Operations {
 			UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
 				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Analogs)
-				.Future();
-
-			UoW.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
 				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
-				.Future();
-
-			ProtectionTools protectionToolsAnalogAlias = null;
-
-			UoW.Session.QueryOver<ProtectionTools>()
-				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.JoinAlias(p => p.Analogs, () => protectionToolsAnalogAlias, NHibernate.SqlCommand.JoinType.InnerJoin)
-				.Fetch(SelectMode.ChildFetch, () => protectionToolsAnalogAlias)
-				.Fetch(SelectMode.Fetch, () => protectionToolsAnalogAlias.Nomenclatures)
 				.Future();
 
 			query.ToList();
@@ -305,7 +306,7 @@ namespace Workwear.Models.Operations {
 			var items = employees.SelectMany(x => x.WorkwearItems).ToList();
 			progressStep?.Invoke("Получаем список номенклатур");
 			var allNomenclatures = 
-				items.SelectMany(x => x.ProtectionTools.MatchedNomenclatures).Distinct().ToList();
+				items.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().ToList();
 			progressStep?.Invoke("Обновляем складские остатки при необходимости");
 			stockBalanceModel.AddNomenclatures(allNomenclatures);
 			progressStep?.Invoke("Заполняем строки карточек");

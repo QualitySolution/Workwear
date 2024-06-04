@@ -11,7 +11,9 @@
 * xref:manipulation.adoc[Обработка]
 * xref:history-log.adoc[Журнал изменений]
 * xref:import.adoc[Импорт данных]
+* xref:export.adoc[Экспорт данных]
 * xref:mobile-app.adoc[Кабинет сотрудника]
+* xref:postomat.adoc[Постаматы]
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]

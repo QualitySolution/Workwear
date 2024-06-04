@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author></Author>
+  <PageHeight>297mm</PageHeight>
+  <PageWidth>210mm</PageWidth>
+  <Width>1pt</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>4mm</LeftMargin>
+  <RightMargin>4mm</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <Height>111.4pt</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <Table Name="Table1">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Нет данных</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>122.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>41.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>42.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>62.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>52.2pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>86.8pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>85.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>76.2pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>36pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox13">
+                      <Value>Наименование</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox3">
+                      <Value>Размер</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>Рост</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox17">
+                      <Value>Ед.</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>Коли-чество</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value>Дата выдачи по сроку</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>Количество дней просрочки</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value>Количество на складе</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>14.2pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value>={protection_tools_name}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox4">
+                      <Value>={size}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox6">
+                      <Value>={height}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox18">
+                      <Value>={unit}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0.00</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>={amount}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
+                      <Value>={need_date}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>d</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor></BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox36">
+                      <Value>={delay}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor></BackgroundColor>
+                        <Color>Black</Color>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox2">
+                      <Value>={sum}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor></BackgroundColor>
+                        <Color>Black</Color>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>1.6pt</Left>
+        <Top>46.9pt</Top>
+      </Table>
+      <Textbox Name="Textbox50">
+        <Height>20.21pt</Height>
+        <Width>561.64pt</Width>
+        <Value>="СИЗ к получению от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>0.00pt</Left>
+        <Top>5.70pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <FontWeight>Bold</FontWeight>
+          <FontSize>16pt</FontSize>
+        </Style>
+      </Textbox>
+    </ReportItems>
+  </Body>
+  <PageFooter>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT protection_tools.name                                                                  AS protection_tools_name,
+       norms_item.amount -
+       (SELECT IFNULL(SUM(op.issued) - SUM(op.returned), 0)
+        FROM operation_issued_by_employee as op
+        WHERE op.employee_id = @employee_id
+          AND op.protection_tools_id = wear_cards_item.protection_tools_id
+          AND (NOT op.auto_writeoff OR op.auto_writeoff_date &gt; IFNULL(@endDateIssue, CURDATE()))
+          AND op.operation_time &lt; IFNULL(@endDateIssue, CURDATE()))           AS amount,
+       measurement_units.name                                                                 AS unit,
+       DATE_FORMAT(wear_cards_item.next_issue, '%d.%m.%Y')                                    AS need_date,
+       DATEDIFF(IFNULL(@endDateIssue, CURDATE()), wear_cards_item.next_issue) AS delay,
+       size.name                                                                              as size,
+       height.name                                                                            as height,
+       IFNULL(ballance.SUM, 0)                                                                as sum
+FROM wear_cards_item
+         JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+         JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+         LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
+         LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+         LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+         LEFT JOIN wear_cards_sizes AS employeeSizeAlias
+                   ON (employeeSizeAlias.employee_id = wear_cards.id AND
+                       employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+         LEFT JOIN wear_cards_sizes AS employeeHeightAlias
+                   ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
+                       employeeHeightAlias.size_type_id = heightTypeAlias.id)
+         JOIN measurement_units ON item_types.units_id = measurement_units.id
+         JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
+         LEFT JOIN (SELECT sex_b.ptid,
+                           sex_b.size_id,
+                           sex_b.height_id,
+                           sex_const.sex,
+                           IF(sex_const.sex = 'Men', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U) AS SUM
+                    FROM (SELECT spt.id AS ptid,
+                                 sopwh.size_id,
+                                 sopwh.height_id,
+                                 (SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                                   (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id)),
+                                         sopwh.amount, 0))
+                                     - SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                        (@warehouse_id = -1 OR sopwh.warehouse_expense_id = @warehouse_id)),
+                                              sopwh.amount, 0))
+                                     )  AS SUM_U,
+                                 (SUM(IF(sn.sex = 'Men' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                             (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id)),
+                                         sopwh.amount, 0))
+                                     - SUM(IF(sn.sex = 'Men' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                  (@warehouse_id = -1 OR sopwh.warehouse_expense_id = @warehouse_id)),
+                                              sopwh.amount, 0))
+                                     )  AS SUM_M,
+                                 (SUM(IF(sn.sex = 'Women' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
+                                                               (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id)),
+                                         sopwh.amount, 0))
+                                     - SUM(IF(sn.sex = 'Women' AND (sopwh.warehouse_expense_id IS NOT NULL AND
+                                                                    (@warehouse_id = -1 OR sopwh.warehouse_expense_id = @warehouse_id)),
+                                              sopwh.amount, 0))
+                                     )  AS SUM_F
+                          FROM protection_tools AS spt
+                                   LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
+                                   LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
+                                   LEFT JOIN operation_warehouse AS sopwh on (sopwh.operation_time &lt; ADDDATE(
+                                   IFNULL(@endDateIssue, CURDATE()), INTERVAL 1 DAY)
+                              AND sopwh.nomenclature_id = sptn.nomenclature_id
+                              AND sopwh.wear_percent = 0
+                              AND (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id OR
+                                   sopwh.warehouse_expense_id = @warehouse_id))
+                          WHERE (-1 IN (@protection_tools_ids) OR spt.id IN (@protection_tools_ids))
+                          GROUP BY spt.id, size_id, height_id) AS sex_b
+                             JOIN (SELECT IF(const.seq = 1, 'Men', 'Women') as sex
+                                   FROM seq_1_to_2 as const) AS sex_const
+                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
+    AS ballance ON (wear_cards_item.protection_tools_id = ballance.ptid
+    AND (ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND wear_cards.sex = 'M') OR
+         (ballance.sex = 'Women' AND wear_cards.sex = 'F'))
+    AND ((employeeSizeAlias.size_id IS NULL AND ballance.size_id IS NULL) OR
+         ballance.size_id = employeeSizeAlias.size_id)
+    AND ((employeeHeightAlias.size_id IS NULL AND ballance.height_id IS NULL) OR
+         ballance.height_id = employeeHeightAlias.size_id))
+         LEFT JOIN sizes as size ON employeeSizeAlias.size_id = size.id
+         LEFT JOIN sizes as height ON employeeHeightAlias.size_id = height.id
+WHERE wear_cards_item.wear_card_id = @employee_id
+  AND wear_cards_item.next_issue &lt; IFNULL(@endDateIssue, CURDATE())
+  AND (-1 IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids));</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@employee_id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@warehouse_id">
+            <Value>={?warehouse_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@endDateIssue">
+            <Value>={?endDateIssue}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="need_date">
+          <DataField>need_date</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="delay">
+          <DataField>delay</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="size">
+          <DataField>size</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="height">
+          <DataField>height</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="sum">
+          <DataField>sum</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_test_1160;user=SpMob;password=MdVoPf3cxrqzcbIf;port=3306;server=192.168.1.10</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>667</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="endDateIssue">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

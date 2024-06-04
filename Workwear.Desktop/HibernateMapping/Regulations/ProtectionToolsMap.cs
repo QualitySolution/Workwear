@@ -20,12 +20,8 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.Comment).Column("comments");
 			Map(x => x.AssessedCost).Column("assessed_cost");
 
+			References(x => x.CategoryForAnalytic).Column("category_for_analytic_id").Nullable();
 			References(x => x.Type).Column("item_types_id");
-
-			HasManyToMany<ProtectionTools>(x => x.Analogs)
-			.Table("protection_tools_replacement")
-			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("protection_tools_analog_id");
 
 			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
 			.Table("protection_tools_nomenclature")

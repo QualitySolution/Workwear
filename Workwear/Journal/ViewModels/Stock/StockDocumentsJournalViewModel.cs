@@ -81,7 +81,6 @@ namespace workwear.Journal.ViewModels.Stock
 		#region Формирование запроса
 		private StockDocumentsJournalNode resultAlias = null;
 		private EmployeeCard employeeAlias = null;
-		private Subdivision subdivisionAlias = null;
 		private UserBase authorAlias = null;
 		private Warehouse warehouseReceiptAlias = null;
 		private Warehouse warehouseExpenseAlias = null;
@@ -108,20 +107,18 @@ namespace workwear.Journal.ViewModels.Stock
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
-				() => employeeAlias.Patronymic,
-				() => subdivisionAlias.Name
+				() => employeeAlias.Patronymic
 			));
 
 			incomeQuery
 				.JoinQueryOver(() => incomeAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => incomeAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => incomeAlias.Operation).WithAlias(() => resultAlias.IncomeOperation)
-						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -141,7 +138,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		protected IQueryOver<Expense> QueryExpenseDoc(IUnitOfWork uow)
 		{
-			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseEmployeeDoc && Filter.StockDocumentType != StockDocumentType.ExpenseObjectDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseEmployeeDoc)
 				return null;
 
 			Expense expenseAlias = null;
@@ -151,10 +148,6 @@ namespace workwear.Journal.ViewModels.Stock
 				expenseQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				expenseQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
-			if(Filter.StockDocumentType == StockDocumentType.ExpenseEmployeeDoc)
-				expenseQuery.Where(x => x.Operation == ExpenseOperations.Employee);
-			if(Filter.StockDocumentType == StockDocumentType.ExpenseObjectDoc)
-				expenseQuery.Where(x => x.Operation == ExpenseOperations.Object);
 			if(Filter.Warehouse != null)
 				expenseQuery.Where(x => x.Warehouse == Filter.Warehouse);
 
@@ -164,22 +157,20 @@ namespace workwear.Journal.ViewModels.Stock
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
-				() => employeeAlias.Patronymic,
-				() => subdivisionAlias.Name
+				() => employeeAlias.Patronymic
 			));
 
 			expenseQuery
 				.JoinQueryOver(() => expenseAlias.Employee, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinQueryOver(() => expenseAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.Left.JoinAlias(() => expenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => expenseAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+						.Select(() => StockDocumentType.ExpenseEmployeeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 						.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
-						.Select(() => expenseAlias.Operation).WithAlias(() => resultAlias.ExpenseOperation)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
-						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -262,6 +253,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => collectiveExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => collectiveExpenseAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
@@ -346,14 +338,15 @@ namespace workwear.Journal.ViewModels.Stock
 
 			if(!isCounting) {
 				writeoffQuery
-				.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
+					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
 			}
 
 			writeoffQuery
-				.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.SelectGroup(() => writeoffAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => writeoffAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
@@ -419,6 +412,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => inspectionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.SelectGroup(() => inspectionAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => inspectionAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => inspectionAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => StockDocumentType.InspectionDoc).WithAlias(() => resultAlias.DocTypeEnum)
@@ -495,9 +489,11 @@ namespace workwear.Journal.ViewModels.Stock
 
 	public class StockDocumentsJournalNode
 	{
-		private ExpenseOperations _expenseOperation;
-
 		public int Id { get; set; }
+		
+		public string DocNumber { get; set; }
+
+		public string DocNumberText => DocNumber ?? Id.ToString();
 
 		public StockDocumentType DocTypeEnum { get; set; }
 
@@ -509,24 +505,11 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public IncomeOperations IncomeOperation { get; set; }
 
-		public ExpenseOperations ExpenseOperation {
-			get => _expenseOperation;
-			set {
-				_expenseOperation = value;
-				if(ExpenseOperation == ExpenseOperations.Employee)
-					DocTypeEnum = StockDocumentType.ExpenseEmployeeDoc;
-				if(ExpenseOperation == ExpenseOperations.Object)
-					DocTypeEnum = StockDocumentType.ExpenseObjectDoc;
-			}
-		}
-
 		public string Description {
 			get {
 				string text = String.Empty;
 				if(!String.IsNullOrWhiteSpace(Employee))
 					text += $"Сотрудник: {Employee} ";
-				if(!String.IsNullOrWhiteSpace(Subdivision))
-					text += $"Подразделение: {Subdivision} ";
 				if(DocTypeEnum == StockDocumentType.IncomeDoc)
 					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
@@ -540,8 +523,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
 			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
-
-		public string Subdivision { get; set; }
 
 		public string Author { get; set; }
 

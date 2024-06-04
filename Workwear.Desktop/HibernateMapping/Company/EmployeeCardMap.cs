@@ -9,13 +9,13 @@ namespace Workwear.HibernateMapping.Company
 		{
 			Table("wear_cards");
 
-			if (Workwear.HibernateMapping.MappingParams.UseIdsForTest)
+			if (MappingParams.UseIdsForTest)
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
-			else
+			else {
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
-			
-			OptimisticLock.Version();
-			Version(x => x.LastUpdate).Column("last_update");
+				//Версионирование используем только в рабочей версии. В тестах вызывает ошибки.
+				Version(x => x.LastUpdate).Column("last_update").Generated.Always();
+			}
 
 			Map(x => x.CardNumber).Column("card_number");
 			Map(x => x.PersonnelNumber).Column("personnel_number");
@@ -27,6 +27,7 @@ namespace Workwear.HibernateMapping.Company
 			Map(x => x.ChangeOfPositionDate).Column("change_of_position_date");
 			Map(x => x.DismissDate).Column("dismiss_date");
 			Map(x => x.BirthDate).Column("birth_date");
+			Map(x => x.Email).Column("email");
 			Map(x => x.Comment).Column("comment");
 
 			Map(x => x.PhoneNumber).Column("phone_number");

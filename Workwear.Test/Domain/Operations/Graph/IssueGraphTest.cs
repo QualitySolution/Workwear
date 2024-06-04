@@ -235,11 +235,11 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation1.StartOfUse.Returns(new DateTime(2017, 11, 28));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2020, 11, 28));
 			operation1.AutoWriteoffDate.Returns(new DateTime(2020, 11, 28));
-			operation1.Issued.Returns(1);
+			operation1.Issued.Returns(3);
 			
 			var operation3 = Substitute.For<IGraphIssueOperation>();
 			operation3.Id.Returns(3);
-			operation3.OperationTime.Returns(new DateTime(2019, 12, 16, 0, 0, 0));
+			operation3.OperationTime.Returns(new DateTime(2019, 12, 16, 17, 21, 10));
 			operation3.StartOfUse.Returns(new DateTime(2019, 12, 16));
 			operation3.AutoWriteoffDate.Returns(new DateTime(2021, 12, 16));
 			operation3.AutoWriteoffDate.Returns(new DateTime(2021, 12, 16));
@@ -247,7 +247,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 
 			var operationOverride = Substitute.For<IGraphIssueOperation>();
 			operationOverride.Id.Returns(4);
-			operationOverride.OperationTime.Returns(new DateTime(2019, 12, 16, 17, 21, 0));
+			operationOverride.OperationTime.Returns(new DateTime(2019, 12, 16, 0, 0, 0));
 			operationOverride.StartOfUse.Returns(new DateTime(2019, 12, 16));
 			operationOverride.AutoWriteoffDate.Returns(new DateTime(2021, 1, 10));
 			operationOverride.AutoWriteoffDate.Returns(new DateTime(2021, 1, 10));
@@ -258,7 +258,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			var graph = new IssueGraph<IGraphIssueOperation>(list);
 			
 			//Проверяем корректное начисление количества
-			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2019, 12, 15)), Is.EqualTo(1));
+			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2019, 12, 15)), Is.EqualTo(3));
 			Assert.That(graph.AmountAtEndOfDay(new DateTime(2019, 12, 16)), Is.EqualTo(5));
 			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2020, 1, 15)), Is.EqualTo(5));
 			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2021, 1, 15)), Is.EqualTo(0));

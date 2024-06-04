@@ -10,10 +10,10 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
@@ -37,8 +37,12 @@ namespace Workwear.ViewModels.Regulations
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
-			.MakeByType()
-			.Finish();
+				.MakeByType()
+				.Finish();
+			
+			CategoriesEntryViewModel = entryBuilder.ForProperty(x => x.CategoryForAnalytic)
+				.MakeByType()
+				.Finish();
 
 			Entity.Nomenclatures.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
@@ -61,39 +65,10 @@ namespace Workwear.ViewModels.Regulations
 
 		#region EntityViewModels
 		public readonly EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		public readonly EntityEntryViewModel<ProtectionToolsCategory> CategoriesEntryViewModel;
 		#endregion
 
 		#region Действия View
-		#region Аналоги
-		public void AddAnalog()
-		{
-			if(Entity.Type == null) {
-				interactiveService.ShowMessage(ImportanceLevel.Error, "Не указан тип номенклатуры!");
-				return;
-			}
-			var page = NavigationManager.OpenViewModel<ProtectionToolsJournalViewModel, ItemsType>(
-				this, Entity.Type, 
-				OpenPageOptions.AsSlave);
-			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			page.ViewModel.OnSelectResult += Analog_OnSelectResult;
-		}
-
-		void Analog_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
-		{
-			foreach(var toolsNode in e.SelectedObjects) {
-				var tools = UoW.GetById<ProtectionTools>(toolsNode.GetId());
-				if (tools.Type == Entity?.Type)
-					Entity.AddAnalog(tools);
-			}
-		}
-
-		public void RemoveAnalog(ProtectionTools[] tools)
-		{
-			foreach(var item in tools) {
-				Entity.RemoveAnalog(item);
-			}
-		}
-		#endregion
 		#region Номеклатуры
 		public void AddNomenclature()
 		{

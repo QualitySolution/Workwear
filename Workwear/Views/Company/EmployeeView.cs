@@ -10,6 +10,7 @@ using QS.DomainModel.Entity;
 using QS.Views.Dialog;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
+using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company.EmployeeChildren;
@@ -97,6 +98,9 @@ namespace Workwear.Views.Company {
 			entryPhone.PhoneFormat = QS.Utilities.Numeric.PhoneFormat.RussiaOnlyHyphenated;
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
 			ViewModel.Performance.CheckPoint("Телефоны");
+
+			yentryEMail.ValidationMode = ValidationType.email;
+			yentryEMail.Binding.AddBinding(Entity, e => e.Email, w => w.Text).InitializeFromSource();
 			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
 			hboxLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
@@ -106,7 +110,12 @@ namespace Workwear.Views.Company {
 				.AddBinding(ViewModel, v => v.LkPassword, w => w.Text)
 				.AddBinding(ViewModel, v => v.ShowLkPassword, w => w.Visibility)
 				.InitializeFromSource();
-
+			buttonDeductSpecCoins.Binding.AddBinding(ViewModel, vm => vm.SensitiveDeductSpecCoins, w => w.Sensitive).InitializeFromSource();
+			buttonDeductSpecCoins.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			labelSpecCoinsSymbol.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			labelSpecCoinsBalance.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			labelSpecCoinsBalance.Binding.AddBinding(ViewModel, vm => vm.SpecCoinsBalance, w => w.Text, new IntToStringConverter()).InitializeFromSource();
+			
 			ViewModel.Performance.CheckPoint("Пароль");
 			//Устанавливаем последовательность фокуса по Tab
 			//!!!!!!!! НЕ ЗАБЫВАЕМ КОРРЕКТИРОВАТЬ ПОРЯДОК ПРИ ДОБАВЛЕНИИ ВИДЖЕТОВ В ТАБЛИЦУ !!!!!!!!
@@ -237,6 +246,12 @@ namespace Workwear.Views.Company {
 		{
 			ViewModel.CreateLkPassword();
 		}
+
+		protected void OnButtonDeductSpecCoinsClicked(object sender, EventArgs e) 
+		{
+			ViewModel.OpenDeductCoinsView();
+		}
+
 		#endregion
 	}
 }

@@ -97,6 +97,12 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref useBarcode, value);
 		}
 		
+		private bool washable;
+		[Display(Name ="Можно стирать")]
+		public virtual bool Washable {
+			get => washable;
+			set => SetField(ref washable, value);
+		}
 		#endregion
 		#region Рассчетные
 		public virtual string TypeName => Type.Name;

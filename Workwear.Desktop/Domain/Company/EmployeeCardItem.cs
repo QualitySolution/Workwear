@@ -118,7 +118,7 @@ namespace Workwear.Domain.Company
 				if(StockBalanceModel == null)
 					return StockStateInfo.NotLoaded;
 
-				if(!ProtectionTools.MatchedNomenclatures.Any())
+				if(!ProtectionTools.Nomenclatures.Any())
 					return StockStateInfo.UnknownNomenclature;
 
 				if(InStock.Any(x => x.Amount >= ActiveNormItem.Amount))
@@ -225,17 +225,15 @@ namespace Workwear.Domain.Company
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {
-			if (ProtectionTools.MatchedNomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
+			if (ProtectionTools.Nomenclatures.All(n => n.Id != stockPosition.Nomenclature.Id))
 				return false;
 			if (stockPosition.Nomenclature.MatchingEmployeeSex(EmployeeCard.Sex) == false)
 				return false;
 
 			var employeeSize = EmployeeCard.Sizes.FirstOrDefault(x => x.SizeType == stockPosition.WearSize?.SizeType)?.Size;
 
-			if (employeeSize is null && stockPosition.WearSize != null) {
-				logger.Warn("В карточке сотрудника не указан размер для спецодежды типа <{0}>.", ProtectionTools.Name);
+			if (employeeSize is null && stockPosition.WearSize != null) 
 				return false;
-			}
 
 			if (employeeSize != null && stockPosition.WearSize != null) {
 				var suitableStockPositionSize = stockPosition.WearSize.SuitableSizes
@@ -251,10 +249,8 @@ namespace Workwear.Domain.Company
 			
 			var employeeHeight = employeeCard.Sizes
 				.FirstOrDefault(x => x.SizeType == stockPosition.Height.SizeType)?.Size;
-			if (employeeHeight is null) {
-				logger.Warn($"В карточке сотрудника не указан {stockPosition.Height.Name}");
+			if (employeeHeight is null)
 				return false;
-			}
 
 			var suitableStockPositionHeights = stockPosition.Height.SuitableSizes
 					.Union(stockPosition.Height.SizesWhereIsThisSizeAsSuitable)
@@ -269,7 +265,6 @@ namespace Workwear.Domain.Company
 		/// Перед вызовом метода Graph должен быть заполнен!
 		/// </summary>
 		/// <param name="uow">Необходим для сохранения строки.</param>
-		/// <exception cref="NullReferenceException"></exception>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета UpdateNextIssue, Graph должен быть заполнен!");
@@ -323,7 +318,7 @@ namespace Workwear.Domain.Company
 
 			if(NextIssue != wantIssue) {
 				NextIssue = wantIssue;
-				uow.Save (this);
+				uow?.Save (this);
 			}
 
 			if(NextIssue < ActiveNormItem.Norm.DateFrom && ActiveNormItem.NormPeriod != NormPeriodType.Wearout && ActiveNormItem.NormPeriod != NormPeriodType.Duty){
@@ -364,8 +359,8 @@ namespace Workwear.Domain.Company
 				throw new ArgumentNullException();
 			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
-			var xMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
-			var yMatchedNomenclature = protectionTools.MatchedNomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
+			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
+			var yMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
 				return xMatchedNomenclature.CompareTo(yMatchedNomenclature);
 			if(x.Position.WearPercent != y.Position.WearPercent)

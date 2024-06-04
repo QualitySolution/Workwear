@@ -8,6 +8,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Regulations;
@@ -37,9 +38,11 @@ namespace workwear.Journal.ViewModels.Regulations
 		{
 			ProtectionToolsJournalNode resultAlias = null;
 			ItemsType itemsTypeAlias = null;
+			ProtectionToolsCategory categoryForAnalyticAlias = null;
 			var query = uow.Session.QueryOver<ProtectionTools>()
-				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias);
-
+				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias)
+				.Left.JoinAlias(x => x.CategoryForAnalytic, () => categoryForAnalyticAlias);
+			
 			if(type != null)
 				query = query.Where(p => itemsTypeAlias.Id == type.Id);
 			
@@ -52,6 +55,7 @@ namespace workwear.Journal.ViewModels.Regulations
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.TypeName)
+					.Select(() => categoryForAnalyticAlias.Name).WithAlias(() => resultAlias.CategoryForAnalytic)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<ProtectionToolsJournalNode>());
 		}
@@ -95,5 +99,6 @@ namespace workwear.Journal.ViewModels.Regulations
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string TypeName { get; set; }
+		public string CategoryForAnalytic { get; set; }
 	}
 }

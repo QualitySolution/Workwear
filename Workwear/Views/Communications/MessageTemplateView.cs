@@ -18,6 +18,9 @@ namespace Workwear.Views.Communications
 			entryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			entityTitle.Binding.AddBinding(Entity, e => e.MessageTitle, w => w.Text).InitializeFromSource();
 			ytextText.Binding.AddBinding(Entity, e => e.MessageText, w => w.Buffer.Text).InitializeFromSource();
+			entryLinkTitle.Binding.AddBinding(Entity, e => e.LinkTitleText, w => w.Text).InitializeFromSource();
+			entryLink.Binding.AddBinding(Entity, e => e.LinkText, w => w.Text).InitializeFromSource();
+
 		}
 	}
 }

@@ -28,6 +28,8 @@ namespace Workwear.Models.Import.Issuance
 		SizeAndGrowth,
 		[Display(Name = "Дата выдачи")]
 		IssueDate,
+		[Display(Name = "Дата списания")]
+		WriteoffDate,
 		[Display(Name = "Количество")]
 		Count,
 	}

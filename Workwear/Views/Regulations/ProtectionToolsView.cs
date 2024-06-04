@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using Gtk;
 using QS.Views.Dialog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Regulations;
@@ -27,16 +29,11 @@ namespace Workwear.Views.Regulations
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 
+			entryCategories.ViewModel = ViewModel.CategoriesEntryViewModel;
+
 			yspinAssessedCost.Binding.AddBinding(Entity, e => e.AssessedCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
-
-			ytreeNormAnalog.ColumnsConfig = FluentColumnsConfig<ProtectionTools>.Create()
-				.AddColumn("Аналог СИЗ").AddTextRenderer(p => p.Name)
-				.Finish();
-			ytreeNormAnalog.ItemsDataSource = Entity.Analogs;
-			ytreeNormAnalog.Selection.Mode = Gtk.SelectionMode.Multiple;
-			ytreeNormAnalog.Selection.Changed += YtreeItemsType_Selection_Changed;
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
@@ -69,24 +66,6 @@ namespace Workwear.Views.Regulations
 			menu.Popup();
 
 		}
-
-		#region Аналоги
-
-		void YtreeItemsType_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonRemoveNormAnalog.Sensitive = ytreeNormAnalog.Selection.CountSelectedRows() > 0;
-		}
-
-		protected void OnButtonAddNormAnalogClicked(object sender, EventArgs e)
-		{
-			ViewModel.AddAnalog();
-		}
-
-		protected void OnButtonRemoveNormAnalogClicked(object sender, EventArgs e)
-		{
-			ViewModel.RemoveAnalog(ytreeNormAnalog.GetSelectedObjects<ProtectionTools>());
-		}
-		#endregion
 		#region Номенклатуры
 		protected void OnButtonAddNomenclatureClicked(object sender, EventArgs e)
 		{

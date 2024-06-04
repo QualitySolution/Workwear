@@ -68,7 +68,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => Substitute.For<SizeService>()).As<SizeService>();
 			builder.Register(x => Substitute.For<IDeleteEntityService>()).As<IDeleteEntityService>();
 			builder.Register(x => Substitute.For<IInteractiveService>()).As<IInteractiveService>().As<IInteractiveQuestion>().As<IInteractiveMessage>();
-			builder.Register(x => Substitute.For<IUserService>()).As<IUserService>();
+			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => Substitute.For<CurrentUserSettings>()).As<CurrentUserSettings>();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			var container = builder.Build();

@@ -27,29 +27,12 @@ namespace Workwear.Domain.Stock.Documents
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
-
-		ExpenseOperations operation;
-
-		[Display (Name = "Тип операции")]
-		public virtual ExpenseOperations Operation {
-			get { return operation; }
-			set { SetField (ref operation, value, () => Operation); }
-		}
-
 		EmployeeCard employee;
 
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
 			get { return employee; }
 			set { SetField (ref employee, value, () => Employee); }
-		}
-
-		Subdivision subdivision;
-
-		[Display (Name = "Подразделение")]
-		public virtual Subdivision Subdivision {
-			get { return subdivision; }
-			set { SetField (ref subdivision, value, () => Subdivision); }
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
@@ -77,27 +60,24 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title{
-			get{ return String.Format ("{0} №{1} от {2:d}", Operation.GetEnumTitle (), Id, Date);}
-		}
+		public virtual string Title => $"Персональная выдача №{DocNumber ?? Id.ToString()} от {Date:d}";
 
 		public Expense ()
 		{
 		}
 
 		#region IValidatableObject implementation
-
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
 		{
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { nameof(Date)});
-
-			if(Operation == ExpenseOperations.Object && Subdivision == null)
-				yield return new ValidationResult ("Подразделение должно быть указано", 
-					new[] { this.GetPropertyName (o => o.Subdivision)});
-
-			if(Operation == ExpenseOperations.Employee && Employee == null)
+			
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] { this.GetPropertyName (o => o.DocNumber)});
+			
+			if(Employee == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.Employee)});
 
@@ -262,13 +242,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 		#endregion
-	}
-
-	public enum ExpenseOperations {
-		[Display(Name = "Выдача сотруднику")]
-		Employee,
-		[Display(Name = "Выдача на подразделение")]
-		Object
 	}
 }
 

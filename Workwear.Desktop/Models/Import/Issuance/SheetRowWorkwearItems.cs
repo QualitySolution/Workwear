@@ -12,6 +12,7 @@ namespace Workwear.Models.Import.Issuance
 		}
 
 		public DateTime? Date;
+		public DateTime? DateWriteoff;
 
 		#region Найденные соответствия
 		public EmployeeCard Employee;

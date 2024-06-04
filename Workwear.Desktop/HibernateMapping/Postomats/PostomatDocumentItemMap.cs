@@ -18,10 +18,13 @@ namespace Workwear.HibernateMapping.Postomats
 			Map(x => x.LocationStorage).Column("loc_storage");
 			Map(x => x.LocationShelf).Column("loc_shelf");
 			Map(x => x.LocationCell).Column("loc_cell");
+			Map(x => x.CellNumber).Column("cell_number");
 
 			References (x => x.Document).Column ("document_id").Not.Nullable ();
+			References (x => x.Employee).Column("employee_id").Not.Nullable ();
 			References (x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
 			References (x => x.Barcode).Column ("barcode_id");
+			References (x => x.ServiceClaim).Column ("claim_id");
 		}
 	}
 }

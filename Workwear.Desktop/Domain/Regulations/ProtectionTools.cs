@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Analytics;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Regulations
@@ -53,47 +52,16 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref assessedCost, value); }
 		}
 
+		private ProtectionToolsCategory categoryForAnalytic;
+		[Display(Name = "Категория номенклатуры нормы для аналитики")]
+		public virtual ProtectionToolsCategory CategoryForAnalytic 
+		{
+			get => categoryForAnalytic;
+			set => SetField(ref categoryForAnalytic, value);
+		}
 		#endregion
-
-		#region Аналоги
-
-		private IObservableList<ProtectionTools> analogs = new ObservableList<ProtectionTools>();
-
-		[Display(Name = "Аналоги")]
-		public virtual IObservableList<ProtectionTools> Analogs {
-			get { return analogs; }
-			set { SetField(ref analogs, value, () => Analogs); }
-		}
-
-		public virtual void AddAnalog(ProtectionTools Analog)
-		{
-			if(Analogs.Any(p => DomainHelper.EqualDomainObjects(p, Analog))) {
-				logger.Warn("Такой аналог уже добавлен. Пропускаем...");
-				return;
-			}
-			if(DomainHelper.EqualDomainObjects(this, Analog)) {
-				logger.Warn("Нельзя добавлять в качестве аналога себя. Пропускаем...");
-				return;
-			}
-			Analogs.Add(Analog);
-		}
-
-		public virtual void RemoveAnalog(ProtectionTools Analog)
-		{
-			Analogs.Remove(Analog);
-		}
-
 		#region Расчетные
-
-		public virtual IEnumerable<ProtectionTools> MatchedProtectionTools => (new[] { this }).Concat(Analogs);
-
-		public virtual string GetAmountAndUnitsText(int amount)
-		{
-			return this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
-		}
-
-		#endregion
-
+		public virtual string GetAmountAndUnitsText(int amount) => this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		#endregion
 
 		#region Номенклатура
@@ -105,8 +73,6 @@ namespace Workwear.Domain.Regulations
 			get { return nomenclatures; }
 			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
 		}
-
-		public virtual IEnumerable<Nomenclature> MatchedNomenclatures => Nomenclatures.Union(Analogs.SelectMany(x => x.Nomenclatures));
 
 		public virtual void AddNomenclature(Nomenclature nomenclature)
 		{

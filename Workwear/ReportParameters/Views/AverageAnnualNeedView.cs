@@ -24,7 +24,7 @@ namespace workwear.ReportParameters.Views
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 			
 			ycheckSummry.Binding
-				.AddBinding(viewModel, v => v.Summary, w => w.Active)
+				.AddBinding(ViewModel, v => v.Summary, w => w.Active)
 				.InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;

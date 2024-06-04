@@ -42,6 +42,13 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref user, value);
 		}
 		
+		private uint? terminalId;
+		[Display(Name = "Терминал")]
+		public virtual uint? TerminalId {
+			get => terminalId;
+			set => SetField(ref terminalId, value);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
@@ -52,20 +59,5 @@ namespace Workwear.Domain.ClothingService {
 		#region Расчетные
 		public virtual string Title => $"Операция {State.GetEnumTitle()} заявки №{Claim.Id} от {OperationTime:d}";
 		#endregion
-	}
-
-	public enum ClaimState {
-		[Display(Name = "Принята")]
-		WaitService,
-		[Display(Name = "В пути")]
-		InTransit,
-		[Display(Name = "В ремонте")]
-		InRepair,
-		[Display(Name = "В стирке")]
-		InWashing,
-		[Display(Name = "Ожидает выдачи")]
-		AwaitIssue,
-		[Display(Name = "Возвращена")]
-		Returned,
 	}
 }

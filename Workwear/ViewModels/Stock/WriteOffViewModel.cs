@@ -36,7 +36,6 @@ namespace Workwear.ViewModels.Stock
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
-        public Subdivision Subdivision { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
         private OrganizationRepository organizationRepository;
@@ -50,6 +49,7 @@ namespace Workwear.ViewModels.Stock
             INavigationManager navigation,
             IInteractiveService interactive,
             ILifetimeScope autofacScope,
+            IUserService userService,
             SizeService sizeService,
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
@@ -65,10 +65,12 @@ namespace Workwear.ViewModels.Stock
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
+            
+            if (UoW.IsNew) {
+	            Entity.CreatedbyUser = userService.GetCurrentUser();
+            }
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
-            else if (subdivision != null)
-                Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
             Owners = UoW.GetAll<Owner>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
 	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -89,6 +91,11 @@ namespace Workwear.ViewModels.Stock
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 
+            if(UoW.IsNew) {
+	            Entity.CreatedbyUser = userService.GetCurrentUser();
+	            logger.Info($"Создание Нового документа Списания");
+            } else 
+	            AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
         }
         
         #region ViewProperty
@@ -96,6 +103,16 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+        public bool SensitiveDocNumber => !AutoDocNumber;
+		
+        private bool autoDocNumber = true;
+        [PropertyChangedAlso(nameof(DocNumber))]
+        [PropertyChangedAlso(nameof(SensitiveDocNumber))]
+        public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+        public string DocNumber {
+	        get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+	        set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+        }
         
         private string total;
         public string Total {
@@ -159,29 +176,7 @@ namespace Workwear.ViewModels.Stock
             
             CalculateTotal(null, null);
         }
-
-        public void AddFromObject() {
-            var selectJournal =
-                NavigationManager.OpenViewModel<SubdivisionBalanceJournalViewModel, Subdivision>(
-                    this,
-                    Subdivision,
-                    OpenPageOptions.AsSlave);
-            selectJournal.ViewModel.Filter.DateSensitive = false;
-            selectJournal.ViewModel.Filter.SubdivisionSensitive = Subdivision == null;
-            selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
-            selectJournal.ViewModel.OnSelectResult += SelectFromobject_ObjectSelected;
-        }
-        private void SelectFromobject_ObjectSelected(object sender, JournalSelectedEventArgs e) {
-            
-	        var operations = UoW.GetById<SubdivisionIssueOperation>(e.GetSelectedObjects<SubdivisionBalanceJournalNode>().Select(x => x.Id));
-	        var addedAmount = ((SubdivisionBalanceJournalViewModel)sender).Filter.AddAmount;
-	        var balance = e.GetSelectedObjects<SubdivisionBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
-
-	        foreach (var operation in operations)
-		        Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
-            CalculateTotal(null, null);
-        }
+        
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);
             CalculateTotal(null, null);
@@ -237,7 +232,7 @@ namespace Workwear.ViewModels.Stock
 		        return;
 			
 	        var reportInfo = new ReportInfo {
-		        Title = String.Format("Акт списания №{0}", Entity.Id),
+		        Title = String.Format("Акт списания №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
 		        Identifier = "Documents.WriteOffSheet",
 		        Parameters = new Dictionary<string, object> {
 			        { "id",  Entity.Id }

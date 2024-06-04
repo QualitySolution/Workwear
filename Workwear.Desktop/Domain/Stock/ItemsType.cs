@@ -36,21 +36,6 @@ namespace Workwear.Domain.Stock
 			get => units;
 			set => SetField (ref units, value);
 		}
-
-		private ItemTypeCategory category;
-		[Display (Name = "Категория")]
-		public virtual ItemTypeCategory Category {
-			get => category;
-			set {
-				if (!SetField(ref category, value, () => Category)) return;
-				if (Category != ItemTypeCategory.wear) {
-					SizeType = null;
-					HeightType = null;
-				}
-				if (Category != ItemTypeCategory.property)
-					LifeMonths = null;
-			}
-		}
 		
 		СlothesType? wearCategory;
 		[Display (Name = "Вид одежды")]
@@ -65,13 +50,7 @@ namespace Workwear.Domain.Stock
 			get => issueType;
 			set => SetField(ref issueType, value);
 		}
-
-		private int? lifeMonths;
-		[Display (Name = "Срок службы")]
-		public virtual int? LifeMonths {
-			get => lifeMonths;
-			set => SetField (ref lifeMonths, value);
-		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment
@@ -100,12 +79,6 @@ namespace Workwear.Domain.Stock
 		}
 		#endregion
 		public ItemsType () { }
-	}
-	public enum ItemTypeCategory{
-		[Display(Name = "Спецодежда")]
-		wear,
-		[Display(Name = "Имущество")]
-		property
 	}
 
 	public enum IssueType {

@@ -8,6 +8,7 @@ using Gamma.Utilities;
 using NHibernate;
 using NLog;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -110,6 +111,11 @@ namespace Workwear.ViewModels.Stock
 				.AndChangeType(TypeOfChangeEvent.Insert)
 				.AndChangeType(TypeOfChangeEvent.Update);
 			
+			if(UoW.IsNew) {
+				Entity.CreatedbyUser = userService.GetCurrentUser();
+				logger.Info($"Создание Нового документа Коллективной выдачи выдачи.");
+			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+						
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
@@ -119,6 +125,19 @@ namespace Workwear.ViewModels.Stock
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
+		#endregion
+		
+		#region Свойства View
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		public string DocNumber {
+			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
 		#endregion
 
 		#region Сохранение
@@ -148,7 +167,7 @@ namespace Workwear.ViewModels.Stock
 			UoW.Commit();
 			performance.CheckPoint("Обновление карточек сотрудников...");
 			if(changedOperations.Any()) {
-				//progressCreator.UpdateMax(6 + changedOperations.Length + 1);
+				progressCreator.UpdateMax(6 + changedOperations.Length + 1);
 				issueModel.UpdateNextIssue(changedOperations, progressCreator);
 			}
 			
@@ -184,7 +203,8 @@ namespace Workwear.ViewModels.Stock
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.Id}" : $"Ведомость №{Entity.IssuanceSheet.Id} (МБ-7)",
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
+					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }

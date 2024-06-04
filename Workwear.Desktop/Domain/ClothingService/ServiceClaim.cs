@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using QS.Project.Domain;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.ClothingService {
@@ -13,6 +16,13 @@ namespace Workwear.Domain.ClothingService {
 	public class ServiceClaim : PropertyChangedBase, IDomainObject {
 		#region Cвойства
 		public virtual int Id { get; set; }
+		
+		private EmployeeCard employee;
+		[Display(Name = "Сотрудник")]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
 		
 		private Barcode barcode;
 		[Display(Name = "Штрихкод")]
@@ -50,6 +60,20 @@ namespace Workwear.Domain.ClothingService {
 		}
 		#endregion
 
+		#region Статусы
+		public virtual void ChangeState(ClaimState state, uint? terminalId = null, UserBase user = null, string comment = null) {
+			var stateOperation = new StateOperation {
+				Claim = this,
+				OperationTime = DateTime.Now,
+				State = state,
+				TerminalId = terminalId,
+				User = user,
+				Comment = comment
+			};
+			States.Add(stateOperation);
+		}
+		#endregion
+		
 		#region Вычисляемые
 		public virtual string Title => $"Заявка на обслуживание №{Id}";
 

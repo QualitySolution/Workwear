@@ -125,8 +125,11 @@ namespace Workwear.Tools.Features
 					case WorkwearFeature.EmployeeLk:
 						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3)
 							return false;
-						
 						return AvailableCloudFeatures.Contains("wear_lk");
+					case WorkwearFeature.SpecCoinsLk:
+						if(ProductEdition != 3) 
+							return false;
+						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
 						if(ProductEdition != 0 && ProductEdition != 3)
 							return false;
@@ -159,6 +162,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.Inspection:
 				case WorkwearFeature.LoadExcel:
+				case WorkwearFeature.ExportExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
@@ -183,6 +187,8 @@ namespace Workwear.Tools.Features
 		Inspection,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
+		[Display(Name = "Выгрузка в Excel")]
+		ExportExcel,
 		[Display(Name = "Групповая обработка")]
 		BatchProcessing,
 		[Display(Name = "История изменений")]
@@ -198,6 +204,9 @@ namespace Workwear.Tools.Features
 		[IsCloudFeature]
 		[Display(Name = "Коммуникация с сотрудниками")]
 		Communications,
+		[IsCloudFeature]
+		[Display(Name = "Спецкойны")]
+		SpecCoinsLk,
 		#endregion
 		#endregion
 		#region Предприятие
@@ -223,7 +232,7 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Отзывы")]
 		Ratings,
 		[IsCloudFeature]
-		[Display(Name = "Постоматы")]
+		[Display(Name = "Постаматы")]
 		Postomats,
 		#endregion
 		#endregion

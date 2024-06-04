@@ -130,7 +130,7 @@ namespace Workwear.Views.Import
 			this.notebookSteps = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebookSteps.CanFocus = true;
 			this.notebookSteps.Name = "notebookSteps";
-			this.notebookSteps.CurrentPage = 2;
+			this.notebookSteps.CurrentPage = 0;
 			this.notebookSteps.ShowBorder = false;
 			// Container child notebookSteps.Gtk.Notebook+NotebookChild
 			this.vbox2 = new global::Gtk.VBox();

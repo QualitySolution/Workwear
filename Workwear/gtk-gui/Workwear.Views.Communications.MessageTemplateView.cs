@@ -16,17 +16,25 @@ namespace Workwear.Views.Communications
 
 		private global::Gamma.GtkWidgets.yEntry entityTitle;
 
+		private global::Gamma.GtkWidgets.yEntry entryLink;
+
+		private global::Gamma.GtkWidgets.yEntry entryLinkTitle;
+
 		private global::Gamma.GtkWidgets.yEntry entryName;
 
-		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
 
 		private global::Gamma.GtkWidgets.yTextView ytextText;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel10;
+		private global::Gamma.GtkWidgets.yLabel ylabel11;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel8;
+		private global::Gamma.GtkWidgets.yLabel ylabel12;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel9;
+		private global::Gamma.GtkWidgets.yLabel ylabel13;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel14;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel15;
 
 		protected virtual void Build()
 		{
@@ -78,7 +86,7 @@ namespace Workwear.Views.Communications
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
+			this.ytable1.NRows = ((uint)(5));
 			this.ytable1.NColumns = ((uint)(2));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
@@ -98,6 +106,38 @@ namespace Workwear.Views.Communications
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.entryLink = new global::Gamma.GtkWidgets.yEntry();
+			this.entryLink.WidthRequest = 400;
+			this.entryLink.CanFocus = true;
+			this.entryLink.Name = "entryLink";
+			this.entryLink.IsEditable = true;
+			this.entryLink.MaxLength = 100;
+			this.entryLink.InvisibleChar = '•';
+			this.ytable1.Add(this.entryLink);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryLink]));
+			w7.TopAttach = ((uint)(4));
+			w7.BottomAttach = ((uint)(5));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.entryLinkTitle = new global::Gamma.GtkWidgets.yEntry();
+			this.entryLinkTitle.WidthRequest = 400;
+			this.entryLinkTitle.CanFocus = true;
+			this.entryLinkTitle.Name = "entryLinkTitle";
+			this.entryLinkTitle.IsEditable = true;
+			this.entryLinkTitle.MaxLength = 100;
+			this.entryLinkTitle.InvisibleChar = '•';
+			this.ytable1.Add(this.entryLinkTitle);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryLinkTitle]));
+			w8.TopAttach = ((uint)(3));
+			w8.BottomAttach = ((uint)(4));
+			w8.LeftAttach = ((uint)(1));
+			w8.RightAttach = ((uint)(2));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.entryName = new global::Gamma.GtkWidgets.yEntry();
 			this.entryName.WidthRequest = 400;
 			this.entryName.CanFocus = true;
@@ -106,65 +146,90 @@ namespace Workwear.Views.Communications
 			this.entryName.MaxLength = 100;
 			this.entryName.InvisibleChar = '•';
 			this.ytable1.Add(this.entryName);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryName]));
-			w7.LeftAttach = ((uint)(1));
-			w7.RightAttach = ((uint)(2));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
-			this.GtkScrolledWindow.HeightRequest = 100;
-			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
-			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
-			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.ytextText = new global::Gamma.GtkWidgets.yTextView();
-			this.ytextText.CanFocus = true;
-			this.ytextText.Name = "ytextText";
-			this.GtkScrolledWindow.Add(this.ytextText);
-			this.ytable1.Add(this.GtkScrolledWindow);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.GtkScrolledWindow]));
-			w9.TopAttach = ((uint)(2));
-			w9.BottomAttach = ((uint)(3));
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryName]));
 			w9.LeftAttach = ((uint)(1));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabel10 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel10.Name = "ylabel10";
-			this.ylabel10.Xalign = 1F;
-			this.ylabel10.Yalign = 0F;
-			this.ylabel10.LabelProp = global::Mono.Unix.Catalog.GetString("Текст:");
-			this.ytable1.Add(this.ylabel10);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel10]));
-			w10.TopAttach = ((uint)(2));
-			w10.BottomAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabel8 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel8.Name = "ylabel8";
-			this.ylabel8.Xalign = 1F;
-			this.ylabel8.LabelProp = global::Mono.Unix.Catalog.GetString("Название:");
-			this.ytable1.Add(this.ylabel8);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel8]));
+			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
+			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
+			this.ytextText = new global::Gamma.GtkWidgets.yTextView();
+			this.ytextText.CanFocus = true;
+			this.ytextText.Name = "ytextText";
+			this.GtkScrolledWindow1.Add(this.ytextText);
+			this.ytable1.Add(this.GtkScrolledWindow1);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable1[this.GtkScrolledWindow1]));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
+			w11.LeftAttach = ((uint)(1));
+			w11.RightAttach = ((uint)(2));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabel9 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel9.Name = "ylabel9";
-			this.ylabel9.Xalign = 1F;
-			this.ylabel9.LabelProp = global::Mono.Unix.Catalog.GetString("Заголовок:");
-			this.ytable1.Add(this.ylabel9);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel9]));
-			w12.TopAttach = ((uint)(1));
-			w12.BottomAttach = ((uint)(2));
+			this.ylabel11 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel11.Name = "ylabel11";
+			this.ylabel11.Xalign = 1F;
+			this.ylabel11.LabelProp = global::Mono.Unix.Catalog.GetString("Название:");
+			this.ytable1.Add(this.ylabel11);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel11]));
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabel12 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel12.Name = "ylabel12";
+			this.ylabel12.Xalign = 1F;
+			this.ylabel12.LabelProp = global::Mono.Unix.Catalog.GetString("Заголовок:");
+			this.ytable1.Add(this.ylabel12);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel12]));
+			w13.TopAttach = ((uint)(1));
+			w13.BottomAttach = ((uint)(2));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabel13 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel13.Name = "ylabel13";
+			this.ylabel13.Xalign = 1F;
+			this.ylabel13.Yalign = 0F;
+			this.ylabel13.LabelProp = global::Mono.Unix.Catalog.GetString("Текст:");
+			this.ytable1.Add(this.ylabel13);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel13]));
+			w14.TopAttach = ((uint)(2));
+			w14.BottomAttach = ((uint)(3));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabel14 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel14.Name = "ylabel14";
+			this.ylabel14.Xalign = 1F;
+			this.ylabel14.Yalign = 0F;
+			this.ylabel14.LabelProp = global::Mono.Unix.Catalog.GetString("Заголовок ссылки:");
+			this.ylabel14.Wrap = true;
+			this.ytable1.Add(this.ylabel14);
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel14]));
+			w15.TopAttach = ((uint)(3));
+			w15.BottomAttach = ((uint)(4));
+			w15.XOptions = ((global::Gtk.AttachOptions)(4));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabel15 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel15.Name = "ylabel15";
+			this.ylabel15.Xalign = 1F;
+			this.ylabel15.Yalign = 0F;
+			this.ylabel15.LabelProp = global::Mono.Unix.Catalog.GetString("Ссылка:");
+			this.ytable1.Add(this.ylabel15);
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel15]));
+			w16.TopAttach = ((uint)(4));
+			w16.BottomAttach = ((uint)(5));
+			w16.XOptions = ((global::Gtk.AttachOptions)(4));
+			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox2.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ytable1]));
-			w13.Position = 1;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ytable1]));
+			w17.Position = 1;
+			w17.Expand = false;
+			w17.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{

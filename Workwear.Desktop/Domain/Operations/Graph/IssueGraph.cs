@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using NHibernate.Criterion;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
@@ -15,7 +14,7 @@ namespace Workwear.Domain.Operations.Graph
 		DateTime OperationTime { get; }
 		DateTime? StartOfUse { get; }
 		DateTime? AutoWriteoffDate { get; }
-		int Issued { get; }
+		int Issued { get; set; }
 		int Returned { get; }
 
 		IGraphIssueOperation IssuedOperation { get; }
@@ -106,6 +105,23 @@ namespace Workwear.Domain.Operations.Graph
 
 		#region Методы
 
+		public void AddOperations(IList<EmployeeIssueOperation> operations) {
+			foreach(var op in operations) 
+				this.operations.Add(op);
+			if(operations.Any())
+				Refresh();
+		}
+
+		/// <summary>
+		///  Возвращает операцию с указанной датой автосписания, если такая есть.
+		///  Не учитывает ручные списания
+		/// </summary>
+		/// <param name="date"></param>
+		/// <returns></returns>
+		public EmployeeIssueOperation GetWrittenOffOperation(DateTime date) {
+			return (EmployeeIssueOperation)operations.FirstOrDefault(o => o.AutoWriteoffDate.GetValueOrDefault().Date == date.Date );
+		}
+		
 		public int AmountAtBeginOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			var interval = IntervalOfDate(date);
@@ -147,12 +163,10 @@ namespace Workwear.Domain.Operations.Graph
 		{
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
-				
-			var matchedProtectionTools = protectionTools.MatchedProtectionTools;
 			
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
 					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.ProtectionTools.Id.IsIn(matchedProtectionTools.Select(n => n.Id).ToArray()))
+					.Where(x => x.ProtectionTools.Id == protectionTools.Id)
 					.OrderBy(x => x.OperationTime).Asc
 					.List();
 			if(unsavedOprarations != null)

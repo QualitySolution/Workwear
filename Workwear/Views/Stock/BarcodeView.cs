@@ -1,4 +1,5 @@
-﻿using QS.Views.Dialog;
+﻿using System;
+using QS.Views.Dialog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.ViewModels.Stock;
@@ -41,6 +42,10 @@ namespace Workwear.Views.Stock
 				.AddColumn("Операция").AddTextRenderer(x => x.OperationTitle)
 				.Finish();
 
+			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			
+			buttonPrintBarcode.Clicked += (sender, args) => ViewModel.PrintBarcodes();
+			
 			treeviewOperations.ItemsDataSource = Entity.BarcodeOperations;
 		}
 	}

@@ -21,7 +21,6 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Representations.Organization;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
-using workwear.ViewModel;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
 
@@ -58,11 +57,9 @@ namespace workwear
 
 		private void IncomeDoc_PropertyChanged (object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == IncomeDoc.GetPropertyName (d => d.Operation) 
-				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.EmployeeCard)
-				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.Subdivision))
+				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.EmployeeCard))
 			{
 				buttonAdd.Sensitive = IncomeDoc.Operation == IncomeOperations.Return && IncomeDoc.EmployeeCard != null 
-					|| IncomeDoc.Operation == IncomeOperations.Object && IncomeDoc.Subdivision != null 
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
@@ -169,14 +166,6 @@ namespace workwear
 				OpenSlaveTab(selectFromEmployeeDlg);
 			}
 
-			if(IncomeDoc.Operation == IncomeOperations.Object) {
-				var selectFromObjectDlg = new ReferenceRepresentation (new ViewModel.ObjectBalanceVM (IncomeDoc.Subdivision),
-				                                                       $"Выданное на {IncomeDoc.Subdivision.Name}");
-				selectFromObjectDlg.Mode = OrmReferenceMode.MultiSelect;
-				selectFromObjectDlg.ObjectSelected += SelectFromObjectDlg_ObjectSelected;;
-				OpenSlaveTab(selectFromObjectDlg);
-			}
-
 			if (IncomeDoc.Operation == IncomeOperations.Enter) {
 				var selectJournal =
 					MainClass.MainWin.NavigationManager
@@ -189,13 +178,6 @@ namespace workwear
 		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => IncomeDoc.AddItem(n, Interactive));
-			CalculateTotal();
-		}
-
-		private void SelectFromObjectDlg_ObjectSelected (object sender, ReferenceRepresentationSelectedEventArgs e) {
-			foreach(var node in e.GetNodes<ObjectBalanceVMNode> ()) {
-				IncomeDoc.AddItem(MyOrmDialog.UoW.GetById<SubdivisionIssueOperation>(node.Id), node.Added - node.Removed);
-			}
 			CalculateTotal();
 		}
 

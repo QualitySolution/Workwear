@@ -19,11 +19,14 @@ namespace Workwear.Views.Operations
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
 			buttonCalculateExpence.Clicked += (sender, args) => ViewModel.CalculateExpense();
 
+			ytableSelectedOPeration.Binding.AddBinding(ViewModel, vm => vm.VisibleSelectOperation, w => w.Visible).InitializeFromSource();
+			
 			ytreeviewOperations.ColumnsConfig = ColumnsConfigFactory.Create<EmployeeIssueOperation>()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(x => x.Id.ToString())
 				.AddColumn("Дата выдачи").AddTextRenderer(x => x.OperationTime.ToShortDateString())
 				.AddColumn("Количество").AddNumericRenderer(x => x.Issued)
-				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.ExpiryByNorm:d}")
+				.AddColumn("Окончание носки").AddTextRenderer(x => $"{x.AutoWriteoffDate:d}")
+				.AddColumn("Процент износа").AddTextRenderer(x => x.WearPercent.ToString("P0"))
 				.Finish();
 			
 			ytreeviewOperations.Binding
@@ -73,6 +76,12 @@ namespace Workwear.Views.Operations
 			yspinbuttonAmmount.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.Issued, w => w.ValueAsInt)
+				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
+				.InitializeFromSource();
+			
+			yspinbuttonWearPercent.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.WearPercent, w => w.ValueAsDecimal)
 				.AddBinding(wm => wm.CanEditOperation, w => w.Sensitive)
 				.InitializeFromSource();
 			

@@ -1,12 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using NPOI.SS.Formula.Functions;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Postomats {
-	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постомата", Nominative = "строка документа постомата")]
+	[Appellative(Gender = GrammaticalGender.Feminine, NominativePlural = "строки документа постамата", Nominative = "строка документа постамата")]
 	[HistoryTrace]
 	public class PostomatDocumentItem : PropertyChangedBase, IDomainObject{
 		#region Cвойства
@@ -14,6 +15,13 @@ namespace Workwear.Domain.Postomats {
 		
 		[IgnoreHistoryTrace]
 		public virtual PostomatDocument Document { get; set; }
+		
+		private EmployeeCard employee;
+		[Display(Name = "Сотрудник")]
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
 		
 		private Nomenclature nomenclature;
 		[Display(Name = "Номенклатура")]
@@ -27,6 +35,13 @@ namespace Workwear.Domain.Postomats {
 		public virtual Barcode Barcode {
 			get => barcode;
 			set => SetField(ref barcode, value);
+		}
+		
+		private ServiceClaim serviceClaim;
+		[Display(Name = "Заявка на обслуживание")]
+		public virtual ServiceClaim ServiceClaim {
+			get => serviceClaim;
+			set => SetField(ref serviceClaim, value);
 		}
 		
 		private int delta;
@@ -62,7 +77,7 @@ namespace Workwear.Domain.Postomats {
 
 		private CellLocation? location;
 		public virtual CellLocation Location {
-			get => location ?? new CellLocation(LocationStorage, LocationShelf, LocationCell);
+			get => location ?? new CellLocation("???", LocationStorage, LocationShelf, LocationCell);
 			set {
 				location = value;
 				LocationStorage = location?.Storage ?? 0;
@@ -72,6 +87,13 @@ namespace Workwear.Domain.Postomats {
 			}
 		}
 
+		[Display(Name = "Номер ячейки")]
+		public virtual uint CellNumber 
+		{
+			get => Location.Cell;
+			set => _ = value;
+		}
+		
 		public virtual string Title => Delta > 0 
 			? $"Загрузка {Nomenclature.Name} х {Delta} в ячейку {Location.Title}"
 		    : $"Выдача {Nomenclature.Name} х {-Delta} из ячейки {Location.Title}";
@@ -82,21 +104,24 @@ namespace Workwear.Domain.Postomats {
 		public readonly uint Storage;
 		public readonly uint Shelf;
 		public readonly uint Cell;
+		public readonly string Number;
 
-		public CellLocation(uint storage, uint shelf, uint cell) {
+		public CellLocation(string number, uint storage, uint shelf, uint cell) {
+			Number = number;
 			Storage = storage;
 			Shelf = shelf;
 			Cell = cell;
 		}
 		
-		public CellLocation(QS.Cloud.Postomat.Manage.CellLocation location) {
+		public CellLocation(string number, QS.Cloud.Postomat.Manage.CellLocation location) {
+			Number = number;
 			Storage = location.Storage;
 			Shelf = location.Shelf;
 			Cell = location.Cell;
 		}
 
 		public bool IsEmpty => Storage == 0 && Shelf == 0 && Cell == 0;
-		public string Title => IsEmpty ? null : $"{Storage}-{Shelf}-{Cell}";
+		public string Title => IsEmpty ? null : $"{Number} ({Storage}-{Shelf}-{Cell})";
 		
 		public bool Equals(CellLocation other) {
 			return Storage == other.Storage && Shelf == other.Shelf && Cell == other.Cell;

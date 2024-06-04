@@ -92,10 +92,11 @@ WHERE doc.id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Doc">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-doc.id,
+IFNULL(doc.doc_number, doc.id)
+        as doc_number,
 users.name as user_name,
 doc.date,
 organizations.name as organization,
@@ -121,10 +122,10 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="id">
-          <DataField>id</DataField>
-          <TypeName>System.UInt32</TypeName>
+      <Fields >
+        <Field Name="doc_number">
+          <DataField>doc_number</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="user_name">
           <DataField>user_name</DataField>
@@ -1225,7 +1226,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox44">
-                      <Value>="№"+{?id}</Value>
+                      <Value>="№ " +  First({doc_number}, 'Doc')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -2298,7 +2299,7 @@ WHERE stock_inspection_members.stock_inspection_id = @id</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

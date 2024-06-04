@@ -75,6 +75,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public void Accept() {
 			var claim = new ServiceClaim {
 				Barcode = BarcodeInfoViewModel.Barcode,
+				Employee = BarcodeInfoViewModel.Employee,
 				NeedForRepair = NeedRepair,
 				Defect = Defect,
 				IsClosed = false

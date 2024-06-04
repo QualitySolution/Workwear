@@ -98,6 +98,13 @@ namespace Workwear.Domain.Company
 			get => phoneNumber;
 			set => SetField(ref phoneNumber, value);
 		}
+		
+		private string email;
+		[Display(Name = "Электронная почта")]
+		public virtual string Email {
+			get => email;
+			set => SetField(ref email, value);
+		}
 
 		private bool lkRegistered;
 		[Display(Name = "Зарегистрирован мобильный кабинет?")]
@@ -265,12 +272,11 @@ namespace Workwear.Domain.Company
 		public virtual string ShortName => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
 
 		private string ToTitleCase(string str){
-			if (!string.IsNullOrWhiteSpace(str)) {
-				var ti = CultureInfo.CurrentCulture.TextInfo;
-				return ti.ToTitleCase(str.Trim().ToLower());
-			}
-
-			return string.Empty;
+			if (string.IsNullOrWhiteSpace(str))
+				return null;
+			
+			var ti = CultureInfo.CurrentCulture.TextInfo;
+			return ti.ToTitleCase(str.Trim().ToLower());
 		}
 
 		#endregion
@@ -303,6 +309,11 @@ namespace Workwear.Domain.Company
 				yield return new ValidationResult(
 					$"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}",
 					new[] { nameof(PhoneNumber) });
+	
+			if(!EmailHelper.Validate(Email, true))
+				yield return new ValidationResult(
+					$"Некорректный формат email адреса",
+					new[] { nameof(Email) });
 
 			if(!String.IsNullOrEmpty(PersonnelNumber)) {
 
@@ -420,7 +431,7 @@ namespace Workwear.Domain.Company
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
-				if(wearItem.ProtectionTools.MatchedProtectionTools.Any(x => ids.Contains(x.Id)))
+				if(ids.Contains(wearItem.ProtectionTools.Id))
 					wearItem.UpdateNextIssue(UoW);
 			}
 		}
@@ -463,24 +474,12 @@ namespace Workwear.Domain.Company
 					.Where(x => x.ProtectionTools != null)
 					.GroupBy(x => x.ProtectionTools.Id)
 					.ToDictionary(g => g.Key, g => g);
-
-			//Основное заполнение выдачи
-			foreach (var item in WorkwearItems) {
-				if(!protectionGroups.ContainsKey(item.ProtectionTools.Id))
-					continue;
-				item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[item.ProtectionTools.Id].ToList());
-				protectionGroups.Remove(item.ProtectionTools.Id);
-			}
 			
-			//Дополнительно ищем по аналогам.
 			foreach (var item in WorkwearItems) {
-			 	var matched = 
-				    item.ProtectionTools.MatchedProtectionTools
-					    .FirstOrDefault(x => protectionGroups.ContainsKey(x.Id));
-				if(matched == null)
-					continue;
-				item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[matched.Id].ToList());
-				protectionGroups.Remove(matched.Id);
+				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
+					item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[item.ProtectionTools.Id].ToList());
+				else 
+					item.Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>());
 			}
 		}
 
@@ -491,10 +490,10 @@ namespace Workwear.Domain.Company
 			Vacations.Add(vacation);
 		}
 		public virtual bool OnVacation(DateTime date) {
-			foreach(var vacation in Vacations) 
-				if(vacation.BeginDate <= date && vacation.EndDate.AddDays(1) > date)
-					return true;
-			return false;
+			return CurrentVacation(date) != null;
+		}
+		public virtual EmployeeVacation CurrentVacation(DateTime date) {
+			return Vacations.FirstOrDefault(v => v.BeginDate <= date && v.EndDate.AddDays(1) > date);
 		}
 		public virtual void RecalculateDatesOfIssueOperations(IUnitOfWork uow,
 			EmployeeIssueRepository employeeIssueRepository, BaseParameters baseParameters,

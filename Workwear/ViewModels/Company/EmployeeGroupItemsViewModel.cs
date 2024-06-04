@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NHibernate.SqlCommand;
-using NHibernate.Transform;
+﻿using System.Linq;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;

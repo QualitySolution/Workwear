@@ -106,14 +106,8 @@ namespace Workwear.Models.Import.Norms
 				.Fetch(SelectMode.Fetch, x => x.Department)
 				.List();
 			progress.Add();
-
-			var subdivisionNames = MatchPairs
-				.Where(x => x.SubdivisionNames != null)
-				.SelectMany(x => x.SubdivisionNames)
-				.Distinct().ToArray();
-			var subdivisions = uow.Session.QueryOver<Subdivision>()
-				.Where(x => x.Name.IsIn(subdivisionNames))
-				.List();
+			
+			var subdivisions = uow.GetAll<Subdivision>().ToList();
 			progress.Add();
 
 			var departmentNames = MatchPairs
@@ -128,7 +122,7 @@ namespace Workwear.Models.Import.Norms
 			//Заполняем и создаем отсутствующие должности
 			foreach(var pair in MatchPairs) {
 				if(pair.AllPostNames.Any())
-					SetOrMakePost(pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null, model.FileName);
+					SetOrMakePost(model.SettingsNormsViewModel, pair, posts, subdivisions, departments, subdivisionColumn == null, departmentColumn == null, model.FileName);
 			}
 			progress.Add();
 
@@ -219,16 +213,29 @@ namespace Workwear.Models.Import.Norms
 			progress.Close();
 		}
 
-		internal void SetOrMakePost(SubdivisionPostCombination combination, IList<Post> posts,
+		internal void SetOrMakePost(SettingsNormsViewModel settings,
+			SubdivisionPostCombination combination,
+			IList<Post> posts,
 			IList<Subdivision> subdivisions,
 			IList<Department> departments,
 			bool withoutSubdivision,
 			bool withoutDepartment,
 			string importFileName) {
 			foreach(var postName in combination.AllPostNames) {
+				string[] subdivisionNames = null;
+				if(!withoutSubdivision) {
+					subdivisionNames = postName.subdivision
+						.Split(new[] { settings.SubdivisionLevelEnable ? settings.SubdivisionLevelSeparator : "" },
+							StringSplitOptions.RemoveEmptyEntries)
+						.Select(x => x.Trim())
+						.ToArray();
+					if(settings.SubdivisionLevelEnable && settings.SubdivisionLevelReverse)
+						subdivisionNames = subdivisionNames.Reverse().ToArray();
+				}
+
 				var existPosts = UsedPosts.Concat(posts).Where(x =>
 					String.Equals(x.Name, postName.post, StringComparison.CurrentCultureIgnoreCase)
-					&& (withoutSubdivision || String.Equals(x.Subdivision?.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase))
+					&& (withoutSubdivision || EqualsSubdivision(subdivisionNames, x.Subdivision))
 					&& (withoutDepartment || String.Equals(x.Department?.Name, postName.department, StringComparison.CurrentCultureIgnoreCase)))
 					.ToList();
 
@@ -242,13 +249,10 @@ namespace Workwear.Models.Import.Norms
 					Department department = null;
 
 					if(!String.IsNullOrEmpty(postName.subdivision)) {
-						subdivision = UsedSubdivisions.Concat(subdivisions).FirstOrDefault(x =>
-							String.Equals(x.Name, postName.subdivision, StringComparison.CurrentCultureIgnoreCase));
+						subdivision = UsedSubdivisions.Concat(subdivisions).FirstOrDefault(x => EqualsSubdivision(subdivisionNames, x));
 
-						if(subdivision == null) {
-							subdivision = new Subdivision { Name = postName.subdivision };
-							UsedSubdivisions.Add(subdivision);
-						}
+						if(subdivision == null)
+							subdivision = GetOrCreateSubdivision(subdivisionNames, subdivisions, null);
 					}
 
 					if(!String.IsNullOrEmpty(postName.department)) {
@@ -270,6 +274,37 @@ namespace Workwear.Models.Import.Norms
 			}
 		}
 
+		#endregion
+
+		#region Heplers
+
+		bool EqualsSubdivision(string[] names, Subdivision subdivision) {
+			if(names.Length == 0 || subdivision == null)
+				return false;
+			if(!String.Equals(subdivision.Name, names.Last(), StringComparison.CurrentCultureIgnoreCase))
+				return false;
+			if(names.Length > 1)
+				return EqualsSubdivision(names.Take(names.Length - 1).ToArray(), subdivision.ParentSubdivision);
+			return subdivision.ParentSubdivision == null;
+		}
+
+		internal Subdivision GetOrCreateSubdivision(string[] names, IList<Subdivision> subdivisions, Subdivision parent) {
+			var name = names.First();
+			var subdivision = UsedSubdivisions.Concat(subdivisions).FirstOrDefault(x => x.ParentSubdivision == parent 
+			                                                                            && String.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+			if(subdivision == null) {
+				subdivision = new Subdivision {
+					Name = name, 
+					ParentSubdivision = parent
+				};
+				UsedSubdivisions.Add(subdivision);
+			}
+
+			if(names.Length > 1)
+				return GetOrCreateSubdivision(names.Skip(1).ToArray(), subdivisions, subdivision);
+			else
+				return subdivision;
+		}
 		#endregion
 
 		#region Сохранение данных
