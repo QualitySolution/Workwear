@@ -1,4 +1,5 @@
-﻿using Gamma.Utilities;
+﻿using System.Threading.Tasks;
+using Gamma.Utilities;
 using QS.Navigation;
 using QS.Views.Dialog;
 using Workwear.Domain.Communications;
@@ -83,9 +84,9 @@ namespace Workwear.Views.Communications
 			ViewModel.Close(false, CloseSource.Self);
 		}
 
-		protected void OnButtonSend(object sender, System.EventArgs e)
+		protected async void OnButtonSend(object sender, System.EventArgs e)
 		{
-			ViewModel.SendMessage();
+			await ViewModel.SendMessageAsync();
 		}
 	}
 }
