@@ -31,6 +31,3 @@ alter table stock_write_off
 
 alter table stock_inspection
 	add doc_number varchar(16) null after id;
-
-alter table `postomat_document_items`
-	modify column `cell_number` varchar(10) null default null
