@@ -13,6 +13,8 @@ namespace workwear.ReportParameters.Views {
 		{
 			this.Build();
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
+			//entitySubdivision.Binding.AddBinding(ViewModel, v => v.Subdivision, w => w.cha).InitializeFromSource();
+			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			
 			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();

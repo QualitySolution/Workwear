@@ -35,6 +35,13 @@ namespace workwear.ReportParameters.ViewModels {
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, autofacScope);
 
 			EntrySubdivisionViewModel = builder.ForEntity<Subdivision>().MakeByType().Finish();
+			EntryDepartmentViewModel = builder.ForEntity<Department>().MakeByType().Finish();
+			
+			
+			/*EntryDepartmentViewModel = builder.F(x => x.Department)
+				.MakeByType()
+				.Finish();*/
+			
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
@@ -51,6 +58,7 @@ namespace workwear.ReportParameters.ViewModels {
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
+		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		#endregion
 
@@ -88,7 +96,15 @@ namespace workwear.ReportParameters.ViewModels {
 			get => issueTypeOptions;
 			set => SetField(ref issueTypeOptions, value);
 		}
-
+		
+		//public Subdivision Subdivision{
+		//	get => EntrySubdivisionViewModel?.Entity;
+		//}
+		
+		public Department Department{
+			get => EntryDepartmentViewModel?.Entity;
+		}
+		
 		private bool addChildSubdivisions;
 		public bool AddChildSubdivisions {
 			get => addChildSubdivisions;
@@ -118,6 +134,7 @@ namespace workwear.ReportParameters.ViewModels {
 					{"end_month", EndMonth},
 					{"end_year", EndYear},
 					{"subdivisions", SelectSubdivisions() },
+					{"department_id", Department?.Id ?? -1},
 					{"issue_type", IssueTypeOptions?.ToString() },
 					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedIdsMod},
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
