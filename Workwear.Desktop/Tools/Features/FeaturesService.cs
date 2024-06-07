@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using QS.Cloud.Client;
 using QS.Dialog;
@@ -27,12 +28,14 @@ namespace Workwear.Tools.Features
 		private readonly CloudClientService cloudClientService;
 		private readonly IInteractiveMessage interactive;
 		private readonly IErrorReporter errorReporter;
+		private readonly ILifetimeScope autofacScope;
 		private readonly IDataBaseInfo dataBaseInfo;
 
-		public byte ProductEdition { get; }
-		public ushort ClientId { get; }
+		public byte ProductEdition { get; private set; }
 		
-		public DateTime? ExpiryDate { get; }
+		public ushort ClientId { get; private set; }
+		
+		public DateTime? ExpiryDate { get; private set; }
 
 		public string CurrentEditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
@@ -67,12 +70,14 @@ namespace Workwear.Tools.Features
 			CloudClientService cloudClientService,
 			IInteractiveMessage interactive,
 			IErrorReporter errorReporter,
+			ILifetimeScope autofacScope,
 			IDataBaseInfo dataBaseInfo = null)
 		{
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -84,6 +89,18 @@ namespace Workwear.Tools.Features
 			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
 				return;
 
+			SetProperties(serialNumberService);
+		}
+
+		/// <summary>
+		/// Используется только для тестов!!!
+		/// </summary>
+		public FeaturesService()
+		{
+		}
+
+		private void SetProperties(ISerialNumberService serialNumberService)
+		{
 			serialNumberEncoder.Number = serialNumberService.SerialNumber;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
@@ -97,14 +114,13 @@ namespace Workwear.Tools.Features
 				}
 			}
 		}
-
-		/// <summary>
-		/// Используется только для тестов!!!
-		/// </summary>
-		public FeaturesService()
+		
+		public void UpdateSerialNumber() 
 		{
+			ISerialNumberService serialNumberService = autofacScope.Resolve<ISerialNumberService>();
+			SetProperties(serialNumberService);
 		}
-
+		
 		public string GetEditionName(int editionId) 
 		{
 			return SupportEditions.FirstOrDefault(x => x.Number == editionId)?.Name;
