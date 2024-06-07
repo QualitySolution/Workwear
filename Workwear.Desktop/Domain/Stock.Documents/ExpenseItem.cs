@@ -64,13 +64,6 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		private SubdivisionPlace subdivisionPlace;
-		[Display (Name = "Размещение в подразделении")]
-		public virtual SubdivisionPlace SubdivisionPlace {
-			get => subdivisionPlace;
-			set { SetField (ref subdivisionPlace, value, () => SubdivisionPlace); }
-		}
-
 		private EmployeeIssueOperation employeeIssueOperation;
 		[Display(Name = "Операция выдачи сотруднику")]
 		[IgnoreHistoryTrace]
@@ -78,14 +71,6 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			get => employeeIssueOperation;
 			set => SetField(ref employeeIssueOperation, value);
-		}
-
-		private SubdivisionIssueOperation subdivisionIssueOperation;
-		[Display(Name = "Операция выдачи на подразделение")]
-		[IgnoreHistoryTrace]
-		public virtual SubdivisionIssueOperation SubdivisionIssueOperation {
-			get => subdivisionIssueOperation;
-			set => SetField(ref subdivisionIssueOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
@@ -207,36 +192,14 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
-
-			//Выдача сотруднику
-			if(expenseDoc.Operation == ExpenseOperations.Employee)
-			{
-				if (EmployeeIssueOperation == null) {
-					EmployeeIssueOperation = new EmployeeIssueOperation();
-				}
-
-				EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
-									
-				uow.Save(EmployeeIssueOperation);
-			}
-			else if(EmployeeIssueOperation != null)
-			{
-				uow.Delete(EmployeeIssueOperation);
-				EmployeeIssueOperation = null;
+			
+			if (EmployeeIssueOperation == null) {
+				EmployeeIssueOperation = new EmployeeIssueOperation();
 			}
 
-			//Выдача на подразделение
-			if(expenseDoc.Operation == ExpenseOperations.Object) {
-				if(SubdivisionIssueOperation == null)
-					SubdivisionIssueOperation = new SubdivisionIssueOperation(baseParameters);
-
-				SubdivisionIssueOperation.Update(uow, askUser, this);
-				uow.Save(SubdivisionIssueOperation);
-			}
-			else if(SubdivisionIssueOperation != null) {
-				uow.Delete(SubdivisionIssueOperation);
-				SubdivisionIssueOperation = null;
-			}
+			EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
+								
+			uow.Save(EmployeeIssueOperation);
 		}
 		#endregion
 	}

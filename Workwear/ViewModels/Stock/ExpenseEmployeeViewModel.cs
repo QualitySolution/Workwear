@@ -9,6 +9,7 @@ using NHibernate;
 using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -92,16 +93,12 @@ namespace Workwear.ViewModels.Stock {
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				Entity.Operation = ExpenseOperations.Employee;
 			}
 			else {
 				//Предварительно загружаем все связанные сущности, чтобы не было дополнительных запросов.
 				PreloadingDoc();
 			}
 			performance.CheckPoint("Заполняем сотрудника");
-
-			if(Entity.Operation != ExpenseOperations.Employee)
-				throw new InvalidOperationException("Диалог предназначен только для операций выдачи сотруднику.");
 
 			if(employee != null) {
 				Entity.Employee = UoW.Session.QueryOver<EmployeeCard>()
@@ -137,7 +134,12 @@ namespace Workwear.ViewModels.Stock {
 			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
 			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
-
+			
+			if(UoW.IsNew) {
+				Entity.CreatedbyUser = userService.GetCurrentUser();
+				logger.Info("Создание Нового документа выдачи");
+			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
@@ -154,6 +156,16 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetCreateSensitive => Entity.Employee != null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
+		public string DocNumber {
+			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
+			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
 		#endregion
 
 		#region Заполение документа
@@ -302,7 +314,8 @@ namespace Workwear.ViewModels.Stock {
 			}
 
 			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.Id}" : $"Ведомость №{Entity.IssuanceSheet.Id} (МБ-7)",
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
+					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id }

@@ -19,7 +19,7 @@ namespace Workwear.Domain.Stock.Documents {
 
 		#region Свойства
 		public virtual string Title{
-			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", Id, Date);}
+			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", DocNumber ?? Id.ToString(), Date);}
 		}
 
 		private IObservableList<InspectionItem> items = new ObservableList<InspectionItem>();
@@ -100,7 +100,11 @@ namespace Workwear.Domain.Stock.Documents {
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { nameof(Date)});
-
+			
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] {nameof(DocNumber)});
+			
 			foreach(var item in Items) {
 				if(!item.Writeoff && !item.ExpiryByNormAfter.HasValue)
 					yield return new ValidationResult ($"По строке {item.Nomenclature.Name} - {item.Employee.ShortName} " +

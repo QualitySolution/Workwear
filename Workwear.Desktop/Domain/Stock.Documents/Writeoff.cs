@@ -76,7 +76,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		public virtual string Title{
-			get{ return String.Format ("Акт списания №{0} от {1:d}", Id, Date);}
+			get{ return String.Format ("Акт списания №{0} от {1:d}", DocNumber ?? Id.ToString(), Date);}
 		}
 
 		#region IValidatableObject implementation
@@ -86,6 +86,10 @@ namespace Workwear.Domain.Stock.Documents
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { this.GetPropertyName (o => o.Date)});
+			
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] {nameof(DocNumber)});
 
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
@@ -105,20 +109,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Обработка строк
-
-		public virtual void AddItem(SubdivisionIssueOperation operation, int count)
-		{
-			if(operation.Issued == 0)
-				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
-
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.SubdivisionWriteoffOperation?.IssuedOperation, operation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return;
-			}
-
-			Items.Add(new WriteoffItem(this, operation, count));
-		}
-
 		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count)
 		{
 			if(operation.Issued == 0)

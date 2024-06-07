@@ -154,7 +154,7 @@ namespace Workwear.ViewModels.Postomats {
 				return false;
 			}
 
-			Entity.User = userService.GetCurrentUser();
+			Entity.User = Entity.User ?? userService.GetCurrentUser();
 			UoW.Save(Entity);
 			UoW.Commit();
 			return true;
@@ -175,7 +175,7 @@ namespace Workwear.ViewModels.Postomats {
 				Parameters = new Dictionary<string, object> 
 				{
 					{ "id",  Entity.Id },
-					{ "responsible_person", Entity.User.Name }
+					{ "responsible_person", userService.GetCurrentUser().Name }
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);

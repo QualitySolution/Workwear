@@ -20,11 +20,6 @@ namespace Workwear.HibernateMapping.Company
 
 			References(x => x.Warehouse).Column("warehouse_id");
 			References(x => x.ParentSubdivision).Column("parent_object_id");
-
-			HasMany (x => x.Places)
-				.KeyColumn ("object_id").Not.KeyNullable ()
-				.Cascade.AllDeleteOrphan ().Inverse ()
-				.LazyLoad ();
 			
 			HasMany (x => x.ChildSubdivisions)
 				.Inverse()

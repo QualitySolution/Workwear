@@ -171,7 +171,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
-   `cell_number` int(11) unsigned NULL, 
+   `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
@@ -563,6 +563,7 @@ AUTO_INCREMENT = 1;
 CREATE TABLE IF NOT EXISTS `stock_income` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operation` ENUM('Enter','Return','Object') NOT NULL,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
@@ -760,7 +761,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL DEFAULT NULL,
-  `category_for_analytics_id` INT UNSIGNED NULL DEFAULT NULL,
+  `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
@@ -769,7 +770,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `FK_protection_tools_category_for_analytics`
-	FOREIGN KEY (`category_for_analytics_id`)
+	FOREIGN KEY (`category_for_analytic_id`)
 	REFERENCES `protection_tools_category_for_analytics` (`id`)
 	ON DELETE SET NULL
 	ON UPDATE CASCADE)
@@ -1138,6 +1139,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL,
   `organization_id` int unsigned null,
@@ -1195,6 +1197,7 @@ create table stock_write_off_members(
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operation` ENUM('Employee','Object') NOT NULL DEFAULT 'Employee',
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
   `object_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1613,6 +1616,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1649,6 +1653,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `organization_id` INT UNSIGNED NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2185,6 +2190,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_inspection` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2371,7 +2377,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.17');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.19');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

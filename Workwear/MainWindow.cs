@@ -65,7 +65,7 @@ using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
-using Workwear.Journal.Analytics;
+using Workwear.Journal.ViewModels.Analytics;
 using Workwear.ViewModels.Export;
 
 public partial class MainWindow : Gtk.Window {
@@ -658,6 +658,12 @@ public partial class MainWindow : Gtk.Window {
 			.Where(x => x.User.Id == user.CurrentUserId)
 			.Select(x => x.Id)
 			.SingleOrDefault<int>();
+			if(idSetting == 0) {
+				var s = new UserSettings(user.GetCurrentUser());
+				uow.Save(s);
+				uow.Commit();
+				idSetting = s.Id;
+			}
 		}
 		MainClass.MainWin.NavigationManager.OpenViewModel<UserSettingsViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(idSetting));
 	}

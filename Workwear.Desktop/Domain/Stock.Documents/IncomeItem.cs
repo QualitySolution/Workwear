@@ -94,14 +94,6 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref returnFromEmployeeOperation, value);
 		}
 
-		private SubdivisionIssueOperation returnFromSubdivisionOperation;
-		[Display(Name = "Операция возврата из подразделения")]
-		[IgnoreHistoryTrace]
-		public virtual SubdivisionIssueOperation ReturnFromSubdivisionOperation {
-			get => returnFromSubdivisionOperation;
-			set => SetField(ref returnFromSubdivisionOperation, value);
-		}
-
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
 		[Display(Name = "Операция на складе")]
 		[IgnoreHistoryTrace]
@@ -160,17 +152,6 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref issuedEmployeeOnOperation, value);
 		}
 
-		private SubdivisionIssueOperation issuedSubdivisionOnOperation;
-		/// <summary>
-		/// Это ссылка на операцию выдачи по которой был выдан на подразделение поступивший от него СИЗ
-		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		/// </summary>
-		[Display(Name = "Операция выдачи на подразделение")]
-		public virtual SubdivisionIssueOperation IssuedSubdivisionOnOperation {
-			get => issuedSubdivisionOnOperation ?? returnFromSubdivisionOperation?.IssuedOperation;
-			set => SetField(ref issuedSubdivisionOnOperation, value);
-		}
-
 		#endregion
 		protected IncomeItem () { }
 		public IncomeItem(Income income) {
@@ -191,17 +172,6 @@ namespace Workwear.Domain.Stock.Documents
 			else if(ReturnFromEmployeeOperation != null) {
 				uow.Delete(ReturnFromEmployeeOperation);
 				ReturnFromEmployeeOperation = null;
-			}
-
-			if(Document.Operation == IncomeOperations.Object) {
-				if(ReturnFromSubdivisionOperation == null)
-					ReturnFromSubdivisionOperation = new SubdivisionIssueOperation();
-				ReturnFromSubdivisionOperation.Update(uow, askUser, this);
-				uow.Save(ReturnFromSubdivisionOperation);
-			}
-			else if(ReturnFromSubdivisionOperation != null) {
-				uow.Delete(ReturnFromSubdivisionOperation);
-				ReturnFromSubdivisionOperation = null;
 			}
 		}
 		#endregion
