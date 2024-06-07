@@ -6,7 +6,9 @@ using QS.Configuration;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
+using QS.Navigation;
 using QS.Project.Versioning;
+using QS.Serial.ViewModels;
 using QSProjectsLib;
 using QSTelemetry;
 using Workwear;
@@ -126,8 +128,32 @@ namespace workwear
 			if (QSMain.User.Login == "root")
 				return;
 			MainWin.Show ();
+			Application.Invoke(delegate 
+			{
+				if (MainWin.IsSNExpired) 
+				{
+					if (!MainWin.Interactive.Question("Срок действия серийного номера истек.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
+					{
+						MainWin.QuitService.Quit();
+						return;
+					}
+					
+					IPage<SerialNumberViewModel> page = MainWin.NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
+					page.PageClosed += (sender, closedArgs) => 
+					{
+						if (closedArgs.CloseSource == CloseSource.Save) 
+						{
+							MainWin.FeaturesService.UpdateSerialNumber();
+						}
+						else
+						{
+							MainWin.QuitService.Quit();
+						}
+					};
+				}
+			});
+			
 			Application.Run ();
-
 			if (!MainTelemetry.SendingError)
 			{
 				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);

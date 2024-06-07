@@ -81,6 +81,7 @@ using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
+using workwear.Tools.Application;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
@@ -258,6 +259,7 @@ namespace workwear
 				 new RegisteredGtkViewResolver(c.Resolve<IGtkViewFactory>(), i)
 				.RegisterView<JournalViewModelBase, JournalView>()
 				.RegisterView<SearchViewModel, OneEntrySearchView>());
+			builder.RegisterType<GtkApplicationQuitService>().As<IApplicationQuitService>();
 			#endregion
 
 			#region Прогрес бар
