@@ -10,8 +10,10 @@ using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
+using workwear.Journal.ViewModels.Company;
 using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
@@ -32,15 +34,17 @@ namespace workwear.ReportParameters.ViewModels {
 			Identifier = "RequestSheet";
 
 			uow = uowFactory.CreateWithoutRoot();
-			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, uow, navigation, autofacScope);
+			var builder = new CommonEEVMBuilderFactory<RequestSheetViewModel>
+				(rdlViewerViewModel, this, uow, navigation, autofacScope);
 
-			EntrySubdivisionViewModel = builder.ForEntity<Subdivision>().MakeByType().Finish();
-			EntryDepartmentViewModel = builder.ForEntity<Department>().MakeByType().Finish();
-			
-			
-			/*EntryDepartmentViewModel = builder.F(x => x.Department)
-				.MakeByType()
-				.Finish();*/
+			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.Finish();
+			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
+				.UseViewModelJournalAndAutocompleter<DepartmentJournalViewModel>()
+				.Finish();
+			EntryDepartmentViewModel.EntitySelector =
+				new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, EntrySubdivisionViewModel);
 			
 			var defaultMonth = DateTime.Today.AddMonths(1);
 			BeginMonth = EndMonth = defaultMonth.Month;
@@ -96,15 +100,26 @@ namespace workwear.ReportParameters.ViewModels {
 			get => issueTypeOptions;
 			set => SetField(ref issueTypeOptions, value);
 		}
-		
-		//public Subdivision Subdivision{
-		//	get => EntrySubdivisionViewModel?.Entity;
-		//}
-		
-		public Department Department{
-			get => EntryDepartmentViewModel?.Entity;
+
+		private Subdivision subdivision;
+		public Subdivision Subdivision{
+			get => subdivision;
+			set => SetField(ref subdivision, value);
 		}
-		
+
+		public Department department;
+		[PropertyChangedAlso(nameof(SensetiveSubdivision))]
+		public Department Department {
+			get => department;
+			set {
+				if(SetField(ref department, value)) {
+					Subdivision = department?.Subdivision ?? subdivision;
+					if(department != null)
+						AddChildSubdivisions = false;
+				}
+			}
+		}
+
 		private bool addChildSubdivisions;
 		public bool AddChildSubdivisions {
 			get => addChildSubdivisions;
@@ -122,7 +137,8 @@ namespace workwear.ReportParameters.ViewModels {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
-
+		
+		public bool SensetiveSubdivision => department == null;
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1)
 		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected;
