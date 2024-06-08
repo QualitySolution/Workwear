@@ -38,7 +38,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.table1.Add(this.entityItemsType);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.entityItemsType]));
 			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
+			w1.RightAttach = ((uint)(3));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entityProtectionTools = new global::QS.Views.Control.EntityEntry();
@@ -49,7 +49,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			w2.TopAttach = ((uint)(1));
 			w2.BottomAttach = ((uint)(2));
 			w2.LeftAttach = ((uint)(1));
-			w2.RightAttach = ((uint)(2));
+			w2.RightAttach = ((uint)(3));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckbuttonOnlyWithRating = new global::Gamma.GtkWidgets.yCheckButton();

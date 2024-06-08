@@ -241,6 +241,7 @@ namespace workwear.Journal
 					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
