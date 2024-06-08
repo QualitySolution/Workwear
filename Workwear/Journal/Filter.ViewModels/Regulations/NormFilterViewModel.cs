@@ -55,6 +55,12 @@ namespace workwear.Journal.Filter.ViewModels.Regulations
 						Subdivision = department?.Subdivision;
 			}
 		}
+				
+		private bool showArchival;
+		public bool ShowArchival {
+			get => showArchival;
+			set => SetField(ref showArchival, value);
+		}
 		#endregion
 		#region EntityModels
 		public EntityEntryViewModel<Post> EntryPost;

@@ -20,6 +20,7 @@ using QS.NewsFeed.Views;
 using QS.NewsFeed;
 using QS.Project.DB;
 using QS.Project.Domain;
+using QS.Project.Services;
 using QS.Project.Versioning;
 using QS.Project.Views;
 using QS.Report.ViewModels;
@@ -76,6 +77,10 @@ public partial class MainWindow : Gtk.Window {
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
 	public readonly CurrentUserSettings CurrentUserSettings;
+	public IInteractiveService Interactive { get; }
+	public IApplicationQuitService QuitService { get; }
+
+	public bool IsSNExpired { get; private set; }
 
 	public FeaturesService FeaturesService { get; private set; }
 
@@ -92,6 +97,8 @@ public partial class MainWindow : Gtk.Window {
 
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
+		Interactive = AutofacScope.Resolve<IInteractiveService>();
+		QuitService = AutofacScope.Resolve<IApplicationQuitService>();
 
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -175,6 +182,26 @@ public partial class MainWindow : Gtk.Window {
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
 
 			FeaturesService = AutofacScope.Resolve<FeaturesService>();
+			
+			//Уведомление о скором истечении срока действия серийного номера
+			if (FeaturesService.ExpiryDate != null) 
+			{
+				if (FeaturesService.ExpiryDate < DateTime.Now) 
+				{
+					IsSNExpired = true;
+					return;
+				}
+				else
+				{
+					int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
+					if (daysLeft < 14) 
+					{
+						Interactive.ShowMessage(ImportanceLevel.Warning,
+							$"Срок действия серийного номера истекает {FeaturesService.ExpiryDate.Value.ToString("d")}");
+					}
+				}
+			}
+			
 			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
 			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
 				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
@@ -283,7 +310,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		Application.Quit();
+		QuitService.Quit();
 	}
 
 	public override void Destroy() {
@@ -306,7 +333,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnQuitActionActivated(object sender, EventArgs e) {
-		Application.Quit();
+		QuitService.Quit();
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {

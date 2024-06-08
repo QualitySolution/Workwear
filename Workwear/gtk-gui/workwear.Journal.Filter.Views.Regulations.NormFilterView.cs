@@ -22,6 +22,8 @@ namespace workwear.Journal.Filter.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yLabel ylabel4;
 
+		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -43,6 +45,7 @@ namespace workwear.Journal.Filter.Views.Regulations
 			w1.BottomAttach = ((uint)(2));
 			w1.LeftAttach = ((uint)(3));
 			w1.RightAttach = ((uint)(4));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
@@ -52,6 +55,7 @@ namespace workwear.Journal.Filter.Views.Regulations
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
 			w2.LeftAttach = ((uint)(3));
 			w2.RightAttach = ((uint)(4));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entryPost = new global::QS.Views.Control.EntityEntry();
@@ -117,6 +121,21 @@ namespace workwear.Journal.Filter.Views.Regulations
 			w8.BottomAttach = ((uint)(2));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
+			this.yShowArchival.CanFocus = true;
+			this.yShowArchival.Name = "yShowArchival";
+			this.yShowArchival.Label = global::Mono.Unix.Catalog.GetString("Показать архивные");
+			this.yShowArchival.DrawIndicator = true;
+			this.yShowArchival.UseUnderline = true;
+			this.table1.Add(this.yShowArchival);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.yShowArchival]));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(3));
+			w9.LeftAttach = ((uint)(3));
+			w9.RightAttach = ((uint)(4));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
