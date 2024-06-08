@@ -153,6 +153,7 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
 					.AddColumn("МВЗ").Resizable().Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 

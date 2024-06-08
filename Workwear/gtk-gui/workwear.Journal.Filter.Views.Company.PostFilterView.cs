@@ -10,6 +10,10 @@ namespace workwear.Journal.Filter.Views.Company
 
 		private global::QS.Views.Control.EntityEntry entryDepartment;
 
+		private global::Gtk.HBox hbox3;
+
+		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
+
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label2;
@@ -24,7 +28,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
 			this.ytable1.NRows = ((uint)(3));
-			this.ytable1.NColumns = ((uint)(3));
+			this.ytable1.NColumns = ((uint)(2));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -48,25 +52,49 @@ namespace workwear.Journal.Filter.Views.Company
 			w2.RightAttach = ((uint)(2));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
+			this.hbox3 = new global::Gtk.HBox();
+			this.hbox3.Name = "hbox3";
+			this.hbox3.Spacing = 6;
+			// Container child hbox3.Gtk.Box+BoxChild
+			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
+			this.yShowArchival.CanFocus = true;
+			this.yShowArchival.Name = "yShowArchival";
+			this.yShowArchival.Label = global::Mono.Unix.Catalog.GetString("Показать архивные");
+			this.yShowArchival.DrawIndicator = true;
+			this.yShowArchival.UseUnderline = true;
+			this.hbox3.Add(this.yShowArchival);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.yShowArchival]));
+			w3.PackType = ((global::Gtk.PackType)(1));
+			w3.Position = 1;
+			w3.Expand = false;
+			w3.Fill = false;
+			this.ytable1.Add(this.hbox3);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.hbox3]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.LeftAttach = ((uint)(1));
+			w4.RightAttach = ((uint)(2));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.ytable1.Add(this.label1);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Отдел:");
 			this.ytable1.Add(this.label2);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label2]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label2]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{

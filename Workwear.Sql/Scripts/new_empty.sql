@@ -262,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `profession_id` INT UNSIGNED NULL DEFAULT NULL,
   `cost_center_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `comments` TEXT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_posts_subdivision_idx` (`subdivision_id` ASC),
