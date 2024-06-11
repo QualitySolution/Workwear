@@ -63,7 +63,9 @@ namespace Workwear.Views.ClothingService
 			w3.Expand = false;
 			w3.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.barcodeinfoview1 = null;
+			this.barcodeinfoview1 = new global::Workwear.Views.ClothingService.BarcodeInfoView();
+			this.barcodeinfoview1.Events = ((global::Gdk.EventMask)(256));
+			this.barcodeinfoview1.Name = "barcodeinfoview1";
 			this.vbox1.Add(this.barcodeinfoview1);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.barcodeinfoview1]));
 			w4.Position = 1;
