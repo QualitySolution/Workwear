@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
@@ -25,6 +26,10 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
+using Workwear.Models.Operations;
+using Workwear.Repository.Operations;
+using Workwear.Tools;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
 
@@ -33,20 +38,36 @@ namespace workwear.Journal.ViewModels.Communications
 	[DontUseAsDefaultViewModel]
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
 	{
+		private readonly UnitOfWorkProvider unitOfWorkProvider;
+		private readonly StockBalanceModel stockBalanceModel;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly BaseParameters baseParameters;
 		private readonly NotificationManagerService notificationManager;
-
+		private readonly SizeService sizeService;
+		private bool alreadyLoaded;
+		
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
 
-		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager,
-			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, NotificationManagerService notificationManager, 
-			ICurrentPermissionService currentPermissionService = null)
+		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService, INavigationManager navigationManager,
+			UnitOfWorkProvider unitOfWorkProvider, IDeleteEntityService deleteEntityService,
+			ILifetimeScope autofacScope, StockBalanceModel stockBalanceModel, EmployeeIssueModel issueModel,
+			BaseParameters baseParameters, NotificationManagerService notificationManager, 
+			SizeService sizeService, ICurrentPermissionService currentPermissionService = null)
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			Title = "Уведомление сотрудников";
+			this.unitOfWorkProvider = unitOfWorkProvider ?? throw new ArgumentNullException(nameof(unitOfWorkProvider));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeNotificationFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 
+			this.unitOfWorkProvider.UoW = UoW;
+			
 			(DataLoader as ThreadDataLoader<EmployeeNotificationJournalNode>).PostLoadProcessingFunc = HandlePostLoadProcessing;
 
 			TableSelectionMode = JournalSelectionMode.Multiple;
@@ -64,6 +85,32 @@ namespace workwear.Journal.ViewModels.Communications
 			{
 				var item = newItems.First(x => x.Phone == status.Phone);
 				item.StatusInfo = status;
+			}
+			
+			if (Filter.ContainsPeriod && Filter.CheckInStockAvailability) 
+			{
+				stockBalanceModel.Warehouse = (Filter.SelectedWarehouse.Id == -1) ? null : Filter.SelectedWarehouse;
+				IEnumerable<EmployeeCard> employees = issueModel.PreloadEmployeeInfo(newItems.Select(x => x.Id).ToArray());
+				LoadSizes();
+				issueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
+				issueModel.FillWearInStockInfo(employees, stockBalanceModel);
+				issueModel.FillWearReceivedInfo(employees.ToArray());
+				foreach (EmployeeCard employee in employees) 
+				{
+					IEnumerable<EmployeeCardItem> cardtems = employee.GetUnderreceivedItems(baseParameters, Filter.EndDateIssue)
+						.Where(x => Filter.SelectedProtectionToolsIds.Contains(x.ProtectionTools.Id));
+					if (cardtems.All(x => x.InStock.Sum(c => c.Amount) == 0)) 
+					{
+						for (int i = 0; i < items.Count; i++) 
+						{
+							if ((items[i] as EmployeeNotificationJournalNode).Id == employee.Id) 
+							{
+								items.RemoveAt(i);
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -94,8 +141,12 @@ namespace workwear.Journal.ViewModels.Communications
 
 			employees
 				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
-			if(Filter.ContainsPeriod)
-				employees = employees.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+			if (Filter.ContainsPeriod) 
+			{
+				employees = employees
+					.Where(() => itemAlias.ProtectionTools.Id.IsIn(Filter.SelectedProtectionToolsIds))
+					.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
+			}
 
 			if(Filter.ContainsDateBirthPeriod)
 				if (Filter.StartDateBirth.Month <= Filter.EndDateBirth.Month) {
@@ -149,6 +200,7 @@ namespace workwear.Journal.ViewModels.Communications
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => employeeAlias.PhoneNumber,
+					() => employeeAlias.Email,
 					() => postAlias.Name,
 					() => subdivisionAlias.Name
 				))
@@ -163,6 +215,7 @@ namespace workwear.Journal.ViewModels.Communications
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
 					.Select(x => x.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(x => x.PhoneNumber).WithAlias(() => resultAlias.Phone)
+					.Select(x => x.Email).WithAlias(() => resultAlias.Email)
 					.Select(x => x.LkRegistered).WithAlias(() => resultAlias.LkRegistered)
 					.SelectCount(() => itemAlias.Id).WithAlias(() => resultAlias.IssueCount)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
@@ -239,7 +292,7 @@ namespace workwear.Journal.ViewModels.Communications
 			RowActivatedAction = editAction;
 			
 			var showHistoryNotificationAction = new JournalAction("Показать сообщения",
-				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).LkRegistered),
+				(selected) => selected.Any(x => ((EmployeeNotificationJournalNode) x).CanSandNotification),
 				(selected) => VisibleEditAction,
 				(selected) => ShowHistoryNotificationAction(selected)
 			);
@@ -264,16 +317,27 @@ namespace workwear.Journal.ViewModels.Communications
 			Refresh();
 		}
 
-		void SendMessage(object[] nodes)
+		void SendMessage(object[] nodes) 
 		{
 			var ids = Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.Selected).Select(x => x.Id).ToArray();
-			NavigationManager.OpenViewModel<SendMessangeViewModel, int[]>(this, ids);
+			DateTime? endDateIssue = null;
+			if (Filter.ContainsPeriod) 
+			{
+				endDateIssue = Filter.EndDateIssue;
+			}
+
+			NavigationManager.OpenViewModelNamedArgs<SendMessangeViewModel>(this, new Dictionary<string, object> {
+				{ "employeeIds", ids },
+				{ "warehouseId", Filter.SelectedWarehouse.Id },
+				{ "endDateIssue", endDateIssue },
+				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds.ToArray() }
+			});
 		}
 		void ShowHistoryNotificationAction(object[] nodes)
 		{
 			var employeeNodes = nodes.Cast<EmployeeNotificationJournalNode>();
 			foreach(var node in employeeNodes) {
-				if(node.LkRegistered)
+				if(node.CanSandNotification)
 					NavigationManager.OpenViewModel<HistoryNotificationViewModel, int>(this, node.Id);
 			}
 		}
@@ -283,9 +347,9 @@ namespace workwear.Journal.ViewModels.Communications
 			if (Items.Count == 0)
 				return;
 			
-			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
+			bool setValue = !Items.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSandNotification).All(x => x.Selected);
 			foreach (EmployeeNotificationJournalNode node in Items)
-				node.Selected = node.CanSelect && setValue;
+				node.Selected = node.CanSandNotification && setValue;
 			Refresh();
 		}
 
@@ -294,9 +358,9 @@ namespace workwear.Journal.ViewModels.Communications
 			if(Items.Count == 0)
 				return;
 
-			bool setValue = !nodes.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSelect).All(x => x.Selected);
+			bool setValue = !nodes.Cast<EmployeeNotificationJournalNode>().Where(x => x.CanSandNotification).All(x => x.Selected);
 			foreach(EmployeeNotificationJournalNode node in nodes)
-				node.Selected = node.CanSelect && setValue;
+				node.Selected = node.CanSandNotification && setValue;
 			Refresh();
 		}
 		
@@ -307,6 +371,15 @@ namespace workwear.Journal.ViewModels.Communications
 			var numbersText = String.Join("\n", numbers);
 			clipboard.Text = numbersText;
 			clipboard.Store();
+		}
+		
+		private void LoadSizes() 
+		{
+			if (!alreadyLoaded) 
+			{
+				sizeService.RefreshSizes(UoW);
+				alreadyLoaded = true;
+			}
 		}
 		#endregion
 	}
@@ -342,6 +415,9 @@ namespace workwear.Journal.ViewModels.Communications
 		public string Phone { get; set; }
 		
 		[SearchHighlight]
+		public string Email { get; set; }
+		
+		[SearchHighlight]
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
@@ -366,7 +442,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSelect => LkRegistered;
+		public bool CanSandNotification => LkRegistered || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 

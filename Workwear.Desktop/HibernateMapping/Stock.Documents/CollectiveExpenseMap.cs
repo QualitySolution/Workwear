@@ -14,6 +14,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
+			Map(x => x.DocNumber).Column("doc_number");
 			Map (x => x.Date).Column ("date");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");

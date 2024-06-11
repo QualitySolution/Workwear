@@ -30,11 +30,6 @@ namespace Workwear.Views.Stock
 				.AddBinding(Entity, e => e.Name, w => w.Text)
 				.InitializeFromSource ();
 
-			ycomboCategory.ItemsEnum = typeof(ItemTypeCategory);
-			ycomboCategory.Binding
-				.AddBinding(Entity, e => e.Category, w => w.SelectedItemOrNull)
-				.InitializeFromSource ();
-
 			ycomboClothesType.ItemsEnum = typeof(СlothesType);
 			ycomboClothesType.Binding
 				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
@@ -72,11 +67,6 @@ namespace Workwear.Views.Stock
 
 			comboIssueType.Visible = labelIssueType.Visible = ViewModel.VisibleIssueType;
 
-			yspinMonths.Binding
-				.AddBinding(Entity, e => e.LifeMonths, w => w.ValueAsInt, new NullToZeroConverter())
-				.InitializeFromSource();
-			ycheckLife.Active = Entity.LifeMonths.HasValue;
-
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();
@@ -89,17 +79,6 @@ namespace Workwear.Views.Stock
 				.AddTextRenderer(p => p.Sex.GetEnumTitle())
 			.Finish();
 			ytreeItems.ItemsDataSource = Entity.Nomenclatures;
-		}
-
-		private void OnYcomboCategoryChanged (object sender, EventArgs e) {
-			ycomboClothesType.Sensitive = Entity.Category == ItemTypeCategory.wear;
-			hboxLife.Visible = labelLife.Visible = Entity.Category == ItemTypeCategory.property;
-		}
-
-		private void OnYcheckLifeToggled(object sender, EventArgs e) {
-			yspinMonths.Sensitive = ycheckLife.Active;
-			if(!ycheckLife.Active) 
-				Entity.LifeMonths = null;
 		}
 	}
 }

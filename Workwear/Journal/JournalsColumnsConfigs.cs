@@ -55,11 +55,12 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
 				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()
 					.AddColumn("☑").AddToggleRenderer(node => node.Selected)
-						.AddSetter((c, n) => c.Activatable = n.CanSelect)
+						.AddSetter((c, n) => c.Activatable = n.CanSandNotification)
 					.AddColumn("Номер").Resizable().AddTextRenderer(node => node.CardNumberText)
 					.AddColumn("Табельный №").Resizable().AddTextRenderer(node => node.PersonnelNumber)
 					.AddColumn("Ф.И.О.").Resizable().AddTextRenderer(node => node.FIO)
 					.AddColumn("Телефон").Resizable().AddTextRenderer(node => node.Phone)
+					.AddColumn("Эл. почта").Resizable().AddTextRenderer(node => node.Email)
 					.AddColumn("Состояние личного кабинета").Resizable().AddTextRenderer(node => node.StatusText)
 					.AddColumn("Последний визит").Resizable().AddTextRenderer(node => node.LastVisit)
 					.AddColumn("Не прочитано").Resizable().AddTextRenderer(node => node.UnreadMessagesText)
@@ -152,6 +153,7 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
 					.AddColumn("МВЗ").Resizable().Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
@@ -182,19 +184,7 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
 					.Finish ()
 			);
-
-			TreeViewColumnsConfigFactory.Register<SubdivisionBalanceJournalViewModel>(
-				(jwm) => FluentColumnsConfig<SubdivisionBalanceJournalNode>.Create()
-					.AddColumn("Подразделение").Resizable().Visible(jwm.Filter.Subdivision is null)
-					.AddTextRenderer(e => e.SubdivisionName)
-					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000)
-					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText)
-					.AddColumn("Срок службы").AddProgressRenderer(e => 
-						(int) (100 - e.Percentage * 100))
-					.AddSetter((w, e) => 
-						w.Text = e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : String.Empty)
-					.Finish()
-			);
+			
 			TreeViewColumnsConfigFactory.Register<EmployeeGroupJournalViewModel>(
 					() => FluentColumnsConfig<EmployeeGroupJournalNode>.Create()
 						.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -252,6 +242,7 @@ namespace workwear.Journal
 					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
@@ -351,12 +342,15 @@ namespace workwear.Journal
 					.AddColumn("Собственник имущества")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddTextRenderer(e => e.OwnerName)
+					.AddColumn("Цена продажи")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(e => e.SaleCostText)
 					.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockDocumentsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockDocumentsJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Номер").AddTextRenderer(node => node.DocNumberText).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Тип документа").Resizable().AddTextRenderer(node => node.DocTypeString)
 					.AddColumn("Дата").Resizable().AddTextRenderer(node => node.DateString).XAlign(0.5f)
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssueSheetId}").SearchHighlight().XAlign(0.5f)

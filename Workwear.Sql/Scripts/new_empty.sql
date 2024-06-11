@@ -171,7 +171,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
-   `cell_number` int(11) unsigned NULL, 
+   `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
@@ -262,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `profession_id` INT UNSIGNED NULL DEFAULT NULL,
   `cost_center_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `comments` TEXT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_posts_subdivision_idx` (`subdivision_id` ASC),
@@ -561,6 +562,7 @@ AUTO_INCREMENT = 1;
 CREATE TABLE IF NOT EXISTS `stock_income` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `operation` ENUM('Enter','Return') NOT NULL,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
@@ -718,6 +720,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `comment` TEXT NULL DEFAULT NULL,
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
@@ -759,7 +762,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  ONSTRAINT `FK_protection_tools_category_for_analytics`
+  CONSTRAINT `FK_protection_tools_category_for_analytics`
 	FOREIGN KEY (`category_for_analytic_id`)
 	REFERENCES `protection_tools_category_for_analytics` (`id`)
 	ON DELETE SET NULL
@@ -960,6 +963,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_write_off` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL,
   `organization_id` int unsigned null,
@@ -1016,6 +1020,7 @@ create table stock_write_off_members(
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
@@ -1397,6 +1402,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1433,6 +1439,7 @@ DEFAULT CHARACTER SET = utf8mb4;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `issuance_sheet` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `organization_id` INT UNSIGNED NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1935,6 +1942,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_inspection` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,

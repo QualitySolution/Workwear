@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Cloud.Postomat.Client;
@@ -15,7 +17,6 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
-using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
@@ -82,9 +83,7 @@ namespace Workwear.ViewModels.Postomats {
 			yield return item.Location;
 			foreach(var cell in AvailableCells()) 
 				yield return cell;
-		}
-		
-		public bool CanChangePostomat => Entity.Items.Count == 0;
+		}		
 		
 		public IEnumerable<CellLocation> AvailableCells() {
 			foreach(var cell in allCells) {
@@ -101,6 +100,7 @@ namespace Workwear.ViewModels.Postomats {
 		#region Свойства View
 		public bool CanEdit => Entity.Status == DocumentStatus.New;
 		public bool CanAddItem => Entity.Postomat != null;
+		public bool CanChangePostomat => Entity.Items.Count == 0;
 		#endregion
 
 		#region Команды View
@@ -137,7 +137,8 @@ namespace Workwear.ViewModels.Postomats {
 		#endregion
 
 		#region Save and Print
-		public override bool Save() {
+		public override bool Save()
+		{
 			if(!Validate())
 				return false;
 			foreach(var item in Entity.Items) {
@@ -148,7 +149,8 @@ namespace Workwear.ViewModels.Postomats {
 			return true;
 		}
 		
-		public void Print() 
+		#region Print
+		public void Print(PostomatPrintType type) 
 		{
 			if(!Entity.Items.Any()) 
 			{
@@ -157,16 +159,55 @@ namespace Workwear.ViewModels.Postomats {
 			}
 			
 			Save();
-			var reportInfo = new ReportInfo {
-				Title = $"Ведомость на выдачу №{Entity.Id} от {Entity.CreateTime:d}",
-				Identifier = "Documents.PostomatIssueSheet",
-				Parameters = new Dictionary<string, object> {
+			switch(type) 
+			{
+				case PostomatPrintType.Document: PrintDocument(type);
+					return;
+				case PostomatPrintType.Stickers: PrintStickers(type);
+					return;
+				default: return;
+			}
+		}
+
+		private void PrintDocument(PostomatPrintType type) 
+		{
+			ReportInfo reportInfo = new ReportInfo
+			{
+				Title = $"Ведомость на загрузку №{Entity.Id} от {Entity.CreateTime:d}",
+				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> 
+				{
 					{ "id",  Entity.Id },
 					{ "postomat_location", Postomat?.Location },
 					{ "responsible_person", userService.GetCurrentUser().Name }
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		
+		private void PrintStickers(PostomatPrintType type) 
+		{
+			ReportInfo reportInfo = new ReportInfo
+			{
+				Title = $"Этикетки для загрузки №{Entity.Id} от {Entity.CreateTime:d}",
+				Identifier = type.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> 
+				{
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		#endregion
+
+		public enum PostomatPrintType 
+		{
+			[Display(Name = "Ведомость на загрузку")]
+			[ReportIdentifier("Documents.PostomatIssueSheet")]
+			Document,
+			[Display(Name = "Этикетки")]
+			[ReportIdentifier("Documents.PostomatIssueStickers")]
+			Stickers
 		}
 		#endregion
 	}

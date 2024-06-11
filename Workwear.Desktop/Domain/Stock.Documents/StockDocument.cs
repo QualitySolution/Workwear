@@ -9,6 +9,14 @@ namespace Workwear.Domain.Stock.Documents
 	{
 		public virtual int Id { get; set; }
 
+		private string docNumber;
+		[StringLength(15)]
+		[Display (Name = "Номер документа")]
+		public virtual string DocNumber {
+			get => docNumber;
+			set => SetField (ref docNumber, value);
+		}
+		
 		DateTime date = DateTime.Now;
 		[Display(Name = "Дата")]
 		public virtual DateTime Date {
@@ -45,7 +53,6 @@ namespace Workwear.Domain.Stock.Documents
 				case StockDocumentType.IncomeDoc:
 					return typeof(Income);
 				case StockDocumentType.ExpenseEmployeeDoc:
-				case StockDocumentType.ExpenseObjectDoc:
 					return typeof(Expense);
 				case StockDocumentType.CollectiveExpense:
 					return typeof(CollectiveExpense);
@@ -70,8 +77,6 @@ namespace Workwear.Domain.Stock.Documents
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
-		[Display(Name = "Выдача на подразделение")]
-		ExpenseObjectDoc,
 		[Display(Name = "Перемещение")]
 		TransferDoc,
 		[Display(Name = "Списание")]

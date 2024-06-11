@@ -50,14 +50,6 @@ namespace Workwear.Domain.Stock.Documents
 			get => employeeWriteoffOperation;
 			set => SetField(ref employeeWriteoffOperation, value);
 		}
-
-		private SubdivisionIssueOperation subdivisionWriteoffOperation;
-		[Display(Name = "Операция возврата от сотрудника")]
-		[IgnoreHistoryTrace]
-		public virtual SubdivisionIssueOperation SubdivisionWriteoffOperation {
-			get => subdivisionWriteoffOperation;
-			set => SetField(ref subdivisionWriteoffOperation, value);
-		}
 		
 		[Display(Name = "Собственник имущества")]
 		public virtual Owner Owner {
@@ -117,8 +109,6 @@ namespace Workwear.Domain.Stock.Documents
 					return Warehouse.Name;
 				if(EmployeeWriteoffOperation != null)
 					return EmployeeWriteoffOperation.Employee.ShortName;
-				if(SubdivisionWriteoffOperation != null)
-					return SubdivisionWriteoffOperation.Subdivision.Name;
 
 				return String.Empty;
 			}
@@ -138,8 +128,6 @@ namespace Workwear.Domain.Stock.Documents
 					return WarehouseOperation.WearPercent;
 				if(EmployeeWriteoffOperation != null)
 					return EmployeeWriteoffOperation.WearPercent;
-				if(SubdivisionWriteoffOperation != null)
-					return SubdivisionWriteoffOperation.WearPercent;
 
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
@@ -150,8 +138,6 @@ namespace Workwear.Domain.Stock.Documents
 					WarehouseOperation.WearPercent = value;
 				if(EmployeeWriteoffOperation != null)
 					EmployeeWriteoffOperation.WearPercent = value;
-				if(SubdivisionWriteoffOperation != null)
-					SubdivisionWriteoffOperation.WearPercent = value;
 			}
 		}
 
@@ -164,13 +150,10 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
-				if(EmployeeWriteoffOperation != null && WarehouseOperation == null && SubdivisionWriteoffOperation == null)
+				if(EmployeeWriteoffOperation != null && WarehouseOperation == null)
 					return WriteoffFrom.Employee;
 
-				if(EmployeeWriteoffOperation == null && WarehouseOperation == null && SubdivisionWriteoffOperation != null)
-					return WriteoffFrom.Subdivision;
-
-				if(EmployeeWriteoffOperation == null && WarehouseOperation != null && SubdivisionWriteoffOperation == null)
+				if(EmployeeWriteoffOperation == null && WarehouseOperation != null)
 					return WriteoffFrom.Warehouse;
 
 				throw new InvalidOperationException(
@@ -200,24 +183,7 @@ namespace Workwear.Domain.Stock.Documents
 			Height = issueOperation.Height;
 			this.amount = amount;
 		}
-
-		public WriteoffItem(Writeoff writeOff, SubdivisionIssueOperation issueOperation, int amount) {
-			document = writeOff;
-			subdivisionWriteoffOperation = new SubdivisionIssueOperation {
-				Subdivision = issueOperation.Subdivision,
-				Returned = amount,
-				IssuedOperation = issueOperation,
-				OperationTime = document.Date,
-				Nomenclature = issueOperation.Nomenclature,
-				WearSize = issueOperation.WearSize,
-				Height = issueOperation.Height,
-				WearPercent = issueOperation.CalculatePercentWear(document.Date),
-			};
-			nomenclature = issueOperation.Nomenclature;
-			WearSize = issueOperation.WearSize;
-			Height = issueOperation.Height;
-			this.amount = amount;
-		}
+		
 		public WriteoffItem(Writeoff writeOff, StockPosition position, Warehouse warehouse, int amount) {
 			document = writeOff;
 			this.amount = amount;
@@ -243,9 +209,6 @@ namespace Workwear.Domain.Stock.Documents
 				case WriteoffFrom.Employee:
 					EmployeeWriteoffOperation.Update(uow, this);
 					break;
-				case WriteoffFrom.Subdivision:
-					SubdivisionWriteoffOperation.Update(uow, this);
-					break;
 				case WriteoffFrom.Warehouse:
 					WarehouseOperation.Update(uow, this);
 					break;
@@ -259,7 +222,6 @@ namespace Workwear.Domain.Stock.Documents
 	}
 	public enum WriteoffFrom {
 		Employee,
-		Subdivision,
 		Warehouse
 	}
 }

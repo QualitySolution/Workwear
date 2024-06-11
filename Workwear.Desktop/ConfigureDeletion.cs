@@ -95,16 +95,8 @@ namespace Workwear
 				.AddDeleteDependence<Subdivision>(x => x.ParentSubdivision)
 				.AddDeleteDependence<Department>(x => x.Subdivision)
 				.AddDeleteDependence<Post>(x => x.Subdivision)
-				.AddDeleteDependence<SubdivisionPlace>(x => x.Subdivision)
-				.AddDeleteDependence<Expense>(x => x.Subdivision)
-				.AddDeleteDependence<Income>(x => x.Subdivision)
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Subdivision)
 				.AddClearDependence<EmployeeCard>(x => x.Subdivision)
 				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
-
-			DeleteConfig.AddHibernateDeleteInfo<SubdivisionPlace>()
-				.AddClearDependence<ExpenseItem>(x => x.SubdivisionPlace)
-				.AddClearDependence<SubdivisionIssueOperation>(x => x.SubdivisionPlace);
 				
 			DeleteConfig.AddHibernateDeleteInfo<VacationType>()
 				.AddDeleteDependence<EmployeeVacation>(x => x.VacationType);
@@ -130,13 +122,6 @@ namespace Workwear
 				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
 				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
 
-			DeleteConfig.AddHibernateDeleteInfo<SubdivisionIssueOperation>()
-				.RequiredCascadeDeletion()
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.IssuedOperation)
-				.AddDeleteDependence<ExpenseItem>(x => x.SubdivisionIssueOperation)
-				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromSubdivisionOperation)
-				.AddDeleteDependence<WriteoffItem>(x => x.SubdivisionWriteoffOperation);
-
 			DeleteConfig.AddHibernateDeleteInfo<WarehouseOperation>()
 				.RequiredCascadeDeletion()
 				.AddDeleteDependence<ExpenseItem>(x => x.WarehouseOperation)
@@ -145,7 +130,6 @@ namespace Workwear
 				.AddDeleteDependence<WriteoffItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<TransferItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.WarehouseOperation)
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CompletionResultItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CompletionSourceItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation);
@@ -207,8 +191,6 @@ namespace Workwear
 				.AddClearDependence<IncomeItem>(x => x.WearSize)
 				.AddClearDependence<IssuanceSheetItem>(x => x.Height)
 				.AddClearDependence<IssuanceSheetItem>(x => x.WearSize)
-				.AddClearDependence<SubdivisionIssueOperation>(x => x.Height)
-				.AddClearDependence<SubdivisionIssueOperation>(x => x.WearSize)
 				.AddClearDependence<WarehouseOperation>(x => x.Height)
 				.AddClearDependence<WarehouseOperation>(x => x.WearSize)
 				.AddClearDependence<WriteoffItem>(x => x.Height)
@@ -272,7 +254,6 @@ namespace Workwear
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
-				.AddDeleteDependence<SubdivisionIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
 				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
@@ -289,7 +270,6 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)
 				.AddDeleteCascadeDependence(x => x.EmployeeIssueOperation)
-				.AddDeleteCascadeDependence(x => x.SubdivisionIssueOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<CollectiveExpense>()
@@ -306,7 +286,6 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
 				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
-				.AddDeleteCascadeDependence(x => x.ReturnFromSubdivisionOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
@@ -315,7 +294,6 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
 				.AddRemoveFromDependence<Writeoff>(x => x.Items)//Необходимо иначе будут исключения при удалении строк выдачи которые создают списание. 
 				.AddDeleteCascadeDependence(x => x.EmployeeWriteoffOperation)
-				.AddDeleteCascadeDependence(x => x.SubdivisionWriteoffOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Transfer>()

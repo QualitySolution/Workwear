@@ -28,6 +28,7 @@ namespace workwear.Journal.ViewModels.Company
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			UseSlider = true;
 			JournalFilter = Filter = autofacScope.Resolve<SubdivisionFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 		}

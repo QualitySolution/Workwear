@@ -25,6 +25,7 @@ namespace Workwear.Views.Company
 			entryCostCenter.Binding.AddBinding(ViewModel, v => v.VisibleCostCenter, w => w.Visible).InitializeFromSource();
 			labelCostCenter.Binding.AddBinding(ViewModel, v => v.VisibleCostCenter, w => w.Visible).InitializeFromSource();
 			ytextComments.Binding.AddBinding(Entity, e => e.Comments, w => w.Buffer.Text).InitializeFromSource();
+			ycheckArchival.Binding.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Gamma.Utilities;
+﻿using System.Threading.Tasks;
+using Gamma.Utilities;
 using QS.Navigation;
 using QS.Views.Dialog;
 using Workwear.Domain.Communications;
@@ -21,9 +22,11 @@ namespace Workwear.Views.Communications
 			textTemplate.Binding.AddBinding(ViewModel, vm => vm.MessageText, w => w.Buffer.Text).InitializeFromSource();
 			
 			buttonSend.Binding.AddBinding(ViewModel, vm => vm.SensitiveSendButton, w => w.Sensitive).InitializeFromSource();
+			pushCheckBox.Label += " " + ViewModel.AvailabelPushNotificationCount;
 			pushCheckBox.Binding.AddBinding(ViewModel, vm => vm.PushNotificationSelected, w => w.Active).InitializeFromSource();
+			emailCheckBox.Label += " " + ViewModel.AvailabelEmailNotificationCount;
 			emailCheckBox.Binding.AddBinding(ViewModel, vm => vm.EmailNotificationSelected, w => w.Active).InitializeFromSource();
-
+			
 			ConfigureLinkGroup();
 			ConfigureFileGroup();
 
@@ -81,9 +84,9 @@ namespace Workwear.Views.Communications
 			ViewModel.Close(false, CloseSource.Self);
 		}
 
-		protected void OnButtonSend(object sender, System.EventArgs e)
+		protected async void OnButtonSend(object sender, System.EventArgs e)
 		{
-			ViewModel.SendMessage();
+			await ViewModel.SendMessageAsync();
 		}
 	}
 }

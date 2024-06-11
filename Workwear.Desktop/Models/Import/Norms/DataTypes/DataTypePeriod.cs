@@ -8,6 +8,7 @@ namespace Workwear.Models.Import.Norms.DataTypes {
 		{
 			ColumnNameKeywords.Add("срок носки");
 			ColumnNameKeywords.Add("сроки носки");
+			ColumnNameKeywords.Add("период");
 			Data = DataTypeNorm.Period;
 		}
 

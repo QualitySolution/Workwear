@@ -195,8 +195,13 @@ namespace Workwear.Sql
 			configuration.AddUpdate(
 				new Version(2, 8, 17),
 				new Version(2, 8, 18),
-				"Workwear.Sql.Scripts.2.8.18.sql", 
-				onTesting: true 
+				"Workwear.Sql.Scripts.2.8.18.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 18),
+				new Version(2, 8, 19),
+				"Workwear.Sql.Scripts.2.8.19.sql",
+				onTesting: true
 			);
 
 			configuration.AddUpdate(

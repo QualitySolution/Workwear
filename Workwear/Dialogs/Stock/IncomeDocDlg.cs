@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
-using Gamma.Binding.Converters;
 using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
@@ -69,11 +68,7 @@ namespace workwear
 			Entity.Operation = IncomeOperations.Return;
 			Entity.EmployeeCard = UoW.GetById<EmployeeCard>(employee.Id);
 		}
-		//Конструктор используется при возврате c подразделения
-		public IncomeDocDlg(Subdivision subdivision) : this () {
-			Entity.Operation = IncomeOperations.Object;
-			Entity.Subdivision = UoW.GetById<Subdivision>(subdivision.Id);
-		}
+		
 		//Конструктор используется в журнале документов
 		public IncomeDocDlg (Income item) : this (item.Id) {}
 		public IncomeDocDlg (int id) {
@@ -85,13 +80,20 @@ namespace workwear
 			tdiNavigationManager = AutofacScope.Resolve<ITdiCompatibilityNavigation>();
 			interactiveService = AutofacScope.Resolve<IInteractiveService>();
 			
+			if(!UoW.IsNew) 
+				Entity.AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			
 			ConfigureDlg ();
 		}
-
+		
 		private void ConfigureDlg() {
-			ylabelId.Binding
-				.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter())
-				.InitializeFromSource ();
+			
+			entryId.Binding.AddSource(Entity)
+				.AddBinding(e => e.DocNumberText, w => w.Text)
+				.AddBinding(e => e.SensitiveDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			checkAuto.Binding.AddBinding(Entity, e => e.AutoDocNumber, w => w.Active).InitializeFromSource();
+			
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
@@ -130,11 +132,7 @@ namespace workwear
 						.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 						.UseViewModelDialog<EmployeeViewModel>()
 						.Finish();
-
-			entrySubdivision.ViewModel = builder.ForProperty(x => x.Subdivision)
-				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
-				.UseViewModelDialog<SubdivisionViewModel>()
-				.Finish();
+			
 			//Метод отключает модули спецодежды, которые недоступны для пользователя
 			DisableFeatures();
 
@@ -265,7 +263,6 @@ namespace workwear
 		private void OnYcomboOperationChanged (object sender, EventArgs e) {
 			labelTTN.Visible = yentryNumber.Visible = ybuttonReadInFile.Visible = Entity.Operation == IncomeOperations.Enter;
 			labelWorker.Visible = yentryEmployee.Visible = enumPrint.Visible = Entity.Operation == IncomeOperations.Return;
-			labelObject.Visible = entrySubdivision.Visible = Entity.Operation == IncomeOperations.Object;
 			
 			if (UoWGeneric.IsNew)
 				switch (Entity.Operation)
@@ -275,9 +272,6 @@ namespace workwear
 						break;
 					case IncomeOperations.Return:
 						TabName = "Новый возврат от работника";
-						break;
-					case IncomeOperations.Object:
-						TabName = "Новый возврат c подразделения";
 						break;
 				}
 		}
@@ -309,7 +303,8 @@ namespace workwear
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.Id}" : $"Ведомость №{Entity.Id}",
+				Title = docType == IncomeDocReportEnum.ReturnSheet ? $"Документ №{Entity.DocNumber ?? Entity.Id.ToString()}"
+					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = docType.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id }
@@ -323,7 +318,6 @@ namespace workwear
 			[Display(Name = "Лист возврата")]
 			[ReportIdentifier("Documents.ReturnSheet")]
 			ReturnSheet,
-			
 			[Display(Name = "Ведомость возврата книжная")]
 			[ReportIdentifier("Statements.ReturnStatementVertical")]
 			ReturnStatementVertical

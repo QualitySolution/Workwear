@@ -96,6 +96,9 @@ namespace workwear.Journal.ViewModels.Company {
 			
 			if(Filter.Department != null)
 				query.Where(() => departmentAlias.Id == Filter.Department.Id);
+			
+			if (!Filter.ShowArchival)
+				query.Where(x => !x.Archival);
 
 			query.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
@@ -107,6 +110,7 @@ namespace workwear.Journal.ViewModels.Company {
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.Select(() => costCenterAlias.Code).WithAlias(() => resultAlias.CostCenterCode)
 					.Select(() => costCenterAlias.Name).WithAlias(() => resultAlias.CostCenterName)
+					.Select(() => postAlias.Archival).WithAlias(() => resultAlias.Archival)
 					.SelectCount(() => employeeAlias.Id).WithAlias(() => resultAlias.Employees)
 				)
 				.OrderBy(x => x.Name).Asc
@@ -139,6 +143,7 @@ namespace workwear.Journal.ViewModels.Company {
 		public string Profession { get; set; }
 		public string CostCenterCode { get; set; }
 		public string CostCenterName { get; set; }
+		public bool Archival { get; set; }
 		public string Comments { get; set; }
 
 		public string CostCenterText => String.IsNullOrEmpty(CostCenterCode) ? CostCenterName : $"{CostCenterCode} {CostCenterName}";
