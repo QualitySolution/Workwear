@@ -171,7 +171,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_storage` int(11) unsigned NOT NULL,
    `loc_shelf` int(11) unsigned NOT NULL,
    `loc_cell` int(11) unsigned NOT NULL,
-   `cell_number` int(11) unsigned NULL, 
+   `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
@@ -262,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `profession_id` INT UNSIGNED NULL DEFAULT NULL,
   `cost_center_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `comments` TEXT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_posts_subdivision_idx` (`subdivision_id` ASC),
@@ -728,6 +729,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `comment` TEXT NULL DEFAULT NULL,
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
@@ -2298,7 +2300,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.18');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.19');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

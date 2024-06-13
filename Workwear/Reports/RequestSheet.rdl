@@ -978,6 +978,7 @@ LEFT JOIN norm_conditions AS conditions ON conditions.id = norms_item.condition_
 LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id 
 WHERE
     (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions)) 
+    AND (@department_id = -1) OR wear_cards.department_id = @department_id
     AND wear_cards.dismiss_date IS NULL 
     AND wear_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH)
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
@@ -1021,6 +1022,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@department_id">
+            <Value>={?department_id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1081,7 +1085,16 @@ ORDER BY
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_depot;user=depot_demo;password=beta;port=3306;server=rs.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="subdivisions">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -1165,16 +1178,19 @@ ORDER BY
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="department_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_depot;user=depot_demo;password=beta;port=3306;server=rs.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

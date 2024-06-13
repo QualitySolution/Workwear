@@ -13,9 +13,16 @@ namespace workwear.ReportParameters.Views {
 		{
 			this.Build();
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
+			entitySubdivision.Binding
+				.AddBinding(ViewModel, v => v.SensetiveSubdivision, w => w.Sensitive).InitializeFromSource();
+			ycheckChild.Binding.AddBinding(ViewModel, vm => vm.AddChildSubdivisions, w => w.Active)
+				.AddBinding(ViewModel, v => v.SensetiveSubdivision, w => w.Sensitive).InitializeFromSource();
+			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
+			
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			
-			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
+			labelIssueType.Binding
+				.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			yenumIssueType.ItemsEnum = typeof(IssueType);
 			yenumIssueType.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.IssueTypeOptions, w => w.SelectedItemOrNull)
@@ -32,10 +39,6 @@ namespace workwear.ReportParameters.Views {
 			comboEndMonth.SetRenderTextFunc<int>(x => DateHelper.GetMonthName(x).StringToTitleCase());
 			comboEndMonth.ItemsList = Enumerable.Range(1, 12);
 			comboEndMonth.Binding.AddBinding(ViewModel, v => v.EndMonth, w => w.SelectedItem).InitializeFromSource();
-
-			ycheckChild.Binding
-				.AddBinding(ViewModel, vm => vm.AddChildSubdivisions, w => w.Active)
-				.InitializeFromSource();
 			checkShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			
 			ycheckExcludeInVacation.Binding

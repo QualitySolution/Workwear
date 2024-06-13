@@ -47,7 +47,7 @@ namespace Workwear.Models.Import
 			AddType("Комбинезоны", СlothesType.Wear, sht, new[] { "КОМБИНЕЗОН", "ПОЛУКОМБИНЕЗОН", "ГИДРОКОМБИНЕЗОН" });
 			AddType("Комплекты", СlothesType.Wear, sht, new[] { "КОМПЛЕКТ" });
 			AddType("Подшлемники", СlothesType.Headgear, sht, new[] { "ПОДШЛЕМНИК" });
-			AddType("Головные уборы", СlothesType.Headgear, sht, new[] { "ШАПКА", "Кепка", "ФЕСКА", "ШЛЯПА", "ФУРАЖКА", "БЕЙСБОЛКА", "БЕРЕТ", "КОЛПАК", "КЕПИ", "ПИЛОТКА", "Головной" });
+			AddType("Головные уборы", СlothesType.Headgear, sht, new[] { "ШАПКА", "Кепка", "ФЕСКА", "ШЛЯПА", "ФУРАЖКА", "БЕЙСБОЛКА", "БЕРЕТ", "КОЛПАК", "КЕПИ", "ПИЛОТКА", "Головной", "Каскетка"});
 			AddType("Каски", СlothesType.Headgear, sht, new[] { "КАСКА",  });
 			AddType("Полуботинки", СlothesType.Shoes, pair, new[] { "ПОЛУБОТИНКИ" });
 			AddType("Сапоги", СlothesType.Shoes, pair, new[] { "САПОГИ", "ПОЛУСАПОГИ" });

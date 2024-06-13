@@ -122,30 +122,31 @@ namespace Workwear.ViewModels.Operations
 		}
 
 		private EmployeeIssueOperation selectOperation;
-		[PropertyChangedAlso(nameof(CanEditOperation))]
-		[PropertyChangedAlso(nameof(Nomenclature))]
 		public EmployeeIssueOperation SelectOperation {
 			get => selectOperation;
 			set {
+				changingOperation = true;
+
 				if(SetField(ref selectOperation, value)) {
 					NomenclatureEntryViewModel.IsEditable = SelectOperation != null;
-					if(SelectOperation != null) {
-						//Пишется в приватное поле чтобы не вызывался пересчёт из сеттера, т.к. фактически нет изменения кол-ва.
-						issueDate = value.OperationTime;  
-						AutoWriteoffDate = value.AutoWriteoffDate;
-						issued = value.Issued;
-						OverrideBefore = value.OverrideBefore;
-						Comment = value.Comment;
-						wearPercent = value.WearPercent;
-					}
-					else
-						issued = 0;
-					
+					if(SelectOperation == null) 
+						Issued = 0;
+
+					OnPropertyChanged(nameof(VisibleSelectOperation));
+					OnPropertyChanged(nameof(VisibleHeight));
+					OnPropertyChanged(nameof(VisibleSize));
+					OnPropertyChanged(nameof(Sizes));
+					OnPropertyChanged(nameof(Heights));
+					OnPropertyChanged(nameof(Size));
+					OnPropertyChanged(nameof(Height));
+					OnPropertyChanged(nameof(Nomenclature));
+					OnPropertyChanged(nameof(CanEditOperation));
 					OnPropertyChanged(nameof(VisibleBarcodes));
 					OnPropertyChanged(nameof(Issued));
 					OnPropertyChanged(nameof(WearPercent));
 					OnPropertyChanged(nameof(IssueDate));
 					OnPropertyChanged(nameof(AutoWriteoffDate));
+					changingOperation = false;
 				}
 			}
 		}
@@ -154,40 +155,41 @@ namespace Workwear.ViewModels.Operations
 		#endregion
 		#region Проброс свойств операции
 		
-		private DateTime issueDate;
-		public DateTime IssueDate {
-			get => issueDate;
+		public DateTime? IssueDate {
+			get => SelectOperation?.OperationTime;
 			set {
-				if(SetField(ref issueDate, value) && SelectOperation.OperationTime != value) {
-					SelectOperation.OperationTime = value;
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && SelectOperation.OperationTime != value) {
+					SelectOperation.OperationTime = (DateTime)value;
 					RecalculateDatesOfSelectedOperation();
+					OnPropertyChanged(nameof(AutoWriteoffDate));
+					OnPropertyChanged();
 				}
 			}
 		}
 		
-		private DateTime? autoWriteoffDate;
 		public DateTime? AutoWriteoffDate {
-			get => autoWriteoffDate;
+			get => SelectOperation?.AutoWriteoffDate;
 			set {
-				if(SetField(ref autoWriteoffDate, value)) {
-					if(SelectOperation != null) {
-						SelectOperation.AutoWriteoffDate = value;
-						SelectOperation.UseAutoWriteoff = !(value is null);
-					}
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && SelectOperation.AutoWriteoffDate != value) {
+					SelectOperation.AutoWriteoffDate = value;
+					SelectOperation.UseAutoWriteoff = !(value is null);
+					OnPropertyChanged();
 				}
 			}
 		}
-
-		private int issued;
+		
 		public int Issued {
-			get => issued;
+			get => SelectOperation?.Issued ?? 0;
 			set {
-				if(SetField(ref issued, value)) {
-					
-					if(SelectOperation != null) {
-						SelectOperation.Issued = value;
-						RecalculateDatesOfSelectedOperation();
-					}
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && SelectOperation.Issued != value) {
+					SelectOperation.Issued = value;
+					OnPropertyChanged();
 					OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 					OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				}
@@ -197,13 +199,17 @@ namespace Workwear.ViewModels.Operations
 		public Nomenclature Nomenclature {
 			get => SelectOperation?.Nomenclature;
 			set {
-				if(SelectOperation == null)
+				if(changingOperation) 
+					return;
+				if(SelectOperation == null || DomainHelper.IsSame(SelectOperation.Nomenclature, value))
 					return;
 				SelectOperation.Nomenclature = value;
-				if(Size != null && !Size.SizeType.IsSame(Nomenclature?.Type?.SizeType))
-					Size = null;
-				if(Height != null && !Height.SizeType.IsSame(Nomenclature?.Type?.HeightType))
-					Height = null;
+				if(SelectOperation.WearSize != null && 
+				   !SelectOperation.WearSize.SizeType.IsSame(SelectOperation.Nomenclature?.Type?.SizeType))
+						SelectOperation.WearSize = null;
+				if(SelectOperation.Height != null &&
+				   !SelectOperation.Height.SizeType.IsSame(SelectOperation.Nomenclature?.Type?.HeightType))
+						SelectOperation.Height = null;
 				
 				OnPropertyChanged();
 				OnPropertyChanged(nameof(VisibleHeight));
@@ -211,6 +217,8 @@ namespace Workwear.ViewModels.Operations
 				OnPropertyChanged(nameof(VisibleBarcodes));
 				OnPropertyChanged(nameof(Sizes));
 				OnPropertyChanged(nameof(Heights));
+				OnPropertyChanged(nameof(Size));
+				OnPropertyChanged(nameof(Height));
 				OnPropertyChanged(nameof(BarcodesText));
 				OnPropertyChanged(nameof(BarcodesColor));
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
@@ -221,6 +229,8 @@ namespace Workwear.ViewModels.Operations
 		public Size Size {
 			get => SelectOperation?.WearSize;
 			set {
+				if(changingOperation) 
+					return;
 				SelectOperation.WearSize = value;
 				OnPropertyChanged();
 			}
@@ -229,56 +239,68 @@ namespace Workwear.ViewModels.Operations
 		public Size Height {
 			get => SelectOperation?.Height;
 			set {
+				if(changingOperation) 
+					return;
 				SelectOperation.Height = value;
 				OnPropertyChanged();
 			}
 		}
 
-		private decimal wearPercent;
 		public decimal WearPercent {
-			get => wearPercent * 100;
+			get => (SelectOperation?.WearPercent ?? 0)  * 100;
 			set {
-				if(SelectOperation != null && value != wearPercent * 100 ) {
-					wearPercent = value / 100;
-					SelectOperation.WearPercent = wearPercent;
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && value != SelectOperation.WearPercent * 100 ) {
+					SelectOperation.WearPercent = value / 100;
 					RecalculateDatesOfSelectedOperation();
 					OnPropertyChanged();
+					OnPropertyChanged(nameof(AutoWriteoffDate));
+					OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+                    OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 				}
-				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
-				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			}
 		}
 
-		private bool overrideBefore;
 		public bool OverrideBefore {
-			get => overrideBefore;
+			get => SelectOperation?.OverrideBefore ?? false;
 			set {
-				if(SetField(ref overrideBefore, value))
-					if(SelectOperation != null)
-						SelectOperation.OverrideBefore = value;
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && value != SelectOperation.OverrideBefore){
+					SelectOperation.OverrideBefore = value;;
+                    OnPropertyChanged();
+				}
 			}
 		}
 
-		private string comment;
 		public string Comment {
-			get => comment;
+			get => SelectOperation?.Comment;
 			set {
-				if(SetField(ref comment, value))
-					if(SelectOperation != null)
-						SelectOperation.Comment = value;
+				if(changingOperation) 
+					return;
+				if(SelectOperation != null && value != SelectOperation.Comment) {
+					SelectOperation.Comment = value;
+					OnPropertyChanged();
+				}
 			}
 		}
 		#endregion
 
 		#region Заполняемые значения
 
-		public IEnumerable<Size> Sizes => sizeService.GetSize(UoW, Nomenclature?.Type.SizeType, onlyUseInNomenclature: true);
-		public IEnumerable<Size> Heights => sizeService.GetSize(UoW, Nomenclature?.Type.HeightType, onlyUseInNomenclature: true);
+		public IEnumerable<Size> Sizes => sizeService.GetSize(UoW, Nomenclature?.Type.SizeType, onlyUseInNomenclature: true)
+			.Where(x => x.SizeType.Id != 1);
+		public IEnumerable<Size> Heights => sizeService.GetSize(UoW, Nomenclature?.Type.HeightType, onlyUseInNomenclature: true)
+			.Where(x => x.SizeType.Id == 1);
 		#endregion
 		
 		#region Sensintive and Visibility
-		public bool VisibleHeight => Nomenclature?.Type.HeightType != null;
-		public bool VisibleSize => Nomenclature?.Type.SizeType != null;
+		public bool VisibleSelectOperation => SelectOperation != null;
+		public bool VisibleHeight => SelectOperation?.Height != null ||
+			(Nomenclature != null ? Nomenclature?.Type.HeightType != null : protectionTools?.Type.HeightType != null);
+		public bool VisibleSize => SelectOperation?.WearSize != null ||
+			(Nomenclature != null ? Nomenclature?.Type.SizeType != null : protectionTools?.Type.SizeType != null);
 		public bool VisibleBarcodes => (Nomenclature?.UseBarcode ?? false) || (SelectOperation?.BarcodeOperations.Any() ?? false);
 		public bool VisibleManualCalculate => EmployeeCardItem?.ActiveNormItem == null;
 		public bool CanEditOperation => SelectOperation != null;
@@ -300,7 +322,7 @@ namespace Workwear.ViewModels.Operations
 		}
 
 		public void CalculateExpense() {
-			AutoWriteoffDate = IssueDate.AddMonths(ExpiredMonths);
+			AutoWriteoffDate = IssueDate?.AddMonths(ExpiredMonths);
 		}
 
 		#endregion
@@ -348,6 +370,8 @@ namespace Workwear.ViewModels.Operations
 		#endregion
 
 		#region private
+
+		private bool changingOperation = false;
 		void RecalculateDatesOfSelectedOperation() {
 			if(EmployeeCardItem is null)
 				return;
@@ -392,7 +416,7 @@ namespace Workwear.ViewModels.Operations
 				NormItem = EmployeeCardItem?.ActiveNormItem,
 				ProtectionTools = protectionTools,
 				Returned = 0,
-				WearPercent = wearPercent,
+				WearPercent = WearPercent,
 				UseAutoWriteoff = true,
 				OperationTime =  startDate,
 				StartOfUse = startDate,

@@ -79,6 +79,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"warehouse_id", Warehouse.Id },
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
+					{"view_phones", ViewPhones},
 				 };
 
 		#region Параметры
@@ -124,6 +125,12 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual bool Condition {
 			get => condition;
 			set => SetField(ref condition, value);
+		}
+		
+		private bool viewPhones;
+		public virtual bool ViewPhones {
+			get => viewPhones;
+			set => SetField(ref viewPhones, value);
 		}
 		
 		private Warehouse warehouse;

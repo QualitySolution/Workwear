@@ -153,6 +153,7 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
 					.AddColumn("МВЗ").Resizable().Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
@@ -241,6 +242,7 @@ namespace workwear.Journal
 					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
@@ -340,6 +342,9 @@ namespace workwear.Journal
 					.AddColumn("Собственник имущества")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddTextRenderer(e => e.OwnerName)
+					.AddColumn("Цена продажи")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(e => e.SaleCostText)
 					.Finish()
 			);
 

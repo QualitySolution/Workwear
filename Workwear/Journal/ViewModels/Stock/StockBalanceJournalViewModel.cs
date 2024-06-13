@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using Gamma.Widgets;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
@@ -8,10 +10,12 @@ using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
+using QS.Utilities;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -91,6 +95,13 @@ namespace workwear.Journal.ViewModels.Stock
 			expenseQuery.Select(Projections
 								.Sum(Projections
 									.Property(() => warehouseExpenseOperationAlias.Amount)));
+			
+			if(Filter.SelectOwner != null)
+				switch(Filter.SelectOwner) {
+					case (SpecialComboState.All): break; //все
+					case (SpecialComboState.Not): expenseQuery.Where(x => x.Owner == null); break; //без собственника 
+					default: expenseQuery.Where(x => x.Owner.Id == DomainHelper.GetId(Filter.SelectOwner)); break;
+				}
 
 			var incomeSubQuery = QueryOver.Of(() => warehouseIncomeOperationAlias)
 				.Where(() => warehouseIncomeOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id 
@@ -111,6 +122,13 @@ namespace workwear.Journal.ViewModels.Stock
 								.Sum(Projections
 									.Property(() => warehouseIncomeOperationAlias.Amount)));
 
+			if(Filter.SelectOwner != null)
+				switch(Filter.SelectOwner) {
+					case (SpecialComboState.All): break;  //все
+					case (SpecialComboState.Not): incomeSubQuery.Where(x => x.Owner == null); break; //без собственника
+					default: incomeSubQuery.Where(x => x.Owner.Id == DomainHelper.GetId(Filter.SelectOwner)); break; 
+				}
+			
 			var projection = Projections.SqlFunction(
 				new SQLFunctionTemplate(NHibernateUtil.Int32, "( IFNULL(?1, 0) - IFNULL(?2, 0) )"),
 				NHibernateUtil.Int32,
@@ -158,6 +176,8 @@ namespace workwear.Journal.ViewModels.Stock
 			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
 			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+			   .Select(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
+			   .Select(() => nomenclatureAlias.SaleCost).WithAlias( () => resultAlias.SaleCost)
 			   .SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
 			   .SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
 			   .SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
@@ -221,6 +241,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public int Amount { get; set; }
 		public int OwnerId { get; set; }
 		public string OwnerName { get; set; }
+		public decimal SaleCost { get; set; }
+		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");

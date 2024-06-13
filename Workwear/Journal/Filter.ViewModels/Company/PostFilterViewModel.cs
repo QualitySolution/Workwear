@@ -47,5 +47,11 @@ namespace workwear.Journal.Filter.ViewModels.Company {
 		public EntityEntryViewModel<Department> EntryDepartment;
 		#endregion
 		
+		private bool showArchival;
+		public bool ShowArchival {
+			get => showArchival;
+			set => SetField(ref showArchival, value);
+		}
+		
 	}
 }

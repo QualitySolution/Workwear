@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using fyiReporting.RDL;
 using Gamma.Utilities;
 using Google.Protobuf;
@@ -32,14 +35,18 @@ namespace Workwear.ViewModels.Communications
 		private readonly EmailManagerService emailManagerService;
 		private readonly NotificationManagerService notificationManager;
 		private readonly IInteractiveMessage interactive;
+		private readonly ModalProgressCreator progressCreator;
 		private readonly MySqlConnectionStringBuilder connectionStringBuilder;
+		private readonly IGuiDispatcher guiDispatcher;
 
 		readonly IUnitOfWork uow;
 
 		public SendMessangeViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
 			IUnitOfWorkFactory unitOfWorkFactory, EmailManagerService emailManagerService,
 			NotificationManagerService notificationManager, IInteractiveMessage interactive,
-			MySqlConnectionStringBuilder connectionStringBuilder, INavigationManager navigation) : base(navigation)
+			ModalProgressCreator progressCreator, MySqlConnectionStringBuilder connectionStringBuilder,
+			IGuiDispatcher guiDispatcher,
+			INavigationManager navigation) : base(navigation)
 		{
 			this.warehouseId = warehouseId;
 			this.endDateIssue = endDateIssue;
@@ -47,7 +54,9 @@ namespace Workwear.ViewModels.Communications
 			this.emailManagerService = emailManagerService ?? throw new ArgumentNullException(nameof(emailManagerService));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.connectionStringBuilder = connectionStringBuilder ?? throw new ArgumentNullException(nameof(connectionStringBuilder));
+			this.guiDispatcher = guiDispatcher;
 			Title = "Отправка уведомлений " + EmployeesToText(employeeIds.Length);
 
 			uow = unitOfWorkFactory.CreateWithoutRoot();
@@ -228,19 +237,31 @@ namespace Workwear.ViewModels.Communications
 
 		#region Commands
 
-		public void SendMessage()
+		public async Task SendMessageAsync()
 		{
 			List<string> responseMessages = new List<string>();
+			IProgress<int> progress = new Progress<int>(val => 
+			{
+				if (progressCreator.IsStarted) 
+				{
+					progressCreator.Update(val);
+					progressCreator.Update($"Отправлено: {val}");
+				}
+			});
+			
 			if (PushNotificationSelected) 
 			{
 				responseMessages.Add(SendPushNotificationMessage());
 			}
 			if (EmailNotificationSelected) 
 			{
-				responseMessages.Add(SendEmailNotificationMessage());
+				responseMessages.Add(await SendEmailNotificationMessageAsync(progress));
 			}
-
-			interactive.ShowMessage(ImportanceLevel.Info, string.Join("\n", responseMessages));
+			
+			guiDispatcher.RunInGuiTread(() => 
+				interactive.ShowMessage(ImportanceLevel.Info, string.Join("\n", responseMessages))
+			);
+			
 			Close(false, CloseSource.Self);
 		}
 
@@ -256,15 +277,33 @@ namespace Workwear.ViewModels.Communications
 			return result;
 		}
 
-		private string SendEmailNotificationMessage()
+		private async Task<string> SendEmailNotificationMessageAsync(IProgress<int> progress = default)
 		{
-			IEnumerable<EmailMessage> messages = GetAvailableEmployeeWithEmail().Select(MakeEmailMessage);
+			IList<EmployeeCard> availableEmp = GetAvailableEmployeeWithEmail();
 			string result = "Отправлено 0 email уведомлений.";
-			if (messages.Any()) 
+
+			int emailAmount = availableEmp.Count();
+			CancellationTokenSource tokenSource = new CancellationTokenSource();
+			CancellationToken token = tokenSource.Token;
+			progressCreator.Title = "Отправка email";
+			progressCreator.UserCanCancel = true;
+			progressCreator.Start(emailAmount);
+			progressCreator.Canceled += (sender, args) => tokenSource.Cancel();
+			
+			if (emailAmount > 0) 
 			{
-				result = emailManagerService.SendMessages(messages);
+				try 
+				{
+					IEnumerable<EmailMessage> messages = availableEmp.Select(MakeEmailMessage);
+					result = await emailManagerService.SendMessagesAsync(messages, progress, token);
+				}
+				catch (OperationCanceledException) 
+				{
+					result = $"Операция отправки email уведолмений прервана.\nБыло отправлено {progressCreator.Value} email";
+				}
 			}
 
+			progressCreator.Close();
 			return result;
 		}
 
