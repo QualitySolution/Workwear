@@ -88,9 +88,9 @@ namespace Workwear.Domain.Postomats {
 		}
 
 		[Display(Name = "Номер ячейки")]
-		public virtual uint CellNumber 
+		public virtual string CellNumber 
 		{
-			get => Location.Cell;
+			get => Location.Number;
 			set => _ = value;
 		}
 		

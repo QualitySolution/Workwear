@@ -75,6 +75,13 @@ namespace Workwear.Domain.Regulations
 			get => dateTo;
 			set => SetField(ref dateTo, value);
 		}
+		
+		private bool archival;
+		[Display(Name ="Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		}
 		#endregion
 		#region Коллеции
 		private IObservableList<Post> posts = new ObservableList<Post>();

@@ -33,6 +33,7 @@ namespace workwear.ReportParameters.Views
 			ycheckDontShowZeroStock.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.HideWorn, w => w.Active).InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckViewPhones.Binding.AddBinding(ViewModel, v => v.ViewPhones, w => w.Active).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();

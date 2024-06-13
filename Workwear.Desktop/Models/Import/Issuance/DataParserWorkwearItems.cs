@@ -34,7 +34,8 @@ namespace Workwear.Models.Import.Issuance
 			SizeService sizeService)
 		{
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
-				"Табельный номер"
+				"Табельный",
+				"Таб."
 				);
 			AddColumnName(DataTypeWorkwearItems.NameWithInitials);
 			AddColumnName(DataTypeWorkwearItems.Fio,
@@ -69,6 +70,10 @@ namespace Workwear.Models.Import.Issuance
 				"Дата выдачи",
 				"дата получения"
 				);
+			AddColumnName(DataTypeWorkwearItems.WriteoffDate,
+				"дата списания",
+				"списние"
+			);
 			AddColumnName(DataTypeWorkwearItems.Count,
 				"Количество",
 				"Кол-во"
@@ -95,6 +100,7 @@ namespace Workwear.Models.Import.Issuance
 			var protectionToolsColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.ProtectionTools);
 			var nomenclatureColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Nomenclature);
 			var issueDateColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.IssueDate);
+			var writeoffDateColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.WriteoffDate);
 			var countColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Count);
 			var postColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Post);
 			var subdivisionColumn = importModel.GetColumnForDataType(DataTypeWorkwearItems.Subdivision);
@@ -127,6 +133,14 @@ namespace Workwear.Models.Import.Issuance
 					row.ProgramSkipped = true;
 					row.AddColumnChange(issueDateColumn, ChangeType.ParseError);
 					continue;
+				}
+
+				if(writeoffDateColumn != null) {
+					row.DateWriteoff = row.CellDateTimeValue(writeoffDateColumn);
+					if(row.DateWriteoff == null) 
+						row.AddColumnChange(writeoffDateColumn, new ChangeState(ChangeType.ParseError, error: "Дата списания не распознана."));
+					else 
+						row.AddColumnChange(writeoffDateColumn, new ChangeState(ChangeType.ChangeValue, interpretedValue: row.DateWriteoff.Value.ToShortDateString()));
 				}
 
 				if(countColumn != null && row.CellIntValue(countColumn) == null) {
@@ -252,7 +266,7 @@ namespace Workwear.Models.Import.Issuance
 				}
 				
 				var count = countColumn != null ? row.CellIntValue(countColumn).Value : row.WorkwearItem.ActiveNormItem.Amount;
-				var expenseDate = row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
+				var expenseDate = row.DateWriteoff ?? row.WorkwearItem.ActiveNormItem.CalculateExpireDate(row.Date.Value, count);
 				row.Operation = new EmployeeIssueOperation {
 					OperationTime = row.Date.Value,
 					Employee = row.Employee,
