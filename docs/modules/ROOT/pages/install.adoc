@@ -30,7 +30,7 @@ image::setup-components.png[]
 
 |Тип подключения| Облако Quality Solution
 
-|Название базы| current - для текущей версии, stable - для стабильной
+|Название базы| sps\demo
 
 |Учетная запись в облаке| demo
 
