@@ -282,7 +282,6 @@ public partial class MainWindow : Gtk.Window {
 
 		#region Для спецпошива
 		ActionPay.Visible = false;
-		ActionOpenReformal.Visible = false;
 		#endregion
 	}
 	#endregion
