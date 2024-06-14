@@ -1,5 +1,5 @@
 :title-separator: {sp}|
-= QS: Спецодежда и имущество | Руководство пользователя
+= QS: Спецаутсорсинг | Руководство пользователя
 Quality Solution 2024
 версия 2.8
 :organization: Quality Solution
