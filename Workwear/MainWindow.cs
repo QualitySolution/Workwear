@@ -600,8 +600,8 @@ public partial class MainWindow : Gtk.Window {
 	#endregion
 
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("OpenSite");
-		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		MainTelemetry.AddCount("sps-trade.ru/open");
+		OpenUrl("https://sps-trade.ru/");
 	}
 
 	protected void OnActionOpenReformalActivated(object sender, EventArgs e) {
@@ -736,8 +736,8 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionPayActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("pay.qsolution.ru");
-		OpenUrl("https://pay.qsolution.ru/");
+		MainTelemetry.AddCount("sps-trade.ru/pay");
+		OpenUrl("https://sps-trade.ru/");
 	}
 
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
