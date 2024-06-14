@@ -5490,46 +5490,6 @@
         <property name="StockId">www</property>
         <signal name="Activated" handler="OnActionSiteActivated" />
       </action>
-      <action id="ActionOpenReformal">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Предложить идею</property>
-        <property name="ShortLabel" translatable="yes">Предложить идею</property>
-        <property name="StockId">www</property>
-        <signal name="Activated" handler="OnActionOpenReformalActivated" />
-      </action>
-      <action id="Action38">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Мы в социальных сетях</property>
-        <property name="ShortLabel" translatable="yes">Мы в социальных сетях</property>
-      </action>
-      <action id="ActionVK">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Вконтакте</property>
-        <property name="ShortLabel" translatable="yes">Вконтакте</property>
-        <property name="StockId">vk</property>
-        <signal name="Activated" handler="OnActionVKActivated" />
-      </action>
-      <action id="ActionOdnoklasniki">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Одноклассники</property>
-        <property name="ShortLabel" translatable="yes">Одноклассники</property>
-        <property name="StockId">odnoklasniki</property>
-        <signal name="Activated" handler="OnActionOdnoklasnikiActivated" />
-      </action>
-      <action id="ActionTwitter">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Twitter</property>
-        <property name="ShortLabel" translatable="yes">Twitter</property>
-        <property name="StockId">twitter</property>
-        <signal name="Activated" handler="OnActionTwitterActivated" />
-      </action>
-      <action id="ActionYouTube">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">YouTube</property>
-        <property name="ShortLabel" translatable="yes">YouTube</property>
-        <property name="StockId">youtube</property>
-        <signal name="Activated" handler="OnActionYouTubeActivated" />
-      </action>
       <action id="ActionRegulationDoc">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Нормативные документы</property>
@@ -5672,6 +5632,7 @@
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Купить программу</property>
         <property name="ShortLabel" translatable="yes">Купить программу</property>
+        <property name="StockId">www</property>
         <signal name="Activated" handler="OnActionPayActivated" />
       </action>
       <action id="ActionAdminGuide">
@@ -6007,13 +5968,6 @@
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSite" />
-                <node type="Menuitem" action="ActionOpenReformal" />
-                <node type="Menu" action="Action38">
-                  <node type="Menuitem" action="ActionVK" />
-                  <node type="Menuitem" action="ActionOdnoklasniki" />
-                  <node type="Menuitem" action="ActionTwitter" />
-                  <node type="Menuitem" action="ActionYouTube" />
-                </node>
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionPay" />
                 <node type="Menuitem" action="ActionSN" />
