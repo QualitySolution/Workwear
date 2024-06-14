@@ -26,7 +26,7 @@ namespace Workwear.Domain.Stock.Documents
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
-		//TODO При переводе диалога на VVMM перенести в VM
+		//TODO Удалить
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -35,11 +35,14 @@ namespace Workwear.Domain.Stock.Documents
 			get => autoDocNumber;
 			set => SetField(ref autoDocNumber, value);
 		}
+		
+		//TODO Удалить
 		public virtual string DocNumberText {
 			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
 			set => DocNumber = (AutoDocNumber || value == "авто") ? null : value;
 		}
 		
+		//TODO Удалить
 		private IncomeOperations operation;
 		[Display (Name = "Тип операции")]
 		[PropertyChangedAlso (nameof(Title))]
@@ -89,6 +92,7 @@ namespace Workwear.Domain.Stock.Documents
 				}
 			}
 		}
+		
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))
