@@ -123,37 +123,16 @@ namespace workwear
 			MainTelemetry.DoNotTrack = true;
 #endif
 			//Запускаем программу
-			MainWin = new MainWindow ();
-			MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
-			if (QSMain.User.Login == "root")
-				return;
-			MainWin.Show ();
 			Application.Invoke(delegate 
 			{
-				if (MainWin.IsSNExpired) 
-				{
-					if (!MainWin.Interactive.Question("Срок действия серийного номера истек.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
-					{
-						MainWin.QuitService.Quit();
-						return;
-					}
-					
-					IPage<SerialNumberViewModel> page = MainWin.NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
-					page.PageClosed += (sender, closedArgs) => 
-					{
-						if (closedArgs.CloseSource == CloseSource.Save) 
-						{
-							MainWin.FeaturesService.UpdateSerialNumber();
-						}
-						else
-						{
-							MainWin.QuitService.Quit();
-						}
-					};
-				}
+				MainWin = new MainWindow ();
+				MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
+				if (QSMain.User.Login == "root")
+					return;
+				MainWin.Show ();
 			});
-			
 			Application.Run ();
+			
 			if (!MainTelemetry.SendingError)
 			{
 				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);
