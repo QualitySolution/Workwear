@@ -420,7 +420,6 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("EditSerialNumber");
 		NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 	}
 
@@ -602,31 +601,6 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
 		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
-	}
-
-	protected void OnActionOpenReformalActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("OpenReformal.ru");
-		OpenUrl("http://qs-workwear.reformal.ru/");
-	}
-
-	protected void OnActionVKActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("vk.com");
-		OpenUrl("https://vk.com/qualitysolution");
-	}
-
-	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ok.ru");
-		OpenUrl("https://ok.ru/qualitysolution");
-	}
-
-	protected void OnActionTwitterActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("twitter.com");
-		OpenUrl("https://twitter.com/QSolutionRu");
-	}
-
-	protected void OnActionYouTubeActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("youtube.com");
-		OpenUrl("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
