@@ -81,7 +81,6 @@ using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
-using workwear.Tools.Application;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
