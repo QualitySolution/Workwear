@@ -26951,7 +26951,7 @@
             <child>
               <widget class="Gtk.Label" id="GtkLabel7">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Коментарий</property>
+                <property name="LabelProp" translatable="yes">Комментарий</property>
                 <property name="UseMarkup">True</property>
               </widget>
               <packing>

@@ -253,7 +253,7 @@ namespace Workwear.Views.ClothingService
 			this.frame5.Add(this.GtkAlignment6);
 			this.GtkLabel7 = new global::Gtk.Label();
 			this.GtkLabel7.Name = "GtkLabel7";
-			this.GtkLabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Коментарий");
+			this.GtkLabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий");
 			this.GtkLabel7.UseMarkup = true;
 			this.frame5.LabelWidget = this.GtkLabel7;
 			this.vbox1.Add(this.frame5);

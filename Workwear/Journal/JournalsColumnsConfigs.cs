@@ -48,7 +48,7 @@ namespace workwear.Journal
 					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
 					.AddColumn("Предпочтительный постомат выдачи")
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
-					.AddColumn("Коментарий").AddTextRenderer(node => node.Comment)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);

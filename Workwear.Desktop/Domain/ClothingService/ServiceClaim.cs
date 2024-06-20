@@ -60,7 +60,7 @@ namespace Workwear.Domain.ClothingService {
 		}
 		
 		private string comment;
-		[Display(Name = "Коментарий")]
+		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
