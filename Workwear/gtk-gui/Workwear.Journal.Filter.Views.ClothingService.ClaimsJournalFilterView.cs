@@ -8,6 +8,10 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yCheckButton checkShowClosed;
 
+		private global::Gamma.Widgets.yListComboBox comboPostomat;
+
+		private global::Gamma.GtkWidgets.yLabel labelIsClosed;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -15,7 +19,7 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView";
 			// Container child Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(3)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -30,6 +34,27 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowClosed]));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.comboPostomat = new global::Gamma.Widgets.yListComboBox();
+			this.comboPostomat.Name = "comboPostomat";
+			this.comboPostomat.AddIfNotExist = false;
+			this.comboPostomat.DefaultFirst = false;
+			this.table1.Add(this.comboPostomat);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.comboPostomat]));
+			w2.LeftAttach = ((uint)(2));
+			w2.RightAttach = ((uint)(3));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelIsClosed = new global::Gamma.GtkWidgets.yLabel();
+			this.labelIsClosed.Name = "labelIsClosed";
+			this.labelIsClosed.Xalign = 1F;
+			this.labelIsClosed.LabelProp = global::Mono.Unix.Catalog.GetString("Постамат выдачи:");
+			this.table1.Add(this.labelIsClosed);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIsClosed]));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
