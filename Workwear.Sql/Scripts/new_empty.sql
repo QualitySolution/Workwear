@@ -61,7 +61,7 @@ CREATE TABLE `clothing_service_states` (
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
 	KEY `user_id` (`user_id`),
-	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`),
+	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
