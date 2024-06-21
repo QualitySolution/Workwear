@@ -282,7 +282,7 @@ namespace Workwear.ViewModels.Export {
 				//Форматы ячеек. 
 				IDataFormat dataFormater = workbook.CreateDataFormat();
 				short dateFormat = dataFormater.GetFormat("dd.MM.yyyy");
-				short moneyFormat = dataFormater.GetFormat("#.## ₽");
+				short moneyFormat = dataFormater.GetFormat($"#.## {baseParameters.UsedCurrency}");
 				IFont fontFormatGrey = workbook.CreateFont();
 				fontFormatGrey.Color = HSSFColor.Grey40Percent.Index;
 				IFont fontFormatBold = workbook.CreateFont();

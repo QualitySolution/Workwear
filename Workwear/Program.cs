@@ -6,9 +6,7 @@ using QS.Configuration;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
-using QS.Navigation;
 using QS.Project.Versioning;
-using QS.Serial.ViewModels;
 using QSProjectsLib;
 using QSTelemetry;
 using Workwear;
@@ -98,10 +96,6 @@ namespace workwear
 			scopeLoginTime.Dispose();
 
 			QSSaaS.Session.StartSessionRefresh ();
-
-			//Прописываем системную валюту
-			CurrencyWorks.CurrencyShortFomat = "{0:C}";
-			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
 			
 			CreateBaseConfig (); //Настройка базы
 			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
