@@ -1,7 +1,7 @@
 using System;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
-using QSProjectsLib;
+using QS.Utilities;
 using Workwear.Domain.Operations;
 using Workwear.Models.Operations;
 
