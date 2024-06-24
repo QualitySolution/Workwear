@@ -80,7 +80,7 @@ namespace Workwear.Tools
 		/// Используемая валюта
 		/// </summary>
 		public virtual string UsedCurrency {
-			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
+			get => Dynamic.UsedCurrency(typeof(string)) ?? "₸";
 			set => Dynamic[nameof(UsedCurrency)] = value;
 		}
 		#endregion
