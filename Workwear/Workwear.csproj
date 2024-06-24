@@ -145,7 +145,6 @@
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
-    <Compile Include="Tools\Application\GtkApplicationQuitService.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
     <Compile Include="Tools\Import\Xml1CDocument.cs" />
     <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
@@ -838,6 +837,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Reports\ProvisionReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

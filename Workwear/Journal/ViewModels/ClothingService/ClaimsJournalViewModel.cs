@@ -5,6 +5,8 @@ using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
+using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -21,6 +23,7 @@ using Workwear.ViewModels.ClothingService;
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
 		private IInteractiveService interactive;
+		readonly IDictionary<uint, string> postomatsLabels;
 		
 		public ClaimsJournalFilterViewModel Filter { get; set; }
 		public ClaimsJournalViewModel(
@@ -28,12 +31,16 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope,
+			PostomatManagerService postomatService,
 			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 			Title = "Обслуживание одежды";
 			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			
+			postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} {x.Location}");
 			
 			CreateActions();
 			UpdateOnChanges(typeof(ServiceClaim), typeof(StateOperation));
@@ -62,6 +69,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			var query = uow.Session.QueryOver(() => serviceClaimAlias);
 			if(!Filter.ShowClosed)
 				query.Where(x => x.IsClosed == false);
+			if(Filter.PostomatId != 0)
+				query.Where(x => x.PreferredTerminalId == Filter.PostomatId);
 
 			return query
 				.Where(GetSearchCriterion(
@@ -80,6 +89,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 					.Select(x => x.NeedForRepair).WithAlias(() => resultAlias.NeedForRepair)
 					.Select(x => x.Defect).WithAlias(() => resultAlias.Defect)
+					.Select(x => x.PreferredTerminalId).WithAlias(() => resultAlias.ReferredTerminalId)
+					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.Select(x => x.IsClosed).WithAlias(() => resultAlias.IsClosed)
 					.SelectSubQuery(subqueryLastState).WithAlias(() => resultAlias.State)
@@ -134,6 +145,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		}
 
 		#endregion
+		
+		public string GetTerminalLabel(uint id) => postomatsLabels.ContainsKey(id) ? postomatsLabels[id] : string.Empty;
 	}
 
 	public class ClaimsJournalNode {
@@ -148,6 +161,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		public DateTime OperationTime { get; set; }
 		public string Nomenclature { get; set; }
 		public string Defect { get; set; }
+		public uint ReferredTerminalId { get; set; }
+		public string Comment { get; set; }
 
 		public string Employee => PersonHelper.PersonFullName(EmployeeLastName, EmployeeFirstName, EmployeePatronymic);
 		public string RowColor => IsClosed ? "grey" : null;
