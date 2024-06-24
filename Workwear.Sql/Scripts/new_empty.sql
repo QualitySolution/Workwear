@@ -39,7 +39,7 @@ CREATE TABLE `clothing_service_claim` (
   `barcode_id` int(10) unsigned NOT NULL,
   `employee_id` int UNSIGNED NOT NULL,
   `is_closed` tinyint(1) NOT NULL DEFAULT 0,
-  `referred_terminal_id` int(11) unsigned null,
+  `preferred_terminal_id` int(11) unsigned null,
   `need_for_repair` tinyint(1) NOT NULL,
   `defect` text DEFAULT NULL COMMENT 'Описание дефекта при сдаче, который нужно починить.',
   `comment` text null,
@@ -2302,7 +2302,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.19');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.20');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
