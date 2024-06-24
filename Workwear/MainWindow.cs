@@ -68,6 +68,7 @@ using workwear.ReportsDlg;
 using workwear;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.ViewModels.Export;
+using CurrencyWorks = QS.Utilities.CurrencyWorks;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -142,7 +143,8 @@ public partial class MainWindow : Gtk.Window {
 		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-
+		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
+		
 		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +

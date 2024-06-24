@@ -1,6 +1,6 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.8.19"
+!define PRODUCT_VERSION "2.8.20"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Aros аутсорсинг"
