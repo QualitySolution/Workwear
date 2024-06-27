@@ -2248,7 +2248,6 @@ create index employee_groups_items_employees_id_index
 -- function count_issue
 -- -----------------------------------------------------
 
-DELIMITER $$
 CREATE FUNCTION `count_issue`(
     `amount` INT UNSIGNED, 
     `norm_period` INT UNSIGNED, 
@@ -2289,9 +2288,8 @@ WHILE next_issue <= end_date DO
 	END IF;
 END WHILE;
 RETURN issue_count;
-END$$
+END;
 
-DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
