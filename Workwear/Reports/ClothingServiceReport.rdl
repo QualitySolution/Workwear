@@ -46,8 +46,8 @@ CASE WHEN state = 'WaitService' THEN
     'Возвращена'
     END AS 'Статус заявки',
 CASE WHEN  is_closed = 1 THEN 
-  '+'
-    ELSE '-'
+  'да'
+    ELSE 'нет'
     END AS 'Закрыта'
 FROM (
         WITH state AS (
@@ -171,7 +171,7 @@ FROM (
         <Header>
           <TableRows>
             <TableRow>
-              <Height>13.6pt</Height>
+              <Height>14.4pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -267,7 +267,12 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
+                      <Visibility>
+                        <Hidden>={?show_closed}</Hidden>
+                      </Visibility>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -384,7 +389,13 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
+                      <Visibility>
+                        <Hidden>={?show_closed}</Hidden>
+                        <ToggleItem></ToggleItem>
+                      </Visibility>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
