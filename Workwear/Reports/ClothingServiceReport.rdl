@@ -13,7 +13,7 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT ROW_NUMBER() OVER() AS '№п/п', title AS 'Штрихкод',         
+        <CommandText>SELECT ROW_NUMBER() OVER() AS '№п/п',title AS 'Штрихкод',         
  TO_CHAR(start_date, 'DD.MM.YYYY') AS 'Дата',
  name AS 'Номенклатура', 
 CASE WHEN need_for_repair = 1 THEN 
@@ -64,7 +64,7 @@ FROM (
     on barcodes.id = postomat_document_items.barcode_id
     JOIN start_date 
     ON start_date.claim_id = clothing_service_states.claim_id
-    WHERE clothing_service_claim.is_closed = @show_closed
+    WHERE clothing_service_claim.is_closed = 0 OR clothing_service_claim.is_closed = IF(@show_closed, 1, 0)
     AND start_date.min_time BETWEEN @start_date AND @end_date
 ) q1;
 </CommandText>
@@ -122,7 +122,7 @@ FROM (
         <Height>.25in</Height>
         <Value>Обслуживание одежды</Value>
         <Style>
-          <FontSize>15pt</FontSize>
+          <FontSize>12pt</FontSize>
           <FontWeight>Bold</FontWeight>
           <BorderStyle />
           <BorderColor />
@@ -149,22 +149,22 @@ FROM (
             <Width>34.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>91.8pt</Width>
+            <Width>72.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>65.1pt</Width>
+            <Width>48.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>161.7pt</Width>
+            <Width>221.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>48.2pt</Width>
+            <Width>42.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>112.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>50.5pt</Width>
+            <Width>43.1pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -182,6 +182,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -196,6 +197,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -210,6 +212,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -224,6 +227,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -238,6 +242,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -252,6 +257,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -268,9 +274,10 @@ FROM (
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>8pt</FontSize>
                       </Style>
                       <Visibility>
-                        <Hidden>={?show_closed}</Hidden>
+                        <Hidden>={?show_closed}=false</Hidden>
                       </Visibility>
                     </Textbox>
                   </ReportItems>
@@ -298,6 +305,7 @@ FROM (
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -312,6 +320,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -328,6 +337,7 @@ FROM (
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -345,6 +355,7 @@ FROM (
                         <BorderColor />
                         <BorderWidth />
                         <WritingMode>lr-tb</WritingMode>
+                        <FontSize>8pt</FontSize>
                       </Style>
                       <CanShrink>false</CanShrink>
                     </Textbox>
@@ -360,6 +371,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -374,6 +386,7 @@ FROM (
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <FontSize>8pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -390,9 +403,10 @@ FROM (
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>8pt</FontSize>
                       </Style>
                       <Visibility>
-                        <Hidden>={?show_closed}</Hidden>
+                        <Hidden>={?show_closed}=false</Hidden>
                         <ToggleItem></ToggleItem>
                       </Visibility>
                     </Textbox>
@@ -417,7 +431,7 @@ FROM (
         <Width>3in</Width>
         <Value>=Globals!PageNumber + " из " + Globals!TotalPages</Value>
         <Style>
-          <FontSize>10pt</FontSize>
+          <FontSize>8pt</FontSize>
           <FontWeight>Normal</FontWeight>
         </Style>
       </Textbox>
