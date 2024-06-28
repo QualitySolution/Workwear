@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -29444,6 +29444,42 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelPeriod">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Период:</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.yDatePeriodPicker" id="ydateperiodpicker">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+                <property name="StartDate">0</property>
+                <property name="EndDate">0</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <placeholder />
         </child>
         <child>
@@ -29456,7 +29492,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
