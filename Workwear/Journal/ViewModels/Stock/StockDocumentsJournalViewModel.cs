@@ -54,6 +54,8 @@ namespace workwear.Journal.ViewModels.Stock
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(QueryIncomeDoc);
+			dataLoader.AddQuery(QueryIncome);
+			//dataLoader.AddQuery(QueryReturn);
 			dataLoader.AddQuery(QueryExpenseDoc);
 			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
@@ -133,6 +135,48 @@ namespace workwear.Journal.ViewModels.Stock
 			return incomeQuery;
 		}
 
+		protected IQueryOver<Income> QueryIncome(IUnitOfWork uow)
+		{
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.Income)
+				return null;
+
+			Income incomeAlias = null;
+
+			var incomeQuery = uow.Session.QueryOver<Income>(() => incomeAlias);
+			if(Filter.StartDate.HasValue)
+				incomeQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				incomeQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				incomeQuery.Where(x => x.Warehouse == Filter.Warehouse);
+
+			incomeQuery.Where(GetSearchCriterion(
+				() => incomeAlias.Id,
+				() => authorAlias.Name
+			));
+
+			incomeQuery
+				.Where(o => o.Operation == IncomeOperations.Enter) //Пока таблица общая с возвратами фильтруем так 	
+				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+						.Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StockDocumentType.Income).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
+					)
+			.OrderBy(() => incomeAlias.Date).Desc
+			.ThenBy(() => incomeAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return incomeQuery;
+		}
+		
 		protected IQueryOver<Expense> QueryExpenseDoc(IUnitOfWork uow)
 		{
 			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseEmployeeDoc)

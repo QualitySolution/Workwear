@@ -8,11 +8,13 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 
@@ -33,6 +35,13 @@ namespace Workwear.ViewModels.Stock {
 				Owners = UoW.GetAll<Owner>().ToList();
 			if(featuresService.Available(WorkwearFeature.Warehouses))
 				Warhoses = UoW.GetAll<Warehouse>().ToList();
+			
+			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
+			
+			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
+				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
+				.UseViewModelDialog<WarehouseViewModel>()
+				.Finish();
 		}
 		
 		#region Проброс свойств документа
@@ -44,7 +53,6 @@ namespace Workwear.ViewModels.Stock {
 		public virtual DateTime DocDate => Entity.Date;
 		public virtual Warehouse Warehouse => Entity.Warehouse;
 		public virtual string NumberTN => Entity.Number;
-		public virtual EmployeeCard EmployeeCard => Entity.EmployeeCard;
 		public virtual IObservableList<IncomeItem> Items => Entity.Items;
 
 		#endregion
@@ -52,6 +60,7 @@ namespace Workwear.ViewModels.Stock {
 		#region Свойства ViewModel
 		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService = new SizeService();
+		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		
 		//public IList<Owner> Owners = QS.DomainModel.UoW.UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
 		//private List<Owner> owners = new List<Owner>();
@@ -77,6 +86,8 @@ namespace Workwear.ViewModels.Stock {
 
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
+		public virtual bool ReadInFileVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
 
 		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();

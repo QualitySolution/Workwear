@@ -388,9 +388,7 @@ namespace workwear
 			w30.Expand = false;
 			w30.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.ItemsTable = new global::workwear.IncomeDocItemsView();
-			this.ItemsTable.Events = ((global::Gdk.EventMask)(256));
-			this.ItemsTable.Name = "ItemsTable";
+			this.ItemsTable = null;
 			this.dialog1_VBox.Add(this.ItemsTable);
 			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ItemsTable]));
 			w31.Position = 2;

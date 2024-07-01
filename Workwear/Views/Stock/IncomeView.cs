@@ -1,13 +1,8 @@
 ﻿using System;
 using Gtk;
-using QS.ViewModels.Control.EEVM;
 using QS.Views.Dialog;
 using QSOrmProject;
-using workwear;
 using Workwear.Domain.Stock.Documents;
-using workwear.Journal.ViewModels.Company;
-using workwear.Journal.ViewModels.Stock;
-using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock {
@@ -27,47 +22,33 @@ namespace Workwear.Views.Stock {
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
-			
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(ViewModel, vm => vm.DocCreatedbyUser != null ? vm.DocCreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
-
 			ydateDoc.Binding
 				.AddBinding(ViewModel, vm => vm.DocDate, w => w.Date)
 				.InitializeFromSource ();
-
 			yentryNumber.Binding
 				.AddBinding(ViewModel, vm => vm.NumberTN, w => w.Text)
 				.InitializeFromSource();
-
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
+			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel; 
+			entityWarehouseIncome.Binding.
+				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
+				.InitializeFromSource();
+			ybuttonReadInFile.Binding
+				.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible)
+				.InitializeFromSource();
 			
-			//enumPrint.ItemsEnum = typeof(IncomeDocReportEnum);
+			//ItemsTable.IncomeDoc = Entity;
+			//ItemsTable.SizeService = sizeService;
+			//ItemsTable.Interactive = interactiveService;
 
-			ItemsTable.IncomeDoc = Entity;
-			ItemsTable.SizeService = sizeService;
-			ItemsTable.Interactive = interactiveService;
-
-			var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
-
-			entityWarehouseIncome.ViewModel = builder.ForProperty(x => x.Warehouse)
-				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
-				.UseViewModelDialog<WarehouseViewModel>()
-				.Finish();
-
-			yentryEmployee.ViewModel = builder.ForProperty(x => x.EmployeeCard)
-				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
-				.UseViewModelDialog<EmployeeViewModel>()
-				.Finish();
+			//var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
+	
 			
-			//Метод отключает модули спецодежды, которые недоступны для пользователя
-			DisableFeatures();
-
-			ybuttonReadInFile.Clicked += OnReadFileClicked;
-			
-			Entity.Items.CollectionChanged += (o, a) => ycomboOperation.Sensitive = !Entity.Items.Any();
 		}
 
 		private void ConfigureItems() {
@@ -111,9 +92,27 @@ namespace Workwear.Views.Stock {
 //					.AddTextRenderer(e => e.СommentReturn)
 //					.Editable()
 				.Finish();
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
-			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
+			//ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			//ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
+			
+			ytreeItems.ItemsDataSource = ViewModel.Items;
+			
 		}
-
+		
+		protected void OnButtonReadInFileClicked(object sender, EventArgs e) {
+			//ViewModel
+		}
+		protected void OnButtonAddClicked(object sender, EventArgs e) {
+			//ViewModel
+		}
+		protected void OnButtonDellClicked(object sender, EventArgs e) {
+			//ViewModel
+		}
+		protected void OnButtonAddSizesClicked(object sender, EventArgs e) {
+			//ViewModel
+		}
+		protected void OnButtonSetNomenclatureClicked(object sender, EventArgs e) {
+			//ViewModel
+		}
 	}
 }

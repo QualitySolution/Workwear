@@ -1,4 +1,5 @@
 ﻿using Gamma.Utilities;
+using NHibernate.Id.Insert;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Models.Operations
@@ -11,6 +12,7 @@ namespace Workwear.Models.Operations
 		public int? ExpenceId;
 		public int? ExpenceItemId;
 		public int? IncomeId;
+		public IncomeOperations? IncomeOperation;
 		public int? IncomeItemId;
 		public int? CollectiveExpenseId;
 		public int? CollectiveExpenseItemId;
@@ -32,8 +34,10 @@ namespace Workwear.Models.Operations
 					return StockDocumentType.ExpenseEmployeeDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
-				if(IncomeId.HasValue)
-					return StockDocumentType.IncomeDoc;
+				if(IncomeId.HasValue && IncomeOperation == IncomeOperations.Enter) 
+					return StockDocumentType.Income;
+				if(IncomeId.HasValue && IncomeOperation == IncomeOperations.Return) 
+					return StockDocumentType.Return;
 				if(TransferId.HasValue)
 					return StockDocumentType.TransferDoc;
 				if(WriteoffId.HasValue)

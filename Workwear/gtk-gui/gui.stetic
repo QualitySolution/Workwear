@@ -29372,15 +29372,12 @@
               </packing>
             </child>
             <child>
-              <widget class="QS.Widgets.EnumMenuButton" id="enumPrint">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonReadInFile">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Type">TextAndIcon</property>
-                <property name="Icon">stock:gtk-print Menu</property>
-                <property name="Label" translatable="yes">Печать</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Загрузить из файла</property>
                 <property name="UseUnderline">True</property>
-                <property name="UseMarkup">False</property>
-                <property name="LabelXAlign">0</property>
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -29734,7 +29731,7 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.HBox" id="hbox2">
+              <widget class="Gtk.HBox" id="hbox5">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
