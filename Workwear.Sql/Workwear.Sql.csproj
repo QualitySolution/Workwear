@@ -1,7 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <Configurations>Debug;Release;isSubmodule</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,8 +10,11 @@
       <EmbeddedResource Include="Scripts\*.sql" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj" />
-    </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'IsSubmodule'">
+		<ProjectReference Include="..\..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj" />
+	</ItemGroup>
 
+	<ItemGroup Condition="'$(Configuration)' != 'IsSubmodule'">
+		<ProjectReference Include="..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj" />
+	</ItemGroup>
 </Project>
