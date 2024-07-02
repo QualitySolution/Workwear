@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Manage;
 using QS.Views.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.ViewModels.ClothingService;
@@ -12,17 +13,24 @@ namespace Workwear.Views.ClothingService {
 
 			barcodeinfoview1.ViewModel = ViewModel.BarcodeInfoViewModel;
 			checkNeedRepair.Binding
-				.AddBinding(Entity, e => e.NeedForRepair, w => w.Active)
+				.AddBinding(ViewModel, e => e.NeedForRepair, w => w.Active)
 				.AddBinding(ViewModel, v => v.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
 			
 			textDefect.Binding
-				.AddBinding(Entity, e => e.Defect, w => w.Buffer.Text)
-				.AddBinding(ViewModel, v => v.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel, e => e.Defect, w => w.Buffer.Text)
+				.AddBinding(ViewModel, v => v.DefectCanEdit, w => w.Sensitive)
 				.InitializeFromSource();
 			
 			labelIsClosed.Binding
-				.AddFuncBinding(Entity, e => "Закрыта: " + (e.IsClosed ? "Да" : "Нет"), w => w.LabelProp)
+				.AddFuncBinding(ViewModel, e => "Закрыта: " + (e.IsClosed ? "Да" : "Нет"), w => w.LabelProp)
+				.InitializeFromSource();
+			
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
+			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.CanEdit, w => w.Sensitive)
+				.AddBinding(v => v.Postomats, w => w.ItemsList)
+				.AddBinding(v => v.Postomat, w => w.SelectedItem)
 				.InitializeFromSource();
 			
 			treeOperations.CreateFluentColumnsConfig<StateOperation>()
@@ -33,8 +41,12 @@ namespace Workwear.Views.ClothingService {
 				.Finish();
 
 			treeOperations.Binding
-				.AddSource(Entity)
+				.AddSource(ViewModel)
 				.AddBinding(v => v.States, w => w.ItemsDataSource)
+				.InitializeFromSource();
+
+			ytextComment.Binding
+				.AddBinding(ViewModel,v => v.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();
 		}
 	}

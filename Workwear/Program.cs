@@ -96,10 +96,6 @@ namespace workwear
 			scopeLoginTime.Dispose();
 
 			QSSaaS.Session.StartSessionRefresh ();
-
-			//Прописываем системную валюту
-			CurrencyWorks.CurrencyShortFomat = "{0:C}";
-			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
 			
 			CreateBaseConfig (); //Настройка базы
 			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
@@ -121,13 +117,16 @@ namespace workwear
 			MainTelemetry.DoNotTrack = true;
 #endif
 			//Запускаем программу
-			MainWin = new MainWindow ();
-			MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
-			if (QSMain.User.Login == "root")
-				return;
-			MainWin.Show ();
+			Application.Invoke(delegate 
+			{
+				MainWin = new MainWindow ();
+				MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
+				if (QSMain.User.Login == "root")
+					return;
+				MainWin.Show ();
+			});
 			Application.Run ();
-
+			
 			if (!MainTelemetry.SendingError)
 			{
 				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);

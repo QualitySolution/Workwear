@@ -10,6 +10,9 @@ namespace workwear.Journal.Filter.Views.Company
 			this.Build();
 			entitySubdivision.ViewModel = viewModel.EntrySubdivision;
 			entryDepartment.ViewModel = ViewModel.EntryDepartment;
+			yShowArchival.Binding
+				.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active)
+				.InitializeFromSource();
 		}
 	}
 }

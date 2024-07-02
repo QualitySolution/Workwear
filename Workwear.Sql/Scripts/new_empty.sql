@@ -39,8 +39,10 @@ CREATE TABLE `clothing_service_claim` (
   `barcode_id` int(10) unsigned NOT NULL,
   `employee_id` int UNSIGNED NOT NULL,
   `is_closed` tinyint(1) NOT NULL DEFAULT 0,
+  `preferred_terminal_id` int(11) unsigned null,
   `need_for_repair` tinyint(1) NOT NULL,
   `defect` text DEFAULT NULL COMMENT 'Описание дефекта при сдаче, который нужно починить.',
+  `comment` text null,
   PRIMARY KEY (`id`),
   KEY `barcode_id` (`barcode_id`),
   KEY `fk_clothing_service_claim_employee_id` (`employee_id`),
@@ -59,7 +61,7 @@ CREATE TABLE `clothing_service_states` (
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
 	KEY `user_id` (`user_id`),
-	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`),
+	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -262,6 +264,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `profession_id` INT UNSIGNED NULL DEFAULT NULL,
   `cost_center_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `comments` TEXT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_posts_subdivision_idx` (`subdivision_id` ASC),
@@ -728,6 +731,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `comment` TEXT NULL DEFAULT NULL,
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
+  `archival` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
@@ -2377,7 +2381,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.19');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.20');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

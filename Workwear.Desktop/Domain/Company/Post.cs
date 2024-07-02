@@ -69,6 +69,13 @@ namespace Workwear.Domain.Company
 			set => SetField(ref costCenter, value);
 		}
 
+		private bool archival;
+		[Display(Name ="Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		}
+		
 		private string comments;
 		[Display(Name = "Комментарии")]
 		public virtual string Comments {

@@ -109,6 +109,7 @@ namespace Workwear.ViewModels.Postomats {
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.Filter.SensitiveShowClosed = false;
 			selectPage.ViewModel.Filter.ShowClosed = false;
+			selectPage.ViewModel.Filter.Postomat = Postomat;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 

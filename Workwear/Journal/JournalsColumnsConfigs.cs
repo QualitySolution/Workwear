@@ -37,7 +37,7 @@ namespace workwear.Journal
 			#region ClothingService
 
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
-				() => FluentColumnsConfig<ClaimsJournalNode>.Create()
+				jvm => FluentColumnsConfig<ClaimsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
 					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee)
@@ -46,6 +46,9 @@ namespace workwear.Journal
 					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
 					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
 					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
+					.AddColumn("Предпочтительный постомат выдачи")
+						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
@@ -153,6 +156,7 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision).WrapWidth(700).SearchHighlight()
 					.AddColumn("МВЗ").Resizable().Visible(jwm.FeaturesService.Available(WorkwearFeature.CostCenter)).AddTextRenderer(node => node.CostCenterText).WrapWidth(700).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comments).WrapWidth(700).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
@@ -241,6 +245,7 @@ namespace workwear.Journal
 					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 

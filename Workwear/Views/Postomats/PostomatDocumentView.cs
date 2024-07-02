@@ -25,7 +25,7 @@ namespace Workwear.Views.Postomats {
 			comboTypeDoc.Binding.AddBinding(Entity, e => e.Type, w => w.SelectedItem).InitializeFromSource();
 			ydateDoc.Binding.AddBinding(Entity, e => e.CreateTime, w => w.Date).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
-			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Id} {p.Name}({p.Location})");
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Id} {p.Name} ({p.Location})");
 			comboPostomat.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CanChangePostomat, w => w.Sensitive)
 				.AddBinding(v => v.Postomats, w => w.ItemsList)
