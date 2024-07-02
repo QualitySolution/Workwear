@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -23,6 +23,9 @@ using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
+
+
+
 
 namespace workwear
 {
@@ -56,10 +59,10 @@ namespace workwear
 		}
 
 		private void IncomeDoc_PropertyChanged (object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == IncomeDoc.GetPropertyName (d => d.Operation) 
+			if(e.PropertyName == IncomeDoc.GetPropertyName (d => d.Operation)
 				|| e.PropertyName == IncomeDoc.GetPropertyName (d => d.EmployeeCard))
 			{
-				buttonAdd.Sensitive = IncomeDoc.Operation == IncomeOperations.Return && IncomeDoc.EmployeeCard != null 
+				buttonAdd.Sensitive = IncomeDoc.Operation == IncomeOperations.Return && IncomeDoc.EmployeeCard != null
 					|| IncomeDoc.Operation == IncomeOperations.Enter;
 			}
 
@@ -110,7 +113,7 @@ namespace workwear
 					.AddTextRenderer (e => e.СommentReturn)
 					.Editable()
 				.Finish ();
-			
+
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
 		}
@@ -145,12 +148,12 @@ namespace workwear
 				var sizeType = obj.Nomenclature?.Type?.SizeType;
 				var heightType = obj.Nomenclature?.Type?.SizeType;
 				if(sizeType != null)
-					buttonAddSizes.Sensitive = ytreeItems.Selection.CountSelectedRows() != 1 || 
-					                           !SizeService.GetSize(UoW, sizeType).Any() || 
+					buttonAddSizes.Sensitive = ytreeItems.Selection.CountSelectedRows() != 1 ||
+					                           !SizeService.GetSize(UoW, sizeType).Any() ||
 					                           !(heightType is null) && SizeService.GetSize(UoW, heightType).Any();
 				else
 					buttonAddSizes.Sensitive = false;
-				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation?.Nomenclature == null; 
+				buttonSetNomenclature.Sensitive = obj.IssuedEmployeeOnOperation?.Nomenclature == null;
 			}
 			else
 				buttonAddSizes.Sensitive = false;
@@ -159,8 +162,8 @@ namespace workwear
 		private void OnButtonAddClicked (object sender, EventArgs e) {
 			if(IncomeDoc.Operation == IncomeOperations.Return) {
 				var vm = new EmployeeBalanceVM(UoW);
-				vm.Employee = IncomeDoc.EmployeeCard;
-				var selectFromEmployeeDlg = new ReferenceRepresentation (vm, $"Выданное {IncomeDoc.EmployeeCard.ShortName}");
+				//vm.Employee = IncomeDoc.EmployeeCard;
+				var selectFromEmployeeDlg = new ReferenceRepresentation (vm, $"Выданное {IncomeDocEmployeeCard.ShortName}");
 				selectFromEmployeeDlg.Mode = OrmReferenceMode.MultiSelect;
 				selectFromEmployeeDlg.ObjectSelected += SelectFromEmployeeDlg_ObjectSelected;
 				OpenSlaveTab(selectFromEmployeeDlg);
@@ -206,7 +209,7 @@ namespace workwear
 			var selectJournal = MainClass.MainWin.NavigationManager
 				.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
 
-			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools; 
+//			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
 			selectJournal.ViewModel.OnSelectResult += (s, je) =>  SetNomenclatureSelected(item,je.SelectedObjects.First().GetId());
 		}
@@ -231,7 +234,7 @@ namespace workwear
 				var exist = IncomeDoc.FindItem(item.Nomenclature, i.Size, e.Height, item.Owner);
 				if(exist != null)
 					exist.Amount = i.Amount;
-				else 
+				else
 					IncomeDoc.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
 			}
 			if(item.WearSize == null)

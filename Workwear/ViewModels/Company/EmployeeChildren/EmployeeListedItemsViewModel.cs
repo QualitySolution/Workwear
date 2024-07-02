@@ -75,7 +75,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void ReturnWear()
 		{
-			navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			//navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
 		}
 
 		public void WriteOffWear()

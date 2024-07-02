@@ -197,7 +197,7 @@ namespace Workwear.Repository.Operations
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
-			IncomeItem incomeItemAlias = null;
+			ReturnItem returnItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
 			InspectionItem inspectionItemAlias = null;
@@ -206,7 +206,7 @@ namespace Workwear.Repository.Operations
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.Left.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => inspectionItemAlias, () => inspectionItemAlias.NewOperationIssue.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.Where(x => x.Id.IsIn(operationsIds))
@@ -216,8 +216,8 @@ namespace Workwear.Repository.Operations
 					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
-					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
-					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
+					.Select(() => returnItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
+					.Select(() => returnItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
 					.Select(() => inspectionItemAlias.Id).WithAlias(() => docAlias.InspectionItemId)

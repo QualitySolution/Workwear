@@ -184,11 +184,11 @@ namespace Workwear.ViewModels.Import
 			foreach(var document in DocumentsViewModels) {
 				progressBar.Add();
 				Income income;
-				if(document.OpenAfterSave) {
+				/*if(document.OpenAfterSave) {
 					var page = (NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg>(null, OpenPageOptions.IgnoreHash);
 					income = (page.TdiTab as IncomeDocDlg).Entity;
 				}
-				else
+				else*/
 					income = new Income();
 
 				income.Operation = IncomeOperations.Enter;

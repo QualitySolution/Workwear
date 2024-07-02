@@ -347,6 +347,26 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
+			//Employee = item.Document.EmployeeCard;
+			Nomenclature = item.Nomenclature;
+			WearSize = item.WearSize;
+			Height = item.Height;
+			WearPercent = item.WearPercent;
+			Issued = 0;
+			Returned = item.Amount;
+			WarehouseOperation = item.WarehouseOperation;
+			//IssuedOperation = item.IssuedEmployeeOnOperation;
+			//protectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools;
+			NormItem = null;
+			ExpiryByNorm = null;
+			AutoWriteoffDate = null;
+		}
+		
+		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, ReturnItem item) {
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
 			Employee = item.Document.EmployeeCard;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;

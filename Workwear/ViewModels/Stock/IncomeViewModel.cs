@@ -10,7 +10,6 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -34,7 +33,7 @@ namespace Workwear.ViewModels.Stock {
 			if(featuresService.Available(WorkwearFeature.Owners))
 				Owners = UoW.GetAll<Owner>().ToList();
 			if(featuresService.Available(WorkwearFeature.Warehouses))
-				Warhoses = UoW.GetAll<Warehouse>().ToList();
+				Warhouses = UoW.GetAll<Warehouse>().ToList();
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
 			
@@ -65,7 +64,7 @@ namespace Workwear.ViewModels.Stock {
 		//public IList<Owner> Owners = QS.DomainModel.UoW.UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
 		//private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners {get;}
-		public List<Warehouse> Warhoses {get;}
+		public List<Warehouse> Warhouses {get;}
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]

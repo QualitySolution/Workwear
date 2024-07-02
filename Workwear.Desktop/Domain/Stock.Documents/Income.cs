@@ -66,12 +66,12 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref number, value, () => Number); }
 		}
 
-		private EmployeeCard employeeCard;
+		/*private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard EmployeeCard {
 			get => employeeCard;
 			set { SetField (ref employeeCard, value, () => EmployeeCard); }
-		}
+		}*/
 
 		private IObservableList<IncomeItem> items = new ObservableList<IncomeItem>();
 		[Display (Name = "Строки документа")]
@@ -103,9 +103,9 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
-			if(Operation == IncomeOperations.Return && EmployeeCard == null)
+			/*if(Operation == IncomeOperations.Return && EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
-					new[] { this.GetPropertyName (o => o.EmployeeCard)});
+					new[] { this.GetPropertyName (o => o.EmployeeCard)});*/
 
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
@@ -119,13 +119,13 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
 					new[] { this.GetPropertyName(o => o.Items) });
 			
-			if(Operation == IncomeOperations.Return && EmployeeCard != null)
+			/*if(Operation == IncomeOperations.Return && EmployeeCard != null)
 				foreach (var item in items) {
 					if(item.IssuedEmployeeOnOperation == null || item.IssuedEmployeeOnOperation.Employee != EmployeeCard)
 						yield return new ValidationResult(
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
 							new[] { nameof(Items) });
-				}
+				}*/
 			
 			if(Operation == IncomeOperations.Return)
 				foreach (var item in items) {
@@ -140,27 +140,7 @@ namespace Workwear.Domain.Stock.Documents
 		public Income () { }
 
 		#region Строки документа
-		public virtual IncomeItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
-			if(issuedOperation.Issued == 0)
-				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
-			}
-			var newItem = new IncomeItem(this) {
-				Amount = count,
-				Nomenclature = issuedOperation.Nomenclature,
-				WearSize = issuedOperation.WearSize,
-				Height = issuedOperation.Height,
-				IssuedEmployeeOnOperation = issuedOperation,
-				Cost = issuedOperation.CalculateDepreciationCost(Date),
-				WearPercent = issuedOperation.CalculatePercentWear(Date),
-			};
-
-			Items.Add(newItem);
-			return newItem;
-		}
 		public virtual IncomeItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
@@ -220,13 +200,13 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
 		}
 
-		public virtual void UpdateEmployeeWearItems() {
+		/*public virtual void UpdateEmployeeWearItems() {
 			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			EmployeeCard.UpdateNextIssue(Items
 				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 				.Where(x => x != null).Distinct().ToArray());
 			UoW.Save(EmployeeCard);
-		}
+		}*/
 	}
 	public enum IncomeOperations {
 		/// <summary>

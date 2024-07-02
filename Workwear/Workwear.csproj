@@ -157,10 +157,6 @@
     <Compile Include="Tools\Navigation\AdditionalIdHashGenerator.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
-    <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
-    <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WriteOffView.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />

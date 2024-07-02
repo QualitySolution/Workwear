@@ -68,8 +68,6 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Button buttonAddSizes;
 
-		private global::Gtk.Button buttonSetNomenclature;
-
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
@@ -415,42 +413,26 @@ namespace Workwear.Views.Stock
 			w34.Expand = false;
 			w34.Fill = false;
 			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonSetNomenclature = new global::Gtk.Button();
-			this.buttonSetNomenclature.Sensitive = false;
-			this.buttonSetNomenclature.CanFocus = true;
-			this.buttonSetNomenclature.Name = "buttonSetNomenclature";
-			this.buttonSetNomenclature.UseUnderline = true;
-			this.buttonSetNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выбрать номенклатуру");
-			global::Gtk.Image w35 = new global::Gtk.Image();
-			w35.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
-			this.buttonSetNomenclature.Image = w35;
-			this.hbox6.Add(this.buttonSetNomenclature);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonSetNomenclature]));
-			w36.Position = 3;
-			w36.Expand = false;
-			w36.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox6.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.labelSum]));
-			w37.Position = 4;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.labelSum]));
+			w35.Position = 4;
 			this.vbox2.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox6]));
-			w38.Position = 2;
-			w38.Expand = false;
-			w38.Fill = false;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox6]));
+			w36.Position = 2;
+			w36.Expand = false;
+			w36.Fill = false;
 			this.dialog1_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
-			w39.Position = 2;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
+			w37.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
-			this.buttonSetNomenclature.Hide();
 			this.Hide();
 		}
 	}

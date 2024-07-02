@@ -208,7 +208,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId) 
 //??? возможно не работает
-					.SelectGroup(() => incomeItemAlias.Document.Operation).WithAlias(() => resultAlias.IncomeOperation)
+					//.SelectGroup(() => incomeItemAlias.Document.Operation).WithAlias(() => resultAlias.IncomeOperation)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.SelectGroup(() => writeOffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
@@ -241,7 +241,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 //??? возможно не работает
-					.SelectGroup(() => incomeItemAlias.Document.Operation).WithAlias(() => resultAlias.IncomeOperation)
+					//.SelectGroup(() => incomeItemAlias.Document.Operation).WithAlias(() => resultAlias.IncomeOperation)
 					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferItemId)
 					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.Select(() => writeOffItemAlias.Id).WithAlias(() => resultAlias.WriteoffItemId)

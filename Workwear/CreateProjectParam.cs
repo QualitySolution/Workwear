@@ -125,7 +125,7 @@ namespace workwear
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 			//Склад
-			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
+			//OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
 			NotifyConfiguration.Enable();
 			JournalsColumnsConfigs.RegisterColumns();
@@ -272,11 +272,11 @@ namespace workwear
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
 			#endregion
 
-			#region Старые диалоги
+			/*#region Старые диалоги
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
 				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
 				.AsSelf();
-			#endregion
+			#endregion*/
 
 			#region Старые общие диалоги
 			builder.RegisterType<OrmReference>().AsSelf();
