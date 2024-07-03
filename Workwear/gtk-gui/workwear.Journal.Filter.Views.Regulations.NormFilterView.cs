@@ -45,7 +45,6 @@ namespace workwear.Journal.Filter.Views.Regulations
 			w1.BottomAttach = ((uint)(2));
 			w1.LeftAttach = ((uint)(3));
 			w1.RightAttach = ((uint)(4));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
@@ -55,7 +54,6 @@ namespace workwear.Journal.Filter.Views.Regulations
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
 			w2.LeftAttach = ((uint)(3));
 			w2.RightAttach = ((uint)(4));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entryPost = new global::QS.Views.Control.EntityEntry();

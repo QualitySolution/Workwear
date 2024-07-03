@@ -68,6 +68,7 @@ using workwear.ReportsDlg;
 using workwear;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.ViewModels.Export;
+using CurrencyWorks = QS.Utilities.CurrencyWorks;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -77,14 +78,12 @@ public partial class MainWindow : Gtk.Window {
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
 	public readonly CurrentUserSettings CurrentUserSettings;
-	public IInteractiveService Interactive { get; }
-	public IApplicationQuitService QuitService { get; }
-
-	public bool IsSNExpired { get; private set; }
-
+	public readonly IApplicationQuitService quitService;
+	public readonly IInteractiveService interactive;
+	public readonly IGuiDispatcher dispatcher;
+	
 	public FeaturesService FeaturesService { get; private set; }
-
-
+	
 	public MainWindow() : base(Gtk.WindowType.Toplevel) {
 		Build();
 		//Передаем лебл
@@ -97,12 +96,30 @@ public partial class MainWindow : Gtk.Window {
 
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
-		Interactive = AutofacScope.Resolve<IInteractiveService>();
-		QuitService = AutofacScope.Resolve<IApplicationQuitService>();
+		interactive = AutofacScope.Resolve<IInteractiveService>();
+		quitService = AutofacScope.Resolve<IApplicationQuitService>();
+		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
+		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
-			checker.RunUpdate();
+			UpdateInfo? updateInfo = checker.RunUpdate();
+			if (updateInfo?.Status == UpdateStatus.Error) 
+			{
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				quitService.Quit();
+				return;
+			}
+			
+			if (updateInfo?.Status == UpdateStatus.ExternalError)
+			{
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				if (!EnterNewSN()) 
+				{
+					quitService.Quit();
+					return;
+				}
+			}
 		}
 
 		//Пока такая реализация чтобы не плодить сущностей.
@@ -126,7 +143,8 @@ public partial class MainWindow : Gtk.Window {
 		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-
+		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
+		
 		if(databaseInfo.IsDemo) {
 			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
@@ -180,23 +198,24 @@ public partial class MainWindow : Gtk.Window {
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
-
-			FeaturesService = AutofacScope.Resolve<FeaturesService>();
 			
 			//Уведомление о скором истечении срока действия серийного номера
 			if (FeaturesService.ExpiryDate != null) 
 			{
 				if (FeaturesService.ExpiryDate < DateTime.Now) 
 				{
-					IsSNExpired = true;
-					return;
+					if (EnterNewSN())
+					{
+						quitService.Quit();
+						return;
+					}
 				}
 				else
 				{
 					int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
 					if (daysLeft < 14) 
 					{
-						Interactive.ShowMessage(ImportanceLevel.Warning,
+						interactive.ShowMessage(ImportanceLevel.Warning,
 							$"Срок действия серийного номера истекает {FeaturesService.ExpiryDate.Value.ToString("d")}");
 					}
 				}
@@ -242,6 +261,34 @@ public partial class MainWindow : Gtk.Window {
 		Warehouse warehouse = new Warehouse();
 		warehouse.Name = "Основной склад";
 		UoW.Session.Save(warehouse);
+	}
+
+	private bool EnterNewSN() 
+	{
+		if (!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
+		{
+			return false;
+		}
+					
+		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
+		bool res = false;
+		bool isClosed = false;
+		page.PageClosed += (sender, closedArgs) => 
+		{
+			isClosed = true;
+			if (closedArgs.CloseSource == CloseSource.Save) 
+			{
+				FeaturesService.UpdateSerialNumber();
+				res = true;
+			}
+			else
+			{
+				res = false;
+			}
+		};
+
+		dispatcher.WaitInMainLoop(() => isClosed);
+		return res;
 	}
 
 	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e) {
@@ -310,7 +357,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		QuitService.Quit();
+		quitService.Quit();
 	}
 
 	public override void Destroy() {
@@ -333,7 +380,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnQuitActionActivated(object sender, EventArgs e) {
-		QuitService.Quit();
+		quitService.Quit();
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {
@@ -410,12 +457,11 @@ public partial class MainWindow : Gtk.Window {
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
-			updater.CheckUpdate(true);
+			_ = updater.CheckUpdate(true);
 		}
 	}
 
 	protected void OnActionSNActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("EditSerialNumber");
 		NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 	}
 
@@ -597,31 +643,6 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
 		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
-	}
-
-	protected void OnActionOpenReformalActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("OpenReformal.ru");
-		OpenUrl("http://qs-workwear.reformal.ru/");
-	}
-
-	protected void OnActionVKActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("vk.com");
-		OpenUrl("https://vk.com/qualitysolution");
-	}
-
-	protected void OnActionOdnoklasnikiActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ok.ru");
-		OpenUrl("https://ok.ru/qualitysolution");
-	}
-
-	protected void OnActionTwitterActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("twitter.com");
-		OpenUrl("https://twitter.com/QSolutionRu");
-	}
-
-	protected void OnActionYouTubeActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("youtube.com");
-		OpenUrl("https://www.youtube.com/channel/UC4U9Rzp-yfRgWd2R0f4iIGg");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {

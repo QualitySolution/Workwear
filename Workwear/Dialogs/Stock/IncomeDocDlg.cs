@@ -320,7 +320,10 @@ namespace workwear
 			ReturnSheet,
 			[Display(Name = "Ведомость возврата книжная")]
 			[ReportIdentifier("Statements.ReturnStatementVertical")]
-			ReturnStatementVertical
+			ReturnStatementVertical,
+			[Display(Name = "Ведомость возврата альбомная")]
+			[ReportIdentifier("Statements.ReturnStatementHorizontal")]
+			ReturnStatementHorizontal
 		}
 	}
 }

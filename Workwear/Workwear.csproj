@@ -94,10 +94,6 @@
     <EmbeddedResource Include="icon\toolbar\employees.png" />
     <EmbeddedResource Include="icon\toolbar\go-home.png" />
     <EmbeddedResource Include="icon\menu\www.png" />
-    <EmbeddedResource Include="icon\menu\youtube.png" />
-    <EmbeddedResource Include="icon\menu\vk.png" />
-    <EmbeddedResource Include="icon\menu\twitter.png" />
-    <EmbeddedResource Include="icon\menu\odnoklasniki.png" />
     <EmbeddedResource Include="icon\buttons\timeline_marker.png" />
     <EmbeddedResource Include="icon\toolbar\smart-card.png" />
     <EmbeddedResource Include="icon\buttons\smart-card.png" />
@@ -149,7 +145,6 @@
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
-    <Compile Include="Tools\Application\GtkApplicationQuitService.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
     <Compile Include="Tools\Import\Xml1CDocument.cs" />
     <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
@@ -842,6 +837,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Reports\ProvisionReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

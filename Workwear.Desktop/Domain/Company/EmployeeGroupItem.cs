@@ -40,7 +40,7 @@ namespace Workwear.Domain.Company {
 		}
 		
 		private string comment;
-		[Display(Name = "Коментарий")]
+		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get => String.IsNullOrWhiteSpace(comment) ? null : comment;  //Чтобы в базе хранить null, а не пустую строку. 
 			set => SetField(ref comment, value);

@@ -93,18 +93,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionSite;
 
-	private global::Gtk.Action ActionOpenReformal;
-
-	private global::Gtk.Action Action38;
-
-	private global::Gtk.Action ActionVK;
-
-	private global::Gtk.Action ActionOdnoklasniki;
-
-	private global::Gtk.Action ActionTwitter;
-
-	private global::Gtk.Action ActionYouTube;
-
 	private global::Gtk.Action ActionRegulationDoc;
 
 	private global::Gtk.Action ActionBaseSettings;
@@ -377,7 +365,7 @@ public partial class MainWindow
 		this.ActionIconsSmall.ShortLabel = global::Mono.Unix.Catalog.GetString("Маленькие иконки");
 		w1.Add(this.ActionIconsSmall, null);
 		this.ActionIconsMiddle = new global::Gtk.RadioAction("ActionIconsMiddle", global::Mono.Unix.Catalog.GetString("Средние иконки"), null, null, 0);
-		this.ActionIconsMiddle.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsMiddle.Group = this.ActionIconsExtraSmall.Group;
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
@@ -387,24 +375,6 @@ public partial class MainWindow
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
 		this.ActionSite.ShortLabel = global::Mono.Unix.Catalog.GetString("Сайт программы");
 		w1.Add(this.ActionSite, null);
-		this.ActionOpenReformal = new global::Gtk.Action("ActionOpenReformal", global::Mono.Unix.Catalog.GetString("Предложить идею"), null, "www");
-		this.ActionOpenReformal.ShortLabel = global::Mono.Unix.Catalog.GetString("Предложить идею");
-		w1.Add(this.ActionOpenReformal, null);
-		this.Action38 = new global::Gtk.Action("Action38", global::Mono.Unix.Catalog.GetString("Мы в социальных сетях"), null, null);
-		this.Action38.ShortLabel = global::Mono.Unix.Catalog.GetString("Мы в социальных сетях");
-		w1.Add(this.Action38, null);
-		this.ActionVK = new global::Gtk.Action("ActionVK", global::Mono.Unix.Catalog.GetString("Вконтакте"), null, "vk");
-		this.ActionVK.ShortLabel = global::Mono.Unix.Catalog.GetString("Вконтакте");
-		w1.Add(this.ActionVK, null);
-		this.ActionOdnoklasniki = new global::Gtk.Action("ActionOdnoklasniki", global::Mono.Unix.Catalog.GetString("Одноклассники"), null, "odnoklasniki");
-		this.ActionOdnoklasniki.ShortLabel = global::Mono.Unix.Catalog.GetString("Одноклассники");
-		w1.Add(this.ActionOdnoklasniki, null);
-		this.ActionTwitter = new global::Gtk.Action("ActionTwitter", global::Mono.Unix.Catalog.GetString("Twitter"), null, "twitter");
-		this.ActionTwitter.ShortLabel = global::Mono.Unix.Catalog.GetString("Twitter");
-		w1.Add(this.ActionTwitter, null);
-		this.ActionYouTube = new global::Gtk.Action("ActionYouTube", global::Mono.Unix.Catalog.GetString("YouTube"), null, "youtube");
-		this.ActionYouTube.ShortLabel = global::Mono.Unix.Catalog.GetString("YouTube");
-		w1.Add(this.ActionYouTube, null);
 		this.ActionRegulationDoc = new global::Gtk.Action("ActionRegulationDoc", global::Mono.Unix.Catalog.GetString("Нормативные документы"), null, null);
 		this.ActionRegulationDoc.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормативные документы");
 		w1.Add(this.ActionRegulationDoc, null);
@@ -471,7 +441,7 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetSummary = new global::Gtk.Action("ActionNotIssuedSheetSummary", global::Mono.Unix.Catalog.GetString("Суммарно"), null, null);
 		this.ActionNotIssuedSheetSummary.ShortLabel = global::Mono.Unix.Catalog.GetString("Суммарно");
 		w1.Add(this.ActionNotIssuedSheetSummary, null);
-		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, null);
+		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, "www");
 		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
 		w1.Add(this.ActionPay, null);
 		this.ActionAdminGuide = new global::Gtk.Action("ActionAdminGuide", global::Mono.Unix.Catalog.GetString("Руководство администратора"), global::Mono.Unix.Catalog.GetString("Руководство системного администратора"), "gtk-index");
@@ -651,13 +621,9 @@ public partial class MainWindow
 				"ionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCur" +
 				"rent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></menu" +
 				"><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name" +
-				"=\'ActionSite\' action=\'ActionSite\'/><menuitem name=\'ActionOpenReformal\' action=\'A" +
-				"ctionOpenReformal\'/><menu name=\'Action38\' action=\'Action38\'><menuitem name=\'Acti" +
-				"onVK\' action=\'ActionVK\'/><menuitem name=\'ActionOdnoklasniki\' action=\'ActionOdnok" +
-				"lasniki\'/><menuitem name=\'ActionTwitter\' action=\'ActionTwitter\'/><menuitem name=" +
-				"\'ActionYouTube\' action=\'ActionYouTube\'/></menu><separator/><menuitem name=\'Actio" +
-				"nPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separato" +
-				"r/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionPay\' action" +
+				"=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem" +
+				" name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -821,11 +787,6 @@ public partial class MainWindow
 		this.ActionIconsMiddle.Toggled += new global::System.EventHandler(this.OnActionIconsMiddleToggled);
 		this.ActionIconsLarge.Toggled += new global::System.EventHandler(this.OnActionIconsLargeToggled);
 		this.ActionSite.Activated += new global::System.EventHandler(this.OnActionSiteActivated);
-		this.ActionOpenReformal.Activated += new global::System.EventHandler(this.OnActionOpenReformalActivated);
-		this.ActionVK.Activated += new global::System.EventHandler(this.OnActionVKActivated);
-		this.ActionOdnoklasniki.Activated += new global::System.EventHandler(this.OnActionOdnoklasnikiActivated);
-		this.ActionTwitter.Activated += new global::System.EventHandler(this.OnActionTwitterActivated);
-		this.ActionYouTube.Activated += new global::System.EventHandler(this.OnActionYouTubeActivated);
 		this.ActionRegulationDoc.Activated += new global::System.EventHandler(this.OnActionRegulationDocActivated);
 		this.ActionBaseSettings.Activated += new global::System.EventHandler(this.OnActionBaseSettingsActivated);
 		this.ActionVacationTypes.Activated += new global::System.EventHandler(this.OnActionVacationTypesActivated);

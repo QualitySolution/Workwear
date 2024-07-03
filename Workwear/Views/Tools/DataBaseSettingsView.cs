@@ -20,6 +20,7 @@ namespace Workwear.Views.Tools
 			ComboShirtExpluatacion.Binding.AddBinding(ViewModel , v=> v.ShiftExpluatacion, w=>w.SelectedItem).InitializeFromSource();
 			ComboExtendPeriod.ItemsEnum = typeof(AnswerOptions);
 			ComboExtendPeriod.Binding.AddBinding(ViewModel, v => v.ExtendPeriod, w => w.SelectedItem).InitializeFromSource();
+			yentryCurrency.Binding.AddBinding(ViewModel, v => v.UsedCurrency, w => w.Text).InitializeFromSource();
 			CommonButtonSubscription();
 		}
 	}
