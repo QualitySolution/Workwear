@@ -385,6 +385,7 @@ namespace Workwear.Views.Stock
 			w30.Fill = false;
 			// Container child hbox6.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gtk.Button();
+			this.buttonDel.Sensitive = false;
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
 			this.buttonDel.UseUnderline = true;

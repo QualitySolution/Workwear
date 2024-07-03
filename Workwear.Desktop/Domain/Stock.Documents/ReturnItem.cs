@@ -120,11 +120,11 @@ namespace Workwear.Domain.Stock.Documents {
 		#region Расчетные
 		public virtual string Title =>
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
-
 		public virtual decimal Total => Cost * Amount;
-		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
+		public virtual int MaxAmount => IssuedEmployeeOnOperation?.Issued ?? 0; 
 		#endregion
+		
 		#region Не сохраняемые в базу свойства
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {

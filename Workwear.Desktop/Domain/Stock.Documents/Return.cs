@@ -1,16 +1,4 @@
-﻿/*
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace Workwear.Domain.Stock.Documents {
-	public class Return: StockDocument, IValidatableObject {
-		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			throw new System.NotImplementedException();
-		}
-	}
-}
-*/
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -70,13 +58,6 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
-
-		/*private string number;
-		[Display (Name = "Вх. номер")]
-		public virtual string Number {
-			get => number;
-			set { SetField (ref number, value, () => Number); }
-		}*/
 
 		private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]

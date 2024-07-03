@@ -7,16 +7,19 @@ using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Sizes;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Users;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Features;
-using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
 	public class ReturnViewModel  : EntityDialogViewModelBase<Return> {
@@ -42,6 +45,10 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.EmployeeCard)
+				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+				.UseViewModelDialog<EmployeeViewModel>()
+				.Finish();
 		}
 		
 		#region Проброс свойств документа
@@ -59,8 +66,8 @@ namespace Workwear.ViewModels.Stock {
 
 		#region Свойства ViewModel
 		private readonly FeaturesService featuresService;
-		private readonly SizeService sizeService = new SizeService();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		
 		public List<Owner> Owners {get;}
 		public List<Warehouse> Warhouses {get;}
@@ -85,14 +92,34 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
+		#endregion
 
-		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
+		#region Методы Items
+
+		public void AddFromEmployee() {
+			var selectJournal = 
+				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
+					this,
+					EmployeeCard,
+					OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Filter.DateSensitive = false;
+			selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
+			selectJournal.ViewModel.Filter.SubdivisionSensitive = false;
+			selectJournal.ViewModel.Filter.EmployeeSensitive = false;
+			selectJournal.ViewModel.Filter.Date = Entity.Date;
+			selectJournal.ViewModel.Filter.CanChooseAmount = true;
+			selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
 		}
-		
-		public virtual IList<Size> GetHeightVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.HeightType, onlyUseInNomenclature: true).ToList();
+		private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e) {
+			var operations = UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
+			var addedAmount = ((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount;
+			var balance = e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+
+			foreach (var operation in operations)
+				Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id])); 
+//CalculateTotal(null, null);
 		}
+
 		#endregion
 	}
 }
