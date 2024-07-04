@@ -23,7 +23,7 @@ CASE WHEN need_for_repair = 1 THEN
 CASE WHEN state = 'WaitService' THEN
 	'В ожидании'
 	WHEN state = 'InReceiptTerminal' THEN 
-    'Принят терминалом'
+    'В терминале приёма'
     WHEN state = 'InTransit' THEN 
     'В пути'
     WHEN state = 'InRepair' THEN
