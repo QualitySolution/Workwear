@@ -44,7 +44,7 @@ namespace Workwear.ReportParameters.Views
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.ylabelPeriod = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelPeriod.Name = "ylabelPeriod";
-			this.ylabelPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Период:");
+			this.ylabelPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Период поступления заявок:");
 			this.hbox1.Add(this.ylabelPeriod);
 			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylabelPeriod]));
 			w2.Position = 0;

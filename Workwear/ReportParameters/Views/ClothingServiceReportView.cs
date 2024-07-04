@@ -12,6 +12,7 @@ namespace Workwear.ReportParameters.Views {
 				.InitializeFromSource();
 			ylabelPeriod.Binding.AddBinding(ViewModel, v => v.VisibleUseAlternative, w => w.Visible).InitializeFromSource();
 			buttonRun.Clicked += OnButtonRunClicked;
+			buttonRun.Binding.AddBinding(ViewModel, v=>v.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();
 			ycheckbuttonshowclosed.Binding.AddBinding(ViewModel, w => w.ShowClosed, v => v.Active).InitializeFromSource();
 		}
 		protected void OnButtonRunClicked(object sender, EventArgs e) => ViewModel.LoadReport();

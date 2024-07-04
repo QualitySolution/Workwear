@@ -18,8 +18,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			var parameters = new Dictionary<string, object>();
 			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
 				parameters.Add("show_closed", showClosed);
-				parameters.Add("start_date",startDate);
-				parameters.Add("end_date", endDate);
+				parameters.Add("start_date", StartDate ?? DateTime.MinValue);
+				parameters.Add("end_date", EndDate ?? DateTime.MaxValue);
 			}
 			return parameters;
 		}
@@ -28,23 +28,35 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleUseAlternative))]
 		public virtual bool ShowClosed {
 			get => showClosed;
-			set => SetField(ref showClosed, value);
+			set {
+				if(SetField(ref showClosed, value))
+					OnPropertyChanged(nameof(SensetiveLoad));
+			}
 		}
 		public bool VisibleUseAlternative => ShowClosed;
+		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
+		
 
-		private DateTime startDate = DateTime.Now.AddMonths(-1);
+		private DateTime? endDate =  DateTime.Now;
 
-		private DateTime endDate = DateTime.Now;
-
-		public virtual DateTime StartDate {
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		public virtual DateTime? StartDate {
 			get => startDate;
-			set => SetField(ref startDate, value);
+			set {
+				if(SetField(ref startDate, value))
+					OnPropertyChanged(nameof(SensetiveLoad));
+			}
+		}
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		public virtual DateTime? EndDate {
+			get => endDate;
+			set {
+				if(SetField(ref endDate, value))
+					OnPropertyChanged(nameof(SensetiveLoad));
+			}
 		}
 
-		public virtual DateTime EndDate {
-			get => endDate;
-			set => SetField(ref endDate, value);
-		}
+		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
 		
 	}
 	

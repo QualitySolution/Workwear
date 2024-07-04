@@ -29450,7 +29450,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelPeriod">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Период:</property>
+                <property name="LabelProp" translatable="yes">Период поступления заявок:</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
