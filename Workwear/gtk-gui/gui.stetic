@@ -28710,6 +28710,7 @@
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Загрузить из файла</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnYbuttonReadInFileClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -29059,7 +29060,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.VBox" id="vbox2">
+          <widget class="Gamma.GtkWidgets.yVBox" id="vbox2">
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
@@ -29112,14 +29113,14 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAdd">
                     <property name="MemberName" />
-                    <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-add Menu</property>
                     <property name="Label" translatable="yes">Добавить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddClicked" />
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -29129,7 +29130,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonDel">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
@@ -29137,6 +29138,7 @@
                     <property name="Icon">stock:gtk-remove Menu</property>
                     <property name="Label" translatable="yes">Удалить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonDelClicked" />
                   </widget>
                   <packing>
                     <property name="Position">1</property>
@@ -29146,14 +29148,15 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonAddSizes">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAddSizes">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
-                    <property name="Icon">stock:gtk-execute Menu</property>
+                    <property name="Icon">stock:gtk-preferences Menu</property>
                     <property name="Label" translatable="yes">Добавить размеры</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddSizesClicked" />
                   </widget>
                   <packing>
                     <property name="Position">2</property>
@@ -29246,6 +29249,7 @@
                 <property name="UseUnderline">True</property>
                 <property name="UseMarkup">False</property>
                 <property name="LabelXAlign">0</property>
+                <signal name="EnumItemClicked" handler="OnEnumPrintEnumItemClicked" />
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -29595,7 +29599,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.VBox" id="vbox2">
+          <widget class="Gamma.GtkWidgets.yVBox" id="yvboxItems">
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
@@ -29648,14 +29652,14 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAdd">
                     <property name="MemberName" />
-                    <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-add Menu</property>
                     <property name="Label" translatable="yes">Добавить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddClicked" />
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -29665,7 +29669,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonDel">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
@@ -29673,6 +29677,7 @@
                     <property name="Icon">stock:gtk-remove Menu</property>
                     <property name="Label" translatable="yes">Удалить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonDelClicked" />
                   </widget>
                   <packing>
                     <property name="Position">1</property>
@@ -29682,14 +29687,15 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Button" id="buttonSetNomenclature">
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSetNomenclature">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
-                    <property name="Icon">stock:gtk-execute Menu</property>
+                    <property name="Icon">stock:gtk-preferences Menu</property>
                     <property name="Label" translatable="yes">Выбрать номенклатуру</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonSetNomenclatureClicked" />
                   </widget>
                   <packing>
                     <property name="Position">2</property>

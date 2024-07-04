@@ -84,6 +84,9 @@ namespace Workwear.ViewModels.Stock {
 		#region Свойства для View
 
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
+		public virtual bool CanAddItem => true;
+		public virtual bool CanRemoveItem => false;
+		public virtual bool CanAddSize => false;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool ReadInFileVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);

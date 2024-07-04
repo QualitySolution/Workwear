@@ -62,11 +62,11 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.HBox hbox6;
 
-		private global::Gamma.GtkWidgets.yButton buttonAdd;
+		private global::Gamma.GtkWidgets.yButton ybuttonAdd;
 
-		private global::Gtk.Button buttonDel;
+		private global::Gamma.GtkWidgets.yButton ybuttonDel;
 
-		private global::Gtk.Button buttonAddSizes;
+		private global::Gamma.GtkWidgets.yButton ybuttonAddSizes;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
@@ -369,47 +369,46 @@ namespace Workwear.Views.Stock
 			this.hbox6.Name = "hbox6";
 			this.hbox6.Spacing = 6;
 			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
-			this.buttonAdd.Sensitive = false;
-			this.buttonAdd.CanFocus = true;
-			this.buttonAdd.Name = "buttonAdd";
-			this.buttonAdd.UseUnderline = true;
-			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			this.ybuttonAdd = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonAdd.CanFocus = true;
+			this.ybuttonAdd.Name = "ybuttonAdd";
+			this.ybuttonAdd.UseUnderline = true;
+			this.ybuttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
 			global::Gtk.Image w29 = new global::Gtk.Image();
 			w29.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAdd.Image = w29;
-			this.hbox6.Add(this.buttonAdd);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonAdd]));
+			this.ybuttonAdd.Image = w29;
+			this.hbox6.Add(this.ybuttonAdd);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.ybuttonAdd]));
 			w30.Position = 0;
 			w30.Expand = false;
 			w30.Fill = false;
 			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonDel = new global::Gtk.Button();
-			this.buttonDel.Sensitive = false;
-			this.buttonDel.CanFocus = true;
-			this.buttonDel.Name = "buttonDel";
-			this.buttonDel.UseUnderline = true;
-			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
+			this.ybuttonDel = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonDel.Sensitive = false;
+			this.ybuttonDel.CanFocus = true;
+			this.ybuttonDel.Name = "ybuttonDel";
+			this.ybuttonDel.UseUnderline = true;
+			this.ybuttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
 			global::Gtk.Image w31 = new global::Gtk.Image();
 			w31.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w31;
-			this.hbox6.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonDel]));
+			this.ybuttonDel.Image = w31;
+			this.hbox6.Add(this.ybuttonDel);
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.ybuttonDel]));
 			w32.Position = 1;
 			w32.Expand = false;
 			w32.Fill = false;
 			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonAddSizes = new global::Gtk.Button();
-			this.buttonAddSizes.Sensitive = false;
-			this.buttonAddSizes.CanFocus = true;
-			this.buttonAddSizes.Name = "buttonAddSizes";
-			this.buttonAddSizes.UseUnderline = true;
-			this.buttonAddSizes.Label = global::Mono.Unix.Catalog.GetString("Добавить размеры");
+			this.ybuttonAddSizes = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonAddSizes.Sensitive = false;
+			this.ybuttonAddSizes.CanFocus = true;
+			this.ybuttonAddSizes.Name = "ybuttonAddSizes";
+			this.ybuttonAddSizes.UseUnderline = true;
+			this.ybuttonAddSizes.Label = global::Mono.Unix.Catalog.GetString("Добавить размеры");
 			global::Gtk.Image w33 = new global::Gtk.Image();
-			w33.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
-			this.buttonAddSizes.Image = w33;
-			this.hbox6.Add(this.buttonAddSizes);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonAddSizes]));
+			w33.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-preferences", global::Gtk.IconSize.Menu);
+			this.ybuttonAddSizes.Image = w33;
+			this.hbox6.Add(this.ybuttonAddSizes);
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.ybuttonAddSizes]));
 			w34.Position = 2;
 			w34.Expand = false;
 			w34.Fill = false;
@@ -435,6 +434,10 @@ namespace Workwear.Views.Stock
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.ybuttonReadInFile.Clicked += new global::System.EventHandler(this.OnYbuttonReadInFileClicked);
+			this.ybuttonAdd.Clicked += new global::System.EventHandler(this.OnYbuttonAddClicked);
+			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
+			this.ybuttonAddSizes.Clicked += new global::System.EventHandler(this.OnYbuttonAddSizesClicked);
 		}
 	}
 }

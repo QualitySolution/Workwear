@@ -34,7 +34,11 @@ namespace Workwear.Views.Stock {
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel; 
 			entityWarehouseIncome.Binding.
 				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
-				.InitializeFromSource();	
+				.InitializeFromSource();
+
+			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonSetNomenclature.Binding.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
 		}
 		
 		private void ConfigureItems() {
@@ -71,20 +75,22 @@ namespace Workwear.Views.Stock {
 			//ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
 			
 			ytreeItems.ItemsDataSource = ViewModel.Items;
-			
+			//yAutoNumber
+
+			//.Sensitive => ViewModel.CanEditItems;
 		}
-		
-		protected void OnButtonAddClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+			ViewModel.AddFromEmployee();
 		}
-		protected void OnButtonDellClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
 		}
-		protected void OnButtonAddSizesClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonSetNomenclatureClicked(object sender, EventArgs e) {
 		}
-		protected void OnButtonSetNomenclatureClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
 		}
 	}
 }

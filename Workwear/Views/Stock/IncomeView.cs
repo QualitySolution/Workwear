@@ -16,7 +16,6 @@ namespace Workwear.Views.Stock {
 		}
 
 		private void ConfigureDlg() {
-			
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
@@ -87,10 +86,6 @@ namespace Workwear.Views.Stock {
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.Total).Digits(2) 
-//TODO Удаалить
-//				.AddColumn("Отметка о износе")
-//					.AddTextRenderer(e => e.СommentReturn)
-//					.Editable()
 				.Finish();
 			//ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			//ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
@@ -99,20 +94,16 @@ namespace Workwear.Views.Stock {
 			
 		}
 		
-		protected void OnButtonReadInFileClicked(object sender, EventArgs e) {
-			//ViewModel
+		protected void OnYbuttonReadInFileClicked(object sender, EventArgs e) {
 		}
-		protected void OnButtonAddClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
 		}
-		protected void OnButtonDellClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
 		}
-		protected void OnButtonAddSizesClicked(object sender, EventArgs e) {
-			//ViewModel
-		}
-		protected void OnButtonSetNomenclatureClicked(object sender, EventArgs e) {
-			//ViewModel
+
+		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
 		}
 	}
 }
