@@ -300,6 +300,7 @@ public partial class MainWindow : Gtk.Window {
 	private void DisableFeatures() {
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
+		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
