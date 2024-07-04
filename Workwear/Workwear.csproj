@@ -188,7 +188,7 @@
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
     <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
-    <Compile Include="ViewModels\Stock\IssueBySubstituteFundViewModel.cs" />
+    <Compile Include="ViewModels\Stock\OverNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureProtectionToolsViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
@@ -479,8 +479,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
     <Compile Include="Views\Stock\Widgets\StockReleaseBarcodesView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.StockReleaseBarcodesView.cs" />
-    <Compile Include="Views\Stock\IssueBySubstituteFundView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Stock.IssueBySubstituteFundView.cs" />
+    <Compile Include="Views\Stock\OverNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.OverNormView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,45 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamma.ColumnConfig;
-using NHibernate.Transform;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.OverNorms;
+using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.ViewModels.Stock.Widgets 
 {
-	public class StockReleaseBarcodesViewModel : WindowDialogViewModelBase 
+	public  class StockReleaseBarcodesViewModel : WindowDialogViewModelBase 
 	{
 		private readonly IUnitOfWork uow;
 		private readonly BarcodeService barcodeService;
 		private readonly StockBalanceJournalNode node;
 
 		public StockReleaseBarcodesViewModel(INavigationManager navigation, IUnitOfWorkFactory unitOfWorkFactory,
-			BarcodeService barcodeService, StockBalanceJournalNode node) : base(navigation) 
+			BarcodeService barcodeService, IOverNormFactory overNormFactory, StockBalanceJournalNode node, Warehouse warehouse = null) : base(navigation) 
 		{
 			this.uow = unitOfWorkFactory?.CreateWithoutRoot() ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.node = node ?? throw new ArgumentNullException(nameof(node));
-			AllBarcodesAmount = barcodeService.GetAllBarcodesAmount(uow, node.NomeclatureId);
-			StockBarcodeAmount = barcodeService.GetStockBarcodesAmount(uow, node.NomeclatureId);
-			WithoutBarcodesAmount = node.Amount - AllBarcodesAmount;
+
+			var nomenclature = uow.GetById<Nomenclature>(node.NomeclatureId);
+			var size = uow.GetById<Size>(node.SizeId);
+			var height = uow.GetById<Size>(node.HeightId);
+			
+			NomenclatureAmount = node.Amount;
+			WithBarcodesAmount = barcodeService.CountAllBarcodes(uow, nomenclature, size, height);
+			WithoutBarcodesAmount = node.Amount - WithBarcodesAmount;
+			BarcodesInStockAmount = this.barcodeService.CountBalanceInStock(uow, nomenclature, size, height, warehouse);
+			
 			Title = node.NomenclatureName;
+			Description = $"Создать штрихкоды для: {node.NomenclatureName}";
+			if (!string.IsNullOrEmpty(node.SizeName)) 
+			{
+				Description += $" размером {node.SizeName}";
+			}
+			if (!string.IsNullOrEmpty(node.HeightName)) 
+			{
+				Description += $" ростом {node.HeightName}";
+			}
+			
 			Labels = uow.Session.QueryOver<Barcode>()
-				.Select(b => b.Label)
 				.Where(b => b.Label != null)
-				.List<string>()
-				.Distinct()
-				.ToList();
+				.SelectList(list => list.SelectGroup(b => b.Label))
+				.List<string>();
 		}
 
 		#region View Properties
+
+		public string Description { get; }
+		
 		private int selectedAmount;
 		[PropertyChangedAlso(nameof(ConfirmButtonSensetive))]
 		public int SelectedAmount 
@@ -55,12 +75,14 @@ namespace Workwear.ViewModels.Stock.Widgets
 			get => label;
 			set => SetField(ref label, value);
 		}
+
+		public int NomenclatureAmount { get; set; }
 		
 		public int WithoutBarcodesAmount { get; }
 
-		public int AllBarcodesAmount { get; }
+		public int WithBarcodesAmount { get; }
 
-		public int StockBarcodeAmount { get; }
+		public int BarcodesInStockAmount { get; }
 
 		public IList<string> Labels { get; }
 		#endregion
@@ -75,8 +97,9 @@ namespace Workwear.ViewModels.Stock.Widgets
 			if (!IsValidForm()) return;
  			Warehouse warehouse = uow.GetById<Warehouse>(node.WarehouseId);
 			StockPosition stockPosition = node.GetStockPosition(uow);
-			IList<Barcode> barcodes = barcodeService.CreateBarcodesInWarehouse(uow, warehouse, stockPosition, Label, SelectedAmount);
-			uow.Commit();
+			
+			IEnumerable<Barcode> barcodes = barcodeService.CreateBarcodesInStock(uow, warehouse, stockPosition, SelectedAmount, Label);
+			//overNormFactory.CreateSubstitutionBarcodes(uow, warehouse.Id, stockPosition, SelectedAmount, Label);
 			
 			ReportInfo reportInfo = new ReportInfo() 
 			{

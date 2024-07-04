@@ -21,7 +21,7 @@ namespace Workwear.Domain.Operations
 	{
 		public virtual int Id { get; set; }
 
-		private DateTime operationTime;
+		private DateTime operationTime = DateTime.Now;
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
 			get => operationTime;
@@ -85,13 +85,6 @@ namespace Workwear.Domain.Operations
 		public virtual Owner Owner {
 			get => owner;
 			set => SetField(ref owner, value);
-		}
-		
-		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
-		[Display(Name = "Операции")]
-		public virtual IList<BarcodeOperation> BarcodeOperations {
-			get => barcodeOperations;
-			set => SetField(ref barcodeOperations, value);
 		}
 
 		#region Расчетные

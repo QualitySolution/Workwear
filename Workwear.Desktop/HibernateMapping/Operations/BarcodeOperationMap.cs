@@ -18,7 +18,7 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Nullable();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Nullable();
 			References(x => x.Warehouse).Column("warehouse_id").Nullable();
-			References(x => x.SubstituteFundOperation).Column("operation_substitute_id").Nullable();
+			References(x => x.OverNormOperation).Column("over_norm_id").Nullable();
 		}
 	}
 }

@@ -10,6 +10,10 @@ namespace workwear.Journal.Filter.Views.Stock
 		{
 			this.Build();
 
+			chShowWithBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.ShowWithBarcodes, w => w.Active)
+				.AddBinding(vm => vm.CanChangeShowWithBarcodes, w => w.Sensitive)
+				.InitializeFromSource();
 			chShowNegative.Binding.AddBinding(viewModel, vm => vm.ShowNegativeBalance, w => w.Active).InitializeFromSource();
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();

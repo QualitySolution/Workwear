@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Gtk;
 using QS.Navigation;
 using QS.Views.Dialog;
 using QSOrmProject;
-using QSProjectsLib;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.Views.Stock.Widgets 
@@ -15,18 +13,29 @@ namespace Workwear.Views.Stock.Widgets
 		public StockReleaseBarcodesView(StockReleaseBarcodesViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			
+
+			labelDescription.Text = ViewModel.Description;
 			amountSpin.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.WithoutBarcodesAmount, w => w.Adjustment.Upper)
 				.AddBinding(vm => vm.SelectedAmount, w => w.ValueAsInt)
 				.InitializeFromSource();
-			createBadrodesButton.Binding
+			createBarcodesButton.Binding
 				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
 				.InitializeFromSource();
 			
-			labelWithoutBarcodesAmount.Binding.AddBinding(ViewModel, vm => vm.WithoutBarcodesAmount, w => w.Text, new IntToStringConverter()).InitializeFromSource();
-			labelAllBarcodesAmount.Binding.AddBinding(ViewModel, vm => vm.AllBarcodesAmount, w => w.Text, new IntToStringConverter()).InitializeFromSource();
-			labelStockBarcodesAmount.Binding.AddBinding(ViewModel, vm => vm.StockBarcodeAmount, w => w.Text, new IntToStringConverter()).InitializeFromSource();
+			labelAllNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.NomenclatureAmount, w => w.Text, new IntToStringConverter())
+				.InitializeFromSource();
+			labelWithoutBarcodes.Binding
+				.AddBinding(ViewModel, vm => vm.WithoutBarcodesAmount, w => w.Text, new IntToStringConverter())
+				.InitializeFromSource();
+			labelWithBarcodesAmount.Binding
+				.AddBinding(ViewModel, vm => vm.WithBarcodesAmount, w => w.Text, new IntToStringConverter())
+				.InitializeFromSource();
+			labelBarcodesInStock.Binding
+				.AddBinding(ViewModel, vm => vm.BarcodesInStockAmount, w => w.Text, new IntToStringConverter())
+				.InitializeFromSource();
+			
 			entryBarcodesLabel.Binding.AddBinding(ViewModel, vm => vm.Label, w => w.Text).InitializeFromSource();
 			
 			ConfigureAutocomplete();

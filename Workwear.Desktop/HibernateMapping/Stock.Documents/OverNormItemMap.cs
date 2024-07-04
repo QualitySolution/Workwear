@@ -3,11 +3,11 @@ using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.HibernateMapping.Stock.Documents 
 {
-	public class SubstituteFundDocumentItemMap : ClassMap<SubstituteFundDocumentItem> 
+	public class OverNormItemMap : ClassMap<OverNormItem> 
 	{
-		public SubstituteFundDocumentItemMap() 
+		public OverNormItemMap() 
 		{
-			Table("substitute_fund_document_items");
+			Table("over_norm_document_items");
 			if (MappingParams.UseIdsForTest) 
 			{
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
@@ -18,7 +18,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			}
 
 			References(x => x.Document).Column("document_id").Not.Nullable();
-			References(x => x.SubstituteFundOperation).Column("operation_subsitute_id").Not.Nullable();
+			References(x => x.OverNormOperation).Column("over_norm_id").Not.Nullable().Cascade.All();
 		}
 	}
 }

@@ -43,12 +43,12 @@ namespace Workwear.Domain.Operations {
 			set => SetField(ref warehouse, value);
 		}
 
-		private  SubstituteFundOperation substituteFundOperation;
-		[Display(Name = "Оперерация на выдачу подменного фонда")]
-		public virtual SubstituteFundOperation SubstituteFundOperation 
+		private OverNormOperation overNormOperation;
+		[Display(Name = "Операция сверх нормы")]
+		public virtual OverNormOperation OverNormOperation 
 		{
-			get => substituteFundOperation;
-			set => SetField(ref substituteFundOperation, value);
+			get => overNormOperation;
+			set => SetField(ref overNormOperation, value);
 		}
 		#endregion
 		#region Расчетные

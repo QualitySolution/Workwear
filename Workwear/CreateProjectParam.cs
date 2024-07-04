@@ -83,6 +83,8 @@ using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.OverNorms;
+using Workwear.Tools.OverNorms.Impl;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
@@ -234,6 +236,7 @@ namespace workwear
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<BarcodeService>().AsSelf();
+			builder.RegisterType<OverNormFactory>().As<IOverNormFactory>();
 			#endregion
 
 			#region Навигация
