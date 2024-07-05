@@ -100,32 +100,36 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
 			item.OverNormOperation.WarehouseOperation.Height = param.Height;
 
-			IEnumerable<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id);
+			List<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id).ToList();
 			if (!UseBarcodes) 
 			{
 				item.OverNormOperation.BarcodeOperations.Clear();
 			}
-			else if (UseBarcodes && param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id))) 
+			else if (UseBarcodes && (param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id)) || param.Barcodes.Count != currentBarcodeIds.Count)) 
 			{
-				int amountToDel = item.OverNormOperation.BarcodeOperations.Count > param.Amount
+				int amountToUpdate = item.OverNormOperation.BarcodeOperations.Count > param.Amount
 					? param.Amount
 					: item.OverNormOperation.BarcodeOperations.Count;   
 				if (item.OverNormOperation.BarcodeOperations.Count > param.Amount) 
 				{
-					for (int i = item.OverNormOperation.BarcodeOperations.Count - 1; i < item.OverNormOperation.BarcodeOperations.Count - param.Amount; i--) 
+					int count = item.OverNormOperation.BarcodeOperations.Count;
+					for (int i = count - 1; i >= count - param.Amount; i--) 
 					{
 						item.OverNormOperation.BarcodeOperations.RemoveAt(i);
 					}
 				}
 				else 
 				{
-					FillOverNormOperation(item.OverNormOperation, param.Barcodes.Skip(item.OverNormOperation.BarcodeOperations.Count));
+					FillOverNormOperation(item.OverNormOperation, param.Barcodes.Skip(amountToUpdate));
 				}
 				
-				for (int i = 0; i < amountToDel; i++) 
+				for (int i = 0; i < amountToUpdate; i++) 
 				{
 					BarcodeOperation bo = item.OverNormOperation.BarcodeOperations[i];
-					bo.Barcode = param.Barcodes[i];
+					if (bo.Barcode.Id != param.Barcodes[i].Id) 
+					{
+						bo.Barcode = param.Barcodes[i];
+					}
 				}
 			}
 		}

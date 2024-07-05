@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Data;
-using Mono.Unix.Native;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -18,20 +17,25 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
 	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
 	{
+		private readonly BarcodeService barcodeService;
+
 		public BarcodeJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager, 
+			BarcodeService barcodeService,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			UseSlider = true;
 			VisibleCreateAction = false;
 			
@@ -52,7 +56,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			
-			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
+			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(GetSearchCriterion(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
@@ -81,7 +85,74 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
 				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
+
+			if (OnlyFreeBarcodes) 
+			{
+				int[] ids = barcodeService.GetFreeBarcodesIds(uow, Nomenclature, Size, Height, warehouse).ToArray(); 
+				query.Where(() => barcodeAlias.Id.IsIn(ids));
+			}
+			
+			return query;
 		}
+		
+		#region Constraint
+
+		private Nomenclature nomenclature;
+		public Nomenclature Nomenclature 
+		{
+			get => nomenclature;
+			set 
+			{
+				SetField(ref nomenclature, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Size size;
+		public Size Size 
+		{
+			get => size;
+			set 
+			{
+				SetField(ref size, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Size height;
+		public Size Height 
+		{
+			get => height;
+			set 
+			{
+				SetField(ref height, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Warehouse warehouse;
+		public Warehouse Warehouse 
+		{
+			get => warehouse;
+			set 
+			{
+				SetField(ref warehouse, value); 
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private bool onlyFreeBarcodes;
+		public bool OnlyFreeBarcodes 
+		{
+			get => onlyFreeBarcodes;
+			set 
+			{
+				SetField(ref onlyFreeBarcodes, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		#endregion
 		
 		#region Actions
 

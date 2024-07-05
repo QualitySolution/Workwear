@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Linq;
-using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
+using Gtk;
 using QS.Views.Dialog;
-using QSOrmProject;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools.OverNorms;
-using Workwear.Tools.OverNorms.Impl;
 using Workwear.ViewModels.Stock;
-using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock 
 {
@@ -66,6 +62,8 @@ namespace Workwear.Views.Stock
 				
 				ytreeItems.ColumnsConfig.GetColumnsByTag(BarcodesColumn)
 					.First().Visible = ViewModel.OverNormModel.CanUseWithBarcodes;
+				
+				UpdateDelBarcodesMenu();
 			};
 			
 			entityWarehouseExpense.ViewModel = ViewModel.EntryWarehouseViewModel;
@@ -112,8 +110,40 @@ namespace Workwear.Views.Stock
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = ViewModel.Entity.Items;
-			ytreeItems.Selection.Changed += (sender, args) =>
+			ytreeItems.Selection.Changed += (sender, args) => 
+			{
 				buttonAddNomenclature.Sensitive = buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+				UpdateDelBarcodesMenu();
+			};
+		}
+
+		private void UpdateDelBarcodesMenu() 
+		{
+			OverNormItem item = ytreeItems.GetSelectedObject<OverNormItem>();
+			buttonDelBarcodes.Sensitive = buttonDel.Sensitive && 
+			                              ViewModel.OverNormModel.CanUseWithBarcodes &&
+			                              item.OverNormOperation.BarcodeOperations != null &&
+			                              item.OverNormOperation.BarcodeOperations.Any();
+			if (buttonDelBarcodes.Sensitive) 
+			{
+				Menu barcodesMenu = new Menu();
+				yMenuItem menuItem;
+				foreach (var bo in item.OverNormOperation.BarcodeOperations) 
+				{
+					menuItem = new yMenuItem(bo.Barcode.Title);
+					menuItem.Activated += (o, eventArgs) => 
+					{
+						ViewModel.DeleteBarcodeFromItem(item, bo.Barcode);
+						barcodesMenu.Remove(o as Widget);
+						ytreeItems.QueueDraw();
+					};
+					
+					barcodesMenu.Add(menuItem);
+				}
+
+				buttonDelBarcodes.Menu = barcodesMenu;
+				barcodesMenu.ShowAll();
+			}
 		}
 	}
 }

@@ -13,9 +13,22 @@ namespace Workwear.Tools.OverNorms
 		public EmployeeCard Employee { get; }
 		
 		public Nomenclature Nomenclature { get; }
-		
-		public int Amount { get; }
-		
+
+		private int amount;
+		public int Amount 
+		{
+			get 
+			{
+				if (amount != Barcodes.Count && Barcodes.Any()) 
+				{
+					return amount = Barcodes.Count;
+				}
+
+				return amount;
+			}
+			set => amount = value;
+		}
+
 		public Size Size { get; }
 		
 		public Size Height { get; }
@@ -45,7 +58,7 @@ namespace Workwear.Tools.OverNorms
 		{
 			Employee = employee ?? throw new ArgumentNullException(nameof(employee));;
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
-			Amount = amount;
+			this.amount = amount;
 			Size = size;
 			Height = height;
 			EmployeeIssueOperation = employeeIssueOperation;

@@ -68,6 +68,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonDel;
 
+		private global::QS.Widgets.MenuButton buttonDelBarcodes;
+
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
 		protected virtual void Build()
@@ -119,7 +121,6 @@ namespace Workwear.Views.Stock
 			w5.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
-			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -414,21 +415,38 @@ namespace Workwear.Views.Stock
 			w34.Expand = false;
 			w34.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.buttonDelBarcodes = new global::QS.Widgets.MenuButton();
+			this.buttonDelBarcodes.Sensitive = false;
+			this.buttonDelBarcodes.CanFocus = true;
+			this.buttonDelBarcodes.Name = "buttonDelBarcodes";
+			this.buttonDelBarcodes.UseUnderline = true;
+			this.buttonDelBarcodes.UseMarkup = false;
+			this.buttonDelBarcodes.LabelXAlign = 0F;
+			this.buttonDelBarcodes.Label = global::Mono.Unix.Catalog.GetString("Удалить штрихкод");
+			global::Gtk.Image w35 = new global::Gtk.Image();
+			w35.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonDelBarcodes.Image = w35;
+			this.hbox8.Add(this.buttonDelBarcodes);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDelBarcodes]));
+			w36.Position = 4;
+			w36.Expand = false;
+			w36.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w35.Position = 4;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w37.Position = 5;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w36.Position = 2;
-			w36.Expand = false;
-			w36.Fill = false;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w38.Position = 2;
+			w38.Expand = false;
+			w38.Fill = false;
 			this.dialog1_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
-			w37.Position = 2;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
+			w39.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

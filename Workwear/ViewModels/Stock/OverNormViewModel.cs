@@ -11,7 +11,6 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -22,7 +21,6 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.OverNorms;
-using Workwear.Tools.OverNorms.Impl;
 using Workwear.Tools.OverNorms.Models;
 
 namespace Workwear.ViewModels.Stock 
@@ -74,7 +72,7 @@ namespace Workwear.ViewModels.Stock
 			Entity.Items.ContentChanged += CalculateTotal;
 			CalculateTotal(null, null);
 		}
-		
+
 		#region View Properties
 		public bool CanAddItems => Entity.Warehouse != null && OverNormModel.Editable;
 		
@@ -100,7 +98,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		private bool autoDocNumber = true;
-		
+
 		[PropertyChangedAlso(nameof(DocNumber))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
 		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
@@ -193,29 +191,51 @@ namespace Workwear.ViewModels.Stock
 			var height = UoW.GetById<Size>(node.HeightId);
 
 			Barcode barcode = null;
-			if (OverNormModel.UseBarcodes) 
-			{
-				barcode = barcodeService.GetFreeBarcodes(UoW, nomenclature, size, height, Entity.Warehouse).First();
-			}
-			
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
+			if (OverNormModel.UseBarcodes) 
+			{
+				IPage<BarcodeJournalViewModel> barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
+				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+				barcodeJournal.ViewModel.Nomenclature = nomenclature;
+				barcodeJournal.ViewModel.Size = size;
+				barcodeJournal.ViewModel.Height = height;
+				barcodeJournal.ViewModel.OnlyFreeBarcodes = true;
+				barcodeJournal.ViewModel.Warehouse = Entity.Warehouse;
+				barcodeJournal.ViewModel.OnSelectResult += (o, args) => 
+				{
+					IList<BarcodeJournalNode> nodes = args.GetSelectedObjects<BarcodeJournalNode>();
+					IList<Barcode> barcodes = UoW.GetById<Barcode>(nodes.Select(x => x.Id));
+					item.Param =
+						new OverNormParam(item.OverNormOperation.Employee, nomenclature, barcodes.Count, size, height, item.OverNormOperation.EmployeeIssueOperation, barcodes);
+					
+					AddOrUpdateItem(item);
+				};
+				
+				return;
+			}
+			
 			item.Param =
-				new OverNormParam(item.OverNormOperation.Employee, nomenclature, 1, size, height, item.OverNormOperation.EmployeeIssueOperation, barcode != null ? new List<Barcode>() { barcode } : null);
-			if (Entity.Id < 1 || item.Id < 1) 
-			{
-				Entity.Items.Remove(item);
-				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
-			}
-			else 
-			{
-				OverNormModel.UpdateOperation(item, item.Param);
-			}
+				new OverNormParam(item.OverNormOperation.Employee, nomenclature, 1, size, height, item.OverNormOperation.EmployeeIssueOperation);
+			AddOrUpdateItem(item);
 		}
-		
+
 		public void DeleteItem(OverNormItem item) 
 		{
 			Entity.DeleteItem(item);
+		}
+
+		public void DeleteBarcodeFromItem(OverNormItem item, Barcode barcode) 
+		{
+			if (item.Param.Barcodes.Count == 1) 
+			{
+				DeleteItem(item);
+				return;
+			}
+
+			OverNormModel.UseBarcodes = true;
+			item.Param.Barcodes.Remove(barcode);
+			AddOrUpdateItem(item);
 		}
 		#endregion
 
@@ -240,6 +260,19 @@ namespace Workwear.ViewModels.Stock
 			return base.Save();
 		}
 		#endregion
+		
+		private void AddOrUpdateItem(OverNormItem item)
+		{
+			if (Entity.Id < 1 || item.Id < 1) 
+			{
+				Entity.Items.Remove(item);
+				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
+			}
+			else 
+			{
+				OverNormModel.UpdateOperation(item, item.Param);
+			}
+		}
 	}
 
 	public class OverNormTempItem : PropertyChangedBase 

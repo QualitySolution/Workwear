@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
@@ -134,6 +135,14 @@ namespace Workwear.Tools.Barcodes
 			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
 
 			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height, warehouse).Select(x => x.Barcode).List<Barcode>();
+		}
+
+		public IList<int> GetFreeBarcodesIds(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
+		{
+			if (uow == null) throw new ArgumentNullException(nameof(uow));
+			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
+			
+			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height, warehouse).Select(x => x.Barcode.Id).List<int>();
 		}
 		#endregion
 		
