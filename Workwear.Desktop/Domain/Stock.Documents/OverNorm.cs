@@ -47,7 +47,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Not Mapped Propertis
-		public virtual string Title => $"Выдача сверх нормы №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
+		public virtual string Title => $"Выдача сверх нормы ({Type.GetAttribute<DisplayAttribute>().Name}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
 		
 		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null) 
 		{
@@ -58,7 +58,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void DeleteItem(OverNormItem item) 
 		{
-			items.Remove(item);
+			Items.Remove(item);
 		}
 		
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

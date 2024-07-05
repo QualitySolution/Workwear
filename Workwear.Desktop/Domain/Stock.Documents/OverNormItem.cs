@@ -1,17 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Tools.OverNorms;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Domain.Stock.Documents 
 {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "строки подменной выдачи",
-		Nominative = "строка подменной выдачи",
-		Genitive = "строки подменной выдачи"
+		NominativePlural = "строки выдачи сверх нормы",
+		Nominative = "строка выдачи сверх нормы",
+		Genitive = "строки выдачи сверх норм"
 	)]
 	[HistoryTrace]
 	public class OverNormItem : PropertyChangedBase, IDomainObject
@@ -20,7 +20,7 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual int Id { get; set; }
 
 		private OverNorm document;
-		[Display(Name = "Документ подменной выдачи")]
+		[Display(Name = "Документ выдачи сверх нормы")]
 		public virtual OverNorm Document 
 		{
 			get => document;
@@ -45,7 +45,7 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref param, value);
 		}
 
-		public virtual string Title => $"Подменная выдача {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
+		public virtual string Title => $"Строка выдачи сверх нормы ({OverNormOperation.Type.GetAttribute<DisplayAttribute>().Name}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
 		#endregion
 		
 		protected OverNormItem() 

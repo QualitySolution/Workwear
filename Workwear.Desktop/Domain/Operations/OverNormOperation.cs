@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
@@ -65,7 +66,7 @@ namespace Workwear.Domain.Operations {
 		}
 
 		private OverNormOperation writeOffOverNormOperation;
-		[Display(Name = "Операция возврата подменной вещи")]
+		[Display(Name = "Операция возврата операции вдачи сверх нормы")]
 		public virtual OverNormOperation WriteOffOverNormOperation 
 		{
 			get => writeOffOverNormOperation;
@@ -82,7 +83,7 @@ namespace Workwear.Domain.Operations {
 		#endregion
 
 		#region Not Mapped Propertis
-		public virtual string Title => $"Операция подменной выдачи {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
+		public virtual string Title => $"Операция выдачи сверх нормы ({Type.GetAttribute<DisplayAttribute>().Name}) {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
 		#endregion
 	}
 	
