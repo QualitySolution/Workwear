@@ -362,7 +362,7 @@ namespace Workwear.Domain.Operations
 			AutoWriteoffDate = null;
 		}
 		
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, ReturnItem item) {
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;

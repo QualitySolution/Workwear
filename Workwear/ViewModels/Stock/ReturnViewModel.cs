@@ -66,6 +66,7 @@ namespace Workwear.ViewModels.Stock {
 
 		#region Свойства ViewModel
 		private readonly FeaturesService featuresService;
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		
@@ -98,7 +99,7 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
 		#endregion
 
-		#region Методы Items
+		#region Методы
 
 		public void AddFromEmployee() {
 			var selectJournal = 
@@ -111,7 +112,7 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.SubdivisionSensitive = false;
 			selectJournal.ViewModel.Filter.EmployeeSensitive = false;
 			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.CanChooseAmount = true;
+			selectJournal.ViewModel.Filter.CanChooseAmount = false;
 			selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
 		}
 		private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e) {
@@ -122,6 +123,35 @@ namespace Workwear.ViewModels.Stock {
 			foreach (var operation in operations)
 				Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id])); 
 //CalculateTotal(null, null);
+		}
+		
+		public override bool Save() {
+			logger.Info ("Запись документа...");
+            
+//Валидация ???			
+			
+			Entity.UpdateOperations(UoW);
+			if (Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
+
+			if(!base.Save()) {
+				logger.Info("Не Ок.");
+				return false;
+			}
+            
+			Entity.UpdateOperations(UoW);
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
+			
+			UoWGeneric.Save ();
+
+			logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
+			Entity.UpdateEmployeeWearItems();
+			
+			UoWGeneric.Commit ();
+
+			logger.Info ("Ok");
+			return true;
 		}
 
 		#endregion

@@ -152,14 +152,14 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		
 		#region Функции
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
+		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 
 			if(Document.Operation == IncomeOperations.Return) {
 				if(ReturnFromEmployeeOperation == null)
 					ReturnFromEmployeeOperation = new EmployeeIssueOperation();
-				ReturnFromEmployeeOperation.Update(uow, askUser, this);
+				ReturnFromEmployeeOperation.Update(uow, this);
 				uow.Save(ReturnFromEmployeeOperation);
 			}
 			else if(ReturnFromEmployeeOperation != null) {

@@ -142,14 +142,14 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(ReturnItem item) {
 			Items.Remove (item);
 		}
-
+//????????????????
 		public virtual ReturnItem FindItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => Items
 			.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id
 			                     && i.Height == height && i.WearSize == size && i.Owner == owner);
 		#endregion
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+		public virtual void UpdateOperations(IUnitOfWork uow) {
+			Items.ToList().ForEach(x => x.UpdateOperations(uow));
 		}
 
 		public virtual void UpdateEmployeeWearItems() {
