@@ -4,7 +4,6 @@ using QS.Project.Domain;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Tools.OverNorms.Models 
 {
@@ -15,15 +14,16 @@ namespace Workwear.Tools.OverNorms.Models
 		/// <summary>
 		/// Указвает может ли эта модель использоваться со штрихкодами
 		/// </summary>
-		protected abstract bool CanUseWithBarcodes { get; }
+		public abstract bool CanUseWithBarcodes { get; }
 		
 		/// <summary>
 		/// Указвает может ли эта модель использоваться без штрихкодов
 		/// </summary>
-		protected abstract bool CanUseWithoutBarcodes { get; }
+		public abstract bool CanUseWithoutBarcodes { get; }
 
 		/// <summary>
 		/// Указывает можно ли изменять статус использования штрихкодов
+		/// <see cref="UseBarcodes"/>
 		/// </summary>
 		public virtual bool CanChangeUseBarcodes => CanUseWithBarcodes && CanUseWithoutBarcodes;
 

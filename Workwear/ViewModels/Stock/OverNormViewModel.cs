@@ -211,9 +211,6 @@ namespace Workwear.ViewModels.Stock
 			{
 				OverNormModel.UpdateOperation(item, item.Param);
 			}
-
-			//TODO
-			//CalculateTotal();
 		}
 		
 		public void DeleteItem(OverNormItem item) 

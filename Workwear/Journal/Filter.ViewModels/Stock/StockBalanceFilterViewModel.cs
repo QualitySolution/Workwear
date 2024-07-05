@@ -92,7 +92,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 	        get => itemsType;
 	        set => SetField(ref itemsType, value);
         }
-		#endregion
+        #endregion
 
 		public readonly FeaturesService FeaturesService;
 

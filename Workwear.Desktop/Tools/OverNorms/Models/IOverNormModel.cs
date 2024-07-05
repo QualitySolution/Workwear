@@ -10,6 +10,10 @@ namespace Workwear.Tools.OverNorms.Models
 	public interface IOverNormModel
 	{
 		bool Editable { get; }
+	
+		bool CanUseWithBarcodes { get; }
+		
+		bool CanUseWithoutBarcodes { get; }
 		
 		bool UseBarcodes { get; set; }
 		

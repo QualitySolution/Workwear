@@ -16,6 +16,7 @@ namespace Workwear.Views.Stock
 	public partial class OverNormView : EntityDialogViewBase<OverNormViewModel, OverNorm> 
 	{
 		private const string SubstituteColumn = "SubstituteColumn";
+		private const string BarcodesColumn = "BarcodesColumn";
 		
 		public OverNormView(OverNormViewModel viewModel) : base(viewModel) 
 		{
@@ -62,6 +63,9 @@ namespace Workwear.Views.Stock
 
 				ytreeItems.ColumnsConfig.GetColumnsByTag(SubstituteColumn)
 					.First().Visible = ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
+				
+				ytreeItems.ColumnsConfig.GetColumnsByTag(BarcodesColumn)
+					.First().Visible = ViewModel.OverNormModel.CanUseWithBarcodes;
 			};
 			
 			entityWarehouseExpense.ViewModel = ViewModel.EntryWarehouseViewModel;
@@ -100,6 +104,11 @@ namespace Workwear.Views.Stock
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Height?.Name)
 				.AddColumn("Количество").MinWidth(60)
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Amount.ToString())
+				.AddColumn("Штрихкоды")
+					.Tag(BarcodesColumn)
+					.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
+					.Resizable()
+					.AddReadOnlyTextRenderer(x =>  string.Join(", ", x.OverNormOperation.BarcodeOperations?.Select(b => b.Barcode.Title) ?? Array.Empty<string>()))
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = ViewModel.Entity.Items;
