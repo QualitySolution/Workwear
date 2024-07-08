@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;

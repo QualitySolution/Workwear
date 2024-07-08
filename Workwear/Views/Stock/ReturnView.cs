@@ -31,6 +31,9 @@ namespace Workwear.Views.Stock {
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
+			//yentryEmployee.Binding
+			//	.AddBinding(ViewModel, vm => vm.CanEditEmployee, w => w.Sensitive)
+			//	.InitializeFromSource();
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel; 
 			entityWarehouseIncome.Binding.
 				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
@@ -76,8 +79,14 @@ namespace Workwear.Views.Stock {
 			
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			//yAutoNumber
+			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
+			yvboxItems.Binding
+				.AddBinding(ViewModel, vm => vm.CanEditItems, w => w.Sensitive)
+				.InitializeFromSource();
+		}
 
-			//.Sensitive => ViewModel.CanEditItems;
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
+			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ReturnItem>();
 		}
 
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
@@ -85,9 +94,11 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
+			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ReturnItem>());
 		}
 
 		protected void OnYbuttonSetNomenclatureClicked(object sender, EventArgs e) {
+			ViewModel.SetNomenclature(ytreeItems.GetSelectedObject<ReturnItem>());
 		}
 
 		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {

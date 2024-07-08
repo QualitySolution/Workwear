@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -45,23 +46,37 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			
 			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.EmployeeCard)
 				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
+			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
+			CanEditEmployee = Entity.Id == 0;
+			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
+
+			//EmployeeCardEntryViewModel.ed
 		}
-		
+
+		private void EmployeeCardEntryViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(EmployeeCardEntryViewModel.Entity))
+				OnPropertyChanged(nameof(CanEditItems));
+		}
+
 		#region Проброс свойств документа
 
 		public virtual int DocID => Entity.Id;
 		public virtual string DocTitle => Entity.Title;
 		public virtual string DocComment => Entity.Comment;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime DocDate => Entity.Date;
 		public virtual Warehouse Warehouse => Entity.Warehouse;
 		public virtual EmployeeCard EmployeeCard => Entity.EmployeeCard;
 		public virtual IObservableList<ReturnItem> Items => Entity.Items;
 
+		public virtual DateTime DocDate {
+			get => Entity.Date; 
+			set => Entity.Date = value; 
+		}
 		#endregion
 
 		#region Свойства ViewModel
@@ -69,7 +84,6 @@ namespace Workwear.ViewModels.Stock {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
-		
 		public List<Owner> Owners {get;}
 		public List<Warehouse> Warhouses {get;}
 		
@@ -85,15 +99,24 @@ namespace Workwear.ViewModels.Stock {
 			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
 			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
 		}
+		
+		private ReturnItem selectedItem;
+		[PropertyChangedAlso(nameof(CanRemoveItem))]
+		[PropertyChangedAlso(nameof(CanSetNomenclature))]
+		public virtual ReturnItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
 
 		#endregion 
 		
 		#region Свойства для View
 
+		public bool CanEditEmployee;// => DocID == 0;
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
 		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => false;
-		public virtual bool CanSetNomenclature => false;
+		public virtual bool CanRemoveItem => SelectedItem != null;
+		public virtual bool CanSetNomenclature => SelectedItem != null;
 		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
@@ -123,6 +146,23 @@ namespace Workwear.ViewModels.Stock {
 			foreach (var operation in operations)
 				Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id])); 
 //CalculateTotal(null, null);
+		}
+		public void DeleteItem(ReturnItem item) {
+			Entity.RemoveItem(item); 
+//CalculateTotal(null, null);
+		}
+		
+		public void SetNomenclature(ReturnItem item) {
+			//var selectJournal = MainClass.MainWin.NavigationManager
+			//	.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
+			var selectJournal = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools; 
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.ViewModel.OnSelectResult += (s, je) =>  SetNomenclatureSelected(item,je.SelectedObjects.First().GetId());
+		}
+
+		private void SetNomenclatureSelected(ReturnItem item, int selectedId) {
+			item.Nomenclature = UoW.GetById<Nomenclature>(selectedId);
 		}
 		
 		public override bool Save() {
