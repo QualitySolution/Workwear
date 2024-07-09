@@ -50,6 +50,7 @@ namespace Workwear.Views.Stock
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
+			ybuttonPrint.Clicked += OnButtonPrintClicked;
 		}
 		#region PopupMenu
 		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
@@ -89,5 +90,6 @@ namespace Workwear.Views.Stock
 		}
 		private string GetRowColor(TransferItem item) 
 			=> !ViewModel.ValidateNomenclature(item) ? "red" : null;
+		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 	}
 }
