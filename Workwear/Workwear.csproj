@@ -142,6 +142,7 @@
     <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
@@ -475,6 +476,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentWithdrawView.cs" />
     <Compile Include="Views\Analytics\ProtectionToolsCategoryView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
+    <Compile Include="ReportParameters\Views\ClothingServiceReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -803,6 +806,12 @@
     <None Include="Reports\NotIssuedSheetSummary.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\Documents\TranseInvocieKazach.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Documents\TransferInvoice.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
@@ -837,6 +846,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Reports\ClothingServiceReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
