@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT stock_transfer.id as 'Номер документа', TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'Дата составления',
 (SELECT warehouse.name 
@@ -31,7 +31,7 @@ warehouse.name as 'name2'
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="Номер_документа">
           <DataField>Номер документа</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -51,7 +51,7 @@ warehouse.name as 'name2'
       </Fields>
     </DataSet>
     <DataSet Name="Info">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT CONCAT_WS('', 
                  nomenclature.name, 
@@ -73,9 +73,6 @@ users.name as 'Name'
     stock_transfer_detail.nomenclature_id = nomenclature.id
     LEFT JOIN operation_warehouse ON
     stock_transfer_detail.warehouse_operation_id = operation_warehouse.id
-    LEFT JOIN warehouse ON
-    stock_transfer.warehouse_from_id = warehouse.id AND
-    stock_transfer.warehouse_to_id = warehouse.id
     LEFT JOIN sizes s1 ON
     operation_warehouse.size_id = s1.id 
     LEFT JOIN sizes s2 ON
@@ -93,7 +90,7 @@ users.name as 'Name'
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="наименование1">
           <DataField>наименование1</DataField>
           <TypeName>System.String</TypeName>
