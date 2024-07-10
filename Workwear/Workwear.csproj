@@ -806,9 +806,6 @@
     <None Include="Reports\NotIssuedSheetSummary.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\Documents\TranseInvocieKazach.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Reports\Documents\TransferInvoice.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
