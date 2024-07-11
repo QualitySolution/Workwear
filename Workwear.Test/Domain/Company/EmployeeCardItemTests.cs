@@ -661,7 +661,7 @@ namespace Workwear.Test.Domain.Company
 		}
 		#endregion
 
-		#region BestChoiceStockPosition
+		#region BestChoiceInStock
 		[Test(Description = "Проверяем что позиции отсутствующие на складе или имеющие отрицательные остатки не будут показываться в качестве возможного выбора.")]
 		public void BestChoiceInStock_NotExistOrNegativeAmountCase()
 		{
