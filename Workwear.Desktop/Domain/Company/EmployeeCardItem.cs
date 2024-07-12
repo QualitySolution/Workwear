@@ -132,7 +132,7 @@ namespace Workwear.Domain.Company
 		}
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
-				var bestChoice = InStock.ToList();
+				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
 				bestChoice.Sort(new BestChoiceInStockComparer(ProtectionTools));
 				return bestChoice;
 			}

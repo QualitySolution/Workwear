@@ -11,6 +11,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Test.Domain.Company
@@ -658,6 +659,62 @@ namespace Workwear.Test.Domain.Company
 
 			return employeeItem.MatchStockPosition(new StockPosition(nomenclature, 0, null, null, null));
 		}
+		#endregion
+
+		#region BestChoiceInStock
+		[Test(Description = "Проверяем что позиции отсутствующие на складе или имеющие отрицательные остатки не будут показываться в качестве возможного выбора.")]
+		public void BestChoiceInStock_NotExistOrNegativeAmountCase()
+		{
+			var employee = new EmployeeCard();
+			var itemType = Substitute.For<ItemsType>();
+			var nomenclatureZero = new Nomenclature {
+				Id = 25,
+				Type = itemType
+			};
+			var nomenclatureNegativeBalance = new Nomenclature {
+				Id = 26,
+				Type = itemType
+			};
+			var nomenclaturePositiveBalance = new Nomenclature {
+				Id = 250,
+				Type = itemType
+			};
+			var protectionTools = Substitute.For<ProtectionTools>();
+			protectionTools.Nomenclatures.Returns(new ObservableList<Nomenclature> { nomenclatureZero, nomenclatureNegativeBalance, nomenclaturePositiveBalance });
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
+
+			//Сначала проверяем что при позитивных значениях все эти номелатуры будут
+			var stockBalanceFull = Substitute.For<StockBalanceModel>();
+			var stockList = new List<StockBalance> {
+				new StockBalance(new StockPosition(nomenclatureZero, 0, null, null, null), 10),
+				new StockBalance(new StockPosition(nomenclatureNegativeBalance, 0, null, null, null), 10),
+				new StockBalance(new StockPosition(nomenclaturePositiveBalance, 0, null, null, null), 10)
+			};
+			stockBalanceFull.Balances.Returns(stockList);
+			
+			employeeItem.StockBalanceModel = stockBalanceFull;
+			var bestList = employeeItem.BestChoiceInStock.ToList();
+			Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclatureZero), Is.True);
+			Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclatureNegativeBalance), Is.True);
+			Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclaturePositiveBalance), Is.True);
+			
+            //Теперь проверяем что при нулевых значениях и отрицательных значениях номенклатуры не попадают в список
+            var stockBalanceEmpty = Substitute.For<StockBalanceModel>();
+            stockList = new List<StockBalance> {
+	            new StockBalance(new StockPosition(nomenclatureZero, 0, null, null, null), 0),
+	            new StockBalance(new StockPosition(nomenclatureNegativeBalance, 0, null, null, null), -10),
+	            new StockBalance(new StockPosition(nomenclaturePositiveBalance, 0, null, null, null), 10)
+            };
+            stockBalanceEmpty.Balances.Returns(stockList);
+            employeeItem.StockBalanceModel = stockBalanceEmpty;
+            bestList = employeeItem.BestChoiceInStock.ToList();
+            Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclaturePositiveBalance), Is.True);
+            Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclatureNegativeBalance), Is.False);
+            Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclatureZero), Is.False);
+		}
+
 		#endregion
 		#region LastIssued
 		[Test(Description = "Проверяем базовый случай отображения последних выдач")]

@@ -201,6 +201,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action Action43;
 
+	private global::Gtk.Action ActionClothingServiceReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -541,6 +543,9 @@ public partial class MainWindow
 		this.Action43 = new global::Gtk.Action("Action43", global::Mono.Unix.Catalog.GetString("Категории номенклатуры"), null, null);
 		this.Action43.ShortLabel = global::Mono.Unix.Catalog.GetString("Категории номенклатуры");
 		w1.Add(this.Action43, null);
+		this.ActionClothingServiceReport = new global::Gtk.Action("ActionClothingServiceReport", global::Mono.Unix.Catalog.GetString("Обслуживание одежды"), null, null);
+		this.ActionClothingServiceReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Обслуживание одежды");
+		w1.Add(this.ActionClothingServiceReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -614,16 +619,17 @@ public partial class MainWindow
 				"tionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=" +
 				"\'ActionAmountIssuedWear\' action=\'ActionAmountIssuedWear\'/><menuitem name=\'Action" +
 				"Provision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessRe" +
-				"port\' action=\'ActionBarcodeCompletenessReport\'/></menu><menu name=\'ActionHelp\' a" +
-				"ction=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem na" +
-				"me=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'Act" +
-				"ionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'Act" +
-				"ionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCur" +
-				"rent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></menu" +
-				"><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name" +
-				"=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionPay\' action" +
-				"=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem" +
-				" name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"port\' action=\'ActionBarcodeCompletenessReport\'/><menuitem name=\'ActionClothingSe" +
+				"rviceReport\' action=\'ActionClothingServiceReport\'/></menu><menu name=\'ActionHelp" +
+				"\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem" +
+				" name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'" +
+				"ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'" +
+				"ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannel" +
+				"Current\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></m" +
+				"enu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem n" +
+				"ame=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionPay\' act" +
+				"ion=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menui" +
+				"tem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -836,5 +842,6 @@ public partial class MainWindow
 		this.ActionBarcodeCompletenessReport.Activated += new global::System.EventHandler(this.OnActionBarcodeCompletenessReportActivated);
 		this.ActionPostomatDocsWithdraw.Activated += new global::System.EventHandler(this.OnActionPostomatDocsWithdrawActivated);
 		this.Action43.Activated += new global::System.EventHandler(this.OnProtectionToolsCategoriesActivated);
+		this.ActionClothingServiceReport.Activated += new global::System.EventHandler(this.OnActionClothingServiceReportActivated);
 	}
 }
