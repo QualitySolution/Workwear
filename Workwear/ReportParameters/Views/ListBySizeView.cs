@@ -10,8 +10,13 @@ namespace workwear.ReportParameters.Views
 		{
 			this.Build();
 			buttonRun.Clicked += OnButtonRunClicked;
-			ycheckbuttongroupbysubdivision.Binding.AddBinding(ViewModel, w => w.GroupBySubdivision, v => v.Active).InitializeFromSource(); 
+			comboReportType.ItemsEnum = typeof(ListBySizeViewModel.SizeReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
+			ycheckbuttongroupbysubdivision.Binding.AddBinding(ViewModel, w => w.GroupBySubdivision, v => v.Active).InitializeFromSource();
+			ylabel1.Binding.AddBinding(ViewModel,v => v.VisibleShowGroup, w => w.Visible).InitializeFromSource();
+			ycheckbuttongroupbysubdivision.Binding.AddBinding(ViewModel, v => v.VisibleShowGroup, w => w.Visible).InitializeFromSource();
 		}
 		protected void OnButtonRunClicked(object sender, EventArgs e) => ViewModel.LoadReport();
+		
 	}
 }
