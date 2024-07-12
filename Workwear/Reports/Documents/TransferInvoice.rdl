@@ -13,17 +13,17 @@
     <DataSet Name="Header">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT stock_transfer.id as 'num_doc', TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
-(SELECT warehouse.name 
- FROM stock_transfer
-   JOIN warehouse ON
-    stock_transfer.warehouse_from_id = warehouse.id
- WHERE stock_transfer.id = @id) as 'warehouse_name_from', 
-warehouse.name as 'warehouse_name_to'
- FROM stock_transfer
-    JOIN warehouse ON
-    stock_transfer.warehouse_to_id = warehouse.id
- WHERE stock_transfer.id = @id;
+        <CommandText>SELECT 
+	stock_transfer.id as 'num_doc', 
+	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
+	wh.name as 'warehouse_name_from', 
+	wh2.name as 'warehouse_name_to'
+ 	FROM stock_transfer
+    	LEFT JOIN warehouse wh ON
+    	stock_transfer.warehouse_from_id = wh.id
+    	LEFT JOIN warehouse wh2 ON 
+    	stock_transfer.warehouse_to_id = wh2.id
+ 	WHERE stock_transfer.id = @id;
  </CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
