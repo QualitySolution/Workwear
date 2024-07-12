@@ -21,26 +21,20 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT stock_transfer.id as '№ документа', TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'Дата составления',
-(SELECT warehouse.name 
- FROM stock_transfer
-   JOIN warehouse ON
-    stock_transfer.warehouse_from_id = warehouse.id
- WHERE stock_transfer.id = @id) as 'name1',
-warehouse.name as 'name2',
-CONCAT_WS('', 
+        <CommandText>SELECT CONCAT_WS('', 
                  nomenclature.name, 
                  IF(s1.name IS NULL AND s2.name IS NULL, '', '('), 
                  IF(s1.name IS NOT NULL, s1.name, ''),
                  IF(s1.name IS NULL AND s2.name IS NOT NULL, s2.name, ''), 
                  IF(s1.name IS NOT NULL AND s2.name IS NOT NULL, '/', ''), 
                  IF(s2.name IS NOT NULL, s2.name, ''), 
-                 IF(s1.name IS NULL AND s2.name IS NULL, '', ')'))as 'наименование', nomenclature.number as 'номер', 
-measurement_units.name as 'единица_измерения', 
- stock_transfer_detail.quantity as 'Количество', 
-nomenclature.sale_cost as 'цена', 
-nomenclature.sale_cost * stock_transfer_detail.quantity as 'сумма',
-users.name as 'Name'
+                 IF(s1.name IS NULL AND s2.name IS NULL, '', ')'))as 'name', 
+nomenclature.number as 'nomenclature_num', 
+measurement_units.name as 'unit', 
+ stock_transfer_detail.quantity as 'quantity', 
+nomenclature.sale_cost as 'sale_cost', 
+nomenclature.sale_cost * stock_transfer_detail.quantity as 'sum',
+users.name as 'user_name'
  FROM stock_transfer 
     LEFT JOIN stock_transfer_detail ON
     stock_transfer.id = stock_transfer_detail.stock_transfer_id
@@ -48,8 +42,6 @@ users.name as 'Name'
     stock_transfer_detail.nomenclature_id = nomenclature.id
     LEFT JOIN operation_warehouse ON
     stock_transfer_detail.warehouse_operation_id = operation_warehouse.id
-    LEFT JOIN warehouse ON
-    stock_transfer.warehouse_to_id = warehouse.id
     LEFT JOIN sizes s1 ON
     operation_warehouse.size_id = s1.id 
     LEFT JOIN sizes s2 ON
@@ -60,7 +52,8 @@ users.name as 'Name'
     item_types.units_id = measurement_units.id
     LEFT JOIN users ON
     stock_transfer.user_id = users.id
-    WHERE stock_transfer.id = @id;</CommandText>
+    WHERE stock_transfer.id = @id;
+</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
@@ -68,49 +61,73 @@ users.name as 'Name'
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="номер_документа">
-          <DataField>№ документа</DataField>
+        <Field Name="name">
+          <DataField>name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nomenclature_num">
+          <DataField>nomenclature_num</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="quantity">
+          <DataField>quantity</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
-        <Field Name="Дата_составления">
-          <DataField>Дата составления</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="name1">
-          <DataField>name1</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="name2">
-          <DataField>name2</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="наименование">
-          <DataField>наименование</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="номер">
-          <DataField>номер</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="единица_измерения">
-          <DataField>единица_измерения</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Количество">
-          <DataField>Количество</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="цена">
-          <DataField>цена</DataField>
+        <Field Name="sale_cost">
+          <DataField>sale_cost</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="сумма">
-          <DataField>сумма</DataField>
+        <Field Name="sum">
+          <DataField>sum</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="Name">
-          <DataField>Name</DataField>
+        <Field Name="user_name">
+          <DataField>user_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Header">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+	stock_transfer.id as 'num_doc', 
+	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
+	wh.name as 'warehouse_name_from', 
+	wh2.name as 'warehouse_name_to'
+ 	FROM stock_transfer
+    	LEFT JOIN warehouse wh ON
+    	stock_transfer.warehouse_from_id = wh.id
+    	LEFT JOIN warehouse wh2 ON 
+    	stock_transfer.warehouse_to_id = wh2.id
+ 	WHERE stock_transfer.id = @id;
+ </CommandText>
+        <QueryParameters>
+          <QueryParameter Name="id">
+            <Value>={?id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="num_doc">
+          <DataField>num_doc</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="date">
+          <DataField>date</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="warehouse_name_from">
+          <DataField>warehouse_name_from</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="warehouse_name_to">
+          <DataField>warehouse_name_to</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1359,7 +1376,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox52">
-                      <Value>=Fields!номер_документа.Value</Value>
+                      <Value>= First({num_doc}, 'Header')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1377,7 +1394,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox71">
-                      <Value>=Fields!Дата_составления.Value</Value>
+                      <Value>= First({date}, 'Header')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1395,7 +1412,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox77">
-                      <Value>=Fields!name1.Value</Value>
+                      <Value>= First({warehouse_name_from}, 'Header')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1413,7 +1430,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox78">
-                      <Value>=Fields!name2.Value</Value>
+                      <Value>= First({warehouse_name_to}, 'Header')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1786,7 +1803,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Дата_составления">
-                      <Value>=Fields!наименование.Value</Value>
+                      <Value>={name}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1806,7 +1823,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="name2">
-                      <Value>=Fields!номер.Value</Value>
+                      <Value>={nomenclature_num}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1825,7 +1842,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="naim_dokt">
-                      <Value>=Fields!единица_измерения.Value</Value>
+                      <Value>={unit}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1844,7 +1861,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="_doc">
-                      <Value>=Fields!Количество.Value</Value>
+                      <Value>={quantity}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1863,7 +1880,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="date">
-                      <Value>=Fields!цена.Value</Value>
+                      <Value>={sale_cost}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1882,7 +1899,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="response">
-                      <Value>=Fields!сумма.Value</Value>
+                      <Value>={sum}</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1939,7 +1956,7 @@ users.name as 'Name'
                         <FontWeight>Bold</FontWeight>
                         <TextAlign>Center</TextAlign>
                       </Style>
-                      <Value>=Sum({Количество})</Value>
+                      <Value>=Sum({quantity})</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1967,7 +1984,7 @@ users.name as 'Name'
                         <FontWeight>Bold</FontWeight>
                         <TextAlign>Center</TextAlign>
                       </Style>
-                      <Value>=Sum({сумма})</Value>
+                      <Value>=Sum({sum})</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -2218,7 +2235,7 @@ users.name as 'Name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox74">
-                      <Value>=Fields!Name.Value</Value>
+                      <Value>={user_name}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
