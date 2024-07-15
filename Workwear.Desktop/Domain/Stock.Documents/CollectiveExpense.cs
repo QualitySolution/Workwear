@@ -162,10 +162,11 @@ namespace Workwear.Domain.Stock.Documents
 
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
 			var position = employeeCardItem.BestChoiceInStock.FirstOrDefault(x => x.Amount >= needPositionAmount);
-			if(position != null) {
+			
+			if(position != null)
 				return AddItem(employeeCardItem, position.Position, needPositionAmount);//Частичных выдач не делаем
-			}
-			return AddItem(employeeCardItem); 
+			else
+				return AddItem(employeeCardItem); 
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)
