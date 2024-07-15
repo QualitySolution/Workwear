@@ -104,6 +104,7 @@ namespace Workwear.Domain.Stock.Documents
 		#region Строки документа
 
 		public virtual IncomeItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
+//Удалить			
 			if (Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                     "Возвраты должны добавляться с указанием строки выдачи.");
@@ -128,6 +129,7 @@ namespace Workwear.Domain.Stock.Documents
 			Size size, Size height, int amount = 0, 
 			string certificate = null, decimal price = 0m, Owner owner = null)
 		{
+//Удалить			
 			if(Operation != IncomeOperations.Enter)
 				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
 				                                    "Возвраты должны добавляться с указанием строки выдачи.");

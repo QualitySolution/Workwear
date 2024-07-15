@@ -41,13 +41,10 @@ namespace Workwear.Views.Stock {
 				.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible)
 				.InitializeFromSource();
 			
-			//ItemsTable.IncomeDoc = Entity;
-			//ItemsTable.SizeService = sizeService;
-			//ItemsTable.Interactive = interactiveService;
-
-			//var builder = new LegacyEEVMBuilderFactory<Income>(this, Entity, UoW, MainClass.MainWin.NavigationManager, AutofacScope);
-	
-			
+			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
+			ybuttonReadInFile.Binding.AddBinding(ViewModel, vm => vm.CanReadFile, w => w.Sensitive).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -87,9 +84,8 @@ namespace Workwear.Views.Stock {
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.Total).Digits(2) 
 				.Finish();
-			//ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
-			//ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
 			
+			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			
 		}
@@ -98,12 +94,18 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+			ViewModel.AddItem();
 		}
 
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
 		}
 
 		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
+			ViewModel.AddSize(ytreeItems.GetSelectedObject<IncomeItem>());
+		}
+		
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
+			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<IncomeItem>();
 		}
 	}
 }
