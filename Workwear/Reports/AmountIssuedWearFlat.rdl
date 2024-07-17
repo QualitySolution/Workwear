@@ -904,7 +904,7 @@
     GROUP_CONCAT(issuance_sheet_items.issuance_sheet_id) as issuance_sheet,
     IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
         FROM operation_issued_by_employee as op2
-        LEFT JOIN operation_issued_by_employee as op3 on op2.operation_write_off_id = op3.id
+             LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
         WHERE op2.employee_id = operation_issued_by_employee.employee_id 
           AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
           AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
