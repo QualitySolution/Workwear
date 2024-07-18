@@ -901,7 +901,7 @@
         WHEN 'Month' THEN norms_item.period_count
         END AS wearing_period,
     GROUP_CONCAT(DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y')) as operation_date,
-    GROUP_CONCAT(issuance_sheet_items.issuance_sheet_id) as issuance_sheet,
+    GROUP_CONCAT(IFNULL(issuance_sheet.doc_number, issuance_sheet.id)) as issuance_sheet,
     IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
         FROM operation_issued_by_employee as op2
              LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
@@ -923,6 +923,7 @@ FROM operation_issued_by_employee
          LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
          LEFT JOIN norms_item ON norms_item.id = operation_issued_by_employee.norm_item_id
          LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+         LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
   AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
   AND (@issue_type = '' OR item_types.issue_type = @issue_type)
