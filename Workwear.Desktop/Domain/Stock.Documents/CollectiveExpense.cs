@@ -161,12 +161,12 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 
 			var needPositionAmount = employeeCardItem.CalculateRequiredIssue(baseParameters, Date); //Количество которое нужно выдать
-			if(employeeCardItem.BestChoiceInStock.Any()) {
-				var position = employeeCardItem.BestChoiceInStock.FirstOrDefault();
-				if(position.Amount >= needPositionAmount) 
-					return AddItem(employeeCardItem, position.Position, needPositionAmount);//Частичных выдач не делаем
-			}
-			return AddItem(employeeCardItem); 
+			var position = employeeCardItem.BestChoiceInStock.FirstOrDefault(x => x.Amount >= needPositionAmount);
+			
+			if(position != null)
+				return AddItem(employeeCardItem, position.Position, needPositionAmount);//Частичных выдач не делаем
+			else
+				return AddItem(employeeCardItem); 
 		}
 
 		public virtual void RemoveItem(CollectiveExpenseItem item)

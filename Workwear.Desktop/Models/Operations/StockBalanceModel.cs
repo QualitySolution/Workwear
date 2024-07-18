@@ -18,6 +18,11 @@ namespace Workwear.Models.Operations {
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 		}
 		
+		/// <summary>
+		/// Только для тестов
+		///	</summary>
+		public StockBalanceModel() { }
+		
 		#region Helpers
 		private IUnitOfWork UoW => unitOfWorkProvider?.UoW;
 		#endregion
@@ -86,7 +91,7 @@ namespace Workwear.Models.Operations {
 		#endregion
 		
 		#region Получение данных
-		public IEnumerable<StockBalance> Balances => stockBalances;
+		public virtual IEnumerable<StockBalance> Balances => stockBalances;
 		public IEnumerable<StockBalance> ForNomenclature(params Nomenclature[] nomenclatures) => stockBalances.Where(x => nomenclatures.Contains(x.Position.Nomenclature));
 		public int GetAmount(StockPosition stockPosition) => stockBalances.FirstOrDefault(x => x.Position.Equals(stockPosition))?.Amount ?? 0;
 		#endregion

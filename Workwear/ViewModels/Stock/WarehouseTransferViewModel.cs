@@ -12,6 +12,8 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.Report;
+using QS.Report.ViewModels;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
@@ -143,6 +145,22 @@ namespace Workwear.ViewModels.Stock
 		}
 		public bool ValidateNomenclature(TransferItem transferItem) {
 			return transferItem.Amount <= transferItem.AmountInStock;
+		}
+		
+		public void Print() {
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Накладная на внутреннее перемещение №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
+				Identifier = "Documents.TransferInvoice",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }
