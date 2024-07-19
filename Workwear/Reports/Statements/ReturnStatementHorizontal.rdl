@@ -50,7 +50,7 @@
           <TableColumn>
             <Width>57.8pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>99.4pt</Width>
           </TableColumn>
         </TableColumns>
@@ -97,7 +97,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox35">
                       <Value>Спецодежда, спецобувь и предохранительные приспособления</Value>
@@ -155,7 +155,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox39">
                       <Value>Причины</Value>
@@ -215,7 +215,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
                       <Value>Наименование</Value>
@@ -306,7 +306,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox41">
                       <Value>возврата</Value>
@@ -363,7 +363,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox36">
                       <Value>3</Value>
@@ -448,7 +448,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox43">
                       <Value>8</Value>
@@ -508,7 +508,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox40">
                       <Value>={nomenclature_name} + Iif(Fields!size.IsMissing, "", " " + {size} + Iif(Fields!growth.IsMissing, "", "\\" + {growth}))</Value>
@@ -592,7 +592,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>={comment_return}</Value>
@@ -643,7 +643,7 @@
                   </ReportItems>
                   <ColSpan>2</ColSpan>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox46">
                       <Value></Value>
@@ -684,7 +684,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox34" >
+                    <Textbox Name="Textbox34">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -703,7 +703,7 @@
                   </ReportItems>
                   <ColSpan>1</ColSpan>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
                       <Value>=First({responsible_person_fio}, 'Sheet')</Value>
@@ -765,7 +765,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox47">
                       <Value>(должность)</Value>
@@ -779,13 +779,13 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >8pt</FontSize>
-                        <TextAlign >Center</TextAlign>
+                        <FontSize>8pt</FontSize>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13">
                       <Value></Value>
@@ -1841,12 +1841,12 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    wear_cards.last_name,
-    wear_cards.first_name,
-    wear_cards.patronymic_name,
+    employees.last_name,
+    employees.first_name,
+    employees.patronymic_name,
     nomenclature.name as nomenclature_name,
     nomenclature.number as nomenclature_number,
     measurement_units.name as units,
@@ -1856,7 +1856,7 @@
     stock_income_detail.comment_return
 FROM stock_income_detail
          LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
-         LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id
+         LEFT JOIN employees ON employees.id = stock_income.employee_id
          LEFT JOIN nomenclature on nomenclature.id = stock_income_detail.nomenclature_id
          LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_income_detail.employee_issue_operation_id
          LEFT JOIN item_types ON nomenclature.type_id = item_types.id
@@ -1870,7 +1870,7 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1914,30 +1914,30 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Sheet">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-IFNULL(stock_income.doc_number, stock_income.id)
-        as doc_number,
-stock_income.date AS doc_date,
-CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
-objects.code as subdivision_code,
-CONCAT(wear_cards.last_name, ' ', wear_cards.first_name, ' ', wear_cards.patronymic_name) AS fio,
-users.name as responsible_person_fio,
-(select name from organizations  limit 1) as organizations_name
+        <CommandText>SELECT
+    IFNULL(stock_income.doc_number, stock_income.id)
+                                                                                                                       as doc_number,
+    stock_income.date AS doc_date,
+    CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
+    subdivisions.code as subdivision_code,
+    CONCAT(employees.last_name, ' ', employees.first_name, ' ', employees.patronymic_name) AS fio,
+    users.name as responsible_person_fio,
+    (select name from organizations  limit 1) as organizations_name
 FROM stock_income
-LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id
-LEFT JOIN objects as ob1 ON ob1.id = wear_cards.object_id
-LEFT JOIN objects as ob2 ON ob2.id = ob1.parent_object_id 
-LEFT JOIN objects as ob3 ON ob3.id = ob2.parent_object_id
-LEFT JOIN objects as ob4 ON ob4.id = ob3.parent_object_id
-LEFT JOIN objects as ob5 ON ob5.id = ob4.parent_object_id
-LEFT JOIN objects as ob6 ON ob6.id = ob5.parent_object_id
-LEFT JOIN objects as ob7 ON ob7.id = ob6.parent_object_id
-LEFT JOIN objects as ob8 ON ob8.id = ob7.parent_object_id
-LEFT JOIN objects ON objects.id = wear_cards.object_id
-LEFT JOIN departments ON departments.id = wear_cards.department_id
-LEFT JOIN users ON users.id = stock_income.user_id
+         LEFT JOIN employees ON employees.id = stock_income.employee_id
+         LEFT JOIN subdivisions as ob1 ON ob1.id = employees.subdivision_id
+         LEFT JOIN subdivisions as ob2 ON ob2.id = ob1.parent_subdivision_id
+         LEFT JOIN subdivisions as ob3 ON ob3.id = ob2.parent_subdivision_id
+         LEFT JOIN subdivisions as ob4 ON ob4.id = ob3.parent_subdivision_id
+         LEFT JOIN subdivisions as ob5 ON ob5.id = ob4.parent_subdivision_id
+         LEFT JOIN subdivisions as ob6 ON ob6.id = ob5.parent_subdivision_id
+         LEFT JOIN subdivisions as ob7 ON ob7.id = ob6.parent_subdivision_id
+         LEFT JOIN subdivisions as ob8 ON ob8.id = ob7.parent_subdivision_id
+         LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
+         LEFT JOIN departments ON departments.id = employees.department_id
+         LEFT JOIN users ON users.id = stock_income.user_id
 
 WHERE stock_income.id = @id</CommandText>
         <QueryParameters>
@@ -1946,7 +1946,7 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>
@@ -1987,7 +1987,7 @@ WHERE stock_income.id = @id</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>

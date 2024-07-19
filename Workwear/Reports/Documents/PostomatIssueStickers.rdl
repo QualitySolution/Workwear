@@ -183,7 +183,7 @@ FROM postomat_documents as postomat
          LEFT JOIN postomat_document_items as cells on cells.document_id = postomat.id
          LEFT JOIN barcodes on barcodes.id = cells.barcode_id
          LEFT JOIN nomenclature on nomenclature.id = barcodes.nomenclature_id
-         LEFT JOIN wear_cards as employee on employee.id = cells.employee_id
+         LEFT JOIN employees as employee on employee.id = cells.employee_id
 WHERE postomat.id = @id;
 </CommandText>
         <QueryParameters>

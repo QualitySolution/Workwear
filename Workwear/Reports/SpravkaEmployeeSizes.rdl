@@ -19,13 +19,13 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-   'СИБУР' as 'company',   
-    wear_cards.personnel_number as 'tab_num',
-    CONCAT_WS(' ',wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as "employee",
-    objects.name as 'division',
+    'СИБУР' as 'company',
+    employees.personnel_number as 'tab_num',
+    CONCAT_WS(' ',employees.last_name, employees.first_name, employees.patronymic_name) as "employee",
+    subdivisions.name as 'division',
     departments.name as 'department',
     posts.name as 'post',
     IF(s_1.id IS NULL, '-', s_1.name) as 'size_name_1',
@@ -41,41 +41,41 @@
     IF(s_11.id IS NULL, '-', s_11.name) as 'size_name_11',
     IF(s_12.id IS NULL, '-', s_12.name) as 'size_name_12',
     sex
-FROM wear_cards
-        LEFT JOIN objects on wear_cards.object_id = objects.id
-        LEFT JOIN departments on wear_cards.department_id = departments.id
-        LEFT JOIN posts on wear_cards.post_id = posts.id    
-        LEFT JOIN wear_cards_sizes as wci_1 on (wci_1.employee_id = wear_cards.id AND wci_1.size_type_id = 1)
-        LEFT JOIN sizes as s_1 on wci_1.size_id = s_1.id
-        LEFT JOIN wear_cards_sizes as wci_2 on (wci_2.employee_id = wear_cards.id AND wci_2.size_type_id = 2)
-        LEFT JOIN sizes as s_2 on wci_2.size_id = s_2.id
-        LEFT JOIN wear_cards_sizes as wci_3 on (wci_3.employee_id =
-wear_cards.id AND wci_3.size_type_id = 3)
-		LEFT JOIN sizes as s_3 on wci_3.size_id = s_3.id
-        LEFT JOIN wear_cards_sizes as wci_4 on (wci_4.employee_id = wear_cards.id AND wci_4.size_type_id = 4)
-        LEFT JOIN sizes as s_4 on wci_4.size_id = s_4.id
-        LEFT JOIN wear_cards_sizes as wci_5 on (wci_5.employee_id =
-wear_cards.id AND wci_5.size_type_id = 5)
-		LEFT JOIN sizes as s_5 on wci_5.size_id = s_5.id
-        LEFT JOIN wear_cards_sizes as wci_6 on (wci_6.employee_id =
-wear_cards.id AND wci_6.size_type_id = 6)
-		LEFT JOIN sizes as s_6 on wci_6.size_id = s_6.id
-        LEFT JOIN wear_cards_sizes as wci_7 on (wci_7.employee_id = wear_cards.id AND wci_7.size_type_id = 7)
-        LEFT JOIN sizes as s_7 on wci_7.size_id = s_7.id
-        LEFT JOIN wear_cards_sizes as wci_8 on (wci_8.employee_id = wear_cards.id AND wci_8.size_type_id = 8)
-        LEFT JOIN sizes as s_8 on wci_8.size_id = s_8.id
-        LEFT JOIN wear_cards_sizes as wci_9 on (wci_9.employee_id = wear_cards.id AND wci_9.size_type_id = 9)
-        LEFT JOIN sizes as s_9 on wci_9.size_id = s_9.id
-        LEFT JOIN wear_cards_sizes as wci_10 on (wci_10.employee_id = wear_cards.id AND wci_10.size_type_id = 10)
-        LEFT JOIN sizes as s_10 on wci_10.size_id = s_10.id
-        LEFT JOIN wear_cards_sizes as wci_11 on (wci_11.employee_id = wear_cards.id AND wci_11.size_type_id = 11)
-        LEFT JOIN sizes as s_11 on wci_11.size_id = s_11.id
-        LEFT JOIN wear_cards_sizes as wci_12 on (wci_12.employee_id = wear_cards.id AND wci_12.size_type_id = 12)
-        LEFT JOIN sizes as s_12 on wci_12.size_id = s_12.id
+FROM employees
+         LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
+         LEFT JOIN departments on employees.department_id = departments.id
+         LEFT JOIN posts on employees.post_id = posts.id
+         LEFT JOIN employees_sizes as eci_1 on (eci_1.employee_id = employees.id AND eci_1.size_type_id = 1)
+         LEFT JOIN sizes as s_1 on eci_1.size_id = s_1.id
+         LEFT JOIN employees_sizes as eci_2 on (eci_2.employee_id = employees.id AND eci_2.size_type_id = 2)
+         LEFT JOIN sizes as s_2 on eci_2.size_id = s_2.id
+         LEFT JOIN employees_sizes as eci_3 on (eci_3.employee_id =
+                                                employees.id AND eci_3.size_type_id = 3)
+         LEFT JOIN sizes as s_3 on eci_3.size_id = s_3.id
+         LEFT JOIN employees_sizes as eci_4 on (eci_4.employee_id = employees.id AND eci_4.size_type_id = 4)
+         LEFT JOIN sizes as s_4 on eci_4.size_id = s_4.id
+         LEFT JOIN employees_sizes as eci_5 on (eci_5.employee_id =
+                                                employees.id AND eci_5.size_type_id = 5)
+         LEFT JOIN sizes as s_5 on eci_5.size_id = s_5.id
+         LEFT JOIN employees_sizes as eci_6 on (eci_6.employee_id =
+                                                employees.id AND eci_6.size_type_id = 6)
+         LEFT JOIN sizes as s_6 on eci_6.size_id = s_6.id
+         LEFT JOIN employees_sizes as eci_7 on (eci_7.employee_id = employees.id AND eci_7.size_type_id = 7)
+         LEFT JOIN sizes as s_7 on eci_7.size_id = s_7.id
+         LEFT JOIN employees_sizes as eci_8 on (eci_8.employee_id = employees.id AND eci_8.size_type_id = 8)
+         LEFT JOIN sizes as s_8 on eci_8.size_id = s_8.id
+         LEFT JOIN employees_sizes as eci_9 on (eci_9.employee_id = employees.id AND eci_9.size_type_id = 9)
+         LEFT JOIN sizes as s_9 on eci_9.size_id = s_9.id
+         LEFT JOIN employees_sizes as eci_10 on (eci_10.employee_id = employees.id AND eci_10.size_type_id = 10)
+         LEFT JOIN sizes as s_10 on eci_10.size_id = s_10.id
+         LEFT JOIN employees_sizes as eci_11 on (eci_11.employee_id = employees.id AND eci_11.size_type_id = 11)
+         LEFT JOIN sizes as s_11 on eci_11.size_id = s_11.id
+         LEFT JOIN employees_sizes as eci_12 on (eci_12.employee_id = employees.id AND eci_12.size_type_id = 12)
+         LEFT JOIN sizes as s_12 on eci_12.size_id = s_12.id
 WHERE
-    wear_cards.dismiss_date is null;</CommandText>
+    employees.dismiss_date is null;</CommandText>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="company">
           <DataField>company</DataField>
           <rd:TypeName>System.String</rd:TypeName>

@@ -16,13 +16,13 @@
         <CommandText>select items.terminal_location,
        doc.create_time                                                                         as date,
        barcodes.title                                                                          as barcode,
-       CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as FIO,
+       CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as FIO,
        nomenclature.name                                                                       as nomenclature
 from postomat_documents_withdraw as doc
          left join postomat_document_withdraw_items as items on items.document_withdraw_id = doc.id
          left join barcodes on barcodes.id = items.barcode_id
          left join nomenclature on nomenclature.id = barcodes.nomenclature_id
-         left join wear_cards on wear_cards.id = items.employee_id
+         left join employees on employees.id = items.employee_id
 where doc.id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
