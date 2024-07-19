@@ -40,7 +40,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			Title = "Обслуживание одежды";
 			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
-			postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} {x.Location}");
+			postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 			
 			CreateActions();
 			UpdateOnChanges(typeof(ServiceClaim), typeof(StateOperation));
