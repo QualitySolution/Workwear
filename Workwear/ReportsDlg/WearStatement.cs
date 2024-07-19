@@ -11,7 +11,7 @@ namespace workwear
 		public WearStatement()
 		{
 			this.Build();
-			ComboWorks.ComboFillReference(comboObject, "objects", ComboWorks.ListMode.OnlyItems);
+			ComboWorks.ComboFillReference(comboObject, "subdivisions", ComboWorks.ListMode.OnlyItems);
 			comboObject.Active = 0;
 		}
 

@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Company
 	{
 		public SubdivisionMap ()
 		{
-			Table ("objects");
+			Table ("subdivisions");
 
 			if(MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
@@ -19,11 +19,11 @@ namespace Workwear.HibernateMapping.Company
 			Map (x => x.Address).Column ("address");
 
 			References(x => x.Warehouse).Column("warehouse_id");
-			References(x => x.ParentSubdivision).Column("parent_object_id");
+			References(x => x.ParentSubdivision).Column("parent_subdivision_id");
 			
 			HasMany (x => x.ChildSubdivisions)
 				.Inverse()
-				.KeyColumn ("parent_object_id").Not.KeyNullable()
+				.KeyColumn ("parent_subdivision_id").Not.KeyNullable()
 				.LazyLoad();
 		}
 	}
