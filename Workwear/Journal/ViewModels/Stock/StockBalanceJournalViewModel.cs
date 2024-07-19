@@ -222,6 +222,14 @@ namespace workwear.Journal.ViewModels.Stock
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		
+		public override string FooterInfo {
+			get => $"Суммарная стоимость: " +
+			       $"{CurrencyWorks.GetShortCurrencyString(DataLoader.Items.Cast<StockBalanceJournalNode>().Sum(x => x.SumSaleCost))} " +
+			       $"    Загружено:	" +
+			       $"{DataLoader.Items.Count} шт.";
+			set { }
+		}
 	}
 
 	public class StockBalanceJournalNode
@@ -243,6 +251,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public string OwnerName { get; set; }
 		public decimal SaleCost { get; set; }
 		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
+		public decimal SumSaleCost => SaleCost > 0 ? SaleCost * Amount : 0;
+		public string SumSaleCostText => CurrencyWorks.GetShortCurrencyString (SumSaleCost);
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");
