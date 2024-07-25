@@ -371,9 +371,9 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
 				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssuanceSheetId}").SearchHighlight()
-					.AddColumn("Дата").AddTextRenderer(node => node.OperationTimeText)
-					.AddColumn("Документ").Resizable().AddTextRenderer(node => node.DocumentText)
-					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()
+					.AddColumn("Дата").ToolTipText(n => n.RowTooltip).AddTextRenderer(node => node.OperationTimeText)
+					.AddColumn("Документ").ToolTipText(n => n.RowTooltip).Resizable().AddTextRenderer(node => node.DocumentText)
+					.AddColumn("Наименование").ToolTipText(n => n.RowTooltip).Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(700).SearchHighlight()
 					.AddColumn("Сотрудник").Resizable().AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.WearSizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
