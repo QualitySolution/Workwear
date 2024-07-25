@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -332,17 +332,8 @@ namespace Workwear.ViewModels.Export {
 					GtkHelper.WaitRedraw();
 					
 					DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
-					DateTime? vacationEnd;
 					//список созданных объектов операций
 					List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>(); 
-					
-					//отпускники
-					var vacation = item.EmployeeCard.CurrentVacation(startDate);
-					if(vacation != null)
-						if(vacation.EndDate < EndDate)
-							vacationEnd = vacation.EndDate;
-						else 						
-							continue;
 
 					//номенклатура с максимальной стоимостью
 					Nomenclature nomenclature = null;
