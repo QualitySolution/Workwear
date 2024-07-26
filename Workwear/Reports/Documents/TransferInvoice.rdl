@@ -140,7 +140,7 @@ users.name as 'user_name'
   <Body>
     <ReportItems>
       <Table Name="Table1">
-        <DataSetName>Data</DataSetName>
+        <DataSetName>Header</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
@@ -1145,7 +1145,14 @@ users.name as 'user_name'
                         <FontWeight>Bold</FontWeight>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
-                        <BorderWidth />
+                        <BorderWidth>
+                          <Default>1pt</Default>
+                          <Left>1pt</Left>
+                          <Right>1pt</Right>
+                          <Top>1pt</Top>
+                          <Bottom>1pt</Bottom>
+                        </BorderWidth>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1194,6 +1201,10 @@ users.name as 'user_name'
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Left>Solid</Left>
+                          <Right>Solid</Right>
+                          <Top>Solid</Top>
+                          <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />

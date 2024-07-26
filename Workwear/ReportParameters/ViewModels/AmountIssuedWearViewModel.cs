@@ -104,7 +104,7 @@ namespace workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(ByEmployee))]
 		[PropertyChangedAlso(nameof(BySize))]
 		public virtual bool ByOperation {
-			get => byOperation;
+			get => ReportType == AmountIssuedWearReportType.Flat && byOperation;
 			set => SetField(ref byOperation, ReportType == AmountIssuedWearReportType.Flat && value);
 		}
 
