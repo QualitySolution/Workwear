@@ -140,7 +140,7 @@ users.name as 'user_name'
   <Body>
     <ReportItems>
       <Table Name="Table1">
-        <DataSetName>Header</DataSetName>
+        <DataSetName>Data</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
