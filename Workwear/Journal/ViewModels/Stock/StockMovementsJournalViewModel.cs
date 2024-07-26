@@ -220,6 +220,7 @@ namespace workwear.Journal.ViewModels.Stock
 			else {
 				queryStock.SelectList(list => list
 					.Select(() => warehouseOperationAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => warehouseOperationAlias.Id).WithAlias(() => resultAlias.OperationId)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.OperationTime)
 					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
 					.Select(receiptProjection).WithAlias(() => resultAlias.Receipt)
@@ -280,6 +281,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockMovementsJournalNode : OperationToDocumentReference
 	{
 		public int Id { get; set; }
+		public int? OperationId { get; set; }
 		public int? IssuanceSheetId { get; set; }
 		public DateTime OperationTime { get; set; }
 		public string UnitsName { get; set; }
@@ -306,6 +308,8 @@ namespace workwear.Journal.ViewModels.Stock
 				return "<span foreground=\"Fuchsia\" weight=\"ultrabold\">?</span>";
 			}
 		}
+
+		public string RowTooltip => OperationId.HasValue ? $"ИД складской операции: {OperationId}" : null;
 		public string EmployeeSurname { get; set; }
 		public string EmployeeName { get; set; }
 		public string EmployeePatronymic { get; set; }

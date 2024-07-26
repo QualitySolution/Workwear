@@ -798,7 +798,7 @@ LIMIT 1
     operation_issued_by_employee.wear_percent * 100
 ) AS wearout, 
 IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
-    CONCAT('Ведомость №', issuance_sheet_items.issuance_sheet_id)) AS issue_sign, 
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))) AS issue_sign, 
 CONCAT_WS(
     '\n',
     GROUP_CONCAT(
@@ -834,6 +834,7 @@ CONCAT_WS(
         LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
         LEFT JOIN operation_warehouse ON operation_issued_by_employee.warehouse_operation_id = operation_warehouse.id
         LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+        LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
         LEFT JOIN(
             SELECT
                 return_detail.issued_operation_id,
