@@ -298,20 +298,21 @@ public partial class MainWindow : Gtk.Window {
 
 	#region Workwear featrures
 	private void DisableFeatures() {
-		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
-		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
+		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionClothingService.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
+		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
+		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
+		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
-		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
@@ -319,18 +320,15 @@ public partial class MainWindow : Gtk.Window {
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
-		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
-						 || FeaturesService.Available(WorkwearFeature.Postomats);
-
-		#region Для спецпошива
-		ActionPay.Visible = false;
-		#endregion
+						 || FeaturesService.Available(WorkwearFeature.Postomats)
+						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
 	}
 	#endregion
 
@@ -880,5 +878,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionClothingServiceReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ClothingServiceReportViewModel));
+	}
+
+	protected void OnActionSpecCoinsBalanceActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<SpecCoinsBalanceJournalViewModel>(null);
 	}
 }
