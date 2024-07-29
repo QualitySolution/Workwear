@@ -3,8 +3,21 @@
 package QS.Cloud.WearLk.Manage;
 
 service SpecCoinsManager{
+	rpc GetListBalances(GetListBalancesRequest) returns (GetListBalancesResponse);
 	rpc GetCoinsBalance(GetCoinsBalanceRequest) returns (GetCoinsBalanceResponse);
 	rpc CreateCoinsOperation(CreateCoinsOperationRequest) returns (CreateCoinsOperationResponse);
+}
+//Получение списка балансов
+message GetListBalancesRequest{
+}
+
+message GetListBalancesResponse{
+	repeated UserBalance balances = 1;
+}
+
+message UserBalance{
+	string phone = 1;
+	int32 balance = 2;
 }
 
 //Получение баланса

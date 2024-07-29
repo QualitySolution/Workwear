@@ -84,6 +84,15 @@ namespace workwear.Journal
 					.AddColumn("Ссылка").AddTextRenderer(node => node.LinkText)
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<SpecCoinsBalanceJournalViewModel>(
+				() => FluentColumnsConfig<SpecCoinsBalanceJournalNode>.Create()
+					.AddColumn("Табельный №").AddTextRenderer(x => x.PersonnelNumber)
+					.AddColumn("Ф.И.О.").AddTextRenderer(x => x.EmployeeText)
+					.AddColumn("Телефон").AddTextRenderer(x => x.EmployeePhone)
+					.AddColumn("Баланс").AddTextRenderer(x => x.EmployeeBalanceText)
+					.Finish()
+			);
 			#endregion
 
 			#region Company
