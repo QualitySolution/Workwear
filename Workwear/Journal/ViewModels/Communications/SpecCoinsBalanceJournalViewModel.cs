@@ -8,30 +8,31 @@ using QS.Cloud.WearLk.Client;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Communications {
 	public class SpecCoinsBalanceJournalViewModel : JournalViewModelBase {
 		private readonly SpecCoinManagerService specCoinManagerService;
-		private readonly IProgressBarDisplayable globalProgress;
 
 		public SpecCoinsBalanceJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigation,
-			SpecCoinManagerService specCoinManagerService,
-			IProgressBarDisplayable globalProgress) : base(unitOfWorkFactory, interactiveService, navigation) {
+			SpecCoinManagerService specCoinManagerService) : base(unitOfWorkFactory, interactiveService, navigation) {
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
-			this.globalProgress = globalProgress ?? throw new ArgumentNullException(nameof(globalProgress));
 			Title = "Баланс спецкойнов";
 			SearchEnabled = false;
 			
 			var loader = new AnyDataLoader<SpecCoinsBalanceJournalNode>(GetBalanceNodes);
 			loader.DynamicLoadingEnabled = false;
 			DataLoader = loader;
+			CreateNodeActions();
 		}
 
 		private IList<SpecCoinsBalanceJournalNode> GetBalanceNodes(CancellationToken token) {
@@ -60,8 +61,35 @@ namespace workwear.Journal.ViewModels.Communications {
 			}
 			return result;
 		}
+
+		protected override void CreateNodeActions() {
+			NodeActionsList.Clear();
+			
+			NodeActionsList.Add(new JournalAction("Открыть сотрудника", 
+				selected => selected.Any(),
+				selected => true,
+				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnOpenEmployee)));
+			NodeActionsList.Add(new JournalAction( "Списать спецкойны",
+				selected => selected.Any(),
+				selected => true,
+				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnDeductSpecCoins)));
+		}
+
+		private void OnOpenEmployee(SpecCoinsBalanceJournalNode node) {
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(node.Id));
+		}
+		
+		private void OnDeductSpecCoins(SpecCoinsBalanceJournalNode node) {
+			NavigationManager.OpenViewModel<DeductSpecCoinsViewModel, string, int, Action>
+			(
+				this,
+				node.EmployeePhone,
+				node.Balance,
+				() => Refresh()
+			);
+		}
 	}
-	
+
 	public class SpecCoinsBalanceJournalNode{
 		public int Id { get; set; }
 		public string EmployeePhone { get; set; }
