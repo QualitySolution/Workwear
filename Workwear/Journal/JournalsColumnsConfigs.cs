@@ -101,6 +101,7 @@ namespace workwear.Journal
 					.AddColumn("Причина").AddReadOnlyTextRenderer(node => node.OperationDescription)
 					.AddColumn("Оценка").AddReadOnlyTextRenderer(node => node.Rating)
 					.AddColumn("Отзыв").AddReadOnlyTextRenderer(node => node.RatingDescription).WrapWidth(500)
+					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.NomenclatureName)
 					.Finish()
 			);
 			#endregion
