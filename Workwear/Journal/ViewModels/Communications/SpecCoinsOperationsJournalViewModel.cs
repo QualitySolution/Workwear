@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using NHibernate.Criterion;
@@ -113,7 +114,9 @@ namespace workwear.Journal.ViewModels.Communications {
 		public string CreateTime => Operation.CreateTime.ToDateTime().ToLongTimeString();
 		public int Coin => Operation.Coin;
 		public string OperationDescription => Operation.Description;
-		public string Rating => new string('⭐', (int)(Operation.Rating?.Rating ?? 0));
+		public string Rating => new string(star, (int)(Operation.Rating?.Rating ?? 0));
 		public string RatingDescription => $"{Operation.Rating?.Description}";
+		
+		private readonly char star = Path.DirectorySeparatorChar == '\\' ? '★' : '⭐';
 	}
 }
