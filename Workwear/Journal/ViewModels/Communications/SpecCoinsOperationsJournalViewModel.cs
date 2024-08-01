@@ -92,7 +92,7 @@ namespace workwear.Journal.ViewModels.Communications {
 			NodeActionsList.Clear();
 			
 			NodeActionsList.Add(new JournalAction( "Списать спецкойны",
-				selected => true,
+				selected => Items?.Cast<SpecCoinsOperationsJournalNode>().Select(x => x.Operation.Coin).Sum() > 0,
 				selected => true,
 				selected => OnDeductSpecCoins()));
 		}

@@ -74,9 +74,9 @@ namespace workwear.Journal.ViewModels.Communications {
 				selected => true,
 				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnOpenOperations)));
 			NodeActionsList.Add(new JournalAction( "Списать спецкойны",
-				selected => selected.Any(),
+				selected => selected.Cast<SpecCoinsBalanceJournalNode>().Any(x => x.Balance > 0),
 				selected => true,
-				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnDeductSpecCoins)));
+				selected => selected.Cast<SpecCoinsBalanceJournalNode>().Where(x => x.Balance > 0).ToList().ForEach(OnDeductSpecCoins)));
 		}
 
 		private void OnOpenEmployee(SpecCoinsBalanceJournalNode node) {
