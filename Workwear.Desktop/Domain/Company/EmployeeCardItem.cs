@@ -170,7 +170,7 @@ namespace Workwear.Domain.Company
 				if(InStockState == StockStateInfo.UnknownNomenclature)
 					return "нет подходящей";
 
-				if(StockBalanceModel == null || !InStock.Any())
+				if(StockBalanceModel == null || !InStock.Any() || !BestChoiceInStock.Any())
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
@@ -186,8 +186,8 @@ namespace Workwear.Domain.Company
 		public virtual string AmountByNormText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
 		public virtual string InStockText => 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? 
-			InStock?.Sum(x => x.Amount).ToString();
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ?? 
+			BestChoiceInStock.Sum(x => x.Amount).ToString();
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;

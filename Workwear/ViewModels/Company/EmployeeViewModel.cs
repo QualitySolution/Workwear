@@ -24,6 +24,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
+using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
@@ -204,7 +205,6 @@ namespace Workwear.ViewModels.Company
 
 		#region Sensetive
 		public bool SensitiveCardNumber => !AutoCardNumber;
-
 		public bool SensitiveDeductSpecCoins => SpecCoinsBalance > 0;
 		#endregion
 
@@ -431,7 +431,13 @@ namespace Workwear.ViewModels.Company
 					Entity.Sex = sex;
 			}
 		}
-		
+
+		#endregion
+		#region MyRegion
+
+		public void OpenCoinsOperations() {
+			NavigationManager.OpenViewModel<SpecCoinsOperationsJournalViewModel, EmployeeCard>(this, Entity);
+		}
 		public void OpenDeductCoinsView() 
 		{
 			NavigationManager.OpenViewModel<DeductSpecCoinsViewModel, string, int, Action>
