@@ -69,6 +69,10 @@ namespace workwear.Journal.ViewModels.Communications {
 				selected => selected.Any(),
 				selected => true,
 				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnOpenEmployee)));
+			NodeActionsList.Add(new JournalAction( "История операций",
+				selected => selected.Any(),
+				selected => true,
+				selected => selected.Cast<SpecCoinsBalanceJournalNode>().ToList().ForEach(OnOpenOperations)));
 			NodeActionsList.Add(new JournalAction( "Списать спецкойны",
 				selected => selected.Any(),
 				selected => true,
@@ -87,6 +91,11 @@ namespace workwear.Journal.ViewModels.Communications {
 				node.Balance,
 				() => Refresh()
 			);
+		}
+		
+		private void OnOpenOperations(SpecCoinsBalanceJournalNode node) {
+			var employee = UoW.GetById<EmployeeCard>(node.Id);
+			NavigationManager.OpenViewModel<SpecCoinsOperationsJournalViewModel, EmployeeCard>(this, employee);
 		}
 	}
 

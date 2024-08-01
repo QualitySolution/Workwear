@@ -145,6 +145,20 @@ namespace QS.Cloud.WearLk.Client
 				return rpcEx.Status.Detail;
 			}
 		}
+		
+		public IList<CoinsOperation> GetCoinsOperations(string employeePhone, CancellationToken token)
+		{
+			if(string.IsNullOrWhiteSpace(employeePhone))
+				throw new ArgumentNullException(nameof(employeePhone));
+
+			SpecCoinsManager.SpecCoinsManagerClient client = new SpecCoinsManager.SpecCoinsManagerClient(Channel);
+			GetCoinsOperationsRequest request = new GetCoinsOperationsRequest {
+				Phone = employeePhone
+			};
+
+			GetCoinsOperationsResponse response = client.GetCoinsOperations(request, Headers, cancellationToken: token);
+			return response.Operations;
+		}
 		#endregion
 	}
 }

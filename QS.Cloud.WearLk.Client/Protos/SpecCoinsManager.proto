@@ -1,11 +1,14 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package QS.Cloud.WearLk.Manage;
 
 service SpecCoinsManager{
 	rpc GetListBalances(GetListBalancesRequest) returns (GetListBalancesResponse);
 	rpc GetCoinsBalance(GetCoinsBalanceRequest) returns (GetCoinsBalanceResponse);
 	rpc CreateCoinsOperation(CreateCoinsOperationRequest) returns (CreateCoinsOperationResponse);
+	rpc GetCoinsOperations(GetCoinsOperationsRequest) returns (GetCoinsOperationsResponse);
 }
 //Получение списка балансов
 message GetListBalancesRequest{
@@ -37,4 +40,35 @@ message CreateCoinsOperationRequest{
 }
 message CreateCoinsOperationResponse{
 	string result = 1;
+}
+
+//Получение истории операций
+message GetCoinsOperationsRequest{
+	string phone = 1;
+}
+
+message GetCoinsOperationsResponse{
+	repeated CoinsOperation operations = 1;
+}
+
+message CoinsOperation{
+	uint32 coin_id = 1;
+	google.protobuf.Timestamp create_time = 2;
+	int32 coin = 3;
+	string description = 4;
+	optional CoinsOperationRating rating = 5;
+}
+
+enum CoinsOperationRatingType{
+	RATING_TYPE_ISSUE = 0;
+	RATING_TYPE_WASHING = 1;
+}
+
+message CoinsOperationRating{
+	CoinsOperationRatingType type = 1;
+	uint32 rating_id = 2;
+	uint32 rating = 3;
+	string description = 4;
+	optional uint32 issue_operation_id = 5;
+	optional uint32 service_claim_id = 6;
 }
