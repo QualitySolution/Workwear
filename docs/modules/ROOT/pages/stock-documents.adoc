@@ -117,7 +117,7 @@ image::stock-documents_transfer.png[]
 
 .Печатная форма документа перемещения
 ****
-image::stock-documents_transfer_print.png[]
+image::stock-documents_transfer_torg13.png[]
 ****
 
 
