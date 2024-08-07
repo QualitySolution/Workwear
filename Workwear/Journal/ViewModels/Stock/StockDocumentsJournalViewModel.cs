@@ -249,7 +249,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 			transferQuery.Where(GetSearchCriterion(
 				() => transferAlias.Id,
-				() => transferAlias.DocNumber,
 				() => authorAlias.Name
 			));
 
@@ -342,7 +341,6 @@ namespace workwear.Journal.ViewModels.Stock
 
 			completionQuery.Where(GetSearchCriterion(
 				() => completionAlias.Id,
-				() => completionAlias.DocNumber,
 				() => authorAlias.Name));
 			
 			completionQuery
@@ -370,12 +368,18 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Inspection inspectionAlias = null;
-
+			
 			var inspectionQuery = uow.Session.QueryOver<Inspection>(() => inspectionAlias);
 			if(Filter.StartDate.HasValue)
 				inspectionQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				inspectionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			
+			inspectionQuery.Where(GetSearchCriterion(
+				() => inspectionAlias.Id,
+				() => inspectionAlias.DocNumber,
+				() => authorAlias.Name
+			));
 
 			inspectionQuery
 				.JoinAlias(() => inspectionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
