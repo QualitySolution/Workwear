@@ -12,11 +12,19 @@ namespace workwear.Journal.Filter.Views.Company
 
 		private global::QS.Views.Control.EntityEntry entityDepartment;
 
+		private global::QS.Views.Control.EntityEntry entityNorm;
+
+		private global::QS.Views.Control.EntityEntry entityPost;
+
 		private global::QS.Views.Control.EntityEntry entitySubdivision;
 
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label2;
+
+		private global::Gtk.Label label3;
+
+		private global::Gtk.Label label4;
 
 		protected virtual void Build()
 		{
@@ -25,7 +33,7 @@ namespace workwear.Journal.Filter.Views.Company
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "workwear.Journal.Filter.Views.Company.EmployeeFilterView";
 			// Container child workwear.Journal.Filter.Views.Company.EmployeeFilterView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(5)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -33,7 +41,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.checkShowOnlyWithoutNorms = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowOnlyWithoutNorms.CanFocus = true;
 			this.checkShowOnlyWithoutNorms.Name = "checkShowOnlyWithoutNorms";
-			this.checkShowOnlyWithoutNorms.Label = global::Mono.Unix.Catalog.GetString("Только сотрудники без норм");
+			this.checkShowOnlyWithoutNorms.Label = global::Mono.Unix.Catalog.GetString("Только сотрудники без норм.");
 			this.checkShowOnlyWithoutNorms.DrawIndicator = true;
 			this.checkShowOnlyWithoutNorms.UseUnderline = true;
 			this.table1.Add(this.checkShowOnlyWithoutNorms);
@@ -46,12 +54,12 @@ namespace workwear.Journal.Filter.Views.Company
 			this.checkShowOnlyWork = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowOnlyWork.CanFocus = true;
 			this.checkShowOnlyWork.Name = "checkShowOnlyWork";
-			this.checkShowOnlyWork.Label = global::Mono.Unix.Catalog.GetString("Только работающие");
-			this.checkShowOnlyWork.Active = true;
+			this.checkShowOnlyWork.Label = global::Mono.Unix.Catalog.GetString("Только работающие.");
 			this.checkShowOnlyWork.DrawIndicator = true;
 			this.checkShowOnlyWork.UseUnderline = true;
 			this.table1.Add(this.checkShowOnlyWork);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowOnlyWork]));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entityDepartment = new global::QS.Views.Control.EntityEntry();
@@ -59,43 +67,89 @@ namespace workwear.Journal.Filter.Views.Company
 			this.entityDepartment.Name = "entityDepartment";
 			this.table1.Add(this.entityDepartment);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.entityDepartment]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
-			w3.LeftAttach = ((uint)(2));
-			w3.RightAttach = ((uint)(3));
+			w3.LeftAttach = ((uint)(4));
+			w3.RightAttach = ((uint)(5));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.entityNorm = new global::QS.Views.Control.EntityEntry();
+			this.entityNorm.Events = ((global::Gdk.EventMask)(256));
+			this.entityNorm.Name = "entityNorm";
+			this.table1.Add(this.entityNorm);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.entityNorm]));
+			w4.TopAttach = ((uint)(1));
+			w4.BottomAttach = ((uint)(2));
+			w4.LeftAttach = ((uint)(4));
+			w4.RightAttach = ((uint)(5));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.entityPost = new global::QS.Views.Control.EntityEntry();
+			this.entityPost.Events = ((global::Gdk.EventMask)(256));
+			this.entityPost.Name = "entityPost";
+			this.table1.Add(this.entityPost);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.entityPost]));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
+			w5.LeftAttach = ((uint)(2));
+			w5.RightAttach = ((uint)(3));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.entitySubdivision = new global::QS.Views.Control.EntityEntry();
 			this.entitySubdivision.Events = ((global::Gdk.EventMask)(256));
 			this.entitySubdivision.Name = "entitySubdivision";
 			this.table1.Add(this.entitySubdivision);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
-			w4.LeftAttach = ((uint)(2));
-			w4.RightAttach = ((uint)(3));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
+			w6.LeftAttach = ((uint)(2));
+			w6.RightAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
 			this.label2.Xalign = 1F;
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Отдел:");
 			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
-			w6.TopAttach = ((uint)(1));
-			w6.BottomAttach = ((uint)(2));
-			w6.LeftAttach = ((uint)(1));
-			w6.RightAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(4));
-			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			w8.LeftAttach = ((uint)(3));
+			w8.RightAttach = ((uint)(4));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.Xalign = 1F;
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Норма:");
+			this.table1.Add(this.label3);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
+			w9.TopAttach = ((uint)(1));
+			w9.BottomAttach = ((uint)(2));
+			w9.LeftAttach = ((uint)(3));
+			w9.RightAttach = ((uint)(4));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label4 = new global::Gtk.Label();
+			this.label4.Name = "label4";
+			this.label4.Xalign = 1F;
+			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("     Должность:");
+			this.table1.Add(this.label4);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label4]));
+			w10.TopAttach = ((uint)(1));
+			w10.BottomAttach = ((uint)(2));
+			w10.LeftAttach = ((uint)(1));
+			w10.RightAttach = ((uint)(2));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
