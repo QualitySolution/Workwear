@@ -12758,7 +12758,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Company.EmployeeFilterView" design-size="1386 76">
+  <widget class="Gtk.Bin" id="workwear.Journal.Filter.Views.Company.EmployeeFilterView" design-size="1386 154">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -12772,10 +12772,12 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowOnlyWithoutNorms">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Только сотрудники без норм.</property>
+            <property name="Label" translatable="yes">Только сотрудники без норм</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
+            <property name="FocusOnClick">False</property>
+            <property name="Xalign">1</property>
           </widget>
           <packing>
             <property name="TopAttach">1</property>
@@ -12795,10 +12797,12 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkShowOnlyWork">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Только работающие.</property>
+            <property name="Label" translatable="yes">Только работающие</property>
+            <property name="Active">True</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
+            <property name="Xalign">1</property>
           </widget>
           <packing>
             <property name="AutoSize">False</property>
@@ -12898,7 +12902,7 @@
           <packing>
             <property name="LeftAttach">1</property>
             <property name="RightAttach">2</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
             <property name="XExpand">False</property>
@@ -12955,7 +12959,7 @@
           <widget class="Gtk.Label" id="label4">
             <property name="MemberName" />
             <property name="Xalign">1</property>
-            <property name="LabelProp" translatable="yes">     Должность:</property>
+            <property name="LabelProp" translatable="yes">Должность:</property>
           </widget>
           <packing>
             <property name="TopAttach">1</property>

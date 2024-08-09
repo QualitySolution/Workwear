@@ -34,16 +34,17 @@ namespace workwear.Journal.Filter.Views.Company
 			this.Name = "workwear.Journal.Filter.Views.Company.EmployeeFilterView";
 			// Container child workwear.Journal.Filter.Views.Company.EmployeeFilterView.Gtk.Container+ContainerChild
 			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(5)), false);
-			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
 			this.checkShowOnlyWithoutNorms = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowOnlyWithoutNorms.CanFocus = true;
 			this.checkShowOnlyWithoutNorms.Name = "checkShowOnlyWithoutNorms";
-			this.checkShowOnlyWithoutNorms.Label = global::Mono.Unix.Catalog.GetString("Только сотрудники без норм.");
+			this.checkShowOnlyWithoutNorms.Label = global::Mono.Unix.Catalog.GetString("Только сотрудники без норм");
 			this.checkShowOnlyWithoutNorms.DrawIndicator = true;
 			this.checkShowOnlyWithoutNorms.UseUnderline = true;
+			this.checkShowOnlyWithoutNorms.FocusOnClick = false;
+			this.checkShowOnlyWithoutNorms.Xalign = 1F;
 			this.table1.Add(this.checkShowOnlyWithoutNorms);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowOnlyWithoutNorms]));
 			w1.TopAttach = ((uint)(1));
@@ -54,9 +55,11 @@ namespace workwear.Journal.Filter.Views.Company
 			this.checkShowOnlyWork = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowOnlyWork.CanFocus = true;
 			this.checkShowOnlyWork.Name = "checkShowOnlyWork";
-			this.checkShowOnlyWork.Label = global::Mono.Unix.Catalog.GetString("Только работающие.");
+			this.checkShowOnlyWork.Label = global::Mono.Unix.Catalog.GetString("Только работающие");
+			this.checkShowOnlyWork.Active = true;
 			this.checkShowOnlyWork.DrawIndicator = true;
 			this.checkShowOnlyWork.UseUnderline = true;
+			this.checkShowOnlyWork.Xalign = 1F;
 			this.table1.Add(this.checkShowOnlyWork);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowOnlyWork]));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -141,7 +144,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.label4 = new global::Gtk.Label();
 			this.label4.Name = "label4";
 			this.label4.Xalign = 1F;
-			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("     Должность:");
+			this.label4.LabelProp = global::Mono.Unix.Catalog.GetString("Должность:");
 			this.table1.Add(this.label4);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label4]));
 			w10.TopAttach = ((uint)(1));
