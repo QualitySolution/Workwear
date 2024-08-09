@@ -28,26 +28,16 @@ namespace workwear.Journal.ViewModels.Company
 		public object Tag;
 
 		public readonly FeaturesService FeaturesService;
-		private readonly Norm norm;
-
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null,
-										//Ограничения журнала
-										Norm norm = null) 
+										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			this.norm = norm;
-
-			if(norm != null) {
-				norm = UoW.GetById<Norm>(norm.Id); //Загружаем из своей сессии.
-				Title = "Использующие норму: " + norm.Title;
-			}
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -73,11 +63,11 @@ namespace workwear.Journal.ViewModels.Company
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
 				employees.Where(x => x.Department.Id == Filter.Department.Id);
-
-			if(norm != null) {
+			if(Filter.Post != null)
+				employees.Where(x => x.Post.Id == Filter.Post.Id);
+			if(Filter.Norm != null) 
 				employees.JoinAlias(x => x.UsedNorms, () => normAlias)
-				 .Where(x => normAlias.Id == norm.Id);
-			}
+						 .Where(x => normAlias.Id == Filter.Norm.Id);
 
 			return employees
 				.Where(MakeSearchCriterion<EmployeeCard>().By(
@@ -160,7 +150,7 @@ namespace workwear.Journal.ViewModels.Company
 		public int? VacationId { get; private set; }
 
 		public bool InVocation => VacationId.HasValue;
-
+		
 		[SearchHighlight]
 		public string Comment { get; set; }
 
