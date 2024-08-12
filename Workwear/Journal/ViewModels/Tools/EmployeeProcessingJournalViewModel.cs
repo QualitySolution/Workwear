@@ -110,6 +110,10 @@ namespace workwear.Journal.ViewModels.Tools
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
 				employees.Where(x => x.Department.Id == Filter.Department.Id);
+			if(Filter.Post != null)
+				employees.Where(x => x.Post.Id == Filter.Post.Id);
+			if(Filter.Norm != null) 
+				employees.Where(x => normAlias.Id == Filter.Norm.Id);
 
 			var normProjection = CustomProjections.GroupConcat(Projections.SqlFunction("coalesce", NHibernateUtil.String, Projections.Property(() => normAlias.Name), Projections.Property(() => normAlias.Id)), separator: "\n");
 
