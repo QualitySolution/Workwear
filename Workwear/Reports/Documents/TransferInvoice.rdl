@@ -92,10 +92,10 @@ users.name as 'user_name'
       </Fields>
     </DataSet>
     <DataSet Name="Header">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-	stock_transfer.id as 'num_doc', 
+    IFNULL(doc.doc_number, doc.id) as 'num_doc', 
 	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
 	wh.name as 'warehouse_name_from', 
 	wh2.name as 'warehouse_name_to'
@@ -112,7 +112,7 @@ users.name as 'user_name'
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="num_doc">
           <DataField>num_doc</DataField>
           <TypeName>System.UInt32</TypeName>
