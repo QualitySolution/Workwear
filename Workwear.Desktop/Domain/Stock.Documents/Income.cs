@@ -37,7 +37,10 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		public virtual string DocNumberText {
 			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
-			set => DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+			set { 
+				if(!AutoDocNumber) 
+					DocNumber = value; 
+			}
 		}
 		
 		private IncomeOperations operation;
@@ -81,9 +84,9 @@ namespace Workwear.Domain.Stock.Documents
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return $"Приходная накладная №{DocNumber ?? Id.ToString()} от {Date:d}";
+					return $"Приходная накладная №{DocNumberText ?? Id.ToString()} от {Date:d}";
 				case IncomeOperations.Return:
-					return $"Возврат от работника №{DocNumber ?? Id.ToString()} от {Date:d}";
+					return $"Возврат от работника №{DocNumberText ?? Id.ToString()} от {Date:d}";
 				default:
 					return null;
 				}

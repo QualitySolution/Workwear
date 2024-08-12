@@ -249,6 +249,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			transferQuery.Where(GetSearchCriterion(
 				() => transferAlias.Id,
+				() => transferAlias.DocNumber,
 				() => authorAlias.Name
 			));
 
@@ -258,6 +259,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => transferAlias.WarehouseTo, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => transferAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => transferAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
@@ -341,6 +343,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			completionQuery.Where(GetSearchCriterion(
 				() => completionAlias.Id,
+				() => completionAlias.DocNumber,
 				() => authorAlias.Name));
 			
 			completionQuery
@@ -349,6 +352,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => completionAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => completionAlias.Date).WithAlias(() => resultAlias.Date)
 			            .Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 			            .Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
@@ -466,7 +470,7 @@ namespace workwear.Journal.ViewModels.Stock
 		
 		public string DocNumber { get; set; }
 
-		public string DocNumberText => DocNumber ?? Id.ToString();
+		public string DocNumberText => String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber;
 
 		public StockDocumentType DocTypeEnum { get; set; }
 
@@ -510,7 +514,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public int? IssueSheetId { get; set; }
 		public string IssueSheetNumber { get; set; }
-		public string IssueSheetNumberText => IssueSheetNumber ?? IssueSheetId.ToString();
+		public string IssueSheetNumberText => String.IsNullOrWhiteSpace(IssueSheetNumber) ? IssueSheetId.ToString() : IssueSheetNumber;
 
 		private DateTime? creationDate;
 		public DateTime? CreationDate {

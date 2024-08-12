@@ -106,7 +106,7 @@ namespace Workwear.Domain.Statements
 
 		#region Вычисляемые свойства
 
-		public virtual string Title => $"Ведомость №{DocNumber ?? Id.ToString()}";
+		public virtual string Title => $"Ведомость №{(String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber)}";
 
 		#endregion
 

@@ -11,10 +11,10 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Header">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-	stock_transfer.id as 'num_doc', 
+    IFNULL(doc.doc_number, doc.id) as 'num_doc', 
 	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
 	wh.name as 'warehouse_name_from', 
 	wh2.name as 'warehouse_name_to'
@@ -31,7 +31,7 @@
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="num_doc">
           <DataField>num_doc</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
