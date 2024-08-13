@@ -40,10 +40,10 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IObservableList<TransferItem> Items {
 			get => items;
 			set => SetField(ref items, value);
-		}
+		} 
 		#endregion
 		#region Расчетные
-		public virtual string Title => $"Перемещение №{Id} от {Date:d}";
+		public virtual string Title => $"Перемещение №{DocNumberText} от {Date:d}";
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
