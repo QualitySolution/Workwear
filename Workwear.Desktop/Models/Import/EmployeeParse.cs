@@ -33,7 +33,7 @@ namespace Workwear.Models.Import
 				return false;
 			nameWithInitials.SplitNameWithInitials(out var lastName, out var firstName, out var patronymic);
 			return CompareString(lastName, employee.LastName)
-			       && CompareString(firstName, employee.FirstName.FirstOrDefault().ToString())
+			       && CompareString(firstName, employee.FirstName?.FirstOrDefault().ToString())
 			       && CompareString(patronymic, employee.Patronymic?.FirstOrDefault().ToString());
 		}
 
