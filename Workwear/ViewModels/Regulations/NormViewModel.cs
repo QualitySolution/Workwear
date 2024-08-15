@@ -101,7 +101,8 @@ namespace Workwear.ViewModels.Regulations
 			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
 				.IfEntity<Norm>()
 				.AndWhere(x => x.Id == Entity.Id)
-				.AndChangeType(TypeOfChangeEvent.Update);
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndDiffAnyOfProperties(x => x.Archival);
 			
 			performance.CheckPoint("Конец");
 			performance.PrintAllPoints(logger);
@@ -360,7 +361,6 @@ namespace Workwear.ViewModels.Regulations
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-			UoW.Save(Entity);
 			
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
