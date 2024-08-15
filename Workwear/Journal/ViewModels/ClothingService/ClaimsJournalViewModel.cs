@@ -53,7 +53,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			Barcode barcodeAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			EmployeeCard employeeAlias = null;
-			
+
 			var subqueryLastState = QueryOver.Of<StateOperation>(() => stateOperationAlias)
 				.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
 				.OrderBy(() => stateOperationAlias.OperationTime).Desc
@@ -69,9 +69,13 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			var query = uow.Session.QueryOver(() => serviceClaimAlias);
 			if(!Filter.ShowClosed)
 				query.Where(x => x.IsClosed == false);
+			if(Filter.ShowOnlyRepair)
+				query.Where(x => x.NeedForRepair == true);
 			if(Filter.PostomatId != 0)
 				query.Where(x => x.PreferredTerminalId == Filter.PostomatId);
-
+			if(Filter.Status != null)
+				query.WithSubquery.WhereValue(Filter.Status).Eq(subqueryLastState);
+			
 			return query
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Name,
