@@ -26,7 +26,7 @@ node {
       } catch (e) {}
       finally{
       	 discoverGitReferenceBuild()
-         recordCoverage ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: 'TestResults/*/coverage.cobertura.xml']]
+         recordCoverage ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: '**/coverage.cobertura.xml']]
          mstest testResultsFile:"**/*.trx", keepLongStdio: true
       }
    }
