@@ -86,7 +86,7 @@ namespace Workwear.ViewModels.Regulations
 			EmployeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(thisViewModel);
 			performance.CheckPoint("Создание дочерних вию моделей");
 			
-			this.changeWatcher.BatchSubscribe(Subscriber).OnlyForUow(UoW)
+			this.changeWatcher.BatchSubscribe(SubscriberItems).OnlyForUow(UoW)
 				.IfEntity<NormItem>()
 				.AndWhere(x => x.Norm.Id == Entity.Id)
 				.AndChangeType(TypeOfChangeEvent.Update)
@@ -97,6 +97,11 @@ namespace Workwear.ViewModels.Regulations
 					x => x.NormCondition,
 					x => x.NormPeriod,
 					x => x.PeriodCount);
+
+			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
+				.IfEntity<Norm>()
+				.AndWhere(x => x.Id == Entity.Id)
+				.AndChangeType(TypeOfChangeEvent.Update);
 			
 			performance.CheckPoint("Конец");
 			performance.PrintAllPoints(logger);
@@ -343,7 +348,7 @@ namespace Workwear.ViewModels.Regulations
 		List<NormItem> needRecalculateIssue = new List<NormItem>();
 		bool needUpdateEmployees;
 		
-		private void Subscriber(EntityChangeEvent[] changeevents) {
+		private void SubscriberItems(EntityChangeEvent[] changeevents) {
 			needUpdateEmployees = true;
 			needRecalculateIssue = changeevents.Where(x => x.EventType == TypeOfChangeEvent.Update)
 				.Select(x => x.GetEntity<NormItem>()).ToList();
@@ -355,7 +360,8 @@ namespace Workwear.ViewModels.Regulations
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-
+			UoW.Save(Entity);
+			
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(
