@@ -1807,7 +1807,8 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
   INDEX `fk_stock_transfer_1_idx` (`warehouse_from_id` ASC),
   INDEX `fk_stock_transfer_2_idx` (`warehouse_to_id` ASC),
   INDEX `fk_stock_transfer_3_idx` (`user_id` ASC),
-  INDEX `index_stock_inspection_date` (`date` ASC),
+  INDEX `index_stock_transfer_organization` (`organization_id` ASC),
+  INDEX `index_stock_transfer_date` (`date` ASC),
   CONSTRAINT `fk_stock_transfer_1`
     FOREIGN KEY (`warehouse_from_id`)
     REFERENCES `warehouse` (`id`)
@@ -1822,7 +1823,12 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_transfer_4`
+	FOREIGN KEY (`organization_id`)
+	REFERENCES `organizations` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
