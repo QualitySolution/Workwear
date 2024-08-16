@@ -456,8 +456,7 @@ FROM wear_cards_item
                                    sopwh.warehouse_expense_id = @warehouse_id))
                           WHERE (-1 IN (@protection_tools_ids) OR spt.id IN (@protection_tools_ids))
                           GROUP BY spt.id, size_id, height_id) AS sex_b
-                             JOIN (SELECT IF(const.seq = 1, 'Men', 'Women') as sex
-                                   FROM seq_1_to_2 as const) AS sex_const
+                             JOIN (SELECT 'Men' AS sex UNION SELECT 'Women') AS sex_const
                     GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
     AS ballance ON (wear_cards_item.protection_tools_id = ballance.ptid
     AND (ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND wear_cards.sex = 'M') OR

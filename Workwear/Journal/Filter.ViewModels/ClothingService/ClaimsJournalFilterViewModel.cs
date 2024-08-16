@@ -5,6 +5,7 @@ using QS.Cloud.Postomat.Manage;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Journal;
+using Workwear.Domain.ClothingService;
 
 namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 	public class ClaimsJournalFilterViewModel : JournalFilterViewModelBase<ClaimsJournalFilterViewModel> {
@@ -31,7 +32,19 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			get => showClosed;
 			set => SetField(ref showClosed, value);
 		}
-
+		
+		private bool showOnlyRepair;
+		public virtual bool ShowOnlyRepair {
+			get => showOnlyRepair;
+			set => SetField(ref showOnlyRepair, value);
+		}
+		
+		private ClaimState? status;
+		public virtual ClaimState? Status {
+			get => status;
+			set => SetField(ref status, value);
+		}
+		
 		private PostomatInfo postomat;
 		[PropertyChangedAlso(nameof(PostomatId))]
 		public PostomatInfo Postomat {

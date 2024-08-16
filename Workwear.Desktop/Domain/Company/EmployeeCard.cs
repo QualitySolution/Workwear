@@ -376,10 +376,11 @@ namespace Workwear.Domain.Company
 			UpdateWorkwearItems ();
 		}
 
-		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository) {
-			var norms = normRepository.GetNormsForPost(UoW, Post);
+		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
+			var norms = normRepository.GetNormsForPost(UoW, post ?? Post);
 			foreach(var norm in norms)
-				AddUsedNorm(norm);
+				if(!norm.Archival)
+					AddUsedNorm(norm);
 		}
 		#endregion
 		#region Функции для работы с коллекцией потребностей
@@ -391,6 +392,8 @@ namespace Workwear.Domain.Company
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();
 			foreach(var norm in UsedNorms) {
+				if(norm.Archival)
+					continue;
 				foreach (var normItem in norm.Items) {
 					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;

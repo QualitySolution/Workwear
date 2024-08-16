@@ -13,6 +13,8 @@ namespace workwear.Journal.Filter.Views.Company
 			checkShowOnlyWithoutNorms.Binding.AddBinding(ViewModel, vm => vm.CanShowOnlyWithoutNorms, w => w.Visible).InitializeFromSource();
 			entitySubdivision.ViewModel = viewModel.SubdivisionEntry;
 			entityDepartment.ViewModel = viewModel.DepartmentEntry;
+			entityPost.ViewModel = viewModel.PostEntry;
+			entityNorm.ViewModel = viewModel.NormEntry;
 		}
 	}
 }
