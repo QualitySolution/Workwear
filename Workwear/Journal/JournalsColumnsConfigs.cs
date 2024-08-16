@@ -40,7 +40,7 @@ namespace workwear.Journal
 				jvm => FluentColumnsConfig<ClaimsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
 					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
-					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee)
+					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
 					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
@@ -48,7 +48,7 @@ namespace workwear.Journal
 					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
 					.AddColumn("Предпочтительный постомат выдачи")
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
-					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);

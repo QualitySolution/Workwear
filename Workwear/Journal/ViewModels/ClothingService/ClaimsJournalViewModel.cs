@@ -79,8 +79,13 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			return query
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Name,
-					() => barcodeAlias.Title
-					))
+					() => barcodeAlias.Title,
+					() => employeeAlias.LastName,
+					() => employeeAlias.FirstName,
+					() => employeeAlias.Patronymic,
+					() => serviceClaimAlias.Comment
+					)
+				)
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias( x => x.Employee, () => employeeAlias)
