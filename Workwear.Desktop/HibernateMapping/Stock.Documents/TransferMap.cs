@@ -19,6 +19,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");
 
+			References (x => x.Organization).Column ("organization_id");
 			References(x => x.WarehouseFrom).Column("warehouse_from_id").Not.Nullable();
 			References(x => x.WarehouseTo).Column("warehouse_to_id").Not.Nullable();
 			References(x => x.CreatedbyUser).Column("user_id");

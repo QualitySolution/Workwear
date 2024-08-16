@@ -18,7 +18,6 @@ namespace Workwear.Views.Stock
 			CommonButtonSubscription();
 		}
 		private void ConfigureDlg() {
-			
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
@@ -27,6 +26,7 @@ namespace Workwear.Views.Stock
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource(); 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			entityentryOrganization.ViewModel = ViewModel.OrganizationEntryViewModel;
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
