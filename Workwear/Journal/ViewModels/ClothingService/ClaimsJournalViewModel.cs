@@ -79,8 +79,14 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			return query
 				.Where(GetSearchCriterion(
 					() => nomenclatureAlias.Name,
-					() => barcodeAlias.Title
-					))
+					() => barcodeAlias.Title,
+					() => employeeAlias.PersonnelNumber,
+					() => employeeAlias.LastName,
+					() => employeeAlias.FirstName,
+					() => employeeAlias.Patronymic,
+					() => serviceClaimAlias.Comment
+					)
+				)
 				.Left.JoinAlias(x => x.Barcode, () => barcodeAlias)
 				.Left.JoinAlias(() => barcodeAlias.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias( x => x.Employee, () => employeeAlias)
@@ -88,6 +94,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.SelectList(list => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => barcodeAlias.Title).WithAlias(() => resultAlias.Barcode)
+					.Select(() => employeeAlias.PersonnelNumber).WithAlias(() => resultAlias.EmployeePersonnelNumber)
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeLastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeFirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
@@ -156,6 +163,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalNode {
 		public int Id { get; set; }
 		public string Barcode { get; set; }
+		public string EmployeePersonnelNumber { get; set; }
 		public string EmployeeFirstName { get; set; }
 		public string EmployeeLastName { get; set; }
 		public string EmployeePatronymic { get; set; }
