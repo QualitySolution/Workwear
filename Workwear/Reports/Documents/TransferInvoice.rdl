@@ -94,18 +94,19 @@ users.name as 'user_name'
     <DataSet Name="Header">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-    IFNULL(doc.doc_number, doc.id) as 'num_doc', 
-	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
-	wh.name as 'warehouse_name_from', 
-	wh2.name as 'warehouse_name_to'
- 	FROM stock_transfer
-    	LEFT JOIN warehouse wh ON
-    	stock_transfer.warehouse_from_id = wh.id
-    	LEFT JOIN warehouse wh2 ON 
-    	stock_transfer.warehouse_to_id = wh2.id
- 	WHERE stock_transfer.id = @id;
- </CommandText>
+        <CommandText>SELECT
+    IFNULL(stock_transfer.doc_number, stock_transfer.id) as 'num_doc',
+    TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
+    organizations.name as 'org_name',
+    wh.name as 'warehouse_name_from',
+    wh2.name as 'warehouse_name_to'
+FROM stock_transfer
+    LEFT JOIN organizations ON stock_transfer.organization_id = organizations.id 
+    LEFT JOIN warehouse wh ON stock_transfer.warehouse_from_id = wh.id
+    LEFT JOIN warehouse wh2 ON stock_transfer.warehouse_to_id = wh2.id
+WHERE stock_transfer.id = @id;
+ 
+</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -127,6 +128,10 @@ users.name as 'user_name'
         </Field>
         <Field Name="warehouse_name_to">
           <DataField>warehouse_name_to</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="org_name">
+          <DataField>org_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -183,7 +188,7 @@ users.name as 'user_name'
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox1">
-                      <Value></Value>
+                      <Value>= First({org_name}, 'Header')</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -193,9 +198,11 @@ users.name as 'user_name'
                           <Top>None</Top>
                           <Bottom>None</Bottom>
                         </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Bottom</VerticalAlign>
+                        <FontSize >12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1394,7 +1401,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                           <Top>None</Top>
                         </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Top</VerticalAlign>
@@ -1412,7 +1419,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                           <Top>None</Top>
                         </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <VerticalAlign>Top</VerticalAlign>
                         <BorderColor />
                         <BorderWidth />
@@ -1430,7 +1437,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                           <Top>None</Top>
                         </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Top</VerticalAlign>
@@ -1448,7 +1455,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                           <Top>None</Top>
                         </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Top</VerticalAlign>
@@ -1804,7 +1811,7 @@ users.name as 'user_name'
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
@@ -1821,7 +1828,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -1841,7 +1848,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -1860,7 +1867,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -1879,7 +1886,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -1898,7 +1905,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -1917,7 +1924,7 @@ users.name as 'user_name'
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BorderColor />
@@ -2257,7 +2264,7 @@ users.name as 'user_name'
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
+                        <FontWeight>Normal</FontWeight>
                         <TextAlign>Center</TextAlign>
                         <VerticalAlign>Bottom</VerticalAlign>
                       </Style>
