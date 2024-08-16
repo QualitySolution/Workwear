@@ -8,9 +8,21 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yCheckButton checkShowClosed;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkShowRepair;
+
+		private global::Gtk.HBox hbox1;
+
+		private global::Gamma.GtkWidgets.yLabel labelPostomat;
+
 		private global::Gamma.Widgets.yListComboBox comboPostomat;
 
-		private global::Gamma.GtkWidgets.yLabel labelIsClosed;
+		private global::Gtk.HBox hbox2;
+
+		private global::Gamma.GtkWidgets.yLabel labelStatus;
+
+		private global::Gamma.Widgets.yEnumComboBox comboStatus;
+
+		private global::Gtk.Label label1;
 
 		protected virtual void Build()
 		{
@@ -19,7 +31,7 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView";
 			// Container child Workwear.Journal.Filter.Views.ClothingService.ClaimsJournalFilterView.Gtk.Container+ContainerChild
-			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(2)), ((uint)(5)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -35,26 +47,90 @@ namespace Workwear.Journal.Filter.Views.ClothingService
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.checkShowRepair = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkShowRepair.CanFocus = true;
+			this.checkShowRepair.Name = "checkShowRepair";
+			this.checkShowRepair.Label = global::Mono.Unix.Catalog.GetString("Только с ремонтом");
+			this.checkShowRepair.DrawIndicator = true;
+			this.checkShowRepair.UseUnderline = true;
+			this.table1.Add(this.checkShowRepair);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowRepair]));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.labelPostomat = new global::Gamma.GtkWidgets.yLabel();
+			this.labelPostomat.Name = "labelPostomat";
+			this.labelPostomat.Xalign = 1F;
+			this.labelPostomat.LabelProp = global::Mono.Unix.Catalog.GetString("Постамат выдачи:");
+			this.hbox1.Add(this.labelPostomat);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelPostomat]));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.comboPostomat = new global::Gamma.Widgets.yListComboBox();
 			this.comboPostomat.Name = "comboPostomat";
 			this.comboPostomat.AddIfNotExist = false;
 			this.comboPostomat.DefaultFirst = false;
-			this.table1.Add(this.comboPostomat);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.comboPostomat]));
-			w2.LeftAttach = ((uint)(2));
-			w2.RightAttach = ((uint)(3));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.hbox1.Add(this.comboPostomat);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.comboPostomat]));
+			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
+			this.table1.Add(this.hbox1);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox1]));
+			w5.LeftAttach = ((uint)(4));
+			w5.RightAttach = ((uint)(5));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.labelIsClosed = new global::Gamma.GtkWidgets.yLabel();
-			this.labelIsClosed.Name = "labelIsClosed";
-			this.labelIsClosed.Xalign = 1F;
-			this.labelIsClosed.LabelProp = global::Mono.Unix.Catalog.GetString("Постамат выдачи:");
-			this.table1.Add(this.labelIsClosed);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIsClosed]));
-			w3.LeftAttach = ((uint)(1));
-			w3.RightAttach = ((uint)(2));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.hbox2 = new global::Gtk.HBox();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.labelStatus = new global::Gamma.GtkWidgets.yLabel();
+			this.labelStatus.Name = "labelStatus";
+			this.labelStatus.Xalign = 1F;
+			this.labelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Статус:");
+			this.hbox2.Add(this.labelStatus);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.labelStatus]));
+			w6.Position = 0;
+			w6.Expand = false;
+			w6.Fill = false;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.comboStatus = new global::Gamma.Widgets.yEnumComboBox();
+			this.comboStatus.Name = "comboStatus";
+			this.comboStatus.ShowSpecialStateAll = true;
+			this.comboStatus.ShowSpecialStateNot = false;
+			this.comboStatus.UseShortTitle = false;
+			this.comboStatus.DefaultFirst = false;
+			this.hbox2.Add(this.comboStatus);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.comboStatus]));
+			w7.Position = 1;
+			w7.Expand = false;
+			w7.Fill = false;
+			this.table1.Add(this.hbox2);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table1[this.hbox2]));
+			w8.LeftAttach = ((uint)(3));
+			w8.RightAttach = ((uint)(4));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label1 = new global::Gtk.Label();
+			this.label1.Name = "label1";
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("  ");
+			this.table1.Add(this.label1);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
+			w9.LeftAttach = ((uint)(2));
+			w9.RightAttach = ((uint)(3));
+			w9.XOptions = ((global::Gtk.AttachOptions)(1));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{
