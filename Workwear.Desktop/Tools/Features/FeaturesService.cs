@@ -22,7 +22,8 @@ namespace Workwear.Tools.Features
 			new ProductEdition(0, "Демонстрационная"),
 			new ProductEdition(1, "Однопользовательская"),
 			new ProductEdition(2, "Профессиональная"),
-			new ProductEdition(3, "Предприятие")
+			new ProductEdition(3, "Предприятие"),
+			new ProductEdition(4, "Спецаутсорсинг")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
 		private readonly CloudClientService cloudClientService;
@@ -165,12 +166,11 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
-				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.Exchange1C:
-					return ProductEdition == 0 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Completion:
@@ -181,7 +181,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				default:
 					return false;
 			}
@@ -226,8 +226,6 @@ namespace Workwear.Tools.Features
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
-		[Display(Name = "Обслуживание спецодежды")]
-		ClothingService,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
@@ -250,7 +248,9 @@ namespace Workwear.Tools.Features
 		Postomats,
 		#endregion
 		#endregion
-		#region Спецредакции
+		#region Спецаутсорсинг
+		[Display(Name = "Обслуживание спецодежды")]
+		ClothingService,
 		[Display(Name = "Продажа")]
 		Selling
 		#endregion

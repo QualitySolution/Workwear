@@ -309,7 +309,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<IssuanceSheetJournalViewModel>(
 				() => FluentColumnsConfig<IssuanceSheetJournalNode>.Create()
-					.AddColumn("Номер").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.DocNumberText).SearchHighlight()
 					.AddColumn("Дата").AddTextRenderer(node => node.Date.ToShortDateString())
 					.AddColumn("Документ").Resizable().AddTextRenderer(node => node.Document).SearchHighlight()
 					.AddColumn("Организация").Resizable().AddTextRenderer(node => node.Organigation).SearchHighlight()
