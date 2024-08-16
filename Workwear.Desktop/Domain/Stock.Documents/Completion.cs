@@ -50,7 +50,7 @@ namespace Workwear.Domain.Stock.Documents
         }
         #endregion
         #region Расчётные
-        public virtual string Title => String.Format("Комплектация №{0} от {1:d}" ,Id, Date);
+        public virtual string Title => String.Format("Комплектация №{0} от {1:d}" ,DocNumberText, Date);
         #endregion
         #region IValidatableObject implementation
 

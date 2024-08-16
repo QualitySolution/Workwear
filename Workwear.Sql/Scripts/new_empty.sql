@@ -1795,6 +1795,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_transfer` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_from_id` INT UNSIGNED NOT NULL,
   `warehouse_to_id` INT UNSIGNED NOT NULL,
   `date` DATETIME NOT NULL,
@@ -1916,6 +1917,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_completion` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_receipt_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2302,7 +2304,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.20');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.22');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;

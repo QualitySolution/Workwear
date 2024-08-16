@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -50,6 +51,10 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+			else 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+
+			autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 
 			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
 				AutofacScope = autofacScope
@@ -101,6 +106,27 @@ namespace Workwear.ViewModels.Stock
 		}
 		#region Sensetive
 		public bool CanAddItem => Entity.WarehouseFrom != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		#endregion
+
+		#region Свойства
+
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
+		}
+
 		#endregion
 		public void AddItems() {
 			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
@@ -136,6 +162,10 @@ namespace Workwear.ViewModels.Stock
 				this, EntityUoWBuilder.ForOpen(nomenclature.Id));
 		}
 		public override bool Save() {
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+				Entity.DocNumber = Entity.DocNumberText;				
 			Entity.UpdateOperations(UoW, null); 
 			return base.Save();
 		}
