@@ -15,11 +15,13 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.Report;
 using QS.Report.ViewModels;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -27,6 +29,7 @@ namespace Workwear.ViewModels.Stock
 {
 	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
 	{
+		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
 		public readonly FeaturesService FeaturesService;
@@ -44,14 +47,17 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator, 
 			IUserService userService,
 			BaseParameters baseParameters,
+			OrganizationRepository organizationRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveQuestion interactive,
 			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator, unitOfWorkProvider) {
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			if(UoW.IsNew)
+			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-			else 
+				Entity.Organization =
+					organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
+			}else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 
 			autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -59,6 +65,12 @@ namespace Workwear.ViewModels.Stock
 			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
 				AutofacScope = autofacScope
 			};
+			
+			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
+				//.ForProperty(x => x.Organization)
+				//.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
+				//.UseViewModelDialog<OrganizationViewModel>()
+				//.Finish();
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
 			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
 			

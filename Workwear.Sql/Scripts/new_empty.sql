@@ -1796,6 +1796,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE IF NOT EXISTS `stock_transfer` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
+  `organization_id` INT(10) UNSIGNED NULL,
   `warehouse_from_id` INT UNSIGNED NOT NULL,
   `warehouse_to_id` INT UNSIGNED NOT NULL,
   `date` DATETIME NOT NULL,
