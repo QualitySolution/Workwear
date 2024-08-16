@@ -1827,7 +1827,7 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
   CONSTRAINT `fk_stock_transfer_4`
 	FOREIGN KEY (`organization_id`)
 	REFERENCES `organizations` (`id`)
-	ON DELETE NO ACTION
+	ON DELETE SET NULL
 	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
