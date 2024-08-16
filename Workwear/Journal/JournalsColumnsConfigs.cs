@@ -369,7 +369,7 @@ namespace workwear.Journal
 					.AddColumn("Цена продажи")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(e => e.SaleCostText)
-					.AddColumn("Цена продажи")
+					.AddColumn("Сумма")
 					.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 					.AddTextRenderer(e => e.SumSaleCostText)
 					.Finish()
