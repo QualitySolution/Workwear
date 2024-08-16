@@ -67,10 +67,6 @@ namespace Workwear.ViewModels.Stock
 			};
 			
 			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
-				//.ForProperty(x => x.Organization)
-				//.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
-				//.UseViewModelDialog<OrganizationViewModel>()
-				//.Finish();
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
 			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
 			
