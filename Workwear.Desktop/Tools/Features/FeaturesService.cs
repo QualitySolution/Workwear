@@ -164,6 +164,7 @@ namespace Workwear.Tools.Features
 
 			switch(feature) {
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
+				case WorkwearFeature.ClothingService: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
