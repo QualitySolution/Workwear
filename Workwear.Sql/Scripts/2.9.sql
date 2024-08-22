@@ -82,6 +82,7 @@ alter table item_types
 
 -- переименование таблиц: objects в subdivisions, wear_cards в employees и таблички связи с wear_cards , 
 -- norms_professions в norms_posts, переименование ключей, индексов
+-- вставка данных из старых таблиц в новые
 	    
 alter table clothing_service_claim
 drop foreign key fk_clothing_service_claim_employee_id;
@@ -97,7 +98,7 @@ alter table employee_group_items
 drop key wear_card_groups_items_unique;
 
 alter table employee_group_items
-drop foreign key foreign_key_employee_groups_items_employees;
+drop foreign key employee_group_items_ibfk_1; 
 
 alter table issuance_sheet
 drop foreign key fk_issuance_sheet_2;
@@ -132,6 +133,9 @@ create index fk_norms_posts_1_idx
 create index fk_norms_posts_2_idx
 	on norms_posts (post_id);
 
+insert into norms_posts
+select * from norms_professions;
+
 drop table norms_professions;
 
 alter table operation_issued_by_employee
@@ -153,36 +157,26 @@ alter table stock_collective_expense_detail
 drop foreign key fk_stock_collective_expense_detail_6;
 
 alter table stock_expense
-	add employee_id int unsigned null default null after warehouse_id;
+	change column wear_card_id employee_id int unsigned null;
 
 create index fk_stock_expense_employee_idx
 	on stock_expense (employee_id);
-
 
 alter table stock_expense
 	drop foreign key fk_stock_expense_wear_card;
 
 drop index fk_stock_expense_wear_card_idx on stock_expense;
 
-
-alter table stock_expense
-drop column wear_card_id;
-
 alter table stock_income
-	add employee_id int unsigned null default null after warehouse_id;
+	change column wear_card_id employee_id int unsigned null;
 
 create index fk_stock_income_employee_idx
 	on stock_income (employee_id);
-
 
 alter table stock_income
 	drop foreign key fk_stock_income_wear_card;
 
 drop index fk_stock_income_wear_card_idx on stock_income;
-
-
-alter table stock_income
-drop column wear_card_id;
 
 create table subdivisions
 (
@@ -203,6 +197,9 @@ create table subdivisions
 			on update no action
 )
 	collate = utf8mb3_general_ci;
+
+insert into subdivisions
+select * from objects;
 
 alter table departments
 	add constraint fk_departaments_1
@@ -255,6 +252,9 @@ create table employees
 		foreign key (user_id) references users (id)
 			on update cascade on delete set null
 );
+
+insert into employees
+select * from wear_cards;
 
 alter table clothing_service_claim
 	add constraint fk_clothing_service_claim_employee_id
@@ -502,6 +502,21 @@ create index fk_subdivisions_2_idx
 create index index_subdivisions_code
 	on subdivisions (code);
 
+insert into employees_cost_allocation
+select * from wear_cards_cost_allocation;
+
+insert into employee_cards_item
+select * from wear_cards_item;
+
+insert into employees_norms
+select * from wear_cards_norms;
+
+insert into employees_sizes
+select * from wear_cards_sizes;
+
+insert into employees_vacations
+select * from wear_cards_vacations;
+
 drop table wear_cards_cost_allocation;
 
 drop table wear_cards_item;
@@ -515,44 +530,3 @@ drop table wear_cards_vacations;
 drop table wear_cards;
 
 drop table objects;
-
-drop function count_issue;
-
-create
-definer = `t.ekaterina`@`%` function count_issue(amount int unsigned, norm_period int unsigned, next_issue date,
-                                                     begin_date date, end_date date, begin_Issue_Period int,
-                                                     end_Issue_Period int) returns int unsigned
-    comment 'Функция рассчитывает количество необходимое к выдачи.'
-    deterministic
-    no sql
-BEGIN
-DECLARE issue_count INT;
-
-IF norm_period <= 0 THEN RETURN 0; END IF;
-IF next_issue IS NULL THEN RETURN 0; END IF;
-
-SET issue_count = 0;
-
-WHILE next_issue <= end_date DO
-    IF next_issue >= begin_date THEN 
-    	SET issue_count = issue_count + amount;
-END IF;
-  SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
-	IF begin_Issue_Period IS NOT NULL THEN
-		IF begin_Issue_Period < end_Issue_Period THEN
-			IF MONTH(next_issue) BETWEEN begin_Issue_Period AND end_Issue_Period THEN 
-             SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue) , '-', end_Issue_Period, '-01'), INTERVAL 1 MONTH);
-END IF;
-ELSE
-			IF MONTH(next_issue) BETWEEN begin_Issue_Period AND 12 THEN
-				SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue), '-', end_Issue_Period, '-01'), INTERVAL '1T1' YEAR_MONTH);
-			ELSEIF MONTH(next_issue) BETWEEN 1 AND end_Issue_Period THEN
-				SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue), '-', end_Issue_Period, '-01'), INTERVAL 1 MONTH);
-END IF;
-END IF;
-END IF;
-END WHILE;
-RETURN issue_count;
-END;
-
-
