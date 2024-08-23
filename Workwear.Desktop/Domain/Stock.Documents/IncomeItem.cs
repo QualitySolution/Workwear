@@ -133,7 +133,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Функции
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
+		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 		}

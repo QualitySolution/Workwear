@@ -33,9 +33,12 @@ namespace Workwear.Views.Stock {
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
-			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel; 
-			entityWarehouseIncome.Binding.
-				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
+			ylabelWarehouse.Binding
+				.AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
+				.InitializeFromSource();
+			entityWarehouse.ViewModel = ViewModel.WarehouseEntryViewModel;
+			entityWarehouse.Binding
+				.AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
 				.InitializeFromSource();
 			ybuttonReadInFile.Binding
 				.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible)
@@ -45,6 +48,7 @@ namespace Workwear.Views.Stock {
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
 			ybuttonReadInFile.Binding.AddBinding(ViewModel, vm => vm.CanReadFile, w => w.Sensitive).InitializeFromSource();
+			ybuttonReadInFile.Binding.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -98,6 +102,7 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
+			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<IncomeItem>());
 		}
 
 		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {

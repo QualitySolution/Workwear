@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Services;
+using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -16,31 +19,33 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock {
 	public class IncomeViewModel  : EntityDialogViewModelBase<Income> {
-		
-		private readonly IInteractiveMessage interactive;
 		public IncomeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
-			IInteractiveMessage interactive,
+			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
+			StockRepository stockRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
-			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			
+			featuresService = autofacScope.Resolve<FeaturesService>();
+					
 			if(featuresService.Available(WorkwearFeature.Owners))
-				Owners = UoW.GetAll<Owner>().ToList();
-			if(featuresService.Available(WorkwearFeature.Warehouses))
-				Warhouses = UoW.GetAll<Warehouse>().ToList();
+				owners = UoW.GetAll<Owner>().ToList();
+			
+			if(featuresService.Available(WorkwearFeature.Warehouses) && Entity.Warehouse == null)
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
 			
@@ -49,16 +54,21 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 		}
+
+		#region Свойства VikewModel
+		//private readonly IInteractiveMessage interactive;
+		private readonly IInteractiveService interactive;
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		#endregion
 		
 		#region Проброс свойств документа
 
 		public virtual int DocID => Entity.Id;
 		public virtual string DocTitle => Entity.Title;
-		public virtual string DocComment => Entity.Comment;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime DocDate => Entity.Date;
-		public virtual Warehouse Warehouse => Entity.Warehouse;
-		public virtual string NumberTN => Entity.Number;
+		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
+		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
+		public virtual DateTime DocDate { get => Entity.Date;set => Entity.Date = value;}
 		public virtual IObservableList<IncomeItem> Items => Entity.Items;
 
 		#endregion
@@ -68,10 +78,9 @@ namespace Workwear.ViewModels.Stock {
 		private readonly SizeService sizeService = new SizeService();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		
-		//public IList<Owner> Owners = QS.DomainModel.UoW.UnitOfWorkFactory.CreateWithoutRoot().GetAll<Owner>().ToList();
-		//private List<Owner> owners = new List<Owner>();
-		public List<Owner> Owners {get;}
-		public List<Warehouse> Warhouses {get;}
+		private List<Owner> owners = new List<Owner>();
+		public List<Owner> Owners => owners;
+
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -106,12 +115,11 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool SensitiveDocNumber => !AutoDocNumber;
 		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
-		public virtual bool CanAddSize => SelectedItem != null && SelectedItem.WearSizeType != null && SelectedItem.HeightType != null;
+		public virtual bool CanAddSize => SelectedItem != null && (SelectedItem.WearSizeType != null || SelectedItem.HeightType != null);
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
-		public virtual bool ReadInFileVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool ReadInFileVisible  => featuresService.Available(WorkwearFeature.Exchange1C);
 		public virtual bool CanReadFile => false;
-		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
-
 		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
 		}
@@ -127,13 +135,19 @@ namespace Workwear.ViewModels.Stock {
 				.OpenViewModel<NomenclatureJournalViewModel>( this,OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.Filter.ShowArchival = false;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclature_OnSelectResult;
+			selectJournal.ViewModel.OnSelectResult += AddItem_OnSelectResult;
 		}
 
-		private void AddNomenclature_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+		private void AddItem_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => Entity.AddItem(n, interactive));
 			//CalculateTotal();
+		}
+		public void DeleteItem(IncomeItem item) {
+			Entity.RemoveItem(item); 
+			OnPropertyChanged(nameof(CanRemoveItem));
+			OnPropertyChanged(nameof(CanAddSize));
+//CalculateTotal(null, null);
 		}
 		public void AddSize(IncomeItem item) {
 			if(item.Nomenclature == null)
@@ -155,10 +169,49 @@ namespace Workwear.ViewModels.Stock {
 				else
 					Entity.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
 			}
-			if(item.WearSize == null)
+
+			if(item.WearSize == null) {
 				Entity.RemoveItem(item);
+				OnPropertyChanged(nameof(CanRemoveItem));
+				OnPropertyChanged(nameof(CanAddSize));
+			}
+
 			//CalculateTotal();
 		}
+		#endregion
+
+		#region Валидация и сохранение
+
+		public override bool Save() {
+			logger.Info ("Запись документа...");
+			
+			logger.Info("Валидация...");
+			if(!Validate()) {
+				logger.Warn("Валидация не пройдена, сохранение отменено.");
+				return false;
+			} else 
+				logger.Info("Валидация пройдена.");
+			
+			logger.Info ("Проверка на дубли");
+			string duplicateMessage = "";
+			foreach(var duplicate in Entity.Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
+				duplicateMessage += $"- {duplicate.First().StockPosition.Title} указано " +
+				                    $"{NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз")}" 
+				                    + $", общим количеством {duplicate.Sum(x=>x.Amount)} \n";
+			}
+			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся складские позиции:\n{duplicateMessage}\n Сохранить документ?"))
+				return false;
+
+			logger.Info ("Обновлление складских операций");
+			Entity.UpdateOperations(UoW);
+			if(Entity.Id == 0)
+				Entity.CreationDate = DateTime.Now;
+			UoWGeneric.Save ();
+
+			logger.Info ("Документ сохранён.");
+			return true;
+		}
+		
 		#endregion
 	}
 }

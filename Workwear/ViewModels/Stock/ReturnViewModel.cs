@@ -9,6 +9,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
@@ -19,6 +20,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
@@ -29,16 +31,21 @@ namespace Workwear.ViewModels.Stock {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
+			StockRepository stockRepository,
 			IValidator validator = null,
-			UnitOfWorkProvider unitOfWorkProvider = null
+			UnitOfWorkProvider unitOfWorkProvider = null,
+			EmployeeCard employee = null,
+			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
-				Owners = UoW.GetAll<Owner>().ToList();
-			if(featuresService.Available(WorkwearFeature.Warehouses))
-				Warhouses = UoW.GetAll<Warehouse>().ToList();
+				owners = UoW.GetAll<Owner>().ToList();
+			if(Entity.Id == 0) {
+				Entity.EmployeeCard = employee;
+				Entity.Warehouse = warehouse ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			}
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Return>(this, Entity, UoW, navigation, autofacScope);
 			
@@ -54,8 +61,6 @@ namespace Workwear.ViewModels.Stock {
 			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
 			CanEditEmployee = Entity.Id == 0;
 			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
-
-			//EmployeeCardEntryViewModel.ed
 		}
 
 		private void EmployeeCardEntryViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -67,16 +72,11 @@ namespace Workwear.ViewModels.Stock {
 
 		public virtual int DocID => Entity.Id;
 		public virtual string DocTitle => Entity.Title;
-		public virtual string DocComment => Entity.Comment;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual Warehouse Warehouse => Entity.Warehouse;
+		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
 		public virtual EmployeeCard EmployeeCard => Entity.EmployeeCard;
+		public virtual DateTime DocDate { get => Entity.Date;set => Entity.Date = value;}
 		public virtual IObservableList<ReturnItem> Items => Entity.Items;
-
-		public virtual DateTime DocDate {
-			get => Entity.Date; 
-			set => Entity.Date = value; 
-		}
 		#endregion
 
 		#region Свойства ViewModel
@@ -84,8 +84,9 @@ namespace Workwear.ViewModels.Stock {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
-		public List<Owner> Owners {get;}
-		public List<Warehouse> Warhouses {get;}
+		
+		private List<Owner> owners = new List<Owner>();
+		public List<Owner> Owners => owners;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -149,6 +150,8 @@ namespace Workwear.ViewModels.Stock {
 		}
 		public void DeleteItem(ReturnItem item) {
 			Entity.RemoveItem(item); 
+			OnPropertyChanged(nameof(CanRemoveItem));
+			OnPropertyChanged(nameof(CanSetNomenclature));
 //CalculateTotal(null, null);
 		}
 		
@@ -175,25 +178,19 @@ namespace Workwear.ViewModels.Stock {
 				Entity.CreationDate = DateTime.Now;
 
 			if(!base.Save()) {
-				logger.Info("Не Ок.");
-				return false;
-			}
-            
-			Entity.UpdateOperations(UoW);
-			if(Entity.Id == 0)
-				Entity.CreationDate = DateTime.Now;
-			
-			UoWGeneric.Save ();
+            	logger.Info("Не Ок.");
+            	return false;
+            }
 
 			logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-			Entity.UpdateEmployeeWearItems();
-			
-			UoWGeneric.Commit ();
+			Entity.UpdateEmployeeWearItems(UoW);
 
+			UoW.Commit();
+			
 			logger.Info ("Ok");
 			return true;
 		}
-
 		#endregion
+		
 	}
 }

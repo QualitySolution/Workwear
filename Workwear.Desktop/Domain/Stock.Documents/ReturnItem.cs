@@ -9,9 +9,9 @@ using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "строки прихода",
-		Nominative = "строка прихода",
-		Genitive = "строки прихода"
+		NominativePlural = "строки возврата",
+		Nominative = "строка возврата",
+		Genitive = "строки возврата"
 		)]
 	[HistoryTrace]
 	public class ReturnItem : PropertyChangedBase, IDomainObject , IDocItemSizeInfo
@@ -156,16 +156,12 @@ namespace Workwear.Domain.Stock.Documents {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
 
-			if(Document.Operation == IncomeOperations.Return) {
-				if(ReturnFromEmployeeOperation == null)
-					ReturnFromEmployeeOperation = new EmployeeIssueOperation();
-				ReturnFromEmployeeOperation.Update(uow, this);
-				uow.Save(ReturnFromEmployeeOperation);
-			}
-			else if(ReturnFromEmployeeOperation != null) {
-				uow.Delete(ReturnFromEmployeeOperation);
-				ReturnFromEmployeeOperation = null;
-			}
+			if(ReturnFromEmployeeOperation == null)
+				ReturnFromEmployeeOperation = new EmployeeIssueOperation();
+
+			ReturnFromEmployeeOperation.Update(uow, this);
+			uow.Save(ReturnFromEmployeeOperation);
+
 		}
 		#endregion
 	}

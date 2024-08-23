@@ -10,7 +10,6 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -49,7 +48,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
-			ITdiCompatibilityNavigation tdiNavigation,
 			OpenStockDocumentsModel stockDocumentsModel,
 			FeaturesService featuresService,
 			IProgressBarDisplayable progress)
@@ -179,9 +177,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
-		public void ReturnWear()
-		{
-			//tdiNavigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+		public void ReturnWear() {
+			navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel,EntityUoWBuilder.ForCreate(),Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)

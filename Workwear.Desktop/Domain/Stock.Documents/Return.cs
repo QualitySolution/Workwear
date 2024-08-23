@@ -151,12 +151,12 @@ namespace Workwear.Domain.Stock.Documents
 			Items.ToList().ForEach(x => x.UpdateOperations(uow));
 		}
 
-		public virtual void UpdateEmployeeWearItems() {
-			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
+		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
+			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 			EmployeeCard.UpdateNextIssue(Items
 				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 				.Where(x => x != null).Distinct().ToArray());
-			UoW.Save(EmployeeCard);
+			uow.Save(EmployeeCard);
 		}
 	}
 }

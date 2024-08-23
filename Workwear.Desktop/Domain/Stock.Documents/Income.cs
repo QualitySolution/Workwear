@@ -88,14 +88,6 @@ namespace Workwear.Domain.Stock.Documents
 			if (Items.Any(i => i.Certificate != null && i.Certificate.Length > 40))
 				yield return new ValidationResult("Длина номера сертификата не может быть больше 40 символов.",
 					new[] { this.GetPropertyName(o => o.Items) });
-			
-			if(Operation == IncomeOperations.Return)
-				foreach (var item in items) {
-					if(item.Nomenclature == null)
-						yield return new ValidationResult(
-							$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.", 
-							new[] { nameof(Items) });
-				}
 		}
 
 		#endregion
@@ -160,8 +152,8 @@ namespace Workwear.Domain.Stock.Documents
 			                     && i.Height == height && i.WearSize == size && i.Owner == owner);
 		#endregion
 
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, askUser));
+		public virtual void UpdateOperations(IUnitOfWork uow) {
+			Items.ToList().ForEach(x => x.UpdateOperations(uow));
 		}
 	}
 	public enum IncomeOperations {
