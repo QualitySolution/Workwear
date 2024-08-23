@@ -8078,10 +8078,16 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">5</property>
+            <property name="NRows">6</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <placeholder />
             </child>
@@ -8101,8 +8107,8 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -8127,8 +8133,8 @@
                 <property name="DefaultFirst">False</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -8148,6 +8154,8 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -8168,6 +8176,8 @@
                 <property name="LabelProp" translatable="yes">Подразделение:</property>
               </widget>
               <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -8186,8 +8196,8 @@
                 <property name="LabelProp" translatable="yes">Тип выдачи:</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -8209,8 +8219,8 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -8234,8 +8244,8 @@
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>
-                <property name="TopAttach">4</property>
-                <property name="BottomAttach">5</property>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -8258,7 +8268,31 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gtk.Expander" id="expander1">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="Workwear.ReportParameters.Views.ChoiceEmployeeGroupView" id="choiceemployeegroupview4">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel7">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Группы сотрудников</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
         <child>
           <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
