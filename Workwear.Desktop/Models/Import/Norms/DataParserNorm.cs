@@ -34,13 +34,14 @@ namespace Workwear.Models.Import.Norms
 		}
 
 		public void CreateDatatypes(IUnitOfWork uow, SettingsNormsViewModel settings) {
-			SupportDataTypes.Add( new DataTypeProtectionTools());
-			SupportDataTypes.Add( new DataTypePeriodAndCount(settings));//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
-			SupportDataTypes.Add( new DataTypeAmount());
-			SupportDataTypes.Add( new DataTypePeriod());
-			SupportDataTypes.Add( new DataTypeSubdivision());
-			SupportDataTypes.Add( new DataTypeDepartment());
-			SupportDataTypes.Add( new DataTypePost());
+			SupportDataTypes.Add(new DataTypeProtectionTools());
+			SupportDataTypes.Add(new DataTypePeriodAndCount(settings));//Должна быть выше колонки с количеством, так как у них одинаковые слова для определения. А вариант с наличием в одной колонке обоих типов данных встречается чаще.
+			SupportDataTypes.Add(new DataTypeAmount());
+			SupportDataTypes.Add(new DataTypePeriod());
+			SupportDataTypes.Add(new DataTypeSubdivision());
+			SupportDataTypes.Add(new DataTypeDepartment());
+			SupportDataTypes.Add(new DataTypePost());
+			SupportDataTypes.Add(new DataTypeParagraph());
 			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
 			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeNorm.Name, n => n.Name, new []{"название"}));
 		}

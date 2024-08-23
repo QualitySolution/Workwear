@@ -23,7 +23,9 @@ namespace Workwear.Models.Import.Norms
 		Period,
 		[Display(Name = "Условия нормы")]
 		Condition,
+		[Display(Name = "Пункт норм")]
+        Paragraph,
 		[Display(Name = "Название нормы")]
-		Name,
+		Name
 	}
 }
