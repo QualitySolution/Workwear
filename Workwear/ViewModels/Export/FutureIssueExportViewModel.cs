@@ -101,6 +101,12 @@ namespace Workwear.ViewModels.Export {
 			get => endDate;
 			set => SetField(ref endDate, value);
 		}
+		
+		private bool noDebt;
+		public virtual bool NoDebt {
+			get => noDebt;
+			set => SetField(ref noDebt, value);
+		}
 		#endregion
 
 		#region  Шаблон файла
@@ -230,7 +236,7 @@ namespace Workwear.ViewModels.Export {
 			param[3] = Gtk.ResponseType.Accept;
 
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
-				fc.CurrentName = "Прогноз выдач на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
+				fc.CurrentName = "Прогноз выдач" + (NoDebt ? "(без долгов)" : "") + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
 					filename = fc.Filename;
@@ -332,17 +338,8 @@ namespace Workwear.ViewModels.Export {
 					GtkHelper.WaitRedraw();
 					
 					DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
-					DateTime? vacationEnd;
 					//список созданных объектов операций
 					List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>(); 
-					
-					//отпускники
-					var vacation = item.EmployeeCard.CurrentVacation(startDate);
-					if(vacation != null)
-						if(vacation.EndDate < EndDate)
-							vacationEnd = vacation.EndDate;
-						else 						
-							continue;
 
 					//номенклатура с максимальной стоимостью
 					Nomenclature nomenclature = null;
@@ -355,12 +352,13 @@ namespace Workwear.ViewModels.Export {
 						int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
 						if(need == 0)
 							break;
-						//Операцция приведшая к возникновению потребности
+						//Операция приведшая к возникновению потребности
 						var lastIsssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
 						//создаём следующую виртуальную выдачу
+						var issueDate = (NoDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
 						var op = new EmployeeIssueOperation(baseParameters) {
-							OperationTime = (DateTime)item.NextIssue < startDate ? startDate : (DateTime)item.NextIssue,
-							StartOfUse = item.NextIssue,
+							OperationTime = issueDate,
+							StartOfUse = issueDate,
 							Issued = need,
 							Returned = 0,
 							OverrideBefore = false,

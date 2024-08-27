@@ -1480,11 +1480,11 @@
     IF(@byEmployee, employees.personnel_number, NULL) AS personnel_number,
     IF(@byEmployee, CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
-    IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL) as issuance_sheet,
-    nomenclature.name as nomen,
-    sum(issued) as sum,
-    nomenclature.number,
-    if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size,
+    IF(@byEmployee, IFNULL(issuance_sheet.doc_number, issuance_sheet.id), NULL) as issuance_sheet,
+    nomenclature.name as nomen, 
+    sum(issued) as sum, 
+    nomenclature.number, 
+    if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
     heightAlias.name as growth,
     if(@showOwners, owners.name, null) as owner_name,
     (nomenclature.sale_cost) AS cost,
@@ -1502,6 +1502,7 @@ FROM operation_issued_by_employee
          LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
          LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
          LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+         LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
   AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
   AND operation_issued_by_employee.returned = 0

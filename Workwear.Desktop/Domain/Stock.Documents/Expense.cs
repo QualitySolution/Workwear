@@ -60,7 +60,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => $"Персональная выдача №{DocNumber ?? Id.ToString()} от {Date:d}";
+		public virtual string Title => $"Персональная выдача №{DocNumberText} от {Date:d}";
 
 		public Expense ()
 		{

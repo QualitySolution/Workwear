@@ -11,10 +11,17 @@ namespace Workwear.Domain.Stock.Documents
 
 		private string docNumber;
 		[StringLength(15)]
-		[Display (Name = "Номер документа")]
+		[Display (Name = "Пользовательский номер документа")]
 		public virtual string DocNumber {
 			get => docNumber;
 			set => SetField (ref docNumber, value);
+		}
+		
+		[StringLength(15)]
+		[Display (Name = "Номер документа")]
+		public virtual string DocNumberText {
+			get => String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber;
+			set => DocNumber = value == Id.ToString() ? docNumber : value; 
 		}
 		
 		DateTime date = DateTime.Now;

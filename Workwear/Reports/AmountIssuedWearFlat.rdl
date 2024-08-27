@@ -901,38 +901,40 @@
         WHEN 'Month' THEN norms_item.period_count
         END AS wearing_period,
     GROUP_CONCAT(DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y')) as operation_date,
-    GROUP_CONCAT(issuance_sheet_items.issuance_sheet_id) as issuance_sheet,
-    IF(@byOperation,(SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date,  op2.auto_writeoff_date), '%d.%m.%Y')
-                     FROM operation_issued_by_employee as op2
-                              LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
-                     WHERE op2.employee_id = operation_issued_by_employee.employee_id
-                       AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id
-                       AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time) AS date_need
-       FROM operation_issued_by_employee
+    GROUP_CONCAT(IFNULL(issuance_sheet.doc_number, issuance_sheet.id)) as issuance_sheet,
+    IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
+        FROM operation_issued_by_employee as op2
+             LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
+        WHERE op2.employee_id = operation_issued_by_employee.employee_id 
+          AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
+          AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
+    ,NULL) AS date_need
+FROM operation_issued_by_employee
        LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
        LEFT JOIN subdivisions. on subdivisions.id = employees.subdivision_id
        LEFT JOIN posts ON posts.id = employees.post_id
-       LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
-       LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
-       LEFT JOIN item_types ON item_types.id = nomenclature.type_id
-       LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
-       LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
-       LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
-       LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
-       LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
-       LEFT JOIN norms_item ON norms_item.id = operation_issued_by_employee.norm_item_id
-       LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
-       WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
-           AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
-           AND (@issue_type = '' OR item_types.issue_type = @issue_type)
-           and operation_issued_by_employee.returned = 0
+         LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
+         LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
+         LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+         LEFT JOIN sizes as sizeAlias ON (sizeAlias.id = operation_issued_by_employee.size_id)
+         LEFT JOIN sizes AS heightAlias ON (heightAlias.id = operation_issued_by_employee.height_id)
+         LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
+         LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
+         LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
+         LEFT JOIN norms_item ON norms_item.id = operation_issued_by_employee.norm_item_id
+         LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+         LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
+WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
+  AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
+  AND (@issue_type = '' OR item_types.issue_type = @issue_type)
+  and operation_issued_by_employee.returned = 0
            AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
-           and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
-           and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
-           AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
-           AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
+  and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
+  and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
+  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+  AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
        GROUP BY IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
-       ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
+ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>

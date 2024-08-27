@@ -11,27 +11,28 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Header">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-	stock_transfer.id as 'num_doc', 
-	TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
-	wh.name as 'warehouse_name_from', 
-	wh2.name as 'warehouse_name_to'
- 	FROM stock_transfer
-    	LEFT JOIN warehouse wh ON
-    	stock_transfer.warehouse_from_id = wh.id
-    	LEFT JOIN warehouse wh2 ON 
-    	stock_transfer.warehouse_to_id = wh2.id
- 	WHERE stock_transfer.id = @id;
- </CommandText>
+        <CommandText>SELECT
+    IFNULL(stock_transfer.doc_number, stock_transfer.id) as 'num_doc',
+    TO_CHAR(stock_transfer.date, 'DD.MM.YYYY')as 'date',
+    organizations.name as 'org_name',
+    wh.name as 'warehouse_name_from',
+    wh2.name as 'warehouse_name_to'
+FROM stock_transfer
+        LEFT JOIN organizations ON stock_transfer.organization_id = organizations.id 
+         LEFT JOIN warehouse wh ON stock_transfer.warehouse_from_id = wh.id
+         LEFT JOIN warehouse wh2 ON stock_transfer.warehouse_to_id = wh2.id
+WHERE stock_transfer.id = @id;
+ 
+</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="num_doc">
           <DataField>num_doc</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -46,6 +47,10 @@
         </Field>
         <Field Name="warehouse_name_to">
           <DataField>warehouse_name_to</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="org_name">
+          <DataField>org_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -764,7 +769,7 @@ users.name as 'user_name'
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox70">
+                    <Textbox Name="Textbox12" >
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -772,38 +777,29 @@ users.name as 'user_name'
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
+                        <VerticalAlign >Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
+                  <ColSpan >1</ColSpan>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox39">
-                      <Value></Value>
-                      <Style>
+                    <Textbox Name="Textbox11">
+                      <Value>={org_name}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Bottom>Solid</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >Center</TextAlign>
+                        <VerticalAlign >Bottom</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ColSpan>4</ColSpan>
-                  <ReportItems>
-                    <Textbox Name="Textbox56">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Bottom>Solid</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
+                  <ColSpan>5</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>

@@ -28,6 +28,11 @@ namespace Workwear.HibernateMapping.Regulations
 				.ParentKeyColumn ("norm_id")
 				.ChildKeyColumn ("post_id")
 				.LazyLoad ();
+			
+			HasManyToMany (x => x.Employees).Table ("wear_cards_norms")
+				.ParentKeyColumn ("norm_id")
+				.ChildKeyColumn ("wear_card_id")
+				.LazyLoad ();
 
 			HasMany (x => x.Items).KeyColumn ("norm_id").Not.KeyNullable ().Inverse ().Cascade.AllDeleteOrphan ()
 				.LazyLoad ();

@@ -101,6 +101,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
+				() => incomeAlias.DocNumber,
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
@@ -150,7 +151,9 @@ namespace workwear.Journal.ViewModels.Stock
 
 			expenseQuery.Where(GetSearchCriterion(
 				() => expenseAlias.Id,
+				() => expenseAlias.DocNumber,
 				() => issuanceSheetAlias.Id,
+				() => issuanceSheetAlias.DocNumber,
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
@@ -168,6 +171,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => StockDocumentType.ExpenseEmployeeDoc).WithAlias(() => resultAlias.DocTypeEnum)
 						.Select(() => expenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
+						.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
@@ -200,8 +204,10 @@ namespace workwear.Journal.ViewModels.Stock
 
 			collectiveExpenseQuery.Where(GetSearchCriterion(
 				() => collectiveExpenseAlias.Id,
+				() => collectiveExpenseAlias.DocNumber,
 				() => authorAlias.Name,
-				() => issuanceSheetAlias.Id
+				() => issuanceSheetAlias.Id,
+                () => issuanceSheetAlias.DocNumber
 			));
 
 			collectiveExpenseQuery
@@ -213,6 +219,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => collectiveExpenseAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
+						.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => collectiveExpenseAlias.Comment).WithAlias(() => resultAlias.Comment)
@@ -242,6 +249,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			transferQuery.Where(GetSearchCriterion(
 				() => transferAlias.Id,
+				() => transferAlias.DocNumber,
 				() => authorAlias.Name
 			));
 
@@ -251,6 +259,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => transferAlias.WarehouseTo, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => transferAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => transferAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
@@ -284,6 +293,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			writeoffQuery.Where(GetSearchCriterion(
 				() => writeoffAlias.Id,
+				() => writeoffAlias.DocNumber,
 				() => authorAlias.Name
 			));
 
@@ -332,13 +342,17 @@ namespace workwear.Journal.ViewModels.Stock
 				completionQuery.Where(x => x.SourceWarehouse == Filter.Warehouse || x.ResultWarehouse == Filter.Warehouse);
 
 			completionQuery.Where(GetSearchCriterion(
-				() => completionAlias.Id, () => authorAlias.Name));
+				() => completionAlias.Id,
+				() => completionAlias.DocNumber,
+				() => authorAlias.Name));
+			
 			completionQuery
 				.JoinAlias(() => completionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
+					    .Select(() => completionAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => completionAlias.Date).WithAlias(() => resultAlias.Date)
 			            .Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 			            .Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
@@ -358,12 +372,18 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Inspection inspectionAlias = null;
-
+			
 			var inspectionQuery = uow.Session.QueryOver<Inspection>(() => inspectionAlias);
 			if(Filter.StartDate.HasValue)
 				inspectionQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				inspectionQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			
+			inspectionQuery.Where(GetSearchCriterion(
+				() => inspectionAlias.Id,
+				() => inspectionAlias.DocNumber,
+				() => authorAlias.Name
+			));
 
 			inspectionQuery
 				.JoinAlias(() => inspectionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -450,7 +470,7 @@ namespace workwear.Journal.ViewModels.Stock
 		
 		public string DocNumber { get; set; }
 
-		public string DocNumberText => DocNumber ?? Id.ToString();
+		public string DocNumberText => String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber;
 
 		public StockDocumentType DocTypeEnum { get; set; }
 
@@ -493,6 +513,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Comment { get; set; }
 
 		public int? IssueSheetId { get; set; }
+		public string IssueSheetNumber { get; set; }
+		public string IssueSheetNumberText => String.IsNullOrWhiteSpace(IssueSheetNumber) ? IssueSheetId.ToString() : IssueSheetNumber;
 
 		private DateTime? creationDate;
 		public DateTime? CreationDate {

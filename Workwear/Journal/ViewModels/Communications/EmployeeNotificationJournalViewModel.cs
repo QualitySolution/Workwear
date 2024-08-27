@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
@@ -27,7 +26,6 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Communications;
 using Workwear.Models.Operations;
-using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Communications;

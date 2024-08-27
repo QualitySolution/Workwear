@@ -5,7 +5,10 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using workwear.Journal.ViewModels.Regulations;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.Filter.ViewModels.Company
 {
@@ -49,16 +52,33 @@ namespace workwear.Journal.Filter.ViewModels.Company
 						Subdivision = department?.Subdivision;
 			}
 		}
-
+		
+		private Post post;
+		public virtual Post Post {
+			get => post;
+			set {
+				SetField(ref post, value);
+				if(value != null) {
+					Department = value.Department;
+					Subdivision = value.Subdivision;
+				}
+			}
+		}
+		
+		private Norm norm;
+		public virtual Norm Norm {
+			get => norm;
+			set => SetField(ref norm, value);
+		}
 
 		#endregion
 
 		#region EntityModels
 
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
-
 		public EntityEntryViewModel<Department> DepartmentEntry;
-
+		public EntityEntryViewModel<Post> PostEntry;
+		public EntityEntryViewModel<Norm> NormEntry;
 		#endregion
 
 		public EmployeeFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
@@ -73,6 +93,20 @@ namespace workwear.Journal.Filter.ViewModels.Company
 				.MakeByType()
 				.Finish();
 			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(journal, navigation, SubdivisionEntry);
+			
+			PostEntry = builder.ForProperty(x => x.Post)
+				.MakeByType()
+				.Finish();
+			///TODO Хорошо бы реализовать автопроставку фильтра подразделения и отдела в журнале должжностей
+			
+			NormEntry = builder.ForProperty(x => x.Norm)				
+				.MakeByType()				
+				.Finish();
+			
+			NormEntry = builder.ForProperty(x => x.Norm)
+				.UseViewModelJournalAndAutocompleter<NormJournalViewModel>()
+				.UseViewModelDialog<NormViewModel>()
+				.Finish();
 		}
 	}
 }
