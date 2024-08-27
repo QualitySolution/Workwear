@@ -196,7 +196,7 @@ create table subdivisions
 			on delete set null
 			on update no action
 )
-	collate = utf8mb3_general_ci;
+	collate = utf8mb4_general_ci;
 
 insert into subdivisions
 select * from objects;
