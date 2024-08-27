@@ -51,6 +51,8 @@ namespace Workwear.ViewModels.Stock
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+			else 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse
@@ -84,6 +86,7 @@ namespace Workwear.ViewModels.Stock
 		#region View
 		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
 		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
 		public string ResultAmountText => $"Общее количество: {Entity.ResultItems.Sum(x=>x.Amount)}";
 		public string SourceAmountText => $"Общее количество: {Entity.SourceItems.Sum(x=>x.Amount)}";
@@ -112,6 +115,22 @@ namespace Workwear.ViewModels.Stock
 		public IList<Owner> Owners {
 			get => owners;
 			set => SetField(ref owners, value);
+		}
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
 		}
 
 		#endregion
@@ -195,6 +214,10 @@ namespace Workwear.ViewModels.Stock
 		public override bool Save() {
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			//else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+			//	Entity.DocNumber = DocNumberText;
 			Entity.UpdateItems();
 			return base.Save();
 		}

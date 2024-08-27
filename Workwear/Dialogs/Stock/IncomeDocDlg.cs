@@ -244,6 +244,9 @@ namespace workwear
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactiveService.Question($"В документе есть повторяющиеся складские позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
+			
+			if(Entity.AutoDocNumber)
+				Entity.DocNumber = null;	
 
 			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);

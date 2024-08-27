@@ -85,12 +85,18 @@ namespace Workwear.ViewModels.Statements
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
-		public string DocNumber {
+		public bool AutoDocNumber {
+			get => autoDocNumber; 
+			set => SetField(ref autoDocNumber, value);
+		}
+		public string DocNumberText {
 			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
-			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
 		}
 		#endregion
 
@@ -228,6 +234,12 @@ namespace Workwear.ViewModels.Statements
 				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		public override bool Save() {
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			return base.Save();
 		}
 
 		#endregion

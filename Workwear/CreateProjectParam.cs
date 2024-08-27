@@ -64,6 +64,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal;
+using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
@@ -75,7 +76,6 @@ using workwear.Models.Stock;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
-using workwear.Tools.Navigation;
 using Workwear.Tools.Nhibernate;
 using workwear.Tools.Import;
 using Workwear.ViewModels.Communications;
@@ -237,9 +237,15 @@ namespace workwear
 			#endregion
 
 			#region Навигация
-			builder.Register(ctx => new ClassNamesHashGenerator(new IExtraPageHashGenerator[] {new RDLReportsHashGenerator(), new AdditionalIdHashGenerator(
-				 new [] {typeof(HistoryNotificationViewModel)}
-				) })).As<IPageHashGenerator>();
+			var parametersHashGenerator = new WithParametersHashGenerator()
+				.Configure<HistoryNotificationViewModel>().AddParameter<int>(id => id.ToString())
+				.Configure<SpecCoinsOperationsJournalViewModel>().AddParameter<EmployeeCard>(emp => emp.Id.ToString())
+				.End();
+			
+			builder.Register(ctx => new ClassNamesHashGenerator(new IExtraPageHashGenerator[] {
+				new RDLReportsHashGenerator(),
+				parametersHashGenerator
+			})).As<IPageHashGenerator>();
 			builder.Register((ctx) => new AutofacViewModelsTdiPageFactory(AppDIContainer)).As<IViewModelsPageFactory>();
 			builder.Register((ctx) => new AutofacTdiPageFactory(AppDIContainer)).As<ITdiPageFactory>();
 			builder.Register((ctx) => new AutofacViewModelsGtkPageFactory(AppDIContainer)).AsSelf();

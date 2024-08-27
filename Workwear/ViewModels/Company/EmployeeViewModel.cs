@@ -24,6 +24,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
+using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
@@ -108,32 +109,34 @@ namespace Workwear.ViewModels.Company
 				.SingleOrDefault();
 			Performance.CheckPoint("Создание диалога");
 			
-			var builder = new CommonEEVMBuilderFactory<EmployeeCard>(this, Entity, UoW, NavigationManager, AutofacScope);
+			var builderVm = new CommonEEVMBuilderFactory<EmployeeViewModel>(this, this, UoW, NavigationManager, AutofacScope);
 
-			EntryLeaderViewModel = builder.ForProperty(x => x.Leader)
+			EntryLeaderViewModel = builderVm.ForProperty(x => x.Leader)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
 
-			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
+			subdivision = Entity.Subdivision;
+			EntrySubdivisionViewModel = builderVm.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 
-			EntryDepartmentViewModel = builder.ForProperty(x => x.Department)
+			department = Entity.Department;
+			EntryDepartmentViewModel = builderVm.ForProperty(x => x.Department)
 				.UseViewModelDialog<DepartmentViewModel>()
 				.Finish();
 
 			EntryDepartmentViewModel.EntitySelector = new DepartmentJournalViewModelSelector(
 				this, NavigationManager, EntrySubdivisionViewModel);
-
-			EntryPostViewModel = builder.ForProperty(x => x.Post)
+			
+			post = Entity.Post; 			
+			EntryPostViewModel = builderVm.ForProperty(x => x.Post)
 				.UseViewModelJournalAndAutocompleter<PostJournalViewModel>()
 				.UseViewModelDialog<PostViewModel>()
 				.Finish();
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.PropertyChanged += PostChangedCheck;
 
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -142,9 +145,6 @@ namespace Workwear.ViewModels.Company
 			else {
 				AutoCardNumber = String.IsNullOrWhiteSpace(Entity.CardNumber);
 			}
-
-			lastSubdivision = Entity.Subdivision;
-			lastPost = Entity.Post;
 
 			//Создаем вкладки
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
@@ -161,7 +161,7 @@ namespace Workwear.ViewModels.Company
 			VisiblePhoto = Entity.Photo != null;
 			lkLastPhone = Entity.PhoneNumber;
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
-
+			
 			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
 		}
@@ -205,12 +205,12 @@ namespace Workwear.ViewModels.Company
 
 		#region Sensetive
 		public bool SensitiveCardNumber => !AutoCardNumber;
-
 		public bool SensitiveDeductSpecCoins => SpecCoinsBalance > 0;
 		#endregion
 
-		#region Свойства ViewModel
-
+		#region Свойства ViewModel и пробросы из Model
+		
+		private bool skipChangeOfPositionDate = false;
 		private bool autoCardNumber = true;
 		[PropertyChangedAlso(nameof(CardNumber))]
 		[PropertyChangedAlso(nameof(SensitiveCardNumber))]
@@ -221,6 +221,100 @@ namespace Workwear.ViewModels.Company
 			set => Entity.CardNumber = (AutoCardNumber || value == "авто") ? null : value;
 		}
 
+		public Leader Leader {
+			get => Entity.Leader;
+			set => Entity.Leader = value;
+		}
+			
+		private Subdivision subdivision;
+		public Subdivision Subdivision {
+			get => subdivision;
+			set { if(subdivision != value) {
+					if(!skipChangeOfPositionDate && Entity.ChangeOfPositionDate != DateTime.Today && interactive.Question(
+						   "Установить для сотрудника новую дату последнего перевода в другое структурное подразделение?")) {
+						Entity.ChangeOfPositionDate = DateTime.Today;
+					}
+					subdivision = value;
+					Entity.Subdivision = value;
+				}
+			}
+		}
+
+		private Department department;
+		public Department Department {
+			get => department;
+			set { if(department != value) {
+					if(!skipChangeOfPositionDate && Entity.ChangeOfPositionDate != DateTime.Today && interactive.Question(
+						   "Установить для сотрудника новую дату последнего перевода в другое структурное подразделение?")) {
+						Entity.ChangeOfPositionDate = DateTime.Today;
+					}
+					department = value;
+					Entity.Department = value;
+				}
+			}
+		}
+
+		private Post post;
+		public Post Post {
+			get => post;
+			set {
+				if(post != value) {
+					skipChangeOfPositionDate = true;
+					if(value != null) {
+						if(value.Subdivision != null && value.Subdivision != Entity.Subdivision &&
+						   value.Department != null && value.Department != Entity.Department) {
+							if(interactive.Question(
+								   "Подразделение и отдел в должности отличается от указанных в сотруднике. Установить их в сотрудника из должности?")) {
+								Entity.Subdivision = value.Subdivision;
+								Entity.Department = value.Department;
+							}
+						}
+						else if(value.Subdivision != null && value.Subdivision != Entity.Subdivision) {
+							if(interactive.Question(
+								   "Подразделение в должности отличается от указанных в сотруднике. Установить его в сотрудника из должности?")) {
+								
+								Entity.Subdivision = value.Subdivision;
+								
+							}
+						}
+						else if(value.Department != null && value.Department != Entity.Department) {
+							if(interactive.Question(
+								   "Отдел в должности отличается от указанных в сотрудника. Установить его в сотрудника из должности?")) {
+								Entity.Department = value.Department;
+							}
+						}
+
+						if(Entity.UsedNorms.Any(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)))
+						   && interactive.Question("Заменить нормы от старой должности нормами от новой должности?")) {
+							Entity.UsedNorms.RemoveAll(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)));
+							Entity.NormFromPost(UoW, NormRepository, value);
+						}
+
+						var postsNorms = NormRepository.GetNormsForPost(UoW, value);
+						if(postsNorms.Any(n => !Entity.UsedNorms.Contains(n)) &&
+						   interactive.Question((Entity.UsedNorms.Count == 0 ? "Установить" : "Дополнить") +" нормы по должности?")) {
+							if(Entity.Id == 0 && !Save()) {
+								//Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+								interactive.ShowMessage(ImportanceLevel.Error,
+									"Норма не установлена, так как не все данные сотрудника заполнены корректно.");
+								return;
+							}
+							Entity.NormFromPost(UoW, NormRepository, value);
+						}
+					}
+					post = value;
+					Entity.Post = value;
+					
+					skipChangeOfPositionDate = false;
+					if(Entity.ChangeOfPositionDate != DateTime.Today && interactive.Question(
+						   "Установить для сотрудника новую дату изменения должности или последнего перевода в другое структурное подразделение?")) {
+						Entity.ChangeOfPositionDate = DateTime.Today;
+					}
+				}
+				
+			} 
+		}
+		
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
 		#region CardUid
@@ -337,7 +431,13 @@ namespace Workwear.ViewModels.Company
 					Entity.Sex = sex;
 			}
 		}
-		
+
+		#endregion
+		#region MyRegion
+
+		public void OpenCoinsOperations() {
+			NavigationManager.OpenViewModel<SpecCoinsOperationsJournalViewModel, EmployeeCard>(this, Entity);
+		}
 		public void OpenDeductCoinsView() 
 		{
 			NavigationManager.OpenViewModel<DeductSpecCoinsViewModel, string, int, Action>
@@ -528,56 +628,7 @@ namespace Workwear.ViewModels.Company
 		}
 
 		#endregion
-		#region Дата изменения должности
 
-		Subdivision lastSubdivision;
-		Post lastPost;
-		bool skipSubdivisionChange = false;
-
-		void PostChangedCheck(object sender, PropertyChangedEventArgs e)
-		{
-			if( e.PropertyName == nameof(Entity.Post) && lastPost != null && interactive.Question(
-				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
-				Entity.ChangeOfPositionDate = DateTime.Today;
-			}
-			if(!skipSubdivisionChange && e.PropertyName == nameof(Entity.Subdivision) && lastSubdivision != null && interactive.Question(
-				"Установить новую дату изменения должности или перевода в другое структурное подразделение для сотрудника?")) {
-				Entity.ChangeOfPositionDate = DateTime.Today;
-			}
-			
-			if(e.PropertyName == nameof(Entity.Post) && Entity.Post != null) {
-				if(Entity.Post.Subdivision != null && Entity.Post.Subdivision != Entity.Subdivision && 
-				   Entity.Post.Department != null && Entity.Post.Department != Entity.Department) {
-					if(interactive.Question("Подразделение и отдел в должности отличается от указанных в сотруднике. Установить их в сотрудника из должности?")) {
-						skipSubdivisionChange = true;
-						Entity.Subdivision = Entity.Post.Subdivision;
-						Entity.Department = Entity.Post.Department;
-						skipSubdivisionChange = false;
-					}
-				}
-				else if (Entity.Post.Subdivision != null && Entity.Post.Subdivision != Entity.Subdivision) {
-					if(interactive.Question("Подразделение в должности отличается от указанных в сотруднике. Установить его в сотрудника из должности?")) {
-						skipSubdivisionChange = true;
-						Entity.Subdivision = Entity.Post.Subdivision;
-						skipSubdivisionChange = false;
-					}
-				}
-				else if(Entity.Post.Department != null && Entity.Post.Department != Entity.Department) {
-					if(interactive.Question("Отдел в должности отличается от указанных в сотрудника. Установить его в сотрудника из должности?")) {
-						Entity.Department = Entity.Post.Department;
-					}
-				}
-				
-				if(Entity.UsedNorms.Count == 0 && interactive.Question("Установить норму по должности?")) {
-					if(Entity.Id == 0 && !Save()) { //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
-						interactive.ShowMessage(ImportanceLevel.Error, "Норма не установлена, так как не все данные сотрудника заполнены корректно.");
-						return;
-					} 
-					Entity.NormFromPost(UoW, NormRepository);
-				}
-			}
-		}
-		#endregion
 		#region Uid
 
 		public void ReadUid()

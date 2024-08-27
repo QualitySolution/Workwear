@@ -19,6 +19,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("№ Приложения").AddTextRenderer(node => node.AnnexNumberText)
 				.AddColumn("№ Пункта").AddTextRenderer(node => node.TONParagraph)
 				.AddColumn("Профессии").AddTextRenderer(node => node.ProfessionsText)
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, node) => c.Foreground = node.Archival? "gray": "black")
 				.Finish();
 			ytreeNorms.Selection.Changed += YtreeNorms_Selection_Changed;
 		}
