@@ -602,27 +602,27 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*,
-    IF(@show_stock,ballance.SUM, null) AS in_stock
+       IF(@show_stock,ballance.SUM, null) AS in_stock
 FROM(SELECT
          protection_tools.name AS protection_tools_name,
          protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
-         wear_cards_item.protection_tools_id,
-         if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
-         if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
+         employee_cards_item.protection_tools_id,
+         if(@group_by_subdivision, subdivisions.code, NULL) as subdivision_code,
+         if(@group_by_subdivision, subdivisions.id, NULL)as subdivision_id,
          if(@department_id, (SELECT name from departments as d where d.id = @department_id), NULL) as department_name,
-         objects.name as subdivision_name,
+         subdivisions.name as subdivision_name,
          if(@show_employees,
             GROUP_CONCAT( CONCAT_WS('',
-                                    CONCAT(wear_cards.last_name, ' '),
-                                    IF(wear_cards.first_name = '',
+                                    CONCAT(employees.last_name, ' '),
+                                    IF(employees.first_name = '',
                                        NULL,
-                                       CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-                                    IF(wear_cards.patronymic_name = '',
+                                       CONCAT(LEFT(employees.first_name, 1), '.')),
+                                    IF(employees.patronymic_name = '',
                                        NULL,
-                                       CONCAT(LEFT(wear_cards.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500),
+                                       CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500),
             null)
              AS employees,
-         IF(@show_sex, wear_cards.sex, NULL) as sex,
+         IF(@show_sex, employees.sex, NULL) as sex,
          sizeTypeAlias.id as sizeTypeId,
          heightTypeAlias.id as heightTypeId,
          sizeAlias.id as sizeId,
@@ -632,51 +632,51 @@ FROM(SELECT
          measurement_units.name AS unit,
          SUM(norms_item.amount) AS amount
      FROM
-         wear_cards_item
-             JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-             LEFT JOIN posts ON wear_cards.post_id = posts.id
-             LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
-             JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+         employee_cards_item
+             JOIN employees ON employees.id = employee_cards_item.employee_id
+             LEFT JOIN posts ON employees.post_id = posts.id
+             LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
+             JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
              LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
              LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-             LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
+             LEFT JOIN employees_vacations ON employees.id = employees_vacations.employee_id
              LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
              LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-             LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+             LEFT JOIN employees_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
              LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-             LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+             LEFT JOIN employees_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
              LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-             JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+             JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
              LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
      WHERE
-         wear_cards.dismiss_date IS NULL
+         employees.dismiss_date IS NULL
        AND ((-1 IN (@employee_groups_ids))
          OR(@without_groups AND NOT EXISTS
              (SELECT * FROM employee_group_items as gi
-              WHERE gi.employee_id = wear_cards_item.wear_card_id) )
+              WHERE gi.employee_id = employee_cards_item.employee_id) )
          OR (EXISTS (SELECT * FROM employee_group_items as gi
-                     WHERE gi.employee_id = wear_cards_item.wear_card_id
+                     WHERE gi.employee_id = employee_cards_item.employee_id
                        AND gi.employee_group_id IN (@employee_groups_ids))) )
-       AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
-       AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-       AND (@department_id = -1 OR wear_cards.department_id = @department_id)
+       AND (@exclude_in_vacation = false OR (CONVERT(@report_date, DATE) NOT BETWEEN employees_vacations.begin_date AND employees_vacations.end_date OR employees_vacations.begin_date IS NULL))
+       AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
+       AND (@department_id = -1 OR employees.department_id = @department_id)
        AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
        AND (@condition = false OR norm_conditions.issuance_start is null OR
             IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
                SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
                SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
        AND( @issue_type = '' OR item_types.issue_type = @issue_type )
-       AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-       AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
+       AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+       AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
      GROUP BY
-         IF(@group_by_subdivision, objects.id, NULL),
-         wear_cards_item.protection_tools_id,
-         IF(@show_sex, wear_cards.sex, NULL),
+         IF(@group_by_subdivision, subdivisions.id, NULL),
+         employee_cards_item.protection_tools_id,
+         IF(@show_sex, employees.sex, NULL),
          sizeId,
-        heightId
+         heightId
      ORDER BY
          protection_tools_name,
-         IF(@show_sex, wear_cards.sex, NULL),
+         IF(@show_sex, employees.sex, NULL),
          size,
          growth
     ) as tabel
@@ -717,16 +717,16 @@ FROM(SELECT
                         ) AS sex_b
                             JOIN (SELECT 'A' AS sex UNION SELECT 'M' UNION SELECT 'F') AS sex_const
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
-        AS ballance
-            ON (tabel.protection_tools_id = ballance.ptid
-                AND (@show_sex AND tabel.sex = ballance.sex OR NOT @show_sex AND ballance.sex = 'A')
-                AND ((tabel.sizeId IS NULL AND ballance.size_id IS NULL)
-                    OR ballance.size_id = tabel.sizeId
-                    OR ballance.size_id IN (SELECT IF(size_suitable.size_id = tabel.sizeId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.sizeId OR size_suitable.`size_suitable_id` = tabel.sizeId))
-                AND ((tabel.heightId IS NULL AND ballance.height_id IS NULL) 
-                    OR ballance.height_id = tabel.heightId 
-                    OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
-            );</CommandText>
+    AS ballance
+                  ON (tabel.protection_tools_id = ballance.ptid
+                      AND (@show_sex AND tabel.sex = ballance.sex OR NOT @show_sex AND ballance.sex = 'A')
+                      AND ((tabel.sizeId IS NULL AND ballance.size_id IS NULL)
+                          OR ballance.size_id = tabel.sizeId
+                          OR ballance.size_id IN (SELECT IF(size_suitable.size_id = tabel.sizeId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.sizeId OR size_suitable.`size_suitable_id` = tabel.sizeId))
+                      AND ((tabel.heightId IS NULL AND ballance.height_id IS NULL)
+                          OR ballance.height_id = tabel.heightId
+                          OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
+                      );</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>

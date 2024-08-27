@@ -46,7 +46,7 @@ CREATE TABLE `clothing_service_claim` (
   PRIMARY KEY (`id`),
   KEY `barcode_id` (`barcode_id`),
   KEY `fk_clothing_service_claim_employee_id` (`employee_id`),
-  constraint `fk_clothing_service_claim_employee_id` foreign key (employee_id) references wear_cards (id),
+  constraint `fk_clothing_service_claim_employee_id` foreign key (employee_id) references employees (id),
   CONSTRAINT `fk_claim_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -76,32 +76,33 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `objects`
+-- Table `subdivisions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `objects` (
+CREATE TABLE IF NOT EXISTS `subdivisions` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(20) NULL DEFAULT NULL,
   `address` TEXT NULL DEFAULT NULL,
   `name` VARCHAR(240) NOT NULL,
   `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
-  `parent_object_id` INT UNSIGNED NULL DEFAULT NULL,
+  `parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_objects_1_idx` (`warehouse_id` ASC),
-  INDEX `fk_objects_2_idx` (`parent_object_id` ASC),
-  INDEX `index_objects_code` (`code` ASC),
-  CONSTRAINT `fk_objects_1`
+  INDEX `fk_subdivisions_1_idx` (`warehouse_id` ASC),
+  INDEX `fk_subdivisions_2_idx` (`parent_subdivision_id` ASC),
+  INDEX `index_subdivisions_code` (`code` ASC),
+  CONSTRAINT `fk_subdivisions_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_objects_2`
-    FOREIGN KEY (`parent_object_id`)
-    REFERENCES `objects` (`id`)
+  CONSTRAINT `fk_subdivisions_2`
+    FOREIGN KEY (`parent_subdivision_id`)
+    REFERENCES `subdivisions` (`id`)
     ON DELETE SET NULL
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARACTER SET = utf8mb4;
+
 
 
 -- -----------------------------------------------------
@@ -130,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `departments` (
   INDEX `fk_departaments_1_idx` (`subdivision_id` ASC),
   CONSTRAINT `fk_departaments_1`
     FOREIGN KEY (`subdivision_id`)
-    REFERENCES `objects` (`id`)
+    REFERENCES `subdivisions` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -182,7 +183,7 @@ CREATE TABLE `postomat_document_items` (
    KEY `fk_barcode_id` (`barcode_id`),
    KEY `fk_claim_id` (`claim_id`),
    KEY `fk_nomenclature_id` (`nomenclature_id`),
-   constraint `fk_postomat_document_items_employee_id` foreign key (employee_id) references wear_cards (id),
+   constraint `fk_postomat_document_items_employee_id` foreign key (employee_id) references employees (id),
    CONSTRAINT `fk_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
    CONSTRAINT `fk_claim_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
    CONSTRAINT `fk_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
@@ -244,7 +245,7 @@ create table if not exists `postomat_document_withdraw_items`
 	KEY `fk_postomat_document_withdraw_items_employee_id` (`employee_id`),
 	KEY `fk_postomat_document_withdraw_items_barcode_id` (`barcode_id`),
 	KEY `fk_postomat_document_withdraw_items_nomenclature_id` (`nomenclature_id`),
-	constraint `fk_postomat_document_withdraw_items_employee_id` foreign key (employee_id) references wear_cards (id),
+	constraint `fk_postomat_document_withdraw_items_employee_id` foreign key (employee_id) references employees (id),
 	CONSTRAINT `fk_postomat_document_withdraw_items_barcode_id` FOREIGN KEY (`barcode_id`) REFERENCES `barcodes` (`id`),
 	CONSTRAINT `fk_postomat_document_withdraw_items_nomenclature_id` FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`),
 	CONSTRAINT `fk_postomat_document_withdraw_items_postomat_documents_export_id` FOREIGN KEY (`document_withdraw_id`) REFERENCES `postomat_documents_withdraw` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -273,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `posts` (
   INDEX `fk_posts_1_idx` (`cost_center_id` ASC),
   CONSTRAINT `fk_posts_subdivision`
     FOREIGN KEY (`subdivision_id`)
-    REFERENCES `objects` (`id`)
+    REFERENCES `subdivisions` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
   CONSTRAINT `fk_posts_department`
@@ -296,9 +297,9 @@ AUTO_INCREMENT = 1;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards`
+-- Table `employees`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards` (
+CREATE TABLE IF NOT EXISTS `employees` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `card_number` VARCHAR(15) NULL DEFAULT NULL,
@@ -307,7 +308,7 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `first_name` VARCHAR(20) NULL,
   `patronymic_name` VARCHAR(20) NULL,
   `card_key` VARCHAR(16) NULL DEFAULT NULL,
-  `object_id` INT UNSIGNED NULL DEFAULT NULL,
+  `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `department_id` INT UNSIGNED NULL DEFAULT NULL,
   `hire_date` DATE NULL DEFAULT NULL,
   `change_of_position_date` DATE NULL DEFAULT NULL,
@@ -324,40 +325,40 @@ CREATE TABLE IF NOT EXISTS `wear_cards` (
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
-  INDEX `fk_wear_cards_object_idx` (`object_id` ASC),
-  INDEX `fk_wear_cards_post_idx` (`post_id` ASC),
-  INDEX `fk_wear_cards_leader_idx` (`leader_id` ASC),
-  INDEX `fk_wear_cards_user_idx` (`user_id` ASC),
-  INDEX `fk_wear_cards_department_idx` (`department_id` ASC),
+  INDEX `fk_employees_subdivision_idx` (`subdivision_id` ASC),
+  INDEX `fk_employees_post_idx` (`post_id` ASC),
+  INDEX `fk_employees_leader_idx` (`leader_id` ASC),
+  INDEX `fk_employees_user_idx` (`user_id` ASC),
+  INDEX `fk_employees_department_idx` (`department_id` ASC),
   UNIQUE INDEX `card_key_UNIQUE` (`card_key` ASC),
   UNIQUE INDEX `card_number_UNIQUE` (`card_number` ASC),
-  INDEX `index_wear_cards_personal_number` (`personnel_number` ASC),
-  INDEX `index_wear_cards_last_name` (`last_name` ASC),
-  INDEX `index_wear_cards_first_name` (`first_name` ASC),
-  INDEX `index_wear_cards_patronymic_name` (`patronymic_name` ASC),
-  INDEX `index_wear_cards_dismiss_date` (`dismiss_date` ASC),
-  INDEX `index_wear_cards_phone_number` (`phone_number` ASC),
-  CONSTRAINT `fk_wear_cards_object`
-    FOREIGN KEY (`object_id`)
-    REFERENCES `objects` (`id`)
+  INDEX `index_employees_personal_number` (`personnel_number` ASC),
+  INDEX `index_employees_last_name` (`last_name` ASC),
+  INDEX `index_employees_first_name` (`first_name` ASC),
+  INDEX `index_employees_patronymic_name` (`patronymic_name` ASC),
+  INDEX `index_employees_dismiss_date` (`dismiss_date` ASC),
+  INDEX `index_employees_phone_number` (`phone_number` ASC),
+  CONSTRAINT `fk_employees_subdivision`
+    FOREIGN KEY (`subdivision_id`)
+    REFERENCES `subdivisions` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_post`
+  CONSTRAINT `fk_employees_post`
     FOREIGN KEY (`post_id`)
     REFERENCES `posts` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_leader`
+  CONSTRAINT `fk_employees_leader`
     FOREIGN KEY (`leader_id`)
     REFERENCES `leaders` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_user`
+  CONSTRAINT `fk_employees_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_department`
+  CONSTRAINT `fk_employees_department`
     FOREIGN KEY (`department_id`)
     REFERENCES `departments` (`id`)
     ON DELETE SET NULL
@@ -380,7 +381,7 @@ CREATE TABLE IF NOT EXISTS `leaders` (
   INDEX `fk_leaders_1_idx` (`employee_id` ASC),
   CONSTRAINT `fk_leaders_1`
     FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -568,12 +569,12 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
-  `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
+  `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_stock_income_wear_card_idx` (`wear_card_id` ASC),
+  INDEX `fk_stock_income_employee_idx` (`employee_id` ASC),
   INDEX `fk_stock_income_user_idx` (`user_id` ASC),
   INDEX `fk_stock_income_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_income_date` (`date` ASC),
@@ -582,9 +583,9 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_wear_card`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  CONSTRAINT `fk_stock_income_employee`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_income_user`
@@ -862,7 +863,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   INDEX `fk_operation_issued_by_employee_8_idx` (`height_id` ASC),
   CONSTRAINT `fk_operation_issued_by_employee_1`
     FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_operation_issued_by_employee_2`
@@ -1024,13 +1025,13 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
-  `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
+  `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_stock_expense_wear_card_idx` (`wear_card_id` ASC),
+  INDEX `fk_stock_expense_employee_idx` (`employee_id` ASC),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_expense_date` (`date` ASC),
@@ -1039,9 +1040,9 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
     REFERENCES `warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_expense_wear_card`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  CONSTRAINT `fk_stock_expense_employee`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_expense_user`
@@ -1196,22 +1197,22 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `norms_professions`
+-- Table `norms_posts`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `norms_professions` (
+CREATE TABLE IF NOT EXISTS `norms_posts` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `norm_id` INT UNSIGNED NOT NULL,
-  `profession_id` INT UNSIGNED NOT NULL,
+  `post_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_norms_professions_1_idx` (`norm_id` ASC),
-  INDEX `fk_norms_professions_2_idx` (`profession_id` ASC),
-  CONSTRAINT `fk_norms_professions_1`
+  INDEX `fk_norms_posts_1_idx` (`norm_id` ASC),
+  INDEX `fk_norms_posts_2_idx` (`post_id` ASC),
+  CONSTRAINT `fk_norms_posts_1`
     FOREIGN KEY (`norm_id`)
     REFERENCES `norms` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_norms_professions_2`
-    FOREIGN KEY (`profession_id`)
+  CONSTRAINT `fk_norms_posts_2`
+    FOREIGN KEY (`post_id`)
     REFERENCES `posts` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
@@ -1219,21 +1220,21 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards_norms`
+-- Table `employees_norms`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_norms` (
+CREATE TABLE IF NOT EXISTS `employees_norms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `wear_card_id` INT UNSIGNED NOT NULL,
+  `employee_id` INT UNSIGNED NOT NULL,
   `norm_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_wear_cards_norms_1_idx` (`wear_card_id` ASC),
-  INDEX `fk_wear_cards_norms_2_idx` (`norm_id` ASC),
-  CONSTRAINT `fk_wear_cards_norms_1`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  INDEX `fk_employees_norms_1_idx` (`employee_id` ASC),
+  INDEX `fk_employees_norms_2_idx` (`norm_id` ASC),
+  CONSTRAINT `fk_employees_norms_1`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_norms_2`
+  CONSTRAINT `fk_employees_norms_2`
     FOREIGN KEY (`norm_id`)
     REFERENCES `norms` (`id`)
     ON DELETE CASCADE
@@ -1242,24 +1243,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards_cost_allocation`
+-- Table `employees_cost_allocation`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_cost_allocation` (
+CREATE TABLE IF NOT EXISTS `employees_cost_allocation` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `wear_card_id` INT(10) UNSIGNED NOT NULL,
+  `employee_id` INT(10) UNSIGNED NOT NULL,
   `cost_center_id` INT(10) UNSIGNED NOT NULL,
   `percent` DECIMAL(3,2) UNSIGNED NOT NULL DEFAULT 1.00,
   PRIMARY KEY (`id`),
-  INDEX `wear_cards_cost_allocation_ibfk_1` (`cost_center_id` ASC),
-  INDEX `wear_cards_cost_allocation_ibfk_2` (`wear_card_id` ASC),
-  CONSTRAINT `wear_cards_cost_allocation_ibfk_1`
+  INDEX `employees_cost_allocation_ibfk_1` (`cost_center_id` ASC),
+  INDEX `employees_cost_allocation_ibfk_2` (`employee_id` ASC),
+  CONSTRAINT `employees_cost_allocation_ibfk_1`
     FOREIGN KEY (`cost_center_id`)
     REFERENCES `cost_center` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `wear_cards_cost_allocation_ibfk_2`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  CONSTRAINT `employees_cost_allocation_ibfk_2`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1267,32 +1268,32 @@ DEFAULT CHARACTER SET = utf8mb4;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards_item`
+-- Table `employee_cards_item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_item` (
+CREATE TABLE IF NOT EXISTS `employee_cards_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `wear_card_id` INT UNSIGNED NOT NULL,
+  `employee_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `norm_item_id` INT UNSIGNED NULL,
   `created` DATE NULL,
   `next_issue` DATE NULL,
   `next_issue_annotation` VARCHAR(240) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_wear_cards_item_1_idx` (`wear_card_id` ASC),
-  INDEX `fk_wear_cards_item_3_idx` (`norm_item_id` ASC),
-  INDEX `fk_wear_cards_item_2_idx` (`protection_tools_id` ASC),
-  INDEX `index_wear_cards_item_next_issue` (`next_issue` ASC),
-  CONSTRAINT `fk_wear_cards_item_1`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  INDEX `fk_employees_item_1_idx` (`employee_id` ASC),
+  INDEX `fk_employee_cards_item_3_idx` (`norm_item_id` ASC),
+  INDEX `fk_employee_cards_item_2_idx` (`protection_tools_id` ASC),
+  INDEX `index_employee_cards_item_next_issue` (`next_issue` ASC),
+  CONSTRAINT `fk_employees_item_1`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_item_2`
+  CONSTRAINT `fk_employee_cards_item_2`
     FOREIGN KEY (`protection_tools_id`)
     REFERENCES `protection_tools` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_item_3`
+  CONSTRAINT `fk_employee_cards_item_3`
     FOREIGN KEY (`norm_item_id`)
     REFERENCES `norms_item` (`id`)
     ON DELETE RESTRICT
@@ -1374,24 +1375,24 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards_vacations`
+-- Table `employees_vacations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_vacations` (
+CREATE TABLE IF NOT EXISTS `employees_vacations` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `wear_card_id` INT UNSIGNED NOT NULL,
+  `employee_id` INT UNSIGNED NOT NULL,
   `vacation_type_id` INT UNSIGNED NOT NULL,
   `begin_date` DATE NOT NULL,
   `end_date` DATE NOT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_wear_cards_vacations_1_idx` (`wear_card_id` ASC),
-  INDEX `fk_wear_cards_vacations_2_idx` (`vacation_type_id` ASC),
-  CONSTRAINT `fk_wear_cards_vacations_1`
-    FOREIGN KEY (`wear_card_id`)
-    REFERENCES `wear_cards` (`id`)
+  INDEX `fk_employees_vacations_1_idx` (`employee_id` ASC),
+  INDEX `fk_employees_vacations_2_idx` (`vacation_type_id` ASC),
+  CONSTRAINT `fk_employees_vacations_1`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `employees` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_vacations_2`
+  CONSTRAINT `fk_employees_vacations_2`
     FOREIGN KEY (`vacation_type_id`)
     REFERENCES `vacation_type` (`id`)
     ON DELETE RESTRICT
@@ -1428,7 +1429,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_collective_expense_3`
     FOREIGN KEY (`transfer_agent_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -1466,7 +1467,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_2`
     FOREIGN KEY (`subdivision_id`)
-    REFERENCES `objects` (`id`)
+    REFERENCES `subdivisions` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_3`
@@ -1491,7 +1492,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_8`
     FOREIGN KEY (`transfer_agent_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -1547,7 +1548,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense_detail` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_stock_collective_expense_detail_6`
     FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_stock_collective_expense_detail_7`
@@ -1599,7 +1600,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_2`
     FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_3`
@@ -1851,29 +1852,29 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `wear_cards_sizes`
+-- Table `employees_sizes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wear_cards_sizes` (
+CREATE TABLE IF NOT EXISTS `employees_sizes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `employee_id` INT UNSIGNED NOT NULL COMMENT 'Сотрудник для которого установлен размер',
   `size_type_id` INT UNSIGNED NOT NULL COMMENT 'Тип размера, не может быть установлено несколько размеров одного типа одному сотруднику',
   `size_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_wear_cards_sizes_1_idx` (`employee_id` ASC),
-  INDEX `fk_wear_cards_sizes_2_idx` (`size_type_id` ASC),
-  INDEX `fk_wear_cards_sizes_3_idx` (`size_id` ASC),
-  UNIQUE INDEX `wear_cards_sizes_unique` USING BTREE (`employee_id`, `size_type_id`),
-  CONSTRAINT `fk_wear_cards_sizes_1`
+  INDEX `fk_employees_sizes_1_idx` (`employee_id` ASC),
+  INDEX `fk_employees_sizes_2_idx` (`size_type_id` ASC),
+  INDEX `fk_employees_sizes_3_idx` (`size_id` ASC),
+  UNIQUE INDEX `employees_sizes_unique` USING BTREE (`employee_id`, `size_type_id`),
+  CONSTRAINT `fk_employees_sizes_1`
     FOREIGN KEY (`employee_id`)
-    REFERENCES `wear_cards` (`id`)
+    REFERENCES `employees` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_sizes_2`
+  CONSTRAINT `fk_employees_sizes_2`
     FOREIGN KEY (`size_type_id`)
     REFERENCES `size_types` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_wear_cards_sizes_3`
+  CONSTRAINT `fk_employees_sizes_3`
     FOREIGN KEY (`size_id`)
     REFERENCES `sizes` (`id`)
     ON DELETE CASCADE
@@ -2065,10 +2066,10 @@ create table employee_group_items
 	employee_id int unsigned not null,
 	comment text null,
 	PRIMARY KEY (`id`),
-	constraint wear_card_groups_items_unique
+	constraint employee_groups_items_unique
 		unique (employee_id, employee_group_id),
 	constraint foreign_key_employee_groups_items_employees
-		foreign key (employee_id) references wear_cards (id)
+		foreign key (employee_id) references employees (id)
 			on update cascade on delete cascade,
 	constraint foreign_key_employee_groups_items_employee_groups
 		foreign key (employee_group_id) references employee_groups (id)

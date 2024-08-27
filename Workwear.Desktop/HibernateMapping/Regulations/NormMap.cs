@@ -24,9 +24,9 @@ namespace Workwear.HibernateMapping.Regulations
 			References(x => x.Document).Column("regulations_id");
 			References(x => x.Annex).Column("regulations_annex_id");
 
-			HasManyToMany (x => x.Posts).Table ("norms_professions")
+			HasManyToMany (x => x.Posts).Table ("norms_posts")
 				.ParentKeyColumn ("norm_id")
-				.ChildKeyColumn ("profession_id")
+				.ChildKeyColumn ("post_id")
 				.LazyLoad ();
 			
 			HasManyToMany (x => x.Employees).Table ("wear_cards_norms")

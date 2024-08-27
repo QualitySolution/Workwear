@@ -825,78 +825,78 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>
 SELECT tabel.*,
        IFNULL(ballance.SUM, 0) AS in_stock
 FROM(SELECT
-        protection_tools.name AS protection_tools_name,
-        protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
-        wear_cards_item.protection_tools_id,
-        if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
-        if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
-        objects.name as subdivision_name,
-        IF(@show_sex, wear_cards.sex, NULL) as sex,
-        sizeTypeAlias.id as sizeTypeId,
-        heightTypeAlias.id as heightTypeId,
-        sizeAlias.id as sizeId,
-        heightAlias.id AS heightId,
-        sizeAlias.name AS size,
-        heightAlias.name AS growth,
-        measurement_units.name AS unit,
-        SUM(norms_item.amount) AS amount
-    FROM
-        wear_cards_item
-            JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-            LEFT JOIN posts ON wear_cards.post_id = posts.id
-            LEFT JOIN objects ON wear_cards.object_id = objects.id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
-            JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-            LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-            LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-            LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-            LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-            LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-            LEFT JOIN wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-            LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-            LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
-            LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-            JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-            LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
-    WHERE
-        wear_cards.dismiss_date IS NULL
-      AND ((-1 IN (@employee_groups_ids))
-        OR(@without_groups AND NOT EXISTS
-            (SELECT * FROM employee_group_items as gi
-             WHERE gi.employee_id = wear_cards_item.wear_card_id) )
-        OR (EXISTS (SELECT * FROM employee_group_items as gi
-                    WHERE gi.employee_id = wear_cards_item.wear_card_id
-                      AND gi.employee_group_id IN (@employee_groups_ids))) )
-      AND (@exclude_in_vacation = false OR ((CONVERT(@report_date, DATE) NOT BETWEEN CONVERT(wear_cards_vacations.begin_date, DATE) AND CONVERT(wear_cards_vacations.end_date, DATE)) OR wear_cards_vacations.begin_date IS NULL))
-      AND (@subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-      AND (@department_id = -1 OR wear_cards.department_id = @department_id)
-      AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
-      AND (@condition = false OR norm_conditions.issuance_start is null OR
-           IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
-              SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
-              SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
-      AND( @issue_type IS NULL OR @issue_type = '' OR item_types.issue_type = @issue_type )
-      AND wear_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
-      AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; wear_cards_item.next_issue)
-    GROUP BY
-        IF(@group_by_subdivision, objects.id, NULL),
-        wear_cards_item.protection_tools_id,
-        IF(@show_sex, wear_cards.sex, NULL),
-        sizeId,
-        heightId
-    ORDER BY
-        protection_tools_name,
-        IF(@show_sex, wear_cards.sex, NULL),
-        size,
-        growth
-   ) as tabel
-       LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
+         protection_tools.name AS protection_tools_name,
+         protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
+         employee_cards_item.protection_tools_id,
+         if(@group_by_subdivision, subdivisions.code, NULL) as subdivision_code,
+         if(@group_by_subdivision, subdivisions.id, NULL)as subdivision_id,
+         subdivisions.name as subdivision_name,
+         IF(@show_sex, employees.sex, NULL) as sex,
+         sizeTypeAlias.id as sizeTypeId,
+         heightTypeAlias.id as heightTypeId,
+         sizeAlias.id as sizeId,
+         heightAlias.id AS heightId,
+         sizeAlias.name AS size,
+         heightAlias.name AS growth,
+         measurement_units.name AS unit,
+         SUM(norms_item.amount) AS amount
+     FROM
+         employee_cards_item
+             JOIN employees ON employees.id = employee_cards_item.employee_id
+             LEFT JOIN posts ON employees.post_id = posts.id
+             LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
+             JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
+             LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+             LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+             LEFT JOIN employees_vacations ON employees.id = employees_vacations.employee_id
+             LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+             LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+             LEFT JOIN employees_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+             LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+             LEFT JOIN employees_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+             LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+             JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
+             LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
+     WHERE
+         employees.dismiss_date IS NULL
+       AND ((-1 IN (@employee_groups_ids))
+         OR(@without_groups AND NOT EXISTS
+             (SELECT * FROM employee_group_items as gi
+              WHERE gi.employee_id = employee_cards_item.employee_id) )
+         OR (EXISTS (SELECT * FROM employee_group_items as gi
+                     WHERE gi.employee_id = employee_cards_item.employee_id
+                       AND gi.employee_group_id IN (@employee_groups_ids))) )
+       AND (@exclude_in_vacation = false OR ((CONVERT(@report_date, DATE) NOT BETWEEN CONVERT(employees_vacations.begin_date, DATE) AND CONVERT(employees_vacations.end_date, DATE)) OR employees_vacations.begin_date IS NULL))
+       AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
+       AND (@department_id = -1 OR employees.department_id = @department_id)
+       AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+       AND (@condition = false OR norm_conditions.issuance_start is null OR
+            IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
+               SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+               SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
+       AND( @issue_type IS NULL OR @issue_type = '' OR item_types.issue_type = @issue_type )
+       AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+       AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
+     GROUP BY
+         IF(@group_by_subdivision, subdivisions.id, NULL),
+         employee_cards_item.protection_tools_id,
+         IF(@show_sex, employees.sex, NULL),
+         sizeId,
+         heightId
+     ORDER BY
+         protection_tools_name,
+         IF(@show_sex, employees.sex, NULL),
+         size,
+         growth
+    ) as tabel
+        LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
                           IF(sex_const.sex = 'A',  sex_b.SUM_M + sex_b.SUM_U + sex_b.SUM_F,
                              IF(sex_const.sex = 'M', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U)) AS SUM
                    FROM (
@@ -994,7 +994,7 @@ FROM(SELECT
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>

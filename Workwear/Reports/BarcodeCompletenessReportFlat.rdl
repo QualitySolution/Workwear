@@ -14,21 +14,21 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *,
-          (tabel.barcodes / tabel.balance * 100)
-              AS 'barcode_percent',
-          (tabel.new_barcodes / tabel.balance * 100)
-              AS 'barcode_new_percent'
+       (tabel.barcodes / tabel.balance * 100)
+           AS 'barcode_percent',
+       (tabel.new_barcodes / tabel.balance * 100)
+           AS 'barcode_new_percent'
 FROM (SELECT
-          IF(@group_by_subdivision, wear_cards.object_id, null)
+          IF(@group_by_subdivision, employees.subdivision_id, null)
               AS subdivision_id,
-          IF(@group_by_subdivision, objects.name, null)
+          IF(@group_by_subdivision, subdivisions.name, null)
               AS subdivision_name,
           protection_tools.id
               AS 'protection_tools_id',
           protection_tools.name
               AS 'protection_tools_name',
-          if(@show_sex, IF(wear_cards.sex = 'M','М', IF(wear_cards.sex = 'F','Ж','')), null)
-                AS 'employee_sex',
+          if(@show_sex, IF(employees.sex = 'M','М', IF(employees.sex = 'F','Ж','')), null)
+              AS 'employee_sex',
           if(@show_size, sizeAlias.name, null)
               as size,
           if(@show_size, heightAlias.name, null)
@@ -40,93 +40,93 @@ FROM (SELECT
           SUM(bar_op.num_new)
               AS 'new_barcodes',
           IF(@show_employees,
-              GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &gt; bar_op.num_all),
-                           CONCAT_WS('',
-                                 CONCAT(wear_cards.last_name, ' '),
-                                 IF(wear_cards.first_name = '',
-                                    NULL,
-                                    CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-                                 IF(wear_cards.patronymic_name = '',
-                                    NULL,
-                                    CONCAT(LEFT(wear_cards.patronymic_name, 1), '.')))
-                    ,null )
-                  SEPARATOR ', ' LIMIT 1000)
-              ,null) 
-               AS 'list_without_barcoses',
+             GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &gt; bar_op.num_all),
+                             CONCAT_WS('',
+                                       CONCAT(employees.last_name, ' '),
+                                       IF(employees.first_name = '',
+                                          NULL,
+                                          CONCAT(LEFT(employees.first_name, 1), '.')),
+                                       IF(employees.patronymic_name = '',
+                                          NULL,
+                                          CONCAT(LEFT(employees.patronymic_name, 1), '.')))
+                              ,null )
+                          SEPARATOR ', ' LIMIT 1000)
+              ,null)
+              AS 'list_without_barcoses',
           IF(@show_employees,
              GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &lt;= bar_op.num_all),
                              CONCAT_WS('',
-                                       CONCAT(wear_cards.last_name, ' '),
-                                       IF(wear_cards.first_name = '',
+                                       CONCAT(employees.last_name, ' '),
+                                       IF(employees.first_name = '',
                                           NULL,
-                                          CONCAT(LEFT(wear_cards.first_name, 1), '.')),
-                                       IF(wear_cards.patronymic_name = '',
+                                          CONCAT(LEFT(employees.first_name, 1), '.')),
+                                       IF(employees.patronymic_name = '',
                                           NULL,
-                                          CONCAT(LEFT(wear_cards.patronymic_name, 1), '.')))
+                                          CONCAT(LEFT(employees.patronymic_name, 1), '.')))
                               ,null )
                           SEPARATOR ', ' LIMIT 1000)
               ,null)
               AS 'list_with_barcoses'
 
-      FROM wear_cards_item
-           JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-           LEFT JOIN objects ON wear_cards.object_id = objects.id
-           JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
-           LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-           LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-           LEFT JOIN wear_cards_vacations ON wear_cards.id = wear_cards_vacations.wear_card_id
-           LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-           LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-           LEFT JOIN wear_cards_sizes AS employeeSizeAlias
-                     ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND
-                         employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-           LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
-           LEFT JOIN wear_cards_sizes AS employeeHeightAlias
-                     ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
-                         employeeHeightAlias.size_type_id = heightTypeAlias.id)
-           LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-           JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
-           LEFT JOIN
-               (SELECT
-                    op.employee_id as emp,
-                    op.protection_tools_id as pt,
-                    COUNT(all_bar.id) as num_all,
-                    COUNT(new_bar.id) as num_new,
-                    (SUM(op.issued) - SUM(op.returned)) as emp_ballance
-               FROM operation_issued_by_employee as op
-                         LEFT JOIN operation_barcodes on op.id = operation_barcodes.employee_issue_operation_id
-                         LEFT JOIN barcodes as all_bar on all_bar.id = operation_barcodes.barcode_id
-                         LEFT JOIN barcodes as new_bar on new_bar.id = operation_barcodes.barcode_id
-                   AND (new_bar.creation_date BETWEEN CONVERT(ADDDATE(@report_date, -@barcode_lag), DATE) AND CONVERT(@report_date, DATETIME ))
-               WHERE
-                   op.protection_tools_id is not null AND #!!!!!!!!!!!!!!!!!!
-                      CONVERT(op.operation_time, DATE) &lt;= CONVERT(@report_date, DATE)
-                      AND IFNULL(CONVERT(op.auto_writeoff_date, DATE) &gt; CONVERT(@report_date, DATE), TRUE)
-                GROUP BY op.employee_id, op.protection_tools_id
-               ) as bar_op on bar_op.pt = wear_cards_item.protection_tools_id AND bar_op.emp = wear_cards_item.wear_card_id
+      FROM employee_cards_item
+               JOIN employees ON employees.id = employee_cards_item.employee_id
+               LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
+               JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
+               LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
+               LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+               LEFT JOIN employees_vacations ON employees.id = employees_vacations.employee_id
+               LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+               LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+               LEFT JOIN employees_sizes AS employeeSizeAlias
+                         ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND
+                             employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+               LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
+               LEFT JOIN employees_sizes AS employeeHeightAlias
+                         ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND
+                             employeeHeightAlias.size_type_id = heightTypeAlias.id)
+               LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
+               JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
+               LEFT JOIN
+           (SELECT
+                op.employee_id as emp,
+                op.protection_tools_id as pt,
+                COUNT(all_bar.id) as num_all,
+                COUNT(new_bar.id) as num_new,
+                (SUM(op.issued) - SUM(op.returned)) as emp_ballance
+            FROM operation_issued_by_employee as op
+                     LEFT JOIN operation_barcodes on op.id = operation_barcodes.employee_issue_operation_id
+                     LEFT JOIN barcodes as all_bar on all_bar.id = operation_barcodes.barcode_id
+                     LEFT JOIN barcodes as new_bar on new_bar.id = operation_barcodes.barcode_id
+                AND (new_bar.creation_date BETWEEN CONVERT(ADDDATE(@report_date, -@barcode_lag), DATE) AND CONVERT(@report_date, DATETIME ))
+            WHERE
+                op.protection_tools_id is not null AND #!!!!!!!!!!!!!!!!!!
+                    CONVERT(op.operation_time, DATE) &lt;= CONVERT(@report_date, DATE)
+              AND IFNULL(CONVERT(op.auto_writeoff_date, DATE) &gt; CONVERT(@report_date, DATE), TRUE)
+            GROUP BY op.employee_id, op.protection_tools_id
+           ) as bar_op on bar_op.pt = employee_cards_item.protection_tools_id AND bar_op.emp = employee_cards_item.employee_id
       WHERE
-          wear_cards.dismiss_date IS NULL
-          AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
-          AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))          
-          AND (NOT @exclude_in_vacation
-              OR (wear_cards_vacations.begin_date IS NULL
+          employees.dismiss_date IS NULL
+        AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
+        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
+        AND (NOT @exclude_in_vacation
+          OR (employees_vacations.begin_date IS NULL
               OR (CONVERT(@report_date, DATE) BETWEEN
-                  wear_cards_vacations.begin_date AND wear_cards_vacations.end_date
+                  employees_vacations.begin_date AND employees_vacations.end_date
                   )
-              )
+                 )
           )
-          GROUP BY
-              wear_cards_item.protection_tools_id,
-              IF(@group_by_subdivision, subdivision_id, NULL), 
-              IF(@show_sex, employee_sex, NULL),
-              IF(@show_size, employeeSizeAlias.size_id, NULL),
-              IF(@show_size, employeeHeightAlias.size_id, NULL)
-          ORDER BY
-              subdivision_name,
-              protection_tools.name,
-              IF(@show_sex, employee_sex, NULL),
-              IF(@show_size, size, NULL),
-              IF(@show_size, height, NULL)
+      GROUP BY
+          employee_cards_item.protection_tools_id,
+          IF(@group_by_subdivision, subdivision_id, NULL),
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, employeeSizeAlias.size_id, NULL),
+          IF(@show_size, employeeHeightAlias.size_id, NULL)
+      ORDER BY
+          subdivision_name,
+          protection_tools.name,
+          IF(@show_sex, employee_sex, NULL),
+          IF(@show_size, size, NULL),
+          IF(@show_size, height, NULL)
      ) as tabel</CommandText>
         <QueryParameters>
           <QueryParameter Name="report_date">
