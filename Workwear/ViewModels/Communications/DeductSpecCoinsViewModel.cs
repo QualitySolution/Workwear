@@ -4,23 +4,20 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.DB;
 using QS.ViewModels.Dialog;
 
 namespace Workwear.ViewModels.Communications 
 {
 	public class DeductSpecCoinsViewModel : WindowDialogViewModelBase {
 		private const string DeductOperationErrorMessage = "Операция невозможна: недостаточно спецкойнов для списания";
-		private readonly IUnitOfWork unitOfWork;
 		private readonly IInteractiveMessage interactive;
-		private readonly IDataBaseInfo dataBaseInfo;
 		private readonly SpecCoinManagerService specCoinManagerService;
 		private readonly string employeePhone;
 		private readonly int specCoinsBalance;
 		private readonly Action specCoinsBalanceUpdated;
 
 		public DeductSpecCoinsViewModel(IUnitOfWorkFactory unitOfWorkFactory, string employeePhone,
-			int specCoinsBalance, Action specCoinsBalanceUpdated, IDataBaseInfo dataBaseInfo,
+			int specCoinsBalance, Action specCoinsBalanceUpdated, 
 			SpecCoinManagerService specCoinManagerService, IInteractiveMessage interactive,
 			INavigationManager navigation) : base(navigation) 
 		{
@@ -30,10 +27,7 @@ namespace Workwear.ViewModels.Communications
 			this.employeePhone = employeePhone;
 			this.specCoinsBalance = specCoinsBalance;
 			this.specCoinsBalanceUpdated = specCoinsBalanceUpdated;
-			this.dataBaseInfo = dataBaseInfo;
 			Title = "Списание спецкойнов";
-			
-			unitOfWork = unitOfWorkFactory.CreateWithoutRoot();
 		}
 
 		#region Sensetive

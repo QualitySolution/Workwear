@@ -892,7 +892,7 @@ FROM
                             GROUP BY spt.id, sopwh.size_id, sopwh.height_id
                             #Конец универсального зарпроса      
                         ) AS sex_b
-                            JOIN (SELECT IF(const.seq = 1,'Men','Women')  as sex FROM seq_1_to_2 as const) AS sex_const
+                            JOIN (SELECT 'Men' AS sex UNION SELECT 'Women') AS sex_const
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
         AS ballance
                   ON (employee_cards_item.protection_tools_id = ballance.ptid

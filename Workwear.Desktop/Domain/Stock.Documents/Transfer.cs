@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
@@ -20,7 +21,14 @@ namespace Workwear.Domain.Stock.Documents
 	{
 		public Transfer() { }
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		
 		#region Свойства
+		private Organization organization;
+		[Display(Name = "Организация")]
+		public virtual Organization Organization {
+			get { return organization; }
+			set { SetField(ref organization, value, () => Organization); }
+		}
 		private Warehouse warehouseFrom;
 		[Display(Name = "Склад отправитель")]
 		[Required(ErrorMessage = "Склад отправитель должен быть указан.")]
@@ -40,10 +48,10 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IObservableList<TransferItem> Items {
 			get => items;
 			set => SetField(ref items, value);
-		}
+		} 
 		#endregion
 		#region Расчетные
-		public virtual string Title => $"Перемещение №{Id} от {Date:d}";
+		public virtual string Title => $"Перемещение №{DocNumberText} от {Date:d}";
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {

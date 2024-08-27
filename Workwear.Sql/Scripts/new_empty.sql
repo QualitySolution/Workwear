@@ -1647,6 +1647,8 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_transfer` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
+  `organization_id` INT(10) UNSIGNED NULL,
   `warehouse_from_id` INT UNSIGNED NOT NULL,
   `warehouse_to_id` INT UNSIGNED NOT NULL,
   `date` DATETIME NOT NULL,
@@ -1657,7 +1659,8 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
   INDEX `fk_stock_transfer_1_idx` (`warehouse_from_id` ASC),
   INDEX `fk_stock_transfer_2_idx` (`warehouse_to_id` ASC),
   INDEX `fk_stock_transfer_3_idx` (`user_id` ASC),
-  INDEX `index_stock_inspection_date` (`date` ASC),
+  INDEX `index_stock_transfer_organization` (`organization_id` ASC),
+  INDEX `index_stock_transfer_date` (`date` ASC),
   CONSTRAINT `fk_stock_transfer_1`
     FOREIGN KEY (`warehouse_from_id`)
     REFERENCES `warehouse` (`id`)
@@ -1672,7 +1675,12 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_transfer_4`
+	FOREIGN KEY (`organization_id`)
+	REFERENCES `organizations` (`id`)
+	ON DELETE SET NULL
+	ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -1746,6 +1754,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_completion` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_receipt_id` INT UNSIGNED NULL DEFAULT NULL,
