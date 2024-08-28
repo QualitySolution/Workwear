@@ -66,6 +66,7 @@ namespace Workwear.Views.Stock.Widgets {
 					var label = new Label {LabelProp = item.ProtectionTools.Name}; //Номенклатура нормы
 					label.Justify = Justification.Left;
 					label.Xalign = 0;
+					label.WidthChars = 90;
 					label.Wrap = true;
 					ItemListTable.Attach(label, 4, 5, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
 
@@ -90,8 +91,8 @@ namespace Workwear.Views.Stock.Widgets {
 
 					i += 2;
 				}
-
-				if(rows > 17) {
+				
+				if(rows > 5) {
 					scrolledwindow1.VscrollbarPolicy = PolicyType.Always;
 					HeightRequest = 600;
 				}
