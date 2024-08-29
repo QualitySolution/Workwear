@@ -377,7 +377,7 @@ namespace Workwear.Domain.Company
 		}
 
 		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
-			var norms = normRepository.GetNormsForPost(UoW, post ?? Post);
+			var norms = normRepository.GetNormsForPost(uow, post ?? Post);
 			foreach(var norm in norms)
 				if(!norm.Archival)
 					AddUsedNorm(norm);
