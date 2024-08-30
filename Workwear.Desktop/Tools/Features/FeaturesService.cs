@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -165,6 +165,7 @@ namespace Workwear.Tools.Features
 			switch(feature) {
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.ClothingService:
+				case WorkwearFeature.StockForecasting:
 				#if	DEBUG //Пока доступно только в редакции спецпошива
 					return true;
 				#else
@@ -242,6 +243,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]
