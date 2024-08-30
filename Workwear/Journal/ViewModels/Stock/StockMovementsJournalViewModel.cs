@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -280,6 +281,16 @@ namespace workwear.Journal.ViewModels.Stock
 			foreach(var node in nodes.Where(x => x.DocumentId.HasValue))
 				openDocuments.EditDocumentDialog(this, node);
 		}
+
+		public override string FooterInfo => $"<span foreground=\"Green\" weight=\"ultrabold\">+</span> {SumReceipt}  " +
+		                                     $"<span foreground=\"Red\" weight=\"ultrabold\">-</span> {SumExpense}  " +
+		                                     "Сальдо: " +
+		                                     (SumExpense > SumReceipt ? $"<span foreground=\"Red\" weight=\"ultrabold\">-</span>{SumExpense-SumReceipt} " : $"{SumReceipt-SumExpense} ") +
+		                                     $"| Загружено: {DataLoader.Items.Count} шт.";
+
+		protected IEnumerable<StockMovementsJournalNode> Nodes => DataLoader.Items.Cast<StockMovementsJournalNode>();
+		private int SumReceipt => Nodes.Where(x => x.Receipt).Sum(x => x.Amount);
+		private int SumExpense => Nodes.Where(x => x.Expense).Sum(x => x.Amount);
 	}
 
 	public class StockMovementsJournalNode : OperationToDocumentReference
