@@ -208,7 +208,7 @@ namespace workwear.Journal.ViewModels.Stock
 			   .SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
-			   //.SelectSubQuery(expenseYearQuery).WithAlias(() => resultAlias.DailyConsumption)
+			   .SelectSubQuery(expenseYearQuery).WithAlias(() => resultAlias.DailyConsumption)
 				)
 				.OrderBy(() => nomenclatureAlias.Name).Asc
 				.ThenBy(Projections.SqlFunction(
