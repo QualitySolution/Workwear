@@ -7,15 +7,14 @@ namespace Workwear.Models.Import.Norms.DataTypes{
 	public class DataTypeCondition : DataTypeNormBase {
 
 
-		public DataTypeCondition( IList<NormCondition> conditions) {
+		public DataTypeCondition() {
 			ColumnNameKeywords.Add("условия");
 			ColumnNameKeywords.Add("условие");
 			ColumnNameKeywords.Add("сезон");
-			this.conditions = conditions;
+			ColumnNameKeywords.Add("ограничения");
+			ColumnNameKeywords.Add("ограничение");
 			Data = DataTypeNorm.Condition;
 		}
-
-		private IList<NormCondition> conditions;
 
 		public override void CalculateChange(SheetRowNorm row, ExcelValueTarget target) {
 			var value = row.CellStringValue(target);
@@ -27,13 +26,10 @@ namespace Workwear.Models.Import.Norms.DataTypes{
 				return new ChangeState(ChangeType.NotChanged);
 			}
 
-			var con = conditions.FirstOrDefault(c => String.Equals(c.Name, value, StringComparison.CurrentCultureIgnoreCase));
-			if(con != null) {
-				row.AddSetValueAction(ValueSetOrder, () => row.NormItem.NormCondition = con);
+			if(row.NormItem.NormCondition.Id != 0) 
 				return new ChangeState(ChangeType.ChangeValue);
-			}
-			else 
-				return new ChangeState(ChangeType.NotFound );
+			else
+				return new ChangeState(ChangeType.NewEntity, willCreatedValues: new[] { row.NormItem.NormCondition.Name });
 		}
 	}
 }

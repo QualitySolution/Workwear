@@ -3,6 +3,8 @@
 		public DataTypeParagraph() {
 			ColumnNameKeywords.Add("пункт");
 			ColumnNameKeywords.Add("документ");
+			ColumnNameKeywords.Add("основание");
+			ColumnNameKeywords.Add("обоснование");
 			Data = DataTypeNorm.Paragraph;
 		}
 
