@@ -196,15 +196,20 @@ namespace Workwear.Models.Import.Norms
 					}
 					UsedProtectionTools.Add(protection);
 				}
-				
-				var conditionName = row.CellStringValue(conditionColumn);
-				var condition = UsedConditions.FirstOrDefault(x => String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase));
-				if(condition == null) {
-					condition = conditions.FirstOrDefault(x => String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase))
-					     ?? new NormCondition() { Name = conditionName };
-					UsedConditions.Add(condition);
+
+				NormCondition condition = null;
+				if(conditionColumn != null) {
+					var conditionName = row.CellStringValue(conditionColumn);
+					condition = UsedConditions.FirstOrDefault(x =>
+						String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase));
+					if(condition == null) {
+						condition = conditions.FirstOrDefault(x =>
+							            String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase))
+						            ?? new NormCondition() { Name = conditionName };
+						UsedConditions.Add(condition);
+					}
 				}
-					
+
 				var norm = row.SubdivisionPostCombination.EditingNorm;
 				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
 				if(row.NormItem == null) {
@@ -238,7 +243,7 @@ namespace Workwear.Models.Import.Norms
 			foreach(var postName in combination.AllPostNames) {
 				string[] subdivisionNames = null;
 				if(!withoutSubdivision) {
-					subdivisionNames = postName.subdivision
+					subdivisionNames = (postName.subdivision ?? String.Empty)
 						.Split(new[] { settings.SubdivisionLevelEnable ? settings.SubdivisionLevelSeparator : "" },
 							StringSplitOptions.RemoveEmptyEntries)
 						.Select(x => x.Trim())
