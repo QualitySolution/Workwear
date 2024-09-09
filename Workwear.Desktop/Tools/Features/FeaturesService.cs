@@ -165,6 +165,7 @@ namespace Workwear.Tools.Features
 			switch(feature) {
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.ClothingService: //Пока доступно только в редакции спецпошива
+				case WorkwearFeature.StockForecasting:
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
@@ -237,6 +238,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]

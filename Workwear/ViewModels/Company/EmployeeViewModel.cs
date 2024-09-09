@@ -274,7 +274,6 @@ namespace Workwear.ViewModels.Company
 								   "Подразделение в должности отличается от указанных в сотруднике. Установить его в сотрудника из должности?")) {
 								
 								Entity.Subdivision = value.Subdivision;
-								
 							}
 						}
 						else if(value.Department != null && value.Department != Entity.Department) {
@@ -311,7 +310,6 @@ namespace Workwear.ViewModels.Company
 						Entity.ChangeOfPositionDate = DateTime.Today;
 					}
 				}
-				
 			} 
 		}
 		
