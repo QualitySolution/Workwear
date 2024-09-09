@@ -236,6 +236,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]

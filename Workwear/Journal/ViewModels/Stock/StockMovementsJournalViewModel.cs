@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -180,7 +181,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinEntityAlias(() => writeOffItemAlias, () => writeOffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => issuanceSheetItem, () => issuanceSheetItem.IssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinAlias(() => issuanceSheetItem.IssuanceSheet, () => issuanceSheetAlias)
+				.JoinAlias(() => issuanceSheetItem.IssuanceSheet, () => issuanceSheetAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeCardAlias, () => employeeIssueOperationAlias.Employee.Id == employeeCardAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionResultItemAlias, () => completionResultItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionSourceItemAlias, () => completionSourceItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -280,6 +281,16 @@ namespace workwear.Journal.ViewModels.Stock
 			foreach(var node in nodes.Where(x => x.DocumentId.HasValue))
 				openDocuments.EditDocumentDialog(this, node);
 		}
+
+		public override string FooterInfo => $"<span foreground=\"Green\" weight=\"ultrabold\">+</span> {SumReceipt}  " +
+		                                     $"<span foreground=\"Red\" weight=\"ultrabold\">-</span> {SumExpense}  " +
+		                                     "Сальдо: " +
+		                                     (SumExpense > SumReceipt ? $"<span foreground=\"Red\" weight=\"ultrabold\">-</span>{SumExpense-SumReceipt} " : $"{SumReceipt-SumExpense} ") +
+		                                     $"| Загружено: {DataLoader.Items.Count} шт.";
+
+		protected IEnumerable<StockMovementsJournalNode> Nodes => DataLoader.Items.Cast<StockMovementsJournalNode>();
+		private int SumReceipt => Nodes.Where(x => x.Receipt).Sum(x => x.Amount);
+		private int SumExpense => Nodes.Where(x => x.Expense).Sum(x => x.Amount);
 	}
 
 	public class StockMovementsJournalNode : OperationToDocumentReference

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Autofac;
 using Gtk;
 using MySqlConnector;
@@ -67,6 +68,7 @@ using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear.Journal.ViewModels.Analytics;
+using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
 
@@ -255,8 +257,26 @@ public partial class MainWindow : Gtk.Window {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
+		
+		//Дополнительные параметры в телеметрию
+		if(!MainTelemetry.DoNotTrack)
+			Task.Run(FillTelemetry);
 	}
 
+	void FillTelemetry() {
+		logger.Debug("Собираем данные для телеметрии");
+		using(var telemetryScope = AutofacScope.BeginLifetimeScope()) {
+			var featureService = telemetryScope.Resolve<FeaturesService>();
+			MainTelemetry.ProductEdition = featureService.ProductEdition;
+			var uowFactory = telemetryScope.Resolve<IUnitOfWorkFactory>();
+			using(var uow = uowFactory.CreateWithoutRoot("Сбор телеметрии")) {
+				var employeeRepository = telemetryScope.Resolve<EmployeeRepository>();
+				MainTelemetry.EmployeesCount = (uint)employeeRepository.ActiveEmployeesQuery(uow).RowCount();
+			}
+		}
+		logger.Debug("Характеристики базы собраны");
+	}
+	
 	private void CreateDefaultWarehouse() {
 		Warehouse warehouse = new Warehouse();
 		warehouse.Name = "Основной склад";
