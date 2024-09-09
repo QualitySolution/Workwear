@@ -435,24 +435,40 @@ namespace workwear.Journal.ViewModels.Tools
 
 		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLastIssueOperationsForEmployee);
 		void Update2LastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee);
+		void Update2LastFromNomenclatures(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee, true);
 		
-		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc)
-		{
-			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников");
+		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc, bool fromNomenclatures = false) {
+			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников " +
+			                      $"{(fromNomenclatures ? "с переключением на текущие потребности по номенклатурам" : "")}");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
-			
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
+			
 			progressCreator.Add(text: "Получаем последние выдачи");
 			var operations = repoFunc(employees);
 
 			progressCreator.Update("Проверка выданного");
 			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
+			progressCreator.Update("Проверка выданного"+
+			                       $"{(fromNomenclatures ? " переключение на текущие потребности" : "")}");
+			
+			HashSet<int> employeeIds = new HashSet<int>(operations.Select(x => x.Employee.Id)); 
 			foreach(var employee in employees) {
 				progressCreator.Add();
-				if(!operationsEmployeeIds.Contains(employee.Id)) 
+				if(!employeeIds.Contains(employee.Id)) 
 					Results[employee.Id] = ("Нет выданного", "red");
+				else if(fromNomenclatures) {
+					var needs = employee.WorkwearItems.Select(i => i.ProtectionTools).ToList();
+					var ptIds = new HashSet<int>(needs.Select(i => i.Id));
+					foreach(var operation in operations.Where(x => 
+						        x.Employee.Id == employee.Id 
+					            && !ptIds.Contains(x.ProtectionTools.Id))) {
+						var pt = needs.FirstOrDefault(x => x.Nomenclatures.Select(n => n.Id).Contains(operation.Nomenclature.Id));
+						if(pt != null)
+							operation.ProtectionTools = pt;
+					}
+				}
 			}
 
 			progressCreator.Close();
@@ -479,6 +495,7 @@ namespace workwear.Journal.ViewModels.Tools
 			Refresh();
 			progressCreator.Close();
 		}
+		
 		#endregion
 
 		#region Замена
