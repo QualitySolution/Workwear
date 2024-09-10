@@ -200,13 +200,15 @@ namespace Workwear.Models.Import.Norms
 				NormCondition condition = null;
 				if(conditionColumn != null) {
 					var conditionName = row.CellStringValue(conditionColumn);
-					condition = UsedConditions.FirstOrDefault(x =>
-						String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase));
-					if(condition == null) {
-						condition = conditions.FirstOrDefault(x =>
-							            String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase))
-						            ?? new NormCondition() { Name = conditionName };
-						UsedConditions.Add(condition);
+					if(!string.IsNullOrWhiteSpace(conditionName)) {
+						condition = UsedConditions.FirstOrDefault(x =>
+							String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase));
+						if(condition == null) {
+							condition = conditions.FirstOrDefault(x =>
+								            String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase))
+							            ?? new NormCondition() { Name = conditionName };
+							UsedConditions.Add(condition);
+						}
 					}
 				}
 
