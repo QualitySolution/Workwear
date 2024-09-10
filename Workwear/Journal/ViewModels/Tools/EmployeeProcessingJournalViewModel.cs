@@ -286,7 +286,8 @@ namespace workwear.Journal.ViewModels.Tools
 			progressCreator.Add(text: "Загружаем нормы");
 			var norms = normRepository.GetNormsForPost(UoW, employees.Select(x => x.Post).Where(x => x != null).Distinct().ToArray());
 
-			int step = 0;
+			var step = 0;
+			var removeNorms = interactive.Question("Удалить прочие нормы у сотрудников?");
 
 			foreach(var employee in employees) {
 				if(cancellation.IsCancellationRequested) {
@@ -297,10 +298,11 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[employee.Id] = ("Отсутствует должность", "red");
 					continue;
 				}
-				var norm = norms.FirstOrDefault(x => x.IsActive && x.Posts.Contains(employee.Post));
+				var norm = norms.FirstOrDefault(x => x.IsActive && x.Posts.Contains(employee.Post) && !x.Archival);
 				if(norm != null) {
 					step++;
-					employee.UsedNorms.Clear();
+					if(removeNorms)
+						employee.UsedNorms.Clear();
 					employee.AddUsedNorm(norm);
 					UoW.Save(employee);
 					Results[employee.Id] = ("ОК", "green");
@@ -326,13 +328,10 @@ namespace workwear.Journal.ViewModels.Tools
 			var cancellation = progressCreator.CancellationToken;
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id));
 			progressCreator.Add(text: "Загружаем нормы");
-			var norms = normRepository.GetNormsForPost(UoW, employees.Select(x => x.Post)
-				.Where(x => x != null)
-				.Distinct()
-				.ToArray());
 
 			var step = 0;
-
+			var removeNorms = interactive.Question("Удалить прочие нормы у сотрудников?");
+			
 			foreach(var employee in employees) {
 				if(cancellation.IsCancellationRequested) {
 					break;
@@ -342,22 +341,26 @@ namespace workwear.Journal.ViewModels.Tools
 					Results[employee.Id] = ("Отсутствует должность", "red");
 					continue;
 				}
-
-				var normsForEmployee = norms
-					.Where(x => x.IsActive && x.Posts.Contains(employee.Post))
-					.Distinct()
-					.ToList();
-				if(normsForEmployee.Any()) {
+				if(removeNorms) {
 					step++;
 					employee.UsedNorms.Clear();
-					employee.AddUsedNorms(normsForEmployee);
 					UoW.Save(employee);
-					Results[employee.Id] = ($"ОК({normsForEmployee.Count})", "green");
-					if(step % 10 == 0)
-						UoW.Commit();
+				}
+				
+				var count = employee.NormFromPost(UoW,normRepository);
+				if(count != 0) {
+					step++;
+					UoW.Save(employee);
+					Results[employee.Id] = ($"ОК({count})", "green");
 				}
 				else
-					Results[employee.Id] = ("Подходящая норма не найдена", "red"); }
+					Results[employee.Id] = ("Подходящая норма не найдена", "red");
+
+				if(step > 10) {
+					UoW.Commit();
+					step = 0;
+				}
+			}
 
 			if(!cancellation.IsCancellationRequested) {
 				progressCreator.Add(text: "Завершаем транзакцию");
