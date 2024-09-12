@@ -263,6 +263,13 @@ namespace workwear.Journal.ViewModels.Tools
 					(selected) => Active2LastNormItem(selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			replaceAction.ChildActionsList.Add(replaceActiveNormItemAction);
+			
+			var replaceActiveNormItemFromNomenclaturesAction = new JournalAction("Нормы на текущие у 2 последних выдач по номенклатурам",
+				(selected) => selected.Any(),
+				(selected) => true,
+				(selected) => Active2LastNormItem(selected.Cast<EmployeeProcessingJournalNode>().ToArray(), true)
+			);
+			recalculateAction.ChildActionsList.Add(replaceActiveNormItemFromNomenclaturesAction);
 				
 			replaceAction.ChildActionsList.Add(replacePostAction);
 			#endregion
@@ -438,11 +445,9 @@ namespace workwear.Journal.ViewModels.Tools
 
 		void UpdateLastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLastIssueOperationsForEmployee);
 		void Update2LastIssue(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee);
-		void Update2LastFromNomenclatures(EmployeeProcessingJournalNode[] nodes) => UpdateIssue(nodes, employeeIssueRepository.GetLast2IssueOperationsForEmployee, true);
 		
-		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc, bool fromNomenclatures = false) {
-			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников " +
-			                      $"{(fromNomenclatures ? "с переключением на текущие потребности по номенклатурам" : "")}");
+		void UpdateIssue(EmployeeProcessingJournalNode[] nodes, Func<IEnumerable<EmployeeCard>, IList<EmployeeIssueOperation>> repoFunc) {
+			loggerProcessing.Info($"Пересчет сроков носки последних выдач для {nodes.Length} сотрудников ");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(nodes.Length + 1, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
@@ -453,25 +458,13 @@ namespace workwear.Journal.ViewModels.Tools
 
 			progressCreator.Update("Проверка выданного");
 			HashSet<int> operationsEmployeeIds = new HashSet<int>(operations.Select(x => x.Id)); 
-			progressCreator.Update("Проверка выданного"+
-			                       $"{(fromNomenclatures ? " переключение на текущие потребности" : "")}");
+			progressCreator.Update("Проверка выданного");
 			
 			HashSet<int> employeeIds = new HashSet<int>(operations.Select(x => x.Employee.Id)); 
 			foreach(var employee in employees) {
 				progressCreator.Add();
 				if(!employeeIds.Contains(employee.Id)) 
 					Results[employee.Id] = ("Нет выданного", "red");
-				else if(fromNomenclatures) {
-					var needs = employee.WorkwearItems.Select(i => i.ProtectionTools).ToList();
-					var ptIds = new HashSet<int>(needs.Select(i => i.Id));
-					foreach(var operation in operations.Where(x => 
-						        x.Employee.Id == employee.Id 
-					            && !ptIds.Contains(x.ProtectionTools.Id))) {
-						var pt = needs.FirstOrDefault(x => x.Nomenclatures.Select(n => n.Id).Contains(operation.Nomenclature.Id));
-						if(pt != null)
-							operation.ProtectionTools = pt;
-					}
-				}
 			}
 
 			progressCreator.Close();
@@ -588,7 +581,7 @@ namespace workwear.Journal.ViewModels.Tools
 			};
 		}
 		
-		void Active2LastNormItem(EmployeeProcessingJournalNode[] nodes) {
+		void Active2LastNormItem(EmployeeProcessingJournalNode[] nodes, bool fromNomenclature = false) {
 			loggerProcessing.Info($"Переустановка строк нормы в 2 последих опирациях на актуальные у {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(3, text: "Загружаем сотрудников");
@@ -617,6 +610,17 @@ namespace workwear.Journal.ViewModels.Tools
 				if(!changes.ContainsKey(operation.Employee.Id))
 					changes[operation.Employee.Id] = 0;
 				progressCreator.Add(text: $"Обработка {operation.Employee.ShortName}");
+
+				if(fromNomenclature) {
+					if(!operation.Employee.WorkwearItems.Select(i => i.ProtectionTools)
+						   .Any(pt => DomainHelper.EqualDomainObjects(pt, operation.ProtectionTools))) {
+						var protectionTools = operation.Employee.WorkwearItems.Select(i => i.ProtectionTools)
+							.FirstOrDefault(pt => pt.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, operation.Nomenclature)));
+						if(protectionTools != null)
+							operation.ProtectionTools = protectionTools;
+					}
+				}
+
 				if(operation.ProtectionTools != null //подбор по номенклатуре не делаю, но проставляем если не было norm item
 					&& operation.Employee.WorkwearItems.Select(wc => wc.ActiveNormItem)
 				   .Any(ni => DomainHelper.EqualDomainObjects(ni, operation.NormItem))) {
