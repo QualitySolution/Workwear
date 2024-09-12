@@ -611,7 +611,7 @@ namespace workwear.Journal.ViewModels.Tools
 					changes[operation.Employee.Id] = 0;
 				progressCreator.Add(text: $"Обработка {operation.Employee.ShortName}");
 
-				if(fromNomenclature) {
+				if(fromNomenclature) { //подбираем потребность по номенклатуре
 					if(!operation.Employee.WorkwearItems.Select(i => i.ProtectionTools)
 						   .Any(pt => DomainHelper.EqualDomainObjects(pt, operation.ProtectionTools))) {
 						var protectionTools = operation.Employee.WorkwearItems.Select(i => i.ProtectionTools)
@@ -621,7 +621,7 @@ namespace workwear.Journal.ViewModels.Tools
 					}
 				}
 
-				if(operation.ProtectionTools != null //подбор по номенклатуре не делаю, но проставляем если не было norm item
+				if(operation.ProtectionTools != null //проставляем если не было norm item
 					&& operation.Employee.WorkwearItems.Select(wc => wc.ActiveNormItem)
 				   .Any(ni => DomainHelper.EqualDomainObjects(ni, operation.NormItem))) {
 					continue;
