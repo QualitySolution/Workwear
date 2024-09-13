@@ -140,7 +140,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			NodeActionsList.Add(changeStateAction);
 			
 			var cancelAction = new JournalAction("Отменить получение",
-				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService,
+				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService 
+				|| (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.InReceiptTerminal,
 				selected => true,
 				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
 			NodeActionsList.Add(cancelAction);
