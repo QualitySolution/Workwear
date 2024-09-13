@@ -147,6 +147,7 @@
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
+    <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
@@ -479,7 +480,6 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
     <Compile Include="ReportParameters\Views\StockAllWearView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.StockAllWearView.cs" />
-    <Compile Include="ViewModels\Communications\NotIssuedSheetSummaryView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
