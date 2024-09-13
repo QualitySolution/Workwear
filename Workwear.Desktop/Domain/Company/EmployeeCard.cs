@@ -376,11 +376,15 @@ namespace Workwear.Domain.Company
 			UpdateWorkwearItems ();
 		}
 
-		public virtual void NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
+		public virtual int NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
 			var norms = normRepository.GetNormsForPost(uow, post ?? Post);
+			int count = 0;
 			foreach(var norm in norms)
-				if(!norm.Archival)
+				if(!norm.Archival) {
 					AddUsedNorm(norm);
+					count++;
+				}
+			return count;
 		}
 		#endregion
 		#region Функции для работы с коллекцией потребностей

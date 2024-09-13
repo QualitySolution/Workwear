@@ -146,6 +146,7 @@
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
@@ -222,8 +223,6 @@
     <Compile Include="Journal\Filter.Views\Stock\StockBalanceFilterView.cs" />
     <Compile Include="gtk-gui\workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.cs" />
     <Compile Include="Journal\JournalsColumnsConfigs.cs" />
-    <Compile Include="ReportsDlg\StockAllWearDlg.cs" />
-    <Compile Include="gtk-gui\workwear.ReportsDlg.StockAllWearDlg.cs" />
     <Compile Include="ViewModels\Stock\Widgets\SizeWidgetViewModel.cs" />
     <Compile Include="Views\Stock\Widgets\SizeWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.SizeWidgetView.cs" />
@@ -351,7 +350,6 @@
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.NotIssuedSheetView.cs" />
     <Compile Include="Views\Import\SettingsWorkwearItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Import.SettingsWorkwearItemsView.cs" />
-    <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\ViewModels\NotIssuedSheetSummaryViewModel.cs" />
     <Compile Include="gtk-gui\workwear.ReportParameters.Views.NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\Views\AverageAnnualNeedView.cs" />
@@ -479,6 +477,9 @@
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
     <Compile Include="ReportParameters\Views\ClothingServiceReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
+    <Compile Include="ReportParameters\Views\StockAllWearView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.StockAllWearView.cs" />
+    <Compile Include="ViewModels\Communications\NotIssuedSheetSummaryView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -694,8 +695,6 @@
     <Folder Include="Views\User\" />
     <Folder Include="ViewModels\User\" />
     <Folder Include="ReportParameters\" />
-    <Folder Include="ReportParameters\ViewModels\" />
-    <Folder Include="ReportParameters\Views\" />
     <Folder Include="Tools\IdentityCards\" />
     <Folder Include="Views\IdentityCards\" />
     <Folder Include="ViewModels\IdentityCards\" />
@@ -740,7 +739,7 @@
     <None Include="Reports\Statements\ReturnStatementVertical.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\StockAllWear.rdl">
+    <None Include="Reports\StockBallanceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\WearStatement.rdl">
@@ -852,6 +851,9 @@
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\StockBallanceReportFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\ProvisionReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
