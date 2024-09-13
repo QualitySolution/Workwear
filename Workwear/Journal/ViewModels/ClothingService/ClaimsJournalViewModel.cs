@@ -16,6 +16,7 @@ using QS.Services;
 using QS.Utilities.Text;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
+using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
@@ -24,6 +25,10 @@ namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
 		private IInteractiveService interactive;
 		readonly IDictionary<uint, string> postomatsLabels;
+
+		#region Внешние прараметры
+		public bool ExcludeInDocs = false; 
+		#endregion
 		
 		public ClaimsJournalFilterViewModel Filter { get; set; }
 		public ClaimsJournalViewModel(
@@ -66,6 +71,10 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Select(x => x.OperationTime)
 				.Take(1);
 
+			var subqueryInDocument = QueryOver.Of<PostomatDocumentItem>()
+				.Where(item => item.ServiceClaim.Id == serviceClaimAlias.Id)
+				.Select(item => item.Id);
+
 			var query = uow.Session.QueryOver(() => serviceClaimAlias);
 			if(!Filter.ShowClosed)
 				query.Where(x => x.IsClosed == false);
@@ -75,6 +84,9 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				query.Where(x => x.PreferredTerminalId == Filter.PostomatId);
 			if(Filter.Status != null)
 				query.WithSubquery.WhereValue(Filter.Status).Eq(subqueryLastState);
+
+			if(ExcludeInDocs)
+				query.WithSubquery.WhereNotExists(subqueryInDocument);
 			
 			return query
 				.Where(GetSearchCriterion(
