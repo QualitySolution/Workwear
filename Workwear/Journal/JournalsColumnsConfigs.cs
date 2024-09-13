@@ -392,7 +392,7 @@ namespace workwear.Journal
 					.AddColumn("Автор").Resizable().AddTextRenderer(node => node.Author).SearchHighlight()
 					.AddColumn("Детали").Resizable().AddTextRenderer(node => node.Description).SearchHighlight()
 					.AddColumn("Дата создания").AddTextRenderer(x => x.CreationDateString)
-					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
+					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).SearchHighlight()
 					.Finish()
 			);
 
