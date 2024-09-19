@@ -149,10 +149,20 @@ namespace workwear.Journal.ViewModels.ClothingService {
 
 		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
-				var claim = uow.GetById<ServiceClaim>(selected.First().Id);
+				var node = selected.First();
+				var claim = uow.GetById<ServiceClaim>(node.Id);
 				if(claim.States.Count != 1) {
 					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
 					return;
+				}
+				bool isTerminalReceipt = claim.States.First().State == ClaimState.InReceiptTerminal;
+				var terminalWarning = isTerminalReceipt ? "Если одежда все таки находится в терминале сдачи в стирку, может возникнуть путаница. " : "";
+				if(interactive.Question($"Данная операция удалит сдачу в стирку, восстановить ее будет невозможно. {terminalWarning}Вы уверены, что хотите продолжить?") == false)
+					return;
+				if(isTerminalReceipt) {
+					//Чтобы форсировать обновление информации на терминале
+					claim.Employee.LastUpdate = DateTime.Now;
+					uow.Save(claim.Employee);
 				}
 				uow.Delete(claim.States.First());
 				uow.Delete(claim);
