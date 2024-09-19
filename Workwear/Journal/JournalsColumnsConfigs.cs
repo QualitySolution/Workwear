@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
@@ -243,11 +244,19 @@ namespace workwear.Journal
 				);
 			
 			TreeViewColumnsConfigFactory.Register<FullnessJournalViewModel>(
-				() => FluentColumnsConfig<FullnessInfo>.Create()
+				(jvm) => FluentColumnsConfig<FullnessInfo>.Create()
 					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString())
 					.AddColumn("Название").AddReadOnlyTextRenderer(n => n.Name)
 					.AddColumn("Размещение").AddReadOnlyTextRenderer(n => n.Location)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(n => n.Type.ToString())
+					.AddColumn("Был онлайн").AddReadOnlyTextRenderer(x => x.LastOnline?.ToDateTime().ToString("g"))
+						.AddSetter((c, n) => c.Foreground = n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-15) ? "red" : 
+						(n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-3) ? "orange" : "green"))
+					.AddColumn("Старейшая закладка")
+						.ToolTipText(jvm.GetLongestPickupTooltip)
+						.AddReadOnlyTextRenderer(x => x.Cells.Min(c => c.CreateTime)?.ToDateTime().ToShortDateString())
+							.AddSetter((c, n) => c.Foreground = n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddMonths(-1) ? "red" : 
+								(n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddDays(-7) ? "orange" : "green"))
 					.AddColumn("Заполненность")
 						.AddProgressRenderer(n => n.Capacity == 0 ? 0 : (int)(100f * n.Filling / n.Capacity))
 						.Text(x => $"{x.Filling} из {x.Capacity}")
