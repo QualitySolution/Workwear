@@ -28,7 +28,7 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gtk.Label GtkLabel3;
 
-		private global::Gtk.Frame frame4;
+		private global::Gtk.Frame framePostamat;
 
 		private global::Gtk.Alignment GtkAlignment5;
 
@@ -66,7 +66,6 @@ namespace Workwear.Views.ClothingService
 			this.Name = "Workwear.Views.ClothingService.ServiceClaimView";
 			// Container child Workwear.Views.ClothingService.ServiceClaimView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox4 = new global::Gtk.HBox();
@@ -170,10 +169,10 @@ namespace Workwear.Views.ClothingService
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.frame4 = new global::Gtk.Frame();
-			this.frame4.Name = "frame4";
-			this.frame4.ShadowType = ((global::Gtk.ShadowType)(0));
-			// Container child frame4.Gtk.Container+ContainerChild
+			this.framePostamat = new global::Gtk.Frame();
+			this.framePostamat.Name = "framePostamat";
+			this.framePostamat.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child framePostamat.Gtk.Container+ContainerChild
 			this.GtkAlignment5 = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
 			this.GtkAlignment5.Name = "GtkAlignment5";
 			this.GtkAlignment5.LeftPadding = ((uint)(12));
@@ -183,14 +182,14 @@ namespace Workwear.Views.ClothingService
 			this.comboPostomat.AddIfNotExist = false;
 			this.comboPostomat.DefaultFirst = false;
 			this.GtkAlignment5.Add(this.comboPostomat);
-			this.frame4.Add(this.GtkAlignment5);
+			this.framePostamat.Add(this.GtkAlignment5);
 			this.GtkLabel6 = new global::Gtk.Label();
 			this.GtkLabel6.Name = "GtkLabel6";
 			this.GtkLabel6.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Предпочтительный постамат выдачи</b>");
 			this.GtkLabel6.UseMarkup = true;
-			this.frame4.LabelWidget = this.GtkLabel6;
-			this.vbox1.Add(this.frame4);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame4]));
+			this.framePostamat.LabelWidget = this.GtkLabel6;
+			this.vbox1.Add(this.framePostamat);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.framePostamat]));
 			w15.Position = 2;
 			w15.Expand = false;
 			w15.Fill = false;

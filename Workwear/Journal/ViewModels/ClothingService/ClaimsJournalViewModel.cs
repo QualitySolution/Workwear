@@ -19,12 +19,14 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
 		private IInteractiveService interactive;
-		readonly IDictionary<uint, string> postomatsLabels;
+		public readonly FeaturesService FeaturesService;
+		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 
 		#region Внешние прараметры
 		public bool ExcludeInDocs = false; 
@@ -36,16 +38,19 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope,
+			FeaturesService featuresService,
 			PostomatManagerService postomatService,
 			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 			Title = "Обслуживание одежды";
 			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
-			postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 			
 			CreateActions();
 			UpdateOnChanges(typeof(ServiceClaim), typeof(StateOperation));
