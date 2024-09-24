@@ -91,11 +91,12 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		public static void CreateBaseConfig ()
+		public static void CreateBaseConfig (ProgressPerformanceHelper progress)
 		{
 			logger.Info ("Настройка параметров базы...");
 
 			// Настройка ORM
+			progress.CheckPoint("Настройка подключения к базе");
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
@@ -103,7 +104,8 @@ namespace workwear
 				.AdoNetBatchSize(100)
 				.ShowSql ()
 				.FormatSql ();
-
+			
+			progress.CheckPoint("Настройка доменных объектов");
 			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
@@ -117,6 +119,7 @@ namespace workwear
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
 
+			progress.CheckPoint("Антикварные объекты");
 			//Настраиваем классы сущностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
@@ -126,7 +129,9 @@ namespace workwear
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
+			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
+			progress.CheckPoint("Регистрация журналов");
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 		

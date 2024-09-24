@@ -96,15 +96,17 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
 		
-		progress.CheckPoint("Настройка базы");
-		MainClass.CreateBaseConfig ();
+		progress.StartGroup("Настройка базы");
+		MainClass.CreateBaseConfig (progress);
+		progress.EndGroup();
 		progress.CheckPoint("Конфигурация классов приложения");
 		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => MainClass.AutofacClassConfig(c, isDemo));
 		progress.CheckPoint("DI главного окна");
 		AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
 		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
-		progress.CheckPoint("Донастройка обработчика ошибок");
-		unhandledExceptionHandler.UpdateDependencies(MainClass.AppDIContainer);
+		progress.StartGroup("Донастройка обработчика ошибок");
+		unhandledExceptionHandler.UpdateDependencies(MainClass.AppDIContainer, progress);
+		progress.EndGroup();
 		progress.CheckPoint("Инициализация глобального обработчика");
 		BusinessLogicGlobalEventHandler.Init(MainClass.AppDIContainer);
 
