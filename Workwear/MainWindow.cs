@@ -14,6 +14,7 @@ using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.ErrorReporting;
 using QS.HistoryLog.ViewModels;
 using QS.HistoryLog;
 using QS.Navigation;
@@ -67,6 +68,7 @@ using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
+using Workwear;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
@@ -75,7 +77,7 @@ using CurrencyWorks = QS.Utilities.CurrencyWorks;
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
 
-	private ILifetimeScope AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+	private ILifetimeScope AutofacScope;
 	public TdiNavigationManager NavigationManager;
 	public IProgressBarDisplayable ProgressBar;
 	public IUnitOfWork UoW = UnitOfWorkFactory.CreateWithoutRoot();
@@ -86,14 +88,25 @@ public partial class MainWindow : Gtk.Window {
 	
 	public FeaturesService FeaturesService { get; private set; }
 	
-	public MainWindow() : base(Gtk.WindowType.Toplevel) {
+	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
 		ProgressBar = progresswidget1;
-		var progress = new ProgressPerformanceHelper(ProgressBar, 14, "Подготовка статусной строк", logger, showProgressText:true);
+		var progress = new ProgressPerformanceHelper(ProgressBar, 21, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
-		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
 		QSMain.MakeNewStatusTargetForNlog();
+		
+		progress.CheckPoint("Настройка базы");
+		MainClass.CreateBaseConfig ();
+		progress.CheckPoint("Конфигурация классов приложения");
+		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => MainClass.AutofacClassConfig(c, isDemo));
+		progress.CheckPoint("DI главного окна");
+		AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
+		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
+		progress.CheckPoint("Донастройка обработчика ошибок");
+		unhandledExceptionHandler.UpdateDependencies(MainClass.AppDIContainer);
+		progress.CheckPoint("Инициализация глобального обработчика");
+		BusinessLogicGlobalEventHandler.Init(MainClass.AppDIContainer);
 
 		progress.CheckPoint("Проверка кодировки SQL сервера");
 		QSMain.CheckServer(this); // Проверяем настройки сервера
@@ -268,14 +281,37 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 		
+		progress.CheckPoint("Настройка удаления");
+		//Настройка удаления
+		Configure.ConfigureDeletion();
+		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
 		
 		//Дополнительные параметры в телеметрию
 		progress.CheckPoint("Запускаем телеметрию");
+		#if !DEBUG
+			//Инициализируем телеметрию
+			using(var telemetryScope = AutofacScope.BeginLifetimeScope()) {
+				var applicationInfo = telemetryScope.Resolve<IApplicationInfo>();
+				var configuration = telemetryScope.Resolve<IChangeableConfiguration>();
+				MainTelemetry.Product = applicationInfo.ProductName;
+				MainTelemetry.Edition = applicationInfo.Modification;
+				MainTelemetry.Version = applicationInfo.Version.ToString();
+				MainTelemetry.IsDemo = databaseInfo.IsDemo;
+				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
+				MainTelemetry.StartUpdateByTimer(600);
+			}
+		#else
+			MainTelemetry.DoNotTrack = true;
+		#endif
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
+		
+		progress.CheckPoint("Запуск QS: Облако");
+		QSSaaS.Session.StartSessionRefresh ();
 		progress.End();
+		logger.Info($"Заппуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
 
 	void FillTelemetry() {

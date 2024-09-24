@@ -91,7 +91,7 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		static void CreateBaseConfig ()
+		public static void CreateBaseConfig ()
 		{
 			logger.Info ("Настройка параметров базы...");
 
@@ -131,7 +131,7 @@ namespace workwear
 		}
 		
 		public static ILifetimeScope AppDIContainer;
-		static IContainer startupContainer;
+		public static IContainer StartupContainer;
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
@@ -185,7 +185,7 @@ namespace workwear
 			#region Временные будут переопределены
 			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
-			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
+			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(StartupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(),
 				typeof(UpdateProcessView),
 				typeof(ProgressWindowView)
@@ -193,7 +193,7 @@ namespace workwear
 			#endregion
 		}
 		
-		static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
+		public static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
 		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
