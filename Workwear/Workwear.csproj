@@ -168,6 +168,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
+    <Compile Include="ViewModels\Analytics\WarehouseForecastingItem.cs" />
+    <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
@@ -480,6 +482,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
     <Compile Include="ReportParameters\Views\StockAllWearView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.StockAllWearView.cs" />
+    <Compile Include="Views\Analytics\WarehouseForecastingView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Analytics.WarehouseForecastingView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

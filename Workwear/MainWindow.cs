@@ -71,6 +71,7 @@ using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
+using Workwear.ViewModels.Analytics;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -343,6 +344,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
@@ -897,5 +899,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionSpecCoinsBalanceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SpecCoinsBalanceJournalViewModel>(null);
+	}
+
+	protected void OnActionWarehouseForecastingActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<WarehouseForecastingViewModel>(null);
 	}
 }
