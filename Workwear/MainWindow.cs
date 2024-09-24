@@ -88,14 +88,17 @@ public partial class MainWindow : Gtk.Window {
 	
 	public MainWindow() : base(Gtk.WindowType.Toplevel) {
 		Build();
+		ProgressBar = progresswidget1;
+		var progress = new ProgressPerformanceHelper(ProgressBar, 14, "Подготовка статусной строк", logger, showProgressText:true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
-		ProgressBar = progresswidget1;
 		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
 		QSMain.MakeNewStatusTargetForNlog();
 
+		progress.CheckPoint("Проверка кодировки SQL сервера");
 		QSMain.CheckServer(this); // Проверяем настройки сервера
 
+		progress.CheckPoint("Подготовка менеджера вкладок");
 		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>(new TypedParameter(typeof(Assembly[]), new[] { Assembly.GetAssembly(typeof(OrganizationViewModel)) }));
 		interactive = AutofacScope.Resolve<IInteractiveService>();
@@ -103,6 +106,7 @@ public partial class MainWindow : Gtk.Window {
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 
+		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
@@ -124,6 +128,7 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 
+		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
@@ -141,6 +146,7 @@ public partial class MainWindow : Gtk.Window {
 			return;
 		}
 
+		progress.CheckPoint("Установка настроек пользователя");
 		var userService = AutofacScope.Resolve<IUserService>();
 		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
@@ -171,6 +177,7 @@ public partial class MainWindow : Gtk.Window {
 		labelUser.LabelProp = user.Name;
 
 		//Настраиваем новости
+		progress.CheckPoint("Запускаем чтение новостей");
 		var feeds = new List<NewsFeed>(){
 			new NewsFeed("workwearsite", "Новости программы", "https://workwear.qsolution.ru/?feed=atom")
 			};
@@ -181,8 +188,7 @@ public partial class MainWindow : Gtk.Window {
 		menubar1.Add(newsmenu);
 		newsmenuModel.LoadFeed();
 
-		ReadUserSettings();
-
+		progress.CheckPoint("Настройка виджета поиска сотрудников");
 		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
@@ -191,6 +197,7 @@ public partial class MainWindow : Gtk.Window {
 		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>();
 		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
+		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(!UoW.GetAll<Warehouse>().Any())
@@ -232,15 +239,18 @@ public partial class MainWindow : Gtk.Window {
 		}
 		#endregion
 
+		progress.CheckPoint("Отключение недоступных функций");
 		DisableFeatures();
 		if(FeaturesService.Available(WorkwearFeature.Claims)) {
 			var button = toolbarMain.Children.FirstOrDefault(x => x.Action == ActionClaims);
 			var counter = AutofacScope.Resolve<UnansweredClaimsCounter>(new TypedParameter(typeof(Gtk.ToolButton), button));
 		}
 
+		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
 
 		//Настраиваем каналы обновлений
+		progress.CheckPoint("Настройка каналов обновления");
 		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
 			var appInfo = releaseScope.Resolve<IApplicationInfo>();
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
@@ -258,9 +268,14 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 		
+		progress.CheckPoint("Настройка панелей");
+		ReadUserSettings();
+		
 		//Дополнительные параметры в телеметрию
+		progress.CheckPoint("Запускаем телеметрию");
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
+		progress.End();
 	}
 
 	void FillTelemetry() {
