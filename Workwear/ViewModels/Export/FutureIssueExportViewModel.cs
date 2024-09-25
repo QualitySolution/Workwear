@@ -13,7 +13,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Services;
 using QS.Utilities;
-using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
@@ -46,11 +45,8 @@ namespace Workwear.ViewModels.Export {
 			BaseParameters baseParameters,
 			SizeService sizeService,
 			OrganizationRepository organizationRepository,
-			
-			IValidator validator = null,
-			string UoWTitle = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
-			: base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider) {
+			: base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			_sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
@@ -166,8 +162,8 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.VirtualLastIssue ? "+" : "");},},
 				new ColumnInfo() {Label = 
 					"Дата последней выдачи", FillCell = (cell, item) => { 
-					if(item?.LasatIssueOperation?.OperationTime.Date != null) 
-						cell.SetCellValue(item.LasatIssueOperation.OperationTime.Date);},
+					if(item?.LastIssueOperation?.OperationTime.Date != null) 
+						cell.SetCellValue(item.LastIssueOperation.OperationTime.Date);},
 					Type = CellType.Numeric,
 					SetStyle = (cell, item, col) => { cell.CellStyle = item.VirtualLastIssue ? cellStyleDateVirtual : cellStyleDate; },
 					Wight = 3000},
@@ -179,7 +175,7 @@ namespace Workwear.ViewModels.Export {
 					Style = cellStyleDate,
 					Wight = 3000},
 				new ColumnInfo() {Label =
-					"Дата пропущеной выдачи", FillCell = (cell, item) => { 
+					"Дата пропущенной выдачи", FillCell = (cell, item) => { 
 					if(item.DelayIssueDate != null) 
 						cell.SetCellValue(item?.DelayIssueDate?.ToShortDateString() ?? "");}, 
 					Type = CellType.Numeric,
@@ -249,39 +245,39 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globlProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
-				globlProgress.StartGroup("Загрузка общих данных");
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
+				globalProgress.StartGroup("Загрузка общих данных");
 				_sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
 				ISheet sheet = workbook.CreateSheet("Планируемые выдачи");
 
 				#region Получение данных
-				var employes = UoW.Session.QueryOver<EmployeeCard>()
+				var employees = UoW.Session.QueryOver<EmployeeCard>()
 					.Fetch(SelectMode.Fetch, x => x.Subdivision)
 					.Fetch(SelectMode.Fetch, x => x.Department)
 					.Fetch(SelectMode.Fetch, x => x.Post)
 					.Where(x => x.DismissDate == null)
 					.List();
 
-				var employeeIds = employes.Select(x => x.Id).ToArray();
+				var employeeIds = employees.Select(x => x.Id).ToArray();
 				UoW.Session.QueryOver<Norm>()
 					.Future();
 				UoW.Session.QueryOver<NormItem>()
 					.Future();
 				
-				globlProgress.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
+				globalProgress.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
 				issueModel.PreloadEmployeeInfo(employeeIds);
 				
-				globlProgress.StartGroup(nameof(issueModel.PreloadWearItems));
+				globalProgress.StartGroup(nameof(issueModel.PreloadWearItems));
 				issueModel.PreloadWearItems(employeeIds);
 				
-				globlProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
+				globalProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
 				ProgressLocal.Close(); 
-				issueModel.FillWearReceivedInfo(employes.ToArray(), progress: ProgressLocal);
+				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
-				globlProgress.StartGroup("Создание документа");
-				var wearCardsItems = employes.SelectMany(x => x.WorkwearItems);
+				globalProgress.StartGroup("Создание документа");
+				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems);
 				#endregion
 
 				#region Форматы и стили ячеек
@@ -322,7 +318,7 @@ namespace Workwear.ViewModels.Export {
 				}
 
 				#region Формирование набора данных
-				globlProgress.StartGroup("Перебор потребностей");				
+				globalProgress.StartGroup("Перебор потребностей");				
 				ProgressLocal.Start(wearCardsItems.Count());
 				int i = 1;
 				int gc = 0;
@@ -353,7 +349,7 @@ namespace Workwear.ViewModels.Export {
 						if(need == 0)
 							break;
 						//Операция приведшая к возникновению потребности
-						var lastIsssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
+						var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
 						//создаём следующую виртуальную выдачу
 						var issueDate = (NoDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
 						var op = new EmployeeIssueOperation(baseParameters) {
@@ -380,9 +376,9 @@ namespace Workwear.ViewModels.Export {
 								OperationDate = op.OperationTime,
 								Nomenclature = nomenclature,
 								Amount = op.Issued,
-								LasatIssueOperation = lastIsssue,
+								LastIssueOperation = lastIssue,
 								DelayIssueDate = delayIssue,
-								VirtualLastIssue = virtualOperations.Any(o => o == lastIsssue)
+								VirtualLastIssue = virtualOperations.Any(o => o == lastIssue)
 							}).SetRow(row, ColumnMap);
 							delayIssue = null;
 						}
@@ -401,7 +397,7 @@ namespace Workwear.ViewModels.Export {
 				}
 				ProgressLocal.Close();
 				#endregion
-				globlProgress.StartGroup("Сохранение документа");
+				globalProgress.StartGroup("Сохранение документа");
 				foreach(var col in ColumnMap)
 					switch(col.Wight) {
 						case 0 : break;
@@ -410,7 +406,7 @@ namespace Workwear.ViewModels.Export {
 					}
 				workbook.Write(fileStream);
 				workbook.Close();
-				globlProgress.End();
+				globalProgress.End();
 			}
 			RunSensetive = true;
 		}
@@ -454,7 +450,7 @@ namespace Workwear.ViewModels.Export {
 		public Organization Organization { get; set; }
 		public EmployeeCardItem EmployeeCardItem { get; set; }
 		public Nomenclature Nomenclature { get; set; }
-		public EmployeeIssueOperation LasatIssueOperation { get; set; }
+		public EmployeeIssueOperation LastIssueOperation { get; set; }
 		public bool VirtualLastIssue { get; set; }
 
 		public EmployeeCard Employee => EmployeeCardItem.EmployeeCard;
