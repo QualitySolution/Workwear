@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -245,8 +245,7 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, nameof(issueModel.PreloadWearItems), logger: logger); 
-				globalProgress.StartGroup("Загрузка общих данных");
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", logger: logger); 
 				_sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -266,17 +265,17 @@ namespace Workwear.ViewModels.Export {
 				UoW.Session.QueryOver<NormItem>()
 					.Future();
 				
-				globalProgress.StartGroup(nameof(issueModel.PreloadEmployeeInfo));
+				globalProgress.CheckPoint(nameof(issueModel.PreloadEmployeeInfo));
 				issueModel.PreloadEmployeeInfo(employeeIds);
 				
-				globalProgress.StartGroup(nameof(issueModel.PreloadWearItems));
+				globalProgress.CheckPoint(nameof(issueModel.PreloadWearItems));
 				issueModel.PreloadWearItems(employeeIds);
 				
-				globalProgress.StartGroup(nameof(issueModel.FillWearReceivedInfo));
+				globalProgress.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 				ProgressLocal.Close(); 
 				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
-				globalProgress.StartGroup("Создание документа");
+				globalProgress.CheckPoint("Создание документа");
 				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems);
 				#endregion
 
@@ -318,7 +317,7 @@ namespace Workwear.ViewModels.Export {
 				}
 
 				#region Формирование набора данных
-				globalProgress.StartGroup("Перебор потребностей");				
+				globalProgress.CheckPoint("Перебор потребностей");				
 				ProgressLocal.Start(wearCardsItems.Count());
 				int i = 1;
 				int gc = 0;
@@ -331,7 +330,6 @@ namespace Workwear.ViewModels.Export {
 					}
 					
 					ProgressLocal.Add(text:"Потребность " + item.EmployeeCard.ShortName);
-					GtkHelper.WaitRedraw();
 					
 					DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 					//список созданных объектов операций
@@ -397,7 +395,7 @@ namespace Workwear.ViewModels.Export {
 				}
 				ProgressLocal.Close();
 				#endregion
-				globalProgress.StartGroup("Сохранение документа");
+				globalProgress.CheckPoint("Сохранение документа");
 				foreach(var col in ColumnMap)
 					switch(col.Wight) {
 						case 0 : break;
