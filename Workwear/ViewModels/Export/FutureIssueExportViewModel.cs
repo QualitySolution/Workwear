@@ -334,7 +334,6 @@ namespace Workwear.ViewModels.Export {
 					}
 					
 					ProgressLocal.Add(text:"Потребность " + item.EmployeeCard.ShortName);
-					GtkHelper.WaitRedraw();
 					
 					DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 					//список созданных объектов операций
