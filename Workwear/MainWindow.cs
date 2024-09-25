@@ -91,7 +91,7 @@ public partial class MainWindow : Gtk.Window {
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
 		ProgressBar = progresswidget1;
-		var progress = new ProgressPerformanceHelper(ProgressBar, 21, "Подготовка статусной строк", logger, showProgressText: true);
+		var progress = new ProgressPerformanceHelper(ProgressBar, 34, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
