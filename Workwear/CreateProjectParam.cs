@@ -91,11 +91,12 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		static void CreateBaseConfig ()
+		public static void CreateBaseConfig (ProgressPerformanceHelper progress)
 		{
 			logger.Info ("Настройка параметров базы...");
 
 			// Настройка ORM
+			progress.CheckPoint("Настройка подключения к базе");
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
@@ -103,7 +104,8 @@ namespace workwear
 				.AdoNetBatchSize(100)
 				.ShowSql ()
 				.FormatSql ();
-
+			
+			progress.CheckPoint("Настройка доменных объектов");
 			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
@@ -117,6 +119,7 @@ namespace workwear
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
 
+			progress.CheckPoint("Антикварные объекты");
 			//Настраиваем классы сущностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
@@ -126,12 +129,14 @@ namespace workwear
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
+			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
+			progress.CheckPoint("Регистрация журналов");
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 		
 		public static ILifetimeScope AppDIContainer;
-		static IContainer startupContainer;
+		public static IContainer StartupContainer;
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
@@ -185,7 +190,7 @@ namespace workwear
 			#region Временные будут переопределены
 			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
-			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
+			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(StartupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(),
 				typeof(UpdateProcessView),
 				typeof(ProgressWindowView)
@@ -193,7 +198,7 @@ namespace workwear
 			#endregion
 		}
 		
-		static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
+		public static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
 		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
