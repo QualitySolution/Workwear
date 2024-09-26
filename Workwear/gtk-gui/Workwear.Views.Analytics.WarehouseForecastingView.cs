@@ -148,7 +148,7 @@ namespace Workwear.Views.Analytics
 			this.buttonFill.CanFocus = true;
 			this.buttonFill.Name = "buttonFill";
 			this.buttonFill.UseUnderline = true;
-			this.buttonFill.Label = global::Mono.Unix.Catalog.GetString("Заполнить прогноз");
+			this.buttonFill.Label = global::Mono.Unix.Catalog.GetString("Рассчитать прогноз");
 			this.yhbox1.Add(this.buttonFill);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonFill]));
 			w10.Position = 1;
@@ -176,6 +176,8 @@ namespace Workwear.Views.Analytics
 			{
 				this.Child.ShowAll();
 			}
+			this.progressTotal.Hide();
+			this.progressLocal.Hide();
 			this.Hide();
 			this.buttonFill.Clicked += new global::System.EventHandler(this.OnButtonFillClicked);
 		}

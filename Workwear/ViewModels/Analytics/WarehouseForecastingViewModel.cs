@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -38,7 +39,7 @@ namespace Workwear.ViewModels.Analytics {
 			FutureIssueModel futureIssueModel,
 			StockBalanceModel stockBalance,
 			SizeService sizeService,
-			UnitOfWorkProvider unitOfWorkProvider) : base(unitOfWorkFactory, navigation, UoWTitle: "Прогнозирование склада" , unitOfWorkProvider: unitOfWorkProvider)
+			UnitOfWorkProvider unitOfWorkProvider) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
@@ -51,37 +52,57 @@ namespace Workwear.ViewModels.Analytics {
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse)
 				.MakeByType()
 				.Finish();
+			Granularity = Granularity.Weekly;
 		}
 
 		#region Свойства View
 		public IProgressBarDisplayable ProgressTotal { get; set; }
 		public IProgressBarDisplayable ProgressLocal { get; set; }
 		
-		public EntityEntryViewModel<Warehouse> WarehouseEntry;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseEntry;
 
 		private Warehouse warehouse;
-		public virtual Warehouse Warehouse {
+		public Warehouse Warehouse {
 			get => warehouse;
 			set => SetField(ref warehouse, value);
 		}
 
 		private DateTime endDate = DateTime.Today.AddMonths(3);
-		public virtual DateTime EndDate {
+		public DateTime EndDate {
 			get => endDate;
-			set => SetField(ref endDate, value);
+			set {
+				if(SetField(ref endDate, value))
+					RefreshColumns();
+			}
 		}
-		
+
 		private List<WarehouseForecastingItem> items = new List<WarehouseForecastingItem>();
-		public virtual List<WarehouseForecastingItem> Items {
+		public List<WarehouseForecastingItem> Items {
 			get => items;
 			set => SetField(ref items, value);
 		}
 		
 		private bool sensitiveFill = true;
-		public virtual bool SensitiveFill {
+		public bool SensitiveFill {
 			get => sensitiveFill;
 			set => SetField(ref sensitiveFill, value);
 		}
+		
+		private Granularity granularity;
+		public Granularity Granularity {
+			get => granularity;
+			set { 
+				if(SetField(ref granularity, value))
+			         RefreshColumns();
+			}
+		}
+
+		private ForecastColumn[] forecastColumns;
+		public ForecastColumn[] ForecastColumns {
+			get => forecastColumns;
+			set => SetField(ref forecastColumns, value);
+		}
+		
 		#endregion
 
 		#region Действия
@@ -99,7 +120,6 @@ namespace Workwear.ViewModels.Analytics {
 			var employeeIds = employees.Select(x => x.Id).ToArray();
 			ProgressLocal.Add(text: "Получение норм");
 			UoW.Session.QueryOver<Norm>()
-				.Where(x => !x.Archival)
 				.Fetch(SelectMode.Fetch, x => x.Items)
 				.List();
 			ProgressLocal.Add(text: "Заполняем сотрудников");
@@ -128,10 +148,14 @@ namespace Workwear.ViewModels.Analytics {
 				var stocks = stockBalance.ForNomenclature(group.Key.ProtectionTools.Nomenclatures.ToArray()).ToArray();
 				var sex = stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal;
 				if (sex == ClothesSex.Universal)
-					result.Add(new WarehouseForecastingItem(group, stocks, ClothesSex.Universal));
+					result.Add(new WarehouseForecastingItem(this, group.Key, group.ToList(), stocks, ClothesSex.Universal));
 				else {
-					result.Add(new WarehouseForecastingItem(group, stocks, ClothesSex.Men));
-					result.Add(new WarehouseForecastingItem(group, stocks, ClothesSex.Women));
+					var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();
+					if (mensIssues.Any())
+						result.Add(new WarehouseForecastingItem(this, group.Key, mensIssues, stocks, ClothesSex.Men));
+					var womenIssues = group.Where(x => x.Employee.Sex == Sex.F).ToList();
+					if(womenIssues.Any())
+						result.Add(new WarehouseForecastingItem(this, group.Key, womenIssues, stocks, ClothesSex.Women));
 				}
 			}
 			ProgressLocal.Add(text: "Сортировка");
@@ -143,5 +167,55 @@ namespace Workwear.ViewModels.Analytics {
 		}
 
 		#endregion
+
+		#region Private
+
+		private void RefreshColumns() {
+			var list = new List<ForecastColumn>();
+			switch(Granularity) {
+				case Granularity.Totally:
+					list.Add(new ForecastColumn() { Title = "Потребность\nза весь период", StartDate = DateTime.Today, EndDate = EndDate });
+					break;
+				case Granularity.Monthly:
+					var startMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+					while(startMonth <= EndDate) {
+						var endMonth = startMonth.AddMonths(1).AddDays(-1);
+						list.Add(new ForecastColumn() { Title = startMonth.ToString("yyyy\nMMMM"), StartDate = startMonth, EndDate = endMonth });
+						startMonth = endMonth.AddDays(1);
+					}
+					break;
+				case Granularity.Weekly:
+					var startWeek = DateTime.Today.AddDays(DateTime.Today.DayOfWeek == DayOfWeek.Sunday ? -6 : 1 - (int)DateTime.Today.DayOfWeek);
+					while(startWeek <= EndDate) {
+						var endWeek = startWeek.AddDays(6);
+						list.Add(new ForecastColumn() { Title = $"c {startWeek:dd.MM}\nпо {endWeek:dd.MM}", StartDate = startWeek, EndDate = endWeek });
+						startWeek = endWeek.AddDays(1);
+					}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			ForecastColumns = list.ToArray();
+			foreach(var item in Items) {
+				item.FillForecast();
+			}
+		}
+		#endregion
+	}
+
+	public class ForecastColumn {
+		public string Title { get; set; }
+		public DateTime StartDate { get; set; }
+		public DateTime EndDate { get; set; }
+	}
+
+	public enum Granularity {
+		[Display(Name = "За весь период")]
+		Totally,
+		[Display(Name = "По месяцам")]
+		Monthly,
+		[Display(Name = "По неделям")]
+		Weekly
 	}
 }

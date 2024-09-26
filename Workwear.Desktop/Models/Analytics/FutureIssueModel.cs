@@ -18,7 +18,7 @@ namespace Workwear.Models.Analytics {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 		}
 
-		public List<FeatureIssue> CalculateIssues(
+		public List<FutureIssue> CalculateIssues(
 			DateTime startDate,
 			DateTime endDate,
 			bool noDebt,
@@ -27,7 +27,7 @@ namespace Workwear.Models.Analytics {
 		{
 			progress.Start(employeeItems.Count() + 1);
 			int gc = 0;
-			var issues = new List<FeatureIssue>();
+			var issues = new List<FutureIssue>();
 
 			foreach(var item in employeeItems) {
 				if(gc++ > 10000) {
@@ -73,7 +73,7 @@ namespace Workwear.Models.Analytics {
 
 					//Создание строки выгрузки на эту выдачу
 					if(op.OperationTime >= startDate) {
-						issues.Add(new FeatureIssue() {
+						issues.Add(new FutureIssue() {
 							EmployeeCardItem = item,
 							OperationDate = op.OperationTime,
 							Nomenclature = nomenclature,
@@ -106,7 +106,7 @@ namespace Workwear.Models.Analytics {
 	/// <summary>
 	/// Будущая выдача 
 	/// </summary>
-	public class FeatureIssue {
+	public class FutureIssue {
 		public EmployeeCardItem EmployeeCardItem { get; set; }
 		public Nomenclature Nomenclature { get; set; }
 		public EmployeeIssueOperation LastIssueOperation { get; set; }
@@ -125,6 +125,9 @@ namespace Workwear.Models.Analytics {
 		public Size Height =>
 			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.HeightType))?.Size;
 
+		/// <summary>
+		/// Дата планируемой выдачи
+		/// </summary>
 		public DateTime ? OperationDate { get; set; }
 		public DateTime ? LastIssueDate { get; set; }
 		public DateTime ? DelayIssueDate { get; set; }

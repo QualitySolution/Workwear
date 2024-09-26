@@ -261,7 +261,6 @@ namespace Workwear.ViewModels.Export {
 
 				var employeeIds = employees.Select(x => x.Id).ToArray();
 				UoW.Session.QueryOver<Norm>()
-					.Where(x => !x.Archival)
 					.Fetch(SelectMode.Fetch, x => x.Items)
 					.List();
 				
@@ -359,9 +358,9 @@ namespace Workwear.ViewModels.Export {
 		public CellType Type { get; set; } = CellType.String;
 		public ICellStyle Style { get; set; } = null;
 
-		public FillCellD<ICell, FeatureIssue> FillCell
+		public FillCellD<ICell, FutureIssue> FillCell
 			= (cell, item) => { cell.SetCellValue("*"); };
-		public FillCellS<ICell, FeatureIssue, ColumnInfo> SetStyle
+		public FillCellS<ICell, FutureIssue, ColumnInfo> SetStyle
 			= (cell, item, col) => { cell.CellStyle = col.Style; };
 			
 	}

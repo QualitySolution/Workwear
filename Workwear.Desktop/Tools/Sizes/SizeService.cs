@@ -85,7 +85,7 @@ namespace Workwear.Tools.Sizes
 		public const int MaxStandardSizeId = 1000, MaxStandardSizeTypeId = 100;
 
 		#region Статика
-		public static string SizeTitle(Size size, Size height) => height != null ? $"{size.Name}/{height.Name}" : size?.Name;
+		public static string SizeTitle(Size size, Size height) => height != null ? $"{size?.Name}/{height?.Name}" : size?.Name;
 		#endregion
 	}
 }
