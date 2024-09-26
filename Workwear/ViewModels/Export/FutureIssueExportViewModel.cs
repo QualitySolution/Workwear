@@ -245,7 +245,7 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", logger: logger); 
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, "Загрузка общих данных", logger: logger); 
 				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -261,9 +261,9 @@ namespace Workwear.ViewModels.Export {
 
 				var employeeIds = employees.Select(x => x.Id).ToArray();
 				UoW.Session.QueryOver<Norm>()
-					.Future();
-				UoW.Session.QueryOver<NormItem>()
-					.Future();
+					.Where(x => !x.Archival)
+					.Fetch(SelectMode.Fetch, x => x.Items)
+					.List();
 				
 				globalProgress.CheckPoint(nameof(issueModel.PreloadEmployeeInfo));
 				issueModel.PreloadEmployeeInfo(employeeIds);
