@@ -16,11 +16,9 @@ using QS.Utilities;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Sizes;
-using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Tools;
@@ -33,23 +31,25 @@ namespace Workwear.ViewModels.Export {
 
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly EmployeeIssueModel issueModel;
+		private readonly FutureIssueModel futureIssueModel;
 		private readonly BaseParameters baseParameters;
-		private readonly ModalProgressCreator localProgress;
-		private readonly SizeService _sizeService;
+		private readonly SizeService sizeService;
 
 		public FutureIssueExportViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			EmployeeIssueModel issueModel,
+			FutureIssueModel futureIssueModel,
 			BaseParameters baseParameters,
 			SizeService sizeService,
 			OrganizationRepository organizationRepository,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			_sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
 			Title = "Прогноз выдач";
 			
@@ -66,16 +66,16 @@ namespace Workwear.ViewModels.Export {
 		}
 
 		#region Поля и свойства
-		private bool runSensetive;
-		public bool SensetiveLoad => startDate <= endDate;
+		private bool runSensitive;
+		public bool SensitiveLoad => startDate <= endDate;
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;
 		
-		public virtual bool RunSensetive {
-			get => runSensetive;
-			set => SetField(ref runSensetive, value);
+		public virtual bool RunSensitive {
+			get => runSensitive;
+			set => SetField(ref runSensitive, value);
 		}
 		
 		private Organization exportOrganization;
@@ -85,14 +85,14 @@ namespace Workwear.ViewModels.Export {
         }
             
         private DateTime startDate = DateTime.Today.Date;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
 		private DateTime endDate = DateTime.Today.AddMonths(1);
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -110,7 +110,7 @@ namespace Workwear.ViewModels.Export {
 			var columnMap = new List<ColumnInfo>() {
 				new ColumnInfo() {Label = 
 					"Организация", FillCell = (cell, item) => {
-					cell.SetCellValue(item.Organization?.Name ?? "");}},
+					cell.SetCellValue(ExportOrganization?.Name ?? "");}},
 				new ColumnInfo() {Label =
 					"МВЗ.Код", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Subdivision?.Code ?? "");}},
@@ -221,7 +221,7 @@ namespace Workwear.ViewModels.Export {
 
 		#region Создание файла
 		public void Create() {
-			RunSensetive = false;
+			RunSensitive = false;
 			string filename = "";
 			
 			
@@ -246,7 +246,7 @@ namespace Workwear.ViewModels.Export {
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
 				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", logger: logger); 
-				_sizeService.RefreshSizes(UoW);
+				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
 				ISheet sheet = workbook.CreateSheet("Планируемые выдачи");
@@ -276,7 +276,7 @@ namespace Workwear.ViewModels.Export {
 				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
 				globalProgress.CheckPoint("Создание документа");
-				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems);
+				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
 				#endregion
 
 				#region Форматы и стили ячеек
@@ -315,86 +315,21 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(column.Label);
 					cell.CellStyle = cellStyleHead;
 				}
-
-				#region Формирование набора данных
-				globalProgress.CheckPoint("Перебор потребностей");				
-				ProgressLocal.Start(wearCardsItems.Count());
-				int i = 1;
-				int gc = 0;
 				
-				foreach(var item in wearCardsItems) {
-					if(gc++ > 10000) {
-						GC.Collect();
-						GC.WaitForPendingFinalizers();
-						gc = 0;
-					}
-					
-					ProgressLocal.Add(text:"Потребность " + item.EmployeeCard.ShortName);
-					
-					DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
-					//список созданных объектов операций
-					List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>(); 
-
-					//номенклатура с максимальной стоимостью
-					Nomenclature nomenclature = null;
-					if(item.ProtectionTools?.Nomenclatures.Count > 0)
-						nomenclature =
-							item.ProtectionTools?.Nomenclatures.Aggregate((x, y) => (x?.SaleCost ?? 0.0M) >= (y?.SaleCost ?? 0.0M) ? x : y);
-
-					item.UpdateNextIssue(null);
-					while(item.NextIssue.HasValue && item.NextIssue < EndDate) {
-						int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
-						if(need == 0)
-							break;
-						//Операция приведшая к возникновению потребности
-						var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
-						//создаём следующую виртуальную выдачу
-						var issueDate = (NoDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
-						var op = new EmployeeIssueOperation(baseParameters) {
-							OperationTime = issueDate,
-							StartOfUse = issueDate,
-							Issued = need,
-							Returned = 0,
-							OverrideBefore = false,
-
-							Employee = item.EmployeeCard,
-							NormItem = item.ActiveNormItem,
-							ProtectionTools = item.ProtectionTools,
-						};
-						op.ExpiryByNorm = item.ActiveNormItem.CalculateExpireDate(op.OperationTime);
-						op.AutoWriteoffDate = op.ExpiryByNorm; //Подстраховка
-						virtualOperations.Add(op);
-
-						//Создание строки выгрузки на эту выдачу
-						if(op.OperationTime >= StartDate) {
-							IRow row = sheet.CreateRow(i++);
-							(new ExportRow() {
-								Organization = ExportOrganization,
-								EmployeeCardItem = item,
-								OperationDate = op.OperationTime,
-								Nomenclature = nomenclature,
-								Amount = op.Issued,
-								LastIssueOperation = lastIssue,
-								DelayIssueDate = delayIssue,
-								VirtualLastIssue = virtualOperations.Any(o => o == lastIssue)
-							}).SetRow(row, ColumnMap);
-							delayIssue = null;
-						}
-
-						var resetOperations = item.Graph.Intervals.Where(gi=> gi.StartDate == item.NextIssue)
-							.Select(ai => ai.ActiveItems)
-							.Select(x => x.Select(y => y.IssueOperation).Where(o => o.OverrideBefore));
-						if(op.Issued < op.NormItem.Amount && resetOperations.Any())
-							foreach (var opR in resetOperations.SelectMany(x => x).Select(y => y))
-								if(opR != null)
-									opR.Issued = op.NormItem.Amount;
-
-						item.Graph.AddOperations(new List<EmployeeIssueOperation> { op });
-						item.UpdateNextIssue(null);
+				globalProgress.CheckPoint("Прогнозирование выдач");
+				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, NoDebt, wearCardsItems, ProgressLocal);
+				
+				globalProgress.CheckPoint("Заполнение Excel файла");
+				int i = 1;
+				foreach(var issue in featureIssues) {
+					IRow row = sheet.CreateRow(i++);
+					foreach(var col in ColumnMap) {
+						ICell cell = row.CreateCell(col.Index);
+						cell.SetCellType(col.Type);
+						col.SetStyle(cell, issue, col);
+						col.FillCell(cell, issue);
 					}
 				}
-				ProgressLocal.Close();
-				#endregion
 				globalProgress.CheckPoint("Сохранение документа");
 				foreach(var col in ColumnMap)
 					switch(col.Wight) {
@@ -406,7 +341,7 @@ namespace Workwear.ViewModels.Export {
 				workbook.Close();
 				globalProgress.End();
 			}
-			RunSensetive = true;
+			RunSensitive = true;
 		}
 		#endregion
 	}
@@ -421,61 +356,15 @@ namespace Workwear.ViewModels.Export {
 		public int Index { get; set; }
 		public string Label { get; set; }
 		public int Wight { get; set; } //Умолчание 0
-		
-		private CellType type = CellType.String;
-		public CellType Type {
-			get => type;
-			set => type = value;
-		}
-		
-		private ICellStyle style = null;
-		public ICellStyle Style {
-			get => style;
-			set => style = value;
-		}
+		public CellType Type { get; set; } = CellType.String;
+		public ICellStyle Style { get; set; } = null;
 
-		public FillCellD<ICell, ExportRow> FillCell
+		public FillCellD<ICell, FeatureIssue> FillCell
 			= (cell, item) => { cell.SetCellValue("*"); };
-		public FillCellS<ICell, ExportRow, ColumnInfo> SetStyle
+		public FillCellS<ICell, FeatureIssue, ColumnInfo> SetStyle
 			= (cell, item, col) => { cell.CellStyle = col.Style; };
 			
 	}
 	
-	/// <summary>
-	/// Строка экспорта. 
-	/// </summary>
-	public class ExportRow {
-		public Organization Organization { get; set; }
-		public EmployeeCardItem EmployeeCardItem { get; set; }
-		public Nomenclature Nomenclature { get; set; }
-		public EmployeeIssueOperation LastIssueOperation { get; set; }
-		public bool VirtualLastIssue { get; set; }
-
-		public EmployeeCard Employee => EmployeeCardItem.EmployeeCard;
-		public Subdivision Subdivision => Employee.Subdivision;
-		public Department Department => Employee.Department;
-		public Post Post => Employee.Post;	
-		public ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
-		public NormItem NormItem => EmployeeCardItem.ActiveNormItem;
-		public Norm Norm => NormItem.Norm;
-
-		public Size Size =>
-			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.SizeType))?.Size;
-		public Size Height =>
-			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.HeightType))?.Size;
-
-		public DateTime ? OperationDate { get; set; }
-		public DateTime ? LastIssueDate { get; set; }
-		public DateTime ? DelayIssueDate { get; set; }
-		public int Amount { get; set; }
-
-		public virtual void SetRow(IRow row, List<ColumnInfo> columnMap) {
-			foreach(var col in columnMap) {
-				ICell cell = row.CreateCell(col.Index);
-				cell.SetCellType(col.Type);
-				col.SetStyle(cell, this, col);
-				col.FillCell(cell, this);
-			}
-		}
-	}
+	
 }

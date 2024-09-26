@@ -66,6 +66,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Analytics;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
@@ -325,6 +326,7 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 

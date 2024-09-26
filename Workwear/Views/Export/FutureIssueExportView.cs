@@ -19,7 +19,7 @@ namespace Workwear.Views.Export {
 			ViewModel.ProgressGlobal = yprogressTotal;
 			ViewModel.ProgressLocal = yprogressLocal;
 
-			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {
