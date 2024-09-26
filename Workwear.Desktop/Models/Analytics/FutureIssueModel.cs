@@ -25,7 +25,7 @@ namespace Workwear.Models.Analytics {
 			IList<EmployeeCardItem> employeeItems,
 			IProgressBarDisplayable progress) 
 		{
-			progress.Start(employeeItems.Count());
+			progress.Start(employeeItems.Count() + 1);
 			int gc = 0;
 			var issues = new List<FeatureIssue>();
 
@@ -63,7 +63,6 @@ namespace Workwear.Models.Analytics {
 						Issued = need,
 						Returned = 0,
 						OverrideBefore = false,
-
 						Employee = item.EmployeeCard,
 						NormItem = item.ActiveNormItem,
 						ProtectionTools = item.ProtectionTools,

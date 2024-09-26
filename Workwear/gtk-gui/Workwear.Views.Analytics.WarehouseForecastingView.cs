@@ -8,6 +8,8 @@ namespace Workwear.Views.Analytics
 
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
+		private global::Gamma.Widgets.yEnumComboBox comboDetail;
+
 		private global::QS.Widgets.GtkUI.DatePicker dateEnd;
 
 		private global::QS.Views.Control.EntityEntry entryWarehouse;
@@ -18,7 +20,9 @@ namespace Workwear.Views.Analytics
 
 		private global::Gamma.GtkWidgets.yLabel ylabel4;
 
-		private global::QS.Widgets.ProgressWidget progresswidget1;
+		private global::QS.Widgets.ProgressWidget progressTotal;
+
+		private global::QS.Widgets.ProgressWidget progressLocal;
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
@@ -41,10 +45,23 @@ namespace Workwear.Views.Analytics
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(3));
+			this.ytable1.NRows = ((uint)(2));
 			this.ytable1.NColumns = ((uint)(4));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.comboDetail = new global::Gamma.Widgets.yEnumComboBox();
+			this.comboDetail.Name = "comboDetail";
+			this.comboDetail.ShowSpecialStateAll = false;
+			this.comboDetail.ShowSpecialStateNot = false;
+			this.comboDetail.UseShortTitle = false;
+			this.comboDetail.DefaultFirst = false;
+			this.ytable1.Add(this.comboDetail);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.comboDetail]));
+			w1.LeftAttach = ((uint)(3));
+			w1.RightAttach = ((uint)(4));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.dateEnd = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateEnd.Events = ((global::Gdk.EventMask)(256));
@@ -56,60 +73,72 @@ namespace Workwear.Views.Analytics
 			this.dateEnd.AutoSeparation = true;
 			this.dateEnd.HideButtonClearDate = false;
 			this.ytable1.Add(this.dateEnd);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.dateEnd]));
-			w1.TopAttach = ((uint)(1));
-			w1.BottomAttach = ((uint)(2));
-			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.dateEnd]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.entryWarehouse = new global::QS.Views.Control.EntityEntry();
 			this.entryWarehouse.Events = ((global::Gdk.EventMask)(256));
 			this.entryWarehouse.Name = "entryWarehouse";
 			this.ytable1.Add(this.entryWarehouse);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryWarehouse]));
-			w2.LeftAttach = ((uint)(1));
-			w2.RightAttach = ((uint)(2));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryWarehouse]));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
+			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Склад прогнозирования:");
 			this.ytable1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel1]));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel3.Name = "ylabel3";
-			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Период прогнозирования:");
+			this.ylabel3.Xalign = 1F;
+			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Прогнозирование до:");
 			this.ytable1.Add(this.ylabel3);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel3]));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Детализация потребностей:");
 			this.ytable1.Add(this.ylabel4);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
-			w5.LeftAttach = ((uint)(2));
-			w5.RightAttach = ((uint)(3));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabel4]));
+			w6.LeftAttach = ((uint)(2));
+			w6.RightAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.yvbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
-			w6.Position = 0;
-			// Container child yvbox1.Gtk.Box+BoxChild
-			this.progresswidget1 = new global::QS.Widgets.ProgressWidget();
-			this.progresswidget1.Name = "progresswidget1";
-			this.yvbox1.Add(this.progresswidget1);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.progresswidget1]));
-			w7.Position = 1;
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
+			w7.Position = 0;
 			w7.Expand = false;
 			w7.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.progressTotal = new global::QS.Widgets.ProgressWidget();
+			this.progressTotal.Name = "progressTotal";
+			this.yvbox1.Add(this.progressTotal);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.progressTotal]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.progressLocal = new global::QS.Widgets.ProgressWidget();
+			this.progressLocal.Name = "progressLocal";
+			this.yvbox1.Add(this.progressLocal);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.progressLocal]));
+			w9.Position = 2;
+			w9.Expand = false;
+			w9.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
@@ -121,15 +150,15 @@ namespace Workwear.Views.Analytics
 			this.buttonFill.UseUnderline = true;
 			this.buttonFill.Label = global::Mono.Unix.Catalog.GetString("Заполнить прогноз");
 			this.yhbox1.Add(this.buttonFill);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonFill]));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonFill]));
+			w10.Position = 1;
+			w10.Expand = false;
+			w10.Fill = false;
 			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w9.Position = 2;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w11.Position = 3;
+			w11.Expand = false;
+			w11.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -140,8 +169,8 @@ namespace Workwear.Views.Analytics
 			this.treeItems.Name = "treeItems";
 			this.GtkScrolledWindow.Add(this.treeItems);
 			this.yvbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
-			w11.Position = 3;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
+			w13.Position = 4;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
