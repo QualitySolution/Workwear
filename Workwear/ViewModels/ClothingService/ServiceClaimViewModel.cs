@@ -10,9 +10,11 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ServiceClaimViewModel : EntityDialogViewModelBase<ServiceClaim> {
+		private readonly FeaturesService featuresService;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 
 		public ServiceClaimViewModel(
@@ -20,20 +22,23 @@ namespace Workwear.ViewModels.ClothingService {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			INavigationManager navigation,
+			FeaturesService featuresService,
 			PostomatManagerService postomatService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null) 
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 			BarcodeInfoViewModel.Barcode = Entity.Barcode;
-			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
+			if(this.featuresService.Available(WorkwearFeature.Postomats))
+				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 		}
 
 		#region Postamat
 
-		public IList<PostomatInfo> Postomats { get; }
+		public IList<PostomatInfo> Postomats { get; } = new List<PostomatInfo>();
 		
 		private PostomatInfo postomat;
 		public virtual PostomatInfo Postomat {
@@ -49,6 +54,10 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Sensitive
 		public bool CanEdit => !Entity.IsClosed;
 		public bool DefectCanEdit => CanEdit && Entity.NeedForRepair;
+		#endregion
+
+		#region Visible
+		public bool PostomatVisible => featuresService.Available(WorkwearFeature.Postomats);
 		#endregion
 
 		#region Пропрос свойств модели

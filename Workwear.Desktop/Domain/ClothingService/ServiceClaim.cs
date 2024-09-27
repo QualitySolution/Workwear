@@ -52,9 +52,9 @@ namespace Workwear.Domain.ClothingService {
 			set { SetField(ref defect, value, () => Defect); }
 		}
 
-		private uint preferredTerminalId;
+		private uint? preferredTerminalId;
 		[Display(Name = "Предпочтительный постамат выдачи")]
-		public virtual uint PreferredTerminalId {
+		public virtual uint? PreferredTerminalId {
 			get => preferredTerminalId;
 			set => SetField(ref preferredTerminalId, value);
 		}
