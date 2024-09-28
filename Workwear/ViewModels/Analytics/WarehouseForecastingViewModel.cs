@@ -76,6 +76,15 @@ namespace Workwear.ViewModels.Analytics {
 			}
 		}
 
+		private List<WarehouseForecastingItem> internalItems = new List<WarehouseForecastingItem>();
+		protected List<WarehouseForecastingItem> InternalItems {
+			get => internalItems;
+			set { 
+				if(SetField(ref internalItems, value))
+					ShowItemsList(); 
+			}
+		}
+
 		private List<WarehouseForecastingItem> items = new List<WarehouseForecastingItem>();
 		public List<WarehouseForecastingItem> Items {
 			get => items;
@@ -94,6 +103,16 @@ namespace Workwear.ViewModels.Analytics {
 			set { 
 				if(SetField(ref granularity, value))
 			         RefreshColumns();
+			}
+		}
+
+		private WarehouseForecastingShowMode showMode;
+
+		public WarehouseForecastingShowMode ShowMode {
+			get => showMode;
+			set {
+				if(SetField(ref showMode, value))
+					ShowItemsList();
 			}
 		}
 
@@ -159,7 +178,7 @@ namespace Workwear.ViewModels.Analytics {
 				}
 			}
 			ProgressLocal.Add(text: "Сортировка");
-			Items = result.OrderBy(x => x.ProtectionTool.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
+			InternalItems = result.OrderBy(x => x.ProtectionTool.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
 			ProgressLocal.Close();
 			ProgressTotal.Close();
@@ -201,6 +220,22 @@ namespace Workwear.ViewModels.Analytics {
 				item.FillForecast();
 			}
 		}
+
+		private void ShowItemsList() {
+			switch(ShowMode) {
+				case WarehouseForecastingShowMode.AllData:
+					Items = InternalItems;
+					break;
+				case WarehouseForecastingShowMode.JustShortfall:
+					Items = InternalItems.Where(x => x.ClosingBalance < 0).ToList();
+					break;
+				case WarehouseForecastingShowMode.JustSurplus:
+					Items = InternalItems.Where(x => x.ClosingBalance > 0).ToList();
+					break;
+				default:
+					throw new NotImplementedException();
+			}
+		}
 		#endregion
 	}
 
@@ -217,5 +252,14 @@ namespace Workwear.ViewModels.Analytics {
 		Monthly,
 		[Display(Name = "По неделям")]
 		Weekly
+	}
+
+	public enum WarehouseForecastingShowMode {
+		[Display(Name = "Все данные")]
+		AllData,
+		[Display(Name = "Только дефицит")]
+		JustShortfall,
+		[Display(Name = "Только излишки")]
+		JustSurplus
 	}
 }

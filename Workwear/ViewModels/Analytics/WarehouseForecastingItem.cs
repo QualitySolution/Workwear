@@ -115,8 +115,8 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 
 		#region Расчетные для отображения
-
 		public string SizeText => SizeService.SizeTitle(size, height);
+		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
 
 		#endregion
 	}

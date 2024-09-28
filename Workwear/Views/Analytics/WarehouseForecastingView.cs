@@ -26,6 +26,8 @@ namespace Workwear.Views.Analytics {
 			dateEnd.Binding.AddBinding(ViewModel, v => v.EndDate, w => w.Date).InitializeFromSource();
 			comboDetail.ItemsEnum = typeof(Granularity);
 			comboDetail.Binding.AddBinding(ViewModel, v => v.Granularity, w => w.SelectedItem).InitializeFromSource();
+			comboShowMode.ItemsEnum = typeof(WarehouseForecastingShowMode);
+			comboShowMode.Binding.AddBinding(ViewModel, v => v.ShowMode, w => w.SelectedItem).InitializeFromSource();
 		}
 
 		private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
