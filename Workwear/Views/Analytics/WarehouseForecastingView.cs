@@ -19,15 +19,25 @@ namespace Workwear.Views.Analytics {
 			ViewModel.ProgressTotal = progressTotal;
 			ViewModel.ProgressLocal = progressLocal;
 
-			buttonFill.Binding.AddBinding(ViewModel, v => v.SensitiveFill, w => w.Sensitive).InitializeFromSource();
+			buttonFill.Binding.AddBinding(ViewModel, v => v.SensitiveSettings, w => w.Sensitive).InitializeFromSource();
 
 			entryWarehouse.ViewModel = ViewModel.WarehouseEntry;
+			entryWarehouse.Binding.AddBinding(ViewModel, v => v.SensitiveSettings, w => w.Sensitive).InitializeFromSource();
 			dateEnd.HideButtonClearDate = true;
-			dateEnd.Binding.AddBinding(ViewModel, v => v.EndDate, w => w.Date).InitializeFromSource();
+			dateEnd.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.EndDate, w => w.Date)
+				.AddBinding(v => v.SensitiveSettings, w => w.Sensitive)
+				.InitializeFromSource();
 			comboDetail.ItemsEnum = typeof(Granularity);
-			comboDetail.Binding.AddBinding(ViewModel, v => v.Granularity, w => w.SelectedItem).InitializeFromSource();
+			comboDetail.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Granularity, w => w.SelectedItem)
+				.AddBinding(v => v.SensitiveSettings, w => w.Sensitive)
+				.InitializeFromSource();
 			comboShowMode.ItemsEnum = typeof(WarehouseForecastingShowMode);
-			comboShowMode.Binding.AddBinding(ViewModel, v => v.ShowMode, w => w.SelectedItem).InitializeFromSource();
+			comboShowMode.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowMode, w => w.SelectedItem)
+				.AddBinding(v => v.SensitiveSettings, w => w.Sensitive)
+				.InitializeFromSource();
 		}
 
 		private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {

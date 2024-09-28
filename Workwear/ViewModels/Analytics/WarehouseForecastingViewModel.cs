@@ -71,8 +71,11 @@ namespace Workwear.ViewModels.Analytics {
 		public DateTime EndDate {
 			get => endDate;
 			set {
-				if(SetField(ref endDate, value))
+				if(SetField(ref endDate, value)) {
+					if(EndDate > lastForecastUntil)
+						MakeForecast();
 					RefreshColumns();
+				}
 			}
 		}
 
@@ -91,10 +94,10 @@ namespace Workwear.ViewModels.Analytics {
 			set => SetField(ref items, value);
 		}
 		
-		private bool sensitiveFill = true;
-		public bool SensitiveFill {
-			get => sensitiveFill;
-			set => SetField(ref sensitiveFill, value);
+		private bool sensitiveSettings = true;
+		public bool SensitiveSettings {
+			get => sensitiveSettings;
+			set => SetField(ref sensitiveSettings, value);
 		}
 		
 		private Granularity granularity;
@@ -124,16 +127,21 @@ namespace Workwear.ViewModels.Analytics {
 		
 		#endregion
 
+		#region Внутренние переменные
+		IList<EmployeeCard> employees;
+		DateTime lastForecastUntil;
+		List<FutureIssue> futureIssues = new List<FutureIssue>();
+		#endregion
 		#region Действия
 
 		public void Fill() {
-			SensitiveFill = false;
+			SensitiveSettings = false;
 			stockBalance.Warehouse = Warehouse;
 			ProgressTotal.Start(4, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
-			var employees = UoW.Session.QueryOver<EmployeeCard>()
+			employees = UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.DismissDate == null)
 				.List();
 			var employeeIds = employees.Select(x => x.Id).ToArray();
@@ -152,13 +160,25 @@ namespace Workwear.ViewModels.Analytics {
 			issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
 			ProgressTotal.Add(text: "Прогнозирование выдач");
+			MakeForecast();
+		}
+		
+		private void MakeForecast() {
+			if(employees == null)
+				return;
+			SensitiveSettings = false;
+			if(!ProgressTotal.IsStarted)
+				ProgressTotal.Start(2, text: "Прогнозирование выдач");
+			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
-			var featureIssues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, false, wearCardsItems, ProgressLocal);
+			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, false, wearCardsItems, ProgressLocal);
+			futureIssues.AddRange(issues);
+			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");
-			var nomenclatures = featureIssues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray();
+			var nomenclatures = issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
 			ProgressTotal.Add(text: "Формируем прогноз");
-			var groups = featureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
+			var groups = futureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
 			
 			ProgressLocal.Start(groups.Count() + 1, text: "Суммирование");
 			var result = new List<WarehouseForecastingItem>();
@@ -182,7 +202,7 @@ namespace Workwear.ViewModels.Analytics {
 			
 			ProgressLocal.Close();
 			ProgressTotal.Close();
-			SensitiveFill = true;
+			SensitiveSettings = true;
 		}
 
 		#endregion

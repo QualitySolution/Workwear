@@ -30,8 +30,7 @@ namespace Workwear.ViewModels.Analytics {
 				.Where(x => x.Position.WearSize == Size && x.Position.Height == Height)
 				.ToArray();
 			InStock = Stocks.Sum(x => x.Amount);
-
-			FillForecast();			
+			FillForecast();
 		}
 		
 		#region Группировка
