@@ -38,15 +38,23 @@ namespace Workwear.Views.Analytics {
 
 		void RecreateColumns() {
 			var conf = treeItems.CreateFluentColumnsConfig<WarehouseForecastingItem>()
-				.AddColumn("Номенклатура нормы").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.ProtectionTool.Name).WrapWidth(500)
+				.AddColumn("Номенклатура нормы").HeaderAlignment(0.5f)
+					.ToolTipText(n => n.NomenclaturesText)
+					.AddReadOnlyTextRenderer(x => x.ProtectionTool.Name).WrapWidth(500)
 				.AddColumn("Пол").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.Sex.GetEnumShortTitle()).XAlign(0.5f)
 				.AddColumn("Размер/Рост").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.SizeText).XAlign(0.5f)
-				.AddColumn("На\nскладе").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.InStock > 0 ? $"{x.InStock}" : "").XAlign(0.5f)
-				.AddColumn("Просро-\nченное").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.Unissued > 0 ? $"-{x.Unissued}" : "").XAlign(0.5f);
+				.AddColumn("На\nскладе").HeaderAlignment(0.5f)
+					.ToolTipText(x => x.StockText)
+					.AddReadOnlyTextRenderer(x => x.InStock > 0 ? $"{x.InStock}" : "").XAlign(0.5f)
+				.AddColumn("Просро-\nченное").HeaderAlignment(0.5f)
+					.AddReadOnlyTextRenderer(x => x.Unissued > 0 ? $"-{x.Unissued}" : "")
+					.AddSetter((c,n) => c.Foreground = n.InStock - n.Unissued < 0 ? "red" : "green")
+					.XAlign(0.5f);
 			
 			for(int i = 0; i < ViewModel.ForecastColumns.Length; i++) {
 				int col = i;
 				conf.AddColumn(ViewModel.ForecastColumns[i].Title).HeaderAlignment(0.5f)
+					.ToolTipText(x => $"Прогнозируемый остаток: {x.ForecastBalance[col]}")
 					.AddReadOnlyTextRenderer(x => x.Forecast[col] > 0 ? $"-{x.Forecast[col]}" : "")
 					.AddSetter((c,n) => c.Foreground = n.ForecastColours[col])
 					.XAlign(0.5f);
