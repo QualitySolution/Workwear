@@ -129,7 +129,7 @@ namespace Workwear.ViewModels.Analytics {
 		public void Fill() {
 			SensitiveFill = false;
 			stockBalance.Warehouse = Warehouse;
-			ProgressTotal.Start(10, text:"Получение данных");
+			ProgressTotal.Start(4, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -160,7 +160,7 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressTotal.Add(text: "Формируем прогноз");
 			var groups = featureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
 			
-			ProgressLocal.Start(groups.Count() + 2, text: "Суммирование");
+			ProgressLocal.Start(groups.Count() + 1, text: "Суммирование");
 			var result = new List<WarehouseForecastingItem>();
 			foreach(var group in groups) {
 				ProgressLocal.Add(text: group.Key.ProtectionTools.Name.EllipsizeMiddle(100));
