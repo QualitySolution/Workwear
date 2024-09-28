@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using ClosedXML.Excel;
+using Gamma.Utilities;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Services.FileDialog;
 using QS.Services;
 using QS.Utilities.Text;
 using QS.ViewModels.Control.EEVM;
@@ -28,6 +31,7 @@ namespace Workwear.ViewModels.Analytics {
 		private readonly FutureIssueModel futureIssueModel;
 		private readonly StockBalanceModel stockBalance;
 		private readonly SizeService sizeService;
+		private readonly IFileDialogService fileDialogService;
 
 		public WarehouseForecastingViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -39,12 +43,14 @@ namespace Workwear.ViewModels.Analytics {
 			FutureIssueModel futureIssueModel,
 			StockBalanceModel stockBalance,
 			SizeService sizeService,
+			IFileDialogService fileDialogService,
 			UnitOfWorkProvider unitOfWorkProvider) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.fileDialogService = fileDialogService ?? throw new ArgumentNullException(nameof(fileDialogService));
 			Title = "Прогнозирование склада";
 			
 			var builder = new CommonEEVMBuilderFactory<WarehouseForecastingViewModel>(this, this, UoW, navigation, autofacScope);
@@ -72,7 +78,7 @@ namespace Workwear.ViewModels.Analytics {
 			get => endDate;
 			set {
 				if(SetField(ref endDate, value)) {
-					if(EndDate > lastForecastUntil)
+					if(EndDate > lastForecastUntil || employees != null)
 						MakeForecast();
 					RefreshColumns();
 				}
@@ -97,7 +103,16 @@ namespace Workwear.ViewModels.Analytics {
 		private bool sensitiveSettings = true;
 		public bool SensitiveSettings {
 			get => sensitiveSettings;
-			set => SetField(ref sensitiveSettings, value);
+			set { 
+				if(SetField(ref sensitiveSettings, value))
+					SensitiveExport = SensitiveSettings;
+			}
+		}
+
+		private bool sensitiveExport = false;
+		public bool SensitiveExport {
+			get => sensitiveExport;
+			set => SetField(ref sensitiveExport, value);
 		}
 		
 		private Granularity granularity;
@@ -205,6 +220,82 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = true;
 		}
 
+		public void ExportToExcel() {
+			var settings = new DialogSettings();
+			settings.FileFilters.Add(new DialogFileFilter("Excel 2007 ", "*.xlsx"));
+			settings.Title = "Сохранить прогноз склада";
+			settings.DefaultFileExtention = "xlsx";
+			settings.PlatformType = DialogPlatformType.Crossplatform;
+			string sheetName;
+			switch(ShowMode) {
+				case WarehouseForecastingShowMode.JustShortfall:
+					settings.FileName = $"Заявка на поставку по {EndDate:dd.MM.yyyy}";
+					sheetName = "Заявка на поставку";
+					break;
+				case WarehouseForecastingShowMode.JustSurplus:
+					settings.FileName = $"Излишки склада на {EndDate:dd.MM.yyyy}";
+					sheetName = "Излишки склада";
+					break;
+				default:
+					settings.FileName = $"Прогноз склада до {EndDate:dd.MM.yyyy}";
+					sheetName = "Прогноз склада";
+					break;
+			};
+			settings.FileName += ".xlsx";
+			var file = fileDialogService.RunSaveFileDialog(settings);
+			if(!file.Successful)
+				return;
+			
+			SensitiveSettings = false;
+			ProgressLocal.Start(Items.Count + 1, text: "Сохранение");
+			using (var workbook = new XLWorkbook())
+			{
+				var worksheet = workbook.Worksheets.Add(sheetName);
+				//Создаем заголовки
+				worksheet.Cell("A1").Value = "Номенклатура нормы";
+				worksheet.Cell("B1").Value = "Номенклатура";
+				worksheet.Cell("C1").Value = "Размер";
+				worksheet.Cell("D1").Value = "Рост";
+				worksheet.Cell("E1").Value = "Пол";
+				worksheet.Cell("F1").Value = "В наличии";
+				worksheet.Cell("G1").Value = "Просрочено";
+				int col = 8;
+				foreach(var column in ForecastColumns) {
+					worksheet.Cell(1, col).Value = column.Title;
+					col++;
+				}
+				worksheet.Cell(1, col).Value = "Остаток без \nпросроченной";
+				col++;
+				worksheet.Cell(1, col).Value = "Остаток c \nпросроченной";
+				ProgressLocal.Add();
+				
+				//Заполняем данными
+				int row = 2;
+				foreach(var item in Items) {
+					worksheet.Cell(row, 1).Value = item.ProtectionTool.Name;
+					worksheet.Cell(row, 2).Value = item.Nomenclature?.Name;
+					worksheet.Cell(row, 3).Value = item.Size?.Name;
+					worksheet.Cell(row, 4).Value = item.Height?.Name;
+					worksheet.Cell(row, 5).Value = item.Sex.GetEnumShortTitle();
+					worksheet.Cell(row, 6).Value = item.InStock;
+					worksheet.Cell(row, 7).Value = item.Unissued;
+					col = 8;
+					for(int i = 0; i < ForecastColumns.Length; i++) {
+						worksheet.Cell(row, col).Value = item.Forecast[i];
+						col++;
+					}
+					worksheet.Cell(row, col).Value = item.InStock - item.Forecast.Sum();
+					col++;
+					worksheet.Cell(row, col).Value = item.InStock - item.Unissued - item.Forecast.Sum();
+					row++;
+					ProgressLocal.Add();
+				}
+
+				workbook.SaveAs(file.Path);
+			}
+			ProgressLocal.Close();
+			SensitiveSettings = true;
+		}
 		#endregion
 
 		#region Private
@@ -227,7 +318,7 @@ namespace Workwear.ViewModels.Analytics {
 					var startWeek = DateTime.Today.AddDays(DateTime.Today.DayOfWeek == DayOfWeek.Sunday ? -6 : 1 - (int)DateTime.Today.DayOfWeek);
 					while(startWeek <= EndDate) {
 						var endWeek = startWeek.AddDays(6);
-						list.Add(new ForecastColumn() { Title = $"c {startWeek:dd.MM}\nпо {endWeek:dd.MM}", StartDate = startWeek, EndDate = endWeek });
+						list.Add(new ForecastColumn() { Title = $"с {startWeek:dd.MM}\nпо {endWeek:dd.MM}", StartDate = startWeek, EndDate = endWeek });
 						startWeek = endWeek.AddDays(1);
 					}
 					break;

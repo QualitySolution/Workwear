@@ -112,6 +112,7 @@
     <EmbeddedResource Include="icon\toolbar\claims.png" />
     <EmbeddedResource Include="icon\buttons\barcode-add.png" />
     <EmbeddedResource Include="icon\buttons\send.png" />
+    <EmbeddedResource Include="icon\buttons\document-export.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -817,6 +818,7 @@
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="ClosedXML" Version="0.104.0-rc1" />
     <PackageReference Include="FluentNHibernate" Version="3.1.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
     <PackageReference Include="Iesi.Collections" Version="4.0.5" />

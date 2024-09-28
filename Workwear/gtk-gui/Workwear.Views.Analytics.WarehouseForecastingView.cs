@@ -32,6 +32,10 @@ namespace Workwear.Views.Analytics
 
 		private global::Gamma.GtkWidgets.yButton buttonFill;
 
+		private global::Gamma.GtkWidgets.yButton buttonExcel;
+
+		private global::Gamma.GtkWidgets.yButton buttonColorsLegend;
+
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
 		private global::Gamma.GtkWidgets.yTreeView treeItems;
@@ -181,16 +185,48 @@ namespace Workwear.Views.Analytics
 			this.buttonFill.Name = "buttonFill";
 			this.buttonFill.UseUnderline = true;
 			this.buttonFill.Label = global::Mono.Unix.Catalog.GetString("Рассчитать прогноз");
+			global::Gtk.Image w12 = new global::Gtk.Image();
+			w12.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-execute", global::Gtk.IconSize.Menu);
+			this.buttonFill.Image = w12;
 			this.yhbox1.Add(this.buttonFill);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonFill]));
-			w12.Position = 1;
-			w12.Expand = false;
-			w12.Fill = false;
-			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w13.Position = 3;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonFill]));
+			w13.Position = 0;
 			w13.Expand = false;
 			w13.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonExcel = new global::Gamma.GtkWidgets.yButton();
+			this.buttonExcel.CanFocus = true;
+			this.buttonExcel.Name = "buttonExcel";
+			this.buttonExcel.UseUnderline = true;
+			this.buttonExcel.Label = global::Mono.Unix.Catalog.GetString("Сохранить в Excel");
+			global::Gtk.Image w14 = new global::Gtk.Image();
+			w14.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.document-export.png");
+			this.buttonExcel.Image = w14;
+			this.yhbox1.Add(this.buttonExcel);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonExcel]));
+			w15.Position = 1;
+			w15.Expand = false;
+			w15.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonColorsLegend = new global::Gamma.GtkWidgets.yButton();
+			this.buttonColorsLegend.TooltipMarkup = "Цветовая легенда";
+			this.buttonColorsLegend.CanFocus = true;
+			this.buttonColorsLegend.Name = "buttonColorsLegend";
+			this.buttonColorsLegend.UseUnderline = true;
+			global::Gtk.Image w16 = new global::Gtk.Image();
+			w16.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.legend.png");
+			this.buttonColorsLegend.Image = w16;
+			this.yhbox1.Add(this.buttonColorsLegend);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonColorsLegend]));
+			w17.PackType = ((global::Gtk.PackType)(1));
+			w17.Position = 3;
+			w17.Expand = false;
+			w17.Fill = false;
+			this.yvbox1.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w18.Position = 3;
+			w18.Expand = false;
+			w18.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -201,8 +237,8 @@ namespace Workwear.Views.Analytics
 			this.treeItems.Name = "treeItems";
 			this.GtkScrolledWindow.Add(this.treeItems);
 			this.yvbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
-			w15.Position = 4;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
+			w20.Position = 4;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
@@ -212,6 +248,8 @@ namespace Workwear.Views.Analytics
 			this.progressLocal.Hide();
 			this.Hide();
 			this.buttonFill.Clicked += new global::System.EventHandler(this.OnButtonFillClicked);
+			this.buttonExcel.Clicked += new global::System.EventHandler(this.OnButtonExcelClicked);
+			this.buttonColorsLegend.Clicked += new global::System.EventHandler(this.OnButtonColorsLegendClicked);
 		}
 	}
 }

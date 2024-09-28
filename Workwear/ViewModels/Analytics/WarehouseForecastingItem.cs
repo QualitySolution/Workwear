@@ -4,6 +4,7 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
@@ -30,6 +31,8 @@ namespace Workwear.ViewModels.Analytics {
 				.Where(x => x.Position.WearSize == Size && x.Position.Height == Height)
 				.ToArray();
 			InStock = Stocks.Sum(x => x.Amount);
+			Nomenclature = Stocks.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
+				?? ProtectionTool.Nomenclatures.FirstOrDefault();
 			FillForecast();
 		}
 		
@@ -87,6 +90,8 @@ namespace Workwear.ViewModels.Analytics {
 			set => SetField(ref forecastColours, value);
 		}
 
+		public Nomenclature Nomenclature { get; }
+		
 		#region Рассчеты
 
 		public void FillForecast() {

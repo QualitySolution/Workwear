@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using Gamma.Utilities;
+using QS.Dialog.GtkUI;
 using QS.Views;
 using Workwear.ViewModels.Analytics;
 
@@ -20,6 +21,7 @@ namespace Workwear.Views.Analytics {
 			ViewModel.ProgressLocal = progressLocal;
 
 			buttonFill.Binding.AddBinding(ViewModel, v => v.SensitiveSettings, w => w.Sensitive).InitializeFromSource();
+			buttonExcel.Binding.AddBinding(ViewModel, v => v.SensitiveExport, w => w.Sensitive).InitializeFromSource();
 
 			entryWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entryWarehouse.Binding.AddBinding(ViewModel, v => v.SensitiveSettings, w => w.Sensitive).InitializeFromSource();
@@ -84,6 +86,19 @@ namespace Workwear.Views.Analytics {
 
 		protected void OnButtonFillClicked(object sender, EventArgs e) {
 			ViewModel.Fill();
+		}
+
+		protected void OnButtonExcelClicked(object sender, EventArgs e) {
+			ViewModel.ExportToExcel();
+		}
+
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
+			MessageDialogHelper.RunInfoDialog(
+				"<b>Колонки с прогнозом выдач:</b>\n" +
+				"<span color='green'>●</span> — склад полностью обеспечивает потребность (планируемые + просрочка)\n" +
+				"<span color='orange'>●</span> — на складе достаточное количество для планируемых выдач, без просрочки\n" +
+				"<span color='red'>●</span> — недостаточное количество для планируемых выдач"
+			);
 		}
 	}
 }
