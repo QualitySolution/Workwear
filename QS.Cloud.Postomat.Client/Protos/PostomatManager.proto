@@ -1,5 +1,5 @@
 ﻿syntax = "proto3";
-
+import "google/protobuf/timestamp.proto";
 package QS.Cloud.Postomat.Manage;
 
 service PostomatManager {
@@ -48,6 +48,10 @@ message CellInfo {
 	//Номер документа который занимает ячейку
 	uint32 document_id = 3;
 	string cell_title = 4;
+	uint32 item_id = 5;
+	string employee_full_name = 6;
+	string nomenclature_name = 7;
+	google.protobuf.Timestamp create_time = 8;
 }
 
 message CellLocation {
@@ -71,6 +75,8 @@ message FullnessInfo{
 	PostomatType type = 4;
 	uint32 filling = 5;
 	uint32 capacity = 6;
+	google.protobuf.Timestamp last_online = 7;
+	repeated CellInfo cells = 8;
 }
 
 enum PostomatType{

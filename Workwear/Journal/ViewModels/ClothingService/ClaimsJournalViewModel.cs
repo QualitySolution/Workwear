@@ -16,14 +16,21 @@ using QS.Services;
 using QS.Utilities.Text;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
+using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
 	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
 		private IInteractiveService interactive;
-		readonly IDictionary<uint, string> postomatsLabels;
+		public readonly FeaturesService FeaturesService;
+		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
+
+		#region Внешние прараметры
+		public bool ExcludeInDocs = false; 
+		#endregion
 		
 		public ClaimsJournalFilterViewModel Filter { get; set; }
 		public ClaimsJournalViewModel(
@@ -31,16 +38,19 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope,
+			FeaturesService featuresService,
 			PostomatManagerService postomatService,
 			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 			Title = "Обслуживание одежды";
 			JournalFilter = Filter = autofacScope.Resolve<ClaimsJournalFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			
-			postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 			
 			CreateActions();
 			UpdateOnChanges(typeof(ServiceClaim), typeof(StateOperation));
@@ -66,6 +76,10 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Select(x => x.OperationTime)
 				.Take(1);
 
+			var subqueryInDocument = QueryOver.Of<PostomatDocumentItem>()
+				.Where(item => item.ServiceClaim.Id == serviceClaimAlias.Id)
+				.Select(item => item.Id);
+
 			var query = uow.Session.QueryOver(() => serviceClaimAlias);
 			if(!Filter.ShowClosed)
 				query.Where(x => x.IsClosed == false);
@@ -75,6 +89,9 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				query.Where(x => x.PreferredTerminalId == Filter.PostomatId);
 			if(Filter.Status != null)
 				query.WithSubquery.WhereValue(Filter.Status).Eq(subqueryLastState);
+
+			if(ExcludeInDocs)
+				query.WithSubquery.WhereNotExists(subqueryInDocument);
 			
 			return query
 				.Where(GetSearchCriterion(
@@ -128,7 +145,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			NodeActionsList.Add(changeStateAction);
 			
 			var cancelAction = new JournalAction("Отменить получение",
-				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService,
+				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService 
+				|| (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.InReceiptTerminal,
 				selected => true,
 				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
 			NodeActionsList.Add(cancelAction);
@@ -136,10 +154,20 @@ namespace workwear.Journal.ViewModels.ClothingService {
 
 		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
-				var claim = uow.GetById<ServiceClaim>(selected.First().Id);
+				var node = selected.First();
+				var claim = uow.GetById<ServiceClaim>(node.Id);
 				if(claim.States.Count != 1) {
 					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
 					return;
+				}
+				bool isTerminalReceipt = claim.States.First().State == ClaimState.InReceiptTerminal;
+				var terminalWarning = isTerminalReceipt ? "Если одежда все таки находится в терминале сдачи в стирку, может возникнуть путаница. " : "";
+				if(interactive.Question($"Данная операция удалит сдачу в стирку, восстановить ее будет невозможно. {terminalWarning}Вы уверены, что хотите продолжить?") == false)
+					return;
+				if(isTerminalReceipt) {
+					//Чтобы форсировать обновление информации на терминале
+					claim.Employee.LastUpdate = DateTime.Now;
+					uow.Save(claim.Employee);
 				}
 				uow.Delete(claim.States.First());
 				uow.Delete(claim);
