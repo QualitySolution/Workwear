@@ -4,6 +4,7 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
@@ -25,12 +26,14 @@ namespace Workwear.ViewModels.Analytics {
 			Height = key.Height;
 			Sex = sex;
 			futureIssues = issues;
-			InStock = stocks
+			Stocks = stocks
 				.Where(x => x.Position.Nomenclature.Sex == Sex)
 				.Where(x => x.Position.WearSize == Size && x.Position.Height == Height)
-				.Sum(x => x.Amount);
-
-			FillForecast();			
+				.ToArray();
+			InStock = Stocks.Sum(x => x.Amount);
+			Nomenclature = Stocks.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
+				?? ProtectionTool.Nomenclatures.FirstOrDefault();
+			FillForecast();
 		}
 		
 		#region Группировка
@@ -55,6 +58,8 @@ namespace Workwear.ViewModels.Analytics {
 		public ClothesSex Sex { get; set; }
 		#endregion
 
+		public StockBalance[] Stocks { get; set; }
+		
 		private int inStock;
 		public int InStock {
 			get => inStock;
@@ -73,17 +78,26 @@ namespace Workwear.ViewModels.Analytics {
 			set => SetField(ref forecast, value);
 		}
 		
+		private int[] forecastBalance;
+		public int[] ForecastBalance {
+			get => forecastBalance;
+			set => SetField(ref forecastBalance, value);
+		}
+		
 		private string[] forecastColours;
 		public string[] ForecastColours {
 			get => forecastColours;
 			set => SetField(ref forecastColours, value);
 		}
 
+		public Nomenclature Nomenclature { get; }
+		
 		#region Рассчеты
 
 		public void FillForecast() {
 			Unissued = 0;
 			Forecast = new int[model.ForecastColumns.Length];
+			ForecastBalance = new int[model.ForecastColumns.Length];
 			ForecastColours = new string[model.ForecastColumns.Length];
 			foreach(var issue in futureIssues) {
 				if(issue.DelayIssueDate < model.ForecastColumns[0].StartDate) {
@@ -102,6 +116,7 @@ namespace Workwear.ViewModels.Analytics {
 			//Раскраска
 			for(int i = 0; i < model.ForecastColumns.Length; i++) {
 				var onStock = InStock - Forecast.Take(i + 1).Sum();
+				ForecastBalance[i] = onStock;
 				if(onStock < 0) {
 					ForecastColours[i] = "red";
 				} else if(onStock - Unissued < 0) {
@@ -115,9 +130,10 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 
 		#region Расчетные для отображения
-
 		public string SizeText => SizeService.SizeTitle(size, height);
-
+		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
+		public string NomenclaturesText => ProtectionTool.Nomenclatures.Any() ? "Выдаваемые номенклатуры:" + String.Concat(ProtectionTool.Nomenclatures.Select(x => $"\n* {x.Name}")) : null;
+		public string StockText => Stocks.Any() ? "В наличии:" + String.Concat(Stocks.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
 		#endregion
 	}
 }

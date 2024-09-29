@@ -25,7 +25,7 @@ namespace Workwear.Models.Analytics {
 			IList<EmployeeCardItem> employeeItems,
 			IProgressBarDisplayable progress) 
 		{
-			progress.Start(employeeItems.Count() + 1);
+			progress.Start(employeeItems.Count() + 2);
 			int gc = 0;
 			var issues = new List<FutureIssue>();
 

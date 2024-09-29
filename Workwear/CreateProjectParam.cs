@@ -15,6 +15,7 @@ using QS.Deletion;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.Dialog;
+using QS.Dialog.GtkUI.FileDialog;
 using QS.Dialog.Views;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -36,6 +37,7 @@ using QS.Project.Search;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services.GtkUI;
 using QS.Project.Services;
+using QS.Project.Services.FileDialog;
 using QS.Project.Versioning.Product;
 using QS.Project.Versioning;
 using QS.Project.ViewModels;
@@ -236,10 +238,11 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-            builder.RegisterType<ObjectValidator>().As<IValidator>();
-			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<BarcodeService>().AsSelf();
+			builder.RegisterType<CommonMessages>().AsSelf();
+			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
+            builder.RegisterType<ObjectValidator>().As<IValidator>();
 			#endregion
 
 			#region Навигация

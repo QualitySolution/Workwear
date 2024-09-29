@@ -314,7 +314,7 @@ public partial class MainWindow : Gtk.Window {
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
 		progress.End();
-		logger.Info($"Заппуск за {progress.TotalTime.TotalSeconds} сек.");
+		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
 
 	void FillTelemetry() {
