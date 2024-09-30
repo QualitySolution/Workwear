@@ -208,9 +208,6 @@ Section "${PRODUCT_NAME}" SecProgram
   
   ;Удаляем файлы не используемые после 2.8.9
   Delete $INSTDIR\System.Data.Bindings.dll
-  
-  ; Удаляем файлы до сокращения названия
-  Delete "$DESKTOP\QS Спецодежда и имущество.lnk"
 
 SectionEnd
 
