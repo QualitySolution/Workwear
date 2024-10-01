@@ -762,15 +762,13 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    GROUP_CONCAT(
-        CONCAT(returned.sign_key, '-', DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
-        SEPARATOR '\n'
-        ) AS returned_sign,
-    IFNULL(
-        CONCAT('Акт списания №',returned.writeoff_doc_id), 
-        CONCAT('Возврат №',returned.return_doc_id)
-        )
-    AS returned_doc
+                         IF(returned.writeoff_doc_id IS NOT NULL,  GROUP_CONCAT(
+                             CONCAT(returned.sign_key, '-', DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
+                             SEPARATOR '\n'
+                             ),CONCAT('Возврат №',IF(returned.return_number IS NOT NULL, returned.return_number, returned.return_doc_id))) AS returned_sign,
+                         IF(returned.writeoff_doc_id IS NOT NULL, CONCAT('Акт списания №',IF(returned.writeoff_number IS NOT NULL, 
+                                              returned.writeoff_number, returned.writeoff_doc_id)), '')
+                         AS returned_doc
 FROM
     operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
@@ -787,10 +785,14 @@ FROM
                 return_detail.sign_timestamp,
                 stock_write_off_detail.stock_write_off_id AS writeoff_doc_id,
                 stock_income_detail.stock_income_id AS return_doc_id
+                                     stock_income.doc_number AS return_number,
+                                     stock_write_off.doc_number AS writeoff_number       
             FROM
                 operation_issued_by_employee AS return_detail
                 LEFT JOIN stock_write_off_detail on return_detail.id = stock_write_off_detail.employee_issue_operation_id
                 LEFT JOIN stock_income_detail on return_detail.id = stock_income_detail.employee_issue_operation_id
+                                     LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+                                     LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id
             WHERE
                     return_detail.employee_id = @id AND return_detail.returned &gt; 0
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
