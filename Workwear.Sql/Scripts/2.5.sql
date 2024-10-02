@@ -122,7 +122,7 @@ ADD COLUMN `protection_tools_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `auto_
 ADD COLUMN `operation_write_off_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `buh_document`,
 ADD COLUMN `sign_key` VARCHAR(16) NULL DEFAULT NULL AFTER `operation_write_off_id`,
 ADD COLUMN `sign_timestamp` DATETIME NULL DEFAULT NULL AFTER `sign_key`,
-ADD INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
+#ADD INDEX `fk_operation_issued_by_employee_4_idx` (`warehouse_operation_id` ASC),
 ADD INDEX `fk_operation_issued_by_employee_protection_tools_idx` (`protection_tools_id` ASC);
 
 ALTER TABLE `operation_issued_by_employee`
@@ -356,7 +356,8 @@ INSERT INTO protection_tools_nomenclature
 (protection_tools_id, nomenclature_id)
 SELECT protection_tools.id, nomenclature.id
 FROM nomenclature
-JOIN protection_tools ON protection_tools.item_types_id = nomenclature.type_id;
+JOIN protection_tools ON protection_tools.item_types_id = nomenclature.type_id
+WHERE nomenclature.id not in (SELECT nomenclature_id FROM protection_tools_nomenclature);
 
 -- Заполняем stock_expense_detail.`protection_tools_id`
 UPDATE stock_expense_detail
@@ -520,11 +521,11 @@ ADD CONSTRAINT `fk_operation_issued_by_employee_protection_tools`
   REFERENCES `protection_tools` (`id`)
   ON DELETE SET NULL
   ON UPDATE CASCADE,
-ADD CONSTRAINT `fk_operation_issued_by_employee_4`
-  FOREIGN KEY (`warehouse_operation_id`)
-  REFERENCES `operation_warehouse` (`id`)
-  ON DELETE NO ACTION
-  ON UPDATE CASCADE,    
+#ADD CONSTRAINT `fk_operation_issued_by_employee_4`
+#  FOREIGN KEY (`warehouse_operation_id`)
+#  REFERENCES `operation_warehouse` (`id`)
+#  ON DELETE NO ACTION
+#  ON UPDATE CASCADE,    
 ADD CONSTRAINT `fk_operation_issued_by_employee_6`
   FOREIGN KEY (`operation_write_off_id`)
   REFERENCES `operation_issued_by_employee` (`id`)
