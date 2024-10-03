@@ -765,9 +765,12 @@
                          IF(returned.writeoff_doc_id IS NOT NULL,  GROUP_CONCAT(
                              CONCAT(returned.sign_key, '-', DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                              SEPARATOR '\n'
-                             ),CONCAT('Возврат №',IF(returned.return_number IS NOT NULL, returned.return_number, returned.return_doc_id))) AS returned_sign,
-                         IF(returned.writeoff_doc_id IS NOT NULL, CONCAT('Акт списания №',IF(returned.writeoff_number IS NOT NULL, 
-                                              returned.writeoff_number, returned.writeoff_doc_id)), '')
+                             ),GROUP_CONCAT('Возврат №',IF(returned.return_number IS NOT NULL, 
+                             returned.return_number, returned.return_doc_id)
+                             SEPARATOR '\n')) AS returned_sign,
+                         IF(returned.writeoff_doc_id IS NOT NULL, GROUP_CONCAT('Акт списания №',IF(returned.writeoff_number IS NOT NULL, 
+                                              returned.writeoff_number, returned.writeoff_doc_id)
+                                              SEPARATOR '\n'), '')
                          AS returned_doc
 FROM
     operation_issued_by_employee
@@ -784,9 +787,9 @@ FROM
                 return_detail.sign_key,
                 return_detail.sign_timestamp,
                 stock_write_off_detail.stock_write_off_id AS writeoff_doc_id,
-                stock_income_detail.stock_income_id AS return_doc_id
-                                     stock_income.doc_number AS return_number,
-                                     stock_write_off.doc_number AS writeoff_number       
+                stock_income_detail.stock_income_id AS return_doc_id,
+                stock_income.doc_number AS return_number,
+                stock_write_off.doc_number AS writeoff_number       
             FROM
                 operation_issued_by_employee AS return_detail
                 LEFT JOIN stock_write_off_detail on return_detail.id = stock_write_off_detail.employee_issue_operation_id
