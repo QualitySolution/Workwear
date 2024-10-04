@@ -762,11 +762,11 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    CONCAT_WS('\n', GROUP_CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)
-            SEPARATOR '\n')) 
+    GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), "")
+            SEPARATOR '\n')
           AS returned_sign,
-    CONCAT_WS('\n', GROUP_CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)
-            SEPARATOR '\n'))
+    GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),"") 
+            SEPARATOR '\n')
           AS returned_doc
 FROM
     operation_issued_by_employee
