@@ -322,7 +322,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox39">
-                      <Value>Акт списания (номер)</Value>
+                      <Value>Акт списания (дата, номер)</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
