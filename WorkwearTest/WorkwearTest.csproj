@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItemTest.cs" />
     <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
