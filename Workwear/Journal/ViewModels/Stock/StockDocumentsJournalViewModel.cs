@@ -102,6 +102,7 @@ namespace workwear.Journal.ViewModels.Stock
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
 				() => incomeAlias.DocNumber,
+				() => incomeAlias.Comment,
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
@@ -152,6 +153,7 @@ namespace workwear.Journal.ViewModels.Stock
 			expenseQuery.Where(GetSearchCriterion(
 				() => expenseAlias.Id,
 				() => expenseAlias.DocNumber,
+				() => expenseAlias.Comment,
 				() => issuanceSheetAlias.Id,
 				() => issuanceSheetAlias.DocNumber,
 				() => authorAlias.Name,
@@ -205,6 +207,7 @@ namespace workwear.Journal.ViewModels.Stock
 			collectiveExpenseQuery.Where(GetSearchCriterion(
 				() => collectiveExpenseAlias.Id,
 				() => collectiveExpenseAlias.DocNumber,
+				() => collectiveExpenseAlias.Comment,
 				() => authorAlias.Name,
 				() => issuanceSheetAlias.Id,
                 () => issuanceSheetAlias.DocNumber
@@ -250,6 +253,7 @@ namespace workwear.Journal.ViewModels.Stock
 			transferQuery.Where(GetSearchCriterion(
 				() => transferAlias.Id,
 				() => transferAlias.DocNumber,
+				() => transferAlias.Comment,
 				() => authorAlias.Name
 			));
 
@@ -294,6 +298,7 @@ namespace workwear.Journal.ViewModels.Stock
 			writeoffQuery.Where(GetSearchCriterion(
 				() => writeoffAlias.Id,
 				() => writeoffAlias.DocNumber,
+				() => writeoffAlias.Comment,
 				() => authorAlias.Name
 			));
 
@@ -344,6 +349,7 @@ namespace workwear.Journal.ViewModels.Stock
 			completionQuery.Where(GetSearchCriterion(
 				() => completionAlias.Id,
 				() => completionAlias.DocNumber,
+				() => completionAlias.Comment,
 				() => authorAlias.Name));
 			
 			completionQuery
@@ -382,6 +388,7 @@ namespace workwear.Journal.ViewModels.Stock
 			inspectionQuery.Where(GetSearchCriterion(
 				() => inspectionAlias.Id,
 				() => inspectionAlias.DocNumber,
+				() => inspectionAlias.Comment,
 				() => authorAlias.Name
 			));
 

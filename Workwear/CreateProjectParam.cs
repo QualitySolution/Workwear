@@ -15,6 +15,7 @@ using QS.Deletion;
 using QS.Dialog.GtkUI;
 using QS.Dialog.ViewModels;
 using QS.Dialog;
+using QS.Dialog.GtkUI.FileDialog;
 using QS.Dialog.Views;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -36,6 +37,7 @@ using QS.Project.Search;
 using QS.Project.Search.GtkUI;
 using QS.Project.Services.GtkUI;
 using QS.Project.Services;
+using QS.Project.Services.FileDialog;
 using QS.Project.Versioning.Product;
 using QS.Project.Versioning;
 using QS.Project.ViewModels;
@@ -66,6 +68,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Analytics;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
@@ -91,11 +94,12 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		static void CreateBaseConfig ()
+		public static void CreateBaseConfig (ProgressPerformanceHelper progress)
 		{
 			logger.Info ("Настройка параметров базы...");
 
 			// Настройка ORM
+			progress.CheckPoint("Настройка подключения к базе");
 			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
@@ -103,7 +107,8 @@ namespace workwear
 				.AdoNetBatchSize(100)
 				.ShowSql ()
 				.FormatSql ();
-
+			
+			progress.CheckPoint("Настройка доменных объектов");
 			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
@@ -117,6 +122,7 @@ namespace workwear
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
 
+			progress.CheckPoint("Антикварные объекты");
 			//Настраиваем классы сущностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
 			//Спецодежда
@@ -126,12 +132,14 @@ namespace workwear
 			//Склад
 			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
+			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
+			progress.CheckPoint("Регистрация журналов");
 			JournalsColumnsConfigs.RegisterColumns();
 		}
 		
 		public static ILifetimeScope AppDIContainer;
-		static IContainer startupContainer;
+		public static IContainer StartupContainer;
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
@@ -185,7 +193,7 @@ namespace workwear
 			#region Временные будут переопределены
 			containerBuilder.RegisterType<ProgressWindowViewModel>().AsSelf();
 			containerBuilder.RegisterType<GtkWindowsNavigationManager>().AsSelf().As<INavigationManager>().SingleInstance();
-			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(startupContainer)).As<IViewModelsPageFactory>();
+			containerBuilder.Register((ctx) => new AutofacViewModelsGtkPageFactory(StartupContainer)).As<IViewModelsPageFactory>();
 			containerBuilder.Register(cc => new ClassNamesBaseGtkViewResolver(cc.Resolve<IGtkViewFactory>(),
 				typeof(UpdateProcessView),
 				typeof(ProgressWindowView)
@@ -193,7 +201,7 @@ namespace workwear
 			#endregion
 		}
 		
-		static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
+		public static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
 		{
 			#region База
 			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
@@ -230,10 +238,11 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-            builder.RegisterType<ObjectValidator>().As<IValidator>();
-			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<BarcodeService>().AsSelf();
+			builder.RegisterType<CommonMessages>().AsSelf();
+			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
+            builder.RegisterType<ObjectValidator>().As<IValidator>();
 			#endregion
 
 			#region Навигация
@@ -320,6 +329,7 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 

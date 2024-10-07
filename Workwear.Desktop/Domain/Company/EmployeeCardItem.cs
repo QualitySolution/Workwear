@@ -77,7 +77,13 @@ namespace Workwear.Domain.Company
 		/// Получаем значения остатков на складе для подходящих позиций.
 		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
 		/// </summary>
-		public virtual IEnumerable<StockBalance> InStock => StockBalanceModel?.Balances.Where(x => MatchStockPosition(x.Position));
+		public virtual IEnumerable<StockBalance> InStock {
+			get { 				
+				if(StockBalanceModel == null)
+					throw new InvalidOperationException("StockBalanceModel должна быть заполнена!");
+				return StockBalanceModel?.Balances.Where(x => MatchStockPosition(x.Position));
+			}
+		}
 
 		#region Модели
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
@@ -133,7 +139,7 @@ namespace Workwear.Domain.Company
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
 				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
-				bestChoice.Sort(new BestChoiceInStockComparer(ProtectionTools));
+				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools));
 				return bestChoice;
 			}
 		}
@@ -203,7 +209,7 @@ namespace Workwear.Domain.Company
 
 		#region Methods
 		/// <summary>
-		/// Получить необходимое к выдачи количество.
+		/// Получить необходимое к выдаче количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)

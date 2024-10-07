@@ -42,8 +42,8 @@ namespace Workwear.Models.Import.Norms
 			SupportDataTypes.Add(new DataTypeDepartment());
 			SupportDataTypes.Add(new DataTypePost());
 			SupportDataTypes.Add(new DataTypeParagraph());
-			SupportDataTypes.Add(new DataTypeCondition(uow.GetAll<NormCondition>().ToList()));
-			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeNorm.Name, n => n.Name, new []{"название"}));
+			SupportDataTypes.Add(new DataTypeCondition());
+			SupportDataTypes.Add(new DataTypeSimpleString(DataTypeNorm.Name, n => n.Name, new []{"название", "наименование"}));
 		}
 
 		#region Обработка изменений
@@ -69,10 +69,12 @@ namespace Workwear.Models.Import.Norms
 			progress.Start(10, text: "Сопоставление с существующими данными");
 			var postColumn = model.GetColumnForDataType(DataTypeNorm.Post);
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeNorm.Subdivision);
-			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
 			var departmentColumn = model.GetColumnForDataType(DataTypeNorm.Department);
+			var protectionToolsColumn = model.GetColumnForDataType(DataTypeNorm.ProtectionTools);
+			var conditionColumn = model.GetColumnForDataType(DataTypeNorm.Condition);
 			var nameColumn = model.GetColumnForDataType(DataTypeNorm.Name);
 			var periodAndCountColumn = model.GetColumnForDataType(DataTypeNorm.PeriodAndCount);
+			var periodColumn = model.GetColumnForDataType(DataTypeNorm.Period);
 
 			foreach(var row in list) {
 				var postValue = postColumn != null ? row.CellStringValue(postColumn) : null;
@@ -162,6 +164,8 @@ namespace Workwear.Models.Import.Norms
 			progress.Add();
 			var protections = protectionToolsRepository.GetProtectionToolsByName(uow, protectionNames);
 			progress.Add();
+			var conditions = uow.GetAll<NormCondition>().ToList();
+			progress.Add();
 			foreach(var row in list.Where(x => !x.Skipped)) {
 				if(row.SubdivisionPostCombination.Norms.Count > 1) {
 					row.ProgramSkipped = true;
@@ -176,7 +180,7 @@ namespace Workwear.Models.Import.Norms
 					continue;
 				}
 
-				if(model.SettingsNormsViewModel.WearoutToName && (row.CellStringValue(periodAndCountColumn)?.ToLower().Contains("до износа") ?? false))
+				if(model.SettingsNormsViewModel.WearoutToName && (row.CellStringValue(periodAndCountColumn ?? periodColumn)?.ToLower().Contains("до износа") ?? false))
 					protectionName += " (до износа)";
 
 				var protection = UsedProtectionTools.FirstOrDefault(x => String.Equals(x.Name, protectionName, StringComparison.CurrentCultureIgnoreCase));
@@ -193,6 +197,21 @@ namespace Workwear.Models.Import.Norms
 					UsedProtectionTools.Add(protection);
 				}
 
+				NormCondition condition = null;
+				if(conditionColumn != null) {
+					var conditionName = row.CellStringValue(conditionColumn);
+					if(!string.IsNullOrWhiteSpace(conditionName)) {
+						condition = UsedConditions.FirstOrDefault(x =>
+							String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase));
+						if(condition == null) {
+							condition = conditions.FirstOrDefault(x =>
+								            String.Equals(x.Name, conditionName, StringComparison.CurrentCultureIgnoreCase))
+							            ?? new NormCondition() { Name = conditionName };
+							UsedConditions.Add(condition);
+						}
+					}
+				}
+
 				var norm = row.SubdivisionPostCombination.EditingNorm;
 				row.NormItem = norm.Items.FirstOrDefault(x => protection.IsSame(x.ProtectionTools));
 				if(row.NormItem == null) {
@@ -206,6 +225,7 @@ namespace Workwear.Models.Import.Norms
 					var normItem = new NormItem() {
 						Norm = norm,
 						ProtectionTools = protection,
+						NormCondition = condition
 					};
 					row.NormItem = normItem;
 					row.AddSetValueAction(0, () => norm.Items.Add(normItem));
@@ -225,7 +245,7 @@ namespace Workwear.Models.Import.Norms
 			foreach(var postName in combination.AllPostNames) {
 				string[] subdivisionNames = null;
 				if(!withoutSubdivision) {
-					subdivisionNames = postName.subdivision
+					subdivisionNames = (postName.subdivision ?? String.Empty)
 						.Split(new[] { settings.SubdivisionLevelEnable ? settings.SubdivisionLevelSeparator : "" },
 							StringSplitOptions.RemoveEmptyEntries)
 						.Select(x => x.Trim())
@@ -315,6 +335,7 @@ namespace Workwear.Models.Import.Norms
 		public readonly List<Department> UsedDepartments = new List<Department>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<ProtectionTools> UsedProtectionTools = new List<ProtectionTools>();
+		public readonly List<NormCondition> UsedConditions = new List<NormCondition>();
 		public readonly List<string> UndefinedProtectionNames = new List<string>();
 		#endregion
 

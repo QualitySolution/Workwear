@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -108,7 +108,7 @@ namespace Workwear.Tools.Features
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if(serialNumberEncoder.CodeVersion == 2
 				        && serialNumberEncoder.EditionId >= 1
-				        && serialNumberEncoder.EditionId <= 3) {
+				        && serialNumberEncoder.EditionId <= 4) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
@@ -140,23 +140,23 @@ namespace Workwear.Tools.Features
 				switch(feature) {
 					case WorkwearFeature.Communications:
 					case WorkwearFeature.EmployeeLk:
-						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.SpecCoinsLk:
-						if(ProductEdition != 3) 
+						if(ProductEdition != 3 && ProductEdition != 4) 
 							return false;
 						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 					case WorkwearFeature.Postomats:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
 				}
@@ -165,6 +165,7 @@ namespace Workwear.Tools.Features
 			switch(feature) {
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.ClothingService:
+				case WorkwearFeature.StockForecasting:
 				#if	DEBUG //Пока доступно только в редакции спецпошива
 					return true;
 				#else
@@ -242,6 +243,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]

@@ -3,8 +3,8 @@ Unicode true
 !define PRODUCT_VERSION "2.9"
 !define NET_VERSION "4.6.1"
 !define EXE_NAME "workwear"
-!define PRODUCT_NAME "QS: Спецодежда и имущество"
-!define SHORTCUT_NAME "QS Спецодежда и имущество"
+!define PRODUCT_NAME "QS: Спецодежда"
+!define SHORTCUT_NAME "QS Спецодежда"
 !define MENU_DIR_NAME "Спецодежда и имущество"
 !define APP_DIR_NAME "Спецодежда и имущество"
 !define UNINSTAL_KEY "workwear"
@@ -221,6 +221,9 @@ Section "${PRODUCT_NAME}" SecProgram
   
   ;Удаляем файлы не используемые после 2.8.9
   Delete $INSTDIR\System.Data.Bindings.dll
+  
+  ; Удаляем файлы до сокращения названия
+  Delete "$DESKTOP\QS Спецодежда и имущество.lnk"
 
 SectionEnd
 

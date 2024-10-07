@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
@@ -47,7 +48,7 @@ namespace workwear.Journal
 					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
 					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
 					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
-					.AddColumn("Предпочтительный постомат выдачи")
+					.AddColumn("Предпочтительный постамат выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.Postomats))
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
@@ -243,11 +244,19 @@ namespace workwear.Journal
 				);
 			
 			TreeViewColumnsConfigFactory.Register<FullnessJournalViewModel>(
-				() => FluentColumnsConfig<FullnessInfo>.Create()
+				(jvm) => FluentColumnsConfig<FullnessInfo>.Create()
 					.AddColumn("ИД").AddReadOnlyTextRenderer(node => node.Id.ToString())
 					.AddColumn("Название").AddReadOnlyTextRenderer(n => n.Name)
 					.AddColumn("Размещение").AddReadOnlyTextRenderer(n => n.Location)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(n => n.Type.ToString())
+					.AddColumn("Был онлайн").AddReadOnlyTextRenderer(x => x.LastOnline?.ToDateTime().ToString("g"))
+						.AddSetter((c, n) => c.Foreground = n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-15) ? "red" : 
+						(n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-3) ? "orange" : "green"))
+					.AddColumn("Старейшая закладка")
+						.ToolTipText(jvm.GetLongestPickupTooltip)
+						.AddReadOnlyTextRenderer(x => x.Cells.Min(c => c.CreateTime)?.ToDateTime().ToShortDateString())
+							.AddSetter((c, n) => c.Foreground = n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddMonths(-1) ? "red" : 
+								(n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddDays(-7) ? "orange" : "green"))
 					.AddColumn("Заполненность")
 						.AddProgressRenderer(n => n.Capacity == 0 ? 0 : (int)(100f * n.Filling / n.Capacity))
 						.Text(x => $"{x.Filling} из {x.Capacity}")
@@ -366,12 +375,19 @@ namespace workwear.Journal
 					.AddColumn("Собственник имущества")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddTextRenderer(e => e.OwnerName)
+					.AddColumn("Мес. расход")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.StockForecasting))
+						.AddReadOnlyTextRenderer(e => e.MonthConsumption)
+					.AddColumn("Запасы на")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.StockForecasting))
+						.AddReadOnlyTextRenderer(e => e.Supply)
+							.AddSetter((c,n) => c.Foreground = n.SupplyColor)
 					.AddColumn("Цена продажи")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(e => e.SaleCostText)
 					.AddColumn("Сумма")
-					.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
-					.AddTextRenderer(e => e.SumSaleCostText)
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(e => e.SumSaleCostText)
 					.Finish()
 			);
 
@@ -385,7 +401,7 @@ namespace workwear.Journal
 					.AddColumn("Автор").Resizable().AddTextRenderer(node => node.Author).SearchHighlight()
 					.AddColumn("Детали").Resizable().AddTextRenderer(node => node.Description).SearchHighlight()
 					.AddColumn("Дата создания").AddTextRenderer(x => x.CreationDateString)
-					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
+					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).SearchHighlight()
 					.Finish()
 			);
 

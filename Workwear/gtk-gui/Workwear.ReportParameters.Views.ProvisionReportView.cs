@@ -52,7 +52,7 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gtk.Label GtkLabel11;
 
-		private global::Gtk.Expander expander3;
+		private global::Gtk.Expander expanderEmployeeGroups;
 
 		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview2;
 
@@ -319,21 +319,21 @@ namespace Workwear.ReportParameters.Views
 			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expander2]));
 			w21.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.expander3 = new global::Gtk.Expander(null);
-			this.expander3.CanFocus = true;
-			this.expander3.Name = "expander3";
-			// Container child expander3.Gtk.Container+ContainerChild
+			this.expanderEmployeeGroups = new global::Gtk.Expander(null);
+			this.expanderEmployeeGroups.CanFocus = true;
+			this.expanderEmployeeGroups.Name = "expanderEmployeeGroups";
+			// Container child expanderEmployeeGroups.Gtk.Container+ContainerChild
 			this.choiceemployeegroupview2 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
 			this.choiceemployeegroupview2.Events = ((global::Gdk.EventMask)(256));
 			this.choiceemployeegroupview2.Name = "choiceemployeegroupview2";
-			this.expander3.Add(this.choiceemployeegroupview2);
+			this.expanderEmployeeGroups.Add(this.choiceemployeegroupview2);
 			this.GtkLabel17 = new global::Gtk.Label();
 			this.GtkLabel17.Name = "GtkLabel17";
 			this.GtkLabel17.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
 			this.GtkLabel17.UseUnderline = true;
-			this.expander3.LabelWidget = this.GtkLabel17;
-			this.vbox1.Add(this.expander3);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expander3]));
+			this.expanderEmployeeGroups.LabelWidget = this.GtkLabel17;
+			this.vbox1.Add(this.expanderEmployeeGroups);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expanderEmployeeGroups]));
 			w23.Position = 3;
 			w23.Expand = false;
 			// Container child vbox1.Gtk.Box+BoxChild
@@ -355,7 +355,7 @@ namespace Workwear.ReportParameters.Views
 			this.Hide();
 			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
 			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
-			this.expander3.Activated += new global::System.EventHandler(this.OnExpander3Activated);
+			this.expanderEmployeeGroups.Activated += new global::System.EventHandler(this.OnExpander3Activated);
 			this.ybuttonRun.Clicked += new global::System.EventHandler(this.OnYbuttonRunClicked);
 		}
 	}

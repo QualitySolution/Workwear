@@ -33,8 +33,8 @@ namespace workwear
 				
 				var builder = new ContainerBuilder();
 				AutofacStartupConfig(builder);
-				startupContainer = builder.Build();
-				unhandledExceptionHandler.UpdateDependencies(startupContainer);
+				StartupContainer = builder.Build();
+				unhandledExceptionHandler.UpdateDependencies(StartupContainer);
 				unhandledExceptionHandler.SubscribeToUnhandledExceptions();
 
 			} catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format")) {
@@ -51,7 +51,7 @@ namespace workwear
 				return;
 			}
 			
-			ILifetimeScope scopeLoginTime = startupContainer.BeginLifetimeScope();
+			ILifetimeScope scopeLoginTime = StartupContainer.BeginLifetimeScope();
 			var configuration = scopeLoginTime.Resolve<IChangeableConfiguration>();
 			// Создаем окно входа
 			Login LoginDialog = new Login (configuration);
@@ -92,35 +92,15 @@ namespace workwear
 				return;
 
 			bool isDemo = LoginDialog.ConnectedTo.IsDemo;
+			string baseName = LoginDialog.SelectedConnection;
 			LoginDialog.Destroy ();
 			scopeLoginTime.Dispose();
 
-			QSSaaS.Session.StartSessionRefresh ();
-			
-			CreateBaseConfig (); //Настройка базы
-			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
-			unhandledExceptionHandler.UpdateDependencies(AppDIContainer);
-			BusinessLogicGlobalEventHandler.Init(AppDIContainer);
-
-			//Настройка удаления
-			Configure.ConfigureDeletion();
-#if !DEBUG
-			//Инициализируем телеметрию
-			var applicationInfo = new ApplicationVersionInfo();
-			MainTelemetry.Product = applicationInfo.ProductName;
-            MainTelemetry.Edition = applicationInfo.Modification;
-            MainTelemetry.Version = applicationInfo.Version.ToString();
-            MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-            MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
-            MainTelemetry.StartUpdateByTimer(600);
-#else
-			MainTelemetry.DoNotTrack = true;
-#endif
 			//Запускаем программу
 			Application.Invoke(delegate 
 			{
-				MainWin = new MainWindow ();
-				MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
+				MainWin = new MainWindow (unhandledExceptionHandler, isDemo);
+				MainWin.Title += $" (БД: {baseName})";
 				if (QSMain.User.Login == "root")
 					return;
 				MainWin.Show ();
@@ -134,7 +114,7 @@ namespace workwear
 			}
 			QSSaaS.Session.StopSessionRefresh ();
 			AppDIContainer.Dispose();
-			startupContainer.Dispose();
+			StartupContainer.Dispose();
 		}
 	}
 }
