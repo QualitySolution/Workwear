@@ -35,6 +35,39 @@ namespace Workwear.Views.Regulations
 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
+			#region Планирование закупок
+			ylabelSupply.Binding.AddBinding(ViewModel, vm => vm.ShowSupply, w => w.Visible).InitializeFromSource();
+			ytableSupply.Binding.AddBinding(ViewModel, vm => vm.ShowSupply, w => w.Visible).InitializeFromSource();
+			
+			ybuttonSupplyUni.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Sensitive).InitializeFromSource();
+			ybuttonSupplyTwoSex.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Sensitive).InitializeFromSource();
+			
+			ylabelSupplyUni.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible).InitializeFromSource();
+			ybutton_remUni.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyUni.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));
+			ylistcomboboxSupplyUni.Binding.AddSource(Entity)
+				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
+				.AddBinding(e => e.SupplyNomenclatureUnisex, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible)
+				.InitializeFromSource();
+			ylabelSupplyMale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyMale.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));			
+			ybutton_remMale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyMale.Binding.AddSource(Entity)
+				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
+				.AddBinding(e => e.SupplyNomenclatureMale, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible)
+				.InitializeFromSource();
+			ylabelSupplyFemale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource(); 
+			ylistcomboboxSupplyFemale.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));			
+			ybutton_remFemale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyFemale.Binding.AddSource(Entity)
+				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
+				.AddBinding(e => e.SupplyNomenclatureFemale, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible)
+				.InitializeFromSource();
+			#endregion
+
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
 				.AddColumn("Тип").AddTextRenderer(p => p.TypeName).WrapWidth(500)
@@ -67,24 +100,40 @@ namespace Workwear.Views.Regulations
 
 		}
 		#region Номенклатуры
-		protected void OnButtonAddNomenclatureClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonAddNomenclatureClicked(object sender, EventArgs e) {
 			ViewModel.AddNomenclature();
 		}
 
-		protected void OnButtonRemoveNomeclatureClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonRemoveNomeclatureClicked(object sender, EventArgs e) {
 			ViewModel.RemoveNomenclature(ytreeItems.GetSelectedObjects<Nomenclature>());
 		}
 
-		void Nomenclature_Selection_Changed(object sender, EventArgs e)
-		{
+		void Nomenclature_Selection_Changed(object sender, EventArgs e){
 			buttonRemoveNomeclature.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
-		protected void OnButtonCreateNomenclatureClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonCreateNomenclatureClicked(object sender, EventArgs e) {
 			ViewModel.CreateNomenclature();
+		}
+
+		protected void OnYbuttonSupplyUniClicked(object sender, EventArgs e) {
+			ViewModel.SupplyType = SupplyType.Unisex;
+		}
+
+		protected void OnYbuttonSupplyTwoSexClicked(object sender, EventArgs e) {
+			ViewModel.SupplyType = SupplyType.TwoSex;
+		}
+
+		protected void OnYbuttonRemUniClicked(object sender, EventArgs e) {
+			ViewModel.ClearSupplyNomenclatureUnisex();
+		}
+
+		protected void OnYbuttonRemMaleClicked(object sender, EventArgs e) {
+			ViewModel.ClearSupplyNomenclatureMale();
+		}
+
+		protected void OnYbuttonRemFemaleClicked(object sender, EventArgs e) {
+			ViewModel.ClearSupplyNomenclatureFemale();
 		}
 		#endregion
 

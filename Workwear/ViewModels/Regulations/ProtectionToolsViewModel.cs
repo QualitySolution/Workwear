@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
@@ -44,7 +47,7 @@ namespace Workwear.ViewModels.Regulations
 				.MakeByType()
 				.Finish();
 
-			Entity.Nomenclatures.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			Entity.Nomenclatures.CollectionChanged += EntityNomenclaturesChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 
@@ -57,10 +60,23 @@ namespace Workwear.ViewModels.Regulations
 					break;
 			}
 		}
+		
+		private void EntityNomenclaturesChanged(object sender, NotifyCollectionChangedEventArgs e) {
+			OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureUnisex)))
+				ClearSupplyNomenclatureUnisex();
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureMale)))
+				ClearSupplyNomenclatureMale();
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureFemale)))
+				ClearSupplyNomenclatureFemale();
+		}
 		#endregion
 
 		#region Visible
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting);
+		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
+		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
 		#endregion
 
 		#region EntityViewModels
@@ -68,6 +84,18 @@ namespace Workwear.ViewModels.Regulations
 		public readonly EntityEntryViewModel<ProtectionToolsCategory> CategoriesEntryViewModel;
 		#endregion
 
+		#region Проброс свойств
+		public virtual SupplyType SupplyType {
+			get => Entity.SupplyType;
+			set {
+				if(Entity.SupplyType == value)
+					return;
+				Entity.SupplyType = value;
+				OnPropertyChanged(nameof(ShowSupplyUnisex));
+				OnPropertyChanged(nameof(ShowSupplyTwosex));
+			}
+		}
+		#endregion
 		#region Действия View
 		#region Номеклатуры
 		public void AddNomenclature()
@@ -91,6 +119,18 @@ namespace Workwear.ViewModels.Regulations
 			foreach(var item in tools) {
 				Entity.RemoveNomenclature(item);
 			}
+		}
+
+		public void ClearSupplyNomenclatureUnisex() {
+			Entity.SupplyNomenclatureUnisex = null;
+		}
+
+		public void ClearSupplyNomenclatureMale() {
+			Entity.SupplyNomenclatureMale = null;
+		}
+
+		public void ClearSupplyNomenclatureFemale() {
+			Entity.SupplyNomenclatureFemale = null;
 		}
 
 		public bool SensitiveCreateNomenclature => !String.IsNullOrWhiteSpace(Entity.Name)
