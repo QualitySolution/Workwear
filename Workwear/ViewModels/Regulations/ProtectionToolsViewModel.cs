@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
@@ -77,6 +75,7 @@ namespace Workwear.ViewModels.Regulations
 		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting);
 		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
+		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
 		#endregion
 
 		#region EntityViewModels

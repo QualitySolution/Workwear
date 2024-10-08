@@ -1,5 +1,5 @@
 ﻿alter table protection_tools
-	add supply_type enum ('Unisex', 'TwoSex') null after assessed_cost;
+	add supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null after assessed_cost;
 
 alter table protection_tools
 	add supply_uni_id int(10) unsigned null after supply_type;
