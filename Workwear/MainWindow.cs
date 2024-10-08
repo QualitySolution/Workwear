@@ -957,4 +957,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionWarehouseForecastingActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<WarehouseForecastingViewModel>(null);
 	}
+
+	protected void OnActionCausesWriteOffActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CauseWriteOffJournalViewModel>(null);
+	}
 }
