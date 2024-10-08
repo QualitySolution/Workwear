@@ -41,6 +41,7 @@ namespace Workwear.ViewModels.Stock
         private OrganizationRepository organizationRepository;
         private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
+        public IList<CausesWriteOff> CausesWriteOffs { get; }
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
@@ -54,6 +55,7 @@ namespace Workwear.ViewModels.Stock
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
             OrganizationRepository organizationRepository,
+            IList<CausesWriteOff>causesWriteOffs,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -72,6 +74,7 @@ namespace Workwear.ViewModels.Stock
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
             Owners = UoW.GetAll<Owner>().ToList();
+            CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
 	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
             };
