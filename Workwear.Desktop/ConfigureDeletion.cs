@@ -82,9 +82,10 @@ namespace Workwear
 				.AddRemoveFromDependence<Writeoff>(x => x.Members);
 
 			DeleteConfig.AddHibernateDeleteInfo<Organization>()
-				.AddClearDependence<IssuanceSheet>(x => x.Organization)
-				.AddClearDependence<UserSettings>(x => x.DefaultOrganization)
 				.AddClearDependence<Inspection>(x => x.Organization)
+				.AddClearDependence<IssuanceSheet>(x => x.Organization)
+				.AddClearDependence<Transfer>(x => x.Organization)
+				.AddClearDependence<UserSettings>(x => x.DefaultOrganization)
 				.AddClearDependence<Writeoff>(x => x.Organization);
 
 			DeleteConfig.AddHibernateDeleteInfo<Post>()

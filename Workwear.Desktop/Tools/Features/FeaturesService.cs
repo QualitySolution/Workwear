@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,7 +22,8 @@ namespace Workwear.Tools.Features
 			new ProductEdition(0, "Демонстрационная"),
 			new ProductEdition(1, "Однопользовательская"),
 			new ProductEdition(2, "Профессиональная"),
-			new ProductEdition(3, "Предприятие")
+			new ProductEdition(3, "Предприятие"),
+			new ProductEdition(4, "Спецаутсорсинг")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
 		private readonly CloudClientService cloudClientService;
@@ -107,7 +108,7 @@ namespace Workwear.Tools.Features
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if(serialNumberEncoder.CodeVersion == 2
 				        && serialNumberEncoder.EditionId >= 1
-				        && serialNumberEncoder.EditionId <= 3) {
+				        && serialNumberEncoder.EditionId <= 4) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
@@ -139,40 +140,44 @@ namespace Workwear.Tools.Features
 				switch(feature) {
 					case WorkwearFeature.Communications:
 					case WorkwearFeature.EmployeeLk:
-						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.SpecCoinsLk:
-						if(ProductEdition != 3) 
+						if(ProductEdition != 3 && ProductEdition != 4) 
 							return false;
 						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 					case WorkwearFeature.Postomats:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
 				}
 			}
 
 			switch(feature) {
-				#if	DEBUG //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Selling:
+				case WorkwearFeature.ClothingService:
+				case WorkwearFeature.StockForecasting:
+				#if	DEBUG //Пока доступно только в редакции спецпошива
+					return true;
+				#else
+					return ProductEdition == 4;
 				#endif
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
-				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.Exchange1C:
-					return ProductEdition == 0 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Completion:
@@ -183,7 +188,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				default:
 					return false;
 			}
@@ -228,8 +233,6 @@ namespace Workwear.Tools.Features
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
-		[Display(Name = "Обслуживание спецодежды")]
-		ClothingService,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
@@ -240,6 +243,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]
@@ -252,7 +257,9 @@ namespace Workwear.Tools.Features
 		Postomats,
 		#endregion
 		#endregion
-		#region Спецредакции
+		#region Спецаутсорсинг
+		[Display(Name = "Обслуживание спецодежды")]
+		ClothingService,
 		[Display(Name = "Продажа")]
 		Selling
 		#endregion

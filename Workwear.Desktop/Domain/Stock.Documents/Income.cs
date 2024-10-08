@@ -22,6 +22,23 @@ namespace Workwear.Domain.Stock.Documents
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
+
+		//TODO При переводе диалога на VVMM перенести в VM
+		public virtual bool SensitiveDocNumber => !AutoDocNumber;
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public virtual bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+		public virtual string DocNumberText {
+			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
+			set { 
+				if(!AutoDocNumber) 
+					DocNumber = value; 
+			}
+		}
 		
 		//TODO Удалить
 		private IncomeOperations operation;
@@ -58,9 +75,9 @@ namespace Workwear.Domain.Stock.Documents
 			get{
 				switch (Operation) {
 				case IncomeOperations.Enter:
-					return $"Приходная накладная №{DocNumber ?? Id.ToString()} от {Date:d}";
+					return $"Приходная накладная №{DocNumberText ?? Id.ToString()} от {Date:d}";
 				case IncomeOperations.Return:
-					return $"Возврат от работника №{DocNumber ?? Id.ToString()} от {Date:d}";
+					return $"Возврат от работника №{DocNumberText ?? Id.ToString()} от {Date:d}";
 				default:
 					return null;
 				}

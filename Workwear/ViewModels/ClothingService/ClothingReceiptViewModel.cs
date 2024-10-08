@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -9,9 +12,12 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ClothingReceiptViewModel : UowDialogViewModelBase, IWindowDialogSettings {
+		private readonly FeaturesService featuresService;
+		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
@@ -21,17 +27,24 @@ namespace Workwear.ViewModels.ClothingService {
 			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			BarcodeInfoViewModel barcodeInfoViewModel,
+			FeaturesService featuresService,
+			PostomatManagerService postomatService,
 			IUserService userService,
 			BarcodeRepository barcodeRepository
 				) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.postomatService = postomatService;
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			Title = "Приём в стирку";
-			//Создаем UoW чтобы передать его через провайдер внутреннему виджету.
+			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 		 	var uow = UoW;
 		    BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
+		    Postomats = new List<PostomatInfo>{new PostomatInfo{Name = "Нет"}};
+		    if(this.featuresService.Available(WorkwearFeature.Postomats))
+			    Postomats.AddRange(postomatService.GetPostomatList(PostomatListType.Aso));
 		}
 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -69,6 +82,9 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		public bool SensitiveDefect => NeedRepair;
 		#endregion
+		#region Visible
+		public bool PostomatVisible => featuresService.Available(WorkwearFeature.Postomats);
+		#endregion
 		
 		#region Действия View
 
@@ -80,6 +96,8 @@ namespace Workwear.ViewModels.ClothingService {
 				Defect = Defect,
 				IsClosed = false
 			};
+			if( Postomat?.Id > 0)
+				claim.PreferredTerminalId = Postomat.Id;
 			
 			var status = new StateOperation {
 				OperationTime = DateTime.Now,
@@ -97,6 +115,18 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel.Employee = null;
 			NeedRepair = false;
 			Defect = null;
+		}
+
+		#endregion
+		
+		#region Postamat
+
+		public List<PostomatInfo> Postomats { get; }
+		
+		private PostomatInfo postomat;
+		public virtual PostomatInfo Postomat {
+			get => postomat;
+			set => SetField(ref postomat, value);
 		}
 
 		#endregion

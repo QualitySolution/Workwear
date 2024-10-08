@@ -392,29 +392,29 @@
        (SELECT IFNULL(SUM(op.issued) - SUM(op.returned), 0)
         FROM operation_issued_by_employee as op
         WHERE op.employee_id = @employee_id
-          AND op.protection_tools_id = wear_cards_item.protection_tools_id
+          AND op.protection_tools_id = employee_cards_item.protection_tools_id
           AND (NOT op.auto_writeoff OR op.auto_writeoff_date &gt; IFNULL(@endDateIssue, CURDATE()))
           AND op.operation_time &lt; IFNULL(@endDateIssue, CURDATE()))           AS amount,
        measurement_units.name                                                                 AS unit,
-       DATE_FORMAT(wear_cards_item.next_issue, '%d.%m.%Y')                                    AS need_date,
-       DATEDIFF(IFNULL(@endDateIssue, CURDATE()), wear_cards_item.next_issue) AS delay,
+       DATE_FORMAT(employee_cards_item.next_issue, '%d.%m.%Y')                                    AS need_date,
+       DATEDIFF(IFNULL(@endDateIssue, CURDATE()), employee_cards_item.next_issue) AS delay,
        size.name                                                                              as size,
        height.name                                                                            as height,
        IFNULL(ballance.SUM, 0)                                                                as sum
-FROM wear_cards_item
-         JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-         JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+FROM employee_cards_item
+         JOIN employees ON employees.id = employee_cards_item.employee_id
+         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
          LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
          LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
          LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
-         LEFT JOIN wear_cards_sizes AS employeeSizeAlias
-                   ON (employeeSizeAlias.employee_id = wear_cards.id AND
+         LEFT JOIN employees_sizes AS employeeSizeAlias
+                   ON (employeeSizeAlias.employee_id = employees.id AND
                        employeeSizeAlias.size_type_id = sizeTypeAlias.id)
-         LEFT JOIN wear_cards_sizes AS employeeHeightAlias
-                   ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND
+         LEFT JOIN employees_sizes AS employeeHeightAlias
+                   ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND
                        employeeHeightAlias.size_type_id = heightTypeAlias.id)
          JOIN measurement_units ON item_types.units_id = measurement_units.id
-         JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
          LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
          LEFT JOIN (SELECT sex_b.ptid,
                            sex_b.size_id,
@@ -449,27 +449,26 @@ FROM wear_cards_item
                                    LEFT JOIN protection_tools_nomenclature AS sptn ON spt.id = sptn.protection_tools_id
                                    LEFT JOIN nomenclature AS sn ON sptn.nomenclature_id = sn.id
                                    LEFT JOIN operation_warehouse AS sopwh on (sopwh.operation_time &lt; ADDDATE(
-                                   IFNULL(@endDateIssue, CURDATE()), INTERVAL 1 DAY)
+                                  IFNULL(@endDateIssue, CURDATE()), INTERVAL 1 DAY)
                               AND sopwh.nomenclature_id = sptn.nomenclature_id
                               AND sopwh.wear_percent = 0
                               AND (@warehouse_id = -1 OR sopwh.warehouse_receipt_id = @warehouse_id OR
                                    sopwh.warehouse_expense_id = @warehouse_id))
                           WHERE (-1 IN (@protection_tools_ids) OR spt.id IN (@protection_tools_ids))
                           GROUP BY spt.id, size_id, height_id) AS sex_b
-                             JOIN (SELECT IF(const.seq = 1, 'Men', 'Women') as sex
-                                   FROM seq_1_to_2 as const) AS sex_const
+                             JOIN (SELECT 'Men' AS sex UNION SELECT 'Women') AS sex_const
                     GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
-    AS ballance ON (wear_cards_item.protection_tools_id = ballance.ptid
-    AND (ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND wear_cards.sex = 'M') OR
-         (ballance.sex = 'Women' AND wear_cards.sex = 'F'))
+    AS ballance ON (employee_cards_item.protection_tools_id = ballance.ptid
+    AND (ballance.sex = 'Universal' OR (ballance.sex = 'Men' AND employees.sex = 'M') OR
+         (ballance.sex = 'Women' AND employees.sex = 'F'))
     AND ((employeeSizeAlias.size_id IS NULL AND ballance.size_id IS NULL) OR
          ballance.size_id = employeeSizeAlias.size_id)
     AND ((employeeHeightAlias.size_id IS NULL AND ballance.height_id IS NULL) OR
          ballance.height_id = employeeHeightAlias.size_id))
          LEFT JOIN sizes as size ON employeeSizeAlias.size_id = size.id
          LEFT JOIN sizes as height ON employeeHeightAlias.size_id = height.id
-WHERE wear_cards_item.wear_card_id = @employee_id
-  AND wear_cards_item.next_issue &lt; IFNULL(@endDateIssue, CURDATE())
+WHERE employee_cards_item.employee_id = @employee_id
+  AND employee_cards_item.next_issue &lt; IFNULL(@endDateIssue, CURDATE())
   AND (-1 IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids));</CommandText>
         <QueryParameters>
           <QueryParameter Name="@employee_id">
@@ -531,7 +530,7 @@ WHERE wear_cards_item.wear_card_id = @employee_id
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>

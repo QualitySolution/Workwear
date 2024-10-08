@@ -6,9 +6,7 @@ using QS.Configuration;
 using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
-using QS.Navigation;
 using QS.Project.Versioning;
-using QS.Serial.ViewModels;
 using QSProjectsLib;
 using QSTelemetry;
 using Workwear;
@@ -35,8 +33,8 @@ namespace workwear
 				
 				var builder = new ContainerBuilder();
 				AutofacStartupConfig(builder);
-				startupContainer = builder.Build();
-				unhandledExceptionHandler.UpdateDependencies(startupContainer);
+				StartupContainer = builder.Build();
+				unhandledExceptionHandler.UpdateDependencies(StartupContainer);
 				unhandledExceptionHandler.SubscribeToUnhandledExceptions();
 
 			} catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format")) {
@@ -53,7 +51,7 @@ namespace workwear
 				return;
 			}
 			
-			ILifetimeScope scopeLoginTime = startupContainer.BeginLifetimeScope();
+			ILifetimeScope scopeLoginTime = StartupContainer.BeginLifetimeScope();
 			var configuration = scopeLoginTime.Resolve<IChangeableConfiguration>();
 			// Создаем окно входа
 			Login LoginDialog = new Login (configuration);
@@ -94,66 +92,21 @@ namespace workwear
 				return;
 
 			bool isDemo = LoginDialog.ConnectedTo.IsDemo;
+			string baseName = LoginDialog.SelectedConnection;
 			LoginDialog.Destroy ();
 			scopeLoginTime.Dispose();
 
-			QSSaaS.Session.StartSessionRefresh ();
-
-			//Прописываем системную валюту
-			CurrencyWorks.CurrencyShortFomat = "{0:C}";
-			CurrencyWorks.CurrencyShortName = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
-			
-			CreateBaseConfig (); //Настройка базы
-			AppDIContainer = startupContainer.BeginLifetimeScope(c => AutofacClassConfig(c, isDemo)); //Создаем постоянный контейнер
-			unhandledExceptionHandler.UpdateDependencies(AppDIContainer);
-			BusinessLogicGlobalEventHandler.Init(AppDIContainer);
-
-			//Настройка удаления
-			Configure.ConfigureDeletion();
-#if !DEBUG
-			//Инициализируем телеметрию
-			var applicationInfo = new ApplicationVersionInfo();
-			MainTelemetry.Product = applicationInfo.ProductName;
-            MainTelemetry.Edition = applicationInfo.Modification;
-            MainTelemetry.Version = applicationInfo.Version.ToString();
-            MainTelemetry.IsDemo = Login.ApplicationDemoServer == QSMain.connectionDB.DataSource;
-            MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
-            MainTelemetry.StartUpdateByTimer(600);
-#else
-			MainTelemetry.DoNotTrack = true;
-#endif
 			//Запускаем программу
-			MainWin = new MainWindow ();
-			MainWin.Title += string.Format(" (БД: {0})", LoginDialog.SelectedConnection);
-			if (QSMain.User.Login == "root")
-				return;
-			MainWin.Show ();
 			Application.Invoke(delegate 
 			{
-				if (MainWin.IsSNExpired) 
-				{
-					if (!MainWin.Interactive.Question("Срок действия серийного номера истек.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
-					{
-						MainWin.QuitService.Quit();
-						return;
-					}
-					
-					IPage<SerialNumberViewModel> page = MainWin.NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
-					page.PageClosed += (sender, closedArgs) => 
-					{
-						if (closedArgs.CloseSource == CloseSource.Save) 
-						{
-							MainWin.FeaturesService.UpdateSerialNumber();
-						}
-						else
-						{
-							MainWin.QuitService.Quit();
-						}
-					};
-				}
+				MainWin = new MainWindow (unhandledExceptionHandler, isDemo);
+				MainWin.Title += $" (БД: {baseName})";
+				if (QSMain.User.Login == "root")
+					return;
+				MainWin.Show ();
 			});
-			
 			Application.Run ();
+			
 			if (!MainTelemetry.SendingError)
 			{
 				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);
@@ -161,7 +114,7 @@ namespace workwear
 			}
 			QSSaaS.Session.StopSessionRefresh ();
 			AppDIContainer.Dispose();
-			startupContainer.Dispose();
+			StartupContainer.Dispose();
 		}
 	}
 }

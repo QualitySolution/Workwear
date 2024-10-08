@@ -77,7 +77,13 @@ namespace Workwear.Domain.Company
 		/// Получаем значения остатков на складе для подходящих позиций.
 		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
 		/// </summary>
-		public virtual IEnumerable<StockBalance> InStock => StockBalanceModel?.Balances.Where(x => MatchStockPosition(x.Position));
+		public virtual IEnumerable<StockBalance> InStock {
+			get { 				
+				if(StockBalanceModel == null)
+					throw new InvalidOperationException("StockBalanceModel должна быть заполнена!");
+				return StockBalanceModel?.Balances.Where(x => MatchStockPosition(x.Position));
+			}
+		}
 
 		#region Модели
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
@@ -132,8 +138,8 @@ namespace Workwear.Domain.Company
 		}
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
-				var bestChoice = InStock.ToList();
-				bestChoice.Sort(new BestChoiceInStockComparer(ProtectionTools));
+				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
+				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools));
 				return bestChoice;
 			}
 		}
@@ -170,7 +176,7 @@ namespace Workwear.Domain.Company
 				if(InStockState == StockStateInfo.UnknownNomenclature)
 					return "нет подходящей";
 
-				if(StockBalanceModel == null || !InStock.Any())
+				if(StockBalanceModel == null || !InStock.Any() || !BestChoiceInStock.Any())
 					return String.Empty;
 
 				var first = BestChoiceInStock.First();
@@ -186,8 +192,8 @@ namespace Workwear.Domain.Company
 		public virtual string AmountByNormText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
 		public virtual string InStockText => 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(InStock?.Sum(x => x.Amount) ?? 0) ?? 
-			InStock?.Sum(x => x.Amount).ToString();
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ?? 
+			BestChoiceInStock.Sum(x => x.Amount).ToString();
 		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
@@ -203,7 +209,7 @@ namespace Workwear.Domain.Company
 
 		#region Methods
 		/// <summary>
-		/// Получить необходимое к выдачи количество.
+		/// Получить необходимое к выдаче количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)

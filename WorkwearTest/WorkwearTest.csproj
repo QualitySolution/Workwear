@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItemTest.cs" />
     <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
@@ -55,6 +56,10 @@
     <Compile Include="ViewModels\Stock\WriteOffViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\QSProjects\QS.Testing.Desktop\QS.Testing.Desktop.csproj">
+      <Project>{3f4f3462-4b81-4622-a9b9-a5cef5c8fc6f}</Project>
+      <Name>QS.Testing.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj">
       <Project>{a869ec36-67d2-4a36-95e9-0b1e7350928f}</Project>
       <Name>QS.BaseParameters</Name>

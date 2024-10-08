@@ -246,6 +246,9 @@ namespace workwear
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactiveService.Question($"В документе есть повторяющиеся складские позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
+			
+			if(Entity.AutoDocNumber)
+				Entity.DocNumber = null;	
 
 			var ask = new GtkQuestionDialogsInteractive();
 			Entity.UpdateOperations(UoW, ask);
@@ -322,7 +325,10 @@ namespace workwear
 			ReturnSheet,
 			[Display(Name = "Ведомость возврата книжная")]
 			[ReportIdentifier("Statements.ReturnStatementVertical")]
-			ReturnStatementVertical
+			ReturnStatementVertical,
+			[Display(Name = "Ведомость возврата альбомная")]
+			[ReportIdentifier("Statements.ReturnStatementHorizontal")]
+			ReturnStatementHorizontal
 		}
 	}
 }

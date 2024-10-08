@@ -51,6 +51,20 @@ namespace Workwear.Domain.ClothingService {
 			get { return defect; }
 			set { SetField(ref defect, value, () => Defect); }
 		}
+
+		private uint? preferredTerminalId;
+		[Display(Name = "Предпочтительный постамат выдачи")]
+		public virtual uint? PreferredTerminalId {
+			get => preferredTerminalId;
+			set => SetField(ref preferredTerminalId, value);
+		}
+		
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get { return comment; }
+			set { SetField(ref comment, value, () => Comment); }
+		}
 		
 		private IObservableList<StateOperation> states = new ObservableList<StateOperation>();
 		[Display(Name = "История состояний")]

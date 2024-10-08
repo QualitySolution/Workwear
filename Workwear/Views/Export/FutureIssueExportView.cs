@@ -12,13 +12,14 @@ namespace Workwear.Views.Export {
 				.AddBinding(v => v.EndDate, w => w.EndDate)
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
+			checkNoDebt.Binding.AddBinding(ViewModel, v => v.NoDebt, w => w.Active).InitializeFromSource();
 
 			yprogressTotal.Visible = false;
 			yprogressLocal.Visible = false;
 			ViewModel.ProgressGlobal = yprogressTotal;
 			ViewModel.ProgressLocal = yprogressLocal;
 
-			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
+			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {

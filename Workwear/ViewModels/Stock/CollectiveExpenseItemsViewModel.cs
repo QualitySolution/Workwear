@@ -153,6 +153,7 @@ namespace Workwear.ViewModels.Stock
 		public void AddEmployees(){
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
@@ -226,7 +227,7 @@ namespace Workwear.ViewModels.Stock
 			performance.CheckPoint("Загружаем складские остатки");
 			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
-			performance.CheckPoint("Подготавливаем потребностей");
+			performance.CheckPoint("Подготавливаем список потребностей");
 			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
 			
 			var needs = employees

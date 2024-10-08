@@ -18,10 +18,15 @@ namespace Workwear.Views.Stock
 			CommonButtonSubscription();
 		}
 		private void ConfigureDlg() {
+			entryId.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocNumberText, w => w.Text)
+				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
 			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
-			entryNumber.Binding.AddBinding(Entity, e => e.Id, w => w.Text, new IdToStringConverter()).InitializeFromSource();
-			entryUser.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.Text).InitializeFromSource();
+			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource(); 
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			entityentryOrganization.ViewModel = ViewModel.OrganizationEntryViewModel;
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
 
@@ -50,6 +55,7 @@ namespace Workwear.Views.Stock
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
+			ybuttonPrint.Clicked += OnButtonPrintClicked;
 		}
 		#region PopupMenu
 		void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
@@ -89,5 +95,6 @@ namespace Workwear.Views.Stock
 		}
 		private string GetRowColor(TransferItem item) 
 			=> !ViewModel.ValidateNomenclature(item) ? "red" : null;
+		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 	}
 }

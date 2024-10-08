@@ -65,6 +65,7 @@ namespace workwear.Journal.ViewModels.Stock
 			StockBalanceJournalNode resultAlias = null;
 
 			WarehouseOperation warehouseExpenseOperationAlias = null;
+			WarehouseOperation warehouseExpenseYearOperationAlias = null;
 			WarehouseOperation warehouseIncomeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 
@@ -152,6 +153,30 @@ namespace workwear.Journal.ViewModels.Stock
 				queryStock.Where(x 
 					=> x.Nomenclature.IsIn(Filter.ProtectionTools.Nomenclatures.ToArray()));
 			}
+			
+			// Рассчет среднего расхода за день
+			var expenseYearQuery = QueryOver.Of(() => warehouseExpenseYearOperationAlias)
+				.Where(() => warehouseExpenseYearOperationAlias.Nomenclature.Id == warehouseOperationAlias.Nomenclature.Id
+				             && (warehouseExpenseYearOperationAlias.WearSize.Id == warehouseOperationAlias.WearSize.Id
+				                 || warehouseExpenseYearOperationAlias.WearSize == null && warehouseOperationAlias.WearSize == null)
+				             && (warehouseExpenseYearOperationAlias.Height.Id == warehouseOperationAlias.Height.Id
+				                 || warehouseExpenseYearOperationAlias.Height == null && warehouseOperationAlias.Height == null)
+				             && (warehouseExpenseYearOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
+				                 || warehouseExpenseYearOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
+				             && warehouseExpenseYearOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
+				.Where(e => e.OperationTime < Filter.Date.AddDays(1) && e.OperationTime >= Filter.Date.AddYears(-1));
+
+			if(Filter.Warehouse == null)
+				expenseYearQuery.Where(x => x.ExpenseWarehouse != null);
+			else
+				expenseYearQuery.Where(x => x.ExpenseWarehouse == Filter.Warehouse);
+
+			expenseYearQuery.Select(Projections.SqlFunction(
+					new SQLFunctionTemplate(NHibernateUtil.Double, "SUM(?1)/DATEDIFF(NOW(), MIN(?2))"),
+					NHibernateUtil.Double,
+					Projections.Property(() => warehouseExpenseYearOperationAlias.Amount),
+					Projections.Property(() => warehouseExpenseYearOperationAlias.OperationTime))
+				);
 
 			return queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
@@ -183,6 +208,7 @@ namespace workwear.Journal.ViewModels.Stock
 			   .SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
 			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 			   .Select(projection).WithAlias(() => resultAlias.Amount)
+			   .SelectSubQuery(expenseYearQuery).WithAlias(() => resultAlias.DailyConsumption)
 				)
 				.OrderBy(() => nomenclatureAlias.Name).Asc
 				.ThenBy(Projections.SqlFunction(
@@ -222,6 +248,14 @@ namespace workwear.Journal.ViewModels.Stock
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		
+		public override string FooterInfo {
+			get => $"Суммарная стоимость: " +
+			       $"{CurrencyWorks.GetShortCurrencyString(DataLoader.Items.Cast<StockBalanceJournalNode>().Sum(x => x.SumSaleCost))} " +
+			       $"    Загружено:	" +
+			       $"{DataLoader.Items.Count} шт.";
+			set { }
+		}
 	}
 
 	public class StockBalanceJournalNode
@@ -242,7 +276,25 @@ namespace workwear.Journal.ViewModels.Stock
 		public int OwnerId { get; set; }
 		public string OwnerName { get; set; }
 		public decimal SaleCost { get; set; }
+		public double? DailyConsumption { get; set; }
+
+		public string MonthConsumption => $"{DailyConsumption * 30:N1}";
+
+		public int? SupplyDays => (int?)(Amount / DailyConsumption);
+
+		public string Supply => DailyConsumption.HasValue && SupplyDays >= 0 ? NumberToTextRus.FormatCase(SupplyDays.Value, "{0} день", "{0} дня", "{0} дней") : null;
+
+		public string SupplyColor {
+			get {
+				if(SupplyDays <= 7) return "red";
+				if(SupplyDays <= 14) return "orange";
+				if(SupplyDays <= 365/2) return "green";
+				return "violet";
+			}
+		}
 		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
+		public decimal SumSaleCost => SaleCost > 0 ? SaleCost * Amount : 0;
+		public string SumSaleCostText => CurrencyWorks.GetShortCurrencyString (SumSaleCost);
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");

@@ -22,24 +22,16 @@ namespace Stetic
 				w1.Add("store-balance", w5);
 				global::Gtk.IconSet w6 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.www.png"));
 				w1.Add("www", w6);
-				global::Gtk.IconSet w7 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.youtube.png"));
-				w1.Add("youtube", w7);
-				global::Gtk.IconSet w8 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.vk.png"));
-				w1.Add("vk", w8);
-				global::Gtk.IconSet w9 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.twitter.png"));
-				w1.Add("twitter", w9);
-				global::Gtk.IconSet w10 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.odnoklasniki.png"));
-				w1.Add("odnoklasniki", w10);
-				global::Gtk.IconSet w11 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.smart-card.png"));
-				w1.Add("smart-card", w11);
-				global::Gtk.IconSet w12 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.store-movements.png"));
-				w1.Add("store-movements", w12);
-				global::Gtk.IconSet w13 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.mail.png"));
-				w1.Add("mail", w13);
-				global::Gtk.IconSet w14 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.logs.png"));
-				w1.Add("logs", w14);
-				global::Gtk.IconSet w15 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.claims.png"));
-				w1.Add(" SendBox", w15);
+				global::Gtk.IconSet w7 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.smart-card.png"));
+				w1.Add("smart-card", w7);
+				global::Gtk.IconSet w8 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.store-movements.png"));
+				w1.Add("store-movements", w8);
+				global::Gtk.IconSet w9 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.mail.png"));
+				w1.Add("mail", w9);
+				global::Gtk.IconSet w10 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.menu.logs.png"));
+				w1.Add("logs", w10);
+				global::Gtk.IconSet w11 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.claims.png"));
+				w1.Add(" SendBox", w11);
 				w1.AddDefault();
 			}
 		}
