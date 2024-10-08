@@ -5,3 +5,10 @@
 );
 insert into causes_write_off (name) values ('увольнение'), ('преждевременный износ'), ('изменение должности'), ('прочее');
 
+alter table stock_write_off_detail
+	add column cause_write_off_id int
+		references causes_write_off(id)
+	after akt_number;
+
+alter table stock_write_off_detail
+	rename column cause to comment;
