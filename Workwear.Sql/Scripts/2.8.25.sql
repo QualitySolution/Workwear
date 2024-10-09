@@ -12,3 +12,9 @@ alter table stock_write_off_detail
 
 alter table stock_write_off_detail
 	rename column cause to comment;
+
+alter table stock_write_off_detail
+	drop constraint stock_write_off_detail_ibfk_1;
+alter table stock_write_off_detail
+	add constraint stock_write_off_detail_ibfk_1 foreign key (cause_write_off_id) references causes_write_off (id)
+		on update cascade on delete set null;
