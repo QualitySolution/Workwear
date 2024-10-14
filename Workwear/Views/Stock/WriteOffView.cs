@@ -89,7 +89,6 @@ namespace Workwear.Views.Stock
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 					.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
 					.AddColumn("Причина списания")
-						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
 						.AddComboRenderer(x=>x.CausesWriteOff)
 						.SetDisplayFunc(x=>x.Name)
 						.FillItems(ViewModel.CausesWriteOffs, "Нет")

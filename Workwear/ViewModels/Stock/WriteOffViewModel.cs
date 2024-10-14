@@ -55,7 +55,6 @@ namespace Workwear.ViewModels.Stock
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
             OrganizationRepository organizationRepository,
-            IList<CausesWriteOff>causesWriteOffs,
             EmployeeCard employee = null,
             Subdivision subdivision = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
