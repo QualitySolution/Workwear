@@ -1,5 +1,5 @@
-﻿using Gamma.Utilities;
-using NHibernate.Id.Insert;
+﻿using System;
+using Gamma.Utilities;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Models.Operations
@@ -12,8 +12,10 @@ namespace Workwear.Models.Operations
 		public int? ExpenceId;
 		public int? ExpenceItemId;
 		public int? IncomeId;
-		public IncomeOperations? IncomeOperation;
+		public int? ReturnId;
+//public IncomeOperations? IncomeOperation;
 		public int? IncomeItemId;
+		public int? ReturnItemId;
 		public int? CollectiveExpenseId;
 		public int? CollectiveExpenseItemId;
 		public int? TransferId;
@@ -28,15 +30,18 @@ namespace Workwear.Models.Operations
 		public int? CompletionResultItemId;
 		public int? CompletionId => CompletionFromSourceId ?? CompletionFromResultId;
 
+		public string IncomeDocNumber;
+		public string ReturnDocNumber;
+
 		public StockDocumentType? DocumentType {
 			get {
 				if(ExpenceId.HasValue)
 					return StockDocumentType.ExpenseEmployeeDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
-				if(IncomeId.HasValue && IncomeOperation == IncomeOperations.Enter) 
+				if(IncomeId.HasValue) 
 					return StockDocumentType.Income;
-				if(IncomeId.HasValue && IncomeOperation == IncomeOperations.Return) 
+				if(ReturnId.HasValue) 
 					return StockDocumentType.Return;
 				if(TransferId.HasValue)
 					return StockDocumentType.TransferDoc;
@@ -53,12 +58,14 @@ namespace Workwear.Models.Operations
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId =>
-			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
+			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? ReturnId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
 
 		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ??
-			IncomeItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
+			IncomeItemId ?? ReturnItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
 
-		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{DocumentId}";
+		public string DocumentNumber => IncomeDocNumber ?? ReturnDocNumber;
+		
+		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{(String.IsNullOrWhiteSpace(DocumentNumber) ? DocumentId.ToString() : DocumentNumber)}";
 	}
 
 	public enum OperationType

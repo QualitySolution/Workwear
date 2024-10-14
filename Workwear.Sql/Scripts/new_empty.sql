@@ -563,40 +563,142 @@ AUTO_INCREMENT = 1;
 -- Table `stock_income`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_income` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation` ENUM('Enter','Return') NOT NULL,
-  `doc_number` VARCHAR(16) NULL DEFAULT NULL,
-  `number` VARCHAR(15) NULL DEFAULT NULL,
-  `date` DATE NOT NULL,
-  `warehouse_id` INT(10) UNSIGNED NOT NULL,
-  `employee_id` INT UNSIGNED NULL DEFAULT NULL,
-  `user_id` INT UNSIGNED NULL DEFAULT NULL,
-  `comment` TEXT NULL DEFAULT NULL,
-  `creation_date` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_income_employee_idx` (`employee_id` ASC),
-  INDEX `fk_stock_income_user_idx` (`user_id` ASC),
-  INDEX `fk_stock_income_1_idx` (`warehouse_id` ASC),
-  INDEX `index_stock_income_date` (`date` ASC),
-  CONSTRAINT `fk_stock_income_1`
-    FOREIGN KEY (`warehouse_id`)
-    REFERENCES `warehouse` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_employee`
-    FOREIGN KEY (`employee_id`)
-    REFERENCES `employees` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_user`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `users` (`id`)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE)
+	  id            int unsigned auto_increment
+		  primary key,
+	  doc_number    varchar(16)  null,
+	  number        varchar(15)  null,
+	  date          date         not null,
+	  warehouse_id  int unsigned not null,
+	  user_id       int unsigned null,
+	  comment       text         null,
+	  creation_date datetime     null,
+	  INDEX `index_stock_income_date` (`date` ASC),
+	  INDEX `fk_stock_income_user_idx` (`user_id` ASC),
+	  INDEX `stock_income_warehouse_id_index` (`warehouse_id` ASC),
+	  INDEX `stock_income_doc_number_index` (`doc_number`),
+	  constraint fk_stock_income_user
+		  foreign key (user_id) references users (id)
+			  on update cascade on delete set null,
+	  constraint fk_stock_income_warehouse
+		  foreign key (warehouse_id) references warehouse (id)
+			  on update cascade
+)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8;
 
+-- -----------------------------------------------------
+-- Table `stock_income_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_income_items`
+(
+	id                     int unsigned auto_increment
+		primary key,
+	stock_income_id        int unsigned                         not null,
+	nomenclature_id        int unsigned                         not null,
+	quantity               int unsigned                         not null,
+	cost                   decimal(10, 2) unsigned default 0.00 not null,
+	certificate            varchar(40)                          null,
+	warehouse_operation_id int unsigned                         not null,
+	size_id                int unsigned                         null,
+	height_id              int unsigned                         null,
+	comment                varchar(120)                         null,
+	INDEX `index_stock_income_items_doc` (`stock_income_id` ASC),
+	INDEX `index_stock_income_items_size` (`size_id` ASC),
+	INDEX `index_stock_income_items_height` (`height_id` ASC),
+	INDEX `index_stock_income_items_nomenclature` (`nomenclature_id` ASC),
+	INDEX `index_stock_income_items_warehouse_operation` (`warehouse_operation_id` ASC),
+	constraint fk_stock_income_items_doc
+		foreign key (stock_income_id) references stock_income (id)
+			on update cascade on delete cascade,
+	constraint fk_stock_income_items_height_id
+		foreign key (height_id) references sizes (id)
+			on update cascade,
+	constraint fk_stock_income_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_stock_income_items_operation_warehouse
+		foreign key (warehouse_operation_id) references operation_warehouse (id),
+	constraint fk_stock_income_items_size
+		foreign key (size_id) references sizes (id)
+			on update cascade
+)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -----------------------------------------------------
+-- Table `stock_return`
+-- -----------------------------------------------------
+create table stock_return
+(
+	id            int unsigned auto_increment
+		primary key,
+	doc_number    varchar(16)  null,
+	date          date         not null,
+	warehouse_id  int unsigned not null,
+	employee_id   int unsigned not null,
+	user_id       int unsigned null,
+	comment       text         null,
+	creation_date datetime     null,
+	INDEX `index_stock_income_date` (`date` ASC),
+	INDEX `stock_return_doc_number_index` (`doc_number` ASC),
+	INDEX `stock_return_employee_id_index` (`employee_id` ASC),
+	INDEX `stock_income_warehouse_id_index` (`warehouse_id` ASC),
+	constraint stock_return_employees_id_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade,
+	constraint stock_return_users_id_fk
+		foreign key (user_id) references users (id)
+			on update cascade on delete set null,
+	constraint stock_return_warehouse_id_fk
+		foreign key (warehouse_id) references warehouse (id)
+			on update cascade on delete cascade
+)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -----------------------------------------------------
+-- Table `stock_return_items`
+-- -----------------------------------------------------
+create table stock_return_items
+(
+	id                          int unsigned auto_increment
+		primary key,
+	stock_return_id             int unsigned not null,
+	nomenclature_id             int unsigned not null,
+	quantity                    int unsigned not null,
+	employee_issue_operation_id int unsigned not null,
+	warehouse_operation_id      int unsigned not null,
+	size_id                     int unsigned null,
+	height_id                   int unsigned null,
+	comment_return              varchar(120) null,
+	INDEX `index_stock_return_items_doc` (`stock_return_id` ASC),
+	INDEX `index_stock_return_items_size` (`size_id` ASC),
+	INDEX `index_stock_return_items_height` (`height_id` ASC),
+	INDEX `index_stock_return_items_nomenclature` (`nomenclature_id` ASC),
+	INDEX `index_stock_return_items_warehouse_operation` (`warehouse_operation_id` ASC),
+	constraint fk_stock_return_items_doc
+		foreign key (stock_return_id) references stock_return (id)
+			on update cascade on delete cascade,
+	constraint fk_stock_return_items_height
+		foreign key (height_id) references sizes (id)
+			on update cascade,
+	constraint fk_stock_return_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_stock_return_items_operation_issue
+		foreign key (employee_issue_operation_id) references operation_issued_by_employee (id),
+	constraint fk_stock_return_items_operation_warehouse
+		foreign key (warehouse_operation_id) references operation_warehouse (id),
+	constraint fk_stock_return_items_size
+		foreign key (size_id) references sizes (id)
+			on update cascade
+)
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `sizes`
@@ -903,63 +1005,6 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- -----------------------------------------------------
--- Table `stock_income_detail`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_income_detail` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `stock_income_id` INT UNSIGNED NOT NULL,
-  `nomenclature_id` INT UNSIGNED NOT NULL,
-  `quantity` INT UNSIGNED NOT NULL,
-  `cost` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0,
-  `certificate` VARCHAR(40) NULL DEFAULT NULL,
-  `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
-  `warehouse_operation_id` INT UNSIGNED NOT NULL,
-  `size_id` INT UNSIGNED NULL DEFAULT NULL,
-  `height_id` INT UNSIGNED NULL DEFAULT NULL,
-  `comment_return` VARCHAR(120) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_stock_income_detail_stock_income_idx` (`stock_income_id` ASC),
-  INDEX `fk_stock_income_detail_nomenclature_idx` (`nomenclature_id` ASC),
-  INDEX `fk_stock_income_detail_1_idx` (`employee_issue_operation_id` ASC),
-  INDEX `fk_stock_income_detail_2_idx` (`warehouse_operation_id` ASC),
-  INDEX `fk_stock_income_detail_4_idx` (`size_id` ASC),
-  INDEX `fk_stock_income_detail_5_idx` (`height_id` ASC),
-  CONSTRAINT `fk_stock_income_detail_1`
-    FOREIGN KEY (`employee_issue_operation_id`)
-    REFERENCES `operation_issued_by_employee` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_detail_2`
-    FOREIGN KEY (`warehouse_operation_id`)
-    REFERENCES `operation_warehouse` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_stock_income_detail_nomenclature`
-    FOREIGN KEY (`nomenclature_id`)
-    REFERENCES `nomenclature` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_detail_stock_income`
-    FOREIGN KEY (`stock_income_id`)
-    REFERENCES `stock_income` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_detail_4`
-    FOREIGN KEY (`size_id`)
-    REFERENCES `sizes` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_stock_income_detail_5`
-    FOREIGN KEY (`height_id`)
-    REFERENCES `sizes` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 -- -----------------------------------------------------
 -- Table `stock_write_off`

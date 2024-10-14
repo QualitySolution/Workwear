@@ -531,3 +531,198 @@ drop table wear_cards_vacations;
 drop table wear_cards;
 
 drop table objects;
+
+-- Разделяем документ поступления и возврата
+
+-- Документ возврата
+create table stock_return
+(
+	id            int unsigned auto_increment
+		primary key,
+	doc_number    varchar(16)  null,
+	date          date         not null,
+	warehouse_id  int unsigned not null,
+	employee_id   int unsigned not null,
+	user_id       int unsigned null,
+	comment       text         null,
+	creation_date datetime     null,
+	constraint stock_return_employees_id_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade,
+	constraint stock_return_users_id_fk
+		foreign key (user_id) references users (id)
+			on update cascade on delete set null,
+	constraint stock_return_warehouse_id_fk
+		foreign key (warehouse_id) references warehouse (id)
+			on update cascade on delete cascade
+);
+
+create index stock_return_date_index
+	on stock_return (date);
+
+create index stock_return_doc_number_index
+	on stock_return (doc_number);
+
+create index stock_return_employee_id_index
+	on stock_return (employee_id);
+
+create index stock_income_warehouse_id_index
+	on stock_return (warehouse_id);
+
+create table stock_return_items
+(
+	id                          int unsigned auto_increment
+		primary key,
+	stock_return_id             int unsigned not null,
+	nomenclature_id             int unsigned not null,
+	quantity                    int unsigned not null,
+	employee_issue_operation_id int unsigned not null,
+	warehouse_operation_id      int unsigned not null,
+	size_id                     int unsigned null,
+	height_id                   int unsigned null,
+	comment_return              varchar(120) null,
+	constraint fk_stock_return_items_doc
+		foreign key (stock_return_id) references stock_return (id)
+			on update cascade on delete cascade,
+	constraint fk_stock_return_items_height
+		foreign key (height_id) references sizes (id)
+			on update cascade,
+	constraint fk_stock_return_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_stock_return_items_operation_issue
+		foreign key (employee_issue_operation_id) references operation_issued_by_employee (id),
+	constraint fk_stock_return_items_operation_warehouse
+		foreign key (warehouse_operation_id) references operation_warehouse (id),
+	constraint fk_stock_return_items_size
+		foreign key (size_id) references sizes (id)
+			on update cascade
+);
+
+create index index_stock_return_items_doc
+	on stock_return_items (stock_return_id);
+
+create index index_stock_return_items_height
+	on stock_return_items (height_id);
+
+create index index_stock_return_items_nomenclature
+	on stock_return_items (nomenclature_id);
+
+create index index_stock_return_items_size
+	on stock_return_items (size_id);
+
+create index index_stock_return_items_warehouse_operation
+	on stock_return_items (warehouse_operation_id);
+
+-- Перенос данных
+INSERT INTO stock_return (id, doc_number, date, warehouse_id, employee_id, user_id, comment, creation_date)
+SELECT id, doc_number, date, warehouse_id, employee_id, user_id, comment, creation_date
+FROM stock_income
+WHERE operation = 'Return';
+
+INSERT INTO stock_return_items (stock_return_id, nomenclature_id, quantity, employee_issue_operation_id, warehouse_operation_id, size_id, height_id, comment_return)
+SELECT
+	stock_income_detail.stock_income_id as stock_return_id,
+	stock_income_detail.nomenclature_id,
+	stock_income_detail.quantity,
+	stock_income_detail.employee_issue_operation_id,
+	stock_income_detail.warehouse_operation_id,
+	stock_income_detail.size_id,
+	stock_income_detail.height_id,
+	stock_income_detail.comment_return
+FROM stock_income_detail
+		 LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
+WHERE stock_income.operation = 'Return';
+
+DELETE FROM stock_income_detail WHERE stock_income_detail.stock_income_id in
+									  (SELECT stock_income.id FROM stock_income_detail
+																	   LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
+									   WHERE stock_income.operation = 'Return');
+
+DELETE FROM stock_income WHERE stock_income.operation = 'Return';
+
+-- Переименование stock_income_detail
+create table stock_income_items
+(
+	id                     int unsigned auto_increment
+		primary key,
+	stock_income_id        int unsigned                         not null,
+	nomenclature_id        int unsigned                         not null,
+	quantity               int unsigned                         not null,
+	cost                   decimal(10, 2) unsigned default 0.00 not null,
+	certificate            varchar(40)                          null,
+	warehouse_operation_id int unsigned                         not null,
+	size_id                int unsigned                         null,
+	height_id              int unsigned                         null,
+	comment                varchar(120)                         null,
+	constraint fk_stock_income_items_doc
+		foreign key (stock_income_id) references stock_income (id)
+			on update cascade on delete cascade,
+	constraint fk_stock_income_items_height_id
+		foreign key (height_id) references sizes (id)
+			on update cascade,
+	constraint fk_stock_income_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_stock_income_items_operation_warehouse
+		foreign key (warehouse_operation_id) references operation_warehouse (id),
+	constraint fk_stock_income_items_size
+		foreign key (size_id) references sizes (id)
+			on update cascade
+);
+
+create index index_stock_income_items_doc
+	on stock_income_items (stock_income_id);
+
+create index index_stock_income_items_height
+	on stock_income_items (height_id);
+
+create index index_stock_income_items_nomenclature
+	on stock_income_items (nomenclature_id);
+
+create index index_stock_income_items_size
+	on stock_income_items (size_id);
+
+create index index_stock_income_items_warehouse_operation
+	on stock_income_items (warehouse_operation_id);
+
+-- Перенос данных
+INSERT INTO stock_income_items (stock_income_id, nomenclature_id, quantity, cost, certificate, warehouse_operation_id, size_id, height_id) 
+SELECT
+	stock_income_detail.stock_income_id,
+	stock_income_detail.nomenclature_id,
+	stock_income_detail.quantity,
+	stock_income_detail.cost,
+	stock_income_detail.certificate,
+	stock_income_detail.warehouse_operation_id,
+	stock_income_detail.size_id,
+	stock_income_detail.height_id
+FROM stock_income_detail
+		 LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
+WHERE stock_income.operation = 'Enter';
+
+-- Переименования
+create index stock_income_warehouse_id_index
+	on stock_income (warehouse_id);
+drop index fk_stock_income_1_idx on stock_income;
+
+alter table stock_income
+	add constraint fk_stock_income_warehouse
+		foreign key (warehouse_id) references warehouse (id)
+			on update cascade;
+alter table stock_income
+	drop foreign key fk_stock_income_1;
+
+create index stock_income_doc_number_index
+	on stock_income (doc_number);
+
+-- Удаления
+alter table stock_income
+    drop column operation;
+
+alter table stock_income
+	drop foreign key fk_stock_income_employee;
+alter table stock_income
+	drop column employee_id;
+
+drop table stock_income_detail;

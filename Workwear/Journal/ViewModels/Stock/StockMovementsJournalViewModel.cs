@@ -61,7 +61,10 @@ namespace workwear.Journal.ViewModels.Stock
 
 			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
+			Income incomeAlias = null;
 			IncomeItem incomeItemAlias = null;
+			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeOffItemAlias = null;
@@ -177,6 +180,9 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => incomeItemAlias.Document, () => incomeAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.Document, () => returnAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeOffItemAlias, () => writeOffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => employeeIssueOperationAlias, () => employeeIssueOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -246,6 +252,9 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
+					.Select(() => returnItemAlias.Id).WithAlias(() => resultAlias.ReturnItemId)
+					.Select(() => returnItemAlias.Document.Id).WithAlias(() => resultAlias.ReturnId)
+					.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.ReturnDocNumber)
 //??? возможно не работает
 					//.SelectGroup(() => incomeItemAlias.Document.Operation).WithAlias(() => resultAlias.IncomeOperation)
 					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferItemId)

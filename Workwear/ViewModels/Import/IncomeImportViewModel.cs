@@ -11,7 +11,6 @@ using QS.Project.Journal;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
-using workwear;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -183,15 +182,7 @@ namespace Workwear.ViewModels.Import
 			progressBar.Start(DocumentsViewModels.Count, 0, "Создаём поступление");
 			foreach(var document in DocumentsViewModels) {
 				progressBar.Add();
-				Income income;
-				/*if(document.OpenAfterSave) {
-					var page = (NavigationManager as ITdiCompatibilityNavigation)?.OpenTdiTab<IncomeDocDlg>(null, OpenPageOptions.IgnoreHash);
-					income = (page.TdiTab as IncomeDocDlg).Entity;
-				}
-				else*/
-					income = new Income();
-
-				income.Operation = IncomeOperations.Enter;
+				Income income = new Income();
 				income.Warehouse = Warehouse;
 				income.Number = document.Number.ToString();
 				income.CreationDate = DateTime.Today;

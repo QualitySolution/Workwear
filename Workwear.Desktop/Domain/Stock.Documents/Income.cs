@@ -40,15 +40,6 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 		
-		//TODO Удалить
-		private IncomeOperations operation;
-		[Display (Name = "Тип операции")]
-		[PropertyChangedAlso (nameof(Title))]
-		public virtual IncomeOperations Operation {
-			get => operation;
-			set { SetField (ref operation, value, () => Operation); }
-		}
-
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
@@ -71,18 +62,7 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref items, value, () => Items); }
 		}
 		#endregion
-		public virtual string Title{
-			get{
-				switch (Operation) {
-				case IncomeOperations.Enter:
-					return $"Приходная накладная №{DocNumberText ?? Id.ToString()} от {Date:d}";
-				case IncomeOperations.Return:
-					return $"Возврат от работника №{DocNumberText ?? Id.ToString()} от {Date:d}";
-				default:
-					return null;
-				}
-			}
-		}
+		public virtual string Title => $"Приходная накладная №{DocNumberText ?? Id.ToString()} от {Date:d}";
 		
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
@@ -113,11 +93,6 @@ namespace Workwear.Domain.Stock.Documents
 		#region Строки документа
 
 		public virtual IncomeItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
-//Удалить			
-			if (Operation != IncomeOperations.Enter)
-				throw new InvalidOperationException ("Добавление номенклатуры возможно только во входящую накладную. " +
-				                                     "Возвраты должны добавляться с указанием строки выдачи.");
-
 			if(nomenclature.Type == null) {
 				//Такого в принципе быть не должно. Но бывают поломанные базы, поэтому лучше сообщить пользователю причину.
 				message.ShowMessage(ImportanceLevel.Error, "У добавляемой номенклатуры обязательно должен быть указан тип.");
@@ -138,10 +113,6 @@ namespace Workwear.Domain.Stock.Documents
 			Size size, Size height, int amount = 0, 
 			string certificate = null, decimal price = 0m, Owner owner = null)
 		{
-//Удалить			
-			if(Operation != IncomeOperations.Enter)
-				throw new InvalidOperationException("Добавление номенклатуры возможно только во входящую накладную. " +
-				                                    "Возвраты должны добавляться с указанием строки выдачи.");
 			var item = FindItem(nomenclature, size, height, owner);
 			if(item == null) {
 				item = new IncomeItem(this) {
@@ -172,18 +143,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			Items.ToList().ForEach(x => x.UpdateOperations(uow));
 		}
-	}
-	public enum IncomeOperations {
-		/// <summary>
-		/// Приходная накладная
-		/// </summary>
-		[Display(Name = "Приходная накладная")]
-		Enter,
-		/// <summary>
-		/// Возврат от работника
-		/// </summary>
-		[Display(Name = "Возврат от работника")]
-		Return,
 	}
 }
 

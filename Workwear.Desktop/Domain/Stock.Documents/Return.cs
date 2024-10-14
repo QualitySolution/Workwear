@@ -41,15 +41,6 @@ namespace Workwear.Domain.Stock.Documents
 			set => DocNumber = (AutoDocNumber || value == "авто") ? null : value;
 		}
 		
-		//TODO Перенести
-		private IncomeOperations operation;
-		[Display (Name = "Тип операции")]
-		[PropertyChangedAlso (nameof(Title))]
-		public virtual IncomeOperations Operation {
-			get => operation;
-			set { SetField (ref operation, value, () => Operation); }
-		}
-
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
@@ -84,7 +75,7 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
-			if(Operation == IncomeOperations.Return && EmployeeCard == null)
+			if(EmployeeCard == null)
 				yield return new ValidationResult ("Сотрудник должен быть указан", 
 					new[] { this.GetPropertyName (o => o.EmployeeCard)});
 
@@ -96,21 +87,20 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
 		
-			if(Operation == IncomeOperations.Return && EmployeeCard != null)
+			if(EmployeeCard != null)
 				foreach (var item in items) {
 					if(item.IssuedEmployeeOnOperation == null || item.IssuedEmployeeOnOperation.Employee != EmployeeCard)
 						yield return new ValidationResult(
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
 							new[] { nameof(Items) });
 				}
-			
-			if(Operation == IncomeOperations.Return)
-				foreach (var item in items) {
-					if(item.Nomenclature == null)
-						yield return new ValidationResult(
-							$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.", 
-							new[] { nameof(Items) });
-				}
+
+			foreach(var item in items) {
+				if(item.Nomenclature == null)
+					yield return new ValidationResult(
+						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
+						new[] { nameof(Items) });
+			}
 		}
 
 		#endregion
