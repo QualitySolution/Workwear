@@ -17213,7 +17213,7 @@
             <property name="MemberName" />
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gamma.Widgets.yImageViewer" id="yimagePhoto">
+              <widget class="QS.Widgets.ImageViewer" id="yimagePhoto">
                 <property name="MemberName" />
                 <property name="VerticalFit">True</property>
                 <property name="HorizontalFit">True</property>
