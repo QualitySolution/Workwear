@@ -146,6 +146,7 @@
     <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\WriteOffActViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
@@ -479,6 +480,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
     <Compile Include="ReportParameters\Views\ClothingServiceReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
+    <Compile Include="ReportParameters\Views\WriteOffActView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WriteOffActView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
