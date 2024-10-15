@@ -205,6 +205,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionSpecCoinsBalance;
 
+	private global::Gtk.Action ActionWriteOffAct;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -551,6 +553,9 @@ public partial class MainWindow
 		this.ActionSpecCoinsBalance = new global::Gtk.Action("ActionSpecCoinsBalance", global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ"), null, null);
 		this.ActionSpecCoinsBalance.ShortLabel = global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ");
 		w1.Add(this.ActionSpecCoinsBalance, null);
+		this.ActionWriteOffAct = new global::Gtk.Action("ActionWriteOffAct", global::Mono.Unix.Catalog.GetString("Справка по списаниям"), null, null);
+		this.ActionWriteOffAct.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по списаниям");
+		w1.Add(this.ActionWriteOffAct, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -623,19 +628,20 @@ public partial class MainWindow
 				"Detail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedShee" +
 				"tSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><menuitem name=\'ActionAmo" +
 				"untEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'Action" +
-				"AmountIssuedWear\' action=\'ActionAmountIssuedWear\'/><menuitem name=\'ActionProvisi" +
-				"on\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' a" +
-				"ction=\'ActionBarcodeCompletenessReport\'/><menuitem name=\'ActionClothingServiceRe" +
-				"port\' action=\'ActionClothingServiceReport\'/></menu><menu name=\'ActionHelp\' actio" +
-				"n=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'" +
-				"ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionH" +
-				"istory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionU" +
-				"pdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent" +
-				"\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></menu><me" +
-				"nuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'Ac" +
-				"tionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionPay\' action=\'Ac" +
-				"tionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem nam" +
-				"e=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"AmountIssuedWear\' action=\'ActionAmountIssuedWear\'/><menuitem name=\'ActionWriteOf" +
+				"fAct\' action=\'ActionWriteOffAct\'/><menuitem name=\'ActionProvision\' action=\'Actio" +
+				"nProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' action=\'ActionBarc" +
+				"odeCompletenessReport\'/><menuitem name=\'ActionClothingServiceReport\' action=\'Act" +
+				"ionClothingServiceReport\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><m" +
+				"enuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\'" +
+				" action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'A" +
+				"ctionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><me" +
+				"nuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name" +
+				"=\'ActionChannelStable\' action=\'ActionChannelStable\'/></menu><menuitem name=\'Acti" +
+				"onUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=" +
+				"\'ActionSite\'/><separator/><menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuit" +
+				"em name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' a" +
+				"ction=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -849,5 +855,6 @@ public partial class MainWindow
 		this.Action43.Activated += new global::System.EventHandler(this.OnProtectionToolsCategoriesActivated);
 		this.ActionClothingServiceReport.Activated += new global::System.EventHandler(this.OnActionClothingServiceReportActivated);
 		this.ActionSpecCoinsBalance.Activated += new global::System.EventHandler(this.OnActionSpecCoinsBalanceActivated);
+		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
 	}
 }

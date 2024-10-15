@@ -5857,6 +5857,12 @@
         <property name="ShortLabel" translatable="yes">Баланс Спецкойнов Ⓢ</property>
         <signal name="Activated" handler="OnActionSpecCoinsBalanceActivated" />
       </action>
+      <action id="ActionWriteOffAct">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Справка по списаниям</property>
+        <property name="ShortLabel" translatable="yes">Справка по списаниям</property>
+        <signal name="Activated" handler="OnActionWriteOffActActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5973,6 +5979,7 @@
                 </node>
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
+                <node type="Menuitem" action="ActionWriteOffAct" />
                 <node type="Menuitem" action="ActionProvision" />
                 <node type="Menuitem" action="ActionBarcodeCompletenessReport" />
                 <node type="Menuitem" action="ActionClothingServiceReport" />

@@ -878,9 +878,6 @@
     <Content Include="Reports\Documents\PostomatWithdrawSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\Documents\WriteOffSheet.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\Employee\IssuedSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

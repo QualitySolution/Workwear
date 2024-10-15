@@ -883,4 +883,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionSpecCoinsBalanceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<SpecCoinsBalanceJournalViewModel>(null);
 	}
+
+	protected void OnActionWriteOffActActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WriteOffActViewModel));
+	}
 }
