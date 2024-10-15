@@ -24,6 +24,7 @@ using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Project.Versioning;
+using QS.Project.Versioning.ViewModels;
 using QS.Project.Views;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
@@ -523,7 +524,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RunChangeLogDlg");
-		QSMain.RunChangeLogDlg(this);
+		NavigationManager.OpenViewModel<ChangeLogViewModel>(null);
 	}
 
 	protected void OnActionUpdateActivated(object sender, EventArgs e) {
