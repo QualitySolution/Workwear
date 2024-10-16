@@ -961,4 +961,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionCausesWriteOffActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<CauseWriteOffJournalViewModel>(null);
 	}
+
+	protected void OnActionWriteOffActActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WriteOffActViewModel));
+	}
 }

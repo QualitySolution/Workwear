@@ -56,7 +56,7 @@ namespace Workwear.ReportParameters.Views
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
-			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("ybutton");
+			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox1.Add(this.buttonRun);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonRun]));
 			w4.PackType = ((global::Gtk.PackType)(1));
