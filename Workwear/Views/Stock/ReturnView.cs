@@ -31,9 +31,6 @@ namespace Workwear.Views.Stock {
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
-			//yentryEmployee.Binding
-			//	.AddBinding(ViewModel, vm => vm.CanEditEmployee, w => w.Sensitive)
-			//	.InitializeFromSource();
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel; 
 			entityWarehouseIncome.Binding.
 				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
@@ -68,17 +65,13 @@ namespace Workwear.Views.Stock {
 				.AddColumn("Количество")
 					.AddNumericRenderer(i => i.Amount)
 					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(2)
-					.AddSetter((w, item) => w.Adjustment.Upper = item.MaxAmount)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Отметка о износе")
 					.AddTextRenderer(e => e.СommentReturn)
 					.Editable()
 				.Finish();
-			//ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
-			//ytreeItems.ButtonReleaseEvent += YtreeItemsButtonReleaseEvent;
 			
 			ytreeItems.ItemsDataSource = ViewModel.Items;
-			//yAutoNumber
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
 			yvboxItems.Binding
 				.AddBinding(ViewModel, vm => vm.CanEditItems, w => w.Sensitive)

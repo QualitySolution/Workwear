@@ -24,23 +24,6 @@ namespace Workwear.Domain.Stock.Documents
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
-
-		//TODO Перенести
-		public virtual bool SensitiveDocNumber => !AutoDocNumber;
-		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumberText))]
-		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public virtual bool AutoDocNumber {
-			get => autoDocNumber;
-			set => SetField(ref autoDocNumber, value);
-		}
-		
-		//TODO Перенести
-		public virtual string DocNumberText {
-			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
-			set => DocNumber = (AutoDocNumber || value == "авто") ? null : value;
-		}
-		
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
@@ -99,6 +82,10 @@ namespace Workwear.Domain.Stock.Documents
 				if(item.Nomenclature == null)
 					yield return new ValidationResult(
 						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
+						new[] { nameof(Items) });
+				if(item.Amount > item.MaxAmount)
+					yield return new ValidationResult(
+						$" \"{item.ItemName}\" указано колличество больше выданного.",
 						new[] { nameof(Items) });
 			}
 		}

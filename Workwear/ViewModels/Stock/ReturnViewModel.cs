@@ -31,6 +31,7 @@ namespace Workwear.ViewModels.Stock {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
+			IUserService userService,
 			StockRepository stockRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
@@ -42,11 +43,13 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
-			if(Entity.Id == 0) {
+			if(UoW.IsNew) {
+				logger.Info("Создание Нового документа выдачи");
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.EmployeeCard = employee;
-				Entity.Warehouse = warehouse ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			}
-			
+				Entity.Warehouse = warehouse ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			} else 
+				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			var entryBuilder = new CommonEEVMBuilderFactory<Return>(this, Entity, UoW, navigation, autofacScope);
 			
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
@@ -88,19 +91,6 @@ namespace Workwear.ViewModels.Stock {
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
 		
-		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumberText))]
-		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public virtual bool AutoDocNumber {
-			get => autoDocNumber;
-			set => SetField(ref autoDocNumber, value);
-		}
-
-		public virtual string DocNumberText {
-			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
-			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
-		}
-		
 		private ReturnItem selectedItem;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanSetNomenclature))]
@@ -113,14 +103,30 @@ namespace Workwear.ViewModels.Stock {
 		
 		#region Свойства для View
 
-		public bool CanEditEmployee;// => DocID == 0;
-		public virtual bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanEditEmployee;
 		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
 		public virtual bool CanSetNomenclature => SelectedItem != null;
 		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
+		}
 		#endregion
 
 		#region Методы
@@ -156,8 +162,6 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		public void SetNomenclature(ReturnItem item) {
-			//var selectJournal = MainClass.MainWin.NavigationManager
-			//	.OpenViewModelOnTdi<NomenclatureJournalViewModel>(MyTdiDialog, OpenPageOptions.AsSlave);
 			var selectJournal = NavigationManager.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.Filter.ProtectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools; 
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
