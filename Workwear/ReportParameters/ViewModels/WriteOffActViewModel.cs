@@ -8,7 +8,7 @@ namespace Workwear.ReportParameters.ViewModels {
 	public class WriteOffActViewModel: ReportParametersViewModelBase {
 		public WriteOffActViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) 
 		{
-			Title = "Отчёт по актам списания";
+			Title = "Справка по списаниям";
 			Identifier = "WriteOffAct";
 		}
 		protected override Dictionary<string, object> Parameters => SetParameters();
