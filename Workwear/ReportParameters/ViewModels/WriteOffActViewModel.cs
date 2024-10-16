@@ -11,19 +11,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			Title = "Справка по списаниям";
 			Identifier = "WriteOffAct";
 		}
-		protected override Dictionary<string, object> Parameters => SetParameters();
 
-		private Dictionary<string, object> SetParameters() {
-			var parameters = new Dictionary<string, object>();
-			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
-				parameters.Add("start_date", StartDate ?? DateTime.MinValue);
-				parameters.Add("end_date", EndDate ?? DateTime.MaxValue);
-			}
-			return parameters;
-		}
+		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
+			{ "start_date", StartDate },
+			{ "end_date", EndDate },
+		};
+		
 		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
 		private DateTime? endDate =  DateTime.Now;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set {
@@ -31,7 +26,6 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensetiveLoad));
 			}
 		}
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set {

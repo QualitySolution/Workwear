@@ -13,6 +13,9 @@ namespace Workwear.ReportParameters.Views {
 			buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensetiveLoad,w=>w.Sensitive).InitializeFromSource();
 		}
-		protected void OnButtonRunClicked(object sender, EventArgs e) => ViewModel.LoadReport();
+
+		protected void OnButtonRunClicked(object sender, EventArgs e) {
+			ViewModel.LoadReport();
+		}
 	}
 }
