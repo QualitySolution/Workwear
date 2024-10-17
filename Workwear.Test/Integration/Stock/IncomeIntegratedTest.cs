@@ -173,17 +173,7 @@ namespace Workwear.Test.Integration.Stock
 				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
-/*
-var income = new Income {
-	Warehouse = warehouse,
-	Date = new DateTime(2017, 1, 1),
-	Operation = IncomeOperations.Enter
-};
-var incomeItem1 = income.AddItem(nomenclature, ask);
-incomeItem1.Amount = 10;
-income.UpdateOperations(uow, ask);
-uow.Save(income);
-*/
+
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.ColDayAheadOfShedule.Returns(0);
 				

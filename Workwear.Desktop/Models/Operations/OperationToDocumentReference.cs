@@ -13,7 +13,6 @@ namespace Workwear.Models.Operations
 		public int? ExpenceItemId;
 		public int? IncomeId;
 		public int? ReturnId;
-//public IncomeOperations? IncomeOperation;
 		public int? IncomeItemId;
 		public int? ReturnItemId;
 		public int? CollectiveExpenseId;

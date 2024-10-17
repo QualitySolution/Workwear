@@ -341,23 +341,6 @@ namespace Workwear.Domain.Operations
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
-
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item) {
-			//Внимание здесь сравниваются даты без времени.
-			if(item.Document.Date.Date != OperationTime.Date)
-				OperationTime = item.Document.Date;
-			
-			Nomenclature = item.Nomenclature;
-			WearSize = item.WearSize;
-			Height = item.Height;
-			WearPercent = item.WearPercent;
-			Issued = 0;
-			Returned = item.Amount;
-			WarehouseOperation = item.WarehouseOperation;
-			NormItem = null;
-			ExpiryByNorm = null;
-			AutoWriteoffDate = null;
-		}
 		
 		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
 			//Внимание здесь сравниваются даты без времени.

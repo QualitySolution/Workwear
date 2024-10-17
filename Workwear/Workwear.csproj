@@ -675,7 +675,6 @@
     <Folder Include="ReportsDlg\" />
     <Folder Include="Dialogs\" />
     <Folder Include="Representations\" />
-    <Folder Include="Dialogs\Stock\" />
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Representations\Organization\" />
     <Folder Include="Views\" />

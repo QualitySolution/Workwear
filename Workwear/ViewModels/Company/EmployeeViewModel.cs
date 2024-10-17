@@ -285,7 +285,6 @@ namespace Workwear.ViewModels.Company
 
 						if(Entity.UsedNorms.Any(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)))
 						   && interactive.Question("Заменить нормы от старой должности нормами от новой должности?")) {
-//681								Entity.UsedNorms.RemoveAll(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)));
 							Entity.NormFromPost(UoW, NormRepository, value);
 						}
 

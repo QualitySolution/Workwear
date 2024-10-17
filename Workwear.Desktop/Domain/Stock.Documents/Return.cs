@@ -102,7 +102,7 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 			var newItem = new ReturnItem(this) {
-				//FIXME не учитываютсяч другие операуии (потенциальные списания)
+				//FIXME не учитываются другие операции (потенциальные списания)
 				Amount = count != -1 ? count : issuedOperation.Issued,
 				Nomenclature = issuedOperation.Nomenclature,
 				WearSize = issuedOperation.WearSize,

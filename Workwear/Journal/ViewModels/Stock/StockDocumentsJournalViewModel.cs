@@ -102,6 +102,8 @@ namespace workwear.Journal.ViewModels.Stock
 
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
+				() => incomeAlias.DocNumber,
+				() => incomeAlias.Comment,
 				() => authorAlias.Name
 			));
 
@@ -142,7 +144,9 @@ namespace workwear.Journal.ViewModels.Stock
 				returnQuery.Where(x => x.Warehouse == Filter.Warehouse);
 
 			returnQuery.Where(GetSearchCriterion(
-				() => resultAlias.Id,
+				() => returnAlias.Id,
+				() => returnAlias.DocNumber,
+				() => returnAlias.Comment,
 				() => authorAlias.Name,
 				() => employeeAlias.LastName,
 				() => employeeAlias.FirstName,
