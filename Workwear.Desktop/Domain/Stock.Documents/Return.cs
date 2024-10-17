@@ -72,7 +72,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 			if(EmployeeCard != null)
 				foreach (var item in items) {
-					if(item.IssuedEmployeeOnOperation == null || item.IssuedEmployeeOnOperation.Employee != EmployeeCard)
+					if(item.IssuedEmployeeOnOperation == null || !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, EmployeeCard))
 						yield return new ValidationResult(
 							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
 							new[] { nameof(Items) });
@@ -91,10 +91,9 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#endregion
-		//public Income () { }
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count = -1) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -103,7 +102,8 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 			var newItem = new ReturnItem(this) {
-				Amount = count,
+				//FIXME не учитываютсяч другие операуии (потенциальные списания)
+				Amount = count != -1 ? count : issuedOperation.Issued,
 				Nomenclature = issuedOperation.Nomenclature,
 				WearSize = issuedOperation.WearSize,
 				Height = issuedOperation.Height,
@@ -118,10 +118,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(ReturnItem item) {
 			Items.Remove (item);
 		}
-//????????????????
-		public virtual ReturnItem FindItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => Items
-			.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id
-			                     && i.Height == height && i.WearSize == size && i.Owner == owner);
 		#endregion
 
 		public virtual void UpdateOperations(IUnitOfWork uow) {

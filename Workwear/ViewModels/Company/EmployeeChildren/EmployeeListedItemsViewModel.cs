@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
 using workwear;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Stock.Documents;
 using workwear.Representations.Organization;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
@@ -73,9 +76,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
-		public void ReturnWear()
+		public void ReturnWear(EmployeeBalanceVMNode node)
 		{
-			//navigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+			var  page = navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, EmployeeCard>
+				(employeeViewModel,EntityUoWBuilder.ForCreate(),Entity);
+			page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
 		public void WriteOffWear()

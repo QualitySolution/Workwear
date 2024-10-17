@@ -346,8 +346,7 @@ namespace Workwear.Domain.Operations
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
-
-			//Employee = item.Document.EmployeeCard;
+			
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
 			Height = item.Height;
@@ -355,8 +354,6 @@ namespace Workwear.Domain.Operations
 			Issued = 0;
 			Returned = item.Amount;
 			WarehouseOperation = item.WarehouseOperation;
-			//IssuedOperation = item.IssuedEmployeeOnOperation;
-			//protectionTools = item.IssuedEmployeeOnOperation?.ProtectionTools;
 			NormItem = null;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;

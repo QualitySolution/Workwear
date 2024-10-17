@@ -53,7 +53,6 @@ namespace workwear.Journal.ViewModels.Stock
 				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
-			//dataLoader.AddQuery(QueryIncomeDoc);
 			dataLoader.AddQuery(QueryIncome);
 			dataLoader.AddQuery(QueryReturn);
 			dataLoader.AddQuery(QueryExpenseDoc);
@@ -531,8 +530,6 @@ namespace workwear.Journal.ViewModels.Stock
 				string text = String.Empty;
 				if(!String.IsNullOrWhiteSpace(Employee))
 					text += $"Сотрудник: {Employee} ";
-//if(DocTypeEnum == StockDocumentType.Income)
-//	text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
 					text += $" TН №: {IncomeDocNubber} ";
 				return text;

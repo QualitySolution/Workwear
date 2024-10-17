@@ -148,8 +148,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 					docC.ProtectionTools = protectionTools;
 					UoW.Save(docC);
 					break;
-//681			case StockDocumentType.IncomeDoc:
 				case StockDocumentType.InspectionDoc:
+				case StockDocumentType.Return:
 				case StockDocumentType.WriteoffDoc:
 					//Ничего не делаем, так как в этих типах документов нет номенклатуры нормы, она только в операции.
 					break;
@@ -187,8 +187,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 						docColItem.ProtectionTools = null;
 						UoW.Save(docColItem);
 						break;
-//681					case StockDocumentType.IncomeDoc:
 					case StockDocumentType.InspectionDoc:
+					case StockDocumentType.Return:
 					case StockDocumentType.WriteoffDoc:
 						//Ничего не делаем, так как в этих типах документов нет номенклатуры нормы, она только в операции.
 						break;

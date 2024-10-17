@@ -35,7 +35,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
-		//private readonly ITdiCompatibilityNavigation tdiNavigation; //FIXME Временно пока не перепишем IncomeDocDlg на ViewModel
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 		private readonly IProgressBarDisplayable progress;
 
@@ -58,7 +57,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			//this.tdiNavigation = tdiNavigation ?? throw new ArgumentNullException(nameof(tdiNavigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));

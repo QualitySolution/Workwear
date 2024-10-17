@@ -35,6 +35,9 @@ namespace Workwear.Views.Stock {
 			entityWarehouseIncome.Binding.
 				AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
 				.InitializeFromSource();
+			labelSum.Binding
+				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
+				.InitializeFromSource();
 
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();

@@ -122,6 +122,7 @@ namespace Workwear.Domain.Stock.Documents {
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
+		//FIXME не учитывает прошлые операции (уже списанное)
 		public virtual int MaxAmount => IssuedEmployeeOnOperation?.Issued ?? 0; 
 		#endregion
 		

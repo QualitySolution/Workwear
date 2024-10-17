@@ -20,6 +20,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
@@ -33,19 +34,21 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
+			BaseParameters baseParameters,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
-					
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
 			
 			if(featuresService.Available(WorkwearFeature.Warehouses) && Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
-
+			
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
 			
@@ -53,12 +56,20 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			
+			CalculateTotal();
 		}
 
 		#region Свойства VikewModel
-		//private readonly IInteractiveMessage interactive;
 		private readonly IInteractiveService interactive;
+		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
+		private string total;
+		public string Total {
+			get => total;
+			set => SetField(ref total, value);
+		}
 		#endregion
 		
 		#region Проброс свойств документа
@@ -141,13 +152,13 @@ namespace Workwear.ViewModels.Stock {
 		private void AddItem_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			UoW.GetById<Nomenclature>(e.SelectedObjects.Select(x => x.GetId()))
 				.ToList().ForEach(n => Entity.AddItem(n, interactive));
-			//CalculateTotal();
+			CalculateTotal();
 		}
 		public void DeleteItem(IncomeItem item) {
 			Entity.RemoveItem(item); 
 			OnPropertyChanged(nameof(CanRemoveItem));
 			OnPropertyChanged(nameof(CanAddSize));
-//CalculateTotal(null, null);
+			CalculateTotal();
 		}
 		public void AddSize(IncomeItem item) {
 			if(item.Nomenclature == null)
@@ -176,7 +187,13 @@ namespace Workwear.ViewModels.Stock {
 				OnPropertyChanged(nameof(CanAddSize));
 			}
 
-			//CalculateTotal();
+			CalculateTotal();
+		}
+		
+		private void CalculateTotal() {
+			Total = $"Позиций в документе: {Entity.Items.Count}  " +
+			        $"Количество единиц: {Entity.Items.Sum(x => x.Amount)} " +
+			        $"Сумма: {Entity.Items.Sum(x => x.Amount * x.Cost)}{baseParameters.UsedCurrency}";
 		}
 		#endregion
 

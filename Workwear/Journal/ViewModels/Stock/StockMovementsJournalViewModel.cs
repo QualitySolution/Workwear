@@ -23,12 +23,14 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class StockMovmentsJournalViewModel : JournalViewModelBase
 	{
 		private readonly OpenStockDocumentsModel openDocuments;
+		public readonly FeaturesService FeaturesService;
 
 		public StockMovementsFilterViewModel Filter { get; private set; }
 
@@ -37,8 +39,10 @@ namespace workwear.Journal.ViewModels.Stock
 			IInteractiveService interactiveService, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
+			FeaturesService FeaturesService,
 			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
+			FeaturesService = FeaturesService ?? throw new ArgumentNullException(nameof(FeaturesService));
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
 			JournalFilter = Filter = autofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));

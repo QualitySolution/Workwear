@@ -36,6 +36,7 @@ namespace Workwear.ViewModels.Stock {
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
+			EmployeeIssueOperation issuedOperation = null,
 			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
@@ -64,6 +65,10 @@ namespace Workwear.ViewModels.Stock {
 			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
 			CanEditEmployee = Entity.Id == 0;
 			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
+
+			if(issuedOperation != null)
+				Entity.AddItem(issuedOperation);
+			CalculateTotal();
 		}
 
 		private void EmployeeCardEntryViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -97,6 +102,12 @@ namespace Workwear.ViewModels.Stock {
 		public virtual ReturnItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
+		}
+		
+		private string total;
+		public string Total {
+			get => total;
+			set => SetField(ref total, value);
 		}
 
 		#endregion 
@@ -132,7 +143,7 @@ namespace Workwear.ViewModels.Stock {
 		#region Методы
 
 		public void AddFromEmployee() {
-			var selectJournal = 
+			var selectJournal =
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					EmployeeCard,
@@ -143,22 +154,26 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.EmployeeSensitive = false;
 			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.Filter.CanChooseAmount = false;
-			selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionary(
+				e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(
+					k => k.Id,
+					v => ((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount == AddedAmount.One ? 1 :
+						((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount == AddedAmount.Zero ? 0 :
+						v.Balance)
+			);
 		}
-		private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e) {
-			var operations = UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
-			var addedAmount = ((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount;
-			var balance = e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
 
-			foreach (var operation in operations)
-				Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id])); 
-//CalculateTotal(null, null);
+		/// <param name="balance">Dictionary(operationId,amount)</param>
+		public void AddFromDictionary(Dictionary<int, int> balance) {
+			foreach (var operation in UoW.GetById<EmployeeIssueOperation>(balance.Select(x => x.Key)))
+				Entity.AddItem(operation, balance[operation.Id]); 
+			CalculateTotal();
 		}
 		public void DeleteItem(ReturnItem item) {
 			Entity.RemoveItem(item); 
 			OnPropertyChanged(nameof(CanRemoveItem));
 			OnPropertyChanged(nameof(CanSetNomenclature));
-//CalculateTotal(null, null);
+			CalculateTotal();
 		}
 		
 		public void SetNomenclature(ReturnItem item) {
@@ -172,11 +187,14 @@ namespace Workwear.ViewModels.Stock {
 			item.Nomenclature = UoW.GetById<Nomenclature>(selectedId);
 		}
 		
+		private void CalculateTotal() {
+			Total = $"Позиций в документе: {Entity.Items.Count}  " +
+			        $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
+		}
+
 		public override bool Save() {
 			logger.Info ("Запись документа...");
-            
-//Валидация ???			
-			
+
 			Entity.UpdateOperations(UoW);
 			if (Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
