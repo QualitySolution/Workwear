@@ -150,6 +150,7 @@
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
+    <Compile Include="ReportParameters\ViewModels\WriteOffActViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
     <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
@@ -489,6 +490,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Analytics.WarehouseForecastingView.cs" />
     <Compile Include="Views\Stock\CauseWriteOffView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.CauseWriteOffView.cs" />
+    <Compile Include="ReportParameters\Views\WriteOffActView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WriteOffActView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -864,6 +867,9 @@
     <None Include="Reports\StockBallanceReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\WriteOffAct.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Reports\ProvisionReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -5869,6 +5869,12 @@
         <property name="ShortLabel" translatable="yes">Причины списания</property>
         <signal name="Activated" handler="OnActionCausesWriteOffActivated" />
       </action>
+      <action id="ActionWriteOffAct">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Справка по списаниям</property>
+        <property name="ShortLabel" translatable="yes">Справка по списаниям</property>
+        <signal name="Activated" handler="OnActionWriteOffActActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5987,6 +5993,7 @@
                 </node>
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
+                <node type="Menuitem" action="ActionWriteOffAct" />
                 <node type="Menuitem" action="ActionProvision" />
                 <node type="Menuitem" action="ActionBarcodeCompletenessReport" />
                 <node type="Menuitem" action="ActionClothingServiceReport" />
@@ -30834,6 +30841,68 @@
           <packing>
             <property name="Position">1</property>
             <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.WriteOffActView" design-size="310 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Период списания:</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.yDatePeriodPicker" id="ydateperiodpicker">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+                <property name="StartDate">0</property>
+                <property name="EndDate">0</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="PackType">End</property>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>
