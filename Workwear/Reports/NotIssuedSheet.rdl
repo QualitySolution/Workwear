@@ -848,7 +848,7 @@
 	heightAlias.name AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
-    SUM(IF(@show_stock, ballance.SUM, null)) AS in_stock
+    IF(@show_stock, SUM(ballance.SUM), null) AS in_stock
 FROM
     wear_cards_item
     JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
@@ -867,7 +867,6 @@ FROM
     LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
     LEFT JOIN wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
     LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-    LEFT JOIN size_suitable ON sizeAlias.id = (size_suitable.size_id OR size_suitable.size_suitable_id)
     LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex, 
            IF(sex_const.sex = 'Men', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U) AS SUM
 FROM (
