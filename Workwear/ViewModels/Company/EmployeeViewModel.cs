@@ -86,6 +86,17 @@ namespace Workwear.ViewModels.Company
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 
+			if(Entity.Id == 0) {
+				if(featuresService.Employees != 0) {
+					if(featuresService.Employees <= employeeRepository.GetNumberOfEmployees()) {
+						throw new AbortCreatingPageException("Невозможно добавить нового сотрудника: количество сотрудников в базе " +
+						                                     "превышает количество сотрудников в серийном номере.",
+							"Ошибка добавления сотрудника");
+
+					}
+				}
+			}
+			
 			bool isCoinsAvailable = IsSpecCoinsAvailable();
 			VisibleSpecCoinsViews = isCoinsAvailable;
 			if (isCoinsAvailable)
