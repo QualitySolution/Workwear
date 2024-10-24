@@ -7,6 +7,7 @@ using ClosedXML.Excel;
 using Gamma.Utilities;
 using NHibernate;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Services.FileDialog;
@@ -110,11 +111,21 @@ namespace Workwear.ViewModels.Analytics {
 		}
 
 		private bool sensitiveExport = false;
+		[PropertyChangedAlso(nameof(SensitiveFill))]
 		public bool SensitiveExport {
 			get => sensitiveExport;
 			set => SetField(ref sensitiveExport, value);
 		}
 		
+		private bool sensitiveFill = true;
+		public bool SensitiveFill {
+			get => sensitiveFill && SensitiveSettings;
+			set {
+				SetField(ref sensitiveFill, value);
+				WarehouseEntry.IsEditable = value;
+			}
+		}
+
 		private Granularity granularity;
 		public Granularity Granularity {
 			get => granularity;
@@ -151,6 +162,7 @@ namespace Workwear.ViewModels.Analytics {
 
 		public void Fill() {
 			SensitiveSettings = false;
+			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
 			ProgressTotal.Start(4, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
