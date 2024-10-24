@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -212,8 +212,14 @@ namespace Workwear.ViewModels.Analytics {
 			foreach(var group in groups) {
 				ProgressLocal.Add(text: group.Key.ProtectionTools.Name.EllipsizeMiddle(100));
 				var stocks = stockBalance.ForNomenclature(group.Key.ProtectionTools.Nomenclatures.ToArray()).ToArray();
-				var sex = stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal;
-				if (sex == ClothesSex.Universal)
+				SupplyType supplyType; 
+				if(group.Key.ProtectionTools.SupplyType == SupplyType.Unisex && group.Key.ProtectionTools.SupplyNomenclatureUnisex != null)
+					supplyType = SupplyType.Unisex;
+				else if(group.Key.ProtectionTools.SupplyType == SupplyType.TwoSex && (group.Key.ProtectionTools.SupplyNomenclatureMale != null || group.Key.ProtectionTools.SupplyNomenclatureFemale != null))
+					supplyType = SupplyType.TwoSex;
+				else
+					supplyType = (stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal) == ClothesSex.Universal ? SupplyType.Unisex : SupplyType.TwoSex;
+				if (supplyType == SupplyType.Unisex)
 					result.Add(new WarehouseForecastingItem(this, group.Key, group.ToList(), stocks, ClothesSex.Universal));
 				else {
 					var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();

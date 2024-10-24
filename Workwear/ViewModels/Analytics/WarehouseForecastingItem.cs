@@ -31,8 +31,15 @@ namespace Workwear.ViewModels.Analytics {
 				.Where(x => x.Position.WearSize == Size && x.Position.Height == Height)
 				.ToArray();
 			InStock = Stocks.Sum(x => x.Amount);
-			Nomenclature = Stocks.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
-				?? ProtectionTool.Nomenclatures.FirstOrDefault();
+			if(Sex == ClothesSex.Universal && ProtectionTool.SupplyNomenclatureUnisex != null)
+				Nomenclature = ProtectionTool.SupplyNomenclatureUnisex;
+			else if(Sex == ClothesSex.Men && ProtectionTool.SupplyNomenclatureMale != null)
+				Nomenclature = ProtectionTool.SupplyNomenclatureMale;
+			else if(Sex == ClothesSex.Women && ProtectionTool.SupplyNomenclatureFemale != null)
+				Nomenclature = ProtectionTool.SupplyNomenclatureFemale;
+			else
+				Nomenclature = Stocks.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
+					?? ProtectionTool.Nomenclatures.FirstOrDefault();
 			FillForecast();
 		}
 		
