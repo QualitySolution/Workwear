@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Autofac;
+using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
@@ -20,6 +23,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -32,22 +36,26 @@ namespace Workwear.ViewModels.Stock {
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			IUserService userService,
+			EmployeeIssueModel issueModel, 
 			StockRepository stockRepository,
+			StockBalanceModel stockBalanceModel,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
-			EmployeeIssueOperation issuedOperation = null,
 			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				logger.Info("Создание Нового документа выдачи");
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				Entity.EmployeeCard = employee;
+				EmployeeCard = employee;
 				Entity.Warehouse = warehouse ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
 			} else 
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -66,8 +74,6 @@ namespace Workwear.ViewModels.Stock {
 			CanEditEmployee = Entity.Id == 0;
 			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
 
-			if(issuedOperation != null)
-				Entity.AddItem(issuedOperation);
 			CalculateTotal();
 		}
 
@@ -82,9 +88,21 @@ namespace Workwear.ViewModels.Stock {
 		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
-		public virtual EmployeeCard EmployeeCard => Entity.EmployeeCard;
 		public virtual DateTime DocDate { get => Entity.Date;set => Entity.Date = value;}
 		public virtual IObservableList<ReturnItem> Items => Entity.Items;
+		public virtual EmployeeCard EmployeeCard {
+			set {
+				if(value == null || value.Id == 0 || DomainHelper.EqualDomainObjects(EmployeeCard, value))
+					return;
+				UoW.GetById<EmployeeCard>(value.Id);
+				issueModel.PreloadEmployeeInfo(value.Id);
+				issueModel.PreloadWearItems(value.Id);
+				issueModel.FillWearInStockInfo(new[] { value }, stockBalanceModel);
+				issueModel.FillWearReceivedInfo(new[] { value });
+				Entity.EmployeeCard = value;
+			}
+			get { return Entity.EmployeeCard; }
+		}
 		#endregion
 
 		#region Свойства ViewModel
@@ -92,6 +110,8 @@ namespace Workwear.ViewModels.Stock {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		private readonly EmployeeIssueModel issueModel;
+		private readonly StockBalanceModel stockBalanceModel;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -163,10 +183,20 @@ namespace Workwear.ViewModels.Stock {
 			);
 		}
 
-		/// <param name="balance">Dictionary(operationId,amount)</param>
-		public void AddFromDictionary(Dictionary<int, int> balance) {
-			foreach (var operation in UoW.GetById<EmployeeIssueOperation>(balance.Select(x => x.Key)))
-				Entity.AddItem(operation, balance[operation.Id]); 
+		/// <param name="returningOperation">Dictionary(operationId,amount)</param>
+		public void AddFromDictionary(Dictionary<int, int> returningOperation) {
+			var operations = UoW.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(x => x.Id.IsIn(returningOperation.Select(i => i.Key).ToList()))
+				.Fetch(SelectMode.Fetch, x => x.NormItem)
+				.Fetch(SelectMode.Fetch, x => x.IssuedOperation)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.List(); 
+			foreach(var operation in operations) {
+				Entity.AddItem(operation, returningOperation[operation.Id]);
+			}
 			CalculateTotal();
 		}
 		public void DeleteItem(ReturnItem item) {

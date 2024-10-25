@@ -80,7 +80,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			var  page = navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, EmployeeCard>
 				(employeeViewModel,EntityUoWBuilder.ForCreate(),Entity);
-			page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
+			if(node != null)
+				page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
 		public void WriteOffWear()

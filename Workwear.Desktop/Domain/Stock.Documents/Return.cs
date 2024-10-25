@@ -9,7 +9,6 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Sizes;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Domain.Stock.Documents
@@ -93,7 +92,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count = -1) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int maxCount = -1) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -103,7 +102,7 @@ namespace Workwear.Domain.Stock.Documents
 			}
 			var newItem = new ReturnItem(this) {
 				//FIXME не учитываются другие операции (потенциальные списания)
-				Amount = count != -1 ? count : issuedOperation.Issued,
+				Amount = maxCount != -1 ? maxCount : issuedOperation.Issued,
 				Nomenclature = issuedOperation.Nomenclature,
 				WearSize = issuedOperation.WearSize,
 				Height = issuedOperation.Height,
@@ -129,7 +128,6 @@ namespace Workwear.Domain.Stock.Documents
 			EmployeeCard.UpdateNextIssue(Items
 				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 				.Where(x => x != null).Distinct().ToArray());
-			uow.Save(EmployeeCard);
 		}
 	}
 }

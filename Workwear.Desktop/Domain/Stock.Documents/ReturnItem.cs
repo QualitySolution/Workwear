@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
@@ -122,11 +121,16 @@ namespace Workwear.Domain.Stock.Documents {
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
-		//FIXME не учитывает прошлые операции (уже списанное)
-		public virtual int MaxAmount => IssuedEmployeeOnOperation?.Issued ?? 0; 
 		#endregion
 		
 		#region Не сохраняемые в базу свойства
+		//FIXME не учитывает прошлые операции (уже списанное)
+		private int maxAmount = -1;
+		public virtual int MaxAmount {
+			get => maxAmount == -1 ? IssuedEmployeeOnOperation.Issued : maxAmount;
+			set => maxAmount = value;
+		}
+
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
 			get => WarehouseOperation.WearPercent;
@@ -151,7 +155,6 @@ namespace Workwear.Domain.Stock.Documents {
 			document = Return;
 		}
 		
-		
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
@@ -162,7 +165,6 @@ namespace Workwear.Domain.Stock.Documents {
 
 			ReturnFromEmployeeOperation.Update(uow, this);
 			uow.Save(ReturnFromEmployeeOperation);
-
 		}
 		#endregion
 	}
