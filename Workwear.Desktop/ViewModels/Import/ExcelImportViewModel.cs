@@ -197,24 +197,24 @@ namespace Workwear.ViewModels.Import
 					interactive.ShowMessage(ImportanceLevel.Warning,$"Количество новых импортированных сотрудников превышает лимит Вашей лицензии.\n" +
 					                                                $"Лимит Вашей лицензии: {featuresService.Employees}", 
 						"Невозможно добавить сотрудников");
+					return;
 				}
 			}
-			else {
-				var start = DateTime.Now;
-				sensitiveSaveButton = false;
-				progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
-				var toSave = ImportModel.MakeToSave(ProgressStep, UoW);
-				ProgressStep.Start(toSave.Count, text: "Сохранение");
-				foreach(var item in toSave) {
-					UoW.TrySave(item);
-				}
+			var start = DateTime.Now;
+			sensitiveSaveButton = false;
+			progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
+			var toSave = ImportModel.MakeToSave(ProgressStep, UoW);
+			ProgressStep.Start(toSave.Count, text: "Сохранение");
+			foreach(var item in toSave) {
+				UoW.TrySave(item);
+			}
 
-				UoW.Commit();
-				logger.Debug(
-					$"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value} Время: {(DateTime.Now - start).TotalSeconds} сек.");
-				ProgressStep.Close();
-				Close(false, CloseSource.Save);
-			}
+			UoW.Commit();
+			logger.Debug(
+				$"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value} Время: {(DateTime.Now - start).TotalSeconds} сек.");
+			ProgressStep.Close();
+			Close(false, CloseSource.Save);
+			
 		}
 			
 		#endregion
