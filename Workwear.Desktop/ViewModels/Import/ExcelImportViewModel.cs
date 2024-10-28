@@ -55,6 +55,10 @@ namespace Workwear.ViewModels.Import
 			employeeRepository.RepoUow = UoW;
 			Title = importModel.ImportName;
 			importModel.PropertyChanged += ImportModel_PropertyChanged;
+			if((featuresService.Employees * 0.9) < employeeRepository.GetNumberOfEmployees()) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Осталось менее 10% от лимита новых сотрудников по Вашей лицензии.", 
+					"Предупреждение");
+			}
 		}
 
 		#region Общее

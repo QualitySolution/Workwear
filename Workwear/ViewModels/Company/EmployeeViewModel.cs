@@ -94,6 +94,10 @@ namespace Workwear.ViewModels.Company
 							"Ошибка добавления сотрудника");
 
 					}
+					if((featuresService.Employees * 0.9) < employeeRepository.GetNumberOfEmployees()) {
+						interactive.ShowMessage(ImportanceLevel.Warning, "Осталось менее 10% от лимита новых сотрудников по Вашей лицензии.",
+							"Предупреждение");
+					}
 				}
 			}
 			
