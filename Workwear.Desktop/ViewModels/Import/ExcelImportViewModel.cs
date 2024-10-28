@@ -42,6 +42,7 @@ namespace Workwear.ViewModels.Import
 			UnitOfWorkProvider unitOfWorkProvider,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
+			IInteractiveService interactive,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName, unitOfWorkProvider)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
@@ -50,6 +51,7 @@ namespace Workwear.ViewModels.Import
 			this.progressInterceptor = progressInterceptor;
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			employeeRepository.RepoUow = UoW;
 			Title = importModel.ImportName;
 			importModel.PropertyChanged += ImportModel_PropertyChanged;
