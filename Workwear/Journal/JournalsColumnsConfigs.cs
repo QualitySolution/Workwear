@@ -436,6 +436,13 @@ namespace workwear.Journal
 					.Finish()
 			);
 			
+			TreeViewColumnsConfigFactory.Register<CauseWriteOffJournalViewModel>(
+				() => FluentColumnsConfig<CauseWriteOffJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
+					.Finish()
+			);
+			
 			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
 				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())

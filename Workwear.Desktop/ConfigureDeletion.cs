@@ -318,6 +318,9 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<InspectionItem>()
 				.AddDeleteCascadeDependence(x => x.NewOperationIssue);
 
+			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
+				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			
 			#endregion
 			#region Пользователь
 

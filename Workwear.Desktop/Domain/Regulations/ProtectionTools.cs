@@ -59,6 +59,35 @@ namespace Workwear.Domain.Regulations
 			get => categoryForAnalytic;
 			set => SetField(ref categoryForAnalytic, value);
 		}
+		
+		private SupplyType supplyType;
+		[Display(Name = "Тип закупки")]
+		public virtual SupplyType SupplyType 
+		{
+			get => supplyType;
+			set => SetField(ref supplyType, value);
+		}
+		private Nomenclature supplyNomenclatureUnisex;
+		[Display(Name = "Закупаемая номенклатура, унисекс")]
+		public virtual Nomenclature SupplyNomenclatureUnisex 
+		{
+			get => supplyNomenclatureUnisex;
+			set => SetField(ref supplyNomenclatureUnisex, value);
+		}
+		private Nomenclature supplyNomenclatureMale;
+		[Display(Name = "Закупаемая номенклатура, мужская")]
+		public virtual Nomenclature SupplyNomenclatureMale
+		{
+			get => supplyNomenclatureMale;
+			set => SetField(ref supplyNomenclatureMale, value);
+		}
+		private Nomenclature supplyNomenclatureFemale;
+		[Display(Name = "Закупаемая номенклатура, женская")]
+		public virtual Nomenclature SupplyNomenclatureFemale
+		{
+			get => supplyNomenclatureFemale;
+			set => SetField(ref supplyNomenclatureFemale, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string GetAmountAndUnitsText(int amount) => this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
@@ -88,5 +117,12 @@ namespace Workwear.Domain.Regulations
 			Nomenclatures.Remove(nomenclature);
 		}
 		#endregion
+	}
+
+	public enum SupplyType 	{		
+		[Display(Name = "Универсально")]
+		Unisex,
+		[Display(Name = "Муж./Жен.")]
+		TwoSex,
 	}
 }

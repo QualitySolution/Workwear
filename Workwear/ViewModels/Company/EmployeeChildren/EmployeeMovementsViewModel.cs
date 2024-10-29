@@ -223,6 +223,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
 			);
 			performance.CheckPoint("Получение операций");
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());

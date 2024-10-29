@@ -166,6 +166,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Selling: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.ClothingService: //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.StockForecasting:
+				case WorkwearFeature.Dashboard:
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
 				case WorkwearFeature.IdentityCards:
@@ -256,7 +257,9 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Обслуживание спецодежды")]
 		ClothingService,
 		[Display(Name = "Продажа")]
-		Selling
+		Selling,
+		[Display(Name = "Дашборды")]
+		Dashboard,
 		#endregion
 	}
 	
