@@ -24,7 +24,7 @@ alter table protection_tools
 	add constraint protection_tools_nomenclature_uni_id_fk
 		foreign key (supply_uni_id) references nomenclature (id)
 			on update cascade on delete set null;
- create table causes_write_off
+create table causes_write_off
 (
 	id int auto_increment primary key,
 	name varchar(120) not null

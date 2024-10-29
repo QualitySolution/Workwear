@@ -1271,6 +1271,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `akt_number` VARCHAR(45) NULL DEFAULT NULL,
+  `cause_write_off_id` INT UNSIGNED NULL DEFAULT NULL,
   `cause` text null, 
   PRIMARY KEY (`id`),
   INDEX `fk_stock_write_off_detail_write_off_idx` (`stock_write_off_id` ASC),
@@ -1320,7 +1321,12 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
     FOREIGN KEY (`height_id`)
     REFERENCES `sizes` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  constraint fk_stock_write_off_detail_cause_write_off 
+	foreign key (cause_write_off_id) 
+	references causes_write_off (id)
+	on update cascade
+	on delete set null)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1547,6 +1553,15 @@ CREATE TABLE IF NOT EXISTS `wear_cards_vacations` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `causes_write_off`
+-- -----------------------------------------------------
+create table causes_write_off
+(
+	id int auto_increment primary key,
+	name varchar(120) not null
+);
+insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
 -- Table `stock_collective_expense`
