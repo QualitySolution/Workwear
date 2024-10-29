@@ -37,7 +37,7 @@ namespace Workwear.ViewModels.Import
 			IImportModel importModel, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
-			IInteractiveMessage interactiveMessage, 
+			IInteractiveService interactiveService,
 			ProgressInterceptor progressInterceptor,
 			UnitOfWorkProvider unitOfWorkProvider,
 			FeaturesService featuresService,
@@ -47,7 +47,7 @@ namespace Workwear.ViewModels.Import
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			ImportModel.Init(UoW);
-			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
+			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.progressInterceptor = progressInterceptor;
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
