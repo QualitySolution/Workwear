@@ -15,10 +15,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
 			{ "start_date", StartDate },
 			{ "end_date", EndDate },
+			{ "report_date", ReportDate}
 		};
 		
 		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
-		private DateTime? endDate =  DateTime.Now;
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set {
@@ -26,6 +26,7 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensetiveLoad));
 			}
 		}
+		private DateTime? endDate =  DateTime.Now;
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set {
@@ -33,6 +34,11 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensetiveLoad));
 			}
 		}
-		public bool SensetiveLoad => (StartDate != null && EndDate != null && startDate <= endDate);
+		private DateTime? reportDate = DateTime.Today;
+		public virtual DateTime? ReportDate {
+			get => reportDate;
+		}
+		
+		public bool SensetiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null;
 	}
 }
