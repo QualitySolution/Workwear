@@ -99,19 +99,10 @@ namespace Workwear.ViewModels.Company
 							"Ошибка добавления сотрудника");
 
 					}
-					if(featuresService.Employees <= 500) {
-						if((featuresService.Employees * 0.95) < employeeRepository.GetNumberOfEmployees()) {
-							interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
+					if(remainingEmployees <= 3) {
+						interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
 							                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
 								"Предупреждение");
-						}
-					}
-					else {
-						if((featuresService.Employees * 0.97) < employeeRepository.GetNumberOfEmployees()) {
-							interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
-							                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
-								"Предупреждение");
-						}
 					}
 					
 				}

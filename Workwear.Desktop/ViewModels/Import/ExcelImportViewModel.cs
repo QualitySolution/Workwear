@@ -59,21 +59,12 @@ namespace Workwear.ViewModels.Import
 			if(remainingEmployees < 0) {
 				remainingEmployees = 0;
 			}
-			if(featuresService.Employees != 0 && featuresService.Employees <= 500) {
-				if((featuresService.Employees * 0.95) < employeeRepository.GetNumberOfEmployees()) {
-					
-					interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
+			if(featuresService.Employees != 0 && remainingEmployees <= 3) {
+				interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
 					                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
 						"Предупреждение");
-				}
 			}
-			if(featuresService.Employees > 500) {
-				if((featuresService.Employees * 0.97) < employeeRepository.GetNumberOfEmployees()) {
-					interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
-					                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
-						"Предупреждение");
-				}
-			}
+			
 		}
 
 		#region Общее
