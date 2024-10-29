@@ -55,9 +55,24 @@ namespace Workwear.ViewModels.Import
 			employeeRepository.RepoUow = UoW;
 			Title = importModel.ImportName;
 			importModel.PropertyChanged += ImportModel_PropertyChanged;
-			if((featuresService.Employees * 0.9) < employeeRepository.GetNumberOfEmployees()) {
-				interactive.ShowMessage(ImportanceLevel.Warning, "Осталось менее 10% от лимита новых сотрудников по Вашей лицензии.", 
-					"Предупреждение");
+			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
+			if(remainingEmployees < 0) {
+				remainingEmployees = 0;
+			}
+			if(featuresService.Employees != 0 && featuresService.Employees <= 500) {
+				if((featuresService.Employees * 0.95) < employeeRepository.GetNumberOfEmployees()) {
+					
+					interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
+					                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
+						"Предупреждение");
+				}
+			}
+			if(featuresService.Employees > 500) {
+				if((featuresService.Employees * 0.97) < employeeRepository.GetNumberOfEmployees()) {
+					interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
+					                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
+						"Предупреждение");
+				}
 			}
 		}
 
@@ -87,6 +102,7 @@ namespace Workwear.ViewModels.Import
 		private readonly ProgressInterceptor progressInterceptor;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
+		private int remainingEmployees;
 		protected IWorkbook wb;
 		protected ISheet sh;
 		#endregion
@@ -197,7 +213,7 @@ namespace Workwear.ViewModels.Import
 		#region Сохранение
 		public new void Save() {
 			if(featuresService.Employees != 0) {
-				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.Counters["NewEmployee"].Count) {
+				if(remainingEmployees < CountersViewModel.Counters["NewEmployee"].Count) {
 					interactive.ShowMessage(ImportanceLevel.Warning,$"Количество новых импортированных сотрудников превышает лимит Вашей лицензии.\n" +
 					                                                $"Лимит Вашей лицензии: {featuresService.Employees}", 
 						"Невозможно добавить сотрудников");
