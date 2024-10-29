@@ -848,7 +848,7 @@
     heightAlias.name AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
-    IF(@show_stock, ballance.SUM, null) AS in_stock
+    IF(@show_stock, SUM(ballance.SUM), null) AS in_stock
 FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
