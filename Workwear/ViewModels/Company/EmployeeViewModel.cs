@@ -89,8 +89,8 @@ namespace Workwear.ViewModels.Company
 			if(Entity.Id == 0) {
 				if(featuresService.Employees != 0) {
 					if(featuresService.Employees <= employeeRepository.GetNumberOfEmployees()) {
-						throw new AbortCreatingPageException("Невозможно добавить нового сотрудника: количество сотрудников в базе " +
-						                                     "превышает количество сотрудников в серийном номере.",
+						throw new AbortCreatingPageException($"Невозможно добавить нового сотрудника: количество сотрудников в базе " +
+						                                     $"превышает лимит Вашей лицензии.\nЛимит Вашей лицензии: {featuresService.Employees}",
 							"Ошибка добавления сотрудника");
 
 					}
