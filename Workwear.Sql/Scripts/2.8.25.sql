@@ -26,13 +26,13 @@ alter table protection_tools
 			on update cascade on delete set null;
 create table causes_write_off
 (
-	id int auto_increment primary key,
+	id int unsigned auto_increment primary key,
 	name varchar(120) not null
 );
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 alter table stock_write_off_detail
-	add column cause_write_off_id int after akt_number;
+	add column cause_write_off_id int unsigned after akt_number;
 
 alter table stock_write_off_detail
 	add constraint fk_stock_write_off_detail_cause_write_off foreign key (cause_write_off_id) references causes_write_off (id)

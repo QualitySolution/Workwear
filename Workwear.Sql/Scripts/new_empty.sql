@@ -764,6 +764,10 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `name` VARCHAR(800) NOT NULL,
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
+  supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
+  supply_uni_id int(10) unsigned null,
+  supply_male_id int(10) unsigned null,
+  supply_female_id int(10) unsigned null,
   `comments` TEXT NULL DEFAULT NULL,
   `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -773,6 +777,15 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
     REFERENCES `item_types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
+  constraint protection_tools_nomenclature_female_id_fk
+	foreign key (supply_female_id) references nomenclature (id)
+	on update cascade on delete set null,
+  constraint protection_tools_nomenclature_male_id_fk
+	foreign key (supply_male_id) references nomenclature (id)
+	on update cascade on delete set null,
+  constraint protection_tools_nomenclature_uni_id_fk
+	foreign key (supply_uni_id) references nomenclature (id)
+	on update cascade on delete set null,
   CONSTRAINT `FK_protection_tools_category_for_analytics`
 	FOREIGN KEY (`category_for_analytic_id`)
 	REFERENCES `protection_tools_category_for_analytics` (`id`)
@@ -1558,7 +1571,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 create table causes_write_off
 (
-	id int auto_increment primary key,
+	id int UNSIGNED auto_increment primary key,
 	name varchar(120) not null
 );
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
