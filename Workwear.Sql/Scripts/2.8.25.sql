@@ -29,7 +29,7 @@ alter table protection_tools
 	id int auto_increment primary key,
 	name varchar(120) not null
 );
-insert into causes_write_off (name) values ('увольнение'), ('преждевременный износ'), ('изменение должности'), ('прочее');
+insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 alter table stock_write_off_detail
 	add column cause_write_off_id int after akt_number;
