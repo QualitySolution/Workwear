@@ -3,7 +3,7 @@
   <Description>Отчет по перемещениям между складами</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>8.5in</PageWidth>
+  <PageWidth>13in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -14,46 +14,50 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    convert(operation_time, date) AS 'operation_time',
+   TO_CHAR(operation_time, 'dd.mm.yyyy') AS 'operation_time',
     nomenclature.number AS 'nomenclature_number',
     nomenclature.name AS 'nomenclature_name',
     IF(heightAlias.name is null, sizeAlias.name, CONCAT(sizeAlias.name, '/',heightAlias.name)) AS 'size',
     amount,
     nomenclature.sale_cost,
     nomenclature.sale_cost * amount as 'sum',
-    operation_warehouse.warehouse_receipt_id,
-    operation_warehouse.warehouse_expense_id
+    w1.name as 'warehouse_receipt_name',
+    w2.name as 'warehouse_expense_name'
 FROM operation_warehouse
          LEFT JOIN stock_transfer_detail on stock_transfer_detail.warehouse_operation_id = operation_warehouse.id
          LEFT JOIN stock_transfer on stock_transfer_detail.stock_transfer_id = stock_transfer.id
          LEFT JOIN nomenclature on operation_warehouse.nomenclature_id = nomenclature.id
          LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
          LEFT JOIN sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
-         LEFT JOIN warehouse on operation_warehouse.warehouse_receipt_id = warehouse.id
+         LEFT JOIN warehouse w1 ON operation_warehouse.warehouse_receipt_id = w1.id
+         LEFT JOIN warehouse w2 ON operation_warehouse.warehouse_expense_id = w2.id
 WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehouse.operation_time &lt;= @end_date                                                                                                        
-  AND operation_warehouse.owner_id IS NULL
+  AND operation_warehouse.owner_id = @owner_id
   AND operation_warehouse.warehouse_expense_id = @warehouse_expense_id
   AND operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
-            <Value>{?start_date}</Value>
+            <Value>={?start_date}</Value>
           </QueryParameter>
           <QueryParameter Name="end_date">
-            <Value>{?end_date}
+            <Value>={?end_date}
 </Value>
           </QueryParameter>
           <QueryParameter Name="warehouse_receipt_id">
-            <Value>{?warehouse_receipt_id}</Value>
+            <Value>={?warehouse_receipt_id}</Value>
           </QueryParameter>
           <QueryParameter Name="warehouse_expense_id">
-            <Value>{?warehouse_expense_id}</Value>
+            <Value>={?warehouse_expense_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="owner_id">
+            <Value>={?owner_id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
         <Field Name="operation_time">
           <DataField>operation_time</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
@@ -79,13 +83,13 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
           <DataField>sum</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="warehouse_receipt_id">
-          <DataField>warehouse_receipt_id</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+        <Field Name="warehouse_receipt_name">
+          <DataField>warehouse_receipt_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="warehouse_expense_id">
-          <DataField>warehouse_expense_id</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+        <Field Name="warehouse_expense_name">
+          <DataField>warehouse_expense_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -102,9 +106,9 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -123,31 +127,31 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>1.75in</Width>
+            <Width>109.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.375in</Width>
+            <Width>104.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.125in</Width>
-          </TableColumn>
-          <TableColumn>
-            <Width>1in</Width>
+            <Width>108.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.125in</Width>
+            <Width>134.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>80.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.5in</Width>
+            <Width>67.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.5in</Width>
+            <Width>98.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>120.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -158,13 +162,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>operation_time</Value>
+                      <Value>Дата перемещения</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -172,13 +178,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>nomenclature_number</Value>
+                      <Value>Склад списания</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -186,13 +194,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
-                      <Value>nomenclature_name</Value>
+                      <Value>Склад получения</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -200,13 +210,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox5">
-                      <Value>size</Value>
+                      <Value>Артикул</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -214,13 +226,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>amount</Value>
+                      <Value>Наименование СИЗ</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -228,13 +242,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>sale_cost</Value>
+                      <Value>Размер</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -242,13 +258,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
-                      <Value>sum</Value>
+                      <Value>Количество</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -256,13 +274,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox9">
-                      <Value>warehouse_receipt_id</Value>
+                      <Value>Цена без НДС</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -270,13 +290,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox10">
-                      <Value>warehouse_expense_id</Value>
+                      <Value>Стоимость без НДС</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -308,13 +330,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="nomenclature_number">
-                      <Value>=Fields!nomenclature_number.Value</Value>
+                      <Value>=Fields!warehouse_expense_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -322,13 +346,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="nomenclature_name">
-                      <Value>=Fields!nomenclature_name.Value</Value>
+                      <Value>=Fields!warehouse_receipt_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -336,13 +362,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="size">
-                      <Value>=Fields!size.Value</Value>
+                      <Value>=Fields!nomenclature_number.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -350,13 +378,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="amount">
-                      <Value>=Fields!amount.Value</Value>
+                      <Value>=Fields!nomenclature_name.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -364,7 +394,7 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="sale_cost">
-                      <Value>=Fields!sale_cost.Value</Value>
+                      <Value>=Fields!size.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -372,6 +402,8 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -379,7 +411,7 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="sum">
-                      <Value>=Fields!sum.Value</Value>
+                      <Value>=Fields!amount.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -387,6 +419,8 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Right</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -394,13 +428,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="warehouse_receipt_id">
-                      <Value>=Fields!warehouse_receipt_id.Value</Value>
+                      <Value>=Fields!sale_cost.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -408,13 +444,15 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="warehouse_expense_id">
-                      <Value>=Fields!warehouse_expense_id.Value</Value>
+                      <Value>=Fields!sum.Value</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -423,6 +461,8 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
             </TableRow>
           </TableRows>
         </Details>
+        <Left>0.0pt</Left>
+        <Top>0.8pt</Top>
       </Table>
     </ReportItems>
     <Height>36pt</Height>
@@ -495,6 +535,18 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="warehouse_expense_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="owner_id">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
