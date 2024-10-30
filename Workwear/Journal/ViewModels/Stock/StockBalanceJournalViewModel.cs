@@ -75,6 +75,11 @@ namespace workwear.Journal.ViewModels.Stock
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			Owner ownerAlias = null;
+			
+			var onDate = Filter.Date.AddDays(1);
+			// Если дата не указана, то берем склад на сегодня. Добавляем 10 лет, чтобы исключить падение, так как мы от этой даты отнимаем год.
+			if(onDate <= default(DateTime).AddYears(10))
+				onDate = DateTime.Today.AddDays(1);
 
 			// null == null => null              null <=> null => true
 			var expenseQuery = QueryOver.Of(() => warehouseExpenseOperationAlias)
@@ -86,7 +91,7 @@ namespace workwear.Journal.ViewModels.Stock
 				             && (warehouseExpenseOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
 				                 || warehouseExpenseOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseExpenseOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
+				.Where(e => e.OperationTime < onDate);
 
 			if(Filter.Warehouse == null)
 				expenseQuery.Where(x => x.ExpenseWarehouse != null);
@@ -113,7 +118,7 @@ namespace workwear.Journal.ViewModels.Stock
 				             && (warehouseIncomeOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
 				                 || warehouseIncomeOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseIncomeOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < Filter.Date.AddDays(1));
+				.Where(e => e.OperationTime < onDate);
 			if(Filter.Warehouse == null)
 				incomeSubQuery.Where(x => x.ReceiptWarehouse != null);
 			else
@@ -164,7 +169,7 @@ namespace workwear.Journal.ViewModels.Stock
 				             && (warehouseExpenseYearOperationAlias.Owner.Id == warehouseOperationAlias.Owner.Id
 				                 || warehouseExpenseYearOperationAlias.Owner == null && warehouseOperationAlias.Owner == null)
 				             && warehouseExpenseYearOperationAlias.WearPercent == warehouseOperationAlias.WearPercent)
-				.Where(e => e.OperationTime < Filter.Date.AddDays(1) && e.OperationTime >= Filter.Date.AddYears(-1));
+				.Where(e => e.OperationTime < onDate && e.OperationTime >= onDate.AddYears(-1));
 
 			if(Filter.Warehouse == null)
 				expenseYearQuery.Where(x => x.ExpenseWarehouse != null);
@@ -194,7 +199,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 				.SelectList(list => list
 			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.Id)
-			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
+			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
 			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
 			   .Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
@@ -261,7 +266,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class StockBalanceJournalNode
 	{
 		public int Id { get; set; }
-		public int NomeclatureId { get; set; }
+		public int NomenclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
