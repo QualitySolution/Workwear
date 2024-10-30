@@ -492,6 +492,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.CauseWriteOffView.cs" />
     <Compile Include="ReportParameters\Views\WriteOffActView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WriteOffActView.cs" />
+    <Compile Include="ReportParameters\Views\WarehouseTransferReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WarehouseTransferReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
