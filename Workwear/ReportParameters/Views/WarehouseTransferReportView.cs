@@ -10,16 +10,19 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(w=>w.StartDate, v=>v.StartDateOrNull)
 				.AddBinding(w=>w.EndDate, v=>v.EndDateOrNull)
 				.InitializeFromSource();
-			yenumcomboboxExpenseWarehouse.Binding.AddSource(ViewModel)
-				.AddBinding(w=>w.Warehouses,v=>v.ItemsEnum)
-				.AddBinding(w=>w.SelectWarehouse, v=>v.SelectedItem)
+			yspeccomboboxWarehouseExpense.SelectedItemStrictTyped = false;
+			yspeccomboboxWarehouseExpense.Binding.AddSource(ViewModel)
+				.AddBinding(w=>w.WarehousesExpense,v=>v.ItemsList)
+				.AddBinding(w=>w.SelectExpenseWarehouse,v=>v.SelectedItem)
 				.InitializeFromSource();
-			yenumcomboboxReceiptWarehouse.Binding.AddSource(ViewModel)
-				.AddBinding(w=>w.Warehouses,v=>v.ItemsEnum)
-				.AddBinding(w=>w.SelectWarehouse, v=>v.SelectedItem)
+			yspeccomboboxWarehouseReceipt.SelectedItemStrictTyped = false;
+			yspeccomboboxWarehouseReceipt.Binding.AddSource(ViewModel)
+				.AddBinding(w=>w.WarehousesReceipt,v=>v.ItemsList)
+				.AddBinding(w=>w.SelectReceiptWarehouse,v=>v.SelectedItem)
 				.InitializeFromSource();
-			yenumcomboboxOwner.Binding.AddSource(ViewModel)
-				.AddBinding(w=>w.Owners,v=>v.ItemsEnum)
+			yspeccomboboxOwner.SelectedItemStrictTyped = false;
+			yspeccomboboxOwner.Binding.AddSource(ViewModel)
+				.AddBinding(w=>w.Owners, v=>v.ItemsList)
 				.AddBinding(w=>w.SelectOwner, v=>v.SelectedItem)
 				.InitializeFromSource();
 			buttonRun.Clicked += OnButtonRunClicked;

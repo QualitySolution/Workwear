@@ -211,6 +211,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionWriteOffAct;
 
+	private global::Gtk.Action ActionWarehouseTransferReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -566,6 +568,9 @@ public partial class MainWindow
 		this.ActionWriteOffAct = new global::Gtk.Action("ActionWriteOffAct", global::Mono.Unix.Catalog.GetString("Справка по списаниям"), null, null);
 		this.ActionWriteOffAct.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по списаниям");
 		w1.Add(this.ActionWriteOffAct, null);
+		this.ActionWarehouseTransferReport = new global::Gtk.Action("ActionWarehouseTransferReport", global::Mono.Unix.Catalog.GetString("Перемещения между складами"), null, null);
+		this.ActionWarehouseTransferReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Перемещения между складами");
+		w1.Add(this.ActionWarehouseTransferReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -631,28 +636,30 @@ public partial class MainWindow
 				"\'ActionProfession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'A" +
 				"ctionVacationTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostCent" +
 				"er\' action=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionLead" +
-				"ers\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Action10\' a" +
-				"ction=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><separator/><menu" +
-				"item name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionReques" +
-				"tSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAverageAnnualNeed\' ac" +
-				"tion=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\' action=\'Action\'>" +
-				"<menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/" +
-				"><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSummar" +
-				"y\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmpl" +
-				"oyeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'ActionAmountIssued" +
-				"Wear\'/><menuitem name=\'ActionWriteOffAct\' action=\'ActionWriteOffAct\'/><menuitem " +
-				"name=\'ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCo" +
-				"mpletenessReport\' action=\'ActionBarcodeCompletenessReport\'/><menuitem name=\'Acti" +
-				"onClothingServiceReport\' action=\'ActionClothingServiceReport\'/></menu><menu name" +
-				"=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction" +
-				"\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><men" +
-				"uitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChann" +
-				"el\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'A" +
-				"ctionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannel" +
-				"Stable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/" +
-				"><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'Ac" +
-				"tionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separ" +
-				"ator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"ers\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'A" +
+				"ction10\' action=\'Action10\'/><menuitem name=\'Action11\' action=\'Action11\'/><menuit" +
+				"em name=\'ActionWarehouseTransferReport\' action=\'ActionWarehouseTransferReport\'/>" +
+				"<separator/><menuitem name=\'Action12\' action=\'Action12\'/><separator/><menuitem n" +
+				"ame=\'ActionRequestSheet\' action=\'ActionRequestSheet\'/><menuitem name=\'ActionAver" +
+				"ageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><separator/><menu name=\'Action\'" +
+				" action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'ActionNotIs" +
+				"suedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=\'ActionNot" +
+				"IssuedSheetSummary\'/></menu><menuitem name=\'ActionAmountEmployeeGetWear\' action=" +
+				"\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionAmountIssuedWear\' action=\'A" +
+				"ctionAmountIssuedWear\'/><menuitem name=\'ActionWriteOffAct\' action=\'ActionWriteOf" +
+				"fAct\'/><menuitem name=\'ActionProvision\' action=\'ActionProvision\'/><menuitem name" +
+				"=\'ActionBarcodeCompletenessReport\' action=\'ActionBarcodeCompletenessReport\'/><me" +
+				"nuitem name=\'ActionClothingServiceReport\' action=\'ActionClothingServiceReport\'/>" +
+				"</menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' a" +
+				"ction=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/" +
+				"><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'" +
+				"ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelC" +
+				"urrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' acti" +
+				"on=\'ActionChannelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpd" +
+				"ate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><" +
+				"menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'" +
+				"ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu" +
+				"></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -662,7 +669,6 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
-		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -870,5 +876,6 @@ public partial class MainWindow
 		this.ActionWarehouseForecasting.Activated += new global::System.EventHandler(this.OnActionWarehouseForecastingActivated);
 		this.Action45.Activated += new global::System.EventHandler(this.OnActionCausesWriteOffActivated);
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
+		this.ActionWarehouseTransferReport.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
 	}
 }
