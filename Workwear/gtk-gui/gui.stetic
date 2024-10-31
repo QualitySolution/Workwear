@@ -5875,6 +5875,12 @@
         <property name="ShortLabel" translatable="yes">Справка по списаниям</property>
         <signal name="Activated" handler="OnActionWriteOffActActivated" />
       </action>
+      <action id="ActionWarehouseTransferReport">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Перемещения между складами</property>
+        <property name="ShortLabel" translatable="yes">Перемещения между складами</property>
+        <signal name="Activated" handler="OnActionWarehouseTransferReportActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5981,6 +5987,7 @@
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action11" />
+                <node type="Menuitem" action="ActionWarehouseTransferReport" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action12" />
                 <node type="Separator" />
@@ -30968,14 +30975,15 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcomboboxExpenseWarehouse">
+              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseExpense">
                 <property name="MemberName" />
-                <property name="IsTextCombo">True</property>
+                <property name="IsTextCombo">False</property>
                 <property name="Items" translatable="yes" />
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="UseShortTitle">False</property>
+                <property name="AddIfNotExist">False</property>
                 <property name="DefaultFirst">False</property>
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">True</property>
+                <property name="NameForSpecialStateNot">Без склада</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -31007,14 +31015,15 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcomboboxReceiptWarehouse">
+              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseReceipt">
                 <property name="MemberName" />
                 <property name="IsTextCombo">True</property>
                 <property name="Items" translatable="yes" />
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="UseShortTitle">False</property>
+                <property name="AddIfNotExist">False</property>
                 <property name="DefaultFirst">False</property>
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">True</property>
+                <property name="NameForSpecialStateNot">Без склада</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -31046,14 +31055,15 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.Widgets.yEnumComboBox" id="yenumcomboboxOwner">
+              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxOwner">
                 <property name="MemberName" />
                 <property name="IsTextCombo">True</property>
                 <property name="Items" translatable="yes" />
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="UseShortTitle">False</property>
+                <property name="AddIfNotExist">False</property>
                 <property name="DefaultFirst">False</property>
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">True</property>
+                <property name="NameForSpecialStateNot">Без собственника</property>
               </widget>
               <packing>
                 <property name="Position">1</property>

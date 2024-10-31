@@ -16,19 +16,19 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabelExpenseWarehouse;
 
-		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxExpenseWarehouse;
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseExpense;
 
 		private global::Gtk.HBox hbox4;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelReceiptWarehouse;
 
-		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxReceiptWarehouse;
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseReceipt;
 
 		private global::Gtk.HBox hbox5;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelOwner;
 
-		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxOwner;
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxOwner;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -83,14 +83,15 @@ namespace Workwear.ReportParameters.Views
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.yenumcomboboxExpenseWarehouse = new global::Gamma.Widgets.yEnumComboBox();
-			this.yenumcomboboxExpenseWarehouse.Name = "yenumcomboboxExpenseWarehouse";
-			this.yenumcomboboxExpenseWarehouse.ShowSpecialStateAll = false;
-			this.yenumcomboboxExpenseWarehouse.ShowSpecialStateNot = false;
-			this.yenumcomboboxExpenseWarehouse.UseShortTitle = false;
-			this.yenumcomboboxExpenseWarehouse.DefaultFirst = false;
-			this.hbox3.Add(this.yenumcomboboxExpenseWarehouse);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.yenumcomboboxExpenseWarehouse]));
+			this.yspeccomboboxWarehouseExpense = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseExpense.Name = "yspeccomboboxWarehouseExpense";
+			this.yspeccomboboxWarehouseExpense.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseExpense.DefaultFirst = false;
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = true;
+			this.yspeccomboboxWarehouseExpense.NameForSpecialStateNot = "Без склада";
+			this.hbox3.Add(this.yspeccomboboxWarehouseExpense);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.yspeccomboboxWarehouseExpense]));
 			w5.Position = 1;
 			this.vbox1.Add(this.hbox3);
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox3]));
@@ -111,14 +112,15 @@ namespace Workwear.ReportParameters.Views
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.yenumcomboboxReceiptWarehouse = new global::Gamma.Widgets.yEnumComboBox();
-			this.yenumcomboboxReceiptWarehouse.Name = "yenumcomboboxReceiptWarehouse";
-			this.yenumcomboboxReceiptWarehouse.ShowSpecialStateAll = false;
-			this.yenumcomboboxReceiptWarehouse.ShowSpecialStateNot = false;
-			this.yenumcomboboxReceiptWarehouse.UseShortTitle = false;
-			this.yenumcomboboxReceiptWarehouse.DefaultFirst = false;
-			this.hbox4.Add(this.yenumcomboboxReceiptWarehouse);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.yenumcomboboxReceiptWarehouse]));
+			this.yspeccomboboxWarehouseReceipt = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseReceipt.Name = "yspeccomboboxWarehouseReceipt";
+			this.yspeccomboboxWarehouseReceipt.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseReceipt.DefaultFirst = false;
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = true;
+			this.yspeccomboboxWarehouseReceipt.NameForSpecialStateNot = "Без склада";
+			this.hbox4.Add(this.yspeccomboboxWarehouseReceipt);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.yspeccomboboxWarehouseReceipt]));
 			w8.Position = 1;
 			this.vbox1.Add(this.hbox4);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox4]));
@@ -139,14 +141,15 @@ namespace Workwear.ReportParameters.Views
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
-			this.yenumcomboboxOwner = new global::Gamma.Widgets.yEnumComboBox();
-			this.yenumcomboboxOwner.Name = "yenumcomboboxOwner";
-			this.yenumcomboboxOwner.ShowSpecialStateAll = false;
-			this.yenumcomboboxOwner.ShowSpecialStateNot = false;
-			this.yenumcomboboxOwner.UseShortTitle = false;
-			this.yenumcomboboxOwner.DefaultFirst = false;
-			this.hbox5.Add(this.yenumcomboboxOwner);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.yenumcomboboxOwner]));
+			this.yspeccomboboxOwner = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxOwner.Name = "yspeccomboboxOwner";
+			this.yspeccomboboxOwner.AddIfNotExist = false;
+			this.yspeccomboboxOwner.DefaultFirst = false;
+			this.yspeccomboboxOwner.ShowSpecialStateAll = true;
+			this.yspeccomboboxOwner.ShowSpecialStateNot = true;
+			this.yspeccomboboxOwner.NameForSpecialStateNot = "Без собственника";
+			this.hbox5.Add(this.yspeccomboboxOwner);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.yspeccomboboxOwner]));
 			w11.Position = 1;
 			this.vbox1.Add(this.hbox5);
 			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));

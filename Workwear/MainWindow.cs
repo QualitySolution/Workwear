@@ -965,4 +965,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionWriteOffActActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WriteOffActViewModel));
 	}
+
+	protected void OnActionWarehouseTransferReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WarehouseTransferReportViewModel));
+	}
 }
