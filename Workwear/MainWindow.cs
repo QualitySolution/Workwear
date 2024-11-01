@@ -821,11 +821,6 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionPayActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("pay.qsolution.ru");
-		OpenUrl("https://pay.qsolution.ru/");
-	}
-
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
