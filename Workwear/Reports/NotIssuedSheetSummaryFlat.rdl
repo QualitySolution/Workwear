@@ -602,7 +602,7 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*,
-       IF(@show_stock,ballance.SUM, null) AS in_stock
+    IF(@show_stock,SUM(ballance.SUM), null) AS in_stock
 FROM(SELECT
          protection_tools.name AS protection_tools_name,
          protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
@@ -717,16 +717,17 @@ FROM(SELECT
                         ) AS sex_b
                             JOIN (SELECT 'A' AS sex UNION SELECT 'M' UNION SELECT 'F') AS sex_const
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
-    AS ballance
-                  ON (tabel.protection_tools_id = ballance.ptid
-                      AND (@show_sex AND tabel.sex = ballance.sex OR NOT @show_sex AND ballance.sex = 'A')
-                      AND ((tabel.sizeId IS NULL AND ballance.size_id IS NULL)
-                          OR ballance.size_id = tabel.sizeId
-                          OR ballance.size_id IN (SELECT IF(size_suitable.size_id = tabel.sizeId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.sizeId OR size_suitable.`size_suitable_id` = tabel.sizeId))
-                      AND ((tabel.heightId IS NULL AND ballance.height_id IS NULL)
-                          OR ballance.height_id = tabel.heightId
-                          OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
-                      );</CommandText>
+        AS ballance
+            ON (tabel.protection_tools_id = ballance.ptid
+                AND (@show_sex AND tabel.sex = ballance.sex OR NOT @show_sex AND ballance.sex = 'A')
+                AND (tabel.sizeId IS NULL OR ballance.size_id IS NULL
+                    OR ballance.size_id = tabel.sizeId
+                    OR ballance.size_id IN (SELECT IF(size_suitable.size_id = tabel.sizeId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.sizeId OR size_suitable.`size_suitable_id` = tabel.sizeId))
+                AND (tabel.heightId IS NULL OR ballance.height_id IS NULL 
+                    OR ballance.height_id = tabel.heightId 
+                    OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
+            )
+            GROUP BY  protection_tools_id, sizeId, heightId;</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>

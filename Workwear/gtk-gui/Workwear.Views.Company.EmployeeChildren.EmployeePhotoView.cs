@@ -8,7 +8,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		private global::Gtk.Frame frame1;
 
-		private global::Gamma.Widgets.yImageViewer yimagePhoto;
+		private global::QS.Widgets.ImageViewer yimagePhoto;
 
 		private global::Gtk.HBox hbox11;
 
@@ -31,7 +31,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.frame1.Name = "frame1";
 			this.frame1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child frame1.Gtk.Container+ContainerChild
-			this.yimagePhoto = new global::Gamma.Widgets.yImageViewer();
+			this.yimagePhoto = new global::QS.Widgets.ImageViewer();
 			this.yimagePhoto.Name = "yimagePhoto";
 			this.yimagePhoto.VerticalFit = true;
 			this.yimagePhoto.HorizontalFit = true;

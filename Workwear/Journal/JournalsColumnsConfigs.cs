@@ -414,7 +414,9 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").Resizable().AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.WearSizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
-					.AddColumn("Собственник").Visible(jvm.FeaturesService.Available(WorkwearFeature.Owners)).Resizable().AddTextRenderer(node => node.OwnerName)
+					//.AddColumn("Собственник")
+						//.Visible(jvm.FeaturesService.Available(WorkwearFeature.Owners))
+						//.AddTextRenderer(e => e.OwnerName)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
 					.Finish()
@@ -433,6 +435,13 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Приоритет выдачи").AddNumericRenderer(node => node.Priority)
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<CauseWriteOffJournalViewModel>(
+				() => FluentColumnsConfig<CauseWriteOffJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
 					.Finish()
 			);
 			

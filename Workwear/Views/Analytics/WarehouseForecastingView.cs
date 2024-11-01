@@ -20,7 +20,7 @@ namespace Workwear.Views.Analytics {
 			ViewModel.ProgressTotal = progressTotal;
 			ViewModel.ProgressLocal = progressLocal;
 
-			buttonFill.Binding.AddBinding(ViewModel, v => v.SensitiveSettings, w => w.Sensitive).InitializeFromSource();
+			buttonFill.Binding.AddBinding(ViewModel, v => v.SensitiveFill, w => w.Sensitive).InitializeFromSource();
 			buttonExcel.Binding.AddBinding(ViewModel, v => v.SensitiveExport, w => w.Sensitive).InitializeFromSource();
 
 			entryWarehouse.ViewModel = ViewModel.WarehouseEntry;
