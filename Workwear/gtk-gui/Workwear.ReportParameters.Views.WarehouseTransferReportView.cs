@@ -8,27 +8,27 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gtk.HBox hbox1;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelDuration;
+		private global::Gamma.GtkWidgets.yTable ytable1;
 
 		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker;
 
-		private global::Gtk.HBox hbox3;
+		private global::Gamma.GtkWidgets.yLabel ylabelDuration;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelExpenseWarehouse;
 
-		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseExpense;
-
-		private global::Gtk.HBox hbox4;
+		private global::Gamma.GtkWidgets.yLabel ylabelOwner;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelReceiptWarehouse;
 
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxOwner;
+
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseExpense;
+
 		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseReceipt;
 
+		private global::Gtk.HBox hbox4;
+
 		private global::Gtk.HBox hbox5;
-
-		private global::Gamma.GtkWidgets.yLabel ylabelOwner;
-
-		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxOwner;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -47,115 +47,135 @@ namespace Workwear.ReportParameters.Views
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.ylabelDuration = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelDuration.Name = "ylabelDuration";
-			this.ylabelDuration.LabelProp = global::Mono.Unix.Catalog.GetString("Период перемещения:");
-			this.hbox1.Add(this.ylabelDuration);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylabelDuration]));
-			w1.Position = 0;
-			w1.Expand = false;
-			w1.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
+			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
+			this.ytable1.Name = "ytable1";
+			this.ytable1.NRows = ((uint)(4));
+			this.ytable1.NColumns = ((uint)(2));
+			this.ytable1.RowSpacing = ((uint)(6));
+			this.ytable1.ColumnSpacing = ((uint)(6));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.ydateperiodpicker = new global::Gamma.Widgets.yDatePeriodPicker();
 			this.ydateperiodpicker.Events = ((global::Gdk.EventMask)(256));
 			this.ydateperiodpicker.Name = "ydateperiodpicker";
 			this.ydateperiodpicker.StartDate = new global::System.DateTime(0);
 			this.ydateperiodpicker.EndDate = new global::System.DateTime(0);
-			this.hbox1.Add(this.ydateperiodpicker);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ydateperiodpicker]));
-			w2.Position = 1;
-			this.vbox1.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox3 = new global::Gtk.HBox();
-			this.hbox3.Name = "hbox3";
-			this.hbox3.Spacing = 6;
-			// Container child hbox3.Gtk.Box+BoxChild
+			this.ytable1.Add(this.ydateperiodpicker);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateperiodpicker]));
+			w1.LeftAttach = ((uint)(1));
+			w1.RightAttach = ((uint)(2));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabelDuration = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelDuration.Name = "ylabelDuration";
+			this.ylabelDuration.Xalign = 1F;
+			this.ylabelDuration.LabelProp = global::Mono.Unix.Catalog.GetString("Период перемещения:");
+			this.ytable1.Add(this.ylabelDuration);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelDuration]));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabelExpenseWarehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelExpenseWarehouse.Name = "ylabelExpenseWarehouse";
+			this.ylabelExpenseWarehouse.Xalign = 1F;
 			this.ylabelExpenseWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад списания:");
-			this.hbox3.Add(this.ylabelExpenseWarehouse);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.ylabelExpenseWarehouse]));
-			w4.Position = 0;
-			w4.Expand = false;
-			w4.Fill = false;
-			// Container child hbox3.Gtk.Box+BoxChild
-			this.yspeccomboboxWarehouseExpense = new global::Gamma.Widgets.ySpecComboBox();
-			this.yspeccomboboxWarehouseExpense.Name = "yspeccomboboxWarehouseExpense";
-			this.yspeccomboboxWarehouseExpense.AddIfNotExist = false;
-			this.yspeccomboboxWarehouseExpense.DefaultFirst = false;
-			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = false;
-			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = false;
-			this.yspeccomboboxWarehouseExpense.NameForSpecialStateNot = "";
-			this.hbox3.Add(this.yspeccomboboxWarehouseExpense);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.yspeccomboboxWarehouseExpense]));
-			w5.Position = 1;
-			this.vbox1.Add(this.hbox3);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox3]));
-			w6.Position = 1;
-			w6.Expand = false;
-			w6.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox4 = new global::Gtk.HBox();
-			this.hbox4.Name = "hbox4";
-			this.hbox4.Spacing = 6;
-			// Container child hbox4.Gtk.Box+BoxChild
-			this.ylabelReceiptWarehouse = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelReceiptWarehouse.Name = "ylabelReceiptWarehouse";
-			this.ylabelReceiptWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получения:");
-			this.hbox4.Add(this.ylabelReceiptWarehouse);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.ylabelReceiptWarehouse]));
-			w7.Position = 0;
-			w7.Expand = false;
-			w7.Fill = false;
-			// Container child hbox4.Gtk.Box+BoxChild
-			this.yspeccomboboxWarehouseReceipt = new global::Gamma.Widgets.ySpecComboBox();
-			this.yspeccomboboxWarehouseReceipt.Name = "yspeccomboboxWarehouseReceipt";
-			this.yspeccomboboxWarehouseReceipt.AddIfNotExist = false;
-			this.yspeccomboboxWarehouseReceipt.DefaultFirst = false;
-			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = false;
-			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = false;
-			this.yspeccomboboxWarehouseReceipt.NameForSpecialStateNot = "";
-			this.hbox4.Add(this.yspeccomboboxWarehouseReceipt);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.yspeccomboboxWarehouseReceipt]));
-			w8.Position = 1;
-			this.vbox1.Add(this.hbox4);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox4]));
-			w9.Position = 2;
-			w9.Expand = false;
-			w9.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox5 = new global::Gtk.HBox();
-			this.hbox5.Name = "hbox5";
-			this.hbox5.Spacing = 6;
-			// Container child hbox5.Gtk.Box+BoxChild
+			this.ytable1.Add(this.ylabelExpenseWarehouse);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelExpenseWarehouse]));
+			w3.TopAttach = ((uint)(1));
+			w3.BottomAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabelOwner = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelOwner.Name = "ylabelOwner";
+			this.ylabelOwner.Xalign = 1F;
 			this.ylabelOwner.LabelProp = global::Mono.Unix.Catalog.GetString("Собственник:");
-			this.hbox5.Add(this.ylabelOwner);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.ylabelOwner]));
-			w10.Position = 0;
-			w10.Expand = false;
-			w10.Fill = false;
-			// Container child hbox5.Gtk.Box+BoxChild
+			this.ytable1.Add(this.ylabelOwner);
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelOwner]));
+			w4.TopAttach = ((uint)(3));
+			w4.BottomAttach = ((uint)(4));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ylabelReceiptWarehouse = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelReceiptWarehouse.Name = "ylabelReceiptWarehouse";
+			this.ylabelReceiptWarehouse.Xalign = 1F;
+			this.ylabelReceiptWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад получения:");
+			this.ytable1.Add(this.ylabelReceiptWarehouse);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelReceiptWarehouse]));
+			w5.TopAttach = ((uint)(2));
+			w5.BottomAttach = ((uint)(3));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
 			this.yspeccomboboxOwner = new global::Gamma.Widgets.ySpecComboBox();
 			this.yspeccomboboxOwner.Name = "yspeccomboboxOwner";
 			this.yspeccomboboxOwner.AddIfNotExist = false;
 			this.yspeccomboboxOwner.DefaultFirst = false;
 			this.yspeccomboboxOwner.ShowSpecialStateAll = false;
 			this.yspeccomboboxOwner.ShowSpecialStateNot = false;
-			this.yspeccomboboxOwner.NameForSpecialStateNot = "";
-			this.hbox5.Add(this.yspeccomboboxOwner);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.yspeccomboboxOwner]));
-			w11.Position = 1;
+			this.ytable1.Add(this.yspeccomboboxOwner);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yspeccomboboxOwner]));
+			w6.TopAttach = ((uint)(3));
+			w6.BottomAttach = ((uint)(4));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.yspeccomboboxWarehouseExpense = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseExpense.Name = "yspeccomboboxWarehouseExpense";
+			this.yspeccomboboxWarehouseExpense.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseExpense.DefaultFirst = false;
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = false;
+			this.ytable1.Add(this.yspeccomboboxWarehouseExpense);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yspeccomboboxWarehouseExpense]));
+			w7.TopAttach = ((uint)(1));
+			w7.BottomAttach = ((uint)(2));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.yspeccomboboxWarehouseReceipt = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseReceipt.Name = "yspeccomboboxWarehouseReceipt";
+			this.yspeccomboboxWarehouseReceipt.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseReceipt.DefaultFirst = false;
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = false;
+			this.ytable1.Add(this.yspeccomboboxWarehouseReceipt);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yspeccomboboxWarehouseReceipt]));
+			w8.TopAttach = ((uint)(2));
+			w8.BottomAttach = ((uint)(3));
+			w8.LeftAttach = ((uint)(1));
+			w8.RightAttach = ((uint)(2));
+			w8.XOptions = ((global::Gtk.AttachOptions)(4));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.hbox1.Add(this.ytable1);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ytable1]));
+			w9.Position = 0;
+			w9.Expand = false;
+			w9.Fill = false;
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w10.Position = 0;
+			w10.Expand = false;
+			w10.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox4 = new global::Gtk.HBox();
+			this.hbox4.Name = "hbox4";
+			this.hbox4.Spacing = 6;
+			this.vbox1.Add(this.hbox4);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox4]));
+			w11.Position = 2;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox5 = new global::Gtk.HBox();
+			this.hbox5.Name = "hbox5";
+			this.hbox5.Spacing = 6;
 			this.vbox1.Add(this.hbox5);
 			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
 			w12.Position = 3;
-			w12.Expand = false;
-			w12.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;

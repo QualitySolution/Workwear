@@ -30927,27 +30927,195 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDuration">
+              <widget class="Gamma.GtkWidgets.yTable" id="ytable1">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Период перемещения:</property>
+                <property name="NRows">4</property>
+                <property name="NColumns">2</property>
+                <property name="RowSpacing">6</property>
+                <property name="ColumnSpacing">6</property>
+                <child>
+                  <widget class="Gamma.Widgets.yDatePeriodPicker" id="ydateperiodpicker">
+                    <property name="MemberName" />
+                    <property name="Events">ButtonPressMask</property>
+                    <property name="StartDate">0</property>
+                    <property name="EndDate">0</property>
+                  </widget>
+                  <packing>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDuration">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Период перемещения:</property>
+                  </widget>
+                  <packing>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabelExpenseWarehouse">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Склад списания:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">1</property>
+                    <property name="BottomAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabelOwner">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Собственник:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabelReceiptWarehouse">
+                    <property name="MemberName" />
+                    <property name="Xalign">1</property>
+                    <property name="LabelProp" translatable="yes">Склад получения:</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">2</property>
+                    <property name="BottomAttach">3</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxOwner">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">True</property>
+                    <property name="Items" translatable="yes" />
+                    <property name="AddIfNotExist">False</property>
+                    <property name="DefaultFirst">False</property>
+                    <property name="ShowSpecialStateAll">False</property>
+                    <property name="ShowSpecialStateNot">False</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseExpense">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">True</property>
+                    <property name="Items" translatable="yes" />
+                    <property name="AddIfNotExist">False</property>
+                    <property name="DefaultFirst">False</property>
+                    <property name="ShowSpecialStateAll">False</property>
+                    <property name="ShowSpecialStateNot">False</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">1</property>
+                    <property name="BottomAttach">2</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseReceipt">
+                    <property name="MemberName" />
+                    <property name="IsTextCombo">True</property>
+                    <property name="Items" translatable="yes" />
+                    <property name="AddIfNotExist">False</property>
+                    <property name="DefaultFirst">False</property>
+                    <property name="ShowSpecialStateAll">False</property>
+                    <property name="ShowSpecialStateNot">False</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">2</property>
+                    <property name="BottomAttach">3</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
                 <property name="Position">0</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.yDatePeriodPicker" id="ydateperiodpicker">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-                <property name="StartDate">0</property>
-                <property name="EndDate">0</property>
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">True</property>
               </packing>
             </child>
           </widget>
@@ -30959,83 +31127,19 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.HBox" id="hbox3">
-            <property name="MemberName" />
-            <property name="Spacing">6</property>
-            <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelExpenseWarehouse">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Склад списания:</property>
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseExpense">
-                <property name="MemberName" />
-                <property name="IsTextCombo">False</property>
-                <property name="Items" translatable="yes" />
-                <property name="AddIfNotExist">False</property>
-                <property name="DefaultFirst">False</property>
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="NameForSpecialStateNot" />
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">False</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
+          <placeholder />
         </child>
         <child>
           <widget class="Gtk.HBox" id="hbox4">
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelReceiptWarehouse">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Склад получения:</property>
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseReceipt">
-                <property name="MemberName" />
-                <property name="IsTextCombo">False</property>
-                <property name="Items" translatable="yes" />
-                <property name="AddIfNotExist">False</property>
-                <property name="DefaultFirst">False</property>
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="NameForSpecialStateNot" />
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">False</property>
-              </packing>
+              <placeholder />
             </child>
           </widget>
           <packing>
             <property name="Position">2</property>
             <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
@@ -31043,39 +31147,12 @@
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelOwner">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Собственник:</property>
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxOwner">
-                <property name="MemberName" />
-                <property name="IsTextCombo">False</property>
-                <property name="Items" translatable="yes" />
-                <property name="AddIfNotExist">False</property>
-                <property name="DefaultFirst">False</property>
-                <property name="ShowSpecialStateAll">False</property>
-                <property name="ShowSpecialStateNot">False</property>
-                <property name="NameForSpecialStateNot" />
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">False</property>
-              </packing>
+              <placeholder />
             </child>
           </widget>
           <packing>
             <property name="Position">3</property>
             <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
