@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamma.Widgets;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
@@ -19,13 +18,16 @@ namespace Workwear.ReportParameters.ViewModels {
 			if(FeaturesService.Available(WorkwearFeature.Warehouses)) {
 				warehousesExpense = UoW.GetAll<Warehouse>().ToList();
 				warehousesReceipt = UoW.GetAll<Warehouse>().ToList();
-				warehousesExpense.Add(new Warehouse(){Id=-1,Name="Любой"});
-				warehousesReceipt.Add(new Warehouse(){Id=-1, Name="Любой"});
+				warehousesExpense.Insert(0, new Warehouse(){Id=-1,Name="Любой"});
+				warehousesReceipt.Insert(0,new Warehouse(){Id=-1, Name="Любой"});
+				warehousesExpense.Insert(1, new Warehouse(){Id=-2, Name="Без склада"});
+				warehousesReceipt.Insert(1, new Warehouse(){Id = -2, Name = "Без склада"});
 			}
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				owners = UoW.GetAll<Owner>().ToList();
-				owners.Add(new Owner(){Id=-1,Name = "Любой"});
+				owners.Insert(0,new Owner(){Id=-1,Name = "Любой"});
+				owners.Insert(1, new Owner(){Id = -2,Name = "Без собственника"});
 			}
 
 			selectExpenseWarehouse = warehousesExpense?.First();
@@ -37,13 +39,13 @@ namespace Workwear.ReportParameters.ViewModels {
 			{ "start_date", StartDate },
 			{ "end_date", EndDate },
 			{"allReceiptWarehouses", (SelectReceiptWarehouse as Warehouse)?.Id == -1},
-			{"withoutReceiptWarehouse", SelectReceiptWarehouse.Equals(SpecialComboState.Not)},
+			{"withoutReceiptWarehouse", (SelectReceiptWarehouse as Warehouse)?.Id == -2},
 			{"warehouse_receipt_id", (SelectReceiptWarehouse as Warehouse)?.Id ?? -1},
 			{"allExpenseWarehouses", (SelectExpenseWarehouse as Warehouse)?.Id == -1},
-			{"withoutExpenseWarehouse", SelectExpenseWarehouse.Equals(SpecialComboState.Not)},
+			{"withoutExpenseWarehouse", (SelectExpenseWarehouse as Warehouse)?.Id ==-2},
 			{"warehouse_expense_id", (SelectExpenseWarehouse as Warehouse)?.Id ?? -1},
 			{"allOwners", (SelectOwner as Owner)?.Id == -1},
-			{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
+			{"withoutOwner", (SelectOwner as Owner)?.Id == -2},
 			{"owner_id", (SelectOwner as Owner)?.Id ?? -1},
 		};
 
