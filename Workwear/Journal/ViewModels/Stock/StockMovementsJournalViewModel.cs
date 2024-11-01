@@ -39,10 +39,10 @@ namespace workwear.Journal.ViewModels.Stock
 			IInteractiveService interactiveService, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
-			FeaturesService FeaturesService,
+			FeaturesService featuresService,
 			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
-			FeaturesService = FeaturesService ?? throw new ArgumentNullException(nameof(FeaturesService));
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
 			JournalFilter = Filter = autofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));
@@ -190,15 +190,10 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => collectiveExpenseItemAlias.Document, () => collectiveExpenseAlias, JoinType.LeftOuterJoin)
-				
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeItemAlias.Document, () => incomeAlias, JoinType.LeftOuterJoin)
-				
 				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnItemAlias.Document, () => returnAlias, JoinType.LeftOuterJoin)
-				
-				//.JoinAlias(() => incomeItemAlias.Document, () => incomeAlias, JoinType.LeftOuterJoin)
-				
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => transferItemAlias.Document, () => transferAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -236,20 +231,14 @@ namespace workwear.Journal.ViewModels.Stock
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
 					.SelectGroup(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
-					//.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectGroup(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
-					//.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
-					//.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId) 
-                    //.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.IncomeDocNumber)
 					.SelectGroup(() => returnItemAlias.Document.Id).WithAlias(() => resultAlias.ReturnId)
 					.SelectGroup(() => returnAlias.DocNumber).WithAlias(() => resultAlias.ReturnDocNumber)
-					//.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.IncomeDocNumber)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.SelectGroup(() => transferAlias.DocNumber).WithAlias(() => resultAlias.TransferDocNumber)
-					//.Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.TransferDocNumber)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => writeoffAlias.DocNumber).WithAlias(() => resultAlias.WriteoffDocNumber)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -4528,12 +4528,12 @@
   </widget>
   <widget class="Gtk.Window" id="MainWindow" design-size="1018 458">
     <action-group name="Default">
-      <action id="ActionBase">
+      <action id="Action46">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">База</property>
         <property name="ShortLabel" translatable="yes">База</property>
       </action>
-      <action id="Action44">
+      <action id="Action47">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Справочники</property>
         <property name="ShortLabel" translatable="yes">Справочники</property>
@@ -5220,7 +5220,7 @@
           <widget class="Gtk.MenuBar" id="menubar1">
             <property name="MemberName" />
             <node name="menubar1" type="Menubar">
-              <node type="Menu" action="ActionBase">
+              <node type="Menu" action="Action46">
                 <node type="Menuitem" action="UsersAction" />
                 <node type="Menuitem" action="dialogAuthenticationAction" />
                 <node type="Menuitem" action="ActionUserSettings" />
@@ -5278,7 +5278,7 @@
                 <node type="Menuitem" action="ActionPostomatDocs" />
                 <node type="Menuitem" action="ActionPostomatDocsWithdraw" />
               </node>
-              <node type="Menu" action="Action44">
+              <node type="Menu" action="Action47">
                 <node type="Menuitem" action="ActionOrganizations" />
                 <node type="Menuitem" action="ActionObjects" />
                 <node type="Menuitem" action="ActionDepartment" />

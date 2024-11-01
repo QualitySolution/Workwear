@@ -389,10 +389,7 @@ alter table departments
 
 alter table employee_group_items
 	drop foreign key foreign_key_employee_groups_items_employees;
-###
-			alter table employee_group_items
-				drop foreign key employee_group_items_ibfk_1;
-###
+
 alter table issuance_sheet
 	drop foreign key fk_issuance_sheet_2;
 
