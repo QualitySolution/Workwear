@@ -5635,13 +5635,6 @@
         <property name="ShortLabel" translatable="yes">Суммарно</property>
         <signal name="Activated" handler="OnActionNotIssuedSheetSummaryActivated" />
       </action>
-      <action id="ActionPay">
-        <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Купить программу</property>
-        <property name="ShortLabel" translatable="yes">Купить программу</property>
-        <property name="StockId">www</property>
-        <signal name="Activated" handler="OnActionPayActivated" />
-      </action>
       <action id="ActionAdminGuide">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">Руководство администратора</property>
@@ -6011,7 +6004,6 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSite" />
                 <node type="Separator" />
-                <node type="Menuitem" action="ActionPay" />
                 <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />
                 <node type="Menuitem" action="aboutAction" />
