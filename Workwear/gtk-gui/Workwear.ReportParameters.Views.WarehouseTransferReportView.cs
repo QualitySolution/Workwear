@@ -88,8 +88,8 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouseExpense.AddIfNotExist = false;
 			this.yspeccomboboxWarehouseExpense.DefaultFirst = false;
 			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = false;
-			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = true;
-			this.yspeccomboboxWarehouseExpense.NameForSpecialStateNot = "Без склада";
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = false;
+			this.yspeccomboboxWarehouseExpense.NameForSpecialStateNot = "";
 			this.hbox3.Add(this.yspeccomboboxWarehouseExpense);
 			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.yspeccomboboxWarehouseExpense]));
 			w5.Position = 1;
@@ -117,8 +117,8 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouseReceipt.AddIfNotExist = false;
 			this.yspeccomboboxWarehouseReceipt.DefaultFirst = false;
 			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = false;
-			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = true;
-			this.yspeccomboboxWarehouseReceipt.NameForSpecialStateNot = "Без склада";
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = false;
+			this.yspeccomboboxWarehouseReceipt.NameForSpecialStateNot = "";
 			this.hbox4.Add(this.yspeccomboboxWarehouseReceipt);
 			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.yspeccomboboxWarehouseReceipt]));
 			w8.Position = 1;
@@ -146,8 +146,8 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxOwner.AddIfNotExist = false;
 			this.yspeccomboboxOwner.DefaultFirst = false;
 			this.yspeccomboboxOwner.ShowSpecialStateAll = false;
-			this.yspeccomboboxOwner.ShowSpecialStateNot = true;
-			this.yspeccomboboxOwner.NameForSpecialStateNot = "Без собственника";
+			this.yspeccomboboxOwner.ShowSpecialStateNot = false;
+			this.yspeccomboboxOwner.NameForSpecialStateNot = "";
 			this.hbox5.Add(this.yspeccomboboxOwner);
 			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.yspeccomboboxOwner]));
 			w11.Position = 1;
