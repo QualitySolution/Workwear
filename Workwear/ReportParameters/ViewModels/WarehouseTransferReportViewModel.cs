@@ -17,42 +17,49 @@ namespace Workwear.ReportParameters.ViewModels {
 			Title = "Отчет по перемещениям между складами";
 			Identifier = "WarehouseTransferReport";
 			if(FeaturesService.Available(WorkwearFeature.Warehouses)) {
-				WarehousesExpense = UoW.GetAll<Warehouse>().ToList();
-				WarehousesReceipt = UoW.GetAll<Warehouse>().ToList();
+				warehousesExpense = UoW.GetAll<Warehouse>().ToList();
+				warehousesReceipt = UoW.GetAll<Warehouse>().ToList();
+				warehousesExpense.Add(new Warehouse(){Id=-1,Name="Любой"});
+				warehousesReceipt.Add(new Warehouse(){Id=-1, Name="Любой"});
 			}
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
-				Owners = UoW.GetAll<Owner>().ToList();
+				owners = UoW.GetAll<Owner>().ToList();
+				owners.Add(new Owner(){Id=-1,Name = "Любой"});
 			}
+
+			selectExpenseWarehouse = warehousesExpense?.First();
+			selectReceiptWarehouse = warehousesReceipt?.First();
+			selectOwner = owners?.First();
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
 			{ "start_date", StartDate },
 			{ "end_date", EndDate },
-			{"allReceiptWarehouses", SelectReceiptWarehouse.Equals(SpecialComboState.All)},
+			{"allReceiptWarehouses", (SelectReceiptWarehouse as Warehouse)?.Id == -1},
 			{"withoutReceiptWarehouse", SelectReceiptWarehouse.Equals(SpecialComboState.Not)},
 			{"warehouse_receipt_id", (SelectReceiptWarehouse as Warehouse)?.Id ?? -1},
-			{"allExpenseWarehouses", SelectExpenseWarehouse.Equals(SpecialComboState.All)},
+			{"allExpenseWarehouses", (SelectExpenseWarehouse as Warehouse)?.Id == -1},
 			{"withoutExpenseWarehouse", SelectExpenseWarehouse.Equals(SpecialComboState.Not)},
 			{"warehouse_expense_id", (SelectExpenseWarehouse as Warehouse)?.Id ?? -1},
-			{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
+			{"allOwners", (SelectOwner as Owner)?.Id == -1},
 			{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
 			{"owner_id", (SelectOwner as Owner)?.Id ?? -1},
 		};
 
-		private object selectExpenseWarehouse = SpecialComboState.All;
+		private object selectExpenseWarehouse;
 		public object SelectExpenseWarehouse {
 			get => selectExpenseWarehouse;
 			set => SetField(ref selectExpenseWarehouse, value);
 		}
-		
-		private object selectReceiptWarehouse = SpecialComboState.All;
+
+		private object selectReceiptWarehouse;
 		public object SelectReceiptWarehouse {
 			get => selectReceiptWarehouse;
 			set => SetField(ref selectReceiptWarehouse, value);
 		}
-		
-		private object selectOwner = SpecialComboState.All;
+
+		private object selectOwner;
 
 		public object SelectOwner {
 			get => selectOwner;

@@ -87,7 +87,7 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouseExpense.Name = "yspeccomboboxWarehouseExpense";
 			this.yspeccomboboxWarehouseExpense.AddIfNotExist = false;
 			this.yspeccomboboxWarehouseExpense.DefaultFirst = false;
-			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouseExpense.ShowSpecialStateAll = false;
 			this.yspeccomboboxWarehouseExpense.ShowSpecialStateNot = true;
 			this.yspeccomboboxWarehouseExpense.NameForSpecialStateNot = "Без склада";
 			this.hbox3.Add(this.yspeccomboboxWarehouseExpense);
@@ -116,7 +116,7 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouseReceipt.Name = "yspeccomboboxWarehouseReceipt";
 			this.yspeccomboboxWarehouseReceipt.AddIfNotExist = false;
 			this.yspeccomboboxWarehouseReceipt.DefaultFirst = false;
-			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateAll = false;
 			this.yspeccomboboxWarehouseReceipt.ShowSpecialStateNot = true;
 			this.yspeccomboboxWarehouseReceipt.NameForSpecialStateNot = "Без склада";
 			this.hbox4.Add(this.yspeccomboboxWarehouseReceipt);
@@ -145,7 +145,7 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxOwner.Name = "yspeccomboboxOwner";
 			this.yspeccomboboxOwner.AddIfNotExist = false;
 			this.yspeccomboboxOwner.DefaultFirst = false;
-			this.yspeccomboboxOwner.ShowSpecialStateAll = true;
+			this.yspeccomboboxOwner.ShowSpecialStateAll = false;
 			this.yspeccomboboxOwner.ShowSpecialStateNot = true;
 			this.yspeccomboboxOwner.NameForSpecialStateNot = "Без собственника";
 			this.hbox5.Add(this.yspeccomboboxOwner);
