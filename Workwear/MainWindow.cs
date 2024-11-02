@@ -209,10 +209,6 @@ public partial class MainWindow : Gtk.Window {
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 
-		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
-		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>();
-		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
-
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
@@ -304,6 +300,7 @@ public partial class MainWindow : Gtk.Window {
 				MainTelemetry.IsDemo = databaseInfo.IsDemo;
 				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
 				MainTelemetry.StartUpdateByTimer(600);
+				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 			}
 		#else
 			MainTelemetry.DoNotTrack = true;
@@ -822,11 +819,6 @@ public partial class MainWindow : Gtk.Window {
 			CurrentUserSettings.Settings.MaximizeOnStart = ActionMaxizizeOnStart.Active;
 			CurrentUserSettings.SaveSettings();
 		}
-	}
-
-	protected void OnActionPayActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("pay.qsolution.ru");
-		OpenUrl("https://pay.qsolution.ru/");
 	}
 
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
