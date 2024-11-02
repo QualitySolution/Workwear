@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gamma.Utilities;
 using Workwear.Domain.Stock.Documents;
 
