@@ -3,7 +3,7 @@
   <Description>Отчет по перемещениям между складами</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>13in</PageWidth>
+  <PageWidth>14in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -22,7 +22,8 @@
     nomenclature.sale_cost,
     nomenclature.sale_cost * amount as 'sum',
     w1.name as 'warehouse_receipt_name',
-    w2.name as 'warehouse_expense_name'
+    w2.name as 'warehouse_expense_name',
+    owners.name as 'owner'
 FROM operation_warehouse
          LEFT JOIN stock_transfer_detail on stock_transfer_detail.warehouse_operation_id = operation_warehouse.id
          LEFT JOIN stock_transfer on stock_transfer_detail.stock_transfer_id = stock_transfer.id
@@ -31,10 +32,13 @@ FROM operation_warehouse
          LEFT JOIN sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
          LEFT JOIN warehouse w1 ON operation_warehouse.warehouse_receipt_id = w1.id
          LEFT JOIN warehouse w2 ON operation_warehouse.warehouse_expense_id = w2.id
+        LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
 WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehouse.operation_time &lt;= @end_date                                                                                                        
-  AND operation_warehouse.owner_id = @owner_id
-  AND operation_warehouse.warehouse_expense_id = @warehouse_expense_id
-  AND operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id;</CommandText>
+  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @owner_id)
+  AND (@allExpenseWarehouses OR (@withoutExpenseWarehouse AND operation_warehouse.warehouse_expense_id IS NULL) OR
+operation_warehouse.warehouse_expense_id = @warehouse_expense_id)
+  AND (@allReceiptWarehouses OR (@withoutReceiptWarehouse AND operation_warehouse.warehouse_receipt_id IS NULL) OR
+operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>={?start_date}</Value>
@@ -51,6 +55,24 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
           </QueryParameter>
           <QueryParameter Name="owner_id">
             <Value>={?owner_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allReceiptWarehouses">
+            <Value>={?allReceiptWarehouses}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutReceiptWarehouse">
+            <Value>={?withoutReceiptWarehouse}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allOwners">
+            <Value>={?allOwners}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutOwner">
+            <Value>={?withoutOwner}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allExpenseWarehouses">
+            <Value>={?allExpenseWarehouses}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutExpenseWarehouse">
+            <Value>={?withoutExpenseWarehouse}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -89,6 +111,10 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
         </Field>
         <Field Name="warehouse_expense_name">
           <DataField>warehouse_expense_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="owner">
+          <DataField>owner</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -134,6 +160,9 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
           </TableColumn>
           <TableColumn>
             <Width>108.4pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>79.8pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -196,6 +225,22 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                     <Textbox Name="Textbox4">
                       <Value>Склад получения</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox12">
+                      <Value>Собственник</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -349,6 +394,21 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
                       <Value>=Fields!warehouse_receipt_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox13">
+                      <Value>=Fields!owner.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -553,6 +613,48 @@ WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehou
           <Value>1</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allReceiptWarehouses">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutReceiptWarehouse">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allOwners">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutOwner">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allExpenseWarehouses">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutExpenseWarehouse">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
