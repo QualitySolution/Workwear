@@ -197,8 +197,8 @@ namespace Workwear.Repository.Operations
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
-			Income incomeAlias = null;
-			IncomeItem incomeItemAlias = null;
+			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
 			CollectiveExpense collectiveExpenseAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			Writeoff writeoffAlias = null;
@@ -211,8 +211,8 @@ namespace Workwear.Repository.Operations
 				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => collectiveExpenseItemAlias.Document, () => collectiveExpenseAlias, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinAlias(() => incomeItemAlias.Document, () => incomeAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.Document, () => returnAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => writeoffItemAlias.Document, () => writeoffAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => inspectionItemAlias, () => inspectionItemAlias.NewOperationIssue.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -226,9 +226,9 @@ namespace Workwear.Repository.Operations
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
 					.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => docAlias.CollectiveExpenseDocNumber)
-					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
-					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
-					.Select(() => incomeAlias.DocNumber).WithAlias(() => docAlias.IncomeDocNumber)
+					.Select(() => returnItemAlias.Id).WithAlias(() => docAlias.ReturnItemId)
+					.Select(() => returnItemAlias.Document.Id).WithAlias(() => docAlias.ReturnId)
+					.Select(() => returnAlias.DocNumber).WithAlias(() => docAlias.ReturnDocNumber)
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
 					.Select(() => writeoffAlias.DocNumber).WithAlias(() => docAlias.WriteoffDocNumber)

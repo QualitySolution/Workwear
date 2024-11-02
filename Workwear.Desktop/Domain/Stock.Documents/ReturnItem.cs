@@ -1,31 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 
-namespace Workwear.Domain.Stock.Documents
-{
+namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "строки прихода",
-		Nominative = "строка прихода",
-		Genitive = "строки прихода"
+		NominativePlural = "строки возврата",
+		Nominative = "строка возврата",
+		Genitive = "строки возврата"
 		)]
 	[HistoryTrace]
-	public class IncomeItem : PropertyChangedBase, IDomainObject , IDocItemSizeInfo
+	public class ReturnItem : PropertyChangedBase, IDomainObject , IDocItemSizeInfo
 	{
 		#region Свойства
 
 		public virtual int Id { get; set; }
 
-		private Income document;
-
+		private Return document;
 		[Display(Name = "Документ")]
 		[IgnoreHistoryTrace]
-		public virtual Income Document {
+		public virtual Return Document {
 			get => document;
 			set => SetField(ref document, value);
 		}
@@ -39,7 +36,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		[Display (Name = "Наименование")]
 		public virtual string ItemName {
-			get => nomenclature?.Name; 
+			get => nomenclature?.Name ?? IssuedEmployeeOnOperation?.ProtectionTools.Name;
 		}
 		
 		[Display(Name = "Тип Роста")]
@@ -54,7 +51,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		[Display(Name = "Единица измерения")]
 		public virtual MeasurementUnits Units {
-			get => nomenclature?.Type.Units; 
+			get => nomenclature?.Type.Units ?? IssuedEmployeeOnOperation?.ProtectionTools?.Type.Units;
 		}
 		private int amount;
 		[Display (Name = "Количество")]
@@ -71,12 +68,20 @@ namespace Workwear.Domain.Stock.Documents
 			get => cost;
 			set { SetField (ref cost, value, () => Cost); }
 		}
+		
+		private string commentReturn;
+		[Display(Name = "Отметка о возврате")]
+		public virtual string СommentReturn {
+			get => commentReturn;
+			set { SetField(ref commentReturn, value, () => СommentReturn); }
+		}
 
-		private string certificate;
-		[Display(Name = "№ сертификата")]
-		public virtual string Certificate {
-			get => certificate;
-			set { SetField(ref certificate, value, () => Certificate); }
+		private EmployeeIssueOperation returnFromEmployeeOperation;
+		[Display(Name = "Операция возврата от сотрудника")]
+		[IgnoreHistoryTrace]
+		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
+			get => returnFromEmployeeOperation;
+			set => SetField(ref returnFromEmployeeOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
@@ -113,31 +118,54 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 		#region Расчетные
 		public virtual string Title =>
-			$"Поступление на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
-
+			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
-		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
+		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
 		#endregion
+		
 		#region Не сохраняемые в базу свойства
+		//FIXME не учитывает прошлые операции (уже списанное)
+		private int maxAmount = -1;
+		public virtual int MaxAmount {
+			get => maxAmount == -1 ? IssuedEmployeeOnOperation.Issued : maxAmount;
+			set => maxAmount = value;
+		}
+
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
 			get => WarehouseOperation.WearPercent;
 			set => WarehouseOperation.WearPercent = value;
 		}
 
-		#endregion
-		protected IncomeItem () { }
-		public IncomeItem(Income income) {
-			document = income;
+		private EmployeeIssueOperation issuedEmployeeOnOperation;
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
+		[Display(Name = "Операция выдачи сотруднику")]
+		public virtual EmployeeIssueOperation IssuedEmployeeOnOperation {
+			get => issuedEmployeeOnOperation ?? ReturnFromEmployeeOperation?.IssuedOperation;
+			set => SetField(ref issuedEmployeeOnOperation, value);
 		}
 
+		#endregion
+		
+		protected ReturnItem () { }
+		public ReturnItem(Return Return) {
+			document = Return;
+		}
+		
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
+
+			if(ReturnFromEmployeeOperation == null)
+				ReturnFromEmployeeOperation = new EmployeeIssueOperation();
+
+			ReturnFromEmployeeOperation.Update(uow, this);
+			uow.Save(ReturnFromEmployeeOperation);
 		}
 		#endregion
 	}
 }
-
