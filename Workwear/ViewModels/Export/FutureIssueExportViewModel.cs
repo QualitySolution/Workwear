@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Autofac;
@@ -20,6 +21,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Sizes;
@@ -62,13 +64,22 @@ namespace Workwear.ViewModels.Export {
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
 
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			
 			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
 
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+		}
+		
 		#region Поля и свойства
 		private bool runSensitive;
-		public bool SensitiveLoad => startDate <= endDate;
+		public bool SensetiveLoad => (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;
@@ -85,14 +96,14 @@ namespace Workwear.ViewModels.Export {
         }
             
         private DateTime startDate = DateTime.Today.Date;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
 		private DateTime endDate = DateTime.Today.AddMonths(1);
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -275,7 +286,10 @@ namespace Workwear.ViewModels.Export {
 				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
 				globalProgress.CheckPoint("Создание документа");
-				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
+				var wearCardsItems = employees
+					.SelectMany(x => x.WorkwearItems )
+					.Where(wi => ChoiceProtectionToolsViewModel.SelectedIds.Contains(wi.ProtectionTools.Id))
+					.ToList();
 				#endregion
 
 				#region Форматы и стили ячеек
