@@ -5804,8 +5804,8 @@
       </action>
       <action id="ActionExport">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Экспорт даных</property>
-        <property name="ShortLabel" translatable="yes">Экспорт даных</property>
+        <property name="Label" translatable="yes">Экспорт данных</property>
+        <property name="ShortLabel" translatable="yes">Экспорт данных</property>
         <property name="StockId">gtk-convert</property>
       </action>
       <action id="Action40">

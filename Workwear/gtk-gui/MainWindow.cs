@@ -530,8 +530,8 @@ public partial class MainWindow
 		this.ActionProvision = new global::Gtk.Action("ActionProvision", global::Mono.Unix.Catalog.GetString("Обеспеченность сотрудников"), null, null);
 		this.ActionProvision.ShortLabel = global::Mono.Unix.Catalog.GetString("Обеспеченность сотрудников");
 		w1.Add(this.ActionProvision, null);
-		this.ActionExport = new global::Gtk.Action("ActionExport", global::Mono.Unix.Catalog.GetString("Экспорт даных"), null, "gtk-convert");
-		this.ActionExport.ShortLabel = global::Mono.Unix.Catalog.GetString("Экспорт даных");
+		this.ActionExport = new global::Gtk.Action("ActionExport", global::Mono.Unix.Catalog.GetString("Экспорт данных"), null, "gtk-convert");
+		this.ActionExport.ShortLabel = global::Mono.Unix.Catalog.GetString("Экспорт данных");
 		w1.Add(this.ActionExport, null);
 		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Прогноз выдач"), null, null);
 		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Прогноз");
@@ -652,9 +652,8 @@ public partial class MainWindow
 				"urrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' acti" +
 				"on=\'ActionChannelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpd" +
 				"ate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><" +
-				"menuitem name=\'ActionPay\' action=\'ActionPay\'/><menuitem name=\'ActionSN\' action=\'" +
-				"ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu" +
-				"></menubar></ui>");
+				"menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAct" +
+				"ion\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
