@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
@@ -23,9 +23,9 @@ namespace Workwear.Models.Analytics {
 			DateTime endDate,
 			bool noDebt,
 			IList<EmployeeCardItem> employeeItems,
-			IProgressBarDisplayable progress) 
+			IProgressBarDisplayable progress = null) 
 		{
-			progress.Start(employeeItems.Count() + 2);
+			progress?.Start(employeeItems.Count() + 2);
 			int gc = 0;
 			var issues = new List<FutureIssue>();
 
@@ -36,7 +36,7 @@ namespace Workwear.Models.Analytics {
 					gc = 0;
 				}
 
-				progress.Add(text: "Планирование выдач для " + item.EmployeeCard.ShortName);
+				progress?.Add(text: "Планирование выдач для " + item.EmployeeCard.ShortName);
 
 				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 				//список созданных объектов операций
@@ -98,7 +98,7 @@ namespace Workwear.Models.Analytics {
 				}
 			}
 
-			progress.Close();
+			progress?.Close();
 			return issues;
 		}
 	}
