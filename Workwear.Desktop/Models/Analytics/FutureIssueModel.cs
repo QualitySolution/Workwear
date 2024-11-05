@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
@@ -18,10 +18,19 @@ namespace Workwear.Models.Analytics {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 		}
 
+		/// <summary>
+		/// Метод прогнозирует будущие выдачи
+		/// </summary>
+		/// <param name="startDate">Дата начала периода прогнозирования.</param>
+		/// <param name="endDate">Дата окончания периода прогнозирования.</param>
+		/// <param name="moveDebt">Если True перемещает все долги на начала периода прогнозирования, в этой ситуации все даты выдачи для должников будут сдвинуты, на начало периода.</param>
+		/// <param name="employeeItems">Список потребностей для прогнозирования.</param>
+		/// <param name="progress">Не обязательный аргумент, прогресс выполнения.</param>
+		/// <returns></returns>
 		public List<FutureIssue> CalculateIssues(
 			DateTime startDate,
 			DateTime endDate,
-			bool noDebt,
+			bool moveDebt,
 			IList<EmployeeCardItem> employeeItems,
 			IProgressBarDisplayable progress = null) 
 		{
@@ -37,6 +46,8 @@ namespace Workwear.Models.Analytics {
 				}
 
 				progress?.Add(text: "Планирование выдач для " + item.EmployeeCard.ShortName);
+				if(item.Id == 52668)
+					Console.WriteLine("Debug");
 
 				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 				//список созданных объектов операций
@@ -56,7 +67,7 @@ namespace Workwear.Models.Analytics {
 					//Операция приведшая к возникновению потребности
 					var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
 					//создаём следующую виртуальную выдачу
-					var issueDate = (noDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
 					var op = new EmployeeIssueOperation(baseParameters) {
 						OperationTime = issueDate,
 						StartOfUse = issueDate,

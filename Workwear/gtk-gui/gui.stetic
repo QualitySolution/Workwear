@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -28895,11 +28895,11 @@
           <placeholder />
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkNoDebt">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkMoveDebt">
             <property name="MemberName" />
-            <property name="Tooltip" translatable="yes">Рассчитываем так как будто все долги выданы до начала периода. В этом случае даты будут считаться иначе.</property>
+            <property name="Tooltip" translatable="yes">Рассчитываем так как будто все долги выданы в первый день периода. В этом случае все последующие даты будут считаться для должников от этого дня.</property>
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Без задолжности</property>
+            <property name="Label" translatable="yes">Перенести долги на начало периода</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
