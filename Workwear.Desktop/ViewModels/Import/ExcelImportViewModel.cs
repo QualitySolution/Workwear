@@ -12,6 +12,8 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Models.Import;
+using Workwear.Repository.Company;
+using Workwear.Tools.Features;
 using Workwear.Tools.Nhibernate;
 
 namespace Workwear.ViewModels.Import
@@ -29,22 +31,34 @@ namespace Workwear.ViewModels.Import
 		public static readonly string ColorOfDuplicate = "Peru";
 		
 		public static readonly string ColorOfWarning = "Orange Red";
+		public readonly IInteractiveService interactive;
 
 		public ExcelImportViewModel(
 			IImportModel importModel, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
-			IInteractiveMessage interactiveMessage, 
+			IInteractiveService interactiveService,
 			ProgressInterceptor progressInterceptor,
 			UnitOfWorkProvider unitOfWorkProvider,
+			FeaturesService featuresService,
+			EmployeeRepository employeeRepository,
+			IInteractiveService interactive,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName, unitOfWorkProvider)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			ImportModel.Init(UoW);
-			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
+			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.progressInterceptor = progressInterceptor;
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			employeeRepository.RepoUow = UoW;
 			Title = importModel.ImportName;
 			importModel.PropertyChanged += ImportModel_PropertyChanged;
+			if((featuresService.Employees * 0.9) < employeeRepository.GetNumberOfEmployees() && (featuresService.Employees != 0)) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Осталось менее 10% от лимита новых сотрудников по Вашей лицензии.", 
+					"Предупреждение");
+			}
 		}
 
 		#region Общее
@@ -71,6 +85,8 @@ namespace Workwear.ViewModels.Import
 		#region private
 		protected readonly IInteractiveMessage interactiveMessage;
 		private readonly ProgressInterceptor progressInterceptor;
+		private readonly FeaturesService featuresService;
+		private readonly EmployeeRepository employeeRepository;
 		protected IWorkbook wb;
 		protected ISheet sh;
 		#endregion
@@ -180,6 +196,14 @@ namespace Workwear.ViewModels.Import
 		#endregion
 		#region Сохранение
 		public new void Save() {
+			if(featuresService.Employees != 0) {
+				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.Counters["NewEmployee"].Count) {
+					interactive.ShowMessage(ImportanceLevel.Warning,$"Количество новых импортированных сотрудников превышает лимит Вашей лицензии.\n" +
+					                                                $"Лимит Вашей лицензии: {featuresService.Employees}", 
+						"Невозможно добавить сотрудников");
+					return;
+				}
+			}
 			var start = DateTime.Now;
 			sensitiveSaveButton = false;
 			progressInterceptor.PrepareStatement += (sender, e) => ProgressStep.Add();
@@ -188,11 +212,15 @@ namespace Workwear.ViewModels.Import
 			foreach(var item in toSave) {
 				UoW.TrySave(item);
 			}
+
 			UoW.Commit();
-			logger.Debug($"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value} Время: {(DateTime.Now-start).TotalSeconds} сек.");
+			logger.Debug(
+				$"Объектов сохранено: {toSave.Count} Шагов сохранения: {ProgressStep.Value} Время: {(DateTime.Now - start).TotalSeconds} сек.");
 			ProgressStep.Close();
 			Close(false, CloseSource.Save);
+			
 		}
+			
 		#endregion
 		#region private Methods
 
