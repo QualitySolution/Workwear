@@ -61,13 +61,14 @@ namespace Workwear.Models.Analytics {
 
 				item.UpdateNextIssue(null);
 				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
-					int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
+					//создаём следующую виртуальную выдачу
+					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
 					if(need == 0)
 						break;
 					//Операция приведшая к возникновению потребности
 					var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
-					//создаём следующую виртуальную выдачу
-					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					
 					var op = new EmployeeIssueOperation(baseParameters) {
 						OperationTime = issueDate,
 						StartOfUse = issueDate,
