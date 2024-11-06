@@ -72,7 +72,7 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Visible
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
-		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting);
+		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel);
 		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
 		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
