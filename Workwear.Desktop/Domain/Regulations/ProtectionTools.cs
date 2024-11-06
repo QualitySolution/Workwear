@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Analytics;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Regulations
@@ -91,6 +92,16 @@ namespace Workwear.Domain.Regulations
 		#endregion
 		#region Расчетные
 		public virtual string GetAmountAndUnitsText(int amount) => this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
+
+		public virtual Nomenclature GetSupplyNomenclature(Sex? sex) {
+			if(SupplyType == SupplyType.Unisex)
+				return SupplyNomenclatureUnisex;
+			if(sex == Sex.F)
+				return SupplyNomenclatureFemale;
+			if(sex == Sex.M)
+				return SupplyNomenclatureMale;
+			return null;
+		}
 		#endregion
 
 		#region Номенклатура

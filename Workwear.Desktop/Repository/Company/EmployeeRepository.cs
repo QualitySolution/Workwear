@@ -101,6 +101,13 @@ namespace Workwear.Repository.Company
 				.Take(1)
 				.SingleOrDefault();
 		}
+		
+		public int GetNumberOfEmployees()
+		{
+			return RepoUow.Session.QueryOver<EmployeeCard>()
+				.Where(x=>x.DismissDate == null)
+				.RowCount();
+		}
 
 		#region GetEmployes
 

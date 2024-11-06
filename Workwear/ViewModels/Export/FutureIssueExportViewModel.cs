@@ -98,10 +98,10 @@ namespace Workwear.ViewModels.Export {
 			set => SetField(ref endDate, value);
 		}
 		
-		private bool noDebt;
-		public virtual bool NoDebt {
-			get => noDebt;
-			set => SetField(ref noDebt, value);
+		private bool moveDebt = true;
+		public virtual bool MoveDebt {
+			get => moveDebt;
+			set => SetField(ref moveDebt, value);
 		}
 		#endregion
 
@@ -232,7 +232,7 @@ namespace Workwear.ViewModels.Export {
 			param[3] = Gtk.ResponseType.Accept;
 
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
-				fc.CurrentName = "Прогноз выдач" + (NoDebt ? "(без долгов)" : "") + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
+				fc.CurrentName = "Прогноз выдач на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
 					filename = fc.Filename;
@@ -316,7 +316,7 @@ namespace Workwear.ViewModels.Export {
 				}
 				
 				globalProgress.CheckPoint("Прогнозирование выдач");
-				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, NoDebt, wearCardsItems, ProgressLocal);
+				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, MoveDebt, wearCardsItems, ProgressLocal);
 				
 				globalProgress.CheckPoint("Заполнение Excel файла");
 				int i = 1;

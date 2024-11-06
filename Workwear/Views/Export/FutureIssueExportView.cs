@@ -12,7 +12,7 @@ namespace Workwear.Views.Export {
 				.AddBinding(v => v.EndDate, w => w.EndDate)
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
-			checkNoDebt.Binding.AddBinding(ViewModel, v => v.NoDebt, w => w.Active).InitializeFromSource();
+			checkMoveDebt.Binding.AddBinding(ViewModel, v => v.MoveDebt, w => w.Active).InitializeFromSource();
 
 			yprogressTotal.Visible = false;
 			yprogressLocal.Visible = false;
