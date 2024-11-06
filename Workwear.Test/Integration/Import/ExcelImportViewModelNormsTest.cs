@@ -8,7 +8,9 @@ using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Import.Norms;
+using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
+using Workwear.Tools.Features;
 using Workwear.Tools.Nhibernate;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
@@ -41,13 +43,15 @@ namespace Workwear.Test.Integration.Import
 				
 				var navigation = Substitute.For<INavigationManager>();
 				var interactive = Substitute.For<IInteractiveMessage>();
+				var featureService = Substitute.For<FeaturesService>();
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
 				var settings = new SettingsNormsViewModel(null);
 				var unitOfWorkProvider = new UnitOfWorkProvider();
+				var employeeRepository = new EmployeeRepository();
 				var dataparser = new DataParserNorm(new NormRepository(), new ProtectionToolsRepository(), new SizeService());
 				var model = new ImportModelNorm(dataparser, settings);
-				using(var normsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
+				using(var normsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					normsLoad.ProgressStep = progressStep;
 					normsLoad.FileName = "Samples/Excel/norms_agronom.xlsx";
 					Assert.That(normsLoad.Sheets.Count, Is.EqualTo(3));

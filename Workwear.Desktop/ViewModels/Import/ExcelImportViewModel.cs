@@ -31,23 +31,21 @@ namespace Workwear.ViewModels.Import
 		public static readonly string ColorOfDuplicate = "Peru";
 		
 		public static readonly string ColorOfWarning = "Orange Red";
-		public readonly IInteractiveService interactive;
+		public readonly IInteractiveMessage interactive;
 
 		public ExcelImportViewModel(
 			IImportModel importModel, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
-			INavigationManager navigation, 
-			IInteractiveService interactiveService,
+			INavigationManager navigation,
+			IInteractiveMessage interactive,
 			ProgressInterceptor progressInterceptor,
 			UnitOfWorkProvider unitOfWorkProvider,
 			FeaturesService featuresService,
 			EmployeeRepository employeeRepository,
-			IInteractiveService interactive,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator, importModel.ImportName, unitOfWorkProvider)
 		{
 			ImportModel = importModel ?? throw new ArgumentNullException(nameof(importModel));
 			ImportModel.Init(UoW);
-			interactive = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.progressInterceptor = progressInterceptor;
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
