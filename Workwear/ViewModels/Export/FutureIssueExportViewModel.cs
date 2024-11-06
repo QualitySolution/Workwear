@@ -232,7 +232,7 @@ namespace Workwear.ViewModels.Export {
 			param[3] = Gtk.ResponseType.Accept;
 
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
-				fc.CurrentName = "Прогноз выдач" + (MoveDebt ? "(без долгов)" : "") + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
+				fc.CurrentName = "Прогноз выдач на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
 					filename = fc.Filename;
