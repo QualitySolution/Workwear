@@ -643,16 +643,16 @@ FROM
     sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 WHERE
     wear_cards.dismiss_date IS NULL
-    AND ((-1 IN (@employee_groups_ids))
+    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month') 
+AND ((-1 IN (@employee_groups_ids))
         OR(@without_groups AND NOT EXISTS
             (SELECT * FROM employee_group_items as gi
              WHERE gi.employee_id = wear_cards_item.wear_card_id) )
         OR (EXISTS (SELECT * FROM employee_group_items as gi
                     WHERE gi.employee_id = wear_cards_item.wear_card_id
                       AND gi.employee_group_id IN (@employee_groups_ids))) )
-    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
-    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-    AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month') 
 GROUP BY subdivision_id, protection_tools.id , sex, size, growth
 ORDER BY type_name, size, growth, sex</CommandText>
         <QueryParameters>
