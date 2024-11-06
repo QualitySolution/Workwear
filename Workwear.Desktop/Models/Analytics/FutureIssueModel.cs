@@ -53,11 +53,7 @@ namespace Workwear.Models.Analytics {
 				//список созданных объектов операций
 				List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>();
 
-				//номенклатура с максимальной стоимостью
-				Nomenclature nomenclature = null;
-				if(item.ProtectionTools?.Nomenclatures.Count > 0)
-					nomenclature =
-						item.ProtectionTools?.Nomenclatures.OrderByDescending(x => x.SaleCost ?? 0.0M).FirstOrDefault();
+				Nomenclature nomenclature = item.ProtectionTools.GetSupplyNomenclature(item.EmployeeCard?.Sex);
 
 				item.UpdateNextIssue(null);
 				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
