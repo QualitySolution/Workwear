@@ -62,7 +62,7 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 
-		private CausesWriteOff causesWriteOff = new CausesWriteOff();
+		private CausesWriteOff causesWriteOff;
 		[Display(Name = "Причина списания")]
 		[IgnoreHistoryTrace]
 		public virtual CausesWriteOff CausesWriteOff {
