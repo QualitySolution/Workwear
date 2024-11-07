@@ -152,7 +152,7 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Size?.Name + (item.Height != null ? (" / " + item.Height.Name) : ""));}},
 				new ColumnInfo() {Label =
 					"Количество\nпо норме", FillCell = (cell, item) => {
-					cell.SetCellValue(item.NormItem.Amount + " " + item.NormItem.ProtectionTools.Type.Units.Name);},
+					cell.SetCellValue(item.NormItem.AmountText); },
 					Type = CellType.Numeric},
 				new ColumnInfo() {Label =
 					"Срок\nиспользования", FillCell = (cell, item) => {

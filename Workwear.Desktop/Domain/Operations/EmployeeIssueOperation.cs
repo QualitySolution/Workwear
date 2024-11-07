@@ -447,7 +447,7 @@ namespace Workwear.Domain.Operations
 							if(lastAnswaerRecalculateStartOfUse == null)
 								lastAnswaerRecalculateStartOfUse = askUser.Question(
 									$"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
-									$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
+									$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.AmountText} на {normItem.LifeText}. " +
 									$"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?");
 							if(lastAnswaerRecalculateStartOfUse.Value)
 								StartOfUse = firstLessNorm.StartDate;

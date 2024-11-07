@@ -117,7 +117,7 @@ namespace Workwear.Domain.Company
 		}
 		public virtual string Title =>
 			$"Потребность сотрудника {EmployeeCard.ShortName} в {ProtectionTools.Name} - " +
-			$"{ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount)} на {ActiveNormItem.LifeText}";
+			$"{ActiveNormItem.AmountText} на {ActiveNormItem.LifeText}";
 
 		public virtual StockStateInfo InStockState {
 			get {
@@ -189,8 +189,7 @@ namespace Workwear.Domain.Company
 				return text;
 			}
 		}
-		public virtual string AmountByNormText => 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
+		public virtual string AmountByNormText => ActiveNormItem?.AmountText;
 		public virtual string InStockText => 
 			ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ?? 
 			BestChoiceInStock.Sum(x => x.Amount).ToString();
