@@ -42,11 +42,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.Widgets.yEnumComboBox yenumIssueType;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel2;
-
-		private global::Gamma.GtkWidgets.yButton buttonRun;
+		private global::Gtk.Expander expander1;
 
 		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+
+		private global::Gtk.Label GtkLabel10;
+
+		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
 		{
@@ -276,14 +278,23 @@ namespace workwear.ReportParameters.Views
 			w18.Expand = false;
 			w18.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel2.Name = "ylabel2";
-			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нормы");
-			this.dialog1_VBox.Add(this.ylabel2);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ylabel2]));
-			w19.Position = 1;
-			w19.Expand = false;
-			w19.Fill = false;
+			this.expander1 = new global::Gtk.Expander(null);
+			this.expander1.CanFocus = true;
+			this.expander1.Name = "expander1";
+			this.expander1.Expanded = true;
+			// Container child expander1.Gtk.Container+ContainerChild
+			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
+			this.expander1.Add(this.choiceprotectiontoolsview1);
+			this.GtkLabel10 = new global::Gtk.Label();
+			this.GtkLabel10.Name = "GtkLabel10";
+			this.GtkLabel10.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура нормы");
+			this.GtkLabel10.UseUnderline = true;
+			this.expander1.LabelWidget = this.GtkLabel10;
+			this.dialog1_VBox.Add(this.expander1);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander1]));
+			w20.Position = 1;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
@@ -291,19 +302,11 @@ namespace workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w20.PackType = ((global::Gtk.PackType)(1));
-			w20.Position = 2;
-			w20.Expand = false;
-			w20.Fill = false;
-			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
-			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
-			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
-			this.dialog1_VBox.Add(this.choiceprotectiontoolsview1);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.choiceprotectiontoolsview1]));
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
 			w21.PackType = ((global::Gtk.PackType)(1));
 			w21.Position = 3;
+			w21.Expand = false;
+			w21.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
