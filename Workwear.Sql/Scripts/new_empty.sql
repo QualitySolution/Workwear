@@ -763,6 +763,8 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(800) NOT NULL,
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
+  `washing_ppe` tinyint(1) default 0 not null,
+  `dispenser` tinyint(1) default 0 not null,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,

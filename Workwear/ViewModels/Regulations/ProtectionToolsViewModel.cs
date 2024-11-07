@@ -70,12 +70,13 @@ namespace Workwear.ViewModels.Regulations
 		}
 		#endregion
 
-		#region Visible
+		#region Visible Sensitive
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel);
 		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
 		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
+		public bool SensitiveDispenser => Entity.WashingPpe;
 		#endregion
 
 		#region EntityViewModels
@@ -92,6 +93,17 @@ namespace Workwear.ViewModels.Regulations
 				Entity.SupplyType = value;
 				OnPropertyChanged(nameof(ShowSupplyUnisex));
 				OnPropertyChanged(nameof(ShowSupplyTwosex));
+			}
+		}
+		public virtual bool WashingPPE {
+			get => Entity.WashingPpe;
+			set {
+				if(Entity.WashingPpe == value)
+					return;
+				Entity.WashingPpe = value;
+				if(!Entity.WashingPpe)
+					Entity.Dispenser = false;
+				OnPropertyChanged(nameof(SensitiveDispenser));
 			}
 		}
 		#endregion

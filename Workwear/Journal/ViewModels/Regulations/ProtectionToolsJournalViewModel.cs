@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
@@ -54,6 +55,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.WashingPpe).WithAlias(() => resultAlias.WashingPpe)
+					.Select(x => x.Dispenser).WithAlias(() => resultAlias.Dispenser)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.TypeName)
 					.Select(() => categoryForAnalyticAlias.Name).WithAlias(() => resultAlias.CategoryForAnalytic)
 				).OrderBy(x => x.Name).Asc
@@ -100,5 +103,8 @@ namespace workwear.Journal.ViewModels.Regulations
 		public string Name { get; set; }
 		public string TypeName { get; set; }
 		public string CategoryForAnalytic { get; set; }
+		public bool WashingPpe { get; set; }
+		public bool Dispenser { get; set; }
+		public string WashingText => Dispenser ? "Дозатор" : WashingPpe ? "Да" : String.Empty;
 	}
 }
