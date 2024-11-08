@@ -62,7 +62,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"byEmployee", ByEmployee},
 					{"showCost", ShowCost},
 					{"showCostCenter", ShowCostCenter},
-					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm}
+					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm},
+					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
 		};
 
 		public override string Identifier { 
@@ -184,13 +186,16 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool VisibleCostCenter;
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleByOperation => ReportType == AmountIssuedWearReportType.Flat;
-		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate;
+		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate
+									&& !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public bool SensetiveBySubdiviion => !ByOperation;
 		public bool SensetiveByEmployee => !ByOperation;
 		public bool SensetiveBySize => !ByOperation;
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)== e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion
