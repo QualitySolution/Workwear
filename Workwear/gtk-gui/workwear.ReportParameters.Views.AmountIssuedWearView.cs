@@ -371,7 +371,6 @@ namespace workwear.ReportParameters.Views
 			this.expander2 = new global::Gtk.Expander(null);
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
-			this.expander2.Expanded = true;
 			// Container child expander2.Gtk.Container+ContainerChild
 			this.choiceemployeegroupview3 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
 			this.choiceemployeegroupview3.Events = ((global::Gdk.EventMask)(256));
