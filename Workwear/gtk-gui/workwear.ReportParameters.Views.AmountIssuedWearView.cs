@@ -384,6 +384,7 @@ namespace workwear.ReportParameters.Views
 			this.vbox2.Add(this.expander2);
 			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander2]));
 			w26.Position = 11;
+			w26.Expand = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;

@@ -318,6 +318,7 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.Add(this.expander2);
 			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
 			w22.Position = 2;
+			w22.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
