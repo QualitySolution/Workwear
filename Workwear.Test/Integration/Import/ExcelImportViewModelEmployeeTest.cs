@@ -15,6 +15,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
+using Workwear.Repository.Company;
 using Workwear.Tools.Features;
 using Workwear.Tools.Nhibernate;
 using Workwear.Tools.Sizes;
@@ -45,13 +46,15 @@ namespace Workwear.Test.Integration.Import
 			feature.Available(WorkwearFeature.IdentityCards).Returns(true);
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/Employees/cardkey_list.xlsx";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
@@ -83,15 +86,17 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
 			setting.ConvertPersonnelNumber = true;
 			var model = new ImportModelEmployee(dataparser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/Employees/vostok_1c_employee.xls";
 				Assert.That(employeesLoad.Sheets.Count, Is.GreaterThan(0));
@@ -141,9 +146,11 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			//Так же проверяем что табельные номера вида 00002 превратятся в "2"
@@ -162,7 +169,7 @@ namespace Workwear.Test.Integration.Import
 				rootUow.Save(existEmployee);
 				rootUow.Commit();
 				
-				using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
+				using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					var uow = employeesLoad.UoW;
 					var employeesold = uow.GetAll<EmployeeCard>().ToList();
 					Assert.That(employeesold.Count, Is.EqualTo(1));
@@ -202,13 +209,15 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var navigation = Substitute.For<INavigationManager>();
 			var interactive = Substitute.For<IInteractiveMessage>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataparser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataparser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider)) {
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 				var importModel = employeesLoad.ImportModel as ImportModelEmployee;
 				employeesLoad.ProgressStep = progressStep;
 				employeesLoad.FileName = "Samples/Excel/Employees/dismissed_employees.xls";
@@ -266,13 +275,15 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var navigation = Substitute.For<INavigationManager>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider))
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
@@ -312,13 +323,15 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var navigation = Substitute.For<INavigationManager>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider))
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
@@ -384,13 +397,15 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var navigation = Substitute.For<INavigationManager>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider))
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;
@@ -446,13 +461,15 @@ namespace Workwear.Test.Integration.Import
 			var feature = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveMessage>();
 			var navigation = Substitute.For<INavigationManager>();
+			var featureService = Substitute.For<FeaturesService>();
 			var progressInterceptor = Substitute.For<ProgressInterceptor>();
 			var progressStep = Substitute.For<IProgressBarDisplayable>();
 			var unitOfWorkProvider = new UnitOfWorkProvider();
+			var employeeRepository = new EmployeeRepository();
 			var dataParser = new DataParserEmployee(new PersonNames(), new SizeService(), new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated), feature);
 			var setting = new SettingsMatchEmployeesViewModel(null);
 			var model = new ImportModelEmployee(dataParser, setting);
-			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider))
+			using(var employeesLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository))
 			{
 				var uow = employeesLoad.UoW;
 				employeesLoad.ProgressStep = progressStep;

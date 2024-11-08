@@ -5978,25 +5978,26 @@
                 <node type="Menuitem" action="ActionLeaders" />
               </node>
               <node type="Menu" action="ActionReports">
-                <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action11" />
                 <node type="Menuitem" action="ActionWarehouseTransferReport" />
                 <node type="Separator" />
+                <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action12" />
+                <node type="Separator" />
+                <node type="Menuitem" action="ActionAmountIssuedWear" />
+                <node type="Menuitem" action="ActionWriteOffAct" />
+                <node type="Menuitem" action="ActionClothingServiceReport" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionRequestSheet" />
                 <node type="Menuitem" action="ActionAverageAnnualNeed" />
-                <node type="Separator" />
                 <node type="Menu" action="Action">
                   <node type="Menuitem" action="ActionNotIssuedSheetDetail" />
                   <node type="Menuitem" action="ActionNotIssuedSheetSummary" />
                 </node>
+                <node type="Separator" />
                 <node type="Menuitem" action="ActionAmountEmployeeGetWear" />
-                <node type="Menuitem" action="ActionAmountIssuedWear" />
-                <node type="Menuitem" action="ActionWriteOffAct" />
                 <node type="Menuitem" action="ActionProvision" />
                 <node type="Menuitem" action="ActionBarcodeCompletenessReport" />
-                <node type="Menuitem" action="ActionClothingServiceReport" />
               </node>
               <node type="Menu" action="ActionHelp">
                 <node type="Menuitem" action="helpAction" />

@@ -53,21 +53,18 @@ namespace Workwear.Models.Analytics {
 				//список созданных объектов операций
 				List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>();
 
-				//номенклатура с максимальной стоимостью
-				Nomenclature nomenclature = null;
-				if(item.ProtectionTools?.Nomenclatures.Count > 0)
-					nomenclature =
-						item.ProtectionTools?.Nomenclatures.OrderByDescending(x => x.SaleCost ?? 0.0M).FirstOrDefault();
+				Nomenclature nomenclature = item.ProtectionTools.GetSupplyNomenclature(item.EmployeeCard?.Sex);
 
 				item.UpdateNextIssue(null);
 				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
-					int need = item.CalculateRequiredIssue(baseParameters, (DateTime)item.NextIssue);
+					//создаём следующую виртуальную выдачу
+					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
 					if(need == 0)
 						break;
 					//Операция приведшая к возникновению потребности
 					var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
-					//создаём следующую виртуальную выдачу
-					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					
 					var op = new EmployeeIssueOperation(baseParameters) {
 						OperationTime = issueDate,
 						StartOfUse = issueDate,
