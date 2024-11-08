@@ -19,6 +19,7 @@ namespace workwear.ReportParameters.ViewModels {
 	{
 		public readonly FeaturesService FeaturesService;
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
@@ -30,6 +31,8 @@ namespace workwear.ReportParameters.ViewModels {
 
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -174,6 +177,7 @@ namespace workwear.ReportParameters.ViewModels {
 			get => owners;
 			set => SetField(ref owners, value);
 		}
+		public bool VisibleChoiceEmployeeGroup => FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 
 		#region Visible and Sensitive
 		public bool VisibleOwners;
