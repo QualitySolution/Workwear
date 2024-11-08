@@ -5868,10 +5868,10 @@
         <property name="ShortLabel" translatable="yes">Справка по списаниям</property>
         <signal name="Activated" handler="OnActionWriteOffActActivated" />
       </action>
-      <action id="ActionWarehouseTransferReport">
+      <action id="ActionStockOperations">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Перемещения между складами</property>
-        <property name="ShortLabel" translatable="yes">Перемещения между складами</property>
+        <property name="Label" translatable="yes">Справка по складским операцииям</property>
+        <property name="ShortLabel" translatable="yes">Складские операции</property>
         <signal name="Activated" handler="OnActionWarehouseTransferReportActivated" />
       </action>
     </action-group>
@@ -5979,7 +5979,7 @@
               </node>
               <node type="Menu" action="ActionReports">
                 <node type="Menuitem" action="Action11" />
-                <node type="Menuitem" action="ActionWarehouseTransferReport" />
+                <node type="Menuitem" action="ActionStockOperations" />
                 <node type="Separator" />
                 <node type="Menuitem" action="Action10" />
                 <node type="Menuitem" action="Action12" />

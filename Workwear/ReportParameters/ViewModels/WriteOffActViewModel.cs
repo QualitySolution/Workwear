@@ -1,7 +1,5 @@
 ﻿using QS.Report.ViewModels;
 using System.Collections.Generic;
-using QS.DomainModel.UoW;
-using QS.DomainModel.Entity;
 using System;
 
 namespace Workwear.ReportParameters.ViewModels {
@@ -23,7 +21,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => startDate;
 			set {
 				if(SetField(ref startDate, value))
-					OnPropertyChanged(nameof(SensetiveLoad));
+					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
 		private DateTime? endDate =  DateTime.Now;
@@ -31,14 +29,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => endDate;
 			set {
 				if(SetField(ref endDate, value))
-					OnPropertyChanged(nameof(SensetiveLoad));
+					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
 		private DateTime? reportDate = DateTime.Today;
-		public virtual DateTime? ReportDate {
-			get => reportDate;
-		}
-		
-		public bool SensetiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null;
+		public virtual DateTime? ReportDate => reportDate;
+
+		public bool SensitiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null;
 	}
 }

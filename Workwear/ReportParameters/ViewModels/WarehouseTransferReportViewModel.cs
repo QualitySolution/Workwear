@@ -13,7 +13,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		public WarehouseTransferReportViewModel(RdlViewerViewModel rdlViewerViewModel, 
 			IUnitOfWorkFactory unitOfWorkFactory, FeaturesService featuresService) : base(rdlViewerViewModel, unitOfWorkFactory) {
 			FeaturesService = featuresService;
-			Title = "Отчет по перемещениям между складами";
+			Title = "Отчет по складским операциям";
 			Identifier = "WarehouseTransferReport";
 			if(FeaturesService.Available(WorkwearFeature.Warehouses)) {
 				warehousesExpense = UoW.GetAll<Warehouse>().ToList();
