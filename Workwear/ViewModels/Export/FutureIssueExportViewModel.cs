@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Autofac;
-using NHibernate;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -17,7 +16,6 @@ using QS.Utilities;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
@@ -72,12 +70,12 @@ namespace Workwear.ViewModels.Export {
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
-				OnPropertyChanged(nameof(SensetiveLoad));
+				OnPropertyChanged(nameof(SensitiveLoad));
 		}
 		
 		#region Поля и свойства
 		private bool runSensitive;
-		public bool SensetiveLoad => (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
+		public bool SensitiveLoad => (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
@@ -96,14 +94,14 @@ namespace Workwear.ViewModels.Export {
         }
             
         private DateTime startDate = DateTime.Today.Date;
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
 		private DateTime endDate = DateTime.Today.AddMonths(1);
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(SensitiveLoad))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -243,7 +241,10 @@ namespace Workwear.ViewModels.Export {
 			param[3] = Gtk.ResponseType.Accept;
 
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
-				fc.CurrentName = "Прогноз выдач" + (MoveDebt ? "(без долгов)" : "") + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
+				fc.CurrentName = (ChoiceProtectionToolsViewModel.AllSelected ? "П" : "Частичный п")
+				                 + "рогноз выдач" 
+				                 + (MoveDebt ? " (без долгов)" : "") 
+				                 + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
 					filename = fc.Filename;
@@ -263,35 +264,24 @@ namespace Workwear.ViewModels.Export {
 				ISheet sheet = workbook.CreateSheet("Планируемые выдачи");
 
 				#region Получение данных
-				var employees = UoW.Session.QueryOver<EmployeeCard>()
-					.Fetch(SelectMode.Fetch, x => x.Subdivision)
-					.Fetch(SelectMode.Fetch, x => x.Department)
-					.Fetch(SelectMode.Fetch, x => x.Post)
-					.Where(x => x.DismissDate == null)
-					.List();
 
-				var employeeIds = employees.Select(x => x.Id).ToArray();
-				UoW.Session.QueryOver<Norm>()
-					.Fetch(SelectMode.Fetch, x => x.Items)
-					.List();
-				
+				globalProgress.CheckPoint(nameof(issueModel.LoadWearItemsForProtectionTools));
+				var wearCardsItems = issueModel
+					.LoadWearItemsForProtectionTools(ChoiceProtectionToolsViewModel.SelectedIds);
+					
 				globalProgress.CheckPoint(nameof(issueModel.PreloadEmployeeInfo));
-				issueModel.PreloadEmployeeInfo(employeeIds);
+				issueModel.PreloadEmployeeInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
 				
-				globalProgress.CheckPoint(nameof(issueModel.PreloadWearItems));
-				issueModel.PreloadWearItems(employeeIds);
-				
+				issueModel.PreloadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+					
 				globalProgress.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 				ProgressLocal.Close(); 
-				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
+				issueModel.FillWearReceivedInfo(wearCardsItems.ToArray(), progress: ProgressLocal);
 
-				globalProgress.CheckPoint("Создание документа");
-				var wearCardsItems = employees
-					.SelectMany(x => x.WorkwearItems )
-					.Where(wi => ChoiceProtectionToolsViewModel.SelectedIds.Contains(wi.ProtectionTools.Id))
-					.ToList();
+
 				#endregion
 
+				globalProgress.CheckPoint("Создание документа");
 				#region Форматы и стили ячеек
 				//Форматы ячеек. 
 				IDataFormat dataFormater = workbook.CreateDataFormat();

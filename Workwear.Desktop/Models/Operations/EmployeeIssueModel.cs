@@ -212,6 +212,53 @@ namespace Workwear.Models.Operations {
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
 		#endregion
 
+		#region Заполение данных по потребностям
+		public IList<EmployeeCardItem>  LoadWearItemsForProtectionTools(params int[] protectionToolsIds) {
+			UoW.Session.QueryOver<ProtectionTools>()
+				.Where(p => p.Id.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, p => p)
+				.Fetch(SelectMode.Fetch, p => p.Type)
+				.Fetch(SelectMode.Fetch, p => p.Type.Units)
+				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
+				.Future();
+			
+			EmployeeCard employee = null;
+			var query = UoW.Session.QueryOver<EmployeeCardItem>()
+				.Where(i => i.ProtectionTools.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.Norm)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.NormCondition)
+				.JoinAlias(x => x.EmployeeCard, () => employee)
+				.Where(() => employee.DismissDate == null)
+				.Future();
+
+			return query.ToList();
+		}
+		
+		public void FillWearReceivedInfo(EmployeeCardItem[] employeeCardItems, IProgressBarDisplayable progress = null) {
+			progress?.Add(text: "Подгружаем операции");
+			if(!employeeCardItems.Any())
+				return;
+			var operations = employeeIssueRepository.AllOperationsFor(
+					employeeCardItems.Select(i => i.EmployeeCard).ToArray(),
+					employeeCardItems.Select(i => i.ProtectionTools).ToArray()
+				).ToList();
+		
+			var protectionGroups = 
+				operations
+					.Where(x => x.ProtectionTools != null)
+					.GroupBy(x => (x.Employee.Id, x.ProtectionTools.Id))
+					.ToDictionary(g => g.Key, g => g);
+			
+			foreach (var item in employeeCardItems) {
+				if(protectionGroups.ContainsKey((item.EmployeeCard.Id, item.ProtectionTools.Id))) 
+					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList());
+				else 
+					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+			}
+		}
+		#endregion
+		
 		#region Заполение данных в сотрудников
 		/// <summary>
 		/// Заполняет графы и обновлят дату последней выдачи .
@@ -240,7 +287,6 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
-		
 		public void PreloadWearItems(params int[] employeeIds) {
 			//Загружаем строки
 			EmployeeCardItem employeeCardItemAlias = null;
@@ -326,6 +372,18 @@ namespace Workwear.Models.Operations {
 		{
 			FillWearInStockInfo(new [] {employee}, stockBalanceModel, progressStep);
 		}
+
+		public void PreloadEmployeeFullInfo(int[] employeeIds) {
+			var query = UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.Fetch, x => x.Vacations)
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.Fetch(SelectMode.Fetch, x => x.Post)
+				.Fetch(SelectMode.Fetch, x => x.Department)
+				.Fetch(SelectMode.Fetch, x => x.Subdivision)
+				.Future();
+		}
+
 		#endregion
 	}
 }
