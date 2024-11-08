@@ -44,7 +44,7 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.Name = "dialog1_VBox";
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(6)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -57,8 +57,8 @@ namespace workwear.ReportParameters.Views
 			this.checkShowSex.UseUnderline = true;
 			this.table1.Add(this.checkShowSex);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowSex]));
-			w1.TopAttach = ((uint)(3));
-			w1.BottomAttach = ((uint)(4));
+			w1.TopAttach = ((uint)(2));
+			w1.BottomAttach = ((uint)(3));
 			w1.LeftAttach = ((uint)(1));
 			w1.RightAttach = ((uint)(2));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -72,8 +72,8 @@ namespace workwear.ReportParameters.Views
 			this.comboIssueType.DefaultFirst = false;
 			this.table1.Add(this.comboIssueType);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.comboIssueType]));
-			w2.TopAttach = ((uint)(2));
-			w2.BottomAttach = ((uint)(3));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -84,8 +84,6 @@ namespace workwear.ReportParameters.Views
 			this.entitySubdivision.Name = "entitySubdivision";
 			this.table1.Add(this.entitySubdivision);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.entitySubdivision]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
 			w3.LeftAttach = ((uint)(1));
 			w3.RightAttach = ((uint)(2));
 			w3.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -97,8 +95,6 @@ namespace workwear.ReportParameters.Views
 			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Подразделение:");
 			this.table1.Add(this.label3);
 			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.label3]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
 			w4.XOptions = ((global::Gtk.AttachOptions)(4));
 			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -108,8 +104,8 @@ namespace workwear.ReportParameters.Views
 			this.labelIssueType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.table1.Add(this.labelIssueType);
 			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.labelIssueType]));
-			w5.TopAttach = ((uint)(2));
-			w5.BottomAttach = ((uint)(3));
+			w5.TopAttach = ((uint)(1));
+			w5.BottomAttach = ((uint)(2));
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
 			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -121,8 +117,8 @@ namespace workwear.ReportParameters.Views
 			this.ycheckShowSize.UseUnderline = true;
 			this.table1.Add(this.ycheckShowSize);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckShowSize]));
-			w6.TopAttach = ((uint)(4));
-			w6.BottomAttach = ((uint)(5));
+			w6.TopAttach = ((uint)(3));
+			w6.BottomAttach = ((uint)(4));
 			w6.LeftAttach = ((uint)(1));
 			w6.RightAttach = ((uint)(2));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -136,8 +132,8 @@ namespace workwear.ReportParameters.Views
 			this.ycheckSummry.UseUnderline = true;
 			this.table1.Add(this.ycheckSummry);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckSummry]));
-			w7.TopAttach = ((uint)(5));
-			w7.BottomAttach = ((uint)(6));
+			w7.TopAttach = ((uint)(4));
+			w7.BottomAttach = ((uint)(5));
 			w7.LeftAttach = ((uint)(1));
 			w7.RightAttach = ((uint)(2));
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -145,11 +141,12 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.Add(this.table1);
 			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
 			w8.Position = 0;
+			w8.Expand = false;
+			w8.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
 			this.expander1.Name = "expander1";
-			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
 			this.choiceemployeegroupview4 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
 			this.choiceemployeegroupview4.Events = ((global::Gdk.EventMask)(256));
