@@ -63,9 +63,9 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
-		public bool SensetiveLoad => true;
+		public bool SensetiveLoad => !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)==e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		
