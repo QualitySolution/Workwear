@@ -46,6 +46,9 @@ namespace workwear.ReportParameters.Views {
 				.InitializeFromSource();
 
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveRunReport, w => w.Sensitive).InitializeFromSource();
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

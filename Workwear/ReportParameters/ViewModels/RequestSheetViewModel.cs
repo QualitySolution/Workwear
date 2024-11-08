@@ -52,6 +52,8 @@ namespace workwear.ReportParameters.ViewModels {
 
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(uow);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
 		private readonly IUnitOfWork uow;
@@ -64,6 +66,7 @@ namespace workwear.ReportParameters.ViewModels {
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		#region Свойства View
@@ -142,6 +145,8 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1)
 		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected;
+
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
