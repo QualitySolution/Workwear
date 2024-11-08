@@ -216,7 +216,6 @@ namespace Workwear.Models.Operations {
 		public IList<EmployeeCardItem>  LoadWearItemsForProtectionTools(params int[] protectionToolsIds) {
 			UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
 				.Fetch(SelectMode.Fetch, p => p.Type)
 				.Fetch(SelectMode.Fetch, p => p.Type.Units)
 				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
@@ -225,6 +224,7 @@ namespace Workwear.Models.Operations {
 			EmployeeCard employee = null;
 			var query = UoW.Session.QueryOver<EmployeeCardItem>()
 				.Where(i => i.ProtectionTools.IsIn(protectionToolsIds))
+				.Fetch(SelectMode.ChildFetch, x => x.EmployeeCard)
 				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem)
 				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.Norm)
 				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.NormCondition)
@@ -374,14 +374,26 @@ namespace Workwear.Models.Operations {
 		}
 
 		public IList<EmployeeCard> LoadEmployeeFullInfo(int[] employeeIds) {
-			return UoW.Session.QueryOver<EmployeeCard>()
+			var query = UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
-				.Fetch(SelectMode.Fetch, x => x.Vacations)
-				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.Fetch(SelectMode.Fetch, x => x.Post)
 				.Fetch(SelectMode.Fetch, x => x.Department)
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
-				.List();
+				.Future();
+				
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.Vacations)
+				.Future();
+			
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.Sizes)
+				.Future();
+			
+				return query.ToList();
 		}
 
 		#endregion
