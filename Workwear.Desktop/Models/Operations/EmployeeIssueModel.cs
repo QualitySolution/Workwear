@@ -373,15 +373,15 @@ namespace Workwear.Models.Operations {
 			FillWearInStockInfo(new [] {employee}, stockBalanceModel, progressStep);
 		}
 
-		public void PreloadEmployeeFullInfo(int[] employeeIds) {
-			var query = UoW.Session.QueryOver<EmployeeCard>()
+		public IList<EmployeeCard> LoadEmployeeFullInfo(int[] employeeIds) {
+			return UoW.Session.QueryOver<EmployeeCard>()
 				.Where(x => x.Id.IsIn(employeeIds))
 				.Fetch(SelectMode.Fetch, x => x.Vacations)
 				.Fetch(SelectMode.Fetch, x => x.Sizes)
 				.Fetch(SelectMode.Fetch, x => x.Post)
 				.Fetch(SelectMode.Fetch, x => x.Department)
 				.Fetch(SelectMode.Fetch, x => x.Subdivision)
-				.Future();
+				.List();
 		}
 
 		#endregion

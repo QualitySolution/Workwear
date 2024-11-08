@@ -257,7 +257,7 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, "Загрузка общих данных", logger: logger); 
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, "Загрузка общих данных", showProgressText: true, logger: logger); 
 				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -265,20 +265,16 @@ namespace Workwear.ViewModels.Export {
 
 				#region Получение данных
 
-				globalProgress.CheckPoint(nameof(issueModel.LoadWearItemsForProtectionTools));
+				globalProgress.CheckPoint("Загрузка потребностей");
 				var wearCardsItems = issueModel
 					.LoadWearItemsForProtectionTools(ChoiceProtectionToolsViewModel.SelectedIds);
-					
-				globalProgress.CheckPoint(nameof(issueModel.PreloadEmployeeInfo));
-				issueModel.PreloadEmployeeInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+				var protectionTools = wearCardsItems.Select(x => x.ProtectionTools).Distinct();
 				
-				issueModel.PreloadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+				globalProgress.CheckPoint("Загрузка сотрудников");
+				var employees = issueModel.LoadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
 					
-				globalProgress.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
-				ProgressLocal.Close(); 
+				globalProgress.CheckPoint("Загрузка выдач");
 				issueModel.FillWearReceivedInfo(wearCardsItems.ToArray(), progress: ProgressLocal);
-
-
 				#endregion
 
 				globalProgress.CheckPoint("Создание документа");
