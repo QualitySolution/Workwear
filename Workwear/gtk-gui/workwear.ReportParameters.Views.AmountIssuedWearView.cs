@@ -394,6 +394,7 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
 			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w27.PackType = ((global::Gtk.PackType)(1));
 			w27.Position = 12;
 			w27.Expand = false;
 			w27.Fill = false;
@@ -403,6 +404,8 @@ namespace workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.buttonPrintReport.Clicked += new global::System.EventHandler(this.OnButtonPrintReportClicked);
 		}
 	}

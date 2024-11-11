@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8688,6 +8688,7 @@
             <property name="MemberName" />
             <property name="CanFocus">True</property>
             <property name="Expanded">True</property>
+            <signal name="Activated" handler="OnExpander1Activated" />
             <child>
               <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview1">
                 <property name="MemberName" />
@@ -8714,6 +8715,7 @@
           <widget class="Gtk.Expander" id="expander2">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
+            <signal name="Activated" handler="OnExpander2Activated" />
             <child>
               <widget class="Workwear.ReportParameters.Views.ChoiceEmployeeGroupView" id="choiceemployeegroupview1">
                 <property name="MemberName" />
@@ -15280,6 +15282,7 @@
             <property name="MemberName" />
             <property name="CanFocus">True</property>
             <property name="Expanded">True</property>
+            <signal name="Activated" handler="OnExpander1Activated" />
             <child>
               <widget class="Workwear.ReportParameters.Views.ChoiceSubdivisionView" id="choicesubdivisionview1">
                 <property name="MemberName" />
@@ -15306,6 +15309,7 @@
           <widget class="Gtk.Expander" id="expander2">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
+            <signal name="Activated" handler="OnExpander2Activated" />
             <child>
               <widget class="Workwear.ReportParameters.Views.ChoiceEmployeeGroupView" id="choiceemployeegroupview3">
                 <property name="MemberName" />
@@ -15340,6 +15344,7 @@
             <signal name="Clicked" handler="OnButtonPrintReportClicked" />
           </widget>
           <packing>
+            <property name="PackType">End</property>
             <property name="Position">12</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
