@@ -933,6 +933,13 @@ WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE
   and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
   AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
+AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = operation_issued_by_employee.employee_id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                    WHERE gi.employee_id = operation_issued_by_employee.employee_id
+                      AND gi.employee_group_id IN (@employee_groups_ids))) )
 GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
 ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
@@ -989,6 +996,12 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           </QueryParameter>
           <QueryParameter Name="byOperation">
             <Value>={?byOperation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1233,6 +1246,30 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
