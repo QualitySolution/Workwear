@@ -61,12 +61,20 @@ namespace Workwear.Domain.Stock.Documents
 				}
 			}
 		}
-		
-		private string cause;
+
+		private CausesWriteOff causesWriteOff;
 		[Display(Name = "Причина списания")]
-		public virtual string Cause {
-			get => cause;
-			set => SetField(ref cause, value);
+		[IgnoreHistoryTrace]
+		public virtual CausesWriteOff CausesWriteOff {
+			get => causesWriteOff;
+			set => SetField(ref causesWriteOff, value);
+		}
+		
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
 		}
 
 		#region Списание со склада

@@ -11,6 +11,7 @@ namespace Workwear.Views.ClothingService {
 			this.Build();
 			CommonButtonSubscription();
 
+			framePostamat.Visible = ViewModel.PostomatVisible;
 			barcodeinfoview1.ViewModel = ViewModel.BarcodeInfoViewModel;
 			checkNeedRepair.Binding
 				.AddBinding(ViewModel, e => e.NeedForRepair, w => w.Active)

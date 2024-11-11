@@ -23,6 +23,8 @@ namespace Workwear.Models.Import.Norms
 		NewProtectionTools,
 		[Display(Name = "Новых типов номенклатуры")]
 		NewItemTypes,
+		[Display(Name = "Новых условий нормы")]
+		NewCondition,
 		[Display(Name = "Не распознанных номенклатур")]
 		UndefinedItemTypes,
 		[Display(Name = "Неоднозначных норм")]

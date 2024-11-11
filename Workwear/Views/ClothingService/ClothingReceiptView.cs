@@ -1,4 +1,5 @@
 ﻿using System;
+using QS.Cloud.Postomat.Manage;
 using QS.Views;
 using Workwear.ViewModels.ClothingService;
 
@@ -9,7 +10,8 @@ namespace Workwear.Views.ClothingService {
 			this.Build();
 			
 			barcodeinfoview1.ViewModel = ViewModel.BarcodeInfoViewModel;
-			
+
+			framePostomat.Visible = ViewModel.PostomatVisible;
 			entrySearchBarcode.Binding
 				.AddBinding(ViewModel.BarcodeInfoViewModel, e => e.BarcodeText, w => w.Text)
 				.InitializeFromSource();
@@ -17,7 +19,14 @@ namespace Workwear.Views.ClothingService {
 			checkNeedForRepair.Binding
 				.AddBinding(ViewModel, v => v.NeedRepair, w => w.Active)
 				.InitializeFromSource();
-			
+
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
+			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Postomats, w => w.ItemsList)
+				.AddBinding(v => v.Postomat, w => w.SelectedItem)
+				.InitializeFromSource();
+
+
 			textDefect.Binding
 				.AddSource(ViewModel)
 				.AddBinding(v => v.Defect, w => w.Buffer.Text)

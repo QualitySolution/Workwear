@@ -6,7 +6,7 @@ namespace Workwear.Views.Export
 	{
 		private global::Gamma.GtkWidgets.yTable ytable2;
 
-		private global::Gamma.GtkWidgets.yCheckButton checkNoDebt;
+		private global::Gamma.GtkWidgets.yCheckButton checkMoveDebt;
 
 		private global::QS.Views.Control.EntityEntry entityentryOrganization;
 
@@ -36,16 +36,16 @@ namespace Workwear.Views.Export
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
 			// Container child ytable2.Gtk.Table+TableChild
-			this.checkNoDebt = new global::Gamma.GtkWidgets.yCheckButton();
-			this.checkNoDebt.TooltipMarkup = "Рассчитываем так как будто все долги выданы до начала периода. В этом случае даты" +
-				" будут считаться иначе.";
-			this.checkNoDebt.CanFocus = true;
-			this.checkNoDebt.Name = "checkNoDebt";
-			this.checkNoDebt.Label = global::Mono.Unix.Catalog.GetString("Без задолжности");
-			this.checkNoDebt.DrawIndicator = true;
-			this.checkNoDebt.UseUnderline = true;
-			this.ytable2.Add(this.checkNoDebt);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkNoDebt]));
+			this.checkMoveDebt = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkMoveDebt.TooltipMarkup = "Рассчитываем так как будто все долги выданы в первый день периода. В этом случае " +
+				"все последующие даты будут считаться для должников от этого дня.";
+			this.checkMoveDebt.CanFocus = true;
+			this.checkMoveDebt.Name = "checkMoveDebt";
+			this.checkMoveDebt.Label = global::Mono.Unix.Catalog.GetString("Перенести долги на начало периода");
+			this.checkMoveDebt.DrawIndicator = true;
+			this.checkMoveDebt.UseUnderline = true;
+			this.ytable2.Add(this.checkMoveDebt);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable2[this.checkMoveDebt]));
 			w1.TopAttach = ((uint)(2));
 			w1.BottomAttach = ((uint)(3));
 			w1.LeftAttach = ((uint)(1));

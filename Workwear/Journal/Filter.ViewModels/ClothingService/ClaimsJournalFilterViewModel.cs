@@ -6,21 +6,26 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Project.Journal;
 using Workwear.Domain.ClothingService;
+using Workwear.Tools.Features;
 
 namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 	public class ClaimsJournalFilterViewModel : JournalFilterViewModelBase<ClaimsJournalFilterViewModel> {
-		
+		private readonly FeaturesService featuresService;
+
 		public ClaimsJournalFilterViewModel(
 			JournalViewModelBase journalViewModel,
 			PostomatManagerService postomatService,
+			FeaturesService featuresService,
 			IUnitOfWorkFactory unitOfWorkFactory = null)
 			: base(journalViewModel, unitOfWorkFactory)
 		{
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var postomats = new List<PostomatInfo>();
 			postomat = new PostomatInfo() { Id = 0, Name = "Любой" };//заодно проставим умолчания
 			postomats.Add(postomat);
-			postomats.AddRange(postomatService.GetPostomatList(PostomatListType.Aso));
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomats.AddRange(postomatService.GetPostomatList(PostomatListType.Aso));
 			Postomats = postomats;
 		}
 		
