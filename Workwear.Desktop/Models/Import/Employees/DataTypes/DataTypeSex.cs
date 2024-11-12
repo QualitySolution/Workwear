@@ -28,12 +28,12 @@ namespace Workwear.Models.Import.Employees.DataTypes {
 
 			Sex detectedSex = Sex.None;
 			//Первая М английская, вторая русская.
-			if(value.StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
-			   value.StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
+			if(value.ToUpper().StartsWith("M", StringComparison.CurrentCultureIgnoreCase) || 
+			   value.ToUpper().StartsWith("М", StringComparison.CurrentCultureIgnoreCase)) {
 				detectedSex = Sex.M;
 			}
-			if(value.StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
-			   value.StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
+			if(value.ToUpper().StartsWith("F", StringComparison.CurrentCultureIgnoreCase) || 
+			   value.ToUpper().StartsWith("Ж", StringComparison.CurrentCultureIgnoreCase)) {
 				detectedSex = Sex.F;
 			}
 			if(detectedSex == Sex.None)
