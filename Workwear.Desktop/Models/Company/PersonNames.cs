@@ -6710,6 +6710,14 @@ namespace Workwear.Models.Company
 			"ШИРАЛЫ",    
 			"ШЫРАКБАЙ",    
 			"ЯШАР",
+			//ДОБАВЛЕНИЕ ИМЕН, КОТОРЫЕ И ЖЕНСКИЕ В ТОМ ЧИСЛЕ
+			"АДЕЛЬ",
+			"ЧУЛПАН",
+			"АЙНАР",
+			"АЛЬСИНА",
+			"АЗАМАТУЛЛА",
+			"САЙДАШ",
+			"АМАЛЬ",
 		};
 
 		public HashSet<string> FemaleNames = new HashSet<string>
@@ -12149,17 +12157,38 @@ namespace Workwear.Models.Company
             "УМІТБАЛА",    
             "ФАТИМАГУЛЬ",    
             "ЭЛЬФИРА",    
+            // ДОБАВЛЕНИЕ НОВЫХ ЖЕНСКИХ ИМЕН, КОТОРЫЕ ЕСТЬ В КОС
+            "ГУЗАЛИЯ",
+            "СИРИНА",
+            
 		};
 
-		public Sex GetSexByName(string name) {
+		public Sex GetSexByName(string name, string patronymic="") {
 			if(String.IsNullOrWhiteSpace(name))
 				return Sex.None;
 			name = name.ToUpper().Replace("Ё", "Е");
+			if(MaleNames.Contains(name) && FemaleNames.Contains(name)) {
+				return DetermineGenderByPatronymic(patronymic);
+			}
 			if(MaleNames.Contains(name))
 				return Sex.M;
 			if(FemaleNames.Contains(name))
 				return Sex.F;
 			return Sex.None;
+		}
+
+		private Sex DetermineGenderByPatronymic(string patronymic) {
+			if(string.IsNullOrWhiteSpace(patronymic))
+				return Sex.None;
+			switch (patronymic[patronymic.Length - 1])
+			{
+				case 'ч':
+					return Sex.M;
+				case 'а':
+					return Sex.F;
+				default:
+					return Sex.None;
+			}
 		}
 
 		/// <summary>
