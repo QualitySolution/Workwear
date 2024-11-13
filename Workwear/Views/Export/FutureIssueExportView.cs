@@ -24,6 +24,7 @@ namespace Workwear.Views.Export {
 			ybuttonRun.Binding
 				.AddBinding(ViewModel, v => v.RunSensitive, w => w.Sensitive)
 				.AddBinding(ViewModel, v => v.RunVisible, w => w.Visible).InitializeFromSource();
+			ylabel_done.Binding.AddBinding(ViewModel, vm => vm.DoneVisible, w => w.Visible).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {

@@ -53,6 +53,7 @@ namespace Workwear.ViewModels.Export {
 			
 			Title = "Прогноз выдач";
 			RunVisible = runSensitive = true;
+			DoneVisible = false;
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -87,6 +88,7 @@ namespace Workwear.ViewModels.Export {
 			set => SetField(ref runSensitive, value);
 		}
 		public virtual bool RunVisible { get; set; }
+		public virtual bool DoneVisible { get; set; }
 		
 		private Organization exportOrganization;
         public virtual Organization ExportOrganization {
@@ -244,7 +246,7 @@ namespace Workwear.ViewModels.Export {
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
 				fc.CurrentName = (ChoiceProtectionToolsViewModel.AllSelected ? "П" : "Частичный п")
 				                 + "рогноз выдач" 
-				                 + (MoveDebt ? " (без долгов)" : "") 
+				                 + (MoveDebt ? " (c долгами)" : "") 
 				                 + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
@@ -258,7 +260,7 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, "Загрузка общих данных", showProgressText: true, logger: logger); 
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", showProgressText: true, logger: logger); 
 				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -339,10 +341,12 @@ namespace Workwear.ViewModels.Export {
 					}
 				workbook.Write(fileStream);
 				workbook.Close();
-				globalProgress.CheckPoint("Готово");
+				globalProgress.End();
 			}
 			RunVisible = false;
+			DoneVisible = true;
 			OnPropertyChanged(nameof(RunVisible));
+			OnPropertyChanged(nameof(DoneVisible));
 		}
 		#endregion
 	}

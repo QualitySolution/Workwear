@@ -20,6 +20,8 @@ namespace Workwear.Views.Export
 
 		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker;
 
+		private global::Gamma.GtkWidgets.yLabel ylabel_done;
+
 		private global::QS.Widgets.ProgressWidget yprogressLocal;
 
 		private global::QS.Widgets.ProgressWidget yprogressTotal;
@@ -121,30 +123,43 @@ namespace Workwear.Views.Export
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
-			this.yprogressLocal = new global::QS.Widgets.ProgressWidget();
-			this.yprogressLocal.Name = "yprogressLocal";
-			this.ytable2.Add(this.yprogressLocal);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressLocal]));
-			w8.TopAttach = ((uint)(4));
-			w8.BottomAttach = ((uint)(5));
+			this.ylabel_done = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel_done.Name = "ylabel_done";
+			this.ylabel_done.LabelProp = global::Mono.Unix.Catalog.GetString("Готово");
+			this.ytable2.Add(this.ylabel_done);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabel_done]));
+			w8.TopAttach = ((uint)(6));
+			w8.BottomAttach = ((uint)(7));
+			w8.LeftAttach = ((uint)(1));
 			w8.RightAttach = ((uint)(2));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable2.Gtk.Table+TableChild
-			this.yprogressTotal = new global::QS.Widgets.ProgressWidget();
-			this.yprogressTotal.Name = "yprogressTotal";
-			this.ytable2.Add(this.yprogressTotal);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressTotal]));
-			w9.TopAttach = ((uint)(5));
-			w9.BottomAttach = ((uint)(6));
+			this.yprogressLocal = new global::QS.Widgets.ProgressWidget();
+			this.yprogressLocal.Name = "yprogressLocal";
+			this.ytable2.Add(this.yprogressLocal);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressLocal]));
+			w9.TopAttach = ((uint)(4));
+			w9.BottomAttach = ((uint)(5));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yprogressTotal = new global::QS.Widgets.ProgressWidget();
+			this.yprogressTotal.Name = "yprogressTotal";
+			this.ytable2.Add(this.yprogressTotal);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yprogressTotal]));
+			w10.TopAttach = ((uint)(5));
+			w10.BottomAttach = ((uint)(6));
+			w10.RightAttach = ((uint)(2));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable2);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
+			this.ylabel_done.Hide();
 			this.yprogressLocal.Hide();
 			this.yprogressTotal.Hide();
 			this.Hide();
