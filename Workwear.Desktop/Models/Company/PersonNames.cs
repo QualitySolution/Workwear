@@ -12178,17 +12178,15 @@ namespace Workwear.Models.Company
 		}
 
 		private Sex DetermineGenderByPatronymic(string patronymic) {
+			patronymic = patronymic.ToLower();
 			if(string.IsNullOrWhiteSpace(patronymic))
 				return Sex.None;
-			switch (patronymic[patronymic.Length - 1])
-			{
-				case 'ч':
-					return Sex.M;
-				case 'а':
-					return Sex.F;
-				default:
-					return Sex.None;
-			}
+			if (patronymic.EndsWith("ович")|| patronymic.EndsWith("евич")||(patronymic.EndsWith("ич")))
+				return Sex.M;
+			if (patronymic.EndsWith("овна")|| patronymic.EndsWith("евна")||(patronymic.EndsWith("ична")))
+				return Sex.F;
+			return Sex.None;
+			
 		}
 
 		/// <summary>
