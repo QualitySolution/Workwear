@@ -118,5 +118,119 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result[3].OperationDate, Is.EqualTo(new DateTime(2024, 10, 5)));
 			Assert.That(result[3].Amount, Is.EqualTo(12));
 		}
+		
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что учитываем потребность вышедшего из отпуска в прогнозируемый период.")]
+		public void CalculateIssues_End_vacation()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+
+			EmployeeCard employee = new EmployeeCard();
+			EmployeeVacation vacation = new EmployeeVacation() {
+				BeginDate = new DateTime(2024, 6, 1),
+				EndDate = new DateTime(2024, 11, 1),
+				Employee = employee
+			};
+			employee.AddVacation(vacation);
+			
+			var protectionTools1 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
+			var protectionTools2 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
+			var protectionTools3 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
+			
+			var norm = new Norm();
+			
+			var normItem1 = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools1,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 4
+			};
+			var normItem2 = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools2,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 1
+			};
+			var normItem3 = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools3,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 4
+			};
+			
+			var operations1 = new List<EmployeeIssueOperation>() {
+				new EmployeeIssueOperation { //Уже списано
+					OperationTime = new DateTime(2020, 5, 1),
+					Issued = 2,
+					AutoWriteoffDate = new DateTime(2024, 5, 1),
+					ExpiryByNorm = new DateTime(2024, 5, 1)
+				}
+			};
+			var operations2 = new List<EmployeeIssueOperation>() {
+				new EmployeeIssueOperation { //Частичная
+					OperationTime = new DateTime(2022, 5, 1),
+					Issued = 1,
+					AutoWriteoffDate = new DateTime(2026, 5, 1),
+					ExpiryByNorm = new DateTime(2026, 5, 1)
+				}
+			};
+			var operations3 = new List<EmployeeIssueOperation>() {
+				new EmployeeIssueOperation { //Возникнет если не учитываем переносы по отпуску
+					OperationTime = new DateTime(2020, 11, 10),
+					Issued = 2,
+					AutoWriteoffDate = new DateTime(2024, 11, 10),
+					ExpiryByNorm = new DateTime(2024, 11, 10)
+				}
+			};
+			var employeeItems1 = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem1,
+					ProtectionTools = protectionTools1,
+					NextIssue = new DateTime(2024, 5, 1),
+					Graph = new IssueGraph(operations1)
+				}
+			};
+			var employeeItems2 = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem2,
+					ProtectionTools = protectionTools2,
+					NextIssue = new DateTime(2022, 5, 1),
+					Graph = new IssueGraph(operations2)
+				}
+			};
+			var employeeItems3 = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem3,
+					ProtectionTools = protectionTools3,
+					NextIssue = new DateTime(2024, 11, 10),
+					Graph = new IssueGraph(operations3)
+				}
+			};
+
+			// act
+			var result1 = model.CalculateIssues(new DateTime(2024, 10, 1), new DateTime(2024, 12, 31), true, employeeItems1);
+			var result2 = model.CalculateIssues(new DateTime(2024, 10, 1), new DateTime(2024, 12, 31), true, employeeItems2);
+			var result3 = model.CalculateIssues(new DateTime(2024, 10, 1), new DateTime(2024, 12, 31), true, employeeItems3);
+			// assert
+			Assert.That(result1.Count, Is.EqualTo(1));
+			Assert.That(result1[0].OperationDate, Is.EqualTo(new DateTime(2024, 10, 1)));
+			Assert.That(result1[0].Amount, Is.EqualTo(2));
+			
+			Assert.That(result2.Count, Is.EqualTo(1));
+			Assert.That(result2[0].OperationDate, Is.EqualTo(new DateTime(2024, 10, 1)));
+			Assert.That(result2[0].Amount, Is.EqualTo(1));
+			
+			Assert.That(result3.Count, Is.EqualTo(1));
+			Assert.That(result3[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 10)));
+			Assert.That(result3[0].Amount, Is.EqualTo(2));
+		}
 	}
 }
