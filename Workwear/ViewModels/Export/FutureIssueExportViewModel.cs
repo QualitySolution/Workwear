@@ -52,6 +52,7 @@ namespace Workwear.ViewModels.Export {
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
 			Title = "Прогноз выдач";
+			RunVisible = runSensitive = true;
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -70,22 +71,22 @@ namespace Workwear.ViewModels.Export {
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
-				OnPropertyChanged(nameof(SensitiveLoad));
+				OnPropertyChanged(nameof(RunSensitive));
 		}
 		
 		#region Поля и свойства
-		private bool runSensitive;
-		public bool SensitiveLoad => (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;
 		
+		private bool runSensitive;
 		public virtual bool RunSensitive {
-			get => runSensitive;
+			get => runSensitive && (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
 			set => SetField(ref runSensitive, value);
 		}
+		public virtual bool RunVisible { get; set; }
 		
 		private Organization exportOrganization;
         public virtual Organization ExportOrganization {
@@ -94,14 +95,14 @@ namespace Workwear.ViewModels.Export {
         }
             
         private DateTime startDate = DateTime.Today.Date;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(RunSensitive))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
 		private DateTime endDate = DateTime.Today.AddMonths(1);
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(RunSensitive))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
@@ -338,9 +339,10 @@ namespace Workwear.ViewModels.Export {
 					}
 				workbook.Write(fileStream);
 				workbook.Close();
-				globalProgress.End();
+				globalProgress.CheckPoint("Готово");
 			}
-			RunSensitive = true;
+			RunVisible = false;
+			OnPropertyChanged(nameof(RunVisible));
 		}
 		#endregion
 	}
