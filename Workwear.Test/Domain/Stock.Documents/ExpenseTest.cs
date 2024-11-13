@@ -192,6 +192,37 @@ namespace Workwear.Test.Domain.Stock.Documents
 			Assert.That(expense.Items[0].EmployeeIssueOperation.SignTimestamp, Is.Not.Null);
 			Assert.That((expense.Items[0].EmployeeIssueOperation.SignTimestamp.Value - DateTime.Now).TotalMinutes, Is.LessThan(1));
 		}
+		
+		[Test(Description = "Проверяем что при создании операции мы действительно используем настройку базы выключения автосписания.")]
+		[TestCase(true)]
+		[TestCase(false)]
+		public void UpdateOperations_DefaultAutoWriteoffTest(bool defaultAutowriteoff)
+		{
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(1);
+			var nomenclature = Substitute.For<Nomenclature>();
+
+			var expenseItem = new ExpenseItem();
+			expenseItem.Nomenclature = nomenclature;
+			expenseItem.Amount = 1;
+			var expense = new Expense();
+			expense.Employee = employee;
+			expense.Date = new DateTime(2019, 1, 15);
+			expense.Items.Add(expenseItem);
+			expenseItem.ExpenseDoc = expense;
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.DefaultAutoWriteoff.Returns(defaultAutowriteoff);
+
+			//Выполняем
+			expense.UpdateOperations(uow, baseParameters, ask);
+
+			Assert.That(expense.Items[0].EmployeeIssueOperation.UseAutoWriteoff, Is.EqualTo(defaultAutowriteoff));
+		}
 		#endregion
 		
 		[TearDown]

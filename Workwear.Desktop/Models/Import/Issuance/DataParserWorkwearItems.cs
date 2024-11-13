@@ -13,6 +13,7 @@ using Workwear.Domain.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Import;
 
@@ -25,14 +26,22 @@ namespace Workwear.Models.Import.Issuance
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly PostRepository postRepository;
 		private readonly NormRepository normRepository;
+		private readonly BaseParameters baseParameters;
 		private readonly SizeService sizeService;
 
 		public DataParserWorkwearItems(
 			NomenclatureRepository nomenclatureRepository,
 			PostRepository postRepository,
 			NormRepository normRepository,
+			BaseParameters baseParameters,
 			SizeService sizeService)
 		{
+			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
+			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
 				"Табельный",
 				"Таб."
@@ -78,11 +87,6 @@ namespace Workwear.Models.Import.Issuance
 				"Количество",
 				"Кол-во"
 				);
-				
-			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
-			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
-			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 		}
 		
 		#region Сопоставление данных
@@ -278,7 +282,7 @@ namespace Workwear.Models.Import.Issuance
 					ProtectionTools = row.WorkwearItem.ProtectionTools,
 					Returned = 0,
 					StartOfUse = row.Date,
-					UseAutoWriteoff = expenseDate != null,
+					UseAutoWriteoff = expenseDate != null && baseParameters.DefaultAutoWriteoff,
 					ManualOperation = true, //Загруженные из Excel операции будут выглядеть как ручные.
 				};
 				//Обрабатываем размер.

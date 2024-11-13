@@ -194,7 +194,7 @@ namespace Workwear.Domain.Stock.Documents
 			uow.Save(WarehouseOperation);
 			
 			if (EmployeeIssueOperation == null) {
-				EmployeeIssueOperation = new EmployeeIssueOperation();
+				EmployeeIssueOperation = new EmployeeIssueOperation (baseParameters);
 			}
 
 			EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
