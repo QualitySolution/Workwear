@@ -393,6 +393,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 

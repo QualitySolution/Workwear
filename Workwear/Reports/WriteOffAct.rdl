@@ -3,7 +3,7 @@
   <Description>Отчет по актам списания</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>41.7in</PageHeight>
-  <PageWidth>29.5in</PageWidth>
+  <PageWidth>25.5in</PageWidth>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
@@ -181,58 +181,58 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>120.9pt</Width>
+            <Width>97.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>138.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.5in</Width>
+            <Width>117.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>55.7pt</Width>
+            <Width>43.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>47.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>119.3pt</Width>
+            <Width>99.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>149.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>69.9pt</Width>
+            <Width>66.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>78.0pt</Width>
+            <Width>66.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>58.2pt</Width>
+            <Width>54.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>62.8pt</Width>
+            <Width>47.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>72.4pt</Width>
+            <Width>62.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>66.7pt</Width>
+            <Width>51.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>48.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>122.4pt</Width>
+            <Width>95.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>127.6pt</Width>
+            <Width>116.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>170.7pt</Width>
+            <Width>69.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>128.8pt</Width>
+            <Width>105.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>166.0pt</Width>
@@ -521,7 +521,7 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox18">
-                      <Value>Стоимость номенклатуры</Value>
+                      <Value>Стоимость</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>

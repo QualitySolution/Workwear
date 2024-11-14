@@ -11,7 +11,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(w=>w.EndDate, v=>v.EndDateOrNull)
 				.InitializeFromSource();
 			buttonRun.Clicked += OnButtonRunClicked;
-			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensetiveLoad,w=>w.Sensitive).InitializeFromSource();
+			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensitiveLoad,w=>w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e) {

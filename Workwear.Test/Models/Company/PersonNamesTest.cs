@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Workwear.Domain.Company;
 using Workwear.Models.Company;
 
 namespace Workwear.Test.Models.Company
@@ -6,13 +7,11 @@ namespace Workwear.Test.Models.Company
 	[TestFixture(TestOf = typeof(PersonNames))]
 	public class PersonNamesTest
 	{
-		[Test(Description = "В данных отсутствую одинаковые имена, необходимое условие для работы механизма выставление пола в карточке сотрудника. Иначе будут ложные переключения.")]
-		public void NamesAreUnique()
-		{
+		[Test(Description = "Корректное определение пола у имени Адель.")]
+		public void DetermineGender() {
 			var personNames = new PersonNames();
-			foreach(string manName in personNames.MaleNames)
-				Assert.That(personNames.FemaleNames.Contains(manName), Is.False, $"Имя {manName} присутствует в обоих списках");
-
+			Assert.That(personNames.GetSexByName("Адель", "Константиновна"), Is.EqualTo(Sex.F));
+			Assert.That(personNames.GetSexByName("Адель", "Викторович"), Is.EqualTo(Sex.M));
 		}
 	}
 }

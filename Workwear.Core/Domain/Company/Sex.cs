@@ -6,11 +6,11 @@ namespace Workwear.Domain.Company
 {
 	public enum Sex
 	{
-		[Display(Name = "Нет")]
+		[Display(Name = "Нет", ShortName = "нет")]
 		None,
-		[Display(Name = "Мужской")]
+		[Display(Name = "Мужской", ShortName = "муж.")]
 		M,
-		[Display(Name = "Женский")]
+		[Display(Name = "Женский", ShortName = "жен.")]
 		F
 	}
 	
