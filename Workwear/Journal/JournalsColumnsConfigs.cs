@@ -134,6 +134,7 @@ namespace workwear.Journal
 					.AddColumn("Карта").Resizable().Visible(jvm.FeaturesService.Available(WorkwearFeature.IdentityCards))
 						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png"))
 					.AddColumn("Ф.И.О.").Resizable().AddTextRenderer(node => node.FIO)
+					.AddColumn("Пол").AddReadOnlyTextRenderer(x => x.Sex.GetEnumShortTitle())
 					.AddColumn("Должность").Resizable().AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).SearchHighlight()
@@ -364,7 +365,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
+					.AddColumn("ИД").AddTextRenderer(e => e.NomenclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()
@@ -433,6 +434,13 @@ namespace workwear.Journal
 					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
 					.AddColumn("Приоритет выдачи").AddNumericRenderer(node => node.Priority)
 					.AddColumn("Описание").AddTextRenderer(node => node.ShortDescription)
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<CauseWriteOffJournalViewModel>(
+				() => FluentColumnsConfig<CauseWriteOffJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
 					.Finish()
 			);
 			

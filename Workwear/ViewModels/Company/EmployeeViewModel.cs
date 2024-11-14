@@ -54,6 +54,8 @@ namespace Workwear.ViewModels.Company
 		
 		public SizeService SizeService { get; }
 
+		private int remainingEmployees;
+
 		public EmployeeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -85,7 +87,27 @@ namespace Workwear.ViewModels.Company
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
+			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
+			if(remainingEmployees < 0) {
+				remainingEmployees = 0;
+			}
+			if(Entity.Id == 0) {
+				if(featuresService.Employees != 0) {
+					if(featuresService.Employees <= employeeRepository.GetNumberOfEmployees()) {
+						throw new AbortCreatingPageException($"Невозможно добавить нового сотрудника: количество сотрудников в базе " +
+						                                     $"превышает лимит Вашей лицензии.\nЛимит Вашей лицензии: {featuresService.Employees}",
+							"Ошибка добавления сотрудника");
 
+					}
+					if(remainingEmployees <= 3) {
+						interactive.ShowMessage(ImportanceLevel.Warning, $"Лимит сотрудников по Вашей лицензии: {featuresService.Employees}.\n" +
+							                                                 $"Осталось по Вашей лицензии: {remainingEmployees}",
+								"Предупреждение");
+					}
+					
+				}
+			}
+			
 			bool isCoinsAvailable = IsSpecCoinsAvailable();
 			VisibleSpecCoinsViews = isCoinsAvailable;
 			if (isCoinsAvailable)

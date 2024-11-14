@@ -38,6 +38,8 @@ namespace Workwear.Tools.Features
 		
 		public DateTime? ExpiryDate { get; private set; }
 
+		public ushort Employees { get; private set; }
+
 		public string CurrentEditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
 
@@ -106,12 +108,13 @@ namespace Workwear.Tools.Features
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
-				else if(serialNumberEncoder.CodeVersion == 2
+				else if((serialNumberEncoder.CodeVersion == 2 || serialNumberEncoder.CodeVersion == 3)
 				        && serialNumberEncoder.EditionId >= 1
 				        && serialNumberEncoder.EditionId <= 4) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
+					Employees = serialNumberEncoder.Employees;
 				}
 			}
 		}
@@ -254,7 +257,9 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Обслуживание спецодежды")]
 		ClothingService,
 		[Display(Name = "Продажа")]
-		Selling
+		Selling,
+		[Display(Name = "Дашборды")]
+		Dashboard,
 		#endregion
 	}
 	

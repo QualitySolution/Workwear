@@ -982,6 +982,13 @@ WHERE (-1 IN (@subdivisions) OR wear_cards.object_id IN (@subdivisions))
     AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND ((-1 IN (@protectionTools)) OR (wear_cards_item.protection_tools_id IN (@protectionTools)))
     AND (@exclude_in_vacation = false OR (CURRENT_DATE() NOT BETWEEN wear_cards_vacations.begin_date AND wear_cards_vacations.end_date OR wear_cards_vacations.begin_date IS NULL))
+AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = wear_cards_item.wear_card_id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                    WHERE gi.employee_id = wear_cards_item.wear_card_id
+                      AND gi.employee_group_id IN (@employee_groups_ids))) )
 GROUP BY
     wear_cards_item.protection_tools_id,
     IF(@show_sex, wear_cards.sex, NULL),
@@ -1023,6 +1030,12 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@department_id">
             <Value>={?department_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1188,6 +1201,30 @@ ORDER BY
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

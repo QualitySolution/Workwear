@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -10,7 +9,6 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
 using Workwear.Models.Operations;
-using Workwear.Repository.Stock;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
@@ -154,7 +152,7 @@ namespace Workwear.Domain.Stock.Documents
 			uow.Save(WarehouseOperation);
 
 			if (EmployeeIssueOperation == null) {
-				EmployeeIssueOperation = new EmployeeIssueOperation();
+				EmployeeIssueOperation = new EmployeeIssueOperation(baseParameters);
 			}
 
 			EmployeeIssueOperation.Update(uow, baseParameters, askUser, this);

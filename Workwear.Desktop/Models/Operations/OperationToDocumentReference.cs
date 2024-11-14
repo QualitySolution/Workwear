@@ -25,7 +25,17 @@ namespace Workwear.Models.Operations
 		public int? CompletionSourceItemId;
 		public int? CompletionResultItemId;
 		public int? CompletionId => CompletionFromSourceId ?? CompletionFromResultId;
-
+		
+		public string ExpenceDocNumber;
+		public string IncomeDocNumber;
+		public string CollectiveExpenseDocNumber;
+		public string TransferDocNumber;
+		public string WriteoffDocNumber;
+		public string InspectionDocNumber;
+		public string CompletionFromResultDocNumber;
+		public string CompletionFromSourceDocNumber;
+		public string CompletionDocNumber => CompletionFromResultDocNumber ?? CompletionFromSourceDocNumber;
+		
 		public StockDocumentType? DocumentType {
 			get {
 				if(ExpenceId.HasValue)
@@ -50,11 +60,13 @@ namespace Workwear.Models.Operations
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId =>
 			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
+		public string DocumentNumber =>
+			ExpenceDocNumber ?? CollectiveExpenseDocNumber ?? IncomeDocNumber ?? TransferDocNumber ?? WriteoffDocNumber ?? CompletionDocNumber ?? InspectionDocNumber;
 
 		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ??
 			IncomeItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
 
-		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{DocumentId}";
+		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{DocumentNumber ?? DocumentId.ToString()}";
 	}
 
 	public enum OperationType

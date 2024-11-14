@@ -209,10 +209,6 @@ public partial class MainWindow : Gtk.Window {
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
 
-		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
-		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>();
-		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
-
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
 		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
@@ -304,6 +300,7 @@ public partial class MainWindow : Gtk.Window {
 				MainTelemetry.IsDemo = databaseInfo.IsDemo;
 				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
 				MainTelemetry.StartUpdateByTimer(600);
+				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 			}
 		#else
 			MainTelemetry.DoNotTrack = true;
@@ -396,6 +393,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 
@@ -824,11 +822,6 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionPayActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("pay.qsolution.ru");
-		OpenUrl("https://pay.qsolution.ru/");
-	}
-
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
@@ -956,5 +949,17 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWarehouseForecastingActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<WarehouseForecastingViewModel>(null);
+	}
+
+	protected void OnActionCausesWriteOffActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CauseWriteOffJournalViewModel>(null);
+	}
+
+	protected void OnActionWriteOffActActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WriteOffActViewModel));
+	}
+
+	protected void OnActionWarehouseTransferReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WarehouseTransferReportViewModel));
 	}
 }

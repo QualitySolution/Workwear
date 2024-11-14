@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,6 +7,7 @@ using ClosedXML.Excel;
 using Gamma.Utilities;
 using NHibernate;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Services.FileDialog;
@@ -110,11 +111,21 @@ namespace Workwear.ViewModels.Analytics {
 		}
 
 		private bool sensitiveExport = false;
+		[PropertyChangedAlso(nameof(SensitiveFill))]
 		public bool SensitiveExport {
 			get => sensitiveExport;
 			set => SetField(ref sensitiveExport, value);
 		}
 		
+		private bool sensitiveFill = true;
+		public bool SensitiveFill {
+			get => sensitiveFill && SensitiveSettings;
+			set {
+				SetField(ref sensitiveFill, value);
+				WarehouseEntry.IsEditable = value;
+			}
+		}
+
 		private Granularity granularity;
 		public Granularity Granularity {
 			get => granularity;
@@ -151,6 +162,7 @@ namespace Workwear.ViewModels.Analytics {
 
 		public void Fill() {
 			SensitiveSettings = false;
+			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
 			ProgressTotal.Start(4, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
@@ -186,7 +198,7 @@ namespace Workwear.ViewModels.Analytics {
 				ProgressTotal.Start(2, text: "Прогнозирование выдач");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
-			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, false, wearCardsItems, ProgressLocal);
+			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
 			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");
@@ -200,8 +212,14 @@ namespace Workwear.ViewModels.Analytics {
 			foreach(var group in groups) {
 				ProgressLocal.Add(text: group.Key.ProtectionTools.Name.EllipsizeMiddle(100));
 				var stocks = stockBalance.ForNomenclature(group.Key.ProtectionTools.Nomenclatures.ToArray()).ToArray();
-				var sex = stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal;
-				if (sex == ClothesSex.Universal)
+				SupplyType supplyType; 
+				if(group.Key.ProtectionTools.SupplyType == SupplyType.Unisex && group.Key.ProtectionTools.SupplyNomenclatureUnisex != null)
+					supplyType = SupplyType.Unisex;
+				else if(group.Key.ProtectionTools.SupplyType == SupplyType.TwoSex && (group.Key.ProtectionTools.SupplyNomenclatureMale != null || group.Key.ProtectionTools.SupplyNomenclatureFemale != null))
+					supplyType = SupplyType.TwoSex;
+				else
+					supplyType = (stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal) == ClothesSex.Universal ? SupplyType.Unisex : SupplyType.TwoSex;
+				if (supplyType == SupplyType.Unisex)
 					result.Add(new WarehouseForecastingItem(this, group.Key, group.ToList(), stocks, ClothesSex.Universal));
 				else {
 					var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();

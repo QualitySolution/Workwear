@@ -3,6 +3,8 @@ using NSubstitute;
 using NUnit.Framework;
 using QS.Extensions.Observable.Collections.List;
 using System.Collections.Generic;
+using QS.Dialog;
+using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
@@ -48,6 +50,36 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			var item = expense.AddItem(employeeItem, parameters);
 			Assert.That(item.Nomenclature, Is.Not.Null);
 			Assert.That(item.Nomenclature, Is.EqualTo(nomenclaturePositiveBalance));
+		}
+		
+		[Test(Description = "Проверяем что при создании операции используем настройку базы автосписания по умолчанию.")]
+		[TestCase(true)]
+		[TestCase(false)]
+		public void UpdateOperstions_DefaultAutoWriteOff(bool autoWriteOff) {
+			var parameters = Substitute.For<BaseParameters>();
+			parameters.DefaultAutoWriteoff.Returns(autoWriteOff);
+			var uow = Substitute.For<IUnitOfWork>();
+			
+			var nomenclature = Substitute.For<Nomenclature>();
+			
+			var employeeItem = Substitute.For<EmployeeCardItem>();
+			var employee = Substitute.For<EmployeeCard>();
+			employeeItem.EmployeeCard.Returns(employee);
+			
+			var expense = new CollectiveExpense();
+			expense.Date = new DateTime(2023, 1, 1);
+			var item = new CollectiveExpenseItem {
+				Document = expense,
+				Employee = employee,
+				ProtectionTools = Substitute.For<ProtectionTools>(),
+				Nomenclature = nomenclature,
+				Amount = 1
+			};
+			expense.Items.Add(item);
+			
+			//Проверка
+			expense.UpdateOperations(uow, parameters, Substitute.For<IInteractiveQuestion>());
+			Assert.That(item.EmployeeIssueOperation.UseAutoWriteoff, Is.EqualTo(autoWriteOff));
 		}
 	}
 }

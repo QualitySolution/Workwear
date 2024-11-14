@@ -88,7 +88,12 @@ namespace Workwear.Views.Stock
 					.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
 					.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
-					.AddColumn("Причина списания").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
+					.AddColumn("Причина списания")
+						.AddComboRenderer(x=>x.CausesWriteOff)
+						.SetDisplayFunc(x=>x.Name)
+						.FillItems(ViewModel.CausesWriteOffs, "Нет")
+						.Editing()
+					.AddColumn("Комментарий").AddTextRenderer(e=>e.Comment)
 					.Finish ();
 			
 			ytreeItems.Binding

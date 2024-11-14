@@ -322,7 +322,7 @@ namespace Workwear.Domain.Company
 				}
 			}
 
-			if(NextIssue != wantIssue) {
+			if(NextIssue != wantIssue && wantIssue != default(DateTime)) {
 				NextIssue = wantIssue;
 				uow?.Save (this);
 			}
