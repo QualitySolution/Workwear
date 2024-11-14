@@ -48,6 +48,7 @@ namespace Workwear.Test.Integration.Import
 		public void ItemsLoad_VostokCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.DefaultAutoWriteoff.Returns(true);
 			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
 			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			NewSessionWithSameDB();
