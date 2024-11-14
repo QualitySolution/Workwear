@@ -119,6 +119,7 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem2.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.DefaultAutoWriteoff.Returns(true);
 				baseParameters.ColDayAheadOfShedule.Returns(0);
 
 				//Обновление операций
@@ -145,6 +146,7 @@ namespace Workwear.Test.Integration.Stock
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.DefaultAutoWriteoff.Returns(true);
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
