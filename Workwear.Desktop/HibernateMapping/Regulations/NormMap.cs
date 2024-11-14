@@ -20,6 +20,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.DateFrom).Column("datefrom");
 			Map(x => x.DateTo).Column("dateto");
 			Map(x => x.Archival).Column("archival");
+			Map(x=>x.DateLastChange).Column("datelastchange");
 
 			References(x => x.Document).Column("regulations_id");
 			References(x => x.Annex).Column("regulations_annex_id");

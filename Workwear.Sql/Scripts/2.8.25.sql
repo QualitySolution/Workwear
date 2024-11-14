@@ -37,3 +37,6 @@ alter table stock_write_off_detail
 alter table stock_write_off_detail
 	add constraint fk_stock_write_off_detail_cause_write_off foreign key (cause_write_off_id) references causes_write_off (id)
 		on update cascade on delete set null;
+
+alter table norms
+	add column datelastchange datetime;

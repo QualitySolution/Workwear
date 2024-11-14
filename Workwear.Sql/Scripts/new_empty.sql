@@ -732,6 +732,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
+  `datelastchange` DATETIME NULL DEFAULT NULL
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
