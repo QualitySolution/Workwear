@@ -83,11 +83,11 @@ namespace Workwear.Domain.Regulations
 			set => SetField(ref archival, value);
 		}
 
-		private DateTime? dateLastChange;
-		[Display(Name="Дата последнего изменения")]
-		public virtual DateTime? DateLastChange {
-			get =>dateLastChange; 
-			set => SetField(ref dateLastChange, value); 
+		private DateTime lastUpdate;
+		[Display(Name="Последнее обновление")]
+		public virtual DateTime LastUpdate {
+			get => lastUpdate; 
+			set => SetField(ref lastUpdate, value); 
 			
 		}
 		#endregion
@@ -201,7 +201,6 @@ namespace Workwear.Domain.Regulations
 			DateFrom = norm.dateFrom;
 			DateTo = norm.dateTo;
 			Comment = norm.comment;
-			DateLastChange = norm.dateLastChange;
 			
 			foreach(var post in norm.Posts) {
 				AddPost(post);
