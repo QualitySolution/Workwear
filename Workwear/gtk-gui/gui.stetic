@@ -6312,31 +6312,6 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.Widgets.yDatePicker" id="datelastchange">
-                    <property name="MemberName" />
-                    <property name="Events">ButtonPressMask</property>
-                    <property name="WithTime">False</property>
-                    <property name="Date">0</property>
-                    <property name="IsEditable">False</property>
-                    <property name="AutoSeparation">False</property>
-                  </widget>
-                  <packing>
-                    <property name="TopAttach">7</property>
-                    <property name="BottomAttach">8</property>
-                    <property name="LeftAttach">1</property>
-                    <property name="RightAttach">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="XOptions">Fill</property>
-                    <property name="YOptions">Fill</property>
-                    <property name="XExpand">False</property>
-                    <property name="XFill">True</property>
-                    <property name="XShrink">False</property>
-                    <property name="YExpand">False</property>
-                    <property name="YFill">True</property>
-                    <property name="YShrink">False</property>
-                  </packing>
-                </child>
-                <child>
                   <widget class="QS.Widgets.GtkUI.DatePicker" id="dateto">
                     <property name="MemberName" />
                     <property name="Events">ButtonPressMask</property>
@@ -6675,6 +6650,28 @@
                     <property name="LabelProp" translatable="yes">ylabel1</property>
                   </widget>
                   <packing>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yLabel" id="ylabellastupdate">
+                    <property name="MemberName" />
+                    <property name="Xalign">0</property>
+                    <property name="LabelProp" translatable="yes">ylabel1</property>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">7</property>
+                    <property name="BottomAttach">8</property>
                     <property name="LeftAttach">1</property>
                     <property name="RightAttach">2</property>
                     <property name="AutoSize">True</property>
