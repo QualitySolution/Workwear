@@ -13,7 +13,7 @@ namespace Workwear.HibernateMapping.Regulations
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
 			else {
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
-				Version(x=>x.LastUpdate).Column("").Generated.Always();
+				Version(x=>x.LastUpdate).Column("last_update").Generated.Always();
 			}
 				
 			
