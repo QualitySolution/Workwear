@@ -607,8 +607,8 @@ FROM(SELECT
          protection_tools.name AS protection_tools_name,
          protection_tools.assessed_cost * SUM(norms_item.amount) AS protection_tools_assessed_cost,
          wear_cards_item.protection_tools_id,
-         if(@group_by_subdivision, objects.code, NULL) as subdivision_code,
-         if(@group_by_subdivision, objects.id, NULL)as subdivision_id,
+         objects.code as subdivision_code,
+         objects.id as subdivision_id,
          if(@department_id, (SELECT name from departments as d where d.id = @department_id), NULL) as department_name,
          objects.name as subdivision_name,
          if(@show_employees,
@@ -674,11 +674,6 @@ FROM(SELECT
          IF(@show_sex, wear_cards.sex, NULL),
          sizeId,
         heightId
-     ORDER BY
-         protection_tools_name,
-         IF(@show_sex, wear_cards.sex, NULL),
-         size,
-         growth
     ) as tabel
         LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
                           IF(sex_const.sex = 'A',  sex_b.SUM_M + sex_b.SUM_U + sex_b.SUM_F,
@@ -732,7 +727,12 @@ FROM(SELECT
         tabel.protection_tools_id,
         IF(@show_sex, tabel.sex, NULL),
         sizeId,
-        heightId</CommandText>
+        heightId
+    ORDER BY
+        tabel.protection_tools_name,
+        IF(@show_sex, tabel.sex, NULL),
+        tabel.size,
+        tabel.growth</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
