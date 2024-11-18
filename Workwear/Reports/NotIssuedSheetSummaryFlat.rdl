@@ -727,7 +727,12 @@ FROM(SELECT
                     OR ballance.height_id = tabel.heightId 
                     OR ballance.height_id IN (SELECT IF(size_suitable.size_id = tabel.heightId, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = tabel.heightId OR size_suitable.`size_suitable_id` = tabel.heightId))
             )
-            GROUP BY  protection_tools_id, sizeId, heightId;</CommandText>
+    GROUP BY
+        IF(@group_by_subdivision, tabel.subdivision_id, NULL),
+        tabel.protection_tools_id,
+        IF(@show_sex, tabel.sex, NULL),
+        sizeId,
+        heightId</CommandText>
         <QueryParameters>
           <QueryParameter Name="@report_date">
             <Value>={?report_date}</Value>
