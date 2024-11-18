@@ -732,6 +732,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`id`),
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
@@ -820,6 +821,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`id`),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
   INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC),
