@@ -69,11 +69,22 @@ namespace workwear.ReportParameters.Views {
 			checkShowOnlyWithoutNorm.Binding.AddBinding(ViewModel, v => v.ShowOnlyWithoutNorm, w => w.Active).InitializeFromSource();
 			
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
+			choiceemployeegroupview3.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview3.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e)
 		{
 			ViewModel.LoadReport();
+		}
+
+		protected void OnExpander1Activated(object sender, EventArgs e) {
+			(vbox2[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
+		}
+
+		protected void OnExpander2Activated(object sender, EventArgs e) {
+			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
 		}
 	}
 }

@@ -48,6 +48,7 @@ namespace Workwear.Test.Integration.Import
 		public void ItemsLoad_VostokCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.DefaultAutoWriteoff.Returns(true);
 			//В файле дата хранится в виде строки, поэтому для прохождения теста, нужна русская культура
 			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			NewSessionWithSameDB();
@@ -159,7 +160,7 @@ namespace Workwear.Test.Integration.Import
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
 				var setting = new SettingsWorkwearItemsViewModel();
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -291,6 +292,7 @@ namespace Workwear.Test.Integration.Import
 				
 				var navigation = Substitute.For<INavigationManager>();
 				var interactive = Substitute.For<IInteractiveMessage>();
+				var baseParameters = Substitute.For<BaseParameters>();
 				var featureService = Substitute.For<FeaturesService>();
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
 				var progressInterceptor = Substitute.For<ProgressInterceptor>();
@@ -299,7 +301,7 @@ namespace Workwear.Test.Integration.Import
 				var employeeRepository = new EmployeeRepository();
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -393,6 +395,7 @@ namespace Workwear.Test.Integration.Import
 				uowPrepare.Commit();
 				
 				var navigation = Substitute.For<INavigationManager>();
+				var baseParameters = Substitute.For<BaseParameters>();
 				var interactive = Substitute.For<IInteractiveMessage>();
 				var featureService = Substitute.For<FeaturesService>();
 				var progressStep = Substitute.For<IProgressBarDisplayable>();
@@ -401,7 +404,7 @@ namespace Workwear.Test.Integration.Import
 				var unitOfWorkProvider = new UnitOfWorkProvider();
 				var employeeRepository = new EmployeeRepository();
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(unitOfWorkProvider));
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;

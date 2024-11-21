@@ -124,11 +124,11 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
     <Height>.5in</Height>
     <ReportItems>
       <Textbox Name="Textbox1">
-        <Top>.1in</Top>
-        <Left>.1in</Left>
-        <Width>6in</Width>
-        <Height>.25in</Height>
-        <Value>Отчет по перемещениям между складами</Value>
+        <Top>7.23pt</Top>
+        <Left>7.23pt</Left>
+        <Width>956.12pt</Width>
+        <Height>21.80pt</Height>
+        <Value>= "Складские операции за " + Format(Convert.ToDateTime({?start_date}), "dd.MM.yyyy") + " - "  + Format(Convert.ToDateTime({?end_date}), "dd.MM.yyyy")</Value>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
@@ -153,7 +153,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>109.3pt</Width>
+            <Width>69.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>104.3pt</Width>
@@ -162,25 +162,25 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
             <Width>108.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>79.8pt</Width>
+            <Width>73.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
           </TableColumn>
           <TableColumn>
-            <Width>134.9pt</Width>
+            <Width>202.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>80.3pt</Width>
+            <Width>76.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>67.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>98.1pt</Width>
+            <Width>84.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>120.6pt</Width>
+            <Width>111.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -191,7 +191,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>Дата перемещения</Value>
+                      <Value>Дата</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -416,6 +416,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -439,7 +440,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                   <ReportItems>
                     <Textbox Name="amount">
                       <Value>=Fields!nomenclature_name.Value</Value>
-                      <CanGrow>false</CanGrow>
+                      <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -525,7 +526,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
         <Top>0.8pt</Top>
       </Table>
     </ReportItems>
-    <Height>36pt</Height>
+    <Height>31.3pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -536,10 +537,13 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
         <Left>10pt</Left>
         <Height>12pt</Height>
         <Width>3in</Width>
-        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
         <Style>
           <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
+          <BorderStyle  />
+          <BorderColor  />
+          <BorderWidth  />
         </Style>
       </Textbox>
     </ReportItems>
@@ -557,7 +561,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
   </DataSources>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="start_date">
       <DataType>String</DataType>
       <DefaultValue>

@@ -134,6 +134,7 @@ namespace workwear.Journal
 					.AddColumn("Карта").Resizable().Visible(jvm.FeaturesService.Available(WorkwearFeature.IdentityCards))
 						.AddPixbufRenderer(x => String.IsNullOrEmpty(x.CardKey) ? null : new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png"))
 					.AddColumn("Ф.И.О.").Resizable().AddTextRenderer(node => node.FIO)
+					.AddColumn("Пол").AddReadOnlyTextRenderer(x => x.Sex.GetEnumShortTitle())
 					.AddColumn("Должность").Resizable().AddTextRenderer(node => node.Post)
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).SearchHighlight()
