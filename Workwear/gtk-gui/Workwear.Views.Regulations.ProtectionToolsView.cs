@@ -40,7 +40,7 @@ namespace Workwear.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yHBox yhbox2;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckbutton_washing_PPE;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbutton_dermal_PPE;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbutton_dispenser;
 
@@ -278,14 +278,14 @@ namespace Workwear.Views.Regulations
 			this.yhbox2.Name = "yhbox2";
 			this.yhbox2.Spacing = 6;
 			// Container child yhbox2.Gtk.Box+BoxChild
-			this.ycheckbutton_washing_PPE = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckbutton_washing_PPE.CanFocus = true;
-			this.ycheckbutton_washing_PPE.Name = "ycheckbutton_washing_PPE";
-			this.ycheckbutton_washing_PPE.Label = global::Mono.Unix.Catalog.GetString("Смывающее СИЗ");
-			this.ycheckbutton_washing_PPE.DrawIndicator = true;
-			this.ycheckbutton_washing_PPE.UseUnderline = true;
-			this.yhbox2.Add(this.ycheckbutton_washing_PPE);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ycheckbutton_washing_PPE]));
+			this.ycheckbutton_dermal_PPE = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbutton_dermal_PPE.CanFocus = true;
+			this.ycheckbutton_dermal_PPE.Name = "ycheckbutton_dermal_PPE";
+			this.ycheckbutton_dermal_PPE.Label = global::Mono.Unix.Catalog.GetString("Дермотологические СИЗ");
+			this.ycheckbutton_dermal_PPE.DrawIndicator = true;
+			this.ycheckbutton_dermal_PPE.UseUnderline = true;
+			this.yhbox2.Add(this.ycheckbutton_dermal_PPE);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ycheckbutton_dermal_PPE]));
 			w17.Position = 0;
 			// Container child yhbox2.Gtk.Box+BoxChild
 			this.ycheckbutton_dispenser = new global::Gamma.GtkWidgets.yCheckButton();

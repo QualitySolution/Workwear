@@ -19,7 +19,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.Comment).Column("comments");
 			Map(x => x.AssessedCost).Column("assessed_cost");
 			Map(x => x.SupplyType).Column("supply_type").Not.Nullable();
-			Map(x => x.WashingPpe).Column("washing_ppe").Not.Nullable();
+			Map(x => x.DermalPpe).Column("dermal_ppe").Not.Nullable();
 			Map(x => x.Dispenser).Column("dispenser").Not.Nullable();
 
 			References(x => x.SupplyNomenclatureUnisex).Column("supply_uni_id").Nullable();

@@ -45,7 +45,7 @@ namespace Workwear.Views.Regulations
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NormItem>.Create()
 				.AddColumn("ИД").AddTextRenderer(p => p.ProtectionTools.Id.ToString())
 				.AddColumn("Наименование").AddTextRenderer(p => p.ProtectionTools != null ? p.ProtectionTools.Name : null).WrapWidth(700)
-				.AddColumn("Смывающие").AddTextRenderer(p => p.ProtectionTools.Dispenser ? "Дозатор" : p.ProtectionTools.WashingPpe ? "Да" : String.Empty)
+				.AddColumn("Дерматологические").AddTextRenderer(p => p.ProtectionTools.Dispenser ? "Дозатор" : p.ProtectionTools.DermalPpe ? "Да" : String.Empty)
 				.AddColumn("Количество")
 					.AddNumericRenderer(i => i.Amount).WidthChars(9).Editing().Adjustment(new Gtk.Adjustment(1, 1, int.MaxValue, 1, 10, 10))
 						.AddSetter((c, n) => c.Visible = !n.ProtectionTools.Dispenser)
