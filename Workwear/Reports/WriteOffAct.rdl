@@ -229,7 +229,7 @@ WHERE IF(@doc_write_off, type = 'W' ,'') OR (IF(@auto_write_off, type = 'A', '')
             <Width>66.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>56.8pt</Width>
+            <Width>60.8pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>54.2pt</Width>
