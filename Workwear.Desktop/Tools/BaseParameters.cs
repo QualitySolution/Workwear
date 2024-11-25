@@ -75,6 +75,14 @@ namespace Workwear.Tools
 			get => Dynamic.CollapseDuplicateIssuanceSheet(typeof(bool)) ?? true;
 			set => Dynamic[nameof(CollapseDuplicateIssuanceSheet)] = value;
 		}
+		
+		/// <summary>
+		/// Используемая валюта
+		/// </summary>
+		public virtual string UsedCurrency {
+			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
+			set => Dynamic[nameof(UsedCurrency)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {

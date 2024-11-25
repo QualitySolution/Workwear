@@ -236,7 +236,7 @@ namespace Workwear.Models.Operations {
 				var ops = employeeGroups.ContainsKey(employee.Id) ? employeeGroups[employee.Id] : new List<EmployeeIssueOperation>();
 				employee.FillWearReceivedInfo(ops);
 			}
-			progress?.Add(text: "Готово");
+			progress?.Update("Готово");
 			if(needClose)
 				progress.Close();
 		}

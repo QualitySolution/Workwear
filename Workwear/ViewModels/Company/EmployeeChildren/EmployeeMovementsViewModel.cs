@@ -128,7 +128,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				protectionToolsForUpdate.Add(item.Operation.ProtectionTools);
 
 			item.Operation.ProtectionTools = protectionTools;
-			item.Operation.NormItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools)?.ActiveNormItem;
+			if(item.Operation.Issued > 0)
+				item.Operation.NormItem = Entity.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools)?.ActiveNormItem;
 			UoW.Save(item.Operation);
 			
 			if(item.EmployeeIssueReference?.DocumentType == null)
@@ -141,12 +142,16 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 					var docI =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
 					docI.ProtectionTools = protectionTools;
 					UoW.Save(docI);
-						
 					break;
 				case StockDocumentType.CollectiveExpense:
 					var docC =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
 					docC.ProtectionTools = protectionTools;
 					UoW.Save(docC);
+					break;
+				case StockDocumentType.InspectionDoc:
+				case StockDocumentType.Return:
+				case StockDocumentType.WriteoffDoc:
+					//Ничего не делаем, так как в этих типах документов нет номенклатуры нормы, она только в операции.
 					break;
 				default:
 					throw new NotSupportedException("Unknown document type.");
@@ -182,11 +187,17 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 						docColItem.ProtectionTools = null;
 						UoW.Save(docColItem);
 						break;
+					case StockDocumentType.InspectionDoc:
+					case StockDocumentType.Return:
+					case StockDocumentType.WriteoffDoc:
+						//Ничего не делаем, так как в этих типах документов нет номенклатуры нормы, она только в операции.
+						break;
 					default:
 						throw new NotSupportedException("Unknown document type.");
 				}
 			}
 			item.Operation.ProtectionTools = null;
+			UoW.Save(item.Operation);
 		}
 
 		#endregion
@@ -212,6 +223,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
 			);
 			performance.CheckPoint("Получение операций");
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());

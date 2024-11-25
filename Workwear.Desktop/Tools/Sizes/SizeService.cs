@@ -83,5 +83,9 @@ namespace Workwear.Tools.Sizes
 				.Where(x => x.SizeType.CategorySizeType == categorySizeType);
 
 		public const int MaxStandardSizeId = 1000, MaxStandardSizeTypeId = 100;
+
+		#region Статика
+		public static string SizeTitle(Size size, Size height) => height != null ? $"{size?.Name}/{height?.Name}" : size?.Name;
+		#endregion
 	}
 }

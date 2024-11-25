@@ -337,22 +337,20 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(expense);
 				
 				//Возвращаем 2 штуки
-				var income = new Income {
+				var returndoc = new Return() {
 					Date = new DateTime(2021, 9, 11),
-					Operation = IncomeOperations.Return,
 					EmployeeCard = employee,
 					Warehouse = warehouse,
 				};
 				
-				var returnItem = income.AddItem(item.EmployeeIssueOperation, 2);
-				income.UpdateOperations(uow, interactive);
-				uow.Save(income);
+				var returnItem = returndoc.AddItem(item.EmployeeIssueOperation, 2);
+				returndoc.UpdateOperations(uow);
+				uow.Save(returndoc);
 				uow.Commit();
 
 				var repository = new EmployeeIssueRepository(uow);
 				var result = repository.GetReferencedDocuments(returnItem.ReturnFromEmployeeOperation.Id);
-				Assert.That(result.First().DocumentType, Is.EqualTo(StockDocumentType.IncomeDoc));
-				Assert.That(result.First().DocumentId, Is.EqualTo(income.Id));
+				Assert.That(result.First().DocumentId, Is.EqualTo(returndoc.Id));
 				Assert.That(result.First().ItemId, Is.EqualTo(returnItem.Id));
 			}
 		}

@@ -41,6 +41,7 @@ namespace Workwear.ViewModels.Stock
         private OrganizationRepository organizationRepository;
         private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
+        public IList<CausesWriteOff> CausesWriteOffs { get; }
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
@@ -72,6 +73,7 @@ namespace Workwear.ViewModels.Stock
             if (employee != null)
                 Employee = UoW.GetById<EmployeeCard>(employee.Id);
             Owners = UoW.GetAll<Owner>().ToList();
+            CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
 	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
             };
@@ -106,12 +108,19 @@ namespace Workwear.ViewModels.Stock
         public bool SensitiveDocNumber => !AutoDocNumber;
 		
         private bool autoDocNumber = true;
-        [PropertyChangedAlso(nameof(DocNumber))]
+        [PropertyChangedAlso(nameof(DocNumberText))]
         [PropertyChangedAlso(nameof(SensitiveDocNumber))]
-        public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
-        public string DocNumber {
-	        get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
-	        set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+        public bool AutoDocNumber {
+	        get => autoDocNumber;
+	        set => SetField(ref autoDocNumber, value);
+        }
+
+        public string DocNumberText {
+	        get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+	        set { 
+		        if(!AutoDocNumber) 
+			        Entity.DocNumber = value; 
+	        }
         }
         
         private string total;
@@ -206,6 +215,9 @@ namespace Workwear.ViewModels.Stock
             Entity.UpdateOperations(UoW);
             if (Entity.Id == 0)
                 Entity.CreationDate = DateTime.Now;
+            
+            if(AutoDocNumber)
+	            Entity.DocNumber = null;
 
             if(!base.Save()) {
 	            logger.Info("Не Ок.");

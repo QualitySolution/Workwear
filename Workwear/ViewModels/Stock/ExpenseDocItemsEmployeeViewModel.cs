@@ -240,7 +240,8 @@ namespace Workwear.ViewModels.Stock
 				Parameters = new Dictionary<string, object> {
 					{
 						"barcodes", Entity.Items
-							.SelectMany(x => x.EmployeeIssueOperation.BarcodeOperations.Select(b => b.Barcode.Id))
+							.SelectMany(x => x.EmployeeIssueOperation?.BarcodeOperations.Select(b => b.Barcode?.Id))
+							.Where(x => x != null)
 							.ToList()
 					}
 				}

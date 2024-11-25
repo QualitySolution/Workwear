@@ -51,6 +51,7 @@ namespace Workwear.Models.Import.Norms
 			progress.Start(maxValue: rows.Count, text: "Подготовка");
 
 			List<object> toSave = new List<object>();
+			toSave.AddRange(SavedCondition);
 			toSave.AddRange(SavedSubdivisions);
 			toSave.AddRange(SavedDepartments);
 			toSave.AddRange(SavedPosts);
@@ -76,7 +77,8 @@ namespace Workwear.Models.Import.Norms
 			          || CountersViewModel.GetCount(CountersNorm.NewPosts) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewSubdivisions) > 0
 			          || CountersViewModel.GetCount(CountersNorm.NewDepartments) > 0
-			          || CountersViewModel.GetCount(CountersNorm.NewProtectionTools) > 0;
+			          || CountersViewModel.GetCount(CountersNorm.NewProtectionTools) > 0
+			          || CountersViewModel.GetCount(CountersNorm.NewCondition) > 0;
 		}
 
 		public void CleanMatch()
@@ -105,6 +107,7 @@ namespace Workwear.Models.Import.Norms
 	        CountersViewModel.SetCount(CountersNorm.NewSubdivisions, SavedSubdivisions.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewDepartments, SavedDepartments.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewProtectionTools, SavedProtectionTools.Count());
+	        CountersViewModel.SetCount(CountersNorm.NewCondition, SavedCondition.Count());
 	        CountersViewModel.SetCount(CountersNorm.NewItemTypes, SavedItemsTypes.Count());
 	        CountersViewModel.SetCount(CountersNorm.UndefinedItemTypes, dataParser.UndefinedProtectionNames.Count);
         }
@@ -150,6 +153,12 @@ namespace Workwear.Models.Import.Norms
         private IEnumerable<ProtectionTools> SavedProtectionTools => UsedRows
 	        .Where(x => !x.Skipped)
 	        .Select(x => x.NormItem.ProtectionTools)
+	        .Where(x => x?.Id == 0)
+	        .Distinct();
+
+        private IEnumerable<NormCondition> SavedCondition => UsedRows
+	        .Where(x => !x.Skipped)
+	        .Select(x => x.NormItem.NormCondition)
 	        .Where(x => x?.Id == 0)
 	        .Distinct();
 

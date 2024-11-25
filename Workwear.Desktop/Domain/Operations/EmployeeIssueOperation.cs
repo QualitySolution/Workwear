@@ -343,8 +343,8 @@ namespace Workwear.Domain.Operations
 			var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
-
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item) {
+		
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;

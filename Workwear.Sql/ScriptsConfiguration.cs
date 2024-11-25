@@ -14,7 +14,7 @@ namespace Workwear.Sql
 			return new CreationScript(
 				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
 				"Workwear.Sql.Scripts.new_empty.sql",
-				new Version(2, 8, 18)
+				new Version(2, 9)
 			);
 		}
 
@@ -196,6 +196,32 @@ namespace Workwear.Sql
 				new Version(2, 8, 17),
 				new Version(2, 8, 18),
 				"Workwear.Sql.Scripts.2.8.18.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 18),
+				new Version(2, 8, 19),
+				"Workwear.Sql.Scripts.2.8.19.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 19),
+				new Version(2, 8, 20),
+				"Workwear.Sql.Scripts.2.8.20.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 20),
+				new Version(2, 8, 22),
+				"Workwear.Sql.Scripts.2.8.22.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 22),
+				new Version(2, 8, 25),
+				"Workwear.Sql.Scripts.2.8.25.sql"
+			);
+
+			configuration.AddUpdate(
+				new Version(2, 8, 25),//FIXME
+				new Version(2, 9, 0),
+				"Workwear.Sql.Scripts.2.9.sql"
 			);
 			return configuration;
 		}

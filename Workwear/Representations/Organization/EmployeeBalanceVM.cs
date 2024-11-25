@@ -9,9 +9,9 @@ using NHibernate.Transform;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Utilities;
 using QS.Utilities.Numeric;
 using QSOrmProject.RepresentationModel;
-using QSProjectsLib;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -131,7 +131,8 @@ namespace workwear.Representations.Organization
 				EmployeeIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 		public int Added { get; set;}
 		public int Removed { get; set;}
-		public string BalanceText => $"{Added - Removed} {UnitsName}";
+		public int Balance => Added - Removed;
+		public string BalanceText => $"{Balance} {UnitsName}";
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
 	}
 }

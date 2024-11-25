@@ -61,6 +61,7 @@ namespace workwear.Journal.ViewModels.Statements
 			return query
 				.Where(GetSearchCriterion(
 					() => issuanceSheetAlias.Id,
+					() => issuanceSheetAlias.DocNumber,
 					() => issuanceSheetAlias.Expense.Id,
 					() => issuanceSheetAlias.CollectiveExpense.Id,
 					() => organizationAlias.Name,
@@ -71,6 +72,7 @@ namespace workwear.Journal.ViewModels.Statements
 				.Left.JoinAlias(s => s.Subdivision, () => subdivisionAlias)
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(x => x.DocNumber).WithAlias(() => resultAlias.DocNumber)
 					.Select(x => x.Date).WithAlias(() => resultAlias.Date)
 					.Select(() => organizationAlias.Name).WithAlias(() => resultAlias.Organigation)
 					.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
@@ -88,6 +90,8 @@ namespace workwear.Journal.ViewModels.Statements
 	public class IssuanceSheetJournalNode
 	{
 		public int Id { get; set; }
+		public string DocNumber { get; set; }
+		public string DocNumberText => String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber;
 		public DateTime Date { get; set; }
 		public string Organigation { get; set; }
 		public string SubdivisionCode { get; set; }

@@ -75,6 +75,13 @@ namespace Workwear.Domain.Regulations
 			get => dateTo;
 			set => SetField(ref dateTo, value);
 		}
+		
+		private bool archival;
+		[Display(Name ="Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		}
 		#endregion
 		#region Коллеции
 		private IObservableList<Post> posts = new ObservableList<Post>();
@@ -82,6 +89,13 @@ namespace Workwear.Domain.Regulations
 		public virtual IObservableList<Post> Posts {
 			get => posts;
 			set => SetField (ref posts, value);
+		}
+		
+		private IObservableList<EmployeeCard> employees = new ObservableList<EmployeeCard>();
+		[Display (Name = "Использующие сотрудники")]
+		public virtual IObservableList<EmployeeCard> Employees {
+			get => employees;
+			set => SetField (ref employees, value);
 		}
 
 		private IObservableList<NormItem> items = new ObservableList<NormItem>();
@@ -102,7 +116,7 @@ namespace Workwear.Domain.Regulations
 		public virtual bool IsActive => (DateFrom == null || DateFrom.Value <= DateTime.Today)
 		                                && (DateTo == null || DateTo >= DateTime.Today);
 
-		public virtual string Title => Name ?? $"{DocumentNumberText} {AnnexNumberText} {TONParagraph}";
+		public virtual string Title => $"{Id} " + (String.IsNullOrWhiteSpace(Name) ? $"{DocumentNumberText} {AnnexNumberText} {TONParagraph}" : Name);
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {

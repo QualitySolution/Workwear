@@ -27,7 +27,8 @@ namespace Workwear.ViewModels.Tools
 			ExtendPeriod = baseParameters.ExtendPeriod;
 			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
 			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
-			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);;
+			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);
+			UsedCurrency = baseParameters.UsedCurrency;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
@@ -36,7 +37,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
 		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
-		                                   || ExtendPeriod != baseParameters.ExtendPeriod;
+		                                   || ExtendPeriod != baseParameters.ExtendPeriod
+		                                   || UsedCurrency != baseParameters.UsedCurrency;
 
 		#region Parameters
 		public bool DefaultAutoWriteoff { get; set; }
@@ -44,6 +46,7 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
+		public string UsedCurrency { get; set; }
 
 		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
@@ -65,6 +68,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.CollectiveIssueWithPersonal = CollectiveIssueWithPersonal;
 			if(CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet)
 				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
+			if(UsedCurrency != baseParameters.UsedCurrency)
+				baseParameters.UsedCurrency = UsedCurrency;
 			return true;
 		}
 	}

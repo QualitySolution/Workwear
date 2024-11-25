@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>296.926mm</PageHeight>
-  <PageWidth>210.058mm</PageWidth>
+  <PageWidth>240.058mm</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.15in</TopMargin>
   <LeftMargin>.15in</LeftMargin>
@@ -28,13 +28,14 @@
           ''
        )
     ) as subject_name,
-    items.cause
+    items.cause,
+    CONCAT(CONVERT(opissue.wear_percent * 100, INTEGER), ' %') as wear_percent
 FROM stock_write_off_detail as items
          LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
          LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
          LEFT JOIN protection_tools as pt ON pt.id = opissue.protection_tools_id
          LEFT JOIN operation_warehouse as opwarh on opwarh.id = items.warehouse_operation_id
-         LEFT JOIN wear_cards as wc on wc.id = opissue.employee_id
+         LEFT JOIN employees as em on em.id = opissue.employee_id
          LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
          LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
          LEFT JOIN item_types as it on (n.type_id = it.id or it.id = pt.item_types_id)
@@ -69,6 +70,10 @@ WHERE doc.id = @id</CommandText>
         <Field Name="cause">
           <DataField>cause</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="wear_percent">
+          <DataField>wear_percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1021,7 +1026,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             </TableRow>
           </TableRows>
         </Header>
-        <Left>0.0pt</Left>
+        <Left>0.8pt</Left>
         <Top>1.6pt</Top>
       </Table>
       <Table Name="Table4">
@@ -1222,6 +1227,9 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <Width>33.5pt</Width>
           </TableColumn>
           <TableColumn>
+            <Width>85.0pt</Width>
+          </TableColumn>
+          <TableColumn>
             <Width>87.5pt</Width>
           </TableColumn>
         </TableColumns>
@@ -1273,7 +1281,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>5</ColSpan>
+                  <ColSpan>6</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1374,6 +1382,25 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                   <ReportItems>
                     <Textbox Name="Textbox175">
                       <Value>Причина списания</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>10pt</FontSize>
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>Процент износа</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1499,6 +1526,22 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox25">
+                      <Value>=Fields!wear_percent.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -1602,15 +1645,6 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_test_agronom;user id=SpMob;password=omIV5tuXi]49jQnF;</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
@@ -1625,4 +1659,13 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=192.168.1.10;port=3306;user id=SpMob;password=ouzBxEmpQo0q2jZ0;</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>

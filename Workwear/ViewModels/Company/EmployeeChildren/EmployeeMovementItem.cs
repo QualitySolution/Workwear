@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
-using QSProjectsLib;
+using QS.Utilities;
 using Workwear.Domain.Operations;
 using Workwear.Models.Operations;
+using Workwear.Domain.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
@@ -28,6 +31,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public string CostText => Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
 
 		public string WearPercentText => WearPercet.HasValue ? WearPercet.Value.ToString("P0") : String.Empty;
+
+		public IEnumerable<Barcode> Barcodes => Operation.BarcodeOperations.Select(bo => bo.Barcode);
 
 		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
 		public bool UseAutoWriteOff {
@@ -59,15 +64,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public bool IsSigned => !String.IsNullOrEmpty(Operation.SignCardKey);
 
-		public string DocumentTitle {
+		public string  DocumentTitle {
 			get {
 				if(EmployeeIssueReference?.DocumentType != null)
-					return $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
+					return EmployeeIssueReference.DocumentTitle;//$"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
 				if(Operation.ManualOperation)
 					return "Ручная операция";
 				return String.Empty;
 			}
 		}
+
+		public string BarcodesString {
+			get {
+				if(!Barcodes.Any())
+					return String.Empty;
+				return Barcodes.DefaultIfEmpty().Select(bc => bc.Title).Aggregate((a,b) => a + "\n" + b);
+			}
+		}
+
 		public string ProtectionTools {
 			get {
 				return Operation?.ProtectionTools?.Name ?? String.Empty;

@@ -91,6 +91,9 @@ namespace workwear.Journal.ViewModels.Regulations
 			if(Filter.Department != null)
 				norms.Where(() => departmentAlias.Id == Filter.Department.Id);
 			
+			if (!Filter.ShowArchival)
+				norms.Where(x => !x.Archival);
+			
 			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
@@ -98,6 +101,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				   .Select(() => docAnnexAlias.Number).WithAlias(() => resultAlias.AnnexNumber)
 				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
+				   .Select(() => normAlias.Archival).WithAlias(() => resultAlias.Archival)
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
 				   .SelectSubQuery(employeesWorkedSubquery).WithAlias(() => resultAlias.UsagesWorked)
 				   .Select(Projections.SqlFunction(
@@ -145,7 +149,8 @@ namespace workwear.Journal.ViewModels.Regulations
 		private void ShowEmployees(object[] nodes)
 		{
 			foreach(NormJournalNode node in nodes) {
-				NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
+				var journal = NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
+				journal.ViewModel.Filter.Norm = new Norm {Id = node.Id}; //Фейковая норма для передачи id в фильтр
 			}
 		}
 
@@ -182,26 +187,18 @@ namespace workwear.Journal.ViewModels.Regulations
 	public class NormJournalNode
 	{
 		public int Id { get; set; }
-
 		public string Name { get; set; }
-
 		public string TonNumber { get; set; }
-
 		public int? AnnexNumber { get; set; }
-
 		public string TonAttachment => AnnexNumber?.ToString();
-
 		public string TonParagraph { get; set; }
-
 		public string Posts { get; set; }
-
 		public int Usages { get; set; }
-
 		public int UsagesWorked { get; set; }
-
+		public bool Archival { get; set; }
+		
 		public string UsageText => Usages == UsagesWorked ? Usages.ToString() : $"{Usages}({UsagesWorked})";
 		public string UsageToolTip => Usages == UsagesWorked ? totalUsage : totalUsage + workedUsage;
-
 		private string totalUsage => NumberToTextRus.FormatCase(Usages, "Применена к {0} сотруднику", "Применена к {0} сотрудникам", "Применена к {0} сотрудникам");
 		private string workedUsage => NumberToTextRus.FormatCase(UsagesWorked, " (из них {0} работающий)", " (из них {0} работающих)", " (из них {0} работающих)");
 	}

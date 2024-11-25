@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using QS.Cloud.Client;
 using QS.Dialog;
@@ -21,18 +22,21 @@ namespace Workwear.Tools.Features
 			new ProductEdition(0, "Демонстрационная"),
 			new ProductEdition(1, "Однопользовательская"),
 			new ProductEdition(2, "Профессиональная"),
-			new ProductEdition(3, "Предприятие")
+			new ProductEdition(3, "Предприятие"),
+			new ProductEdition(4, "Спецаутсорсинг")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
 		private readonly CloudClientService cloudClientService;
 		private readonly IInteractiveMessage interactive;
 		private readonly IErrorReporter errorReporter;
+		private readonly ILifetimeScope autofacScope;
 		private readonly IDataBaseInfo dataBaseInfo;
 
-		public byte ProductEdition { get; }
-		public ushort ClientId { get; }
+		public byte ProductEdition { get; private set; }
 		
-		public DateTime? ExpiryDate { get; }
+		public ushort ClientId { get; private set; }
+		
+		public DateTime? ExpiryDate { get; private set; }
 
 		public string CurrentEditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
@@ -67,12 +71,14 @@ namespace Workwear.Tools.Features
 			CloudClientService cloudClientService,
 			IInteractiveMessage interactive,
 			IErrorReporter errorReporter,
+			ILifetimeScope autofacScope,
 			IDataBaseInfo dataBaseInfo = null)
 		{
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -84,18 +90,7 @@ namespace Workwear.Tools.Features
 			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
 				return;
 
-			serialNumberEncoder.Number = serialNumberService.SerialNumber;
-			if(serialNumberEncoder.IsValid) {
-				if(serialNumberEncoder.CodeVersion == 1)
-					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
-				else if(serialNumberEncoder.CodeVersion == 2
-				        && serialNumberEncoder.EditionId >= 1
-				        && serialNumberEncoder.EditionId <= 3) {
-					ProductEdition = serialNumberEncoder.EditionId;
-					ClientId = serialNumberEncoder.ClientId;
-					ExpiryDate = serialNumberEncoder.ExpiryDate;
-				}
-			}
+			SetProperties(serialNumberService);
 		}
 
 		/// <summary>
@@ -105,6 +100,28 @@ namespace Workwear.Tools.Features
 		{
 		}
 
+		private void SetProperties(ISerialNumberService serialNumberService)
+		{
+			serialNumberEncoder.Number = serialNumberService.SerialNumber;
+			if(serialNumberEncoder.IsValid) {
+				if(serialNumberEncoder.CodeVersion == 1)
+					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
+				else if(serialNumberEncoder.CodeVersion == 2
+				        && serialNumberEncoder.EditionId >= 1
+				        && serialNumberEncoder.EditionId <= 4) {
+					ProductEdition = serialNumberEncoder.EditionId;
+					ClientId = serialNumberEncoder.ClientId;
+					ExpiryDate = serialNumberEncoder.ExpiryDate;
+				}
+			}
+		}
+		
+		public void UpdateSerialNumber() 
+		{
+			ISerialNumberService serialNumberService = autofacScope.Resolve<ISerialNumberService>();
+			SetProperties(serialNumberService);
+		}
+		
 		public string GetEditionName(int editionId) 
 		{
 			return SupportEditions.FirstOrDefault(x => x.Number == editionId)?.Name;
@@ -123,40 +140,45 @@ namespace Workwear.Tools.Features
 				switch(feature) {
 					case WorkwearFeature.Communications:
 					case WorkwearFeature.EmployeeLk:
-						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 2 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.SpecCoinsLk:
-						if(ProductEdition != 3) 
+						if(ProductEdition != 3 && ProductEdition != 4) 
 							return false;
 						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 					case WorkwearFeature.Postomats:
-						if(ProductEdition != 0 && ProductEdition != 3)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4) //FIXME после прехода на 2.9 удалить редакцию предприятие
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
 				}
 			}
 
 			switch(feature) {
-				#if	DEBUG //Пока доступно только в редакции спецпошива
 				case WorkwearFeature.Selling:
+				case WorkwearFeature.ClothingService:
+				case WorkwearFeature.StockForecasting:
+				case WorkwearFeature.Dashboard:
+				#if	DEBUG //Пока доступно только в редакции спецпошива
+					return true;
+				#else
+					return ProductEdition == 4;
 				#endif
 				case WorkwearFeature.Barcodes:
 				case WorkwearFeature.Warehouses:
-				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.IdentityCards:
 				case WorkwearFeature.Owners:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.Exchange1C:
-					return ProductEdition == 0 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Completion:
@@ -167,7 +189,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				default:
 					return false;
 			}
@@ -212,8 +234,6 @@ namespace Workwear.Tools.Features
 		#region Предприятие
 		[Display(Name = "Работа с несколькими складами")]
 		Warehouses,
-		[Display(Name = "Обслуживание спецодежды")]
-		ClothingService,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
 		[Display(Name = "Собственники имущества")]
@@ -224,6 +244,8 @@ namespace Workwear.Tools.Features
 		Barcodes,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
+		[Display(Name = "Прогнозирование запасов")]
+		StockForecasting,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Обращения сотрудников")]
@@ -236,9 +258,13 @@ namespace Workwear.Tools.Features
 		Postomats,
 		#endregion
 		#endregion
-		#region Спецредакции
+		#region Спецаутсорсинг
+		[Display(Name = "Обслуживание спецодежды")]
+		ClothingService,
 		[Display(Name = "Продажа")]
-		Selling
+		Selling,
+		[Display(Name = "Дашборды")]
+		Dashboard,
 		#endregion
 	}
 	

@@ -26,7 +26,7 @@ namespace Workwear.Domain.Regulations
 			set => SetField(ref name, value);
 		}
 
-		private SexNormCondition sex;
+		private SexNormCondition sex = SexNormCondition.ForAll;
 		[Display(Name = "Ограничение по полу")]
 		public virtual SexNormCondition SexNormCondition {
 			get => sex;

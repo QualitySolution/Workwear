@@ -22,6 +22,8 @@ namespace workwear.Journal.Filter.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yLabel ylabel4;
 
+		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -117,6 +119,21 @@ namespace workwear.Journal.Filter.Views.Regulations
 			w8.BottomAttach = ((uint)(2));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
+			this.yShowArchival.CanFocus = true;
+			this.yShowArchival.Name = "yShowArchival";
+			this.yShowArchival.Label = global::Mono.Unix.Catalog.GetString("Показать архивные");
+			this.yShowArchival.DrawIndicator = true;
+			this.yShowArchival.UseUnderline = true;
+			this.table1.Add(this.yShowArchival);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.yShowArchival]));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(3));
+			w9.LeftAttach = ((uint)(3));
+			w9.RightAttach = ((uint)(4));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
 			if ((this.Child != null))
 			{

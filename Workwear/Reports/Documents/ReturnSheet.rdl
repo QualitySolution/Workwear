@@ -1330,27 +1330,27 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="DocInfo">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-IFNULL(stock_income.doc_number, stock_income.id)
-        as doc_number,
-stock_income.date AS doc_date,
-CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
-CONCAT(wear_cards.last_name, " ", wear_cards.first_name, " ", wear_cards.patronymic_name) AS fio
+        <CommandText>SELECT
+    IFNULL(stock_income.doc_number, stock_income.id)
+                                                                                                                       as doc_number,
+    stock_income.date AS doc_date,
+    CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
+    CONCAT(employees.last_name, " ", employees.first_name, " ", employees.patronymic_name) AS fio
 
 FROM stock_income
-LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id
-LEFT JOIN objects as ob1 ON ob1.id = wear_cards.object_id
-LEFT JOIN objects as ob2 ON ob2.id = ob1.parent_object_id 
-LEFT JOIN objects as ob3 ON ob3.id = ob2.parent_object_id
-LEFT JOIN objects as ob4 ON ob4.id = ob3.parent_object_id
-LEFT JOIN objects as ob5 ON ob5.id = ob4.parent_object_id
-LEFT JOIN objects as ob6 ON ob6.id = ob5.parent_object_id
-LEFT JOIN objects as ob7 ON ob7.id = ob6.parent_object_id
-LEFT JOIN objects as ob8 ON ob8.id = ob7.parent_object_id
-LEFT JOIN objects ON objects.id = wear_cards.object_id
-LEFT JOIN departments ON departments.id = wear_cards.department_id
+         LEFT JOIN employees ON employees.id = stock_income.employee_id
+         LEFT JOIN subdivisions as ob1 ON ob1.id = employees.subdivision_id
+         LEFT JOIN subdivisions as ob2 ON ob2.id = ob1.parent_subdivision_id
+         LEFT JOIN subdivisions as ob3 ON ob3.id = ob2.parent_subdivision_id
+         LEFT JOIN subdivisions as ob4 ON ob4.id = ob3.parent_subdivision_id
+         LEFT JOIN subdivisions as ob5 ON ob5.id = ob4.parent_subdivision_id
+         LEFT JOIN subdivisions as ob6 ON ob6.id = ob5.parent_subdivision_id
+         LEFT JOIN subdivisions as ob7 ON ob7.id = ob6.parent_subdivision_id
+         LEFT JOIN subdivisions as ob8 ON ob8.id = ob7.parent_subdivision_id
+         LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
+         LEFT JOIN departments ON departments.id = employees.department_id
 
 WHERE stock_income.id = @id</CommandText>
         <QueryParameters>
@@ -1359,7 +1359,7 @@ WHERE stock_income.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>

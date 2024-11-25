@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
@@ -11,10 +11,17 @@ namespace Workwear.Domain.Stock.Documents
 
 		private string docNumber;
 		[StringLength(15)]
-		[Display (Name = "Номер документа")]
+		[Display (Name = "Пользовательский номер документа")]
 		public virtual string DocNumber {
 			get => docNumber;
 			set => SetField (ref docNumber, value);
+		}
+		
+		[StringLength(15)]
+		[Display (Name = "Номер документа")]
+		public virtual string DocNumberText {
+			get => String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber;
+			set => DocNumber = value == Id.ToString() ? docNumber : value; 
 		}
 		
 		DateTime date = DateTime.Now;
@@ -50,8 +57,10 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			switch (docType)
 			{
-				case StockDocumentType.IncomeDoc:
+				case StockDocumentType.Income:
 					return typeof(Income);
+				case StockDocumentType.Return:
+					return typeof(Return);
 				case StockDocumentType.ExpenseEmployeeDoc:
 					return typeof(Expense);
 				case StockDocumentType.ExpenseDutyNornDoc:
@@ -74,13 +83,15 @@ namespace Workwear.Domain.Stock.Documents
 	public enum StockDocumentType
 	{
 		[Display(Name = "Поступление на склад")]
-		IncomeDoc,
+		Income,
 		[Display(Name = "Выдача сотруднику")]
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
 		[Display(Name = "Выдача по дежурной норме")]
 		ExpenseDutyNornDoc,
+		[Display(Name = "Возврат от сотрудника")]
+		Return,
 		[Display(Name = "Перемещение")]
 		TransferDoc,
 		[Display(Name = "Списание")]
