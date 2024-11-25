@@ -40,6 +40,20 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref type, value, () => Type); }
 		}
 
+		private bool dermalPpe = false;
+		[Display(Name = "Смывающие СИЗ")]
+		public virtual bool DermalPpe {
+			get { return dermalPpe; }
+			set { SetField(ref dermalPpe, value, () => DermalPpe); }
+		}
+
+		private bool dispenser = false;
+		[Display(Name = "Выдача дозатором")]
+		public virtual bool Dispenser {
+			get { return dispenser; }
+			set { SetField(ref dispenser, value, () => Dispenser); }
+		}
+
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {

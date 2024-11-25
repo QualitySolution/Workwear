@@ -141,8 +141,8 @@ WHERE
                     TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM  CAST(norms_item.amount * 12 / norms_item.period_count AS DECIMAL(5,3)))))
                 END
         WHEN norms_item.period_type = 'Duty' THEN CONCAT_WS(' ', norms_item.amount, 'дежурный')
-                
-        END AS count_by_year
+        END AS count_by_year,
+    protection_tools.dispenser
 FROM
     wear_cards_item
         LEFT JOIN
@@ -177,10 +177,14 @@ WHERE
           <DataField>count_by_year</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="dispenser">
+          <DataField>dispenser</DataField>
+          <TypeName>System.Boolean</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Sizes">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     size_types.name AS sizeName,
@@ -197,7 +201,7 @@ LIMIT 20</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="sizeName">
           <DataField>sizeName</DataField>
           <TypeName>System.String</TypeName>
@@ -713,7 +717,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit.Value</Value>
+                      <Value>=IIF({dispenser},'Дозатор',Fields!unit.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -729,7 +733,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!count_by_year.Value</Value>
+                      <Value>=IIF({dispenser},'',Fields!count_by_year.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>

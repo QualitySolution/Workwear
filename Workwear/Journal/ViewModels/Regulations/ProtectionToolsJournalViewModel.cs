@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Autofac;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Transform;
@@ -11,6 +13,7 @@ using QS.Services;
 using Workwear.Domain.Analytics;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Journal.Filter.ViewModels.Regulations;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
@@ -18,15 +21,19 @@ namespace workwear.Journal.ViewModels.Regulations
 	public class ProtectionToolsJournalViewModel : EntityJournalViewModelBase<ProtectionTools, ProtectionToolsViewModel, ProtectionToolsJournalNode>
 	{
 		private readonly ItemsType type;
+		public ProtectionToolsFilterViewModel Filter { get; private set; }
 		public ProtectionToolsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager, 
+			ILifetimeScope autofacScope,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null,
 			ItemsType type = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			JournalFilter = Filter = autofacScope.Resolve<ProtectionToolsFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			
 			UseSlider = true;
 			this.type = type;
 			
@@ -43,6 +50,10 @@ namespace workwear.Journal.ViewModels.Regulations
 				.Left.JoinAlias(x => x.Type, () => itemsTypeAlias)
 				.Left.JoinAlias(x => x.CategoryForAnalytic, () => categoryForAnalyticAlias);
 			
+			if (Filter.OnlyDermal)
+				query.Where(x => x.DermalPpe == true);			
+			if (Filter.NotDispenser)
+				query.Where(x => x.Dispenser == false);
 			if(type != null)
 				query = query.Where(p => itemsTypeAlias.Id == type.Id);
 			
@@ -54,6 +65,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				.SelectList((list) => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+					.Select(x => x.DermalPpe).WithAlias(() => resultAlias.WashingPpe)
+					.Select(x => x.Dispenser).WithAlias(() => resultAlias.Dispenser)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.TypeName)
 					.Select(() => categoryForAnalyticAlias.Name).WithAlias(() => resultAlias.CategoryForAnalytic)
 				).OrderBy(x => x.Name).Asc
@@ -100,5 +113,8 @@ namespace workwear.Journal.ViewModels.Regulations
 		public string Name { get; set; }
 		public string TypeName { get; set; }
 		public string CategoryForAnalytic { get; set; }
+		public bool WashingPpe { get; set; }
+		public bool Dispenser { get; set; }
+		public string WashingText => Dispenser ? "Дозатор" : WashingPpe ? "Да" : String.Empty;
 	}
 }
