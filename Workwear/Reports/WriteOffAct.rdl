@@ -14,51 +14,54 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *
-    FROM 
-(SELECT
-    IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id) as 'Номер документа выдачи',
-    IF(stock_write_off.id IS NOT NULL, CONCAT('Списание № ',IFNULL(stock_write_off.doc_number, stock_write_off.id)),
-       IF(stock_income.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_income.doc_number, stock_income.id)), '-')) as 'Номер документа',
-    protection_tools.name as 'Номенклатура нормы',
-    nomenclature.name as 'Номенклатура',
-    sizeAlias.name as 'Размер',
-    heightAlias.name as 'Рост',
-    wear_cards.personnel_number as 'Табельный',
-    CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as 'ФИО',
-    DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'Уволен',
-    DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
-                   IFNULL(stock_income.date, opis.auto_writeoff_date)), '%d.%m.%Y') as 'Дата',
-    opwo.returned as 'Списано',
-    CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
-    DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
-    opis.issued as 'Выдано',
-    IF(opis.manual_operation, '+', '') as 'Ручная',
-    DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_income.creation_date),'%d.%m.%Y') as 'Создан документ',
-    users.name as 'Автор',
-    IFNULL(stock_write_off.comment, stock_income.comment) as 'Коментарий документа',
-    IFNULL(stock_write_off_detail.cause, stock_income_detail.comment_return)as 'Комментарий операции',
-    nomenclature.sale_cost as 'Стоимость номенклатуры',
-    opis.returned * nomenclature.sale_cost as 'Сумма списанного',
-    IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_income.id IS NOT NULL, 'I', '-'))) as 'type'
-FROM operation_issued_by_employee opis
-         LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
-         LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
-         LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id
-         LEFT JOIN stock_income_detail on opis.id = stock_income_detail.employee_issue_operation_id
-         LEFT JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
-         LEFT JOIN users on (stock_write_off.user_id = users.id or stock_income.user_id = users.id)
-         LEFT JOIN  wear_cards on opis.employee_id = wear_cards.id
-         LEFT JOIN nomenclature on (stock_income_detail.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
-         LEFT JOIN protection_tools on opis.protection_tools_id=protection_tools.id
-         LEFT JOIN item_types on nomenclature.type_id = item_types.id
-         LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
-         LEFT JOIN sizes  sizeAlias on sizeAlias.id = opis.size_id
-         LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
-         LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
-         LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
-WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_income.date BETWEEN @start_date AND @end_date)
-    OR (opis.auto_writeoff_date BETWEEN @start_date AND @end_date))) q1
-WHERE IF(@doc_write_off, type = 'W' ,'') OR (IF(@auto_write_off, type = 'A', '')) OR (IF(@income, type='I', ''));</CommandText>
+FROM
+    (SELECT
+         IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id) as 'Номер документа выдачи',
+         IF(stock_write_off.id IS NOT NULL, CONCAT('Списание № ',IFNULL(stock_write_off.doc_number, stock_write_off.id)),
+            IF(stock_income.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_income.doc_number, stock_income.id)), '-')) as 'Номер документа',
+         protection_tools.name as 'Номенклатура нормы',
+         nomenclature.name as 'Номенклатура',
+         sizeAlias.name as 'Размер',
+         heightAlias.name as 'Рост',
+         wear_cards.personnel_number as 'Табельный',
+         CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as 'ФИО',
+         DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'Уволен',
+         IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
+                        IFNULL(stock_income.date, opis.auto_writeoff_date)) as 'Дата',
+         DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
+            IFNULL(stock_income.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
+         opwo.returned as 'Списано',
+         CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
+         DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
+         opis.issued as 'Выдано',
+         IF(opis.manual_operation, '+', '') as 'Ручная',
+         DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_income.creation_date),'%d.%m.%Y') as 'Создан документ',
+         users.name as 'Автор',
+         IFNULL(stock_write_off.comment, stock_income.comment) as 'Коментарий документа',
+         IFNULL(stock_write_off_detail.cause, stock_income_detail.comment_return)as 'Комментарий операции',
+         nomenclature.sale_cost as 'Стоимость номенклатуры',
+         opis.returned * nomenclature.sale_cost as 'Сумма списанного',
+         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_income.id IS NOT NULL, 'I', '-'))) as 'Тип'
+     FROM operation_issued_by_employee opis
+              LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
+              LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
+              LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id
+              LEFT JOIN stock_income_detail on opis.id = stock_income_detail.employee_issue_operation_id
+              LEFT JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
+              LEFT JOIN users on (stock_write_off.user_id = users.id or stock_income.user_id = users.id)
+              LEFT JOIN  wear_cards on opis.employee_id = wear_cards.id
+              LEFT JOIN nomenclature on (stock_income_detail.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
+              LEFT JOIN protection_tools on opis.protection_tools_id=protection_tools.id
+              LEFT JOIN item_types on nomenclature.type_id = item_types.id
+              LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+              LEFT JOIN sizes  sizeAlias on sizeAlias.id = opis.size_id
+              LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
+              LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
+              LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
+     WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_income.date BETWEEN @start_date AND @end_date)
+         OR (opis.auto_writeoff_date BETWEEN @start_date AND @end_date))) q1
+WHERE IF(@doc_write_off, `Тип` = 'W' ,'') OR (IF(@auto_write_off, `Тип` = 'A', '')) OR (IF(@income, `Тип`='I', ''))
+ORDER BY `Тип`, `Дата`;</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>={?start_date}</Value>
@@ -116,6 +119,10 @@ WHERE IF(@doc_write_off, type = 'W' ,'') OR (IF(@auto_write_off, type = 'A', '')
         </Field>
         <Field Name="Дата">
           <DataField>Дата</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Дата_строка">
+          <DataField>Дата_строка</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Списано">
@@ -162,8 +169,8 @@ WHERE IF(@doc_write_off, type = 'W' ,'') OR (IF(@auto_write_off, type = 'A', '')
           <DataField>Сумма списанного</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="type">
-          <DataField>type</DataField>
+        <Field Name="Тип">
+          <DataField>Тип</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -771,7 +778,7 @@ WHERE IF(@doc_write_off, type = 'W' ,'') OR (IF(@auto_write_off, type = 'A', '')
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Списание">
-                      <Value>=Fields!Дата.Value</Value>
+                      <Value>=Fields!Дата_строка.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
