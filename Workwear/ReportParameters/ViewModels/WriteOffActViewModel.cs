@@ -13,7 +13,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
 			{ "start_date", StartDate },
 			{ "end_date", EndDate },
-			{ "report_date", ReportDate}
+			{ "report_date", ReportDate},
+			{"doc_write_off", ShowDocWriteOff},
+			{"auto_write_off", ShowAutoWriteOff},
+			{"income", ShowIncome}
 		};
 		
 		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
@@ -35,6 +38,32 @@ namespace Workwear.ReportParameters.ViewModels {
 		private DateTime? reportDate = DateTime.Today;
 		public virtual DateTime? ReportDate => reportDate;
 
-		public bool SensitiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null;
+		private bool showDocWriteOff=true;
+		public virtual bool ShowDocWriteOff {
+			get=> showDocWriteOff;
+			set {
+				if(SetField(ref showDocWriteOff, value))
+					OnPropertyChanged(nameof(SensitiveLoad));
+			}
+		}
+		private bool showAutoWriteOff=true;
+		public virtual bool ShowAutoWriteOff {
+			get=> showAutoWriteOff;
+			set {
+				if(SetField(ref showAutoWriteOff, value))
+					OnPropertyChanged(nameof(SensitiveLoad));
+			}
+		}
+		private bool showIncome=true;
+		public virtual bool ShowIncome {
+			get=> showIncome;
+			set {
+				if(SetField(ref showIncome, value))
+					OnPropertyChanged(nameof(SensitiveLoad));
+			}
+		}
+
+		public bool SensitiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null && 
+		                             (showDocWriteOff || showIncome || showAutoWriteOff);
 	}
 }
