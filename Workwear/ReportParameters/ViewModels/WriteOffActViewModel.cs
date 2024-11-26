@@ -19,7 +19,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"income", ShowIncome}
 		};
 		
-		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
+		private DateTime? startDate=  DateTime.Today.AddMonths(-1);
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set {
@@ -27,7 +27,7 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
-		private DateTime? endDate =  DateTime.Now;
+		private DateTime? endDate =  DateTime.Today;
 		public virtual DateTime? EndDate {
 			get => endDate;
 			set {
