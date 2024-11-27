@@ -22,12 +22,14 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>-- потребности
-SELECT
+SELECT *
+    FROM
+(SELECT
     wear_cards.personnel_number as 'Табельный номер',
     Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as "ФИО",
     IF(@show_dismissed,DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y'), '-') as 'Дата увольнения',
-    IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
-    objects.name as "Подразделение",
+    wear_cards.object_id as 'subdivision_id',
+    objects.name  as "Подразделение",
     departments.name as "Отдел",
     posts.name as 'Должность',
     protection_tools.name as "Номенклатура нормы",
@@ -70,7 +72,7 @@ SELECT
     wear_cards.personnel_number as "Табельный номер",
     CONCAT_WS(' ' ,wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as 'ФИО',
     IF(@show_dismissed,DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y'), '-') as 'Дата увольнения',
-    IF(@group_by_subdivision, wear_cards.object_id, NULL) AS 'subdivision_id',
+    wear_cards.object_id as 'subdivision_id',
     objects.name as "Подразделение",
     departments.name as "Отдел",
     posts.name as "Должность",
@@ -93,8 +95,23 @@ FROM operation_issued_by_employee o1
 WHERE o1.issued != 0 and (o1.auto_writeoff_date &gt; (select now())) and 
       (IF(!@show_dismissed, wear_cards.dismiss_date is null, wear_cards.dismiss_date is null or wear_cards.dismiss_date 
           is not null))
-  and o1.issued_operation_id is null
-ORDER BY `ФИО`, `Номенклатура нормы`, `Дата`;</CommandText>
+  and o1.issued_operation_id is null)data
+GROUP BY IF(@group_by_subdivision, subdivision_id, ''),
+         `Табельный номер`,
+         `ФИО`,
+         `Дата увольнения`,
+         `Отдел`,
+         `Должность`, 
+         `Номенклатура нормы`,
+         `Наименование СИЗ`,
+         `Модель, марка, артикул, класс защиты СИЗ, дерматологических СИЗ`, 
+         `Дата`,
+         `Количество`,
+         `Срок носки`
+ORDER BY IF(@group_by_subdivision, `Подразделение`, ''),
+         `ФИО`, 
+         `Номенклатура нормы`, 
+         `Дата`;</CommandText>
         <QueryParameters>
           <QueryParameter Name="show_dismissed">
             <Value>={?show_dismissed}</Value>
