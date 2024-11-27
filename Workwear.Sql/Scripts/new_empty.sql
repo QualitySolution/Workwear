@@ -724,6 +724,7 @@ AUTO_INCREMENT = 10000;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `norms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `regulations_id` INT UNSIGNED NULL DEFAULT NULL,
   `regulations_annex_id` INT UNSIGNED NULL DEFAULT NULL,
   `name` VARCHAR(200) NULL DEFAULT NULL,
@@ -732,8 +733,8 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `datefrom` DATETIME NULL DEFAULT NULL,
   `dateto` DATETIME NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
-  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`id`),
+  INDEX `norms_last_update_idx` (`last_update` DESC),	
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
   CONSTRAINT `fk_norms_1`
@@ -815,6 +816,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `norms_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `amount` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -823,8 +825,8 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
-  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`id`),
+  INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
   INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC),
   INDEX `fk_norms_item_3_idx` (`condition_id` ASC),
@@ -2343,7 +2345,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.25');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.26');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
