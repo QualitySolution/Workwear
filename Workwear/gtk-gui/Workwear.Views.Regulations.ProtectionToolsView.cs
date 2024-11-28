@@ -281,7 +281,7 @@ namespace Workwear.Views.Regulations
 			this.ycheckbutton_dermal_PPE = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckbutton_dermal_PPE.CanFocus = true;
 			this.ycheckbutton_dermal_PPE.Name = "ycheckbutton_dermal_PPE";
-			this.ycheckbutton_dermal_PPE.Label = global::Mono.Unix.Catalog.GetString("Дермотологические СИЗ");
+			this.ycheckbutton_dermal_PPE.Label = global::Mono.Unix.Catalog.GetString("Дерматологические СИЗ");
 			this.ycheckbutton_dermal_PPE.DrawIndicator = true;
 			this.ycheckbutton_dermal_PPE.UseUnderline = true;
 			this.yhbox2.Add(this.ycheckbutton_dermal_PPE);
