@@ -86,6 +86,21 @@ namespace Workwear.Tools.Sizes
 
 		#region Статика
 		public static string SizeTitle(Size size, Size height) => height != null ? $"{size?.Name}/{height?.Name}" : size?.Name;
+		/// <summary>
+		/// Сопоставляет размер в сотруднике с размером номенклатуры, с учетом подходящих.
+		/// Так же учитывайте что если в размер в номенклатуре отсутствует, она считается подходящей для всех размеров.
+		/// </summary>
+		public static bool IsSuitable(Size sizeEmployee, Size sizeNomenclature) {
+			if(sizeNomenclature == null)
+				return true;
+			if(sizeEmployee?.Id == sizeNomenclature.Id)
+				return true;
+			if(sizeEmployee != null)
+				return sizeEmployee.SuitableSizes.Any(x => x.Id == sizeNomenclature.Id)
+					|| sizeNomenclature.SuitableSizes.Any(x => x.Id == sizeEmployee.Id);
+			return false;
+		}
+
 		#endregion
 	}
 }

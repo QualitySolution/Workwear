@@ -28,7 +28,8 @@ namespace Workwear.ViewModels.Analytics {
 			futureIssues = issues;
 			Stocks = stocks
 				.Where(x => x.Position.Nomenclature.Sex == Sex)
-				.Where(x => x.Position.WearSize == Size && x.Position.Height == Height)
+				.Where(x => SizeService.IsSuitable(Size, x.Position.WearSize))
+				.Where(x => SizeService.IsSuitable(Height, x.Position.Height))
 				.ToArray();
 			InStock = Stocks.Sum(x => x.Amount);
 			if(Sex == ClothesSex.Universal && ProtectionTool.SupplyNomenclatureUnisex != null)
