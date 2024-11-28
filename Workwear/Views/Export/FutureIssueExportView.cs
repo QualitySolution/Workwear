@@ -2,7 +2,6 @@
 using Workwear.ViewModels.Export;
 
 namespace Workwear.Views.Export {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class FutureIssueExportView : DialogViewBase<FutureIssueExportViewModel> {
 		public FutureIssueExportView(FutureIssueExportViewModel viewModel) : base(viewModel) {
 			this.Build();
@@ -25,6 +24,11 @@ namespace Workwear.Views.Export {
 				.AddBinding(ViewModel, v => v.RunSensitive, w => w.Sensitive)
 				.AddBinding(ViewModel, v => v.RunVisible, w => w.Visible).InitializeFromSource();
 			ylabel_done.Binding.AddBinding(ViewModel, vm => vm.DoneVisible, w => w.Visible).InitializeFromSource();
+
+			comboCost.ItemsEnum = typeof(FutureIssueExportCost);
+			if(!ViewModel.FeaturesService.Available(Workwear.Tools.Features.WorkwearFeature.Selling))
+				comboCost.AddEnumToHideList(FutureIssueExportCost.Sale);
+			comboCost.Binding.AddBinding(ViewModel, v => v.ExportCost, w => w.SelectedItem).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {

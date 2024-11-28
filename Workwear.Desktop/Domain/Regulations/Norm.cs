@@ -82,6 +82,14 @@ namespace Workwear.Domain.Regulations
 			get => archival;
 			set => SetField(ref archival, value);
 		}
+
+		private DateTime lastUpdate;
+		[Display(Name="Последнее обновление")]
+		public virtual DateTime LastUpdate {
+			get => lastUpdate; 
+			set => SetField(ref lastUpdate, value); 
+			
+		}
 		#endregion
 		#region Коллеции
 		private IObservableList<Post> posts = new ObservableList<Post>();

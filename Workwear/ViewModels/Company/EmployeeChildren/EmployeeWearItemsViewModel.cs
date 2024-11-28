@@ -117,7 +117,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#region Sensetive And Visibility
 
-		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null;
+		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 
 		#endregion
 
@@ -236,6 +236,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			var page = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(employeeViewModel, OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			page.ViewModel.OnSelectResult += SetIssueDateManual_OnSelectResult;
+			page.ViewModel.Filter.NotDispenser = true;
 		}
 		
 		void SetIssueDateManual_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
