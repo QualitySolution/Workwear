@@ -170,13 +170,13 @@ public partial class MainWindow : Gtk.Window {
 		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
 		
 		if(databaseInfo.IsDemo) {
-			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
+			string message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
 				"установить собственный сервер или купить подписку на QS:Облако.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
