@@ -22,7 +22,6 @@ SELECT
     Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
     wear_cards.object_id as 'subdivision_id',
     objects.name  as 'subdivision',
-    IFNULL(departments.name, 'Без отдела') as 'department',
     posts.name as 'post',
     protection_tools.id as 'pr_id',
     protection_tools.name as 'protection_tool',
@@ -52,7 +51,6 @@ SELECT
 FROM wear_cards
          LEFT JOIN wear_cards_item on wear_cards.id = wear_cards_item.wear_card_id
          LEFT JOIN objects on objects.id = wear_cards.object_id
-         LEFT JOIN departments on departments.id = wear_cards.department_id
          LEFT JOIN protection_tools on protection_tools.id = wear_cards_item.protection_tools_id
          LEFT JOIN norms_item on norms_item.id = wear_cards_item.norm_item_id
          LEFT JOIN posts on posts.id = wear_cards.post_id
@@ -73,7 +71,6 @@ FROM wear_cards
                         #LEFT JOIN warehouse on operation_warehouse.warehouse_expense_id = warehouse.id
                              LEFT JOIN posts on posts.id = wear_cards.post_id
                              LEFT JOIN objects on objects.id = wear_cards.object_id
-                             LEFT JOIN departments on departments.id = wear_cards.department_id
                              LEFT JOIN operation_issued_by_employee o2 on o1.id = o2.issued_operation_id
                     WHERE o1.issued != 0 and (o1.auto_writeoff_date &gt; (select now()) or o1.auto_writeoff_date is null) and
                         wear_cards.dismiss_date is null
@@ -128,10 +125,6 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
         </Field>
         <Field Name="subdivision">
           <DataField>subdivision</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="department">
-          <DataField>department</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="post">
@@ -204,9 +197,6 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>1in</Width>
-          </TableColumn>
-          <TableColumn>
             <Width>109.6pt</Width>
           </TableColumn>
           <TableColumn>
@@ -224,22 +214,6 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
             <TableRow>
               <Height>12pt</Height>
               <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Отдел">
-                      <Value>=Fields!department.Value</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Наименование_СИЗ">
@@ -328,7 +302,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
-                          <Value>= Iif(Fields!subdivision.IsMissing, "Без подразделения", {subdivision})</Value>
+                          <Value>=Iif({?group_by_subdivision},Iif(Fields!subdivision_id.IsMissing, "Без подразделения", {subdivision}),"По всем выбранным подразделениям")</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -342,30 +316,13 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                           </Style>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>5</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
                 <TableRow>
                   <Height>27.4pt</Height>
                   <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox24">
-                          <Value>Отдел</Value>
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Center</TextAlign>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <BackgroundColor>#E9E9E9</BackgroundColor>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox27">
@@ -473,7 +430,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                           <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {wear_card_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") </Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>5</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
@@ -516,7 +473,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                           <CanShrink>true</CanShrink>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>5</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </TableCell>
                   </TableCells>
                 </TableRow>
