@@ -625,7 +625,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
-                      <Value>=IIF({dermal},'',Fields!returned_date.Value)</Value>
+                      <Value>=Iif({dermal},"",Fields!returned_date.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -644,7 +644,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>=IIF({dermal},''Fields!returned_quantity.Value)</Value>
+                      <Value>=IIF({dermal},"",Fields!returned_quantity.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -736,7 +736,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>(SELECT
     IFNULL(nomenclature.name, protection_tools.name)
@@ -821,7 +821,7 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="name_siz">
           <DataField>name_siz</DataField>
           <TypeName>System.String</TypeName>

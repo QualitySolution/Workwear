@@ -14258,7 +14258,7 @@
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbutton_dermal_PPE">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
-                        <property name="Label" translatable="yes">Дермотологические СИЗ</property>
+                        <property name="Label" translatable="yes">Дерматологические СИЗ</property>
                         <property name="DrawIndicator">True</property>
                         <property name="HasLabel">True</property>
                         <property name="UseUnderline">True</property>
