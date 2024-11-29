@@ -19,7 +19,7 @@ SELECT
     wear_cards_item.id as 'need_id',
     issue.issue_id,
     wear_cards.personnel_number as 'personnel_number',
-    Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'name',
+    Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
     DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'dismiss_date',
     wear_cards.object_id as 'subdivision_id',
     objects.name  as 'subdivision',
@@ -82,10 +82,10 @@ FROM wear_cards
                       and o1.issued_operation_id is null) issue on issue.wear_card_id = wear_cards.id and (issue.pr_id=protection_tools.id)
 WHERE(IF(!@show_dismissed, wear_cards.dismiss_date is null,
          wear_cards.dismiss_date is null or wear_cards.dismiss_date is not null))
-AND wear_cards_item.id is not null;
-
-
-</CommandText>
+AND wear_cards_item.id is not null
+ORDER BY IF(@group_by_subdivision, subdivision, null),
+         wear_card_name,
+         protection_tool;</CommandText>
         <QueryParameters>
           <QueryParameter Name="show_dismissed">
             <Value>={?show_dismissed}</Value>
@@ -121,8 +121,8 @@ AND wear_cards_item.id is not null;
           <DataField>personnel_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="name">
-          <DataField>name</DataField>
+        <Field Name="wear_card_name">
+          <DataField>wear_card_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="dismiss_date">
@@ -445,76 +445,12 @@ AND wear_cards_item.id is not null;
                 </TableRow>
               </TableRows>
             </Header>
-            <Footer>
-              <RepeatOnNewPage>true</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>.2in</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox40">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox43">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox44">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox45">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox46">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Footer>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={subdivision}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
           </TableGroup>
           <TableGroup>
             <Grouping Name="employeeGroup">
@@ -541,7 +477,7 @@ AND wear_cards_item.id is not null;
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                           </Style>
-                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") + " " + Iif(Fields!dismiss_date.IsMissing, "", "Уволен: " + {dismiss_date})</Value>
+                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {wear_card_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") + " " + Iif(Fields!dismiss_date.IsMissing, "", "Уволен: " + {dismiss_date})</Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>5</ColSpan>
@@ -550,76 +486,12 @@ AND wear_cards_item.id is not null;
                 </TableRow>
               </TableRows>
             </Header>
-            <Footer>
-              <RepeatOnNewPage>false</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>.2in</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox64">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox67">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox68">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox69">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox70">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Footer>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={wear_card_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
           </TableGroup>
           <TableGroup>
             <Grouping Name="needGroup">
@@ -647,6 +519,8 @@ AND wear_cards_item.id is not null;
                             <FontWeight>Bold</FontWeight>
                           </Style>
                           <Value>={protection_tool} + " " + {wear_period}</Value>
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>5</ColSpan>
@@ -655,81 +529,17 @@ AND wear_cards_item.id is not null;
                 </TableRow>
               </TableRows>
             </Header>
-            <Footer>
-              <RepeatOnNewPage>false</RepeatOnNewPage>
-              <TableRows>
-                <TableRow>
-                  <Height>.2in</Height>
-                  <TableCells>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox88">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox91">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox92">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox93">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox94">
-                          <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                          </Style>
-                          <Value></Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                  </TableCells>
-                </TableRow>
-              </TableRows>
-            </Footer>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={protection_tool}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
           </TableGroup>
         </TableGroups>
       </Table>
     </ReportItems>
-    <Height>145.6pt</Height>
+    <Height>102.0pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
