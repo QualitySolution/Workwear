@@ -28,7 +28,7 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabelExcludeInVacation;
 
-		private global::Gtk.Label ylabelGroupByNormAmount;
+		private global::Gamma.GtkWidgets.yLabel ylabelGroupByNormAmount;
 
 		private global::Gtk.Label ylabelGroupBySubdivision;
 
@@ -68,6 +68,7 @@ namespace Workwear.ReportParameters.Views
 			this.Name = "Workwear.ReportParameters.Views.ProvisionReportView";
 			// Container child Workwear.ReportParameters.Views.ProvisionReportView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
@@ -212,7 +213,7 @@ namespace Workwear.ReportParameters.Views
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ylabelGroupByNormAmount = new global::Gtk.Label();
+			this.ylabelGroupByNormAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelGroupByNormAmount.Name = "ylabelGroupByNormAmount";
 			this.ylabelGroupByNormAmount.Xalign = 1F;
 			this.ylabelGroupByNormAmount.LabelProp = global::Mono.Unix.Catalog.GetString("Группировать по количеству к выдаче");
