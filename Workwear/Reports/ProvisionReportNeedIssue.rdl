@@ -20,7 +20,6 @@ SELECT
     issue.issue_id,
     wear_cards.personnel_number as 'personnel_number',
     Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
-    DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'dismiss_date',
     wear_cards.object_id as 'subdivision_id',
     objects.name  as 'subdivision',
     IFNULL(departments.name, 'Без отдела') as 'department',
@@ -77,19 +76,14 @@ FROM wear_cards
                              LEFT JOIN departments on departments.id = wear_cards.department_id
                              LEFT JOIN operation_issued_by_employee o2 on o1.id = o2.issued_operation_id
                     WHERE o1.issued != 0 and (o1.auto_writeoff_date &gt; (select now()) or o1.auto_writeoff_date is null) and
-                        (IF(!@show_dismissed, wear_cards.dismiss_date is null, wear_cards.dismiss_date is null or wear_cards.dismiss_date
-                            is not null))
+                        wear_cards.dismiss_date is null
                       and o1.issued_operation_id is null) issue on issue.wear_card_id = wear_cards.id and (issue.pr_id=protection_tools.id)
-WHERE(IF(!@show_dismissed, wear_cards.dismiss_date is null,
-         wear_cards.dismiss_date is null or wear_cards.dismiss_date is not null))
+WHERE wear_cards.dismiss_date is null
 AND wear_cards_item.id is not null
 ORDER BY IF(@group_by_subdivision, subdivision, null),
          wear_card_name,
          protection_tool;</CommandText>
         <QueryParameters>
-          <QueryParameter Name="show_dismissed">
-            <Value>={?show_dismissed}</Value>
-          </QueryParameter>
           <QueryParameter Name="group_by_subdivision">
             <Value>={?group_by_subdivision}</Value>
           </QueryParameter>
@@ -101,6 +95,9 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
           </QueryParameter>
           <QueryParameter Name="employee_groups_ids">
             <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="exclude_in_vacation">
+            <Value>={?exclude_in_vacation}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -123,10 +120,6 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
         </Field>
         <Field Name="wear_card_name">
           <DataField>wear_card_name</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="dismiss_date">
-          <DataField>dismiss_date</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="subdivision_id">
@@ -335,7 +328,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
-                          <Value>= Iif(Fields!subdivision.IsMissing, "      Без подразделения", {subdivision})</Value>
+                          <Value>= Iif(Fields!subdivision.IsMissing, "Без подразделения", {subdivision})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -477,7 +470,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                           </Style>
-                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {wear_card_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") + " " + Iif(Fields!dismiss_date.IsMissing, "", "Уволен: " + {dismiss_date})</Value>
+                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {wear_card_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") </Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>5</ColSpan>
@@ -572,18 +565,6 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
     </DataSource>
   </DataSources>
   <ReportParameters>
-    <ReportParameter Name="show_dismissed">
-      <DataType>Boolean</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>true</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
     <ReportParameter Name="group_by_subdivision">
       <DataType>Boolean</DataType>
       <DefaultValue>
@@ -630,6 +611,18 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
