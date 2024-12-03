@@ -85,6 +85,15 @@ AND wear_cards_item.id is NOT null
                   )
         )
         )
+AND ((-1 IN (@employee_groups_ids))
+         OR (@without_groups AND (NOT EXISTS
+              (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = wear_cards_item.wear_card_id)))
+         OR (EXISTS (SELECT * FROM employee_group_items as gi2
+                      WHERE gi2.employee_id = wear_cards_item.wear_card_id
+                        AND gi2.employee_group_id IN (@employee_groups_ids))) )
+AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
+AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND objects.id IS NULL) OR (objects.id IN (@subdivision_ids)))
 GROUP BY subdivision_id,
          wear_card_id,
          pr_id
@@ -106,6 +115,12 @@ ORDER BY  subdivision,
           </QueryParameter>
           <QueryParameter Name="exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_subdivision">
+            <Value>={?without_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -582,6 +597,30 @@ ORDER BY  subdivision,
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
