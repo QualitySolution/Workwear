@@ -20,8 +20,8 @@ SELECT
     issue.issue_id,
     wear_cards.personnel_number as 'personnel_number',
     Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
-    wear_cards.object_id as 'subdivision_id',
-    objects.name  as 'subdivision',
+    IF(@group_by_subdivision, wear_cards.object_id, NULL) as 'subdivision_id',
+    IF(@group_by_subdivision, objects.name, NULL)  as 'subdivision',
     posts.name as 'post',
     protection_tools.id as 'pr_id',
     protection_tools.name as 'protection_tool',
@@ -30,24 +30,24 @@ SELECT
     issue.operation_date_string_issue,
     issue.amount_issue,
     CASE
-               WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
-               WHEN norms_item.period_type = 'Wearout' THEN ',До износа'
-               WHEN norms_item.period_type = 'Duty' THEN 'Деж.'
-               WHEN norms_item.period_type = 'Year' THEN CONCAT(norms_item.amount, ' на ', norms_item.period_count,
-                                                                CASE
-                                                                    WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' лет'
-                                                                    WHEN norms_item.period_count % 10 = 1 THEN ' год'
-                                                                    WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN ' года'
-                                                                    ELSE ' лет'
-                                                                    END)
-               WHEN norms_item.period_type = 'Month' THEN CONCAT(norms_item.amount, ' на ',norms_item.period_count,
-                                                                 CASE
-                                                                     WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' месяцев'
-                                                                     WHEN norms_item.period_count % 10 = 1 THEN ' месяц'
-                                                                     WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN ' месяца'
-                                                                     ELSE ' месяцев'
-                                                                     END)
-               END as 'wear_period'
+        WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
+        WHEN norms_item.period_type = 'Wearout' THEN ',До износа'
+        WHEN norms_item.period_type = 'Duty' THEN 'Деж.'
+        WHEN norms_item.period_type = 'Year' THEN CONCAT(norms_item.amount, ' на ', norms_item.period_count,
+                                                         CASE
+                                                             WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' лет'
+                                                             WHEN norms_item.period_count % 10 = 1 THEN ' год'
+                                                             WHEN norms_item.period_count % 10 BETWEEN 2 AND 4 THEN ' года'
+                                                             ELSE ' лет'
+                                                             END)
+        WHEN norms_item.period_type = 'Month' THEN CONCAT(norms_item.amount, ' на ',norms_item.period_count,
+                                                          CASE
+                                                              WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' месяцев'
+                                                              WHEN norms_item.period_count % 10 = 1 THEN ' месяц'
+                                                              WHEN norms_item.period_count % 10 BETWEEN 2 AND 4 THEN ' месяца'
+                                                              ELSE ' месяцев'
+                                                              END)
+        END as 'wear_period'
 FROM wear_cards
          LEFT JOIN wear_cards_item on wear_cards.id = wear_cards_item.wear_card_id
          LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -72,12 +72,23 @@ FROM wear_cards
                              LEFT JOIN posts on posts.id = wear_cards.post_id
                              LEFT JOIN objects on objects.id = wear_cards.object_id
                              LEFT JOIN operation_issued_by_employee o2 on o1.id = o2.issued_operation_id
-                    WHERE o1.issued != 0 and (o1.auto_writeoff_date &gt; (select now()) or o1.auto_writeoff_date is null) and
-                        wear_cards.dismiss_date is null
-                      and o1.issued_operation_id is null) issue on issue.wear_card_id = wear_cards.id and (issue.pr_id=protection_tools.id)
-WHERE wear_cards.dismiss_date is null
-AND wear_cards_item.id is not null
-ORDER BY IF(@group_by_subdivision, subdivision, null),
+                    WHERE o1.issued != 0 AND (o1.auto_writeoff_date &gt; (SELECT now()) OR o1.auto_writeoff_date IS NULL) AND
+                        wear_cards.dismiss_date IS NULL
+                      AND o1.issued_operation_id IS NULL) issue on issue.wear_card_id = wear_cards.id AND (issue.pr_id=protection_tools.id)
+WHERE wear_cards.dismiss_date IS NULL
+AND wear_cards_item.id is NOT null
+  AND (NOT @exclude_in_vacation
+    OR (NOT EXISTS(SELECT *
+                   FROM wear_cards_vacations as vac
+                   WHERE vac.wear_card_id = wear_cards_item.wear_card_id
+                     AND (CURRENT_DATE BETWEEN vac.begin_date AND vac.end_date)
+                  )
+        )
+        )
+GROUP BY subdivision_id,
+         wear_card_id,
+         pr_id
+ORDER BY  subdivision,
          wear_card_name,
          protection_tool;</CommandText>
         <QueryParameters>
@@ -302,7 +313,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
-                          <Value>=Iif({?group_by_subdivision},Iif(Fields!subdivision_id.IsMissing, "Без подразделения", {subdivision}),"По всем выбранным подразделениям")</Value>
+                          <Value>= Iif(Fields!subdivision.IsMissing, "      Без подразделения", {subdivision})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -489,7 +500,7 @@ ORDER BY IF(@group_by_subdivision, subdivision, null),
         </TableGroups>
       </Table>
     </ReportItems>
-    <Height>102.0pt</Height>
+    <Height>101.1pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
