@@ -328,7 +328,7 @@ ORDER BY  subdivision,
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
-                          <Value>= Iif(Fields!subdivision.IsMissing, "      Без подразделения", {subdivision})</Value>
+                          <Value>=Iif({?group_by_subdivision},Iif(Fields!subdivision.IsMissing, "      Без подразделения", {subdivision}),"По всем выбранным подразделениям")</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
