@@ -63,6 +63,9 @@ ORDER BY nomenclature.name,
           <QueryParameter Name="report_date">
             <Value>=Parameters!report_date</Value>
           </QueryParameter>
+          <QueryParameter Name="showSumm">
+            <Value>={?showSumm}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
@@ -159,6 +162,9 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn >
             <Width>1in</Width>
+            <Visibility>
+              <Hidden>=!{?showSumm}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -790,6 +796,9 @@ ORDER BY nomenclature.name,
                   </ReportItems>
                 </TableCell>
               </TableCells>
+              <Visibility>
+                <Hidden>=!{?showSumm}</Hidden>
+              </Visibility>
             </TableRow>
           </TableRows>
         </Footer>
@@ -821,6 +830,13 @@ ORDER BY nomenclature.name,
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="ownerVisible">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="showSumm">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
