@@ -38,7 +38,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
-		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat;
+		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Warehouses);
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
