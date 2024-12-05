@@ -864,6 +864,9 @@
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\ProvisionReportNeedIssue.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\SpravkaEmployeeSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
