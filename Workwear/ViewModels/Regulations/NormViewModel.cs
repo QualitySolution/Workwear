@@ -80,7 +80,8 @@ namespace Workwear.ViewModels.Regulations
 			RegulationDocs = regulationQuery.ToList();
 			List<DateTime> lastUpdates = new List<DateTime>();
 			lastUpdates.Add(Entity.LastUpdate);
-			lastUpdates.Add(Entity.Items.Max(x => x.LastUpdate));
+			if(Entity.Items.Any())
+				lastUpdates.Add(Entity.Items.Max(x => x.LastUpdate));
 			LastUpdate = lastUpdates.Max().ToString("dd/M/yyyy");
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
