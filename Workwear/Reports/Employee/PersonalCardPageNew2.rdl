@@ -625,7 +625,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
-                      <Value>=Iif({dermal},"",Fields!returned_date.Value)</Value>
+                      <Value>=Iif(StrComp({dermal}, ""),"",Fields!returned_date.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -644,7 +644,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>=IIF({dermal},"",Fields!returned_quantity.Value)</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),"",Fields!returned_quantity.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -662,7 +662,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>=IIF({dermal},'',Fields!returned_sign.Value)</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),'',Fields!returned_sign.Value)</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -679,7 +679,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox41">
-                      <Value>=IIF({dermal},'',Fields!returned_doc.Value)</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),'',Fields!returned_doc.Value)</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -748,7 +748,7 @@
     operation_issued_by_employee.issued
         AS expense_quantity,
     IF(protection_tools.dermal_ppe,'Лично','')
-        AS dermal,
+        AS dermal, #'' (пустая строка) используется в проверках
     IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
            CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
         ) AS issue_sign,
