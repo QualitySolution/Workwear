@@ -21,6 +21,7 @@ namespace Workwear.ViewModels.Regulations {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider){
 
 			currentTab = Entity.Id == 0 ? 0 : 1;
+//711			
 //Пока обновление при открытии нормы			
 			Entity.UpdateNextIssues(UoW);
 		}
@@ -66,5 +67,19 @@ namespace Workwear.ViewModels.Regulations {
 			Entity.Items.Remove(item);
 		}
 		#endregion
+//711		
+		/*public override bool Save() {
+			if (SelectedStartMonth != null)
+				Entity.IssuanceStart = new DateTime(2001, SelectedStartMonth.Value.Month, StartDay ?? 1);
+			else
+				Entity.IssuanceStart = null;
+			if (SelectedEndMonth != null)
+				Entity.IssuanceEnd = new DateTime(2001, SelectedEndMonth.Value.Month, EndDay ?? 1);
+			else
+				Entity.IssuanceEnd = null;
+
+			if (!Validate()) return false;
+			UoW.Save(Entity); return true;
+		}*/
 	}
 }

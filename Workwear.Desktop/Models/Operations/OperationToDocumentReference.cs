@@ -1,4 +1,5 @@
-﻿using Gamma.Utilities;
+﻿using System;
+using Gamma.Utilities;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Models.Operations
@@ -68,11 +69,11 @@ namespace Workwear.Models.Operations
 		//Внимание здесь последовательность получения ID желательно сохранять такую же как у типа документа.
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId =>
-			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
-
-		public int? ItemId => ExpenceItemId ?? CollectiveExpenseItemId ??
-			IncomeItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
-
+			ExpenceId ?? CollectiveExpenseId ?? IncomeId ?? ReturnId ?? TransferId ?? WriteoffId ?? CompletionId ?? InspectionId;
+		public int? ItemId =>
+			ExpenceItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? ReturnItemId ?? TransferItemId ?? WriteoffItemId ?? CompletionSourceItemId ?? CompletionResultItemId ?? InspectionItemId;
+		public string DocumentNumber =>
+			ExpenceDocNumber ?? CollectiveExpenseDocNumber ?? IncomeDocNumber ?? ReturnDocNumber ?? TransferDocNumber ?? WriteoffDocNumber ?? CompletionDocNumber ?? InspectionDocNumber;
 		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{(String.IsNullOrWhiteSpace(DocumentNumber) ? DocumentId.ToString() : DocumentNumber)}";
 	}
 

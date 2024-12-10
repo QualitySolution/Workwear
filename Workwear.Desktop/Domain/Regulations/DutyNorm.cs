@@ -7,6 +7,8 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -102,7 +104,8 @@ namespace Workwear.Domain.Regulations {
 				ProtectionTools = tools,
 				Amount = 1,
 				NormPeriod = NormPeriodType.Year,
-				PeriodCount = 1
+				PeriodCount = 1,
+				Graph = new IssueGraph<DutyNormIssueOperation>(),
 			};
 
 			Items.Add (item);

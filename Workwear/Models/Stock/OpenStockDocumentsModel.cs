@@ -34,8 +34,6 @@ namespace workwear.Models.Stock
 				case StockDocumentType.ExpenseDutyNornDoc:
 					navigation.OpenViewModel<ExpenseDutyNornViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
-				case StockDocumentType.IncomeDoc:
-					navigation.OpenTdiTab<IncomeDocDlg>(master);
 				case StockDocumentType.Return:
 					navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;

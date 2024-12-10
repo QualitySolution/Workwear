@@ -27,6 +27,8 @@ namespace workwear.Journal.Filter.Views.Stock
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.AddAmount, w => w.SelectedItem).InitializeFromSource();
 			labelAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();
+			yhboxDuty.Binding.AddBinding(viewModel, vm => vm.CanSetDutyNorm, w => w.Visible).InitializeFromSource();
+			entityDutyNorm.ViewModel = viewModel.DutyNormEntry;
 		}
 	}
 }

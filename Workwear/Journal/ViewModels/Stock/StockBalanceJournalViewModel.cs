@@ -17,6 +17,7 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Utilities;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -178,7 +179,7 @@ namespace workwear.Journal.ViewModels.Stock
 					Projections.Property(() => warehouseExpenseYearOperationAlias.OperationTime))
 				);
 
-			return queryStock
+			queryStock
 				.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 				.JoinAlias(() => nomenclatureAlias.Type, () => itemTypesAlias)
 				.JoinAlias(() => itemTypesAlias.Units, () => unitsAlias)
@@ -191,39 +192,58 @@ namespace workwear.Journal.ViewModels.Stock
 					() => nomenclatureAlias.Name,
 					() => sizeAlias.Name,
 					() => heightAlias.Name))
-
 				.SelectList(list => list
-			   .SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.Id)
-			   .Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
-			   .Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-			   .Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
-			   .Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
-			   .Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-			   .Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
-			   .Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
-			   .Select(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
-			   .Select(() => nomenclatureAlias.SaleCost).WithAlias( () => resultAlias.SaleCost)
-			   .SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
-			   .SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
-			   .SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
-			   .SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-			   .Select(projection).WithAlias(() => resultAlias.Amount)
-			   .SelectSubQuery(expenseYearQuery).WithAlias(() => resultAlias.DailyConsumption)
-				)
-				.OrderBy(() => nomenclatureAlias.Name).Asc
-				.ThenBy(Projections.SqlFunction(
-					new SQLFunctionTemplate(
-						NHibernateUtil.String, 
-						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
-					NHibernateUtil.String, 
-					Projections.Property(() => sizeAlias.Name))).Asc
-				.ThenBy(Projections.SqlFunction(
-					new SQLFunctionTemplate(
-						NHibernateUtil.String, 
-						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
-					NHibernateUtil.String, 
-					Projections.Property(() => heightAlias.Name))).Asc
-				.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
+					.SelectGroup(() => warehouseOperationAlias.Nomenclature.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
+					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+					.Select(() => nomenclatureAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
+					.Select(() => nomenclatureAlias.Sex).WithAlias(() => resultAlias.Sex)
+					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
+					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+					.Select(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
+					.Select(() => nomenclatureAlias.SaleCost).WithAlias(() => resultAlias.SaleCost)
+					.SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
+					.SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
+					.SelectGroup(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
+					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					.Select(projection).WithAlias(() => resultAlias.Amount)
+					.SelectSubQuery(expenseYearQuery).WithAlias(() => resultAlias.DailyConsumption)
+				);
+
+//711			
+				if(Filter.DutyNorm != null) {
+				DutyNorm dutyNormAlias = null;
+				DutyNormItem dutyNormItemAlias = null;
+				ProtectionTools protectionToolsAlias = null;
+				Nomenclature nomenclatureAlias2 = null;
+				
+				var dutyList = uow.Session.QueryOver<DutyNorm>(() => dutyNormAlias)
+					.JoinAlias(() => dutyNormAlias.Items, () => dutyNormItemAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => dutyNormItemAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => protectionToolsAlias.Nomenclatures, () => nomenclatureAlias2, JoinType.LeftOuterJoin)
+					.Where(x => x.Id == Filter.DutyNorm.Id)
+					.List();
+				var nomenclatureIds = dutyList
+					.Select(d => d.Items.Select(i => i.ProtectionTools)
+						.Select(pt => pt.Nomenclatures
+							.Select(n => n.Id)));
+			}
+//*		
+			return queryStock.OrderBy(() => nomenclatureAlias.Name).Asc
+	            .ThenBy(Projections.SqlFunction(
+	                new SQLFunctionTemplate(
+	                    NHibernateUtil.String,
+	                    "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
+	                NHibernateUtil.String,
+	                Projections.Property(() => sizeAlias.Name))).Asc
+	            .ThenBy(Projections.SqlFunction(
+	                new SQLFunctionTemplate(
+	                    NHibernateUtil.String,
+	                    "CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
+	                NHibernateUtil.String,
+	                Projections.Property(() => heightAlias.Name))).Asc.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
+
 		}
 
 		protected override void CreateNodeActions()
