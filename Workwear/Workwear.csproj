@@ -879,6 +879,9 @@
     <Content Include="Reports\WarehouseTransferReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\WearCardsFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\WriteOffAct.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
