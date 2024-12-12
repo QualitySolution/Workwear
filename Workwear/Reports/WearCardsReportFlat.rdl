@@ -3,7 +3,7 @@
   <Description></Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.27in</PageHeight>
-  <PageWidth>11.69in</PageWidth>
+  <PageWidth>15in</PageWidth>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
@@ -37,7 +37,8 @@
          LEFT JOIN posts on posts.id = wear_cards.post_id
          LEFT JOIN wear_cards_norms wcn on wcn.wear_card_id=wear_cards.id
     WHERE (if(@only_without_norms, wcn.id IS NULL, wcn.id IS NOT NULL OR  wcn.id IS NULL))
-    AND (if(@only_working, dismiss_date IS NULL, dismiss_date IS NULL OR  dismiss_date IS NOT NULL));</CommandText>
+    AND (if(@only_working, dismiss_date IS NULL, dismiss_date IS NULL OR  dismiss_date IS NOT NULL))
+ORDER BY wear_card_name;</CommandText>
         <QueryParameters>
           <QueryParameter Name="only_without_norms">
             <Value>={?only_without_norms}</Value>
@@ -116,16 +117,16 @@
             <Width>162.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>97.7pt</Width>
+            <Width>90.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>89.3pt</Width>
+            <Width>171.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.375in</Width>
+            <Width>179.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.25in</Width>
+            <Width>169.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>95.8pt</Width>
