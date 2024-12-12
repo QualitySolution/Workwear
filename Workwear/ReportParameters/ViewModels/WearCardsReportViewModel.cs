@@ -9,10 +9,7 @@ namespace Workwear.ReportParameters.ViewModels {
 	public class WearCardsReportViewModel: ReportParametersViewModelBase {
 		public WearCardsReportViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) {
 			Title = "Список сотрудников";
-		}
-		public override string Identifier { 
-			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
-			set => throw new InvalidOperationException();
+			Identifier = "WearCardsReportFlat";
 		}
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
@@ -32,23 +29,6 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => onlyWorking;
 			set=>SetField(ref onlyWorking, value);
 		}
-		private WearCardsReportType reportType;
-
-		public virtual WearCardsReportType ReportType {
-			get => reportType;
-			set {
-				SetField(ref reportType, value);
-        
-			}
-		}
-
-		public enum WearCardsReportType {
-			[ReportIdentifier("WearCardsReportFlat")]
-			[Display(Name="Только данные")]
-			Flat,
-			[ReportIdentifier("WearCardsReport")]
-			[Display(Name="Форматировано")]
-			Common
-		}
+		
 	}
 }
