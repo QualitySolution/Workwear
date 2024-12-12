@@ -1,9 +1,5 @@
 ﻿using QS.Report.ViewModels;
 using System.Collections.Generic;
-using System;
-using System.ComponentModel.DataAnnotations;
-using Gamma.Utilities;
-using QS.Report;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class WearCardsReportViewModel: ReportParametersViewModelBase {
