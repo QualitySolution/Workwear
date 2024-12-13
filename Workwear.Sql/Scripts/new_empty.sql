@@ -2388,8 +2388,9 @@ INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (10, 'Размер противогаза', 1, 'Size', 10);
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (11, 'Размер респиратора', 1, 'Size', 11);
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (12, 'Размер носков', 1, 'Size', 12);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES(13,'Размер футболки',1,'size',13);
 
-COMMIT;
+	COMMIT;
 
 
 -- -----------------------------------------------------
@@ -2645,6 +2646,26 @@ INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_no
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (138, '42-44', 3, 0, 1, '84-88');
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (139, '46-48', 3, 0, 1, '92-96');
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (140, '54-56', 3, 0, 1, '108-112');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (370, '3XS', 13,1,1,'40');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (371, '2XS', 13,1,1,'42');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (372, 'XS', 13,1,1,'44');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (373, 'S', 13,1,1,'46');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (374, 'M', 13,1,1,'48');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (375, 'L', 13,1,1,'50');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (376, 'XL', 13,1,1,'52');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (377, '2XL', 13,1,1,'54');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (378, '3XL', 13,1,1,'56');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (379, '4XL', 13,1,1,'58');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (380, '5XL', 13,1,1,'60');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (381, '6XL', 13,1,1,'62');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (382, '7XL', 13,1,1,'64');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (383, '8XL', 13,1,1,'66');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (384, '9XL', 13,1,1,'68');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (385, '10XL', 13,1,1,'70');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (386, '11XL', 13,1,1,'72');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (387, '12XL', 13,1,1,'74');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (388, '13XL', 13,1,1,'76');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (389, '14XL', 13,1,1,'78');
 
 COMMIT;
 
