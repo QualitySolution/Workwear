@@ -3,7 +3,7 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>30in</PageWidth>
+  <PageWidth>31.2in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.20in</TopMargin>
   <LeftMargin>.20in</LeftMargin>
@@ -118,6 +118,12 @@
             <Visibility>
               <Hidden>=!{?byOperation}</Hidden>
             </Visibility>
+          </TableColumn>
+          <TableColumn >
+            <Width>157.4pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>132.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Details>
@@ -403,6 +409,38 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox32">
+                      <Value>={operation_comment}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox37">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -560,6 +598,46 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox62">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -855,6 +933,38 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>Комментарий операции</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>Комментарий документа</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -908,7 +1018,8 @@
         WHERE op2.employee_id = operation_issued_by_employee.employee_id 
           AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
           AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
-    ,NULL) AS date_need
+    ,NULL) AS date_need,
+    operation_issued_by_employee.comment AS operation_comment
 FROM operation_issued_by_employee
          LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
          LEFT JOIN objects on objects.id = wear_cards.object_id
@@ -1014,6 +1125,30 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>object</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="subdivision_code">
+          <DataField>subdivision_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="cost_center_name">
+          <DataField>cost_center_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="nomen">
           <DataField>nomen</DataField>
           <TypeName>System.String</TypeName>
@@ -1034,24 +1169,8 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>growth</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>subdivision_code</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="owner_name">
           <DataField>owner_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="employee">
-          <DataField>employee</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="post">
-          <DataField>post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="cost">
@@ -1062,28 +1181,24 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>cost_sum</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="issuance_sheet">
-          <DataField>issuance_sheet</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
         <Field Name="wearing_period">
           <DataField>wearing_period</DataField>
           <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="cost_center_name">
-          <DataField>cost_center_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="sex">
-          <DataField>sex</DataField>
-          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="operation_date">
           <DataField>operation_date</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="issuance_sheet">
+          <DataField>issuance_sheet</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="date_need">
           <DataField>date_need</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="operation_comment">
+          <DataField>operation_comment</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1257,7 +1372,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="without_groups">
       <DataType>Boolean</DataType>
@@ -1269,7 +1384,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
