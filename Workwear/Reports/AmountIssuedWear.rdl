@@ -1822,7 +1822,7 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
         </Field>
         <Field Name="issuance_sheet">
           <DataField>issuance_sheet</DataField>
-          <TypeName>System.String</TypeName>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="nomen">
           <DataField>nomen</DataField>
@@ -1830,11 +1830,11 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
         </Field>
         <Field Name="sum">
           <DataField>sum</DataField>
-          <TypeName>System.Decimal</TypeName>
+          <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="number">
           <DataField>number</DataField>
-          <TypeName>System.String</TypeName>
+          <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
