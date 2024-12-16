@@ -1164,7 +1164,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
         </Field>
         <Field Name="number">
           <DataField>number</DataField>
-          <TypeName>System.String</TypeName>
+          <TypeName>System.Int32</TypeName>
         </Field>
         <Field Name="size">
           <DataField>size</DataField>
@@ -1196,7 +1196,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
         </Field>
         <Field Name="issuance_sheet">
           <DataField>issuance_sheet</DataField>
-          <TypeName>System.String</TypeName>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="date_need">
           <DataField>date_need</DataField>
