@@ -45,7 +45,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"report_date", ReportDate },
 			{"warehouse_id", Warehouse.Id},
 			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)},
-			{"showSumm", ShowSumm}
+			{"showSumm", ShowSumm},
+			{"showSex", ShowSex}
 		};
 		
 		public override string Identifier { 
@@ -77,6 +78,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual bool ShowSumm {
 			get=> showSumm;
 			set=> SetField(ref showSumm, value);
+		}
+
+		private bool showSex;
+		public virtual bool ShowSex {
+			get => showSex;
+			set=>SetField(ref showSex, value);
 		}
 	}
 	

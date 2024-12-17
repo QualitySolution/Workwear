@@ -143,6 +143,9 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn >
             <Width>46.6pt</Width>
+            <Visibility >
+              <Hidden>=!{?showSex}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -790,6 +793,13 @@ ORDER BY nomenclature.name,
     </ReportParameter>
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="showSex">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
