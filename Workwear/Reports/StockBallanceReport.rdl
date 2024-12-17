@@ -321,8 +321,8 @@ ORDER BY nomenclature.name,
                             <PaddingLeft>2pt</PaddingLeft>
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left>Solid</Left>
-                              <Right>Solid</Right>
+                              <Left>None</Left>
+                              <Right>None</Right>
                               <Top>None</Top>
                               <Bottom>None</Bottom>
                             </BorderStyle>
