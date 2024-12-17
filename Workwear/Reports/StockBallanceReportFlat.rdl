@@ -33,7 +33,8 @@
     ownersAlias.name AS owner,
     measurement_units.name as unit,
     (nomenclature.sale_cost *  (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-                               SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) ) AS summa
+                               SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) ) AS summa,
+    IF(nomenclature.sex='Universal','Унисекс', IF(nomenclature.sex='Men','М', 'Ж')) as sex
 FROM
     operation_warehouse
         JOIN
@@ -109,6 +110,10 @@ ORDER BY nomenclature.name,
           <DataField>summa</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -141,6 +146,9 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn>
             <Width>153.9pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>48.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
@@ -191,7 +199,7 @@ ORDER BY nomenclature.name,
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>5</ColSpan>
+                  <ColSpan>6</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -351,6 +359,22 @@ ORDER BY nomenclature.name,
                     <Textbox Name="Textbox6">
                       <Value>Тип СИЗ</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -527,6 +551,21 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>=Fields!sex.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor  />
+                        <BorderWidth  />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="size">
@@ -689,6 +728,23 @@ ORDER BY nomenclature.name,
                         <BorderWidth />
                       </Style>
                       <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>

@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>8.5in</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageWidth>11.8in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -23,7 +23,8 @@
     sizeAlias.name AS size,
     heightAlias.name AS growth,
     ownersAlias.name AS owner,
-    measurement_units.name as unit
+    measurement_units.name as unit,
+    IF(nomenclature.sex='Universal','Унисекс', IF(nomenclature.sex='Men','М', 'Ж')) as sex
 FROM
     operation_warehouse
         JOIN
@@ -84,12 +85,16 @@ ORDER BY nomenclature.name,
           <DataField>growth</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="owner">
+          <DataField>owner</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="unit">
           <DataField>unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="owner">
-          <DataField>owner</DataField>
+        <Field Name="sex">
+          <DataField>sex</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -135,6 +140,9 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn>
             <Width>345.9pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>46.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -182,6 +190,22 @@ ORDER BY nomenclature.name,
                     <Textbox Name="Textbox19" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>Наименование</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -286,7 +310,7 @@ ORDER BY nomenclature.name,
                   <Height>16.8pt</Height>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>7</ColSpan>
+                      <ColSpan>8</ColSpan>
                       <ReportItems>
                         <Textbox Name="Textbox13">
                           <Value>=Fields.type.Value</Value>
@@ -338,6 +362,22 @@ ORDER BY nomenclature.name,
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox12">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell >
+                      <ReportItems>
+                        <Textbox Name="Textbox23">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
@@ -466,6 +506,22 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>=Fields!sex.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -574,6 +630,22 @@ ORDER BY nomenclature.name,
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox11">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Right>None</Right>
+                          <Left>None</Left>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox22">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
