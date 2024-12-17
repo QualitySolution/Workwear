@@ -34,7 +34,7 @@
     measurement_units.name as unit,
     (nomenclature.sale_cost *  (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
                                SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) ) AS summa,
-    IF(nomenclature.sex='Universal','Унисекс', IF(nomenclature.sex='Men','М', 'Ж')) as sex
+    IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
 FROM
     operation_warehouse
         JOIN

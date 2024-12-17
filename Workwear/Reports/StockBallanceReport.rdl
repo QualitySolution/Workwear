@@ -24,7 +24,7 @@
     heightAlias.name AS growth,
     ownersAlias.name AS owner,
     measurement_units.name as unit,
-    IF(nomenclature.sex='Universal','Унисекс', IF(nomenclature.sex='Men','М', 'Ж')) as sex
+    IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
 FROM
     operation_warehouse
         JOIN
