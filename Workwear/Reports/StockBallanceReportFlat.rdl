@@ -50,8 +50,8 @@ FROM
         LEFT JOIN
     owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
 WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-    AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id)
-
+    AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id or
+@allWarehouses)
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
@@ -66,6 +66,9 @@ ORDER BY nomenclature.name,
           </QueryParameter>
           <QueryParameter Name="showSumm">
             <Value>={?showSumm}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allWarehouses">
+            <Value>={?allWarehouses}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
