@@ -105,7 +105,7 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
 			this.yspeccomboboxWarehouse.AddIfNotExist = false;
 			this.yspeccomboboxWarehouse.DefaultFirst = false;
-			this.yspeccomboboxWarehouse.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouse.ShowSpecialStateAll = true;
 			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
 			this.table1.Add(this.yspeccomboboxWarehouse);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxWarehouse]));
