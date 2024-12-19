@@ -10,9 +10,9 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.Widgets.yEnumComboBox comboReportType;
 
-		private global::QS.Views.Control.EntityEntry entityWarehouse;
-
 		private global::Gamma.Widgets.yDatePicker ydateReport;
+
+		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxWarehouse;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel_date;
 
@@ -37,7 +37,7 @@ namespace Workwear.ReportParameters.Views
 			this.dialog1_VBox.Name = "dialog1_VBox";
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(3)), false);
+			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -52,20 +52,7 @@ namespace Workwear.ReportParameters.Views
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.comboReportType]));
 			w1.LeftAttach = ((uint)(1));
 			w1.RightAttach = ((uint)(2));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.entityWarehouse = new global::QS.Views.Control.EntityEntry();
-			this.entityWarehouse.Events = ((global::Gdk.EventMask)(256));
-			this.entityWarehouse.Name = "entityWarehouse";
-			this.table1.Add(this.entityWarehouse);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entityWarehouse]));
-			w2.TopAttach = ((uint)(2));
-			w2.BottomAttach = ((uint)(3));
-			w2.LeftAttach = ((uint)(1));
-			w2.RightAttach = ((uint)(2));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ydateReport = new global::Gamma.Widgets.yDatePicker();
 			this.ydateReport.Events = ((global::Gdk.EventMask)(256));
@@ -75,12 +62,26 @@ namespace Workwear.ReportParameters.Views
 			this.ydateReport.IsEditable = true;
 			this.ydateReport.AutoSeparation = true;
 			this.table1.Add(this.ydateReport);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
+			w2.TopAttach = ((uint)(1));
+			w2.BottomAttach = ((uint)(2));
+			w2.LeftAttach = ((uint)(1));
+			w2.RightAttach = ((uint)(2));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yenumcomboboxWarehouse = new global::Gamma.Widgets.yEnumComboBox();
+			this.yenumcomboboxWarehouse.Name = "yenumcomboboxWarehouse";
+			this.yenumcomboboxWarehouse.ShowSpecialStateAll = false;
+			this.yenumcomboboxWarehouse.ShowSpecialStateNot = false;
+			this.yenumcomboboxWarehouse.UseShortTitle = false;
+			this.yenumcomboboxWarehouse.DefaultFirst = true;
+			this.table1.Add(this.yenumcomboboxWarehouse);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.yenumcomboboxWarehouse]));
+			w3.TopAttach = ((uint)(2));
+			w3.BottomAttach = ((uint)(3));
 			w3.LeftAttach = ((uint)(1));
 			w3.RightAttach = ((uint)(2));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabel_date = new global::Gamma.GtkWidgets.yLabel();
