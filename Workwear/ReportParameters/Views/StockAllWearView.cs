@@ -12,6 +12,7 @@ namespace Workwear.ReportParameters.Views {
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			comboReportType.ItemsEnum = typeof(StockAllWearReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
+			yspeccomboboxWarehouse.SelectedItemStrictTyped = false;
 			yspeccomboboxWarehouse.Binding
 				.AddSource(ViewModel)
 				.AddBinding(wh=>wh.Warehouses,w=>w.ItemsList)
