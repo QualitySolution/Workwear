@@ -12,13 +12,13 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.Widgets.yDatePicker ydateReport;
 
-		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxWarehouse;
-
 		private global::Gamma.GtkWidgets.yLabel ylabel_date;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel_warehouse;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
+
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouse;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowSumm;
 
@@ -70,48 +70,49 @@ namespace Workwear.ReportParameters.Views
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.yenumcomboboxWarehouse = new global::Gamma.Widgets.yEnumComboBox();
-			this.yenumcomboboxWarehouse.Name = "yenumcomboboxWarehouse";
-			this.yenumcomboboxWarehouse.ShowSpecialStateAll = false;
-			this.yenumcomboboxWarehouse.ShowSpecialStateNot = false;
-			this.yenumcomboboxWarehouse.UseShortTitle = false;
-			this.yenumcomboboxWarehouse.DefaultFirst = true;
-			this.table1.Add(this.yenumcomboboxWarehouse);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.yenumcomboboxWarehouse]));
-			w3.TopAttach = ((uint)(2));
-			w3.BottomAttach = ((uint)(3));
-			w3.LeftAttach = ((uint)(1));
-			w3.RightAttach = ((uint)(2));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
 			this.ylabel_date = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel_date.Name = "ylabel_date";
 			this.ylabel_date.Xalign = 1F;
 			this.ylabel_date.LabelProp = global::Mono.Unix.Catalog.GetString("Дата отчета:");
 			this.table1.Add(this.ylabel_date);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_date]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_date]));
+			w3.TopAttach = ((uint)(1));
+			w3.BottomAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabel_warehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel_warehouse.Name = "ylabel_warehouse";
 			this.ylabel_warehouse.Xalign = 1F;
 			this.ylabel_warehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
 			this.table1.Add(this.ylabel_warehouse);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_warehouse]));
-			w5.TopAttach = ((uint)(2));
-			w5.BottomAttach = ((uint)(3));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_warehouse]));
+			w4.TopAttach = ((uint)(2));
+			w4.BottomAttach = ((uint)(3));
+			w4.XOptions = ((global::Gtk.AttachOptions)(4));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabel6 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel6.Name = "ylabel6";
 			this.ylabel6.Xalign = 1F;
 			this.ylabel6.LabelProp = global::Mono.Unix.Catalog.GetString("Вид отчета:");
 			this.table1.Add(this.ylabel6);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel6]));
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel6]));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yspeccomboboxWarehouse = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
+			this.yspeccomboboxWarehouse.AddIfNotExist = false;
+			this.yspeccomboboxWarehouse.DefaultFirst = false;
+			this.yspeccomboboxWarehouse.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
+			this.table1.Add(this.yspeccomboboxWarehouse);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxWarehouse]));
+			w6.TopAttach = ((uint)(2));
+			w6.BottomAttach = ((uint)(3));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
