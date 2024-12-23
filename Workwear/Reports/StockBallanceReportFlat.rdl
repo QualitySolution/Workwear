@@ -197,7 +197,7 @@ ORDER BY nomenclature.name,
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>= "Складская ведомость на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+                      <Value>= "Складская ведомость по "  + Iif({?allWarehouses}, "всем складам", "'"+{?warehouse_name}+"'") + " на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -926,6 +926,13 @@ ORDER BY nomenclature.name,
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_name">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
