@@ -864,6 +864,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Reports\AmountIssuedWearAboveNorm.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
