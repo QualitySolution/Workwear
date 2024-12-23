@@ -3,7 +3,7 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
   <PageHeight>391.5mm</PageHeight>
-  <PageWidth>14.5in</PageWidth>
+  <PageWidth>15in</PageWidth>
   <Width>210mm</Width>
   <TopMargin>.10in</TopMargin>
   <LeftMargin>.10in</LeftMargin>
@@ -50,7 +50,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>74.5pt</Width>
+            <Width>109.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>346.0pt</Width>
