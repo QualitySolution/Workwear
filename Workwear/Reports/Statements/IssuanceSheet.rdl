@@ -2016,12 +2016,12 @@
     <PrintOnLastPage>true</PrintOnLastPage>
     <ReportItems >
       <Textbox Name="Textbox92">
-        <Height>14.27pt</Height>
-        <Width>201.77pt</Width>
+        <Height>12pt</Height>
+        <Width>3in</Width>
         <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
         <ZIndex>1</ZIndex>
-        <Left>10.3pt</Left>
-        <Top>1.7pt</Top>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />

@@ -2053,12 +2053,12 @@
     <PrintOnLastPage>true</PrintOnLastPage>
     <ReportItems >
       <Textbox Name="Textbox43">
-        <Height>13.52pt</Height>
-        <Width>192.73pt</Width>
+        <Height>12pt</Height>
+        <Width>3in</Width>
         <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
         <ZIndex>1</ZIndex>
-        <Left>5.60pt</Left>
-        <Top>3.10pt</Top>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
