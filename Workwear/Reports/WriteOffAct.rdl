@@ -3,15 +3,7 @@
   <Description>Отчет по актам списания</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>41.7in</PageHeight>
-  <PageWidth>29.5in</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;port=3306; database=workwear_copy_kos_24_08_03;</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
+  <PageWidth>27.5in</PageWidth>
   <Width>9in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -21,40 +13,55 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
-    doc.id as 'Номер документа',
-    pt.name as 'Номенклатура нормы',
-    nom.name as 'Номенклатура',
-    sizeAlias.name as 'Размер',
-    heightAlias.name as 'Рост',
-    wc.personnel_number as 'Табельный',
-    CONCAT_WS(' ', wc.last_name, wc.first_name, wc.patronymic_name) as 'ФИО',
-    DATE_FORMAT(wc.dismiss_date, '%d.%m.%Y') as 'Уволен',
-    DATE_FORMAT(doc.date, '%d.%m.%Y') as 'Списание',
-    opwo.returned as 'Списано',
-    CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
-    DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
-    opis.issued as 'Выдано',
-    IF(opis.manual_operation, '+', '') as 'Ручная',
-    DATE_FORMAT(doc.creation_date, '%d.%m.%Y') as 'Создан документ',
-    users.name as 'Автор',
-    doc.comment as 'Коментарий документа',
-    item.cause as 'Комментарий операции',
-    nom.sale_cost as 'Стоимость номенклатуры',
-    opwo.returned * nom.sale_cost as 'Сумма списанного'
-FROM stock_write_off_detail as item
-         LEFT JOIN stock_write_off as doc on item.stock_write_off_id = doc.id
-         LEFT JOIN users on doc.user_id = users.id
-         LEFT JOIN operation_issued_by_employee as opwo on item.employee_issue_operation_id = opwo.id
-         LEFT JOIN operation_issued_by_employee as opis on opwo.issued_operation_id = opis.id
-         LEFT JOIN wear_cards as wc on opwo.employee_id = wc.id
-         LEFT JOIN nomenclature as nom on item.nomenclature_id = nom.id
-         LEFT JOIN protection_tools as pt on opwo.protection_tools_id = pt.id
-         LEFT JOIN item_types ON nom.type_id = item_types.id
-         LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
-         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = opwo.size_id
-         LEFT JOIN sizes AS heightAlias ON heightAlias.id = opwo.height_id
-WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
+        <CommandText>SELECT *
+FROM
+    (SELECT
+         IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id) as 'Номер документа выдачи',
+         IF(stock_write_off.id IS NOT NULL, CONCAT('Списание № ',IFNULL(stock_write_off.doc_number, stock_write_off.id)),
+            IF(stock_income.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_income.doc_number, stock_income.id)), '-')) as 'Номер документа',
+         protection_tools.name as 'Номенклатура нормы',
+         nomenclature.name as 'Номенклатура',
+         sizeAlias.name as 'Размер',
+         heightAlias.name as 'Рост',
+         wear_cards.personnel_number as 'Табельный',
+         CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as 'ФИО',
+         DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'Уволен',
+         IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
+                        IFNULL(stock_income.date, opis.auto_writeoff_date)) as 'Дата',
+         DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
+            IFNULL(stock_income.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
+         opwo.returned as 'Списано',
+         CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
+         DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
+         opis.issued as 'Выдано',
+         IF(opis.manual_operation, '+', '') as 'Ручная',
+         DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_income.creation_date),'%d.%m.%Y') as 'Создан документ',
+         users.name as 'Автор',
+         IFNULL(stock_write_off.comment, stock_income.comment) as 'Коментарий документа',
+         IFNULL(stock_write_off_detail.cause, stock_income_detail.comment_return)as 'Комментарий операции',
+         nomenclature.sale_cost as 'Стоимость номенклатуры',
+         opis.returned * nomenclature.sale_cost as 'Сумма списанного',
+         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_income.id IS NOT NULL, 'I', '-'))) as 'Тип'
+     FROM operation_issued_by_employee opis
+              LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
+              LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
+              LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id
+              LEFT JOIN stock_income_detail on opis.id = stock_income_detail.employee_issue_operation_id
+              LEFT JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
+              LEFT JOIN users on (stock_write_off.user_id = users.id or stock_income.user_id = users.id)
+              LEFT JOIN  wear_cards on opis.employee_id = wear_cards.id
+              LEFT JOIN nomenclature on (stock_income_detail.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
+              LEFT JOIN protection_tools on opis.protection_tools_id=protection_tools.id
+              LEFT JOIN item_types on nomenclature.type_id = item_types.id
+              LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+              LEFT JOIN sizes  sizeAlias on sizeAlias.id = opis.size_id
+              LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
+              LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
+              LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
+     WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_income.date BETWEEN @start_date AND @end_date)
+         OR (opis.auto_writeoff_date BETWEEN @start_date AND @end_date))) q1
+WHERE IF(@doc_write_off, `Тип` = 'W' ,'') OR (IF(@auto_write_off, `Тип` = 'A', '')) OR (IF(@income, `Тип`='I', ''))
+ORDER BY `Тип`, `Дата`;</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>={?start_date}</Value>
@@ -62,12 +69,25 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
           <QueryParameter Name="end_date">
             <Value>={?end_date}</Value>
           </QueryParameter>
+          <QueryParameter Name="doc_write_off">
+            <Value>={?doc_write_off}</Value>
+          </QueryParameter>
+          <QueryParameter Name="auto_write_off">
+            <Value>={?auto_write_off}</Value>
+          </QueryParameter>
+          <QueryParameter Name="income">
+            <Value>={?income}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
+        <Field Name="Номер_документа_выдачи">
+          <DataField>Номер документа выдачи</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Номер_документа">
           <DataField>Номер документа</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Номенклатура_нормы">
           <DataField>Номенклатура нормы</DataField>
@@ -97,8 +117,12 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
           <DataField>Уволен</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Списание">
-          <DataField>Списание</DataField>
+        <Field Name="Дата">
+          <DataField>Дата</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Дата_строка">
+          <DataField>Дата_строка</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Списано">
@@ -145,6 +169,10 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
           <DataField>Сумма списанного</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="Тип">
+          <DataField>Тип</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -181,58 +209,61 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>120.9pt</Width>
+            <Width>139.5pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>97.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>138.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1.5in</Width>
+            <Width>117.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>55.7pt</Width>
+            <Width>43.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>47.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>119.3pt</Width>
+            <Width>99.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>149.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>69.9pt</Width>
+            <Width>66.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>78.0pt</Width>
+            <Width>60.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>58.2pt</Width>
+            <Width>54.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>62.8pt</Width>
+            <Width>47.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>72.4pt</Width>
+            <Width>62.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>66.7pt</Width>
+            <Width>51.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>48.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>122.4pt</Width>
+            <Width>95.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>127.6pt</Width>
+            <Width>116.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>170.7pt</Width>
+            <Width>69.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>128.8pt</Width>
+            <Width>105.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>166.0pt</Width>
@@ -246,6 +277,23 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
             <TableRow>
               <Height>12pt</Height>
               <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>Номер документа выдачи</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
@@ -385,7 +433,7 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox10">
-                      <Value>Списание</Value>
+                      <Value>Дата</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -521,7 +569,7 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox18">
-                      <Value>Стоимость номенклатуры</Value>
+                      <Value>Стоимость</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -598,6 +646,21 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>=Fields!Номер_документа_выдачи.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Номер_документа">
                       <Value>=Fields!Номер_документа.Value</Value>
                       <CanGrow>false</CanGrow>
@@ -606,6 +669,8 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -620,6 +685,8 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -711,13 +778,15 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Списание">
-                      <Value>=Fields!Списание.Value</Value>
+                      <Value>=Fields!Дата_строка.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -906,6 +975,15 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=plutus.srv.qsolution.ru;port=3306; </ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="start_date">
       <DataType>String</DataType>
@@ -941,7 +1019,43 @@ WHERE doc.date BETWEEN @start_date AND @end_date;</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="doc_write_off">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="auto_write_off">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="income">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>

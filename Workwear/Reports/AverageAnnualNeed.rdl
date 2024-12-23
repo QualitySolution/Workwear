@@ -614,35 +614,47 @@
     if(@summary, NULL, subdivisions.id) AS subdivision_id,
     subdivisions.name AS subdivision_name
 FROM
-    employee_cards_item
-        LEFT JOIN
-    employees ON employees.id = employee_cards_item.employee_id
+     wear_cards_item
+        JOIN
+    wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
+        JOIN
+    protection_tools ON protection_tools.id =  wear_cards_item.protection_tools_id
         LEFT JOIN
     protection_tools ON protection_tools.id =  employee_cards_item.protection_tools_id
         LEFT JOIN
     item_types ON item_types.id = protection_tools.item_types_id
         LEFT JOIN
     measurement_units ON item_types.units_id = measurement_units.id
+        JOIN
+    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+        LEFT JOIN 
+        posts ON wear_cards.post_id = posts.id
         LEFT JOIN
-    norms_item ON employee_cards_item.norm_item_id = norms_item.id
+    objects ON objects.id = wear_cards.object_id OR wear_cards.object_id IS NULL AND posts.subdivision_id = objects.id
         LEFT JOIN
     size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
         LEFT JOIN
     size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
         LEFT JOIN
-    employees_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
+    wear_cards_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = wear_cards_item.wear_card_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
         LEFT JOIN
     sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
         LEFT JOIN
-    employees_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
+    wear_cards_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = wear_cards_item.wear_card_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
         LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
-        LEFT JOIN
-    subdivisions ON subdivisions.id = employees.subdivision_id
-WHERE employees.dismiss_date IS NULL
-  AND( @subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
-  AND( @issue_type = "" OR item_types.issue_type = @issue_type )
-  AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month')
+WHERE
+    wear_cards.dismiss_date IS NULL
+    AND( @subdivision_id = -1 OR wear_cards.object_id = @subdivision_id )
+    AND( @issue_type = "" OR item_types.issue_type = @issue_type )
+    AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month') 
+AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = wear_cards_item.wear_card_id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                    WHERE gi.employee_id = wear_cards_item.wear_card_id
+                      AND gi.employee_group_id IN (@employee_groups_ids))) )
 GROUP BY subdivision_id, protection_tools.id , sex, size, growth
 ORDER BY type_name, size, growth, sex</CommandText>
         <QueryParameters>
@@ -660,6 +672,12 @@ ORDER BY type_name, size, growth, sex</CommandText>
           </QueryParameter>
           <QueryParameter Name="@summary">
             <Value>={?summary}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -711,6 +729,15 @@ ORDER BY type_name, size, growth, sex</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>database=workwear_dev26;user=;password=;port=3306;server=rs.qsolution.ru</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters>
     <ReportParameter Name="subdivision_id">
       <DataType>Integer</DataType>
@@ -750,16 +777,31 @@ ORDER BY type_name, size, growth, sex</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>database=workwear_dev26;user=;password=;port=3306;server=rs.qsolution.ru</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Analytics;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Regulations
@@ -37,6 +38,20 @@ namespace Workwear.Domain.Regulations
 		public virtual ItemsType Type {
 			get { return type; }
 			set { SetField(ref type, value, () => Type); }
+		}
+
+		private bool dermalPpe = false;
+		[Display(Name = "Смывающие СИЗ")]
+		public virtual bool DermalPpe {
+			get { return dermalPpe; }
+			set { SetField(ref dermalPpe, value, () => DermalPpe); }
+		}
+
+		private bool dispenser = false;
+		[Display(Name = "Выдача дозатором")]
+		public virtual bool Dispenser {
+			get { return dispenser; }
+			set { SetField(ref dispenser, value, () => Dispenser); }
 		}
 
 		private string comment;
@@ -91,6 +106,16 @@ namespace Workwear.Domain.Regulations
 		#endregion
 		#region Расчетные
 		public virtual string GetAmountAndUnitsText(int amount) => this?.Type.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
+
+		public virtual Nomenclature GetSupplyNomenclature(Sex? sex) {
+			if(SupplyType == SupplyType.Unisex)
+				return SupplyNomenclatureUnisex;
+			if(sex == Sex.F)
+				return SupplyNomenclatureFemale;
+			if(sex == Sex.M)
+				return SupplyNomenclatureMale;
+			return null;
+		}
 		#endregion
 
 		#region Номенклатура

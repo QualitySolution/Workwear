@@ -20,6 +20,10 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowSumm;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowSex;
+
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
@@ -114,17 +118,41 @@ namespace Workwear.ReportParameters.Views
 			w7.Position = 0;
 			w7.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonShowSumm = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowSumm.CanFocus = true;
+			this.ycheckbuttonShowSumm.Name = "ycheckbuttonShowSumm";
+			this.ycheckbuttonShowSumm.Label = global::Mono.Unix.Catalog.GetString("Показать стоимость");
+			this.ycheckbuttonShowSumm.DrawIndicator = true;
+			this.ycheckbuttonShowSumm.UseUnderline = true;
+			this.dialog1_VBox.Add(this.ycheckbuttonShowSumm);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSumm]));
+			w8.Position = 1;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonShowSex = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowSex.CanFocus = true;
+			this.ycheckbuttonShowSex.Name = "ycheckbuttonShowSex";
+			this.ycheckbuttonShowSex.Label = global::Mono.Unix.Catalog.GetString("Показать пол");
+			this.ycheckbuttonShowSex.DrawIndicator = true;
+			this.ycheckbuttonShowSex.UseUnderline = true;
+			this.dialog1_VBox.Add(this.ycheckbuttonShowSex);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSex]));
+			w9.Position = 2;
+			w9.Expand = false;
+			w9.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w8.PackType = ((global::Gtk.PackType)(1));
-			w8.Position = 1;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w10.PackType = ((global::Gtk.PackType)(1));
+			w10.Position = 3;
+			w10.Expand = false;
+			w10.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

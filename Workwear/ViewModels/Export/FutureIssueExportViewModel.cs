@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using Autofac;
-using NHibernate;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -16,18 +17,20 @@ using QS.Utilities;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.Repository.Company;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Export {
 	
 	public class FutureIssueExportViewModel : UowDialogViewModelBase {
+		public FeaturesService FeaturesService { get; }
 
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly EmployeeIssueModel issueModel;
@@ -42,16 +45,20 @@ namespace Workwear.ViewModels.Export {
 			EmployeeIssueModel issueModel,
 			FutureIssueModel futureIssueModel,
 			BaseParameters baseParameters,
+			FeaturesService featuresService,
 			SizeService sizeService,
 			OrganizationRepository organizationRepository,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
 			Title = "Прогноз выдач";
+			RunVisible = runSensitive = true;
+			DoneVisible = false;
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<FutureIssueExportViewModel>(this, this, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -62,21 +69,31 @@ namespace Workwear.ViewModels.Export {
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
 
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			
 			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
 
+		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(RunSensitive));
+		}
+		
 		#region Поля и свойства
-		private bool runSensitive;
-		public bool SensitiveLoad => startDate <= endDate;
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;
 		
+		private bool runSensitive;
 		public virtual bool RunSensitive {
-			get => runSensitive;
+			get => runSensitive && (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
 			set => SetField(ref runSensitive, value);
 		}
+		public virtual bool RunVisible { get; set; }
+		public virtual bool DoneVisible { get; set; }
 		
 		private Organization exportOrganization;
         public virtual Organization ExportOrganization {
@@ -85,23 +102,29 @@ namespace Workwear.ViewModels.Export {
         }
             
         private DateTime startDate = DateTime.Today.Date;
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(RunSensitive))]
 		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
 		private DateTime endDate = DateTime.Today.AddMonths(1);
-		[PropertyChangedAlso(nameof(SensitiveLoad))]
+		[PropertyChangedAlso(nameof(RunSensitive))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
 		}
 		
-		private bool noDebt;
-		public virtual bool NoDebt {
-			get => noDebt;
-			set => SetField(ref noDebt, value);
+		private bool moveDebt = true;
+		public virtual bool MoveDebt {
+			get => moveDebt;
+			set => SetField(ref moveDebt, value);
+		}
+		
+		private FutureIssueExportCost exportCost = FutureIssueExportCost.None;
+		public FutureIssueExportCost ExportCost {
+			get => exportCost;
+			set => SetField(ref exportCost, value);
 		}
 		#endregion
 
@@ -152,7 +175,7 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Size?.Name + (item.Height != null ? (" / " + item.Height.Name) : ""));}},
 				new ColumnInfo() {Label =
 					"Количество\nпо норме", FillCell = (cell, item) => {
-					cell.SetCellValue(item.NormItem.Amount + " " + item.NormItem.ProtectionTools.Type.Units.Name);},
+					cell.SetCellValue(item.NormItem.AmountText); },
 					Type = CellType.Numeric},
 				new ColumnInfo() {Label =
 					"Срок\nиспользования", FillCell = (cell, item) => {
@@ -181,15 +204,17 @@ namespace Workwear.ViewModels.Export {
 					Type = CellType.Numeric,
                     Style = cellStyleDate,
                     Wight = 3000},
-				new ColumnInfo() {Label =
-					"Цена", FillCell = (cell, item) => {
-					cell.SetCellValue((double)((item.Nomenclature?.SaleCost ?? 0) * 1.2M));},
+				new ColumnInfo() {
+					Label = "Цена",
+					Visible = () => ExportCost != FutureIssueExportCost.None,
+					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * 1.2M));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1},
-				new ColumnInfo() {Label = 
-					"Цена без НДС", FillCell = (cell, item) => {
-					cell.SetCellValue((double)(item.Nomenclature?.SaleCost ?? 0));},
+				new ColumnInfo() {
+					Label = "Цена без НДС",
+					Visible = () => ExportCost != FutureIssueExportCost.None,
+					FillCell = (cell, item) => {cell.SetCellValue((double)(GetCost(item) ?? 0));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1},
@@ -199,22 +224,22 @@ namespace Workwear.ViewModels.Export {
 				new ColumnInfo() {Label =
 					"Количество", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Amount);}},
-				new ColumnInfo() {Label =
-					"Сумма", FillCell = (cell, item) => {
-					cell.SetCellValue((double)((item.Nomenclature?.SaleCost ?? 0) * item.Amount * 1.2M));},
+				new ColumnInfo() {
+					Label = "Сумма",
+					Visible = () => ExportCost != FutureIssueExportCost.None,
+					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * item.Amount * 1.2M));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1},
-				new ColumnInfo() {Label =
-					"Сумма без НДС", FillCell = (cell, item) => {
-					cell.SetCellValue((double)((item.Nomenclature?.SaleCost ?? 0) * item.Amount));},
+				new ColumnInfo() {
+					Label = "Сумма без НДС",
+					Visible = () => ExportCost != FutureIssueExportCost.None,
+					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * item.Amount));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1}
 				};
 			int i = 0;
-			foreach(var col in columnMap) 
-				col.Index = i++;
 			return columnMap;
 		}
 		#endregion
@@ -232,7 +257,10 @@ namespace Workwear.ViewModels.Export {
 			param[3] = Gtk.ResponseType.Accept;
 
 			using(Gtk.FileChooserDialog fc = new Gtk.FileChooserDialog("Сохранить как", null, Gtk.FileChooserAction.Save, param)) {
-				fc.CurrentName = "Прогноз выдач" + (NoDebt ? "(без долгов)" : "") + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
+				fc.CurrentName = (ChoiceProtectionToolsViewModel.AllSelected ? "П" : "Частичный п")
+				                 + "рогноз выдач" 
+				                 + (MoveDebt ? " (c долгами)" : "") 
+				                 + " на " + startDate.ToShortDateString() + "-" + endDate.ToShortDateString()
 				                 + " от " + DateTime.Now.ToShortDateString() + ".xlsx";
 				if(fc.Run() == (int)Gtk.ResponseType.Accept) 
 					filename = fc.Filename;
@@ -245,39 +273,27 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 8, "Загрузка общих данных", logger: logger); 
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", showProgressText: true, logger: logger); 
 				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
 				ISheet sheet = workbook.CreateSheet("Планируемые выдачи");
 
 				#region Получение данных
-				var employees = UoW.Session.QueryOver<EmployeeCard>()
-					.Fetch(SelectMode.Fetch, x => x.Subdivision)
-					.Fetch(SelectMode.Fetch, x => x.Department)
-					.Fetch(SelectMode.Fetch, x => x.Post)
-					.Where(x => x.DismissDate == null)
-					.List();
 
-				var employeeIds = employees.Select(x => x.Id).ToArray();
-				UoW.Session.QueryOver<Norm>()
-					.Fetch(SelectMode.Fetch, x => x.Items)
-					.List();
+				globalProgress.CheckPoint("Загрузка потребностей");
+				var wearCardsItems = issueModel
+					.LoadWearItemsForProtectionTools(ChoiceProtectionToolsViewModel.SelectedIds);
+				var protectionTools = wearCardsItems.Select(x => x.ProtectionTools).Distinct();
 				
-				globalProgress.CheckPoint(nameof(issueModel.PreloadEmployeeInfo));
-				issueModel.PreloadEmployeeInfo(employeeIds);
-				
-				globalProgress.CheckPoint(nameof(issueModel.PreloadWearItems));
-				issueModel.PreloadWearItems(employeeIds);
-				
-				globalProgress.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
-				ProgressLocal.Close(); 
-				issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
-
-				globalProgress.CheckPoint("Создание документа");
-				var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
+				globalProgress.CheckPoint("Загрузка сотрудников");
+				var employees = issueModel.LoadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+					
+				globalProgress.CheckPoint("Загрузка выдач");
+				issueModel.FillWearReceivedInfo(wearCardsItems.ToArray(), progress: ProgressLocal);
 				#endregion
 
+				globalProgress.CheckPoint("Создание документа");
 				#region Форматы и стили ячеек
 				//Форматы ячеек. 
 				IDataFormat dataFormater = workbook.CreateDataFormat();
@@ -308,40 +324,55 @@ namespace Workwear.ViewModels.Export {
 				row0.Height = 1000;
 
 				ColumnMap = configureColumnMap(cellStyleDateBase, cellStyleDateVirtual, cellStyleFinance);
-				
-				foreach(var column in ColumnMap) {
-					ICell cell = row0.CreateCell(column.Index);
+				foreach(var (column, index) in ColumnsWithIndex) {
+					ICell cell = row0.CreateCell(index);
 					cell.SetCellValue(column.Label);
 					cell.CellStyle = cellStyleHead;
 				}
 				
 				globalProgress.CheckPoint("Прогнозирование выдач");
-				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, NoDebt, wearCardsItems, ProgressLocal);
+				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, MoveDebt, wearCardsItems, ProgressLocal);
 				
 				globalProgress.CheckPoint("Заполнение Excel файла");
-				int i = 1;
+				int rowIndex = 1;
 				foreach(var issue in featureIssues) {
-					IRow row = sheet.CreateRow(i++);
-					foreach(var col in ColumnMap) {
-						ICell cell = row.CreateCell(col.Index);
-						cell.SetCellType(col.Type);
-						col.SetStyle(cell, issue, col);
-						col.FillCell(cell, issue);
+					IRow row = sheet.CreateRow(rowIndex++);
+					foreach(var (column, index) in ColumnsWithIndex) {
+						ICell cell = row.CreateCell(index);
+						cell.SetCellType(column.Type);
+						column.SetStyle(cell, issue, column);
+						column.FillCell(cell, issue);
 					}
 				}
 				globalProgress.CheckPoint("Сохранение документа");
-				foreach(var col in ColumnMap)
+				foreach(var (col, index) in ColumnsWithIndex)
 					switch(col.Wight) {
 						case 0 : break;
-						case -1: sheet.AutoSizeColumn(col.Index); break;
-						default: sheet.SetColumnWidth(col.Index, col.Wight);break;
+						case -1: sheet.AutoSizeColumn(index); break;
+						default: sheet.SetColumnWidth(index, col.Wight);break;
 					}
 				workbook.Write(fileStream);
 				workbook.Close();
 				globalProgress.End();
 			}
-			RunSensitive = true;
+			RunVisible = false;
+			DoneVisible = true;
+			OnPropertyChanged(nameof(RunVisible));
+			OnPropertyChanged(nameof(DoneVisible));
 		}
+		#endregion
+		
+		#region функции
+		private decimal? GetCost(FutureIssue item) {
+			switch(ExportCost) {
+				case FutureIssueExportCost.None: return null;
+				case FutureIssueExportCost.Assessed: return item.ProtectionTools.AssessedCost;
+				case FutureIssueExportCost.Sale: return item.Nomenclature?.SaleCost;
+				default: return null;
+			}
+		}
+
+		private IEnumerable<(ColumnInfo, int)> ColumnsWithIndex => ColumnMap.Where(x => x.Visible()).Select((x, i) => (x, i));
 		#endregion
 	}
 
@@ -352,7 +383,7 @@ namespace Workwear.ViewModels.Export {
 	/// Данные о конкретной колонке экспорта
 	/// </summary>
 	public class ColumnInfo {
-		public int Index { get; set; }
+		public Func<bool> Visible { get; set; } = () => true;
 		public string Label { get; set; }
 		public int Wight { get; set; } //Умолчание 0
 		public CellType Type { get; set; } = CellType.String;
@@ -364,6 +395,13 @@ namespace Workwear.ViewModels.Export {
 			= (cell, item, col) => { cell.CellStyle = col.Style; };
 			
 	}
-	
-	
+
+	public enum FutureIssueExportCost {
+		[Display(Name = "Без стоимости")]
+		None,
+		[Display(Name = "Оценочная стоимость")]
+		Assessed,
+		[Display(Name = "Стоимость продажи")]
+		Sale
+	}
 }

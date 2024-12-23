@@ -10,8 +10,11 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(w=>w.StartDate, v=>v.StartDateOrNull)
 				.AddBinding(w=>w.EndDate, v=>v.EndDateOrNull)
 				.InitializeFromSource();
+			ycheckShowDocWriteOff.Binding.AddBinding(ViewModel,v=>v.ShowDocWriteOff,w=>w.Active).InitializeFromSource();
+			ycheckShowAutoWriteOff.Binding.AddBinding(ViewModel,v=>v.ShowAutoWriteOff,w=>w.Active).InitializeFromSource();
+			ycheckShowIncome.Binding.AddBinding(ViewModel,v=>v.ShowIncome,w=>w.Active).InitializeFromSource();
 			buttonRun.Clicked += OnButtonRunClicked;
-			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensetiveLoad,w=>w.Sensitive).InitializeFromSource();
+			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensitiveLoad,w=>w.Sensitive).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e) {

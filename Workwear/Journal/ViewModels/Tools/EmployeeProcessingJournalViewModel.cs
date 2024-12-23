@@ -201,6 +201,7 @@ namespace workwear.Journal.ViewModels.Tools
 			);
 			updateStatusAction.ChildActionsList.Add(removeAllNorms);
 			#endregion
+			
 			#region Пересчитать
 			var recalculateAction = new JournalAction("Пересчитать",
 					(selected) => selected.Any(),
@@ -269,7 +270,7 @@ namespace workwear.Journal.ViewModels.Tools
 				(selected) => true,
 				(selected) => Active2LastNormItem(selected.Cast<EmployeeProcessingJournalNode>().ToArray(), true)
 			);
-			recalculateAction.ChildActionsList.Add(replaceActiveNormItemFromNomenclaturesAction);
+			replaceAction.ChildActionsList.Add(replaceActiveNormItemFromNomenclaturesAction);
 				
 			replaceAction.ChildActionsList.Add(replacePostAction);
 			#endregion
@@ -583,6 +584,7 @@ namespace workwear.Journal.ViewModels.Tools
 		
 		void Active2LastNormItem(EmployeeProcessingJournalNode[] nodes, bool fromNomenclature = false) {
 			loggerProcessing.Info($"Переустановка строк нормы в 2 последих опирациях на актуальные у {nodes.Length} сотрудников");
+			loggerProcessing.Info(fromNomenclature ? "По номенклатурам" : "По номенклатурам нормы");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(3, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;

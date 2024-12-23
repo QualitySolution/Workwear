@@ -217,6 +217,11 @@ namespace Workwear.Sql
 				new Version(2, 8, 25),
 				"Workwear.Sql.Scripts.2.8.25.sql"
 			);
+			configuration.AddUpdate(
+				new Version(2, 8, 25),
+				new Version(2, 8, 26),
+				"Workwear.Sql.Scripts.2.8.26.sql"
+			);
 
 			configuration.AddUpdate(
 				new Version(2, 8, 25),//FIXME

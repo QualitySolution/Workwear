@@ -38,12 +38,12 @@ FROM stock_write_off_detail as items
          LEFT JOIN employees as em on em.id = opissue.employee_id
          LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
          LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
-         LEFT JOIN item_types as it on (n.type_id = it.id or it.id = pt.item_types_id)
+         LEFT JOIN item_types as it on(IF(n.type_id IS NULL, pt.item_types_id=it.id,n.type_id=it.id))
          LEFT JOIN measurement_units as mu on it.units_id = mu.id
          LEFT JOIN sizes as size on size.id = opwarh.size_id
          LEFT JOIN sizes as height on height.id = opwarh.height_id
 
-WHERE doc.id = @id</CommandText>
+WHERE doc.id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>

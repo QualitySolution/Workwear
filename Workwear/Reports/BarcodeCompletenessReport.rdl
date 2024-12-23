@@ -35,8 +35,7 @@ FROM (SELECT
                JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-               LEFT JOIN employees_vacations ON employees.id = employees_vacations.employee_id
-               JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
+               JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
                LEFT JOIN
            (SELECT
                 op.employee_id as emp,
@@ -58,14 +57,9 @@ FROM (SELECT
       WHERE
           employees.dismiss_date IS NULL
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
-        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
-        AND (NOT @exclude_in_vacation
-          OR (employees_vacations.begin_date IS NULL
-              OR (CONVERT(@report_date, DATE) BETWEEN
-                  employees_vacations.begin_date AND employees_vacations.end_date
-                  )
-                 )
-          )
+        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
+        AND (@exclude_in_vacation = false
+            OR wear_cards.id NOT IN (SELECT DISTINCT v.wear_card_id FROM wear_cards_vacations as v WHERE CONVERT(@report_date, DATE) BETWEEN v.begin_date AND v.end_date))
       GROUP BY
           subdivision_id
       ORDER BY

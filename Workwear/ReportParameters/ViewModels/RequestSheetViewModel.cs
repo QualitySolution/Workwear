@@ -52,18 +52,24 @@ namespace workwear.ReportParameters.ViewModels {
 
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(uow);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
 		private readonly IUnitOfWork uow;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensitiveRunReport));
+			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)==e.PropertyName)
+				OnPropertyChanged(nameof(SensitiveRunReport));
+			
 		}
 
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		#region Свойства View
@@ -141,7 +147,9 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool SensetiveSubdivision => department == null;
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool SensitiveRunReport => new DateTime(BeginYear, BeginMonth, 1) <= new DateTime(EndYear, EndMonth, 1)
-		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected;
+		                                  && !ChoiceProtectionToolsViewModel.AllUnSelected && !ChoiceEmployeeGroupViewModel.AllUnSelected;
+
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -155,7 +163,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"protectionTools", ChoiceProtectionToolsViewModel.SelectedIdsMod},
 					{"headSubdivision", EntrySubdivisionViewModel.Entity?.Id ?? -1},
 					{"show_sex", ShowSex },
-					{"exclude_in_vacation", excludeInVacation }
+					{"exclude_in_vacation", excludeInVacation },
+					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
 					};
 
 		public void Dispose()

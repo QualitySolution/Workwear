@@ -107,8 +107,8 @@ namespace WorkwearTest.ViewModels.Stock
 				employee.FirstName = "Вася";
 				employee.AddUsedNorm(norm);
 				Assert.That(employee.WorkwearItems, Has.Count.EqualTo(1));
-				employee.WorkwearItems.First().Created = new DateTime(2023, 1, 1); //Чтобы дата следующей выдачи не привязывалась с дате запуска теста.
-				employee.WorkwearItems.First().NextIssue = new DateTime(2023, 1, 1); //Чтобы дата следующей выдачи не привязывалась с дате запуска теста.
+				employee.WorkwearItems.First().Created = new DateTime(2023, 1, 1); //Чтобы дата следующей выдачи не привязывалась к дате запуска теста.
+				employee.WorkwearItems.First().NextIssue = new DateTime(2023, 1, 1); //Чтобы дата следующей выдачи не привязывалась к дате запуска теста.
 				uow.Save(employee);
 
 				var issueOperation = new EmployeeIssueOperation {

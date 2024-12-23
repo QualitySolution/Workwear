@@ -422,12 +422,13 @@ namespace Workwear.ViewModels.Operations
 				ProtectionTools = protectionTools,
 				Returned = 0,
 				WearPercent = WearPercent,
-				UseAutoWriteoff = true,
 				OperationTime =  startDate,
 				StartOfUse = startDate,
 				AutoWriteoffDate = endDate,
 				ExpiryByNorm = endDate
 			};
+			//после создания чтобы не исправилось установкой даты.
+			issue.UseAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			
 			if(!Operations.Any())
 				issue.OverrideBefore = true;
