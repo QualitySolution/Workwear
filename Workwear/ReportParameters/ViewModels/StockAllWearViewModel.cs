@@ -49,7 +49,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"allWarehouses",SelectWarehouse.Equals(SpecialComboState.All)},
 			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)},
 			{"showSumm", ShowSumm},
-			{"showSex", ShowSex}
+			{"showSex", ShowSex},
+			{"warehouse_name", (SelectWarehouse as Warehouse)?.Name ?? " "},
+			
 		};
 		
 		public override string Identifier { 

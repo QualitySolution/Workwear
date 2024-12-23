@@ -115,7 +115,7 @@ ORDER BY nomenclature.name,
         <Left>141.6pt</Left>
         <Width>6in</Width>
         <Height>.25in</Height>
-        <Value>= "Складская ведомость на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+        <Value>= "Складская ведомость по "  + Iif({?allWarehouses}, "всем складам", "'"+{?warehouse_name}+"'") + " на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
@@ -814,6 +814,13 @@ ORDER BY nomenclature.name,
     </ReportParameter>
     <ReportParameter Name="allWarehouses">
       <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_name">
+      <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
