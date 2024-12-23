@@ -23,8 +23,12 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
-    (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-     SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) as quantity,
+    IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
+                       SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                              operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
+       (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+        SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
@@ -32,8 +36,12 @@
     heightAlias.name AS growth,
     ownersAlias.name AS owner,
     measurement_units.name as unit,
-    (nomenclature.sale_cost *  (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-                               SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) ) AS summa,
+    (nomenclature.sale_cost *  IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                                                         operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
+                                                  SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                                                         operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
+                                  (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+                                   SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) ) AS summa,
     IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
 FROM
     operation_warehouse
