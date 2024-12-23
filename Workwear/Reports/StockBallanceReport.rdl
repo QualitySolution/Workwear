@@ -15,8 +15,12 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
+    IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) - 
+                       SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                              operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
     (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-     SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) as quantity,
+     SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
@@ -40,8 +44,8 @@ FROM
         LEFT JOIN
     owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
 WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-    AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id or
-@allWarehouses)
+  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id
+      or @allWarehouses)
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
