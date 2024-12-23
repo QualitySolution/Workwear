@@ -224,7 +224,7 @@ namespace Workwear.Sql
 			);
 
 			configuration.AddUpdate(
-				new Version(2, 8, 25),//FIXME
+				new Version(2, 8, 26),//FIXME
 				new Version(2, 9, 0),
 				"Workwear.Sql.Scripts.2.9.sql"
 			);
