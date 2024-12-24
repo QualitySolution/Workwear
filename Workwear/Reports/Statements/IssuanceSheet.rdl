@@ -2011,9 +2011,24 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
-    <PrintOnFirstPage>false</PrintOnFirstPage>
-    <PrintOnLastPage>false</PrintOnLastPage>
+    <Height>16.5pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox92">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
