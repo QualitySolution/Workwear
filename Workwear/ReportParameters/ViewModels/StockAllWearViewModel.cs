@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using Gamma.Widgets;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report;
@@ -33,6 +34,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			WarehouseEntry.Entity = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId) 
 				?? UoW.GetAll<Warehouse>().First();
 			base.Title = "Складская ведомость";
+			Warehouses=UoW.GetAll<Warehouse>().ToList();
 		}
 		
 		IUnitOfWork UoW;
@@ -43,15 +45,24 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 			{"report_date", ReportDate },
-			{"warehouse_id", Warehouse.Id},
+			{"warehouse_id", (SelectWarehouse as Warehouse)?.Id ?? -1},
+			{"allWarehouses",SelectWarehouse.Equals(SpecialComboState.All)},
 			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)},
 			{"showSumm", ShowSumm},
-			{"showSex", ShowSex}
+			{"showSex", ShowSex},
+			{"warehouse_name", (SelectWarehouse as Warehouse)?.Name ?? " "},
+			
 		};
 		
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 			set => throw new InvalidOperationException();
+		}
+		private object selectWarehouse =SpecialComboState.All;
+
+		public object SelectWarehouse {
+			get => selectWarehouse;
+			set => SetField(ref selectWarehouse, value);
 		}
 		
 		private Warehouse warehouse;
@@ -84,6 +95,11 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual bool ShowSex {
 			get => showSex;
 			set=>SetField(ref showSex, value);
+		}
+		private IList<Warehouse> warehouses;
+		public IList<Warehouse> Warehouses {
+			get => warehouses;
+			set => SetField(ref warehouses, value); 
 		}
 	}
 	
