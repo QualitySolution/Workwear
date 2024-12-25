@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using QS.Views;
+using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
@@ -11,9 +12,12 @@ namespace Workwear.ReportParameters.Views {
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			comboReportType.ItemsEnum = typeof(StockAllWearReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
-			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
-			entityWarehouse.Binding
-				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
+			yspeccomboboxWarehouse.SelectedItemStrictTyped = false;
+			yspeccomboboxWarehouse.Binding
+				.AddSource(ViewModel)
+				.AddBinding(wh=>wh.Warehouses,w=>w.ItemsList)
+				.AddBinding(wh=>wh.SelectWarehouse, w=>w.SelectedItem)
+				.AddBinding(v=>v.VisibleWarehouse, w=>w.Visible)
 				.InitializeFromSource();
 			ylabel_warehouse.Binding
 				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
