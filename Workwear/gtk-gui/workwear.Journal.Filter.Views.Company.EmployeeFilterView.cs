@@ -47,8 +47,8 @@ namespace workwear.Journal.Filter.Views.Company
 			this.checkExcludeInVacation.UseUnderline = true;
 			this.table1.Add(this.checkExcludeInVacation);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.checkExcludeInVacation]));
-			w1.TopAttach = ((uint)(2));
-			w1.BottomAttach = ((uint)(3));
+			w1.TopAttach = ((uint)(1));
+			w1.BottomAttach = ((uint)(2));
 			w1.XOptions = ((global::Gtk.AttachOptions)(4));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -62,8 +62,8 @@ namespace workwear.Journal.Filter.Views.Company
 			this.checkShowOnlyWithoutNorms.Xalign = 1F;
 			this.table1.Add(this.checkShowOnlyWithoutNorms);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.checkShowOnlyWithoutNorms]));
-			w2.TopAttach = ((uint)(1));
-			w2.BottomAttach = ((uint)(2));
+			w2.TopAttach = ((uint)(2));
+			w2.BottomAttach = ((uint)(3));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
