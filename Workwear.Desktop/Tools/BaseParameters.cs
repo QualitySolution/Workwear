@@ -83,6 +83,14 @@ namespace Workwear.Tools
 			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
 			set => Dynamic[nameof(UsedCurrency)] = value;
 		}
+
+		/// <summary>
+		/// Подпись сдавшего СИЗ
+		/// </summary>
+		public virtual AnswerSignature Signature {
+			get => Dynamic.Signature(typeof(AnswerSignature)) ?? AnswerSignature.Empty;
+			set => Dynamic[nameof(Signature)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
@@ -92,5 +100,12 @@ namespace Workwear.Tools
 		Yes,
 		[Display(Name = "Всегда нет")]
 		No
+	}
+
+	public enum AnswerSignature {
+		[Display(Name="Рукописная")]
+		Empty,
+		[Display(Name = "По документу возврата/списания")]
+		Doc
 	}
 }
