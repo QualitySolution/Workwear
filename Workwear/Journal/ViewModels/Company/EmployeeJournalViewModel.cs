@@ -49,16 +49,20 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 			Department departmentAlias = null;
+			EmployeeVacation employeeVacationAlias = null;
 
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
 				.Where(ev => ev.BeginDate <= DateTime.Today && ev.EndDate >= DateTime.Today)
 				.Select(ev => ev.Id)
 				.Take(1);
-
+			
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
+			if(Filter.ExcludeInVacation)
+				employees.JoinAlias(()=>employeeAlias.Vacations, ()=>employeeVacationAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					     .Where(()=>employeeVacationAlias.EndDate < DateTime.Today || employeeVacationAlias.EndDate == null);
 			if(Filter.Subdivision != null)
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
