@@ -779,8 +779,9 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
-                 SEPARATOR '\n')
+    IF(@typeSignature='Рукописная', null, 
+        GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
+                  SEPARATOR '\n'))
         AS returned_sign,
     GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),'')
                  SEPARATOR '\n')
@@ -833,6 +834,9 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="typeSignature">
+            <Value>={?typeSignature}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -892,6 +896,13 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="typeSignature">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

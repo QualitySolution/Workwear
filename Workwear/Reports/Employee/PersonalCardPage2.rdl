@@ -839,10 +839,11 @@ CONCAT_WS(
             IF(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
             ) AS returned_wearout,
+            IF(@typeSignature='Рукописная', null, 
             GROUP_CONCAT(
-                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')) 
+                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                 SEPARATOR '\n'
-            ) AS returned_sign
+            )) AS returned_sign
         FROM
             operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
@@ -874,6 +875,9 @@ CONCAT_WS(
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="typeSignature">
+            <Value>={?typeSignature}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -929,6 +933,13 @@ CONCAT_WS(
           <Value>8</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="typeSignature">
+      <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
