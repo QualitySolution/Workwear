@@ -49,7 +49,6 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 			Department departmentAlias = null;
-			EmployeeVacation employeeVacationAlias = null;
 
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
@@ -61,8 +60,7 @@ namespace workwear.Journal.ViewModels.Company
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
 			if(Filter.ExcludeInVacation)
-				employees.JoinAlias(()=>employeeAlias.Vacations, ()=>employeeVacationAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					     .Where(()=>employeeVacationAlias.EndDate < DateTime.Today || employeeVacationAlias.EndDate == null);
+				employees.WithSubquery.WhereNotExists(vacationSubquery);
 			if(Filter.Subdivision != null)
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
