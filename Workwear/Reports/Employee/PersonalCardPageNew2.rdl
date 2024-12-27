@@ -779,7 +779,7 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    IF(@typeSignature='Рукописная', null, 
+    IF(@typeSignature='Empty', " ", 
         GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
                   SEPARATOR '\n'))
         AS returned_sign,

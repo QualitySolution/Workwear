@@ -29,6 +29,7 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Communications;
@@ -51,6 +52,7 @@ namespace Workwear.ViewModels.Company
 		private readonly LkUserManagerService lkUserManagerService;
 		private readonly CommonMessages messages;
 		private readonly SpecCoinManagerService specCoinManagerService;
+		private readonly BaseParameters baseParameters;
 		
 		public SizeService SizeService { get; }
 
@@ -73,6 +75,7 @@ namespace Workwear.ViewModels.Company
 			LkUserManagerService lkUserManagerService,
 			SizeService sizeService,
 			CommonMessages messages,
+			BaseParameters baseParameters,
 			SpecCoinManagerService specCoinManagerService) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -85,6 +88,7 @@ namespace Workwear.ViewModels.Company
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
@@ -336,6 +340,8 @@ namespace Workwear.ViewModels.Company
 		}
 		
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
+
+		public string TypeSignature => baseParameters.Signature.ToString();
 
 		#region CardUid
 		public virtual string CardUid {
@@ -640,7 +646,8 @@ namespace Workwear.ViewModels.Company
 				Title = String.Format("Карточка {0} - {1}", Entity.ShortName, doc.GetEnumTitle()),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"typeSignature", TypeSignature}
 				}
 			};
 

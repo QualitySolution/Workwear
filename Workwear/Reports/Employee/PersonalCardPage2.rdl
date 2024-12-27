@@ -839,7 +839,7 @@ CONCAT_WS(
             IF(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
             ) AS returned_wearout,
-            IF(@typeSignature='Рукописная', null, 
+            IF(@typeSignature="Empty", " ", 
             GROUP_CONCAT(
                 CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                 SEPARATOR '\n'
