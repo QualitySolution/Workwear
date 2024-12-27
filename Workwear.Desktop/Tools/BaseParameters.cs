@@ -85,11 +85,18 @@ namespace Workwear.Tools
 		}
 
 		/// <summary>
-		/// Подпись сдавшего СИЗ
+		/// При выборе галочки проставится номер документа выдачи вместо подписи получившего СИЗ 
 		/// </summary>
-		public virtual AnswerSignature Signature {
-			get => Dynamic.Signature(typeof(AnswerSignature)) ?? AnswerSignature.Empty;
-			set => Dynamic[nameof(Signature)] = value;
+		public virtual bool IsEmptyIssue {
+			get => Dynamic.IsEmptyIssue(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsEmptyIssue)] = value;
+		}
+		/// <summary>
+		/// При выборе галочки проставится номер документа возврата вместо подписи сдавшего СИЗ 
+		/// </summary>
+		public virtual bool IsEmptyReturn {
+			get => Dynamic.IsEmptyReturn(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsEmptyReturn)] = value;
 		}
 		#endregion
 	}
@@ -101,11 +108,5 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
-
-	public enum AnswerSignature {
-		[Display(Name="Рукописная")]
-		Empty,
-		[Display(Name = "По документу возврата/списания")]
-		Doc
-	}
+	
 }

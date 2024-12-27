@@ -764,10 +764,10 @@
         AS expense_quantity,
     IF(protection_tools.dermal_ppe,'Лично','')
         AS dermal, #'' (пустая строка) используется в проверках
-    IF(!@isEmptyIssue, " ",
-    IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
-           CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
-        )) AS issue_sign,
+    IF(!@isEmptyIssue,
+    CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
+        ) AS issue_sign,
     CONCAT_WS('\n', GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'),
               IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
                      AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
@@ -909,7 +909,7 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
       <Prompt />
     </ReportParameter>
     <ReportParameter Name="isEmptyIssue">
-      <DataType>DateTime</DataType>
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

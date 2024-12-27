@@ -812,9 +812,9 @@ LIMIT 1
 ) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
     operation_issued_by_employee.wear_percent * 100
 ) AS wearout,
-IF(!@isEmptyIssue, " ",  
-IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
-    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id)))) AS issue_sign, 
+IF(!@isEmptyIssue, 
+CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))) AS issue_sign, 
 CONCAT_WS(
     '\n',
     GROUP_CONCAT(
@@ -839,12 +839,11 @@ CONCAT_WS(
             ),
             IF(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
-            ) AS returned_wearout,
-            IF(!@isEmptyReturn, " ", 
+            ) AS returned_wearout, 
             GROUP_CONCAT(
                 CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                 SEPARATOR '\n'
-            )) AS returned_sign
+            ) AS returned_sign
         FROM
             operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id

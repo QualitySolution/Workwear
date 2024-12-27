@@ -341,7 +341,8 @@ namespace Workwear.ViewModels.Company
 		
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
 
-		public string TypeSignature => baseParameters.Signature.ToString();
+		public bool IsEmptyIssue => baseParameters.IsEmptyIssue;
+		public bool IsEmptyReturn => baseParameters.IsEmptyReturn;
 
 		#region CardUid
 		public virtual string CardUid {
@@ -647,7 +648,8 @@ namespace Workwear.ViewModels.Company
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id },
-					{"typeSignature", TypeSignature}
+					{"isEmptyIssue", IsEmptyIssue},
+					{"isEmptyReturn", IsEmptyReturn},
 				}
 			};
 

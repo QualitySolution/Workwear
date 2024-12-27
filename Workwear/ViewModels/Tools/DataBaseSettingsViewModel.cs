@@ -29,7 +29,8 @@ namespace Workwear.ViewModels.Tools
 			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
 			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);
 			UsedCurrency = baseParameters.UsedCurrency;
-			Signature = baseParameters.Signature;
+			IsEmptyIssue = baseParameters.IsEmptyIssue;
+			IsEmptyReturn = baseParameters.IsEmptyReturn;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
@@ -40,7 +41,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod
 		                                   || UsedCurrency != baseParameters.UsedCurrency
-		                                   || Signature != baseParameters.Signature;
+		                                   || IsEmptyIssue!=baseParameters.IsEmptyIssue
+		                                   || IsEmptyReturn != baseParameters.IsEmptyReturn;
 
 		#region Parameters
 		public bool DefaultAutoWriteoff { get; set; }
@@ -52,7 +54,8 @@ namespace Workwear.ViewModels.Tools
 
 		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
-		public AnswerSignature Signature{get;set;}
+		public bool IsEmptyIssue{get;set;}
+		public bool IsEmptyReturn { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -73,8 +76,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
 			if(UsedCurrency != baseParameters.UsedCurrency)
 				baseParameters.UsedCurrency = UsedCurrency;
-			if(Signature != baseParameters.Signature)
-				baseParameters.Signature = Signature;
+			if(IsEmptyIssue!=baseParameters.IsEmptyIssue)
+				baseParameters.IsEmptyIssue = IsEmptyIssue;
+			if(IsEmptyReturn!=baseParameters.IsEmptyReturn)
+				baseParameters.IsEmptyReturn = IsEmptyReturn;
 			return true;
 		}
 	}
