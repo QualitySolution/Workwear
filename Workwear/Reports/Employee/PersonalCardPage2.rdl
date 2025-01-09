@@ -811,8 +811,9 @@ LIMIT 1
     '%d.%m.%Y'
 ) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
     operation_issued_by_employee.wear_percent * 100
-) AS wearout, 
-IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
+) AS wearout,
+IF(!@isEmptyIssue, 
+CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
     CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))) AS issue_sign, 
 CONCAT_WS(
     '\n',
@@ -838,9 +839,9 @@ CONCAT_WS(
             ),
             IF(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
-            ) AS returned_wearout,
+            ) AS returned_wearout, 
             GROUP_CONCAT(
-                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')) 
+                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                 SEPARATOR '\n'
             ) AS returned_sign
         FROM
@@ -874,6 +875,12 @@ CONCAT_WS(
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isEmptyIssue">
+            <Value>={?isEmptyIssue}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isEmptyReturn">
+            <Value>={?isEmptyReturn}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -933,6 +940,20 @@ CONCAT_WS(
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isEmptyIssue">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isEmptyReturn">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources >
