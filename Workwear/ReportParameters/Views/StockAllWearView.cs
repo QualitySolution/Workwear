@@ -18,6 +18,9 @@ namespace Workwear.ReportParameters.Views {
 			ylabel_warehouse.Binding
 				.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible)
 				.InitializeFromSource();
+			ycheckbuttonShowSumm.Binding.AddBinding(viewModel, v => v.VisibleSumm, w => w.Visible).InitializeFromSource();
+			ycheckbuttonShowSumm.Binding.AddBinding(viewModel, v => v.ShowSumm, w => w.Active).InitializeFromSource();
+			ycheckbuttonShowSex.Binding.AddBinding(viewModel,v=>v.ShowSex,w=>w.Active).InitializeFromSource();
 		}
 		
 		protected void OnButtonRunClicked(object sender, EventArgs e)

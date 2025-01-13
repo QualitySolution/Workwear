@@ -52,6 +52,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 			{"show_employees", ShowEmployees },
 			{"show_stock", ShowStock },
+			{"show_dismissed", ShowDismissed},
 		};
 
 		#region Параметры
@@ -64,6 +65,9 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
 		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
+		public bool VisibleShowSex => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
+		public bool VisibleShowSize => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
+		public bool VisibleGroupByNormAmount => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected 
@@ -117,6 +121,9 @@ namespace Workwear.ReportParameters.ViewModels {
 				SetField(ref reportType, value); 
 				OnPropertyChanged(nameof(VisibleShowStock));
 				OnPropertyChanged(nameof(VisibleShowEmployee));
+				OnPropertyChanged(nameof(VisibleShowSex));
+				OnPropertyChanged(nameof(VisibleShowSize));
+				OnPropertyChanged(nameof(VisibleGroupByNormAmount));
 			}
 		}
 
@@ -130,6 +137,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => showEmployees;
 			set => SetField(ref showEmployees, value);
 		}
+
+		private bool showDismissed;
+		public virtual bool ShowDismissed {
+			get=>showDismissed;
+			set=>SetField(ref showDismissed, value);
+		}
 		#endregion
 		
 		public enum ProvisionReportType {
@@ -138,7 +151,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			Common,
 			[ReportIdentifier("ProvisionReportFlat")]
 			[Display(Name = "Только данные")]
-			Flat
+			Flat,
+			[ReportIdentifier("ProvisionReportNeedIssue")]
+			[Display(Name = "Детально по выдачам")]
+			NeedIssue,
 		}
 	}
 }

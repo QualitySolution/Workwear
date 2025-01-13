@@ -24,6 +24,7 @@ using QS.Project.Versioning;
 
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 [assembly: AssemblyAuthor("Горячев Иван <space@qsolution.ru>")]
+[assembly: AssemblyAuthor("Тимирева Екатерина <e.timireva@qsolution.ru>")]
 [assembly: AssemblyAuthor("Шеин Виталий <svm@qsolution.ru>")]
 [assembly: AssemblyAuthor("Покровский Михаил 2024")]
 [assembly: AssemblyAuthor("Мингалимов Ильяс 2022")]

@@ -121,50 +121,51 @@ WHERE
        IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
        norms_item.amount AS amount,
        CONCAT(
-               CASE
-                   WHEN measurement_units.okei = 796
-                       THEN 'штук '
-                   WHEN measurement_units.okei = 715
-                       THEN 'пар '
-                   WHEN measurement_units.okei = 839
-                       THEN 'комплектов '
-                   WHEN measurement_units.okei = 704
-                       THEN 'наборов '
-                   END,
-               CASE
-                   WHEN norms_item.period_type = 'Shift'
-                       THEN 'на смену'
-                   WHEN norms_item.period_type = 'Wearout'
-                       THEN 'до износа'
-                   WHEN norms_item.period_type = 'Duty'
-                       THEN 'дежурных'
-                   WHEN norms_item.period_type = 'Year'
-                       THEN CASE
-                                WHEN norms_item.period_count = 1
-                                    THEN 'на год'
-                                WHEN norms_item.period_count BETWEEN 11 AND 19
-                                    THEN CONCAT('на ',norms_item.period_count ,' лет')
-                                WHEN norms_item.period_count % 10 = 1
-                                    THEN CONCAT('на ',norms_item.period_count ,' год')
-                                WHEN norms_item.period_count % 10 BETWEEN 2 and 4
-                                    THEN CONCAT('на ',norms_item.period_count ,' года')
-                                ELSE CONCAT('на ',norms_item.period_count ,' лет')
-                       END
-                   WHEN norms_item.period_type = 'Month'
-                       THEN CASE
-                                WHEN norms_item.period_count = 1
-                                    THEN 'на месяц'
-                                WHEN norms_item.period_count BETWEEN 11 AND 19
-                                    THEN CONCAT('на ',norms_item.period_count ,' месяцев')
-                                WHEN norms_item.period_count % 10 = 1
-                                    THEN CONCAT('на ',norms_item.period_count ,' месяц')
-                                WHEN norms_item.period_count % 10 BETWEEN 2 and 4
-                                    THEN CONCAT('на ',norms_item.period_count ,' месяца')
-                                ELSE CONCAT('на ',norms_item.period_count ,' месяцев')
-                       END
-                   END
-           )AS unit_on_period
-FROM employee_cards_item
+          CASE
+              WHEN measurement_units.okei = 796
+                  THEN 'штук '
+              WHEN measurement_units.okei = 715
+                  THEN 'пар '
+              WHEN measurement_units.okei = 839
+                  THEN 'комплектов '
+              WHEN measurement_units.okei = 704
+                  THEN 'наборов '
+          END,
+          CASE
+             WHEN norms_item.period_type = 'Shift'
+                 THEN 'на смену'
+             WHEN norms_item.period_type = 'Wearout'
+                 THEN 'до износа'
+             WHEN norms_item.period_type = 'Duty'
+                 THEN 'дежурных'
+             WHEN norms_item.period_type = 'Year'
+                 THEN CASE
+                     WHEN norms_item.period_count = 1
+                         THEN 'на год'
+                     WHEN norms_item.period_count BETWEEN 11 AND 19 
+                         THEN CONCAT('на ',norms_item.period_count ,' лет')
+                     WHEN norms_item.period_count % 10 = 1 
+                         THEN CONCAT('на ',norms_item.period_count ,' год')
+                     WHEN norms_item.period_count % 10 BETWEEN 2 and 4 
+                         THEN CONCAT('на ',norms_item.period_count ,' года')
+                     ELSE CONCAT('на ',norms_item.period_count ,' лет')
+                 END
+             WHEN norms_item.period_type = 'Month'
+                 THEN CASE
+                     WHEN norms_item.period_count = 1
+                         THEN 'на месяц'
+                     WHEN norms_item.period_count BETWEEN 11 AND 19
+                         THEN CONCAT('на ',norms_item.period_count ,' месяцев')
+                     WHEN norms_item.period_count % 10 = 1
+                         THEN CONCAT('на ',norms_item.period_count ,' месяц')
+                     WHEN norms_item.period_count % 10 BETWEEN 2 and 4
+                         THEN CONCAT('на ',norms_item.period_count ,' месяца')
+                     ELSE CONCAT('на ',norms_item.period_count ,' месяцев')
+                 END
+             END
+          )AS unit_on_period,
+         protection_tools.dispenser
+FROM wear_cards_item
          LEFT JOIN
      protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
          LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
@@ -195,6 +196,10 @@ WHERE employee_cards_item.employee_id = @id;</CommandText>
         <Field Name="unit_on_period">
           <DataField>unit_on_period</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="dispenser">
+          <DataField>dispenser</DataField>
+          <TypeName>System.Boolean</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -727,7 +732,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit_on_period.Value</Value>
+                      <Value>=IIF({dispenser},'Дозатор',Fields!unit_on_period.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -743,7 +748,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!amount.Value</Value>
+                      <Value>=IIF({dispenser},'',Fields!amount.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>

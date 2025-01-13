@@ -171,13 +171,13 @@ public partial class MainWindow : Gtk.Window {
 		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
 		
 		if(databaseInfo.IsDemo) {
-			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
+			string message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
 				"установить собственный сервер или купить подписку на QS:Облако.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
@@ -209,10 +209,6 @@ public partial class MainWindow : Gtk.Window {
 		var EntityAutocompleteSelector = new JournalViewModelAutocompleteSelector<EmployeeCard, EmployeeJournalViewModel>(AutofacScope);
 		entitySearchEmployee.ViewModel = new EntitySearchViewModel<EmployeeCard>(EntityAutocompleteSelector);
 		entitySearchEmployee.ViewModel.EntitySelected += SearchEmployee_EntitySelected;
-
-		NavigationManager = AutofacScope.Resolve<TdiNavigationManager>(new TypedParameter(typeof(TdiNotebook), tdiMain));
-		tdiMain.WidgetResolver = AutofacScope.Resolve<ITDIWidgetResolver>();
-		NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
@@ -305,6 +301,7 @@ public partial class MainWindow : Gtk.Window {
 				MainTelemetry.IsDemo = databaseInfo.IsDemo;
 				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
 				MainTelemetry.StartUpdateByTimer(600);
+				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 			}
 		#else
 			MainTelemetry.DoNotTrack = true;
@@ -397,6 +394,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 
@@ -825,11 +823,6 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 
-	protected void OnActionPayActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("pay.qsolution.ru");
-		OpenUrl("https://pay.qsolution.ru/");
-	}
-
 	protected void OnActionRequestSheetActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RequestSheetViewModel));
 	}
@@ -969,5 +962,13 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWriteOffActActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WriteOffActViewModel));
+	}
+
+	protected void OnActionWarehouseTransferReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WarehouseTransferReportViewModel));
+	}
+
+	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
 	}
 }

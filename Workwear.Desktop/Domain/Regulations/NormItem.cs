@@ -83,6 +83,13 @@ namespace Workwear.Domain.Regulations
 			get => String.IsNullOrWhiteSpace(comment) ? null : comment; //Чтобы в базе хранить null, а не пустую строку. 
 			set => SetField(ref comment, value); 
 		}
+		private DateTime lastUpdate;
+		[Display(Name="Последнее обновление")]
+		public virtual DateTime LastUpdate {
+			get => lastUpdate; 
+			set => SetField(ref lastUpdate, value); 
+			
+		}
 		#endregion
 
 		public virtual double AmountPerYear
@@ -127,8 +134,13 @@ namespace Workwear.Domain.Regulations
 			}
 		}
 
+		public virtual string AmountText => ProtectionTools.Dispenser ?
+			"Дозатор" :
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount);
 		public virtual string LifeText{
-			get{
+			get {
+				if(ProtectionTools.Dispenser)
+					return String.Empty;
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
 						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
@@ -179,7 +191,7 @@ namespace Workwear.Domain.Regulations
 
 		public virtual string Title{
 			get{ return String.Format ("{0} в количестве {1} на {2}", 
-				ProtectionTools?.Name, ProtectionTools?.Type?.Units?.MakeAmountShortStr (Amount), LifeText);
+				ProtectionTools?.Name, AmountText, LifeText);
 			}
 		}
 

@@ -38,12 +38,15 @@ namespace Workwear.ReportParameters.ViewModels {
 		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
+		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 			{"report_date", ReportDate },
 			{"warehouse_id", Warehouse.Id},
-			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)}
+			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)},
+			{"showSumm", ShowSumm},
+			{"showSex", ShowSex}
 		};
 		
 		public override string Identifier { 
@@ -60,13 +63,27 @@ namespace Workwear.ReportParameters.ViewModels {
 		private StockAllWearReportType reportType;
 		public virtual StockAllWearReportType ReportType {
 			get => reportType;
-			set => SetField(ref reportType, value);
+			set {
+				SetField(ref reportType, value); 
+				OnPropertyChanged(nameof(VisibleSumm));
+			}
 		}
 		
 		private DateTime? reportDate = DateTime.Today;
 		public virtual DateTime? ReportDate {
 			get => reportDate;
 			set => SetField(ref reportDate, value);
+		}
+		private bool showSumm;
+		public virtual bool ShowSumm {
+			get=> showSumm;
+			set=> SetField(ref showSumm, value);
+		}
+
+		private bool showSex;
+		public virtual bool ShowSex {
+			get => showSex;
+			set=>SetField(ref showSex, value);
 		}
 	}
 	

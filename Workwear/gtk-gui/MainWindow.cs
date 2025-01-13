@@ -137,8 +137,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionNotIssuedSheetSummary;
 
-	private global::Gtk.Action ActionPay;
-
 	private global::Gtk.Action ActionAdminGuide;
 
 	private global::Gtk.Action ActionReplaceEntity;
@@ -212,6 +210,10 @@ public partial class MainWindow
 	private global::Gtk.Action Action45;
 
 	private global::Gtk.Action ActionWriteOffAct;
+
+	private global::Gtk.Action ActionStockOperations;
+
+	private global::Gtk.Action ActionWearCardsReport;
 
 	private global::Gtk.VBox vbox1;
 
@@ -381,7 +383,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsExtraSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -453,9 +455,6 @@ public partial class MainWindow
 		this.ActionNotIssuedSheetSummary = new global::Gtk.Action("ActionNotIssuedSheetSummary", global::Mono.Unix.Catalog.GetString("Суммарно"), null, null);
 		this.ActionNotIssuedSheetSummary.ShortLabel = global::Mono.Unix.Catalog.GetString("Суммарно");
 		w1.Add(this.ActionNotIssuedSheetSummary, null);
-		this.ActionPay = new global::Gtk.Action("ActionPay", global::Mono.Unix.Catalog.GetString("Купить программу"), null, "www");
-		this.ActionPay.ShortLabel = global::Mono.Unix.Catalog.GetString("Купить программу");
-		w1.Add(this.ActionPay, null);
 		this.ActionAdminGuide = new global::Gtk.Action("ActionAdminGuide", global::Mono.Unix.Catalog.GetString("Руководство администратора"), global::Mono.Unix.Catalog.GetString("Руководство системного администратора"), "gtk-index");
 		this.ActionAdminGuide.ShortLabel = global::Mono.Unix.Catalog.GetString("Руководство администратора");
 		w1.Add(this.ActionAdminGuide, null);
@@ -538,8 +537,8 @@ public partial class MainWindow
 		this.ActionProvision = new global::Gtk.Action("ActionProvision", global::Mono.Unix.Catalog.GetString("Обеспеченность сотрудников"), null, null);
 		this.ActionProvision.ShortLabel = global::Mono.Unix.Catalog.GetString("Обеспеченность сотрудников");
 		w1.Add(this.ActionProvision, null);
-		this.ActionExport = new global::Gtk.Action("ActionExport", global::Mono.Unix.Catalog.GetString("Экспорт даных"), null, "gtk-convert");
-		this.ActionExport.ShortLabel = global::Mono.Unix.Catalog.GetString("Экспорт даных");
+		this.ActionExport = new global::Gtk.Action("ActionExport", global::Mono.Unix.Catalog.GetString("Экспорт данных"), null, "gtk-convert");
+		this.ActionExport.ShortLabel = global::Mono.Unix.Catalog.GetString("Экспорт данных");
 		w1.Add(this.ActionExport, null);
 		this.Action40 = new global::Gtk.Action("Action40", global::Mono.Unix.Catalog.GetString("Прогноз выдач"), null, null);
 		this.Action40.ShortLabel = global::Mono.Unix.Catalog.GetString("Прогноз");
@@ -571,6 +570,12 @@ public partial class MainWindow
 		this.ActionWriteOffAct = new global::Gtk.Action("ActionWriteOffAct", global::Mono.Unix.Catalog.GetString("Справка по списаниям"), null, null);
 		this.ActionWriteOffAct.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по списаниям");
 		w1.Add(this.ActionWriteOffAct, null);
+		this.ActionStockOperations = new global::Gtk.Action("ActionStockOperations", global::Mono.Unix.Catalog.GetString("Справка по складским операцииям"), null, null);
+		this.ActionStockOperations.ShortLabel = global::Mono.Unix.Catalog.GetString("Складские операции");
+		w1.Add(this.ActionStockOperations, null);
+		this.ActionWearCardsReport = new global::Gtk.Action("ActionWearCardsReport", global::Mono.Unix.Catalog.GetString("Список сотрудников"), null, null);
+		this.ActionWearCardsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Список сотрудников");
+		w1.Add(this.ActionWearCardsReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -841,7 +846,6 @@ public partial class MainWindow
 		this.ActionImportWorkwearItems.Activated += new global::System.EventHandler(this.OnActionImportWorkwearItemsActivated);
 		this.ActionNotIssuedSheetDetail.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetDetailActivated);
 		this.ActionNotIssuedSheetSummary.Activated += new global::System.EventHandler(this.OnActionNotIssuedSheetSummaryActivated);
-		this.ActionPay.Activated += new global::System.EventHandler(this.OnActionPayActivated);
 		this.ActionAdminGuide.Activated += new global::System.EventHandler(this.OnActionAdminGuideActivated);
 		this.ActionReplaceEntity.Activated += new global::System.EventHandler(this.OnActionReplaceEntityActivated);
 		this.ActionStockMovements.Activated += new global::System.EventHandler(this.OnActionStockMovementsActivated);
@@ -876,5 +880,7 @@ public partial class MainWindow
 		this.ActionWarehouseForecasting.Activated += new global::System.EventHandler(this.OnActionWarehouseForecastingActivated);
 		this.Action45.Activated += new global::System.EventHandler(this.OnActionCausesWriteOffActivated);
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
+		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
+		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
 	}
 }

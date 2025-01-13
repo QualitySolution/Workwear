@@ -198,7 +198,7 @@ namespace Workwear.ViewModels.Analytics {
 				ProgressTotal.Start(2, text: "Прогнозирование выдач");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
-			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, false, wearCardsItems, ProgressLocal);
+			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
 			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");

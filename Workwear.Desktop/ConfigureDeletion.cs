@@ -292,6 +292,9 @@ namespace Workwear
 				.AddDeleteDependence<TransferItem>(x => x.Nomenclature)
 				.AddDeleteDependence<WarehouseOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<WriteoffItem> (x => x.Nomenclature)
+				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureUnisex)
+				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureFemale)
+				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureMale)
 				;
 
 			DeleteConfig.AddHibernateDeleteInfo<Owner>()

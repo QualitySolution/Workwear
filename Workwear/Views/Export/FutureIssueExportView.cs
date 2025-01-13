@@ -2,7 +2,6 @@
 using Workwear.ViewModels.Export;
 
 namespace Workwear.Views.Export {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class FutureIssueExportView : DialogViewBase<FutureIssueExportViewModel> {
 		public FutureIssueExportView(FutureIssueExportViewModel viewModel) : base(viewModel) {
 			this.Build();
@@ -12,14 +11,24 @@ namespace Workwear.Views.Export {
 				.AddBinding(v => v.EndDate, w => w.EndDate)
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
-			checkNoDebt.Binding.AddBinding(ViewModel, v => v.NoDebt, w => w.Active).InitializeFromSource();
+			checkMoveDebt.Binding.AddBinding(ViewModel, v => v.MoveDebt, w => w.Active).InitializeFromSource();
 
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			
 			yprogressTotal.Visible = false;
 			yprogressLocal.Visible = false;
 			ViewModel.ProgressGlobal = yprogressTotal;
 			ViewModel.ProgressLocal = yprogressLocal;
 
-			ybuttonRun.Binding.AddBinding(ViewModel, v => v.SensitiveLoad, w => w.Sensitive).InitializeFromSource();
+			ybuttonRun.Binding
+				.AddBinding(ViewModel, v => v.RunSensitive, w => w.Sensitive)
+				.AddBinding(ViewModel, v => v.RunVisible, w => w.Visible).InitializeFromSource();
+			ylabel_done.Binding.AddBinding(ViewModel, vm => vm.DoneVisible, w => w.Visible).InitializeFromSource();
+
+			comboCost.ItemsEnum = typeof(FutureIssueExportCost);
+			if(!ViewModel.FeaturesService.Available(Workwear.Tools.Features.WorkwearFeature.Selling))
+				comboCost.AddEnumToHideList(FutureIssueExportCost.Sale);
+			comboCost.Binding.AddBinding(ViewModel, v => v.ExportCost, w => w.SelectedItem).InitializeFromSource();
 		}
 
 		protected void OnYbuttonRunClicked(object sender, System.EventArgs e) {

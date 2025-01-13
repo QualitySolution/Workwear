@@ -11,8 +11,11 @@ namespace Workwear.HibernateMapping.Regulations
 
 			if(Workwear.HibernateMapping.MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");
-			else 
+			else {
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
+				Version(x=>x.LastUpdate).Column("last_update").Generated.Always();
+			}
+				
 			
 			Map (x => x.Amount).Column ("amount");
 			Map (x => x.NormPeriod).Column ("period_type");
