@@ -698,7 +698,6 @@
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
-    <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
@@ -835,6 +834,7 @@
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
     <PackageReference Include="ClosedXML" Version="0.104.0-rc1" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="FluentNHibernate" Version="3.1.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
     <PackageReference Include="Iesi.Collections" Version="4.0.5" />
