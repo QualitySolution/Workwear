@@ -21,6 +21,8 @@ namespace Workwear.Views.Tools
 			ComboExtendPeriod.ItemsEnum = typeof(AnswerOptions);
 			ComboExtendPeriod.Binding.AddBinding(ViewModel, v => v.ExtendPeriod, w => w.SelectedItem).InitializeFromSource();
 			yentryCurrency.Binding.AddBinding(ViewModel, v => v.UsedCurrency, w => w.Text).InitializeFromSource();
+			ycheckbuttonIssue.Binding.AddBinding(ViewModel, v=>v.IsEmptyIssue,w=>w.Active).InitializeFromSource();
+			ycheckbuttonReturn.Binding.AddBinding(ViewModel, v=>v.IsEmptyReturn, w=>w.Active).InitializeFromSource();
 			CommonButtonSubscription();
 		}
 	}

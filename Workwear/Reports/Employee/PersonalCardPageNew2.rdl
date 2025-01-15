@@ -728,9 +728,24 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox14">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -749,8 +764,9 @@
         AS expense_quantity,
     IF(protection_tools.dermal_ppe,'Лично','')
         AS dermal, #'' (пустая строка) используется в проверках
-    IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
-           CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
+    IF(!@isEmptyIssue,
+    CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
         ) AS issue_sign,
     CONCAT_WS('\n', GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'),
               IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
@@ -764,8 +780,9 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
-                 SEPARATOR '\n')
+    IF(!@isEmptyReturn, " ", 
+        GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
+                  SEPARATOR '\n'))
         AS returned_sign,
     GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),'')
                  SEPARATOR '\n')
@@ -818,6 +835,12 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isEmptyReturn">
+            <Value>={?isEmptyReturn}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isEmptyIssue">
+            <Value>={?isEmptyIssue}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -877,6 +900,20 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isEmptyReturn">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="isEmptyIssue">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

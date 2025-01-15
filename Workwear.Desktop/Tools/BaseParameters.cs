@@ -83,6 +83,21 @@ namespace Workwear.Tools
 			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
 			set => Dynamic[nameof(UsedCurrency)] = value;
 		}
+
+		/// <summary>
+		/// При выборе галочки проставится номер документа выдачи вместо подписи получившего СИЗ 
+		/// </summary>
+		public virtual bool IsEmptyIssue {
+			get => Dynamic.IsEmptyIssue(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsEmptyIssue)] = value;
+		}
+		/// <summary>
+		/// При выборе галочки проставится номер документа возврата вместо подписи сдавшего СИЗ 
+		/// </summary>
+		public virtual bool IsEmptyReturn {
+			get => Dynamic.IsEmptyReturn(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsEmptyReturn)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
@@ -93,4 +108,5 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
+	
 }
