@@ -69,6 +69,7 @@ namespace Workwear.Domain.Company
 
 		private string lastName;
 		[StringLength(20)]
+		
 		[Display (Name = "Фамилия")]
 		public virtual string LastName {
 			get =>lastName; 

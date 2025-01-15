@@ -13,7 +13,7 @@ namespace Workwear.Domain.Stock.Documents {
 		Genitive = "строки выдачи дежурной нормы"
 		)]
 	[HistoryTrace]
-	public class ExpenseDutyNornItem : PropertyChangedBase, IDomainObject
+	public class ExpenseDutyNormItem : PropertyChangedBase, IDomainObject
 	{
 		#region Генерирумые Сввойства
 		public virtual string Title => $"Строка {Nomenclature?.Name ?? ProtectionTools.Name} в {Document.Title}";
@@ -23,10 +23,10 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual int Id { get; set; }
 
-		private ExpenseDutyNorn document;
+		private ExpenseDutyNorm document;
 		[Display (Name = "Документ")]
 		[IgnoreHistoryTrace]
-		public virtual ExpenseDutyNorn Document {
+		public virtual ExpenseDutyNorm Document {
 			get => document;
 			set { SetField (ref document, value); }
 		}

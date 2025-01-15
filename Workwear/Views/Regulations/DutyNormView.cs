@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.ColumnConfig;
+using Gtk;
 using QS.Utilities.Text;
 using QS.Views.Dialog;
 using Workwear.Domain.Operations;
@@ -61,6 +62,8 @@ namespace Workwear.Views.Regulations {
 			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.Binding.AddSource(ViewModel).AddBinding(v => v.SelectedItem, w => w.SelectedRow);
+			
+			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 		}
 		//Вкладка История выдач
 		private void ConfigureHistoty() { 
@@ -77,6 +80,25 @@ namespace Workwear.Views.Regulations {
 			ytreeviewHistory.ItemsDataSource = ViewModel.Operations;
 		}
 		
+		#region Контекстное меню
+
+		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+		{
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeItems.GetSelectedObject<DutyNormItem>();
+				
+				var menuItem = new MenuItem("Открыть номенклатуру нормы");
+				menuItem.Sensitive = selected != null;
+				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
+				menu.Add(menuItem);
+				
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+		#endregion
+		
 		void YtreeItems_Selection_Changed (object sender, EventArgs e) {
 			buttonRemoveItem.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 		}
@@ -87,6 +109,10 @@ namespace Workwear.Views.Regulations {
 
 		protected void OnButtonRemoveItemClicked (object sender, EventArgs e) {
 			ViewModel.RemoveItem(ytreeItems.GetSelectedObject<DutyNormItem>());
+		}
+
+		protected void OnButtonGiveClicked(object sender, EventArgs e) {
+			ViewModel.AddExpense();
 		}
 	}
 }

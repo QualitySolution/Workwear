@@ -11,8 +11,8 @@ namespace Workwear.Models.Operations
 		public OperationType OperationType;
 		public int? ExpenceId;
 		public int? ExpenceItemId;
-		public int? ExpenseDutyNornId;
-		public int? ExpenseDutyNornItemId;
+		public int? ExpenseDutyNormId;
+		public int? ExpenseDutyNormItemId;
 		public int? IncomeId;
 		public int? ReturnId;
 		public int? IncomeItemId;
@@ -46,8 +46,8 @@ namespace Workwear.Models.Operations
 			get {
 				if(ExpenceId.HasValue)
 					return StockDocumentType.ExpenseEmployeeDoc;
-				if(ExpenseDutyNornId.HasValue)
-					return StockDocumentType.ExpenseDutyNornDoc;
+				if(ExpenseDutyNormId.HasValue)
+					return StockDocumentType.ExpenseDutyNormDoc;
 				if(CollectiveExpenseId.HasValue)
 					return StockDocumentType.CollectiveExpense;
 				if(IncomeId.HasValue) 

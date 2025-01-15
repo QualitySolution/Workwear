@@ -109,7 +109,7 @@ namespace Workwear.Domain.Operations
 			Height = item.Height;
 			Amount = item.Amount;
 		}
-		public virtual void Update(IUnitOfWork uow, ExpenseDutyNornItem item) {
+		public virtual void Update(IUnitOfWork uow, ExpenseDutyNormItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;

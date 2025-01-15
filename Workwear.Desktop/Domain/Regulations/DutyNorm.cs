@@ -115,6 +115,13 @@ namespace Workwear.Domain.Regulations {
 
 		#region Методы
 
+		public virtual DutyNormItem GetItem(ProtectionTools pt) {
+			if(pt != null) {
+				return Items.FirstOrDefault(i => i.ProtectionTools == pt);
+			}
+			return null;
+		}
+		
 		public virtual void UpdateNextIssues(IUnitOfWork uow) {
 			foreach (var item in items)
 				item.UpdateNextIssue(uow);

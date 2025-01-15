@@ -3,9 +3,9 @@ using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.HibernateMapping.Stock.Documents
 {
-	public class ExpenseDutyNornMap : ClassMap<ExpenseDutyNorn>
+	public class ExpenseDutyNormMap : ClassMap<ExpenseDutyNorm>
 	{
-		public ExpenseDutyNornMap ()
+		public ExpenseDutyNormMap ()
 		{
 			Table ("stock_expense_duty_norm");
 			if(Workwear.HibernateMapping.MappingParams.UseIdsForTest)

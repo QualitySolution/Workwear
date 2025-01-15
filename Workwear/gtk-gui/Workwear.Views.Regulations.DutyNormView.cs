@@ -64,6 +64,8 @@ namespace Workwear.Views.Regulations
 
 		private global::Gtk.Button buttonRemoveItem;
 
+		private global::Gamma.GtkWidgets.yButton buttonGive;
+
 		private global::Gtk.Label label10;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
@@ -123,7 +125,7 @@ namespace Workwear.Views.Regulations
 			this.tabs = new global::Gamma.GtkWidgets.yNotebook();
 			this.tabs.CanFocus = true;
 			this.tabs.Name = "tabs";
-			this.tabs.CurrentPage = 2;
+			this.tabs.CurrentPage = 1;
 			// Container child tabs.Gtk.Notebook+NotebookChild
 			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
 			this.table1.Name = "table1";
@@ -393,14 +395,28 @@ namespace Workwear.Views.Regulations
 			w29.Position = 1;
 			w29.Expand = false;
 			w29.Fill = false;
+			// Container child hbox6.Gtk.Box+BoxChild
+			this.buttonGive = new global::Gamma.GtkWidgets.yButton();
+			this.buttonGive.CanFocus = true;
+			this.buttonGive.Name = "buttonGive";
+			this.buttonGive.UseUnderline = true;
+			this.buttonGive.Label = global::Mono.Unix.Catalog.GetString("Выдать");
+			global::Gtk.Image w30 = new global::Gtk.Image();
+			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-justify-fill", global::Gtk.IconSize.Menu);
+			this.buttonGive.Image = w30;
+			this.hbox6.Add(this.buttonGive);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonGive]));
+			w31.Position = 3;
+			w31.Expand = false;
+			w31.Fill = false;
 			this.vbox1.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox6]));
-			w30.Position = 1;
-			w30.Expand = false;
-			w30.Fill = false;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox6]));
+			w32.Position = 1;
+			w32.Expand = false;
+			w32.Fill = false;
 			this.tabs.Add(this.vbox1);
-			global::Gtk.Notebook.NotebookChild w31 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.vbox1]));
-			w31.Position = 1;
+			global::Gtk.Notebook.NotebookChild w33 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.vbox1]));
+			w33.Position = 1;
 			// Notebook tab
 			this.label10 = new global::Gtk.Label();
 			this.label10.Name = "label10";
@@ -417,8 +433,8 @@ namespace Workwear.Views.Regulations
 			this.ytreeviewHistory.Name = "ytreeviewHistory";
 			this.GtkScrolledWindow.Add(this.ytreeviewHistory);
 			this.tabs.Add(this.GtkScrolledWindow);
-			global::Gtk.Notebook.NotebookChild w33 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.GtkScrolledWindow]));
-			w33.Position = 2;
+			global::Gtk.Notebook.NotebookChild w35 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.GtkScrolledWindow]));
+			w35.Position = 2;
 			// Notebook tab
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
@@ -426,8 +442,8 @@ namespace Workwear.Views.Regulations
 			this.tabs.SetTabLabel(this.GtkScrolledWindow, this.label2);
 			this.label2.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w34.Position = 1;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w36.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -436,6 +452,7 @@ namespace Workwear.Views.Regulations
 			this.Hide();
 			this.buttonAddItem.Clicked += new global::System.EventHandler(this.OnButtonAddItemClicked);
 			this.buttonRemoveItem.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
+			this.buttonGive.Clicked += new global::System.EventHandler(this.OnButtonGiveClicked);
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace Workwear.Domain.Stock.Documents {
 	)]
 	[HistoryTrace]
 
-	public class ExpenseDutyNorn : StockDocument{
+	public class ExpenseDutyNorm : StockDocument{
 		
 		#region Генерирумые Сввойства
 		public virtual string Title => $"Выдачча по деж. норме №{Id} от {Date:d}";
@@ -47,9 +47,9 @@ namespace Workwear.Domain.Stock.Documents {
 			set { SetField(ref warehouse, value); }
 		}
 		
-		private IObservableList<ExpenseDutyNornItem> items = new ObservableList<ExpenseDutyNornItem>();
+		private IObservableList<ExpenseDutyNormItem> items = new ObservableList<ExpenseDutyNormItem>();
 		[Display (Name = "Строки документа")]
-		public virtual IObservableList<ExpenseDutyNornItem> Items {
+		public virtual IObservableList<ExpenseDutyNormItem> Items {
 			get { return items; }
 			set { SetField (ref items, value); }
 		}
@@ -58,8 +58,8 @@ namespace Workwear.Domain.Stock.Documents {
 		
 
 		#region Методы
-		public virtual ExpenseDutyNornItem AddItem(StockPosition position, int amount = 1) {
-			var newItem = new ExpenseDutyNornItem() {
+		public virtual ExpenseDutyNormItem AddItem(StockPosition position, int amount = 1) {
+			var newItem = new ExpenseDutyNormItem() {
 				Document = this,
 				Amount = amount,
 				Nomenclature = position.Nomenclature,
@@ -75,7 +75,7 @@ namespace Workwear.Domain.Stock.Documents {
 			Items.ToList().ForEach(x => x.UpdateOperation(uow));
 		}
 		
-		public virtual void RemoveItem(ExpenseDutyNornItem item) {
+		public virtual void RemoveItem(ExpenseDutyNormItem item) {
 			Items.Remove(item);
 		}
 		#endregion

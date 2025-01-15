@@ -192,7 +192,7 @@ namespace Workwear.Domain.Operations {
 				yield return new ValidationResult("Номенклатура должна быть задана.");
 		}
         
-        public virtual void Update(ExpenseDutyNornItem item) {
+        public virtual void Update(ExpenseDutyNormItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if (item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
@@ -207,20 +207,23 @@ namespace Workwear.Domain.Operations {
 			Returned = 0;
 			WarehouseOperation = item.WarehouseOperation;
 			ProtectionTools = item.ProtectionTools;
-
+			DutyNormItem = DutyNorm.GetItem(ProtectionTools);
+			
 			RecalculateExpiryByNorm();
         }
         
         public virtual void RecalculateExpiryByNorm(){
 	        if(StartOfUse == null)
 		        StartOfUse = OperationTime;
-			
-	        ExpiryByNorm = DutyNormItem.CalculateExpireDate(StartOfUse.Value, WearPercent);
-			
-	        if(Issued > DutyNormItem.Amount && DutyNormItem.Amount > 0)
-		        ExpiryByNorm = DutyNormItem.CalculateExpireDate(StartOfUse.Value, Issued);
-	        
-	        AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
+
+	        if(DutyNormItem != null) {
+                ExpiryByNorm = DutyNormItem?.CalculateExpireDate(StartOfUse.Value, WearPercent);
+                
+                if(Issued > DutyNormItem.Amount && DutyNormItem.Amount > 0)
+                    ExpiryByNorm = DutyNormItem.CalculateExpireDate(StartOfUse.Value, Issued);
+                
+                AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
+	        }
         }
 	}
 }

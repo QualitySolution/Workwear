@@ -8,8 +8,8 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock {
 	[System.ComponentModel.ToolboxItem(true)]
-	public partial class ExpenseDutyNornView : EntityDialogViewBase<ExpenseDutyNornViewModel, ExpenseDutyNorn> {
-		public ExpenseDutyNornView(ExpenseDutyNornViewModel viewModel) : base(viewModel) {
+	public partial class ExpenseDutyNormView : EntityDialogViewBase<ExpenseDutyNormViewModel, ExpenseDutyNorm> {
+		public ExpenseDutyNormView(ExpenseDutyNormViewModel viewModel) : base(viewModel) {
 			Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
@@ -25,7 +25,9 @@ namespace Workwear.Views.Stock {
 			yentryWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 			yentryResponsible.ViewModel = ViewModel.ResponsibleEmployeeCardEntryViewModel;
 			
-			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseDutyNornItem> ()
+			//butt
+			
+			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseDutyNormItem> ()
 				.AddColumn("Номенклатура нормы").Resizable().AddComboRenderer(x => x.ProtectionTools)
 					.SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.ProtectionToolsListFromNorm.ToList())
@@ -55,7 +57,7 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnButtonDelClicked(object sender, EventArgs e) {
-			foreach(var item in ytreeItems.GetSelectedObjects<ExpenseDutyNornItem>())
+			foreach(var item in ytreeItems.GetSelectedObjects<ExpenseDutyNormItem>())
 				ViewModel.DeleteItem(item);
 		}
 	}

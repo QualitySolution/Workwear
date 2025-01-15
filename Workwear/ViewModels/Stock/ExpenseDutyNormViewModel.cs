@@ -26,17 +26,17 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock {
-	public class ExpenseDutyNornViewModel : EntityDialogViewModelBase<ExpenseDutyNorn>{
+	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>{
 		
 		private ILifetimeScope autofacScope;
 		private readonly IInteractiveService interactive;
 		private readonly StockRepository stockRepository;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public SizeService SizeService { get; }
-//Возможно стоит хранить в объекта,собирать в конструкторе
+//Возможно стоит хранить в объекте ,собирать в конструкторе
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 
-		public ExpenseDutyNornViewModel(
+		public ExpenseDutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			ILifetimeScope autofacScope, 
@@ -46,6 +46,7 @@ namespace Workwear.ViewModels.Stock {
 			SizeService sizeService, 
 			FeaturesService featutesService,
 			StockRepository stockRepository,
+			DutyNorm dutyNorm,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
@@ -54,11 +55,12 @@ namespace Workwear.ViewModels.Stock {
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
-			
-			var entryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorn>(this, Entity, UoW, navigation, autofacScope);
+
+			Entity.DutyNorm = dutyNorm;
+			var entryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			
@@ -105,7 +107,7 @@ namespace Workwear.ViewModels.Stock {
 			}
 		}
 
-		public void DeleteItem(ExpenseDutyNornItem item) {
+		public void DeleteItem(ExpenseDutyNormItem item) {
 			Entity.RemoveItem(item);
 		}
 

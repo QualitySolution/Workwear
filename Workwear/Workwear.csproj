@@ -197,7 +197,7 @@
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\CauseWriteOffViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
-    <Compile Include="ViewModels\Stock\ExpenseDutyNornViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseDutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\IncomeViewModel.cs" />
     <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureProtectionToolsViewModel.cs" />
@@ -487,8 +487,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
     <Compile Include="Views\Regulations\DutyNormView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.DutyNormView.cs" />
-    <Compile Include="Views\Stock\ExpenseDutyNornView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDutyNornView.cs" />
+    <Compile Include="Views\Stock\ExpenseDutyNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDutyNormView.cs" />
     <Compile Include="Views\Stock\IncomeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.IncomeView.cs" />
     <Compile Include="Views\Stock\ReturnView.cs" />

@@ -8,6 +8,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations {
 	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>{
@@ -65,6 +66,17 @@ namespace Workwear.ViewModels.Regulations {
 
 		public void RemoveItem(DutyNormItem item) {
 			Entity.Items.Remove(item);
+		}
+
+		public void AddExpense() {
+			if(!Save())
+				return;
+
+			NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
+		}
+		
+		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
+			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(dutyNormItem.ProtectionTools.Id));
 		}
 		#endregion
 //711		
