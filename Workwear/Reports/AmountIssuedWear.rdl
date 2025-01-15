@@ -603,7 +603,7 @@
               </TableRows>
               <RepeatOnNewPage>true</RepeatOnNewPage>
             </Footer>
-            <Grouping Name="objectGroup">
+            <Grouping Name="subdivisionGroup">
               <GroupExpressions>
                 <GroupExpression>=Fields!subdivision_id.Value</GroupExpression>
               </GroupExpressions>
@@ -619,7 +619,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox23">
-                          <Value>= Iif(Fields!object.IsMissing, "      Без подразделения", "  " + {subdivision_code} + "      " + {object})</Value>
+                          <Value>= Iif(Fields!subdivision.IsMissing, "      Без подразделения", "  " + {subdivision_code} + "      " + {subdivision})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -1673,7 +1673,7 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select
     if(@summary, NULL, subdivisions.id) as subdivision_id,
-    if(@summary, NULL, subdivisions.name) as object,
+    if(@summary, NULL, subdivisions.name) as subdivision,
     if(@summary, NULL, subdivisions.code) as subdivision_code,
     if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)
                                FROM employees_cost_allocation as ecca
@@ -1696,9 +1696,9 @@
     operation_issued_by_employee.comment AS operation_comment,
     IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment
 FROM operation_issued_by_employee
-LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
-LEFT JOIN objects on objects.id = wear_cards.object_id
-LEFT JOIN posts ON posts.id = wear_cards.post_id
+LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
+LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+LEFT JOIN posts ON posts.id = employees.post_id
 LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
@@ -1717,7 +1717,7 @@ WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND operation_issued_by_employee.returned = 0 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
-AND ((-1 IN (@subdivisions)) OR (@withoutsub AND objects.id IS NULL) OR (objects.id IN (@subdivisions)))
+AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
 AND (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 AND (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
@@ -1729,7 +1729,7 @@ AND ((-1 IN (@employee_groups_ids))
         OR (EXISTS (SELECT * FROM employee_group_items as gi
                     WHERE gi.employee_id = operation_issued_by_employee.employee_id
                       AND gi.employee_group_id IN (@employee_groups_ids))) )
-GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
+GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -1796,8 +1796,8 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
-        <Field Name="object">
-          <DataField>object</DataField>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="subdivision_code">

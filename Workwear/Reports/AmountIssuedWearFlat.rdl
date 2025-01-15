@@ -134,7 +134,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
-                      <Value>={object}</Value>
+                      <Value>={subdivision}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -986,7 +986,7 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select
     if(@summary, NULL, subdivisions.id) as subdivision_id,
-    if(@summary, NULL, subdivisions.name) as object,
+    if(@summary, NULL, subdivisions.name) as subdivision,
     if(@summary, NULL, subdivisions.code) as subdivision_code,
     if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)
                                FROM employees_cost_allocation as ecca
@@ -1056,7 +1056,7 @@ AND ((-1 IN (@employee_groups_ids))
         OR (EXISTS (SELECT * FROM employee_group_items as gi
                     WHERE gi.employee_id = operation_issued_by_employee.employee_id
                       AND gi.employee_group_id IN (@employee_groups_ids))) )
-GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
+GROUP BY IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
 ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -1126,8 +1126,8 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
-        <Field Name="object">
-          <DataField>object</DataField>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="subdivision_code">

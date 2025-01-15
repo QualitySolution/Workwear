@@ -823,15 +823,15 @@ ORDER BY
 
 UNION
 #Выдаваемые дозатором
-(SELECT  pt_wci.name,
+(SELECT  pt_eci.name,
          '',
-         DATE_FORMAT(wci.created, '%d.%m.%Y'),
+         DATE_FORMAT(eci.created, '%d.%m.%Y'),
          '',
          'Дозатор',
          '','','','',''
-FROM wear_cards_item as wci
-         LEFT JOIN protection_tools as pt_wci on wci.protection_tools_id = pt_wci.id
-WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
+FROM employee_cards_item as eci
+         LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>

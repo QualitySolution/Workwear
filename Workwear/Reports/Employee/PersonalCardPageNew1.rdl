@@ -165,7 +165,7 @@ WHERE
              END
           )AS unit_on_period,
          protection_tools.dispenser
-FROM wear_cards_item
+FROM employee_cards_item
          LEFT JOIN
      protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
          LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id

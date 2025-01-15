@@ -23,9 +23,9 @@ FROM
          nomenclature.name as 'Номенклатура',
          sizeAlias.name as 'Размер',
          heightAlias.name as 'Рост',
-         wear_cards.personnel_number as 'Табельный',
-         CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as 'ФИО',
-         DATE_FORMAT(wear_cards.dismiss_date, '%d.%m.%Y') as 'Уволен',
+         employees.personnel_number as 'Табельный',
+         CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as 'ФИО',
+         DATE_FORMAT(employees.dismiss_date, '%d.%m.%Y') as 'Уволен',
          IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
                         IFNULL(stock_income.date, opis.auto_writeoff_date)) as 'Дата',
          DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
@@ -49,7 +49,7 @@ FROM
               LEFT JOIN stock_income_detail on opis.id = stock_income_detail.employee_issue_operation_id
               LEFT JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
               LEFT JOIN users on (stock_write_off.user_id = users.id or stock_income.user_id = users.id)
-              LEFT JOIN  wear_cards on opis.employee_id = wear_cards.id
+              LEFT JOIN  employees on opis.employee_id = employees.id
               LEFT JOIN nomenclature on (stock_income_detail.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
               LEFT JOIN protection_tools on opis.protection_tools_id=protection_tools.id
               LEFT JOIN item_types on nomenclature.type_id = item_types.id

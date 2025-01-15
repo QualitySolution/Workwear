@@ -22,36 +22,36 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
-    wear_cards.personnel_number as 'personnel_number',
+    Concat_ws(' ', employees.last_name,employees.first_name, employees.patronymic_name) as 'employee_name',
+    employees.personnel_number as 'personnel_number',
     posts.name as 'post',
-    objects.name as 'subdivision',
+    subdivisions.name as 'subdivision',
     departments.name as 'department',
     DATE_FORMAT(dismiss_date, '%d.%m.%Y') as 'dismiss_date',
     DATE_FORMAT(hire_date, '%d.%m.%Y') as 'hire_date',
     phone_number,
-    wcn.id as 'wear_card_norm_id'
-    FROM wear_cards
-         LEFT JOIN objects on wear_cards.object_id = objects.id
-         LEFT JOIN departments on wear_cards.department_id = departments.id
-         LEFT JOIN posts on posts.id = wear_cards.post_id
-         LEFT JOIN wear_cards_norms wcn on wcn.wear_card_id=wear_cards.id
-         LEFT JOIN norms on wcn.norm_id = norms.id
-WHERE (((@only_without_norms AND (wcn.id IS NULL OR wear_cards.id IN (SELECT arch.id FROM ((SELECT wear_cards.id, (count(norm_id) - num_arch) as 'num'
-                                                                   FROM wear_cards 
-                                                                       LEFT JOIN wear_cards_norms on wear_cards.id = wear_cards_norms.wear_card_id      
-                                                                       LEFT JOIN norms on norms.id=wear_cards_norms.norm_id
-                                                                       LEFT JOIN (SELECT wear_cards.id, count(norm_id) as 'num_arch'
-                                                                                              FROM wear_cards LEFT JOIN wear_cards_norms on wear_cards.id = wear_cards_norms.wear_card_id
-                                                                                                              LEFT JOIN norms on norms.id=wear_cards_norms.norm_id
+    en.id as 'employee_norm_id'
+    FROM employees
+         LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
+         LEFT JOIN departments on employees.department_id = departments.id
+         LEFT JOIN posts on posts.id = employees.post_id
+         LEFT JOIN employees_norms en on en.employee_id=employees.id
+         LEFT JOIN norms on en.norm_id = norms.id
+WHERE (((@only_without_norms AND (en.id IS NULL OR employees.id IN (SELECT arch.id FROM ((SELECT employees.id, (count(norm_id) - num_arch) as 'num'
+                                                                   FROM employees 
+                                                                       LEFT JOIN employees_norms on employees.id = employees_norms.employee_id      
+                                                                       LEFT JOIN norms on norms.id=employees_norms.norm_id
+                                                                       LEFT JOIN (SELECT employees.id, count(norm_id) as 'num_arch'
+                                                                                              FROM employees LEFT JOIN employees_norms on employees.id = employees_norms.employee_id
+                                                                                                              LEFT JOIN norms on norms.id=employees_norms.norm_id
                                                                                               WHERE archival=1
-                                                                                              GROUP BY wear_cards.id)arch on arch.id=wear_cards.id
-                                                                   GROUP BY wear_cards.id))arch
+                                                                                              GROUP BY employees.id)arch on arch.id=employees.id
+                                                                   GROUP BY employees.id))arch
                                                                         WHERE num=0)))
     OR (@only_without_norms=false))
   AND ((@only_working AND dismiss_date IS NULL) OR (@only_working=false)))
-GROUP BY wear_cards.id
-ORDER BY wear_card_name;</CommandText>
+GROUP BY employees.id
+ORDER BY employee_name;</CommandText>
         <QueryParameters>
           <QueryParameter Name="only_without_norms">
             <Value>={?only_without_norms}</Value>
@@ -62,8 +62,8 @@ ORDER BY wear_card_name;</CommandText>
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="wear_card_name">
-          <DataField>wear_card_name</DataField>
+        <Field Name="employee_name">
+          <DataField>employee_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="personnel_number">
@@ -302,8 +302,8 @@ ORDER BY wear_card_name;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="wear_card_name">
-                      <Value>=Fields!wear_card_name.Value</Value>
+                    <Textbox Name="employee_name">
+                      <Value>=Fields!employee_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
