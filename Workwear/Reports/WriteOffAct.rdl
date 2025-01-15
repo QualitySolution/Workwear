@@ -18,7 +18,7 @@ FROM
     (SELECT
          IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id) as 'Номер документа выдачи',
          IF(stock_write_off.id IS NOT NULL, CONCAT('Списание № ',IFNULL(stock_write_off.doc_number, stock_write_off.id)),
-            IF(stock_income.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_income.doc_number, stock_income.id)), '-')) as 'Номер документа',
+            IF(stock_return.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_return.doc_number, stock_return.id)), '-')) as 'Номер документа',
          protection_tools.name as 'Номенклатура нормы',
          nomenclature.name as 'Номенклатура',
          sizeAlias.name as 'Размер',
@@ -27,30 +27,30 @@ FROM
          CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as 'ФИО',
          DATE_FORMAT(employees.dismiss_date, '%d.%m.%Y') as 'Уволен',
          IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
-                        IFNULL(stock_income.date, opis.auto_writeoff_date)) as 'Дата',
+                        IFNULL(stock_return.date, opis.auto_writeoff_date)) as 'Дата',
          DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
-            IFNULL(stock_income.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
+            IFNULL(stock_return.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
          opwo.returned as 'Списано',
          CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
          DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
          opis.issued as 'Выдано',
          IF(opis.manual_operation, '+', '') as 'Ручная',
-         DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_income.creation_date),'%d.%m.%Y') as 'Создан документ',
+         DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_return.creation_date),'%d.%m.%Y') as 'Создан документ',
          users.name as 'Автор',
-         IFNULL(stock_write_off.comment, stock_income.comment) as 'Коментарий документа',
-         IFNULL(stock_write_off_detail.cause, stock_income_detail.comment_return)as 'Комментарий операции',
+         IFNULL(stock_write_off.comment, stock_return.comment) as 'Коментарий документа',
+         IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
          opis.returned * nomenclature.sale_cost as 'Сумма списанного',
-         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_income.id IS NOT NULL, 'I', '-'))) as 'Тип'
+         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип'
      FROM operation_issued_by_employee opis
               LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
               LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
               LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id
-              LEFT JOIN stock_income_detail on opis.id = stock_income_detail.employee_issue_operation_id
-              LEFT JOIN stock_income on stock_income_detail.stock_income_id = stock_income.id
-              LEFT JOIN users on (stock_write_off.user_id = users.id or stock_income.user_id = users.id)
+              LEFT JOIN stock_return_items on opis.id = stock_return_items.employee_issue_operation_id
+              LEFT JOIN stock_return on stock_return_items.stock_return_id = stock_return.id
+              LEFT JOIN users on (stock_write_off.user_id = users.id or stock_return.user_id = users.id)
               LEFT JOIN  employees on opis.employee_id = employees.id
-              LEFT JOIN nomenclature on (stock_income_detail.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
+              LEFT JOIN nomenclature on (stock_return_items.nomenclature_id = nomenclature.id or stock_write_off_detail.nomenclature_id = nomenclature.id)
               LEFT JOIN protection_tools on opis.protection_tools_id=protection_tools.id
               LEFT JOIN item_types on nomenclature.type_id = item_types.id
               LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
@@ -58,7 +58,7 @@ FROM
               LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
               LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
               LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
-     WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_income.date BETWEEN @start_date AND @end_date)
+     WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_return.date BETWEEN @start_date AND @end_date)
          OR (opis.auto_writeoff_date BETWEEN @start_date AND @end_date))) q1
 WHERE IF(@doc_write_off, `Тип` = 'W' ,'') OR (IF(@auto_write_off, `Тип` = 'A', '')) OR (IF(@income, `Тип`='I', ''))
 ORDER BY `Тип`, `Дата`;</CommandText>
