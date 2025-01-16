@@ -158,7 +158,7 @@ namespace Workwear.Domain.Regulations {
 			}
 //Дата создания, если нужна. Пока в базе дата для строки не хранится	
 			if(wantIssue == default(DateTime)) 
-				wantIssue = DutyNorm.DateFrom;
+				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
 			nextIssue = wantIssue;
 		}
 

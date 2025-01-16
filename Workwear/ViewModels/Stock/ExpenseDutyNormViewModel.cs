@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -19,6 +20,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -46,7 +48,7 @@ namespace Workwear.ViewModels.Stock {
 			SizeService sizeService, 
 			FeaturesService featutesService,
 			StockRepository stockRepository,
-			DutyNorm dutyNorm,
+			DutyNorm dutyNorm = null,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
@@ -55,13 +57,14 @@ namespace Workwear.ViewModels.Stock {
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
-
-			Entity.DutyNorm = dutyNorm;
+			
 			var entryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+				if(dutyNorm != null)
+					Entity.DutyNorm = dutyNorm;
 			}
 			
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
@@ -110,8 +113,21 @@ namespace Workwear.ViewModels.Stock {
 		public void DeleteItem(ExpenseDutyNormItem item) {
 			Entity.RemoveItem(item);
 		}
+		
+		private ExpenseDutyNormItem selectedItem;
+		[PropertyChangedAlso(nameof(CanDelSelectedItem))]
+		public virtual ExpenseDutyNormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
+		
 
-		#region Валидация и проверка
+
+		#region Свойства для view
+		public bool CanDelSelectedItem => SelectedItem != null;
+		#endregion
+
+		#region Валидация и сохранение
 		public override bool Save()
 		{
 			logger.Info("Проверка документа...");

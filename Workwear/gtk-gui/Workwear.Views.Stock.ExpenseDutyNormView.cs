@@ -52,11 +52,11 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeItems;
 
-		private global::Gtk.HBox hbox6;
+		private global::Gtk.HBox hbox7;
 
-		private global::Gamma.GtkWidgets.yButton buttonAdd;
+		private global::Gamma.GtkWidgets.yButton ybuttonAdd;
 
-		private global::Gtk.Button buttonDel;
+		private global::Gamma.GtkWidgets.yButton ybuttonDel;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
@@ -314,49 +314,49 @@ namespace Workwear.Views.Stock
 			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.GtkScrolledWindow]));
 			w25.Position = 2;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.hbox6 = new global::Gtk.HBox();
-			this.hbox6.Name = "hbox6";
-			this.hbox6.Spacing = 6;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
-			this.buttonAdd.CanFocus = true;
-			this.buttonAdd.Name = "buttonAdd";
-			this.buttonAdd.UseUnderline = true;
-			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			this.hbox7 = new global::Gtk.HBox();
+			this.hbox7.Name = "hbox7";
+			this.hbox7.Spacing = 6;
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.ybuttonAdd = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonAdd.CanFocus = true;
+			this.ybuttonAdd.Name = "ybuttonAdd";
+			this.ybuttonAdd.UseUnderline = true;
+			this.ybuttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
 			global::Gtk.Image w26 = new global::Gtk.Image();
 			w26.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAdd.Image = w26;
-			this.hbox6.Add(this.buttonAdd);
-			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonAdd]));
+			this.ybuttonAdd.Image = w26;
+			this.hbox7.Add(this.ybuttonAdd);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.ybuttonAdd]));
 			w27.Position = 0;
 			w27.Expand = false;
 			w27.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
-			this.buttonDel = new global::Gtk.Button();
-			this.buttonDel.Sensitive = false;
-			this.buttonDel.CanFocus = true;
-			this.buttonDel.Name = "buttonDel";
-			this.buttonDel.UseUnderline = true;
-			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
+			// Container child hbox7.Gtk.Box+BoxChild
+			this.ybuttonDel = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonDel.Sensitive = false;
+			this.ybuttonDel.CanFocus = true;
+			this.ybuttonDel.Name = "ybuttonDel";
+			this.ybuttonDel.UseUnderline = true;
+			this.ybuttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
 			global::Gtk.Image w28 = new global::Gtk.Image();
 			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w28;
-			this.hbox6.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.buttonDel]));
+			this.ybuttonDel.Image = w28;
+			this.hbox7.Add(this.ybuttonDel);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.ybuttonDel]));
 			w29.Position = 1;
 			w29.Expand = false;
 			w29.Fill = false;
-			// Container child hbox6.Gtk.Box+BoxChild
+			// Container child hbox7.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.labelSum.UseMarkup = true;
-			this.hbox6.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox6[this.labelSum]));
+			this.hbox7.Add(this.labelSum);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.labelSum]));
 			w30.Position = 2;
-			this.dialog1_VBox.Add(this.hbox6);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox6]));
+			this.dialog1_VBox.Add(this.hbox7);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox7]));
 			w31.Position = 3;
 			w31.Expand = false;
 			w31.Fill = false;
@@ -366,8 +366,8 @@ namespace Workwear.Views.Stock
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);
-			this.buttonDel.Clicked += new global::System.EventHandler(this.OnButtonDelClicked);
+			this.ybuttonAdd.Clicked += new global::System.EventHandler(this.OnYbuttonAddClicked);
+			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
 		}
 	}
 }

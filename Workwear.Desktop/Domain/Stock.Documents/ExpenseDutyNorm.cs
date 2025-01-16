@@ -19,7 +19,7 @@ namespace Workwear.Domain.Stock.Documents {
 	public class ExpenseDutyNorm : StockDocument{
 		
 		#region Генерирумые Сввойства
-		public virtual string Title => $"Выдачча по деж. норме №{Id} от {Date:d}";
+		public virtual string Title => $"Выдача по деж. норме №{Id} от {Date:d}";
 		#endregion
 		
 		#region Хранимые Сввойства
@@ -67,6 +67,8 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = position.Height,
 			};
 
+			newItem.DutyNormItem = DutyNorm.GetItem(position.Nomenclature);
+			newItem.ProtectionTools = newItem.DutyNormItem?.ProtectionTools;
 			Items.Add(newItem);
 			return newItem;
 		}

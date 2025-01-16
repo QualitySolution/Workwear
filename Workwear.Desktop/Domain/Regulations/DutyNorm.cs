@@ -9,6 +9,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -115,9 +116,17 @@ namespace Workwear.Domain.Regulations {
 
 		#region Методы
 
-		public virtual DutyNormItem GetItem(ProtectionTools pt) {
-			if(pt != null) {
-				return Items.FirstOrDefault(i => i.ProtectionTools == pt);
+		public virtual DutyNormItem GetItem(ProtectionTools protectionTools) {
+			if(protectionTools != null) {
+				return Items.FirstOrDefault(i => i.ProtectionTools == protectionTools);
+			}
+			return null;
+		}
+		public virtual DutyNormItem GetItem(Nomenclature nomenclature) {
+			if(nomenclature != null) {
+				var pto = items.Select(i => i.ProtectionTools)
+					.FirstOrDefault(pt => pt.Nomenclatures.Select(n => n.Id).Contains(nomenclature.Id));
+				return GetItem(pto);
 			}
 			return null;
 		}

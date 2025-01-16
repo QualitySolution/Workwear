@@ -88,8 +88,6 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private ExpenseItem selectedItem;
-		
-
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);

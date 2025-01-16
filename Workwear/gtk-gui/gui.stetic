@@ -10506,7 +10506,6 @@
                 <child>
                   <widget class="Gtk.Label" id="labelExpense">
                     <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes" />
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -18456,7 +18455,6 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="entryMessageTextToLongError">
                 <property name="MemberName" />
                 <property name="Yalign">0</property>
-                <property name="LabelProp" translatable="yes" />
               </widget>
               <packing>
                 <property name="TopAttach">6</property>
@@ -29791,18 +29789,18 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.HBox" id="hbox6">
+          <widget class="Gtk.HBox" id="hbox7">
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="buttonAdd">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAdd">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
                 <property name="Label" translatable="yes">Добавить</property>
                 <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonAddClicked" />
+                <signal name="Clicked" handler="OnYbuttonAddClicked" />
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -29812,7 +29810,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="buttonDel">
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
@@ -29820,7 +29818,7 @@
                 <property name="Icon">stock:gtk-remove Menu</property>
                 <property name="Label" translatable="yes">Удалить</property>
                 <property name="UseUnderline">True</property>
-                <signal name="Clicked" handler="OnButtonDelClicked" />
+                <signal name="Clicked" handler="OnYbuttonDelClicked" />
               </widget>
               <packing>
                 <property name="Position">1</property>

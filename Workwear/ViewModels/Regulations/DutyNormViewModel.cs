@@ -60,12 +60,13 @@ namespace Workwear.ViewModels.Regulations {
 		void Protection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			foreach(var protectionNode in e.SelectedObjects) {
 				var protectionTools = UoW.GetById<ProtectionTools>(protectionNode.GetId());
-				Entity.AddItem(protectionTools);
+				var item = Entity.AddItem(protectionTools);
+				item.UpdateNextIssue(UoW);
 			}
 		}
 
 		public void RemoveItem(DutyNormItem item) {
-			Entity.Items.Remove(item);
+			Entity.Items.Remove(item); 
 		}
 
 		public void AddExpense() {
