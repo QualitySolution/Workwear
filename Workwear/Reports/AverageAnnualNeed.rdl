@@ -620,8 +620,6 @@ FROM
         JOIN
     protection_tools ON protection_tools.id =  employee_cards_item.protection_tools_id
         LEFT JOIN
-    protection_tools ON protection_tools.id =  employee_cards_item.protection_tools_id
-        LEFT JOIN
     item_types ON item_types.id = protection_tools.item_types_id
         LEFT JOIN
     measurement_units ON item_types.units_id = measurement_units.id
