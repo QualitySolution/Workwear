@@ -1023,7 +1023,7 @@
     IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment
 FROM operation_issued_by_employee
        LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
-       LEFT JOIN subdivisions. on subdivisions.id = employees.subdivision_id
+       LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
        LEFT JOIN posts ON posts.id = employees.post_id
          LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
          LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
