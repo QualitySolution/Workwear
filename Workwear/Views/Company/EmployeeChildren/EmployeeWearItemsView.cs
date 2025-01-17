@@ -4,7 +4,6 @@ using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
-using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Tools.Features;
