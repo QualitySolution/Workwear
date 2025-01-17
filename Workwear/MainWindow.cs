@@ -435,7 +435,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		quitService.Quit();
+		if(quitService != null)
+			quitService.Quit();
+		else 
+			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
 	public override void Destroy() {
