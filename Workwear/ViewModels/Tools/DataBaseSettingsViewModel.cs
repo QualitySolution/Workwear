@@ -29,6 +29,8 @@ namespace Workwear.ViewModels.Tools
 			CollapseDuplicateIssuanceSheet = baseParameters.CollapseDuplicateIssuanceSheet;
 			CollectiveIssueWithPersonalVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);
 			UsedCurrency = baseParameters.UsedCurrency;
+			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
+			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 		}
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
@@ -38,7 +40,9 @@ namespace Workwear.ViewModels.Tools
 		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod
-		                                   || UsedCurrency != baseParameters.UsedCurrency;
+		                                   || UsedCurrency != baseParameters.UsedCurrency
+		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
+		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
 
 		#region Parameters
 		public bool DefaultAutoWriteoff { get; set; }
@@ -50,6 +54,8 @@ namespace Workwear.ViewModels.Tools
 
 		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
+		public bool IsDocNumberInIssueSign{get;set;}
+		public bool IsDocNumberInReturnSign { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -70,6 +76,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.CollapseDuplicateIssuanceSheet = CollapseDuplicateIssuanceSheet;
 			if(UsedCurrency != baseParameters.UsedCurrency)
 				baseParameters.UsedCurrency = UsedCurrency;
+			if(IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign)
+				baseParameters.IsDocNumberInIssueSign = IsDocNumberInIssueSign;
+			if(IsDocNumberInReturnSign!=baseParameters.IsDocNumberInReturnSign)
+				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			return true;
 		}
 	}

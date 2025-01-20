@@ -96,6 +96,7 @@ public partial class MainWindow : Gtk.Window {
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
+		toolbarMain.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -310,6 +311,7 @@ public partial class MainWindow : Gtk.Window {
 		
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
+		toolbarMain.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
@@ -433,7 +435,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		quitService.Quit();
+		if(quitService != null)
+			quitService.Quit();
+		else 
+			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
 	public override void Destroy() {
@@ -961,5 +966,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWarehouseTransferReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WarehouseTransferReportViewModel));
+	}
+
+	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
 	}
 }
