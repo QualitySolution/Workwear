@@ -2345,7 +2345,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.26');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.28');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
@@ -2405,6 +2405,10 @@ INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Варежки', 'wear', 'Mittens', 'Personal', 2, NULL, NULL, 8, NULL);
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'СИЗ', 'wear', 'PPE', 'Personal', 1, NULL, NULL, NULL, NULL);
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя одежда', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 2, 1);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Противогазы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 10, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Респираторы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 11, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Носки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 12, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Футболки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 13, NULL);
 
 COMMIT;
 
