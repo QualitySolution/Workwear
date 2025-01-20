@@ -117,7 +117,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#region Sensetive And Visibility
 
-		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null;
+		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 
 		#endregion
 
@@ -127,14 +127,14 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			if(!IsConfigured)
 				return;
 			bool isMySession = changeEvents.First().Session == UoW.Session;
-			//Не чего не делаем если это наше собственное изменение.
+			//Ничего не делаем если это наше собственное изменение.
 			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
 				//так как заставить корректно сохранить сотрудника все равно не поучится.
 				//Не работал следующий сценарий: Открываем диалог сотрудника,
-				//строка добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму.
+				//строка, добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму.
 				//После этого пытаемся сохранить сотрудника.
 				var page = navigation.FindPage(employeeViewModel);
 				navigation.ForceClosePage(page, CloseSource.Self);
@@ -236,6 +236,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			var page = navigation.OpenViewModel<ProtectionToolsJournalViewModel>(employeeViewModel, OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			page.ViewModel.OnSelectResult += SetIssueDateManual_OnSelectResult;
+			page.ViewModel.Filter.NotDispenser = true;
 		}
 		
 		void SetIssueDateManual_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)

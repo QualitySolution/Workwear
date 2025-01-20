@@ -78,6 +78,15 @@ namespace Workwear.ViewModels.Regulations
 			NormConditions = normConditionQuery.ToList();
 			NormConditions.Insert(0, null);
 			RegulationDocs = regulationQuery.ToList();
+			if(Entity.Id == 0)
+				LastUpdate = "Новая норма";
+			else {
+				List<DateTime> lastUpdates = new List<DateTime>();
+				lastUpdates.Add(Entity.LastUpdate);
+				if(Entity.Items.Any())
+					lastUpdates.Add(Entity.Items.Max(x => x.LastUpdate));
+				LastUpdate = lastUpdates.Max().ToString("dd/M/yyyy");
+			}
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
 
@@ -163,7 +172,8 @@ namespace Workwear.ViewModels.Regulations
 					EmployeesViewModel.OnShow();
 			}
 		}
-
+		public virtual String LastUpdate { get; }
+		
 		#endregion
 
 		#region Действия View

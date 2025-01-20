@@ -211,6 +211,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionStockOperations;
 
+	private global::Gtk.Action ActionWearCardsReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -566,6 +568,9 @@ public partial class MainWindow
 		this.ActionStockOperations = new global::Gtk.Action("ActionStockOperations", global::Mono.Unix.Catalog.GetString("Справка по складским операцииям"), null, null);
 		this.ActionStockOperations.ShortLabel = global::Mono.Unix.Catalog.GetString("Складские операции");
 		w1.Add(this.ActionStockOperations, null);
+		this.ActionWearCardsReport = new global::Gtk.Action("ActionWearCardsReport", global::Mono.Unix.Catalog.GetString("Список сотрудников"), null, null);
+		this.ActionWearCardsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Список сотрудников");
+		w1.Add(this.ActionWearCardsReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -642,18 +647,19 @@ public partial class MainWindow
 				"tionAverageAnnualNeed\'/><menu name=\'Action\' action=\'Action\'><menuitem name=\'Acti" +
 				"onNotIssuedSheetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'Act" +
 				"ionNotIssuedSheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><separato" +
-				"r/><menuitem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetW" +
-				"ear\'/><menuitem name=\'ActionProvision\' action=\'ActionProvision\'/><menuitem name=" +
-				"\'ActionBarcodeCompletenessReport\' action=\'ActionBarcodeCompletenessReport\'/></me" +
-				"nu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' actio" +
-				"n=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><se" +
-				"parator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'Acti" +
-				"onUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurre" +
-				"nt\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'" +
-				"ActionChannelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'" +
-				"/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menu" +
-				"item name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\'" +
-				" action=\'aboutAction\'/></menu></menubar></ui>");
+				"r/><menuitem name=\'ActionWearCardsReport\' action=\'ActionWearCardsReport\'/><menui" +
+				"tem name=\'ActionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><me" +
+				"nuitem name=\'ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBa" +
+				"rcodeCompletenessReport\' action=\'ActionBarcodeCompletenessReport\'/></menu><menu " +
+				"name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAc" +
+				"tion\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/>" +
+				"<menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateC" +
+				"hannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' actio" +
+				"n=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionCha" +
+				"nnelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separa" +
+				"tor/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name" +
+				"=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'" +
+				"aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -871,5 +877,6 @@ public partial class MainWindow
 		this.Action45.Activated += new global::System.EventHandler(this.OnActionCausesWriteOffActivated);
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
 		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
+		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
 	}
 }

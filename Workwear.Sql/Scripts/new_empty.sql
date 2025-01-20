@@ -724,6 +724,7 @@ AUTO_INCREMENT = 10000;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `norms` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `regulations_id` INT UNSIGNED NULL DEFAULT NULL,
   `regulations_annex_id` INT UNSIGNED NULL DEFAULT NULL,
   `name` VARCHAR(200) NULL DEFAULT NULL,
@@ -733,6 +734,7 @@ CREATE TABLE IF NOT EXISTS `norms` (
   `dateto` DATETIME NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  INDEX `norms_last_update_idx` (`last_update` DESC),	
   INDEX `fk_norms_1_idx` (`regulations_id` ASC),
   INDEX `fk_norms_2_idx` (`regulations_annex_id` ASC),
   CONSTRAINT `fk_norms_1`
@@ -763,6 +765,8 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(800) NOT NULL,
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
+  `dermal_ppe` tinyint(1) default 0 not null,
+  `dispenser` tinyint(1) default 0 not null,
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
@@ -812,6 +816,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `norms_item` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `norm_id` INT UNSIGNED NOT NULL,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `amount` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -821,6 +826,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
   INDEX `fk_norms_item_2_idx` (`protection_tools_id` ASC),
   INDEX `fk_norms_item_3_idx` (`condition_id` ASC),
@@ -2339,7 +2345,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.25');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.28');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
@@ -2382,8 +2388,9 @@ INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (10, 'Размер противогаза', 1, 'Size', 10);
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (11, 'Размер респиратора', 1, 'Size', 11);
 INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES (12, 'Размер носков', 1, 'Size', 12);
+INSERT INTO `size_types` (`id`, `name`, `use_in_employee`, `category`, `position`) VALUES(13,'Размер футболки',1,'size',13);
 
-COMMIT;
+	COMMIT;
 
 
 -- -----------------------------------------------------
@@ -2398,6 +2405,10 @@ INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Варежки', 'wear', 'Mittens', 'Personal', 2, NULL, NULL, 8, NULL);
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'СИЗ', 'wear', 'PPE', 'Personal', 1, NULL, NULL, NULL, NULL);
 INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя одежда', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 2, 1);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Противогазы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 10, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Респираторы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 11, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Носки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 12, NULL);
+INSERT INTO `item_types` (`id`, `name`, `category`, `wear_category`, `issue_type`, `units_id`, `norm_life`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Футболки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 13, NULL);
 
 COMMIT;
 
@@ -2639,6 +2650,26 @@ INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_no
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (138, '42-44', 3, 0, 1, '84-88');
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (139, '46-48', 3, 0, 1, '92-96');
 INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (140, '54-56', 3, 0, 1, '108-112');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`) VALUES (370, '3XS', 13,1,1,'40');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (371, '2XS', 13,1,1,'42');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (372, 'XS', 13,1,1,'44');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (373, 'S', 13,1,1,'46');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (374, 'M', 13,1,1,'48');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (375, 'L', 13,1,1,'50');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (376, 'XL', 13,1,1,'52');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (377, '2XL', 13,1,1,'54');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (378, '3XL', 13,1,1,'56');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (379, '4XL', 13,1,1,'58');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (380, '5XL', 13,1,1,'60');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (381, '6XL', 13,1,1,'62');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (382, '7XL', 13,1,1,'64');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (383, '8XL', 13,1,1,'66');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (384, '9XL', 13,1,1,'68');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (385, '10XL', 13,1,1,'70');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (386, '11XL', 13,1,1,'72');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (387, '12XL', 13,1,1,'74');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (388, '13XL', 13,1,1,'76');
+INSERT INTO `sizes` (`id`, `name`, `size_type_id`, `use_in_employee`, `use_in_nomenclature`, `alternative_name`)  VALUES (389, '14XL', 13,1,1,'78');
 
 COMMIT;
 

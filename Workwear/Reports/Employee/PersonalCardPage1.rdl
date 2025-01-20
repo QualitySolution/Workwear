@@ -141,8 +141,8 @@ WHERE
                     TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM  CAST(norms_item.amount * 12 / norms_item.period_count AS DECIMAL(5,3)))))
                 END
         WHEN norms_item.period_type = 'Duty' THEN CONCAT_WS(' ', norms_item.amount, 'дежурный')
-                
-        END AS count_by_year
+        END AS count_by_year,
+    protection_tools.dispenser
 FROM
     wear_cards_item
         LEFT JOIN
@@ -176,6 +176,10 @@ WHERE
         <Field Name="count_by_year">
           <DataField>count_by_year</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="dispenser">
+          <DataField>dispenser</DataField>
+          <TypeName>System.Boolean</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -435,7 +439,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit.Value</Value>
+                      <Value>=IIF({dispenser},'Дозатор',Fields!unit.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -451,7 +455,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!count_by_year.Value</Value>
+                      <Value>=IIF({dispenser},'',Fields!count_by_year.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -1242,9 +1246,24 @@ LIMIT 20</CommandText>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox29">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>

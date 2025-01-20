@@ -4,7 +4,6 @@ using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
-using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Tools.Features;
@@ -65,13 +64,10 @@ namespace Workwear.Views.Company.EmployeeChildren
 					.AddSetter((w, item) => w.Foreground = item.AmountColor)
 				.AddColumn("След. получение")
 					.ToolTipText(item => item.NextIssueAnnotation)
-					.AddTextRenderer(item => $"{item.NextIssue:d}")
+					.AddTextRenderer(item => item.NextIssueText)
 					.AddSetter((w, item) => w.Foreground = item.NextIssueColor(ViewModel.BaseParameters))
 					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.NextIssueAnnotation) ? null : infoIcon)
-				.AddColumn("Просрочка").AddTextRenderer(
-					item => item.NextIssue.HasValue && item.NextIssue.Value < DateTime.Today
-					? NumberToTextRus.FormatCase((int)(DateTime.Today - item.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
-					: String.Empty)
+				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
 				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
 				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
 				.AddColumn("Подходящая номенклатура").AddTextRenderer(item => item.MatchedNomenclatureShortText)

@@ -163,7 +163,8 @@ WHERE
                      ELSE CONCAT('на ',norms_item.period_count ,' месяцев')
                  END
              END
-          )AS unit_on_period
+          )AS unit_on_period,
+         protection_tools.dispenser
 FROM wear_cards_item
          LEFT JOIN
      protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
@@ -196,10 +197,14 @@ WHERE wear_cards_item.wear_card_id = @id;</CommandText>
           <DataField>unit_on_period</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="dispenser">
+          <DataField>dispenser</DataField>
+          <TypeName>System.Boolean</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Sizes">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     size_types.name AS sizeName,
@@ -216,7 +221,7 @@ LIMIT 20</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="sizeName">
           <DataField>sizeName</DataField>
           <TypeName>System.String</TypeName>
@@ -727,7 +732,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit_on_period.Value</Value>
+                      <Value>=IIF({dispenser},'Дозатор',Fields!unit_on_period.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -743,7 +748,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!amount.Value</Value>
+                      <Value>=IIF({dispenser},'',Fields!amount.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -926,9 +931,24 @@ LIMIT 20</CommandText>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox23">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>

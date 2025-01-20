@@ -592,7 +592,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox24">
-                      <Value></Value>
+                      <Value>=Fields!dermal.Value</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -625,7 +625,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
-                      <Value>=Fields!returned_date.Value</Value>
+                      <Value>=Iif(StrComp({dermal}, ""),"",Fields!returned_date.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -644,7 +644,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>=Fields!returned_quantity.Value</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),"",Fields!returned_quantity.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -662,7 +662,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
-                      <Value>=Fields!returned_sign.Value</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),'',Fields!returned_sign.Value)</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -679,7 +679,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox41">
-                      <Value>=Fields!returned_doc.Value</Value>
+                      <Value>=IIF(StrComp({dermal}, ""),'',Fields!returned_doc.Value)</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -728,9 +728,24 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox14">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -738,18 +753,21 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
+        <CommandText>(SELECT
     IFNULL(nomenclature.name, protection_tools.name)
         AS name_siz,
     nomenclature.number
         AS nom_number,
     DATE_FORMAT(operation_issued_by_employee.operation_time,'%d.%m.%Y'
-        ) AS expense_date,
+    ) AS expense_date,
     operation_issued_by_employee.issued
         AS expense_quantity,
-    IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
-           CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
-    ) AS issue_sign,
+    IF(protection_tools.dermal_ppe,'Лично','')
+        AS dermal, #'' (пустая строка) используется в проверках
+    IF(!@isDocNumberInIssueSign,
+    CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
+        ) AS issue_sign,
     CONCAT_WS('\n', GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'),
               IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
                      AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0,
@@ -762,12 +780,13 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), "")
-            SEPARATOR '\n')
-          AS returned_sign,
-    GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),"") 
-            SEPARATOR '\n')
-          AS returned_doc
+    IF(!@isDocNumberInReturnSign, " ", 
+        GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
+                  SEPARATOR '\n'))
+        AS returned_sign,
+    GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),'')
+                 SEPARATOR '\n')
+        AS returned_doc
 FROM
     operation_issued_by_employee
         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
@@ -800,10 +819,28 @@ WHERE
 GROUP BY
     operation_issued_by_employee.id
 ORDER BY
-    operation_issued_by_employee.operation_time</CommandText>
+    operation_issued_by_employee.operation_time)
+
+UNION
+#Выдаваемые дозатором
+(SELECT  pt_wci.name,
+         '',
+         DATE_FORMAT(wci.created, '%d.%m.%Y'),
+         '',
+         'Дозатор',
+         '','','','',''
+FROM wear_cards_item as wci
+         LEFT JOIN protection_tools as pt_wci on wci.protection_tools_id = pt_wci.id
+WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInReturnSign">
+            <Value>={?isDocNumberInReturnSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -844,6 +881,10 @@ ORDER BY
           <DataField>returned_doc</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="dermal">
+          <DataField>dermal</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -860,8 +901,22 @@ ORDER BY
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="isDocNumberInReturnSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

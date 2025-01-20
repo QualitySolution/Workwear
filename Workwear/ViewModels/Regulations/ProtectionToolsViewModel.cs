@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -12,10 +13,12 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Analytics;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -49,6 +52,21 @@ namespace Workwear.ViewModels.Regulations
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 
+		private IList<EmployeeIssueOperation> usedOperations;
+		private IList<EmployeeIssueOperation> UsedOperations {
+			get {//Устанавливаем только при первом обращении
+				if(usedOperations == null) {
+					if(Entity.Id == 0)
+						usedOperations = new List<EmployeeIssueOperation>();
+					else {
+						var repo = new EmployeeIssueRepository();
+						usedOperations = repo.AllOperationsFor(protectionTools: new[] { Entity }, uow: UoW);
+					}
+				}
+				return usedOperations;
+			}
+		}
+
 		#region События
 		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch(e.PropertyName) {
@@ -70,12 +88,13 @@ namespace Workwear.ViewModels.Regulations
 		}
 		#endregion
 
-		#region Visible
+		#region Visible Sensitive
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
 		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel);
 		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
 		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
+		public bool SensitiveDispenser => Entity.DermalPpe;
 		#endregion
 
 		#region EntityViewModels
@@ -92,6 +111,35 @@ namespace Workwear.ViewModels.Regulations
 				Entity.SupplyType = value;
 				OnPropertyChanged(nameof(ShowSupplyUnisex));
 				OnPropertyChanged(nameof(ShowSupplyTwosex));
+			}
+		}
+
+		public virtual bool Dispenser {
+			get => Entity.Dispenser;
+			set {
+				if(Entity.Dispenser == value)
+					return;
+				if(value && UsedOperations.Count != 0) {
+					interactiveService.ShowMessage(ImportanceLevel.Warning,
+						$"По этой номенклатуре нормы уже совершено {UsedOperations.Count} выдач." +
+						$" Её нельзя перевести в выдаваемую дозатором - создайте новую.");
+					OnPropertyChanged();
+					return;
+				}
+
+				Entity.Dispenser = value;
+			}
+		}
+
+		public virtual bool WashingPPE {
+			get => Entity.DermalPpe;
+			set {
+				if(Entity.DermalPpe == value)
+					return;
+				Entity.DermalPpe = value;
+				if(!Entity.DermalPpe)
+					Entity.Dispenser = false;
+				OnPropertyChanged(nameof(SensitiveDispenser));
 			}
 		}
 		#endregion

@@ -150,6 +150,7 @@
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WarehouseTransferReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\WearCardsReportViewModel.cs" />
     <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\ViewModels\WriteOffActViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
@@ -493,8 +494,13 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.CauseWriteOffView.cs" />
     <Compile Include="ReportParameters\Views\WriteOffActView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WriteOffActView.cs" />
-    <Compile Include="ReportParameters\Views\WarehouseTransferReportView.cs"/>
+    <Compile Include="ReportParameters\Views\WarehouseTransferReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WarehouseTransferReportView.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\ProtectionToolsFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.ProtectionToolsFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\ProtectionToolsFilterViewModel.cs" />
+    <Compile Include="ReportParameters\Views\WearCardsReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WearCardsReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -692,7 +698,6 @@
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
-    <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
@@ -788,10 +793,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Employee\PersonalCardPage1.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Employee\PersonalCardPage2.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -829,6 +834,7 @@
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
     <PackageReference Include="ClosedXML" Version="0.104.0-rc1" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="FluentNHibernate" Version="3.1.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
     <PackageReference Include="Iesi.Collections" Version="4.0.5" />
@@ -861,6 +867,9 @@
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\ProvisionReportNeedIssue.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\SpravkaEmployeeSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -871,6 +880,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\WarehouseTransferReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\WearCardsReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\WriteOffAct.rdl">
@@ -903,10 +915,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew1.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew2.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\NotIssuedSheetFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -16,7 +16,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public OperationToDocumentReference EmployeeIssueReference { get; set; }
 
 		public DateTime Date => Operation.OperationTime;
-		public string NomenclatureName => Operation.Nomenclature?.Name ?? Operation.ProtectionTools.Name;
+		public string NomenclatureName => Operation.Nomenclature?.Name ?? String.Empty;
 		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
 		public decimal? WearPercet => Operation.WearPercent;
 		public decimal? Cost => Operation.WarehouseOperation?.Cost;
