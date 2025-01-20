@@ -298,7 +298,7 @@ namespace Workwear.Views.Tools
 			this.ycheckbuttonIssue = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckbuttonIssue.CanFocus = true;
 			this.ycheckbuttonIssue.Name = "ycheckbuttonIssue";
-			this.ycheckbuttonIssue.Label = global::Mono.Unix.Catalog.GetString("Выдано");
+			this.ycheckbuttonIssue.Label = global::Mono.Unix.Catalog.GetString("Для выданного");
 			this.ycheckbuttonIssue.DrawIndicator = true;
 			this.ycheckbuttonIssue.UseUnderline = true;
 			this.yhbox2.Add(this.ycheckbuttonIssue);
@@ -310,7 +310,7 @@ namespace Workwear.Views.Tools
 			this.ycheckbuttonReturn = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckbuttonReturn.CanFocus = true;
 			this.ycheckbuttonReturn.Name = "ycheckbuttonReturn";
-			this.ycheckbuttonReturn.Label = global::Mono.Unix.Catalog.GetString("Возвращено");
+			this.ycheckbuttonReturn.Label = global::Mono.Unix.Catalog.GetString("Для возвращенного");
 			this.ycheckbuttonReturn.DrawIndicator = true;
 			this.ycheckbuttonReturn.UseUnderline = true;
 			this.yhbox2.Add(this.ycheckbuttonReturn);
@@ -385,7 +385,8 @@ namespace Workwear.Views.Tools
 			this.ylabel7 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel7.Name = "ylabel7";
 			this.ylabel7.Xalign = 1F;
-			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Ставить номер документа вместо подписи сотрудника:");
+			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Печатать на оборотной стороне карточки сотрудника номер документа вместо подписи:" +
+					"");
 			this.table1.Add(this.ylabel7);
 			global::Gtk.Table.TableChild w28 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel7]));
 			w28.TopAttach = ((uint)(9));
