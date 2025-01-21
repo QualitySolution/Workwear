@@ -55,7 +55,7 @@ FROM (
                       barcodes.title ,
                       CONVERT(start_date.min_time, DATE) AS start_date,
                       nomenclature.name,
-                      wear_cards.personnel_number AS tab_num,
+                      employees.personnel_number AS tab_num,
                       clothing_service_claim.need_for_repair,
                       clothing_service_claim.defect,
                       clothing_service_states.state,
@@ -73,8 +73,8 @@ FROM (
                            ON nomenclature.id = postomat_document_items.nomenclature_id
                  JOIN barcodes
                            ON barcodes.id = postomat_document_items.barcode_id
-                 JOIN wear_cards
-                      ON wear_cards.id = clothing_service_claim.employee_id
+                 JOIN employees
+                      ON employees.id = clothing_service_claim.employee_id
                  JOIN start_date
                       ON start_date.claim_id = clothing_service_states.claim_id
          WHERE (clothing_service_claim.is_closed = 0 OR clothing_service_claim.is_closed = IF(@show_closed, 1, 0))

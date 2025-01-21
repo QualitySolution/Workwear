@@ -802,14 +802,14 @@ FROM
                 return_detail.sign_key,
                 return_detail.sign_timestamp,
                 stock_write_off_detail.stock_write_off_id AS writeoff_doc_id,
-                stock_income_detail.stock_income_id AS return_doc_id,
-                stock_income.doc_number AS return_number,
+                stock_return_items.stock_return_id AS return_doc_id,
+                stock_return.doc_number AS return_number,
                 stock_write_off.doc_number AS writeoff_number       
             FROM
                 operation_issued_by_employee AS return_detail
                 LEFT JOIN stock_write_off_detail on return_detail.id = stock_write_off_detail.employee_issue_operation_id
-                LEFT JOIN stock_income_detail on return_detail.id = stock_income_detail.employee_issue_operation_id
-                LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+                LEFT JOIN stock_return_items on return_detail.id = stock_return_items.employee_issue_operation_id
+                LEFT JOIN stock_return ON stock_return.id = stock_return_items.stock_return_id
                 LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id
             WHERE
                     return_detail.employee_id = @id AND return_detail.returned &gt; 0
@@ -823,15 +823,15 @@ ORDER BY
 
 UNION
 #Выдаваемые дозатором
-(SELECT  pt_wci.name,
+(SELECT  pt_eci.name,
          '',
-         DATE_FORMAT(wci.created, '%d.%m.%Y'),
+         DATE_FORMAT(eci.created, '%d.%m.%Y'),
          '',
          'Дозатор',
          '','','','',''
-FROM wear_cards_item as wci
-         LEFT JOIN protection_tools as pt_wci on wci.protection_tools_id = pt_wci.id
-WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
+FROM employee_cards_item as eci
+         LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>

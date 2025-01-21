@@ -15,13 +15,13 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>-- потребности
 SELECT
-    wear_cards.id as 'wear_card_id',
-    wear_cards_item.id as 'need_id',
+    employees.id as 'employee_id',
+    employee_cards_item.id as 'need_id',
     issue.issue_id,
-    wear_cards.personnel_number as 'personnel_number',
-    Concat_ws(' ', wear_cards.last_name,wear_cards.first_name, wear_cards.patronymic_name) as 'wear_card_name',
-    IF(@group_by_subdivision, wear_cards.object_id, NULL) as 'subdivision_id',
-    IF(@group_by_subdivision, objects.name, NULL)  as 'subdivision',
+    employees.personnel_number as 'personnel_number',
+    Concat_ws(' ', employees.last_name,employees.first_name, employees.patronymic_name) as 'employee_name',
+    IF(@group_by_subdivision, employees.subdivision_id, NULL) as 'subdivision_id',
+    IF(@group_by_subdivision, subdivisions.name, NULL)  as 'subdivision',
     posts.name as 'post',
     protection_tools.id as 'pr_id',
     protection_tools.name as 'protection_tool',
@@ -48,14 +48,14 @@ SELECT
                                                               ELSE ' месяцев'
                                                               END)
         END as 'wear_period'
-FROM wear_cards
-         LEFT JOIN wear_cards_item on wear_cards.id = wear_cards_item.wear_card_id
-         LEFT JOIN objects on objects.id = wear_cards.object_id
-         LEFT JOIN protection_tools on protection_tools.id = wear_cards_item.protection_tools_id
-         LEFT JOIN norms_item on norms_item.id = wear_cards_item.norm_item_id
-         LEFT JOIN posts on posts.id = wear_cards.post_id
+FROM employees
+         LEFT JOIN employee_cards_item on employees.id = employee_cards_item.employee_id
+         LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+         LEFT JOIN protection_tools on protection_tools.id = employee_cards_item.protection_tools_id
+         LEFT JOIN norms_item on norms_item.id = employee_cards_item.norm_item_id
+         LEFT JOIN posts on posts.id = employees.post_id
          LEFT JOIN (SELECT                                          -- операции выдачи
-                        wear_cards.id as 'wear_card_id',
+                        employees.id as 'employee_id',
                         o1.id as 'issue_id',
                         o1.protection_tools_id as 'pr_id',
                         nomenclature.name as 'name_SIZ_issue',
@@ -64,23 +64,23 @@ FROM wear_cards
                         o1.operation_time as 'operation_date_issue',
                         o1.issued as 'amount_issue',
                         '-' as 'wear_period_issue'
-                    FROM wear_cards
-                             LEFT JOIN operation_issued_by_employee o1 on o1.employee_id = wear_cards.id
+                    FROM employees
+                             LEFT JOIN operation_issued_by_employee o1 on o1.employee_id = employees.id
                              LEFT JOIN protection_tools on o1.protection_tools_id = protection_tools.id
                              LEFT JOIN nomenclature on o1.nomenclature_id = nomenclature.id
                         #LEFT JOIN warehouse on operation_warehouse.warehouse_expense_id = warehouse.id
-                             LEFT JOIN posts on posts.id = wear_cards.post_id
-                             LEFT JOIN objects on objects.id = wear_cards.object_id
+                             LEFT JOIN posts on posts.id = employees.post_id
+                             LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
                              LEFT JOIN operation_issued_by_employee o2 on o1.id = o2.issued_operation_id
                     WHERE o1.issued != 0 AND (o1.auto_writeoff_date &gt; (SELECT now()) OR o1.auto_writeoff_date IS NULL) AND
-                        wear_cards.dismiss_date IS NULL
-                      AND o1.issued_operation_id IS NULL) issue on issue.wear_card_id = wear_cards.id AND (issue.pr_id=protection_tools.id)
-WHERE wear_cards.dismiss_date IS NULL
-AND wear_cards_item.id is NOT null
+                        employees.dismiss_date IS NULL
+                      AND o1.issued_operation_id IS NULL) issue on issue.employee_id = employees.id AND (issue.pr_id=protection_tools.id)
+WHERE employees.dismiss_date IS NULL
+AND employee_cards_item.id is NOT null
   AND (NOT @exclude_in_vacation
     OR (NOT EXISTS(SELECT *
-                   FROM wear_cards_vacations as vac
-                   WHERE vac.wear_card_id = wear_cards_item.wear_card_id
+                   FROM employees_vacations as vac
+                   WHERE vac.employee_id = employee_cards_item.employee_id
                      AND (CURRENT_DATE BETWEEN vac.begin_date AND vac.end_date)
                   )
         )
@@ -88,17 +88,17 @@ AND wear_cards_item.id is NOT null
 AND ((-1 IN (@employee_groups_ids))
          OR (@without_groups AND (NOT EXISTS
               (SELECT * FROM employee_group_items as gi
-               WHERE gi.employee_id = wear_cards_item.wear_card_id)))
+               WHERE gi.employee_id = employee_cards_item.employee_id)))
          OR (EXISTS (SELECT * FROM employee_group_items as gi2
-                      WHERE gi2.employee_id = wear_cards_item.wear_card_id
+                      WHERE gi2.employee_id = employee_cards_item.employee_id
                         AND gi2.employee_group_id IN (@employee_groups_ids))) )
 AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
-AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND objects.id IS NULL) OR (objects.id IN (@subdivision_ids)))
+AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivision_ids)))
 GROUP BY subdivision_id,
-         wear_card_id,
+         employee_id,
          pr_id
 ORDER BY  subdivision,
-         wear_card_name,
+         employee_name,
          protection_tool;</CommandText>
         <QueryParameters>
           <QueryParameter Name="group_by_subdivision">
@@ -125,8 +125,8 @@ ORDER BY  subdivision,
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="wear_card_id">
-          <DataField>wear_card_id</DataField>
+        <Field Name="employee_id">
+          <DataField>employee_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
         <Field Name="need_id">
@@ -141,8 +141,8 @@ ORDER BY  subdivision,
           <DataField>personnel_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="wear_card_name">
-          <DataField>wear_card_name</DataField>
+        <Field Name="employee_name">
+          <DataField>employee_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="subdivision_id">
@@ -312,7 +312,7 @@ ORDER BY  subdivision,
         <Top>5.8pt</Top>
         <TableGroups>
           <TableGroup>
-            <Grouping Name="objectGroup">
+            <Grouping Name="subdivisionGroup">
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
@@ -433,7 +433,7 @@ ORDER BY  subdivision,
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression>={wear_card_id}</GroupExpression>
+                <GroupExpression>={employee_id}</GroupExpression>
               </GroupExpressions>
             </Grouping>
             <Header>
@@ -453,7 +453,7 @@ ORDER BY  subdivision,
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                           </Style>
-                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {wear_card_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") </Value>
+                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {employee_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") </Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>4</ColSpan>
@@ -464,7 +464,7 @@ ORDER BY  subdivision,
             </Header>
             <Sorting>
               <SortBy>
-                <SortExpression>={wear_card_name}</SortExpression>
+                <SortExpression>={employee_name}</SortExpression>
                 <Direction>Ascending</Direction>
               </SortBy>
             </Sorting>
