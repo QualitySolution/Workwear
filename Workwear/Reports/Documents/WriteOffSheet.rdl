@@ -19,9 +19,9 @@
     mu.name as unit,
     IF(items.employee_issue_operation_id is not null,
        CONCAT_WS(' ',
-                 wc.last_name,
-                 CONCAT(LEFT(wc.first_name, 1), '.'),
-                 CONCAT(LEFT(wc.patronymic_name, 1), '.')
+                 em.last_name,
+                 CONCAT(LEFT(em.first_name, 1), '.'),
+                 CONCAT(LEFT(em.patronymic_name, 1), '.')
        ),
        IF(items.warehouse_operation_id is not null,
           w.name,
