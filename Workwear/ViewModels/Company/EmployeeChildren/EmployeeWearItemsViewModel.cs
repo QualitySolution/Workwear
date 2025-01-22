@@ -123,14 +123,14 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			if(!IsConfigured)
 				return;
 			bool isMySession = changeEvents.First().Session == UoW.Session;
-			//Не чего не делаем если это наше собственное изменение.
+			//Ничего не делаем если это наше собственное изменение.
 			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
 				//так как заставить корректно сохранить сотрудника все равно не поучится.
 				//Не работал следующий сценарий: Открываем диалог сотрудника,
-				//строка добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму.
+				//строка, добавленная по норме есть в списке, открываем норму, удаляем одну из строк, сохраняем норму.
 				//После этого пытаемся сохранить сотрудника.
 				var page = navigation.FindPage(employeeViewModel);
 				navigation.ForceClosePage(page, CloseSource.Self);

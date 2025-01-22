@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamma.Utilities;
+using NHibernate;
 using QS.DomainModel.Entity;
 using QS.Utilities;
 using Workwear.Domain.Operations;
@@ -18,7 +18,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public DateTime Date => Operation.OperationTime;
 		public string NomenclatureName => Operation.Nomenclature?.Name ?? String.Empty;
 		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
-		public decimal? WearPercet => Operation.WearPercent;
+		public decimal? WearPercent => Operation.WearPercent;
 		public decimal? Cost => Operation.WarehouseOperation?.Cost;
 
 		public int AmountReceived => Operation.Issued;
@@ -30,7 +30,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public string CostText => Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
 
-		public string WearPercentText => WearPercet.HasValue ? WearPercet.Value.ToString("P0") : String.Empty;
+		public string WearPercentText => WearPercent.HasValue ? WearPercent.Value.ToString("P0") : String.Empty;
 
 		public IEnumerable<Barcode> Barcodes => Operation.BarcodeOperations.Select(bo => bo.Barcode);
 
@@ -76,7 +76,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public string BarcodesString {
 			get {
-				if(!Barcodes.Any())
+				if(!NHibernateUtil.IsInitialized(Barcodes) || !Barcodes.Any())
 					return String.Empty;
 				return Barcodes.DefaultIfEmpty().Select(bc => bc.Title).Aggregate((a,b) => a + "\n" + b);
 			}

@@ -101,7 +101,7 @@ SELECT
     stock.*,
     (SELECT SUM(operation_sub.amount)/DATEDIFF(NOW(), MIN(operation_sub.operation_time))
      FROM operation_warehouse operation_sub
-     WHERE operation_sub.nomenclature_id = stock.NomenclatureId
+     WHERE operation_sub.nomenclature_id = stock.Id
          AND operation_sub.size_id <=> stock.SizeId
          AND operation_sub.height_id <=> stock.HeightId
          AND operation_sub.owner_id <=> stock.OwnerId
@@ -110,7 +110,7 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption
-    FROM (SELECT nomenclature.id        AS NomenclatureId,
+    FROM (SELECT nomenclature.id        AS Id,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
                  nomenclature.sex       AS Sex,
@@ -198,20 +198,22 @@ SELECT
 
 	public class StockBalanceJournalNode
 	{
+		/// <summary>
+		/// NomenclatureId
+		/// </summary>
 		public int Id { get; set; }
-		public int NomenclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
 		public string SexText => Sex.GetEnumShortTitle();
 		public string UnitsName { get; set; }
 		public string SizeName { get; set; }
-		public int SizeId { get; set; }
+		public int? SizeId { get; set; }
 		public string HeightName { get; set; }
-		public int HeightId { get; set; }
+		public int? HeightId { get; set; }
 		public decimal WearPercent { get; set; }
 		public int Amount { get; set; }
-		public int OwnerId { get; set; }
+		public int? OwnerId { get; set; }
 		public string OwnerName { get; set; }
 		public decimal SaleCost { get; set; }
 		public double? DailyConsumption { get; set; }
@@ -239,8 +241,8 @@ SELECT
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
 			uow.GetById<Nomenclature>(Id), 
 			WearPercent, 
-			uow.GetById<Size>(SizeId), 
-			uow.GetById<Size>(HeightId),
-			uow.GetById<Owner>(OwnerId));
+			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
+			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
+			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
 	}
 }

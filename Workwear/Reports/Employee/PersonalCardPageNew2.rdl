@@ -764,7 +764,7 @@
         AS expense_quantity,
     IF(protection_tools.dermal_ppe,'Лично','')
         AS dermal, #'' (пустая строка) используется в проверках
-    IF(!@isEmptyIssue,
+    IF(!@isDocNumberInIssueSign,
     CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
     CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
         ) AS issue_sign,
@@ -780,7 +780,7 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    IF(!@isEmptyReturn, " ", 
+    IF(!@isDocNumberInReturnSign, " ", 
         GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
                   SEPARATOR '\n'))
         AS returned_sign,
@@ -836,11 +836,11 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
-          <QueryParameter Name="isEmptyReturn">
-            <Value>={?isEmptyReturn}</Value>
+          <QueryParameter Name="isDocNumberInReturnSign">
+            <Value>={?isDocNumberInReturnSign}</Value>
           </QueryParameter>
-          <QueryParameter Name="isEmptyIssue">
-            <Value>={?isEmptyIssue}</Value>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -901,14 +901,14 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="isEmptyReturn">
+    <ReportParameter Name="isDocNumberInReturnSign">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt />
     </ReportParameter>
-    <ReportParameter Name="isEmptyIssue">
+    <ReportParameter Name="isDocNumberInIssueSign">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

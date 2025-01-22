@@ -85,18 +85,18 @@ namespace Workwear.Tools
 		}
 
 		/// <summary>
-		/// При выборе галочки проставится номер документа выдачи вместо подписи получившего СИЗ 
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа выдачи.
 		/// </summary>
-		public virtual bool IsEmptyIssue {
-			get => Dynamic.IsEmptyIssue(typeof(bool)) ?? false;
-			set => Dynamic[nameof(IsEmptyIssue)] = value;
+		public virtual bool IsDocNumberInIssueSign {
+			get => Dynamic.IsDocNumberInIssueSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInIssueSign)] = value;
 		}
 		/// <summary>
-		/// При выборе галочки проставится номер документа возврата вместо подписи сдавшего СИЗ 
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа возврата\списания.
 		/// </summary>
-		public virtual bool IsEmptyReturn {
-			get => Dynamic.IsEmptyReturn(typeof(bool)) ?? false;
-			set => Dynamic[nameof(IsEmptyReturn)] = value;
+		public virtual bool IsDocNumberInReturnSign {
+			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
 		}
 		#endregion
 	}
