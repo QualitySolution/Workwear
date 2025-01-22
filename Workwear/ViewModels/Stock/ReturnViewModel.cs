@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
-using NHibernate.Dialect.Function;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -39,6 +43,7 @@ namespace Workwear.ViewModels.Stock {
 			EmployeeIssueModel issueModel, 
 			StockRepository stockRepository,
 			StockBalanceModel stockBalanceModel,
+			IInteractiveService interactiveService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
@@ -47,7 +52,7 @@ namespace Workwear.ViewModels.Stock {
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-
+			this.interactiveService = interactiveService;
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
@@ -112,6 +117,7 @@ namespace Workwear.ViewModels.Stock {
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
+		private IInteractiveService interactiveService;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -242,6 +248,37 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Ok");
 			return true;
 		}
+		public void PrintReturnDoc(ReturnDocReportEnum doc) 
+		{
+			
+			if (UoW.HasChanges && !interactiveService.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = doc == ReturnDocReportEnum.ReturnSheet ? $"Документ №{Entity.DocNumber ?? Entity.Id.ToString()}"
+					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+		public enum ReturnDocReportEnum
+		{
+			[Display(Name = "Лист возврата")]
+			[ReportIdentifier("Documents.ReturnSheet")]
+			ReturnSheet,
+			[Display(Name = "Ведомость возврата книжная")]
+			[ReportIdentifier("Statements.ReturnStatementVertical")]
+			ReturnStatementVertical,
+			[Display(Name = "Ведомость возврата альбомная")]
+			[ReportIdentifier("Statements.ReturnStatementHorizontal")]
+			ReturnStatementHorizontal
+		}
+		
 		#endregion
 		
 	}
