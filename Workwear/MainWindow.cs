@@ -97,6 +97,7 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
 		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -307,6 +308,7 @@ public partial class MainWindow : Gtk.Window {
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
 		toolbarMain.Sensitive = true;
+		menubar1.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
