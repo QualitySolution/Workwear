@@ -678,6 +678,20 @@ WHERE issuance_sheet.id = @id;</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox25" >
+        <Height>12pt</Height>
+        <Width>268.71pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>289.5pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>

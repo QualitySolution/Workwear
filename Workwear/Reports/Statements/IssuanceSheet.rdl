@@ -2028,6 +2028,22 @@
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox94" >
+        <Height>12pt</Height>
+        <Width>266.45pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>541.50pt</Left>
+        <Top>1.00pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>General</TextAlign>
+          <PaddingRight>0pt</PaddingRight>
+        </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
     </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
