@@ -127,18 +127,13 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) 
-			{
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				quitService.Quit();
-				return;
+			if (updateInfo?.Status == UpdateStatus.Error) {
+				logger.Warn(updateInfo.Value.Message);
 			}
 			
-			if (updateInfo?.Status == UpdateStatus.ExternalError)
-			{
+			if (updateInfo?.Status == UpdateStatus.ExternalError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) 
-				{
+				if (!EnterNewSN()) {
 					quitService.Quit();
 					return;
 				}
