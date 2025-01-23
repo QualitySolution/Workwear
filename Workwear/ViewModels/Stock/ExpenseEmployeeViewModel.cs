@@ -139,6 +139,8 @@ namespace Workwear.ViewModels.Stock {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание Нового документа выдачи");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+
+			Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			
 			//Переопределяем параметры валидации
 			Validations.Clear();
@@ -330,7 +332,8 @@ namespace Workwear.ViewModels.Stock {
 					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
+					{ "id",  Entity.IssuanceSheet.Id },
+					{"printPromo", Entity.PrintPromo}
 				}
 			};
 			
