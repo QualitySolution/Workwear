@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.Analytics {
 			Sex = sex;
 			futureIssues = issues;
 			Stocks = stocks
-				.Where(x => x.Position.Nomenclature.Sex == Sex)
+				.Where(x => x.Position.Nomenclature.Sex == Sex || x.Position.Nomenclature.Sex == ClothesSex.Universal)
 				.Where(x => SizeService.IsSuitable(Size, x.Position.WearSize))
 				.Where(x => SizeService.IsSuitable(Height, x.Position.Height))
 				.ToArray();
