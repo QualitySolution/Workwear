@@ -54,6 +54,7 @@ namespace Workwear.ViewModels.Stock {
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
 			featuresService = autofacScope.Resolve<FeaturesService>();
+			Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
@@ -261,7 +262,8 @@ namespace Workwear.ViewModels.Stock {
 					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"printPromo", Entity.PrintPromo}
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
