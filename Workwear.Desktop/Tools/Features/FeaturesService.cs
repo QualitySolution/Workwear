@@ -166,6 +166,8 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
+				case WorkwearFeature.PrintPromo:
+					return ProductEdition == 0 || ProductEdition == 1;
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.ClothingService:
 				case WorkwearFeature.StockForecasting:
@@ -201,6 +203,10 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
+		#region Однопользовательская
+		[Display(Name="Промоданные")]
+		PrintPromo,
+		#endregion
 		#region Профессиональная
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,

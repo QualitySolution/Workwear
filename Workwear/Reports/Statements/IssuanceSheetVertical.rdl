@@ -2078,6 +2078,9 @@
           <BorderWidth />
         </Style>
         <CanGrow>true</CanGrow>
+        <Visibility >
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
       </Textbox>
     </ReportItems>
   </PageFooter>
@@ -2286,6 +2289,13 @@ WHERE
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

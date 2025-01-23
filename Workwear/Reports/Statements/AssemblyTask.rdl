@@ -660,6 +660,7 @@ WHERE issuance_sheet.id = @id;</CommandText>
       </Table>
     </ReportItems>
     <Height>132.4pt</Height>
+    <Columns >1</Columns>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
@@ -691,6 +692,9 @@ WHERE issuance_sheet.id = @id;</CommandText>
           <BorderWidth />
         </Style>
         <CanGrow>true</CanGrow>
+        <Visibility >
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
       </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
@@ -708,6 +712,13 @@ WHERE issuance_sheet.id = @id;</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

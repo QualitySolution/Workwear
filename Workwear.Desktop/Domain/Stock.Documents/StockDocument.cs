@@ -53,6 +53,14 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref creationDate, value);
 		}
 
+		private bool printPromo;
+
+		[Display(Name = "Промоданные")]
+		public virtual bool PrintPromo {
+			get=> printPromo;
+			set => SetField(ref printPromo, value);
+		}
+
 		public static Type GetDocClass(StockDocumentType docType)
 		{
 			switch (docType)
