@@ -75,6 +75,14 @@ namespace Workwear.Domain.Statements
 			get => transferAgent;
 			set => SetField(ref transferAgent, value);
 		}
+
+		private bool printPromo;
+
+		[Display(Name = "Промоданные")]
+		public virtual bool PrintPromo {
+			get=> printPromo;
+			set=> SetField(ref printPromo, value);
+		}
 		
 		#region Подписи
 
