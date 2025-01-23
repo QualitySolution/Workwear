@@ -97,6 +97,8 @@ public partial class MainWindow : Gtk.Window {
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -127,18 +129,13 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) 
-			{
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				quitService.Quit();
-				return;
+			if (updateInfo?.Status == UpdateStatus.Error) {
+				logger.Warn(updateInfo.Value.Message);
 			}
 			
-			if (updateInfo?.Status == UpdateStatus.ExternalError)
-			{
+			if (updateInfo?.Status == UpdateStatus.ExternalError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) 
-				{
+				if (!EnterNewSN()) {
 					quitService.Quit();
 					return;
 				}
@@ -311,6 +308,8 @@ public partial class MainWindow : Gtk.Window {
 		
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
+		toolbarMain.Sensitive = true;
+		menubar1.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
@@ -434,7 +433,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		quitService.Quit();
+		if(quitService != null)
+			quitService.Quit();
+		else 
+			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
 	public override void Destroy() {

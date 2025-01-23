@@ -2280,6 +2280,10 @@ INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id
 INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Варежки', 'Mittens', 'Personal', 2, NULL, 8, NULL);
 INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'СИЗ', 'PPE', 'Personal', 1, NULL, NULL, NULL);
 INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Зимняя одежда', 'Wear', 'Personal', 1, NULL, 2, 1);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Противогазы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 10, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Респираторы', 'wear', 'PPE', 'Personal', 1, NULL, NULL, 11, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Носки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 12, NULL);
+INSERT INTO `item_types` (`id`, `name`, `wear_category`, `issue_type`, `units_id`, `comment`, `size_type_id`, `height_type_id`) VALUES (DEFAULT, 'Футболки', 'wear', 'Wear', 'Personal', 1, NULL, NULL, 13, NULL);
 
 COMMIT;
 

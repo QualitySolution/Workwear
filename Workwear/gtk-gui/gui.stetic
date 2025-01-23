@@ -8586,7 +8586,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="774 400">
+  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="780 506">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -8947,7 +8947,7 @@
                           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonIssue">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="Label" translatable="yes">Выдано</property>
+                            <property name="Label" translatable="yes">Для выданного</property>
                             <property name="DrawIndicator">True</property>
                             <property name="HasLabel">True</property>
                             <property name="UseUnderline">True</property>
@@ -8963,7 +8963,7 @@
                           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonReturn">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="Label" translatable="yes">Возвращено</property>
+                            <property name="Label" translatable="yes">Для возвращенного</property>
                             <property name="DrawIndicator">True</property>
                             <property name="HasLabel">True</property>
                             <property name="UseUnderline">True</property>
@@ -9096,7 +9096,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel7">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Ставить номер документа вместо подписи сотрудника:</property>
+                        <property name="LabelProp" translatable="yes">Печатать на оборотной стороне карточки сотрудника номер документа вместо подписи:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">9</property>
@@ -29922,15 +29922,6 @@
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
             <child>
               <placeholder />
             </child>
