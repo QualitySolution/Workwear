@@ -69,6 +69,7 @@ using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
@@ -559,10 +560,15 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e) {
-		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
-		page.ViewModel.ShowSummary = true;
-		page.ViewModel.Filter.ShowNegativeBalance = true;
-		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null,
+			configureViewModel: vm => vm.ShowSummary = true,
+			addingRegistrations: builder => {
+				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+					filter => {
+						filter.ShowNegativeBalance = true;
+						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+					});
+			});
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e) {

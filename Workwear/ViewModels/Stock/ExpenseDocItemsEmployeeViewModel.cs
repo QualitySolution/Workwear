@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -24,6 +25,7 @@ using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
 using Workwear.Domain.Regulations;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock
@@ -109,21 +111,31 @@ namespace Workwear.ViewModels.Stock
 		#region Действия View
 		public void AddItem()
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
 
 		public void ShowAllSize(ExpenseItem item)
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+							filter.ProtectionTools = item.ProtectionTools;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = item;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;

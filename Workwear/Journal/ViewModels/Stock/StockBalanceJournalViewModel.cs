@@ -29,6 +29,7 @@ namespace workwear.Journal.ViewModels.Stock
 	/// </summary>
 	public class StockBalanceJournalViewModel : JournalViewModelBase
 	{
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		public bool ShowSummary;
 		private readonly IConnectionFactory connectionFactory;
 		public readonly FeaturesService FeaturesService;
@@ -156,11 +157,14 @@ SELECT
 				if(onDate <= default(DateTime).AddYears(10))
 					onDate = DateTime.Today.AddDays(1);
 				
-				return connection.Query<StockBalanceJournalNode>(sql, new {
+				logger.Debug(sql);
+				var result = connection.Query<StockBalanceJournalNode>(sql, new {
 					report_date = onDate,
 					warehouse_id = Filter.Warehouse?.Id,
 					all_warehouse = Filter.Warehouse == null
 				}).ToList();
+				logger.Debug($"Получено {result.Count} складских позиций.");
+				return result;
 			}
 		}
 
