@@ -56,7 +56,6 @@ namespace Workwear.ViewModels.Stock
             EmployeeIssueModel issueModel,
             OrganizationRepository organizationRepository,
             EmployeeCard employee = null,
-            Subdivision subdivision = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 	        this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 	        FeaturesService = featuresService;
@@ -67,11 +66,10 @@ namespace Workwear.ViewModels.Stock
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             
-            if (UoW.IsNew) {
+            if (Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
             }
-            if (employee != null)
-                Employee = UoW.GetById<EmployeeCard>(employee.Id);
+            Employee = UoW.GetInSession(employee);
             Owners = UoW.GetAll<Owner>().ToList();
             CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
