@@ -66,6 +66,7 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 		}
 
 		#region Хелперы
@@ -82,11 +83,6 @@ namespace Workwear.ViewModels.Stock
 		public virtual string Sum {
 			get => sum;
 			set => SetField(ref sum, value);
-		}
-
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
 		}
 
 		private ExpenseItem selectedItem;
@@ -107,6 +103,7 @@ namespace Workwear.ViewModels.Stock
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
+		public bool CanAddItems => Entity.Warehouse != null && Entity.Employee != null;
 		#endregion
 		#region Действия View
 		public void AddItem()
@@ -294,6 +291,12 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region События
+		
+		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Warehouse) || e.PropertyName == nameof(Entity.Employee))
+				OnPropertyChanged(nameof(CanAddItems));
+		}
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
