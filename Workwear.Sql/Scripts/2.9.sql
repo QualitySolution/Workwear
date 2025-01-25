@@ -112,16 +112,18 @@ create table subdivisions
 	constraint fk_subdivisions_1
 		foreign key (warehouse_id) references warehouse (id)
 			on delete no action
-			on update no action ,
-	constraint fk_subdivisions_2
-		foreign key (parent_subdivision_id) references subdivisions (id)
-			on delete set null
-			on update no action
+			on update no action 
 )
 	collate = utf8mb4_general_ci;
 
 insert into subdivisions
 select * from objects;
+
+alter table subdivisions
+	add constraint fk_subdivisions_2
+		foreign key (parent_subdivision_id) references subdivisions (id)
+			on delete set null
+			on update no action;
 
 create index fk_subdivisions_1_idx
 	on subdivisions (warehouse_id);
