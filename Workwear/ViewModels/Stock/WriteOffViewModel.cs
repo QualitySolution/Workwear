@@ -20,6 +20,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -141,12 +142,18 @@ namespace Workwear.ViewModels.Stock
         #region Items
         public void AddFromStock() {
             var selectJournal = 
-                NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
-            if(CurWarehouse != null) {
-                selectJournal.ViewModel.Filter.Warehouse = CurWarehouse;
-            }
+                NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave,
+	                addingRegistrations: builder => {
+		                builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+			                filter => {
+				                if(CurWarehouse != null) {
+					                filter.Warehouse = CurWarehouse;
+					                filter.CanChooseAmount = true;
+				                }
+			                });
+	                });
+            
             selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
             selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
         }
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {

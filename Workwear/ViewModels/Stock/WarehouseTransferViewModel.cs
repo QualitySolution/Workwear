@@ -19,6 +19,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
@@ -137,11 +138,16 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		public void AddItems() {
-			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = Entity.WarehouseFrom;
+							filter.CanChooseAmount = true;
+						});
+				});
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.Filter.CanChooseAmount = true;
-			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
-			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 
