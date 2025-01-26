@@ -132,6 +132,17 @@ namespace Workwear.Domain.Operations
 			Height = item.Height;
 			Amount = item.Amount;
 		}
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
+			//Внимание здесь сравниваются даты без времени.
+			if(item.Document.Date.Date != OperationTime.Date)
+				OperationTime = item.Document.Date;
+
+			ReceiptWarehouse = item.Document.Warehouse;
+			Nomenclature = item.Nomenclature;
+			WearSize = item.WearSize;
+			Height = item.Height;
+			Amount = item.Amount;
+		}
 		public virtual void Update(IUnitOfWork uow, WriteoffItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)

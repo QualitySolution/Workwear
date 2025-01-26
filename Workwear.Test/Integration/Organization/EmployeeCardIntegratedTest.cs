@@ -79,14 +79,13 @@ namespace Workwear.Test.Integration.Organization
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2020, 07, 20),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2020, 07, 20)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 				
 				uow.Commit();
@@ -181,8 +180,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2020, 07, 20),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2020, 07, 20)
 				};
 
 				var incomeItem1 = income.AddItem(nomenclature, ask);
@@ -195,7 +193,7 @@ namespace Workwear.Test.Integration.Organization
 				incomeItem2.WearSize = size;
 				incomeItem2.Height = height;
 
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(2));
@@ -316,8 +314,7 @@ namespace Workwear.Test.Integration.Organization
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2020, 07, 20),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2020, 07, 20)
 				};
 
 				var incomeItem1 = income.AddItem(nomenclature, ask);
@@ -332,7 +329,7 @@ namespace Workwear.Test.Integration.Organization
 				incomeItem3.Amount = 3;
 				incomeItem3.WearSize = shoesSize;
 
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 				uow.Commit();
 				Assert.That(uow.GetAll<WarehouseOperation>().Count(), Is.EqualTo(3));

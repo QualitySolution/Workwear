@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Company
 	{
 		public EmployeeCardMap()
 		{
-			Table("wear_cards");
+			Table("employees");
 
 			if (MappingParams.UseIdsForTest)
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
@@ -36,36 +36,36 @@ namespace Workwear.HibernateMapping.Company
 			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType("BinaryBlob");
 			Map(x => x.Sex).Column("sex").CustomType<SexStringType>();
 
-			References(x => x.Subdivision).Column("object_id");
+			References(x => x.Subdivision).Column("subdivision_id");
 			References(x => x.Department).Column("department_id");
 			References(x => x.Post).Column("post_id");
 			References(x => x.Leader).Column("leader_id");
 			References(x => x.CreatedbyUser).Column("user_id");
 
 			HasMany(x => x.WorkwearItems)
-				.KeyColumn("wear_card_id").Not.KeyNullable()
+				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan().Inverse()
 				.LazyLoad();
 
-			HasMany(x => x.Sizes).Table("wear_cards_sizes")
+			HasMany(x => x.Sizes).Table("employees_sizes")
 				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan()
 				.BatchSize(100)
 				.Inverse()
 				.LazyLoad();
 
-			HasManyToMany(x => x.UsedNorms).Table("wear_cards_norms")
-				.ParentKeyColumn("wear_card_id")
+			HasManyToMany(x => x.UsedNorms).Table("employees_norms")
+				.ParentKeyColumn("employee_id")
 				.ChildKeyColumn("norm_id")
 				.LazyLoad();
 
-			HasMany(x => x.Vacations).Table("wear_cards_vacations")
-				.KeyColumn("wear_card_id").Not.KeyNullable()
+			HasMany(x => x.Vacations).Table("employees_vacations")
+				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan().Inverse()
 				.LazyLoad();
 			
-			HasMany(x => x.CostCenters).Table("wear_cards_cost_allocation")
-				.KeyColumn("wear_card_id").Not.KeyNullable()
+			HasMany(x => x.CostCenters).Table("employees_cost_allocation")
+				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan()
 				.Inverse()
 				.LazyLoad();

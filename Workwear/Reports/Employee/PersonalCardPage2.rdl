@@ -791,16 +791,16 @@
     IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
     (
     SELECT
-        stock_income_detail.certificate
+        stock_income_items.certificate
     FROM
-        stock_income_detail
-    LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+        stock_income_items
+    LEFT JOIN stock_income ON stock_income.id = stock_income_items.stock_income_id
     WHERE
         stock_income.date &lt;= operation_issued_by_employee.operation_time AND
-        operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND
-        operation_issued_by_employee.size_id &lt;=&gt; stock_income_detail.size_id AND
-        operation_issued_by_employee.height_id &lt;=&gt; stock_income_detail.height_id AND
-        stock_income_detail.certificate IS NOT NULL AND
+        operation_issued_by_employee.nomenclature_id = stock_income_items.nomenclature_id AND
+        operation_issued_by_employee.size_id &lt;=&gt; stock_income_items.size_id AND
+        operation_issued_by_employee.height_id &lt;=&gt; stock_income_items.height_id AND
+        stock_income_items.certificate IS NOT NULL AND
         operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
     ORDER BY
         stock_income.date

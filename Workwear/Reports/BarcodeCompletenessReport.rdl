@@ -19,9 +19,9 @@
        (tabel.new_barcodes / tabel.balance * 100)
            AS 'barcode_new_percent'
 FROM (SELECT
-          wear_cards.object_id
+          employees.subdivision_id
               AS subdivision_id,
-          objects.name
+          subdivisions.name
               AS subdivision_name,
           SUM(bar_op.emp_ballance)
               as balance,
@@ -29,13 +29,13 @@ FROM (SELECT
               AS 'barcodes',
           SUM(bar_op.num_new)
               AS 'new_barcodes'
-      FROM wear_cards_item
-               JOIN wear_cards ON wear_cards.id = wear_cards_item.wear_card_id
-               LEFT JOIN objects ON wear_cards.object_id = objects.id
-               JOIN protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+      FROM employee_cards_item
+               JOIN employees ON employees.id = employee_cards_item.employee_id
+               LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
+               JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-               JOIN norms_item ON wear_cards_item.norm_item_id = norms_item.id
+               JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
                LEFT JOIN
            (SELECT
                 op.employee_id as emp,
@@ -53,13 +53,13 @@ FROM (SELECT
                     CONVERT(op.operation_time, DATE) &lt;= CONVERT(@report_date, DATE)
               AND IFNULL(CONVERT(op.auto_writeoff_date, DATE) &gt; CONVERT(@report_date, DATE), TRUE)
             GROUP BY op.employee_id, op.protection_tools_id
-           ) as bar_op on bar_op.pt = wear_cards_item.protection_tools_id AND bar_op.emp = wear_cards_item.wear_card_id
+           ) as bar_op on bar_op.pt = employee_cards_item.protection_tools_id AND bar_op.emp = employee_cards_item.employee_id
       WHERE
-          wear_cards.dismiss_date IS NULL
+          employees.dismiss_date IS NULL
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
-        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND wear_cards.object_id IS NULL) OR (wear_cards.object_id IN (@subdivision_ids)))
+        AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
         AND (@exclude_in_vacation = false
-            OR wear_cards.id NOT IN (SELECT DISTINCT v.wear_card_id FROM wear_cards_vacations as v WHERE CONVERT(@report_date, DATE) BETWEEN v.begin_date AND v.end_date))
+            OR employees.id NOT IN (SELECT DISTINCT v.employee_id FROM employees_vacations as v WHERE CONVERT(@report_date, DATE) BETWEEN v.begin_date AND v.end_date))
       GROUP BY
           subdivision_id
       ORDER BY

@@ -39,7 +39,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		[Display (Name = "Наименование")]
 		public virtual string ItemName {
-			get => nomenclature?.Name ?? IssuedEmployeeOnOperation?.ProtectionTools.Name;
+			get => nomenclature?.Name; 
 		}
 		
 		[Display(Name = "Тип Роста")]
@@ -54,7 +54,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		[Display(Name = "Единица измерения")]
 		public virtual MeasurementUnits Units {
-			get => nomenclature?.Type.Units ?? IssuedEmployeeOnOperation?.ProtectionTools?.Type.Units;
+			get => nomenclature?.Type.Units; 
 		}
 		private int amount;
 		[Display (Name = "Количество")]
@@ -77,21 +77,6 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual string Certificate {
 			get => certificate;
 			set { SetField(ref certificate, value, () => Certificate); }
-		}
-		
-		private string commentReturn;
-		[Display(Name = "Отметка о возврате")]
-		public virtual string СommentReturn {
-			get => commentReturn;
-			set { SetField(ref commentReturn, value, () => СommentReturn); }
-		}
-
-		private EmployeeIssueOperation returnFromEmployeeOperation;
-		[Display(Name = "Операция возврата от сотрудника")]
-		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
-			get => returnFromEmployeeOperation;
-			set => SetField(ref returnFromEmployeeOperation, value);
 		}
 
 		private WarehouseOperation warehouseOperation = new WarehouseOperation();
@@ -141,17 +126,6 @@ namespace Workwear.Domain.Stock.Documents
 			set => WarehouseOperation.WearPercent = value;
 		}
 
-		private EmployeeIssueOperation issuedEmployeeOnOperation;
-		/// <summary>
-		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
-		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
-		/// </summary>
-		[Display(Name = "Операция выдачи сотруднику")]
-		public virtual EmployeeIssueOperation IssuedEmployeeOnOperation {
-			get => issuedEmployeeOnOperation ?? ReturnFromEmployeeOperation?.IssuedOperation;
-			set => SetField(ref issuedEmployeeOnOperation, value);
-		}
-
 		#endregion
 		protected IncomeItem () { }
 		public IncomeItem(Income income) {
@@ -159,20 +133,9 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Функции
-		public virtual void UpdateOperations(IUnitOfWork uow, IInteractiveQuestion askUser) {
+		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
-
-			if(Document.Operation == IncomeOperations.Return) {
-				if(ReturnFromEmployeeOperation == null)
-					ReturnFromEmployeeOperation = new EmployeeIssueOperation();
-				ReturnFromEmployeeOperation.Update(uow, askUser, this);
-				uow.Save(ReturnFromEmployeeOperation);
-			}
-			else if(ReturnFromEmployeeOperation != null) {
-				uow.Delete(ReturnFromEmployeeOperation);
-				ReturnFromEmployeeOperation = null;
-			}
 		}
 		#endregion
 	}

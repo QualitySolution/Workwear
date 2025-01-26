@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
@@ -397,22 +397,22 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-	objects.code, 
-    objects.name as obj,
-    (SELECT COUNT(DISTINCT stock_expense.wear_card_id) FROM stock_expense 
-     	LEFT JOIN wear_cards on stock_expense.wear_card_id = wear_cards.id
-     	WHERE (stock_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
-     	)as count_personal, 
+        <CommandText>SELECT
+    subdivisions.code,
+    subdivisions.name as obj,
+    (SELECT COUNT(DISTINCT stock_expense.employee_id) FROM stock_expense
+                                                               LEFT JOIN employees on stock_expense.employee_id = employees.id
+     WHERE (stock_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND employees.subdivision_id = subdivisions.id)
+    )as count_personal,
     (SELECT COUNT(DISTINCT stock_collective_expense_detail.employee_id) FROM stock_collective_expense
-     	JOIN stock_collective_expense_detail on stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
-     	LEFT JOIN wear_cards on stock_collective_expense_detail.employee_id = wear_cards.id
-     	WHERE (stock_collective_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_collective_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND wear_cards.object_id = objects.id)
-		)as count_collective
-	
-    FROM objects	
-    HAVING (count_personal &gt; 0 OR count_collective &gt; 0) 
-	ORDER BY obj ASC</CommandText>
+                                                                                 JOIN stock_collective_expense_detail on stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
+                                                                                 LEFT JOIN employees on stock_collective_expense_detail.employee_id = employees.id
+     WHERE (stock_collective_expense.date &gt;= CONVERT(@dateStart, DATE) AND stock_collective_expense.date &lt; DATE_ADD(CONVERT(@dateEnd, DATE),INTERVAL 1 DAY) AND employees.subdivision_id = subdivisions.id)
+    )as count_collective
+
+FROM subdivisions
+HAVING (count_personal &gt; 0 OR count_collective &gt; 0)
+ORDER BY obj ASC</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>

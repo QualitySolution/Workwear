@@ -52,7 +52,7 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
-				.AddDeleteDependence<Income>(x => x.EmployeeCard)
+				.AddDeleteDependence<Return>(x => x.EmployeeCard)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)
@@ -116,7 +116,7 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
 				.AddDeleteDependence<ExpenseItem>(x => x.EmployeeIssueOperation)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<IncomeItem>(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
@@ -128,6 +128,7 @@ namespace Workwear
 				.AddDeleteDependence<ExpenseItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<IncomeItem>(x => x.WarehouseOperation)
+				.AddDeleteDependence<ReturnItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<TransferItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.WarehouseOperation)
@@ -190,6 +191,8 @@ namespace Workwear
 				.AddClearDependence<ExpenseItem>(x => x.WearSize)
 				.AddClearDependence<IncomeItem>(x => x.Height)
 				.AddClearDependence<IncomeItem>(x => x.WearSize)
+				.AddClearDependence<ReturnItem>(x => x.Height)
+				.AddClearDependence<ReturnItem>(x => x.WearSize)
 				.AddClearDependence<IssuanceSheetItem>(x => x.Height)
 				.AddClearDependence<IssuanceSheetItem>(x => x.WearSize)
 				.AddClearDependence<WarehouseOperation>(x => x.Height)
@@ -231,6 +234,7 @@ namespace Workwear
 			
 			DeleteConfig.AddHibernateDeleteInfo<Warehouse>()
 				.AddDeleteDependence<Income>(x => x.Warehouse)
+				.AddDeleteDependence<Return>(x => x.Warehouse)
 				.AddDeleteDependence<Expense>(x => x.Warehouse)
 				.AddDeleteDependence<CollectiveExpense>(x => x.Warehouse)
 				.AddDeleteDependence<WriteoffItem>(x => x.Warehouse)
@@ -252,6 +256,7 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
+				.AddDeleteDependence<ReturnItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
@@ -289,6 +294,16 @@ namespace Workwear
 				.AddDeleteDependence<IncomeItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<IncomeItem> ()
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
+			
+			DeleteConfig.AddHibernateDeleteInfo<Return> ()
+				.AddDeleteDependence<ReturnItem>(x => x.Document);
+			
+			DeleteConfig.AddHibernateDeleteInfo<ReturnItem> ()
+				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
+
+			DeleteConfig.AddHibernateDeleteInfo<ReturnItem> ()
 				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
@@ -334,6 +349,7 @@ namespace Workwear
 				.AddClearDependence<EmployeeCard>(x => x.CreatedbyUser)
 				.AddClearDependence<Expense>(x => x.CreatedbyUser)
 				.AddClearDependence<Income>(x => x.CreatedbyUser)
+				.AddClearDependence<Return>(x => x.CreatedbyUser)
 				.AddClearDependence<Inspection>(x => x.CreatedbyUser)
 				.AddClearDependence<PostomatDocumentWithdraw>(x => x.User)
 				.AddClearDependence<StateOperation>(x => x.User)

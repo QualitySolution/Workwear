@@ -53,7 +53,8 @@ namespace workwear.Journal.ViewModels.Stock
 				new TypedParameter(typeof(JournalViewModelBase), this));
 
 			var dataLoader = new ThreadDataLoader<StockDocumentsJournalNode>(unitOfWorkFactory);
-			dataLoader.AddQuery(QueryIncomeDoc);
+			dataLoader.AddQuery(QueryIncome);
+			dataLoader.AddQuery(QueryReturn);
 			dataLoader.AddQuery(QueryExpenseDoc);
 			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
@@ -84,9 +85,9 @@ namespace workwear.Journal.ViewModels.Stock
 		private Warehouse warehouseExpenseAlias = null;
 		private IssuanceSheet issuanceSheetAlias = null;  
 
-		protected IQueryOver<Income> QueryIncomeDoc(IUnitOfWork uow)
+		protected IQueryOver<Income> QueryIncome(IUnitOfWork uow)
 		{
-			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.IncomeDoc)
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.Income)
 				return null;
 
 			Income incomeAlias = null;
@@ -103,28 +104,20 @@ namespace workwear.Journal.ViewModels.Stock
 				() => incomeAlias.Id,
 				() => incomeAlias.DocNumber,
 				() => incomeAlias.Comment,
-				() => authorAlias.Name,
-				() => employeeAlias.LastName,
-				() => employeeAlias.FirstName,
-				() => employeeAlias.Patronymic
+				() => authorAlias.Name
 			));
 
 			incomeQuery
-				.JoinQueryOver(() => incomeAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => incomeAlias.Date).WithAlias(() => resultAlias.Date)
-						.Select(() => incomeAlias.Operation).WithAlias(() => resultAlias.IncomeOperation)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
-						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
-						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
 						.Select(() => incomeAlias.Comment).WithAlias(() => resultAlias.Comment)
-			            .Select(() => StockDocumentType.IncomeDoc).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => StockDocumentType.Income).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
 					)
@@ -134,7 +127,56 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return incomeQuery;
 		}
+		
+		protected IQueryOver<Return> QueryReturn(IUnitOfWork uow)
+		{
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.Return)
+				return null;
 
+			Return returnAlias = null;
+
+			var returnQuery = uow.Session.QueryOver<Return>(() => returnAlias);
+			if(Filter.StartDate.HasValue)
+				returnQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				returnQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				returnQuery.Where(x => x.Warehouse == Filter.Warehouse);
+
+			returnQuery.Where(GetSearchCriterion(
+				() => returnAlias.Id,
+				() => returnAlias.DocNumber,
+				() => returnAlias.Comment,
+				() => authorAlias.Name,
+				() => employeeAlias.LastName,
+				() => employeeAlias.FirstName,
+				() => employeeAlias.Patronymic
+			));
+
+			returnQuery
+				.JoinQueryOver(() => returnAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+			.SelectList(list => list
+			   			.Select(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
+						.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+						.Select(() => returnAlias.Date).WithAlias(() => resultAlias.Date)
+						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
+						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
+						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+						.Select(() => returnAlias.Comment).WithAlias(() => resultAlias.Comment)
+			            .Select(() => StockDocumentType.Return).WithAlias(() => resultAlias.DocTypeEnum)
+			            .Select(() => returnAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+					)
+			.OrderBy(() => returnAlias.Date).Desc
+			.ThenBy(() => returnAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return returnQuery;
+		}
+		
 		protected IQueryOver<Expense> QueryExpenseDoc(IUnitOfWork uow)
 		{
 			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseEmployeeDoc)
@@ -487,15 +529,11 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string DateString => Date.ToShortDateString();
 
-		public IncomeOperations IncomeOperation { get; set; }
-
 		public string Description {
 			get {
 				string text = String.Empty;
 				if(!String.IsNullOrWhiteSpace(Employee))
 					text += $"Сотрудник: {Employee} ";
-				if(DocTypeEnum == StockDocumentType.IncomeDoc)
-					text += $"Операция: {IncomeOperation.GetEnumTitle()}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
 					text += $" TН №: {IncomeDocNubber} ";
 				return text;

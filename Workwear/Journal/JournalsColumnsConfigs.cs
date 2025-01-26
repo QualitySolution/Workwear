@@ -408,7 +408,7 @@ namespace workwear.Journal
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
-				() => FluentColumnsConfig<StockMovementsJournalNode>.Create()
+				(jvm) => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssueSheetNumberText}").SearchHighlight()
 					.AddColumn("Дата").ToolTipText(n => n.RowTooltip).AddTextRenderer(node => node.OperationTimeText)
 					.AddColumn("Документ").ToolTipText(n => n.RowTooltip).Resizable().AddTextRenderer(node => node.DocumentText)
@@ -416,7 +416,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").Resizable().AddTextRenderer(e => e.Employee).SearchHighlight()
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.WearSizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
-					.AddColumn("Собственник").Resizable().AddTextRenderer(node => node.OwnerName)
+					.AddColumn("Собственник").Resizable().Visible(jvm.FeaturesService.Available(WorkwearFeature.Owners)).AddTextRenderer(e => e.OwnerName)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
 					.Finish()
