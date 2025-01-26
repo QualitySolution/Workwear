@@ -217,16 +217,16 @@ LIMIT 20</CommandText>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>Select (SELECT sizes.name AS height
         FROM size_types
-                 LEFT JOIN wear_cards_sizes
-                           ON wear_cards_sizes.employee_id = @id AND wear_cards_sizes.size_type_id = size_types.id
-                 LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
+                 LEFT JOIN employees_sizes
+                           ON employees_sizes.employee_id = @id AND employees_sizes.size_type_id = size_types.id
+                 LEFT JOIN sizes ON employees_sizes.size_id = sizes.id
         WHERE size_types.use_in_employee = true
           and size_types.id = 1)          as height,
        (SELECT sizes.name AS wearSize
         FROM size_types
-                 LEFT JOIN wear_cards_sizes ON wear_cards_sizes.employee_id = @id
-            AND wear_cards_sizes.size_type_id = size_types.id
-                 LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
+                 LEFT JOIN employees_sizes ON employees_sizes.employee_id = @id
+            AND employees_sizes.size_type_id = size_types.id
+                 LEFT JOIN sizes ON employees_sizes.size_id = sizes.id
         WHERE size_types.use_in_employee = true
           and size_types.id = 2) as wearSize</CommandText>
         <QueryParameters>
