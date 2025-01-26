@@ -13,34 +13,34 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-n.name as nomenclature, 
-opissue.issued as amount, 
-CONCAT_WS(" ",
-    wc.last_name,
-    CONCAT(LEFT(wc.first_name, 1), "."),
-    CONCAT(LEFT(wc.patronymic_name, 1), ".")
-    )as FIO,
-IF(wc.card_number IS NOT NULL, wc.card_number, wc.id) as personnel_number,
-DATE_FORMAT(opissue.operation_time, "%d.%m.%Y") as issue_operation_time, 
-IF(opissue.ExpiryByNorm IS NOT NULL, DATE_FORMAT(opissue.ExpiryByNorm, "%d.%m.%Y"), "до износа") as writeoff_date_before, 
-CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after,
-CONCAT(TRUNCATE(opissue.wear_percent * 100, 0), "%") as percent_before,
-IF(opinspect.issued = 0,
-  IF(opissue.ExpiryByNorm IS NOT NULL AND opissue.ExpiryByNorm &gt; opinspect.operation_time,
-   	"списать",
-    "списать досрочно"),     
-  IF(opinspect.ExpiryByNorm IS NULL,
-   	"продлить до износа", 
-   	CONCAT("продлить до ",DATE_FORMAT(opinspect.ExpiryByNorm, "%d.%m.%Y"),"г.")))
-as writeoff_date_after,
-items.cause
+        <CommandText>SELECT
+    n.name as nomenclature,
+    opissue.issued as amount,
+    CONCAT_WS(" ",
+              em.last_name,
+              CONCAT(LEFT(em.first_name, 1), "."),
+              CONCAT(LEFT(em.patronymic_name, 1), ".")
+        )as FIO,
+    IF(em.card_number IS NOT NULL, em.card_number, em.id) as personnel_number,
+    DATE_FORMAT(opissue.operation_time, "%d.%m.%Y") as issue_operation_time,
+    IF(opissue.ExpiryByNorm IS NOT NULL, DATE_FORMAT(opissue.ExpiryByNorm, "%d.%m.%Y"), "до износа") as writeoff_date_before,
+    CONCAT(TRUNCATE(opinspect.wear_percent * 100, 0), "%") as percent_after,
+    CONCAT(TRUNCATE(opissue.wear_percent * 100, 0), "%") as percent_before,
+    IF(opinspect.issued = 0,
+       IF(opissue.ExpiryByNorm IS NOT NULL AND opissue.ExpiryByNorm &gt; opinspect.operation_time,
+          "списать",
+          "списать досрочно"),
+       IF(opinspect.ExpiryByNorm IS NULL,
+          "продлить до износа",
+          CONCAT("продлить до ",DATE_FORMAT(opinspect.ExpiryByNorm, "%d.%m.%Y"),"г.")))
+        as writeoff_date_after,
+    items.cause
 FROM stock_inspection_items as items
-LEFT JOIN stock_inspection as doc on doc.id = items.stock_inspection_id
-LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.operation_issue_id 
-LEFT JOIN operation_issued_by_employee as opinspect on opinspect.id = items.new_operation_issue_id
-LEFT JOIN wear_cards as wc on wc.id = opissue.employee_id
-LEFT JOIN nomenclature as n ON n.id = opissue.nomenclature_id
+         LEFT JOIN stock_inspection as doc on doc.id = items.stock_inspection_id
+         LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.operation_issue_id
+         LEFT JOIN operation_issued_by_employee as opinspect on opinspect.id = items.new_operation_issue_id
+         LEFT JOIN employees as em on em.id = opissue.employee_id
+         LEFT JOIN nomenclature as n ON n.id = opissue.nomenclature_id
 WHERE doc.id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
@@ -48,7 +48,7 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature">
           <DataField>nomenclature</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -92,7 +92,7 @@ WHERE doc.id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="Doc">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
 IFNULL(doc.doc_number, doc.id)
@@ -122,7 +122,7 @@ WHERE doc.id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="doc_number">
           <DataField>doc_number</DataField>
           <TypeName>System.String</TypeName>

@@ -10,7 +10,6 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
-using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -36,7 +35,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
-		private readonly ITdiCompatibilityNavigation tdiNavigation; //FIXME Временно пока не перепишем IncomeDocDlg на ViewModel
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 		private readonly IProgressBarDisplayable progress;
 
@@ -49,7 +47,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
-			ITdiCompatibilityNavigation tdiNavigation,
 			OpenStockDocumentsModel stockDocumentsModel,
 			FeaturesService featuresService,
 			IProgressBarDisplayable progress)
@@ -60,7 +57,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			this.tdiNavigation = tdiNavigation ?? throw new ArgumentNullException(nameof(tdiNavigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -179,9 +175,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
-		public void ReturnWear()
-		{
-			tdiNavigation.OpenTdiTab<IncomeDocDlg, EmployeeCard>(employeeViewModel, Entity);
+		public void ReturnWear() {
+			navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel,EntityUoWBuilder.ForCreate(),Entity);
 		}
 
 		public void OpenTimeLine(EmployeeCardItem item)

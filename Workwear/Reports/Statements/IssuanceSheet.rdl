@@ -1835,11 +1835,11 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    wear_cards.id as employee_id,
-    wear_cards.last_name,
-    wear_cards.first_name,
-    wear_cards.patronymic_name,
-    wear_cards.personnel_number,
+    employees.id as employee_id,
+    employees.last_name,
+    employees.first_name,
+    employees.patronymic_name,
+    employees.personnel_number,
     IFNULL(nomenclature.name, protection_tools.name) as nomenclature,
     sizeAlias.name as size,
     heightAlias.name as growth,
@@ -1852,17 +1852,17 @@
     issuance_sheet_items.lifetime
 FROM
     issuance_sheet_items
-    LEFT JOIN operation_issued_by_employee on operation_issued_by_employee.id = issuance_sheet_items.issued_operation_id
-    LEFT JOIN wear_cards ON wear_cards.id = issuance_sheet_items.employee_id
-    LEFT JOIN nomenclature ON issuance_sheet_items.nomenclature_id = nomenclature.id
-    LEFT JOIN protection_tools ON protection_tools.id = issuance_sheet_items.protection_tools_id
-    LEFT JOIN item_types ON (nomenclature.type_id = item_types.id OR protection_tools.item_types_id = item_types.id)
-    LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-    LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = issuance_sheet_items.size_id
-	LEFT JOIN sizes AS heightAlias ON heightAlias.id = issuance_sheet_items.height_id
+        LEFT JOIN operation_issued_by_employee on operation_issued_by_employee.id = issuance_sheet_items.issued_operation_id
+        LEFT JOIN employees ON employees.id = issuance_sheet_items.employee_id
+        LEFT JOIN nomenclature ON issuance_sheet_items.nomenclature_id = nomenclature.id
+        LEFT JOIN protection_tools ON protection_tools.id = issuance_sheet_items.protection_tools_id
+        LEFT JOIN item_types ON (nomenclature.type_id = item_types.id OR protection_tools.item_types_id = item_types.id)
+        LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+        LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = issuance_sheet_items.size_id
+        LEFT JOIN sizes AS heightAlias ON heightAlias.id = issuance_sheet_items.height_id
 WHERE
-    issuance_sheet_items.issuance_sheet_id = @id
-    ORDER BY wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name</CommandText>
+        issuance_sheet_items.issuance_sheet_id = @id
+ORDER BY employees.last_name, employees.first_name, employees.patronymic_name</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -1933,52 +1933,52 @@ WHERE
       </Fields>
     </DataSet>
     <DataSet Name="Sheet">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(issuance_sheet.doc_number, issuance_sheet.id)
-        as doc_number,
+                                                                                                       as doc_number,
     issuance_sheet.date,
     organizations.name as organization,
-    objects.name as subdivision,
-    objects.code as subdivision_code,
+    subdivisions.name as subdivision,
+    subdivisions.code as subdivision_code,
     CONCAT_WS('',
-            CONCAT(responsible_person.surname, ' '),
-            IF(responsible_person.name = '',
-                '',
-                CONCAT(LEFT(responsible_person.name, 1), '.')),
-            IF(responsible_person.patronymic = '',
-                '',
-                CONCAT(LEFT(responsible_person.patronymic, 1), '.'))) as responsible_person_name,
+              CONCAT(responsible_person.surname, ' '),
+              IF(responsible_person.name = '',
+                 '',
+                 CONCAT(LEFT(responsible_person.name, 1), '.')),
+              IF(responsible_person.patronymic = '',
+                 '',
+                 CONCAT(LEFT(responsible_person.patronymic, 1), '.'))) as responsible_person_name,
     responsible_person.position as responsible_person_post,
     CONCAT_WS('',
-            CONCAT(head_of_division.surname, ' '),
-            IF(head_of_division.name = '',
-                '',
-                CONCAT(LEFT(head_of_division.name, 1), '.')),
-            IF(head_of_division.patronymic = '',
-                '',
-                CONCAT(LEFT(head_of_division.patronymic, 1), '.'))) as head_of_division_name,
+              CONCAT(head_of_division.surname, ' '),
+              IF(head_of_division.name = '',
+                 '',
+                 CONCAT(LEFT(head_of_division.name, 1), '.')),
+              IF(head_of_division.patronymic = '',
+                 '',
+                 CONCAT(LEFT(head_of_division.patronymic, 1), '.'))) as head_of_division_name,
     head_of_division.position as head_of_division_post,
     CONCAT_WS(" ", transfer_agent.last_name,transfer_agent.first_name, transfer_agent.patronymic_name) as transfer_agent_fio,
     transfer_agent_post.name AS transfer_agent_post
 FROM
     issuance_sheet
-    LEFT JOIN organizations ON organizations.id = issuance_sheet.organization_id
-    LEFT JOIN objects ON objects.id = issuance_sheet.subdivision_id
-    LEFT JOIN leaders as responsible_person ON responsible_person.id = issuance_sheet.responsible_person_id
-    LEFT JOIN leaders as head_of_division ON head_of_division.id = issuance_sheet.head_of_division_person_id
-    LEFT JOIN wear_cards as transfer_agent on transfer_agent.id = issuance_sheet.transfer_agent_id
-    LEFT JOIN posts as transfer_agent_post on transfer_agent_post.id = transfer_agent.post_id
+        LEFT JOIN organizations ON organizations.id = issuance_sheet.organization_id
+        LEFT JOIN subdivisions ON subdivisions.id = issuance_sheet.subdivision_id
+        LEFT JOIN leaders as responsible_person ON responsible_person.id = issuance_sheet.responsible_person_id
+        LEFT JOIN leaders as head_of_division ON head_of_division.id = issuance_sheet.head_of_division_person_id
+        LEFT JOIN employees as transfer_agent on transfer_agent.id = issuance_sheet.transfer_agent_id
+        LEFT JOIN posts as transfer_agent_post on transfer_agent_post.id = transfer_agent.post_id
 WHERE
-    issuance_sheet.id = @id</CommandText>
+        issuance_sheet.id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_number">
           <DataField>doc_number</DataField>
           <TypeName>System.String</TypeName>

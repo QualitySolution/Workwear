@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Company
     {
         public EmployeeSizeMap()
         {
-            Table("wear_cards_sizes");
+            Table("employees_sizes");
             
             if (MappingParams.UseIdsForTest)
                 Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");

@@ -65,12 +65,11 @@ namespace Workwear.Test.Integration.Stock
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2017, 1, 1)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var expense = new Expense {

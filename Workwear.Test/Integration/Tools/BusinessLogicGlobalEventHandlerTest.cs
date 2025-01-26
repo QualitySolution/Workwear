@@ -316,12 +316,11 @@ namespace Workwear.Test.Integration.Tools
 				var income = new Income();
 				income.Warehouse = warehouse;
 				income.Date = new DateTime(2017, 1, 1);
-				income.Operation = IncomeOperations.Enter;
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 10;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var expense = new Expense();

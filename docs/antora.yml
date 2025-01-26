@@ -1,6 +1,6 @@
 name: workwear
-title: 'QS: Aros аутсорсинг'
-version: 2.8
+title: 'QS: Спецодежда'
+version: 2.9
 #prerelease: Бета
 start_page: introduction.adoc
 nav:

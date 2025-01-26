@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -23,12 +23,14 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
 	public class StockMovmentsJournalViewModel : JournalViewModelBase
 	{
 		private readonly OpenStockDocumentsModel openDocuments;
+		public readonly FeaturesService FeaturesService;
 
 		public StockMovementsFilterViewModel Filter { get; private set; }
 
@@ -37,8 +39,10 @@ namespace workwear.Journal.ViewModels.Stock
 			IInteractiveService interactiveService, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope, 
+			FeaturesService featuresService,
 			OpenStockDocumentsModel openDocuments) : base(unitOfWorkFactory, interactiveService, navigation)
 		{
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.openDocuments = openDocuments ?? throw new ArgumentNullException(nameof(openDocuments));
 			JournalFilter = Filter = autofacScope.Resolve<StockMovementsFilterViewModel>
 				(new TypedParameter(typeof(JournalViewModelBase), this));
@@ -69,6 +73,8 @@ namespace workwear.Journal.ViewModels.Stock
 			
 			ExpenseItem expenseItemAlias = null;
 			IncomeItem incomeItemAlias = null;
+			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
 			TransferItem transferItemAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
 			WriteoffItem writeoffItemAlias = null;
@@ -186,6 +192,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => collectiveExpenseItemAlias.Document, () => collectiveExpenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeItemAlias.Document, () => incomeAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.Document, () => returnAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => transferItemAlias, () => transferItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => transferItemAlias.Document, () => transferAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -219,25 +227,25 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					//Ссылки
 					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
-					.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
+					.SelectGroup(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectGroup(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
-					.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
-                    					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.SelectGroup(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.IncomeDocNumber)
-					.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.IncomeDocNumber)
+					.SelectGroup(() => returnItemAlias.Document.Id).WithAlias(() => resultAlias.ReturnId)
+					.SelectGroup(() => returnAlias.DocNumber).WithAlias(() => resultAlias.ReturnDocNumber)
 					.SelectGroup(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.SelectGroup(() => transferAlias.DocNumber).WithAlias(() => resultAlias.TransferDocNumber)
-					.Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.TransferDocNumber)
 					.SelectGroup(() => writeoffItemAlias.Document.Id).WithAlias(() => resultAlias.WriteoffId)
 					.SelectGroup(() => writeoffAlias.DocNumber).WithAlias(() => resultAlias.WriteoffDocNumber)
 					.SelectGroup(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
 					.SelectGroup(() => completionResultAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromResultDocNumber)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 					.SelectGroup(() => completionSourceAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromSourceDocNumber)
+					
 					.SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
 					.SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
@@ -270,6 +278,9 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => incomeItemAlias.Id).WithAlias(() => resultAlias.IncomeItemId)
 					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
 					.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.IncomeDocNumber)
+					.Select(() => returnItemAlias.Id).WithAlias(() => resultAlias.ReturnItemId)
+					.Select(() => returnItemAlias.Document.Id).WithAlias(() => resultAlias.ReturnId)
+					.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.ReturnDocNumber)
 					.Select(() => transferItemAlias.Id).WithAlias(() => resultAlias.TransferItemId)
 					.Select(() => transferItemAlias.Document.Id).WithAlias(() => resultAlias.TransferId)
 					.Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.TransferDocNumber)
@@ -280,11 +291,11 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 					.Select(() => completionResultItemAlias.Id).WithAlias(() => resultAlias.CompletionResultItemId)
+					.Select(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
+					.Select(() => completionResultAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromResultDocNumber)
 					.Select(() => completionSourceItemAlias.Id).WithAlias(() => resultAlias.CompletionSourceItemId)
 					.Select(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 					.Select(() => completionSourceAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromSourceDocNumber)
-					.Select(() => completionResultItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromResultId)
-					.Select(() => completionResultAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromResultDocNumber)
 				);
 			}
 

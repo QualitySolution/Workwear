@@ -24,6 +24,7 @@ using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Project.Versioning;
+using QS.Project.Versioning.ViewModels;
 using QS.Project.Views;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
@@ -69,6 +70,7 @@ using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
@@ -97,6 +99,7 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
 		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -127,18 +130,13 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) 
-			{
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				quitService.Quit();
-				return;
+			if (updateInfo?.Status == UpdateStatus.Error) {
+				logger.Warn(updateInfo.Value.Message);
 			}
 			
-			if (updateInfo?.Status == UpdateStatus.ExternalError)
-			{
+			if (updateInfo?.Status == UpdateStatus.ExternalError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) 
-				{
+				if (!EnterNewSN()) {
 					quitService.Quit();
 					return;
 				}
@@ -312,6 +310,7 @@ public partial class MainWindow : Gtk.Window {
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
 		toolbarMain.Sensitive = true;
+		menubar1.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
@@ -526,7 +525,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RunChangeLogDlg");
-		QSMain.RunChangeLogDlg(this);
+		NavigationManager.OpenViewModel<ChangeLogViewModel>(null);
 	}
 
 	protected void OnActionUpdateActivated(object sender, EventArgs e) {
@@ -562,10 +561,15 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e) {
-		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
-		page.ViewModel.ShowSummary = true;
-		page.ViewModel.Filter.ShowNegativeBalance = true;
-		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null,
+			configureViewModel: vm => vm.ShowSummary = true,
+			addingRegistrations: builder => {
+				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+					filter => {
+						filter.ShowNegativeBalance = true;
+						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+					});
+			});
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e) {

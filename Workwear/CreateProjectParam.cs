@@ -129,8 +129,6 @@ namespace workwear
 			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
-			//Склад
-			OrmMain.AddObjectDescription<Income>().Dialog<IncomeDocDlg>();
 
 			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
@@ -284,12 +282,6 @@ namespace workwear
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
-			#endregion
-
-			#region Старые диалоги
-			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(IncomeDocDlg)))
-				.Where(t => t.IsAssignableTo<ITdiTab>() && t.Name.EndsWith("Dlg"))
-				.AsSelf();
 			#endregion
 
 			#region Старые общие диалоги

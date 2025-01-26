@@ -19,9 +19,9 @@
     mu.name as unit,
     IF(items.employee_issue_operation_id is not null,
        CONCAT_WS(' ',
-                 wc.last_name,
-                 CONCAT(LEFT(wc.first_name, 1), '.'),
-                 CONCAT(LEFT(wc.patronymic_name, 1), '.')
+                 em.last_name,
+                 CONCAT(LEFT(em.first_name, 1), '.'),
+                 CONCAT(LEFT(em.patronymic_name, 1), '.')
        ),
        IF(items.warehouse_operation_id is not null,
           w.name,
@@ -35,7 +35,7 @@ FROM stock_write_off_detail as items
          LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
          LEFT JOIN protection_tools as pt ON pt.id = opissue.protection_tools_id
          LEFT JOIN operation_warehouse as opwarh on opwarh.id = items.warehouse_operation_id
-         LEFT JOIN wear_cards as wc on wc.id = opissue.employee_id
+         LEFT JOIN employees as em on em.id = opissue.employee_id
          LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
          LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
          LEFT JOIN item_types as it on(IF(n.type_id IS NULL, pt.item_types_id=it.id,n.type_id=it.id))

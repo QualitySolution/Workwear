@@ -70,7 +70,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		private DateTime? reportDate = DateTime.Today;
 		public virtual DateTime? ReportDate {
 			get => reportDate;
-			set => SetField(ref reportDate, value);
+			set {
+				if(SetField(ref reportDate, value))
+					OnPropertyChanged(nameof(SensitiveLoad));
+			}
 		}
 		private bool showSumm;
 		public virtual bool ShowSumm {
@@ -88,6 +91,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => warehouses;
 			set => SetField(ref warehouses, value); 
 		}
+		public bool SensitiveLoad=>ReportDate!=null;
 	}
 	
 	public enum StockAllWearReportType {
