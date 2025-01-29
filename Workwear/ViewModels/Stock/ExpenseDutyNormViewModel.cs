@@ -22,6 +22,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
@@ -33,9 +34,10 @@ namespace Workwear.ViewModels.Stock {
 		private ILifetimeScope autofacScope;
 		private readonly IInteractiveService interactive;
 		private readonly StockRepository stockRepository;
+		private readonly BaseParameters baseParameters;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public SizeService SizeService { get; }
-//Возможно стоит хранить в объекте ,собирать в конструкторе
+//711 Возможно стоит хранить в объекте ,собирать в конструкторе
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 
 		public ExpenseDutyNormViewModel(
@@ -45,15 +47,18 @@ namespace Workwear.ViewModels.Stock {
 			INavigationManager navigation,
 			IInteractiveService interactive, 
 			IUserService userService,
+			BaseParameters baseParameters,
+			StockBalanceModel stockBalanceModel,
 			SizeService sizeService, 
 			FeaturesService featutesService,
 			StockRepository stockRepository,
 			DutyNorm dutyNorm = null,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
-		{			
+			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
@@ -63,8 +68,11 @@ namespace Workwear.ViewModels.Stock {
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				if(dutyNorm != null)
-					Entity.DutyNorm = dutyNorm;
+				if(dutyNorm != null) {
+					DutyNorm = dutyNorm;
+					StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
+					FillUnderreceivedp();
+				}
 			}
 			
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
@@ -81,17 +89,20 @@ namespace Workwear.ViewModels.Stock {
 				.Finish();
 		}
 
-		#region EntityViewModels
+		#region ViewModels
 		public readonly EntityEntryViewModel<DutyNorm> DutyNormEntryViewModel;
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> ResponsibleEmployeeCardEntryViewModel;
+
+		public StockBalanceModel StockBalanceModel { get; set; }
+
 		#endregion
 		
 		public void AddItems() {
-			if(Entity.Warehouse is null || Entity.DutyNorm is null) {
+			if(Entity.Warehouse is null || DutyNorm is null) {
 				interactive.ShowMessage(ImportanceLevel.Warning,
 					(Entity.Warehouse is null ? "Склад должен быть указан.\n" : "" ) + 
-					(Entity.DutyNorm is null ? "Дежурная норма должна быть указана.\n": ""));
+					(DutyNorm is null ? "Дежурная норма должна быть указана.\n": ""));
 				return;
 			}
 				
@@ -121,10 +132,33 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref selectedItem, value);
 		}
 		
+		#region Работа со складом
+		private void FillUnderreceivedp()
+		{
+			Entity.Items.Clear();
+			if(Entity.DutyNorm == null)
+				return;
+			foreach(var item in Entity.DutyNorm.Items)
+				Entity.AddItem(item.BestChoiceInStock.First().Position,item.CalculateRequiredIssue(baseParameters, Entity.Date));
+		}
 
+		
+		#endregion
 
 		#region Свойства для view
 		public bool CanDelSelectedItem => SelectedItem != null;
+
+		public virtual DutyNorm DutyNorm {
+			get => Entity.DutyNorm;
+			set {
+				Entity.DutyNorm = value;
+				StockBalanceModel.AddNomenclatures(value.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
+				foreach(var item in value.Items) {
+					item.StockBalanceModel = StockBalanceModel;
+				}
+				OnPropertyChanged();
+			}
+		}
 		#endregion
 
 		#region Валидация и сохранение

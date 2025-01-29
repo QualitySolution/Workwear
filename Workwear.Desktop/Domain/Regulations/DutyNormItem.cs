@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
@@ -6,6 +7,7 @@ using QS.DomainModel.UoW;
 using QS.Utilities;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
+using Workwear.Models.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Domain.Regulations {
@@ -112,6 +114,33 @@ namespace Workwear.Domain.Regulations {
 			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
 		}
 		#endregion
+
+		#region Работа со складом
+		public virtual StockBalanceModel StockBalanceModel { get; set; }
+		
+		/// <summary>
+		/// Получаем значения остатков на складе для подходящих позиций.
+		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
+		/// </summary>
+		public virtual IEnumerable<StockBalance> InStock {
+			get { 				
+				if(StockBalanceModel == null)
+					throw new InvalidOperationException("StockBalanceModel должна быть заполнена!");
+				return StockBalanceModel?.Balances.Where(x => 
+					ProtectionTools.Nomenclatures.Select(n => n.Id)
+						.Any( id => id == x.Position.Nomenclature.Id));
+			}
+		}
+		public virtual IEnumerable<StockBalance> BestChoiceInStock {
+			get {
+				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
+//711	bestChoice?.Sort((a,b) => (a.Amount > b.Amount) ? a : b);
+				return bestChoice;
+			}
+		}
+		
+		#endregion
+		
 		#region Граф
 
 		public virtual IssueGraph<DutyNormIssueOperation> Graph { get; set; }
@@ -133,7 +162,7 @@ namespace Workwear.Domain.Regulations {
 		/// </summary>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
 			if(Graph == null) {
-//Пока по простому
+//711 Пока по простому
 				if(Id == 0)
 					Graph = new IssueGraph<DutyNormIssueOperation>();
 				else {
@@ -156,7 +185,7 @@ namespace Workwear.Domain.Regulations {
 						break;
 				}
 			}
-//Дата создания, если нужна. Пока в базе дата для строки не хранится	
+//711 Дата создания, если нужна. Пока в базе дата для строки не хранится	
 			if(wantIssue == default(DateTime)) 
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
 			nextIssue = wantIssue;

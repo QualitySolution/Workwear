@@ -73,7 +73,7 @@ namespace Workwear.ViewModels.Regulations {
 			if(!Save())
 				return;
 
-			NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
+			var vm = NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 		
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {

@@ -80,7 +80,7 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref height, value);
 		}
 		#endregion
-//не думаю, что нужно хранить в базе, это поле хранися в операции
+//711 не думаю, что нужно хранить в базе, это поле хранися в операции
 		private DutyNormItem dutyNormItem;
 		[Display(Name = "Строка дежурной нормы")]
 		[IgnoreHistoryTrace]
