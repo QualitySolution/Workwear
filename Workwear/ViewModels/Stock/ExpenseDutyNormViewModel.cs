@@ -74,6 +74,8 @@ namespace Workwear.ViewModels.Stock {
 					FillUnderreceivedp();
 				}
 			}
+			else 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -147,7 +149,24 @@ namespace Workwear.ViewModels.Stock {
 
 		#region Свойства для view
 		public bool CanDelSelectedItem => SelectedItem != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
 
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
+		}
+		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;
 			set {
@@ -172,6 +191,11 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+				Entity.DocNumber = Entity.DocNumberText;	
 
 			foreach(var item in Entity.Items) 
 				if(item.ProtectionTools != null) 

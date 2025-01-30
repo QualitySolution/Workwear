@@ -251,6 +251,7 @@ namespace workwear.Journal.ViewModels.Stock
 			expenseDutyNormQuery.Where(GetSearchCriterion(
 				() => expenseDutyNormAlias.Id,
 				() => authorAlias.Name,
+				() => expenseDutyNormAlias.DocNumber,
 				() => dutyNormAlias.Name
 			));
 			
@@ -260,6 +261,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => expenseDutyNormAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList(list => list
 					.Select(() => expenseDutyNormAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 					.Select(() => expenseDutyNormAlias.Date).WithAlias(() => resultAlias.Date)
 					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)

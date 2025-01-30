@@ -16,7 +16,12 @@ namespace Workwear.Views.Stock {
 		}
 
 		private void ConfigureDlg() {
-			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new IdToStringConverter()).InitializeFromSource();
+			entryId.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocNumberText, w => w.Text)
+				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
+				.InitializeFromSource();
+			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
+			
 			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();

@@ -65,6 +65,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			Expense expenseAlias = null;
 			CollectiveExpense collectiveExpenseAlias = null;
+			ExpenseDutyNorm expenseDutyNormAlias = null;
 			Income incomeAlias = null;
 			Transfer transferAlias = null;
 			Writeoff writeoffAlias = null;
@@ -72,6 +73,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Completion completionSourceAlias = null;
 			
 			ExpenseItem expenseItemAlias = null;
+			ExpenseDutyNormItem expenseDutyNormItemAlias = null;
 			IncomeItem incomeItemAlias = null;
 			Return returnAlias = null;
 			ReturnItem returnItemAlias = null;
@@ -188,6 +190,8 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => warehouseOperationAlias.Owner,  () => ownerAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => expenseDutyNormItemAlias, () => expenseDutyNormItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormItemAlias.Document, () => expenseDutyNormAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => collectiveExpenseItemAlias.Document, () => collectiveExpenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
@@ -229,8 +233,10 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
 					.SelectCount(() => employeeCardAlias.Id).WithAlias(() => resultAlias.NumberOfCollapsedRows)
 					//Ссылки
-					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
-					.SelectGroup(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
+					.SelectGroup(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenseId)
+					.SelectGroup(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenseDocNumber)
+					.SelectGroup(() => expenseDutyNormItemAlias.Document.Id).WithAlias(() => resultAlias.ExpenseDutyNormId)
+					.SelectGroup(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.ExpenseDutyNormDocNumber)
 					.SelectGroup(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.SelectGroup(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
 					.SelectGroup(() => incomeItemAlias.Document.Id).WithAlias(() => resultAlias.IncomeId)
@@ -267,9 +273,12 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => ownerAlias.Name).WithAlias(() => resultAlias.OwnerName)
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 					//Ссылки
-					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenceItemId)
-					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenceId)
-					.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenceDocNumber)
+					.Select(() => expenseItemAlias.Id).WithAlias(() => resultAlias.ExpenseItemId)
+					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => resultAlias.ExpenseId)
+					.Select(() => expenseAlias.DocNumber).WithAlias(() => resultAlias.ExpenseDocNumber)
+					.Select(() => expenseDutyNormItemAlias.Id).WithAlias(() => resultAlias.ExpenseDutyNormItemId)
+					.Select(() => expenseDutyNormItemAlias.Document.Id).WithAlias(() => resultAlias.ExpenseDutyNormId)
+					.Select(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.ExpenseDutyNormDocNumber)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => resultAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => resultAlias.CollectiveExpenseId)
 					.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => resultAlias.CollectiveExpenseDocNumber)
