@@ -11,12 +11,18 @@ namespace Workwear.Views.Regulations {
 	public partial class DutyNormView : EntityDialogViewBase<DutyNormViewModel, DutyNorm> {
 		public DutyNormView(DutyNormViewModel viewModel) : base(viewModel) {
 			this.Build();
+			ConfigureBase();
 			ConfigureMainInfo();
 			ConfigureDialog();
 			ConfigureHistoty();
 			tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 			CommonButtonSubscription();
 		}
+		//Общее
+		private void ConfigureBase() {
+			enumPrint.ItemsEnum = typeof(DutyNormSheetPrint);
+		}
+
 		//Вкладка Основное
 		private void ConfigureMainInfo() { 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter())
@@ -113,6 +119,10 @@ namespace Workwear.Views.Regulations {
 
 		protected void OnButtonGiveClicked(object sender, EventArgs e) {
 			ViewModel.AddExpense();
+		}
+
+		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
+			ViewModel.Print((DutyNormSheetPrint)e.ItemEnum);
 		}
 	}
 }

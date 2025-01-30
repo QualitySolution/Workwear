@@ -814,7 +814,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountEmployeeGetWear.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -875,6 +875,12 @@
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\DutyNorms\DutyNormPage1.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using QS.Report;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
@@ -137,5 +138,15 @@ namespace Workwear.Domain.Regulations {
 		}
 		#endregion
 		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
+	}
+	
+	public enum DutyNormSheetPrint
+	{
+		[Display(Name = "Лицевая сторона")]
+		[ReportIdentifier("DutyNorms.DutyNormPage1")]
+		DutyNormPage1,
+		[Display(Name = "Обратная сторона")]
+		[ReportIdentifier("DutyNorms.DutyNormPage2")]
+		DutyNormPage2,
 	}
 }

@@ -1,8 +1,12 @@
 using System.Collections.Generic;
+using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Operations;
@@ -13,14 +17,16 @@ using Workwear.ViewModels.Stock;
 namespace Workwear.ViewModels.Regulations {
 	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>{
 		
+		private IInteractiveService interactive;
 		public DutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			IInteractiveService interactive,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null) 
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider){
-
+			this.interactive = interactive;
 			currentTab = Entity.Id == 0 ? 0 : 1;
 //711			
 //Пока обновление при открытии нормы			
@@ -86,6 +92,26 @@ namespace Workwear.ViewModels.Regulations {
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(dutyNormItem.ProtectionTools.Id));
 		}
 		#endregion
+		
+		public void Print(DutyNormSheetPrint typeSheet) {
+			if(UoW.HasChanges && !interactive.Question("Перед печатью изменения будут сохранены. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = (typeSheet == DutyNormSheetPrint.DutyNormPage1 ? $"Лицевая сторона карточки дежурной нормы" :
+						typeSheet == DutyNormSheetPrint.DutyNormPage2 ? $"Оборотная сторона карточки дежурной нормы" :
+						"Дежурная норма")
+						+ $"  №{Entity.Id}",
+				Identifier = typeSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
 //711		
 		/*public override bool Save() {
 			if (SelectedStartMonth != null)
