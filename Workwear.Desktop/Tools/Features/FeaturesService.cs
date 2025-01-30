@@ -38,13 +38,27 @@ namespace Workwear.Tools.Features
 		
 		public DateTime? ExpiryDate { get; private set; }
 
-		public ushort Employees { get; private set; }
+		private ushort employees_by_serial;
+		public ushort Employees {
+			get {
+				if (employees_by_serial != 0)
+					return employees_by_serial;
+				if(ProductEdition == 1)
+					return 50;
+				if(ProductEdition == 2)
+					return 500;
+				return 0;
+			}
+		}
+
 		public PaidFeatures PaidFeatures { get; private set; }
 
 		public string CurrentEditionName => SupportEditions.First(x => x.Number == ProductEdition).Name;
 
 		private bool failCloudConnection;
 		private HashSet<string> availableCloudFeatures;
+		
+
 		private HashSet<string> AvailableCloudFeatures {
 			get {
 				if(availableCloudFeatures == null) {
@@ -114,7 +128,7 @@ namespace Workwear.Tools.Features
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
-					Employees = serialNumberEncoder.Employees;
+					employees_by_serial = serialNumberEncoder.Employees;
 					PaidFeatures = (PaidFeatures)serialNumberEncoder.PaidFeaturesFags;
 				}
 			}
