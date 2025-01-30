@@ -195,11 +195,14 @@ namespace Workwear.ViewModels.Stock {
 			if(AutoDocNumber)
 				Entity.DocNumber = null;
 			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
-				Entity.DocNumber = Entity.DocNumberText;	
+				Entity.DocNumber = Entity.DocNumberText;
 
 			foreach(var item in Entity.Items) 
-				if(item.ProtectionTools != null) 
+				if(item.ProtectionTools != null)
 					item.DutyNormItem = Entity.DutyNorm.Items.First(x => x.ProtectionTools == item.ProtectionTools);
+			
+			foreach(var item in Entity.Items.Where(x => x.Amount <= 0).ToList()) 
+				DeleteItem(item);
 
 			Entity.UpdateOperations(UoW, interactive);
 			UoW.Session.SaveOrUpdate(Entity);

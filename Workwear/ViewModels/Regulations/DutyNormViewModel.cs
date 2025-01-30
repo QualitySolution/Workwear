@@ -74,8 +74,14 @@ namespace Workwear.ViewModels.Regulations {
 				return;
 
 			var vm = NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
+//711 Не работает			
+			vm.PageClosed += UpdateDutyNorm; 
 		}
-		
+
+		private void UpdateDutyNorm(object sender, PageClosedEventArgs e) {
+			Entity.UpdateNextIssues(UoW);
+		}
+
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(dutyNormItem.ProtectionTools.Id));
 		}

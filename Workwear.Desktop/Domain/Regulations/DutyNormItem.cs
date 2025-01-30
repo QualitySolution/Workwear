@@ -189,6 +189,9 @@ namespace Workwear.Domain.Regulations {
 			if(wantIssue == default(DateTime)) 
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
 			nextIssue = wantIssue;
+			
+			OnPropertyChanged(nameof(NextIssue));
+			OnPropertyChanged(nameof(Issued));
 		}
 
 		#endregion
