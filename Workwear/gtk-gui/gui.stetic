@@ -29324,6 +29324,40 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
+                  <widget class="Gtk.HBox" id="hbox3">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonColorsLegend">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Цветовая легенда</property>
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">resource:Workwear.icon.buttons.legend.png</property>
+                        <property name="Label" translatable="yes" />
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonColorsLegendClicked" />
+                      </widget>
+                      <packing>
+                        <property name="PackType">End</property>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow1">
                     <property name="MemberName" />
                     <property name="ShadowType">In</property>
@@ -29336,7 +29370,7 @@
                     </child>
                   </widget>
                   <packing>
-                    <property name="Position">0</property>
+                    <property name="Position">1</property>
                     <property name="AutoSize">True</property>
                   </packing>
                 </child>
@@ -29393,6 +29427,7 @@
                         <signal name="Clicked" handler="OnButtonGiveClicked" />
                       </widget>
                       <packing>
+                        <property name="PackType">End</property>
                         <property name="Position">3</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
@@ -29401,7 +29436,7 @@
                     </child>
                   </widget>
                   <packing>
-                    <property name="Position">1</property>
+                    <property name="Position">2</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -29455,7 +29490,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDutyNormView" design-size="796 361">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDutyNormView" design-size="1020 498">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -29724,10 +29759,13 @@
             <child>
               <widget class="Gtk.Table" id="table3">
                 <property name="MemberName" />
-                <property name="NRows">3</property>
+                <property name="NRows">4</property>
                 <property name="NColumns">2</property>
                 <property name="RowSpacing">6</property>
                 <property name="ColumnSpacing">6</property>
+                <child>
+                  <placeholder />
+                </child>
                 <child>
                   <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindowComments">
                     <property name="MemberName" />
@@ -29754,6 +29792,49 @@
                     <property name="XFill">True</property>
                     <property name="XShrink">False</property>
                     <property name="YExpand">True</property>
+                    <property name="YFill">True</property>
+                    <property name="YShrink">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.HBox" id="hbox8">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonColorsLegend">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Цветовая легенда</property>
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">resource:Workwear.icon.buttons.legend.png</property>
+                        <property name="Label" translatable="yes" />
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonColorsLegendClicked" />
+                      </widget>
+                      <packing>
+                        <property name="PackType">End</property>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">False</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="TopAttach">3</property>
+                    <property name="BottomAttach">4</property>
+                    <property name="LeftAttach">1</property>
+                    <property name="RightAttach">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="XOptions">Fill</property>
+                    <property name="YOptions">Fill</property>
+                    <property name="XExpand">False</property>
+                    <property name="XFill">True</property>
+                    <property name="XShrink">False</property>
+                    <property name="YExpand">False</property>
                     <property name="YFill">True</property>
                     <property name="YShrink">False</property>
                   </packing>

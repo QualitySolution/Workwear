@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Gamma.Utilities;
 using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -91,7 +92,6 @@ namespace Workwear.ViewModels.Regulations {
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(dutyNormItem.ProtectionTools.Id));
 		}
-		#endregion
 		
 		public void Print(DutyNormSheetPrint typeSheet) {
 			if(UoW.HasChanges && !interactive.Question("Перед печатью изменения будут сохранены. Продолжить?"))
@@ -112,6 +112,20 @@ namespace Workwear.ViewModels.Regulations {
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+		public void ShowLegend() {
+			MessageDialogHelper.RunInfoDialog(
+				"Количество:\n" +
+				"<span color='black'>●</span> — потребность удовлетворена\n" +
+				"<span color='blue'>●</span> — выдано больше нонрмы\n" +
+				"<span color='orange'>●</span> — выданого количества не достаточно\n" +
+				"<span color='red'>●</span> — не числится ничего\n" +
+				"\nДата след. выдачи:\n" +
+				"<span color='black'>●</span> — потребность удовлетворена\n" +
+				"<span color='darkred'>●</span> — требуется выдача\n" +
+				"<span color='orange'>●</span> — выдача потребуется в ближайшие 10 дней\n"
+			);
+		}
+	
 //711		
 		/*public override bool Save() {
 			if (SelectedStartMonth != null)
@@ -126,5 +140,6 @@ namespace Workwear.ViewModels.Regulations {
 			if (!Validate()) return false;
 			UoW.Save(Entity); return true;
 		}*/
+		#endregion
 	}
 }

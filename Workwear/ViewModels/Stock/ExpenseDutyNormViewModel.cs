@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using NLog;
 using QS.Dialog;
+using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -135,19 +136,24 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		#region Работа со складом
-		private void FillUnderreceivedp()
-		{
+
+		private void FillUnderreceivedp() {
 			Entity.Items.Clear();
 			if(Entity.DutyNorm == null)
 				return;
-			foreach(var item in Entity.DutyNorm.Items)
-				Entity.AddItem(item.BestChoiceInStock.First().Position,item.CalculateRequiredIssue(baseParameters, Entity.Date));
+			foreach(var item in Entity.DutyNorm.Items) {
+				var position = item.BestChoiceInStock.FirstOrDefault()?.Position;
+				if(position != null)
+					Entity.AddItem(position, item.CalculateRequiredIssue(baseParameters, Entity.Date));
+				else
+					Entity.AddItem(item.ProtectionTools);
+			}
 		}
 
-		
+
 		#endregion
 
-		#region Свойства для view
+		#region Для view
 		public bool CanDelSelectedItem => SelectedItem != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
@@ -177,6 +183,29 @@ namespace Workwear.ViewModels.Stock {
 				}
 				OnPropertyChanged();
 			}
+		}
+		
+		public void ShowLegend() {
+			MessageDialogHelper.RunInfoDialog(
+				"<span color='black'>●</span> — обычная выдача\n" +
+				"<span color='gray'>●</span> — выдача не требуется\n" +
+				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
+				"<span color='green'>●</span> — выдаётся больше необходимого\n" +
+				"<span color='red'>●</span> — нет подходящих вариантов\n"
+			);
+		}
+		
+		public string GetRowColor(ExpenseDutyNormItem item) {
+			var requiredIssue = item.DutyNormItem.CalculateRequiredIssue(baseParameters, Entity.Date);
+			if(requiredIssue > 0 && item.Nomenclature == null)
+				return "red";
+			if(requiredIssue <= 0 && item.Amount == 0)
+				return "gray";
+			if(requiredIssue < item.Amount)
+				return "green";
+			if(requiredIssue > item.Amount)
+				return "blue";
+			return "black";
 		}
 		#endregion
 

@@ -109,20 +109,15 @@ namespace Workwear.Views.Regulations {
 			buttonRemoveItem.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 		}
 		
-		protected void OnButtonAddItemClicked (object sender, EventArgs e) {
+		protected void OnButtonAddItemClicked (object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		}
-
-		protected void OnButtonRemoveItemClicked (object sender, EventArgs e) {
+		protected void OnButtonRemoveItemClicked (object sender, EventArgs e) =>
 			ViewModel.RemoveItem(ytreeItems.GetSelectedObject<DutyNormItem>());
-		}
-
-		protected void OnButtonGiveClicked(object sender, EventArgs e) {
+		protected void OnButtonGiveClicked(object sender, EventArgs e) =>
 			ViewModel.AddExpense();
-		}
-
-		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
+		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) => 
 			ViewModel.Print((DutyNormSheetPrint)e.ItemEnum);
-		}
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) => 
+			ViewModel.ShowLegend();
 	}
 }

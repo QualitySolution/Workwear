@@ -274,23 +274,23 @@ namespace Workwear.Domain.Regulations {
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
-				if (Amount == amount)
-					return "darkgreen";
 				if (Amount < amount)
 					return "blue";
+				if (Amount > amount)
+					return "orange";
 				if (amount == 0)
 					return "red";
 				else
-					return "orange";
+					return "black";
 			}
 		}
 
 		public virtual string NextIssueColor {
 			get {
 				if(DateTime.Today >= NextIssue)
-					return "red";
-				if(DateTime.Today > NextIssue)
-					return "darkgreen";
+					return "darkred";
+				if(DateTime.Today > NextIssue?.AddDays(10))
+					return "orange";
 				else
 					return "black";
 			}
