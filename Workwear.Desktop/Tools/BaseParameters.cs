@@ -83,6 +83,21 @@ namespace Workwear.Tools
 			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
 			set => Dynamic[nameof(UsedCurrency)] = value;
 		}
+
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа выдачи.
+		/// </summary>
+		public virtual bool IsDocNumberInIssueSign {
+			get => Dynamic.IsDocNumberInIssueSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInIssueSign)] = value;
+		}
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа возврата\списания.
+		/// </summary>
+		public virtual bool IsDocNumberInReturnSign {
+			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
@@ -93,4 +108,5 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
+	
 }

@@ -71,12 +71,6 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 				}
 			}
 		}
-		
-		private DutyNorm dutyNorm; 
-		public virtual DutyNorm DutyNorm {
-			get => dutyNorm;
-			set => SetField(ref dutyNorm, value);
-		}
 		#endregion
 
 		public readonly FeaturesService FeaturesService;
@@ -90,17 +84,9 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => canChooseAmount;
 			set => SetField(ref canChooseAmount, value);
 		}
-//711		
-// false		
-		private bool canSetDutyNorm = true;
-		public bool CanSetDutyNorm {
-			get => canSetDutyNorm;
-			set => SetField(ref canSetDutyNorm, value);
-		}
 		#endregion
 
 		public EntityEntryViewModel<Warehouse> WarehouseEntry;
-		public EntityEntryViewModel<DutyNorm> DutyNormEntry;
 
 		public StockBalanceFilterViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -108,7 +94,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
-			FeaturesService featuresService,CurrentUserSettings currentUserSettings): base(journal, unitOfWorkFactory)
+			FeaturesService featuresService,
+			CurrentUserSettings currentUserSettings,
+			Action<StockBalanceFilterViewModel> setFilterParameters = null
+			): base(journal, unitOfWorkFactory)
 		{
 			FeaturesService = featuresService;
 			this.currentUserSettings = currentUserSettings;
@@ -127,16 +116,9 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			if(FeaturesService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
 			
-			DutyNormEntry = builder.ForProperty(x => x.DutyNorm)				
-				.MakeByType()				
-				.Finish();
-//711
-			/*
-			DutyNormEntry = builder.ForProperty(x => x.DutyNorm)
-				.UseViewModelJournalAndAutocompleter<DutyNormJournalViewModel>()
-				.UseViewModelDialog<DutyNormViewModel>()
-				.Finish();
-				*/
+			CanNotify = false;
+			setFilterParameters?.Invoke(this);
+			CanNotify = true;
 		}
 	}
 }

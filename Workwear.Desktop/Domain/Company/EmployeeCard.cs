@@ -421,7 +421,7 @@ namespace Workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 			needRemove.ToList ().ForEach (i => WorkwearItems.Remove (i));
-			//Обновляем информацию о прошлых выдачах, перед обновление даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
+			//Обновляем информацию о прошлых выдачах, перед обновлением даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
 			if(processed.Any())
 				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			//Обновляем срок следующей выдачи
@@ -435,7 +435,7 @@ namespace Workwear.Domain.Company
 		/// Обновляет дату следующей выдачи у потребностей по указанному списку номенклатур нормы.
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
-		/// <param name="protectionTools">список номенклатур нормы потребности в которых надо обновлять.</param>
+		/// <param name="protectionTools">Список номенклатур нормы потребности в которых надо обновлять.</param>
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
@@ -470,7 +470,7 @@ namespace Workwear.Domain.Company
 		}
 
 		/// <summary>
-		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
+		/// Метод заполняет информацию о получениях для строк потребности в виде графа Graph. И обновляет LastIssue.
 		/// </summary>
 		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
 			foreach(var item in WorkwearItems) {

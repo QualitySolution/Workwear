@@ -121,7 +121,13 @@ namespace Workwear.Domain.Stock.Documents
 				return String.Empty;
 			}
 		}
-
+		
+		//FIXME не учитывает прошлые операции (уже списанное)
+		private int maxAmount = -1;
+		public virtual int MaxAmount {
+			get => maxAmount == -1 ? EmployeeWriteoffOperation.IssuedOperation.Issued : maxAmount;
+			set => maxAmount = value;
+		}
 		public virtual string Title =>
 			String.Format ("Списание {0} в количестве {1} {2}",
 				Nomenclature?.Name,

@@ -42,8 +42,7 @@ namespace Workwear.ViewModels.Stock {
 				
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-			if (employee != null)
-				Employee = UoW.GetById<EmployeeCard>(employee.Id);
+			Employee = UoW.GetInSession(employee);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
 			};

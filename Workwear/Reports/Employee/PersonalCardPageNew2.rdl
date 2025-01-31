@@ -728,9 +728,24 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox14">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -749,8 +764,9 @@
         AS expense_quantity,
     IF(protection_tools.dermal_ppe,'Лично','')
         AS dermal, #'' (пустая строка) используется в проверках
-    IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
-           CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
+    IF(!@isDocNumberInIssueSign,
+    CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')),
+    CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))
         ) AS issue_sign,
     CONCAT_WS('\n', GROUP_CONCAT(DATE_FORMAT(returned.date, '%d.%m.%Y') SEPARATOR '\n'),
               IF(operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE()
@@ -764,8 +780,9 @@
                  operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity),0),
                  NULL)
         ) AS returned_quantity,
-    GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
-                 SEPARATOR '\n')
+    IF(!@isDocNumberInReturnSign, " ", 
+        GROUP_CONCAT(IFNULL(CONCAT('Возврат №',IFNULL(returned.return_number, returned.return_doc_id)), '')
+                  SEPARATOR '\n'))
         AS returned_sign,
     GROUP_CONCAT(IFNULL(CONCAT('№',IFNULL(returned.writeoff_number, returned.writeoff_doc_id)),'')
                  SEPARATOR '\n')
@@ -785,14 +802,14 @@ FROM
                 return_detail.sign_key,
                 return_detail.sign_timestamp,
                 stock_write_off_detail.stock_write_off_id AS writeoff_doc_id,
-                stock_income_detail.stock_income_id AS return_doc_id,
-                stock_income.doc_number AS return_number,
+                stock_return_items.stock_return_id AS return_doc_id,
+                stock_return.doc_number AS return_number,
                 stock_write_off.doc_number AS writeoff_number       
             FROM
                 operation_issued_by_employee AS return_detail
                 LEFT JOIN stock_write_off_detail on return_detail.id = stock_write_off_detail.employee_issue_operation_id
-                LEFT JOIN stock_income_detail on return_detail.id = stock_income_detail.employee_issue_operation_id
-                LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+                LEFT JOIN stock_return_items on return_detail.id = stock_return_items.employee_issue_operation_id
+                LEFT JOIN stock_return ON stock_return.id = stock_return_items.stock_return_id
                 LEFT JOIN stock_write_off ON stock_write_off.id = stock_write_off_detail.stock_write_off_id
             WHERE
                     return_detail.employee_id = @id AND return_detail.returned &gt; 0
@@ -806,18 +823,24 @@ ORDER BY
 
 UNION
 #Выдаваемые дозатором
-(SELECT  pt_wci.name,
+(SELECT  pt_eci.name,
          '',
-         DATE_FORMAT(wci.created, '%d.%m.%Y'),
+         DATE_FORMAT(eci.created, '%d.%m.%Y'),
          '',
          'Дозатор',
          '','','','',''
-FROM wear_cards_item as wci
-         LEFT JOIN protection_tools as pt_wci on wci.protection_tools_id = pt_wci.id
-WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
+FROM employee_cards_item as eci
+         LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInReturnSign">
+            <Value>={?isDocNumberInReturnSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -877,6 +900,20 @@ WHERE pt_wci.dispenser IS TRUE AND wci.wear_card_id = @id)</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInReturnSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

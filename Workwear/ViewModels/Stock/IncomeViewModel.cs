@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
-using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
@@ -35,6 +34,7 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
 			BaseParameters baseParameters,
+			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
@@ -42,6 +42,9 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			
+			if(Entity.Id == 0)
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();

@@ -192,10 +192,17 @@ namespace Workwear.Domain.Company
 			}
 		}
 		public virtual string AmountByNormText => ActiveNormItem?.AmountText;
-		public virtual string InStockText => 
-			ProtectionTools?.Dispenser ?? false ? String.Empty : 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ?? 
-			BestChoiceInStock.Sum(x => x.Amount).ToString();
+		public virtual string InStockText {
+			get {
+				if(ProtectionTools?.Dispenser ?? false)
+					return String.Empty;
+				if(InStockState == StockStateInfo.NotLoaded)
+					return "Нет данных";
+				return ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ??
+					  BestChoiceInStock.Sum(x => x.Amount).ToString();
+			}
+		}
+
 		public virtual string AmountText => ProtectionTools?.Dispenser ?? false ? String.Empty : ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
 
 		public virtual string DelayText => ProtectionTools?.Dispenser ?? false ? String.Empty : 

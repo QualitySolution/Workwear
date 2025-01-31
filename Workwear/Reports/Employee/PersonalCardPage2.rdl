@@ -762,9 +762,24 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox21">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -776,16 +791,16 @@
     IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
     (
     SELECT
-        stock_income_detail.certificate
+        stock_income_items.certificate
     FROM
-        stock_income_detail
-    LEFT JOIN stock_income ON stock_income.id = stock_income_detail.stock_income_id
+        stock_income_items
+    LEFT JOIN stock_income ON stock_income.id = stock_income_items.stock_income_id
     WHERE
         stock_income.date &lt;= operation_issued_by_employee.operation_time AND
-        operation_issued_by_employee.nomenclature_id = stock_income_detail.nomenclature_id AND
-        operation_issued_by_employee.size_id &lt;=&gt; stock_income_detail.size_id AND
-        operation_issued_by_employee.height_id &lt;=&gt; stock_income_detail.height_id AND
-        stock_income_detail.certificate IS NOT NULL AND
+        operation_issued_by_employee.nomenclature_id = stock_income_items.nomenclature_id AND
+        operation_issued_by_employee.size_id &lt;=&gt; stock_income_items.size_id AND
+        operation_issued_by_employee.height_id &lt;=&gt; stock_income_items.height_id AND
+        stock_income_items.certificate IS NOT NULL AND
         operation_warehouse.warehouse_expense_id = stock_income.warehouse_id
     ORDER BY
         stock_income.date
@@ -796,8 +811,9 @@ LIMIT 1
     '%d.%m.%Y'
 ) AS expense_date, operation_issued_by_employee.issued AS expense_quantity, ROUND(
     operation_issued_by_employee.wear_percent * 100
-) AS wearout, 
-IFNULL(CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
+) AS wearout,
+IF(!@isDocNumberInIssueSign, 
+CONCAT(operation_issued_by_employee.sign_key, DATE_FORMAT(operation_issued_by_employee.sign_timestamp, ' %d.%m.%Y %H:%i:%s')), 
     CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id))) AS issue_sign, 
 CONCAT_WS(
     '\n',
@@ -823,9 +839,9 @@ CONCAT_WS(
             ),
             IF(
                 operation_issued_by_employee.auto_writeoff_date &lt;= CURDATE() AND operation_issued_by_employee.issued - IFNULL(SUM(returned.quantity), 0) &gt; 0, 100, NULL)
-            ) AS returned_wearout,
+            ) AS returned_wearout, 
             GROUP_CONCAT(
-                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s')) 
+                CONCAT(returned.sign_key, " - ", DATE_FORMAT(returned.sign_timestamp, '%d.%m.%Y %H:%i:%s'))
                 SEPARATOR '\n'
             ) AS returned_sign
         FROM
@@ -859,6 +875,12 @@ CONCAT_WS(
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInReturnSign">
+            <Value>={?isDocNumberInReturnSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -918,6 +940,20 @@ CONCAT_WS(
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInReturnSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources >

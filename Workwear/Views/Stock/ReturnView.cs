@@ -42,6 +42,7 @@ namespace Workwear.Views.Stock {
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonSetNomenclature.Binding.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
+			enumPrint.ItemsEnum = typeof(ReturnViewModel.ReturnDocReportEnum);
 		}
 		
 		private void ConfigureItems() {
@@ -98,6 +99,8 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
+			var doc = (ReturnViewModel.ReturnDocReportEnum)e.ItemEnum;
+			ViewModel.PrintReturnDoc(doc);
 		}
 	}
 }
