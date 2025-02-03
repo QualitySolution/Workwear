@@ -1,4 +1,6 @@
-﻿using NHibernate;
+﻿using System;
+using System.Globalization;
+using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -19,6 +21,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 			ICurrentPermissionService currentPermissionService = null) 
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
+			UseSlider = true;
 		}
 
 		protected override IQueryOver<DutyNorm> ItemsQuery(IUnitOfWork uow) {
@@ -35,6 +38,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 					.SelectList((list) => list
 						.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
+						.Select(x => x.DateFrom).WithAlias(() => resultAlias.DateFrom)
+						.Select(x => x.DateTo).WithAlias(() => resultAlias.DateTo)
 						.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					).OrderBy(x => x.Name).Asc
 					.TransformUsing(Transformers.AliasToBean<DutyNormsJournalNode>());
@@ -44,8 +49,14 @@ namespace workwear.Journal.ViewModels.Regulations {
 	
 	public class DutyNormsJournalNode
 	{
+		static CultureInfo _culture = CultureInfo.GetCultureInfo("ru-RU");
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Comment { get; set; }
+		
+		public DateTime? DateFrom { get; set; }
+		public DateTime? DateTo { get; set; }
+		public string DateFromString => DateFrom == null ? "" : DateFrom.Value.ToString("d", _culture); 
+		public string DateToString => DateTo == null ? "" : DateTo.Value.ToString("d", _culture); 
 	}
 }
