@@ -153,15 +153,19 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 
+		progress.CheckPoint("Настройка удаления");
+		//Настройка удаления
+		Configure.ConfigureDeletion();
+		
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
-			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
+			string message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			Users WinUser = new Users();
@@ -288,10 +292,6 @@ public partial class MainWindow : Gtk.Window {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
-		
-		progress.CheckPoint("Настройка удаления");
-		//Настройка удаления
-		Configure.ConfigureDeletion();
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
