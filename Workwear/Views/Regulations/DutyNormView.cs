@@ -65,11 +65,12 @@ namespace Workwear.Views.Regulations {
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
 				.Finish ();
-			ytreeItems.ItemsDataSource = Entity.Items;
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
-			ytreeItems.Binding.AddSource(ViewModel).AddBinding(v => v.SelectedItem, w => w.SelectedRow);
-			
+			ytreeItems.Binding
+				.AddBinding(ViewModel, v => v.SelectedItem, w => w.SelectedRow)
+				.AddBinding(Entity, e => e.Items, w => w.ItemsDataSource)
+				.InitializeFromSource();
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
+			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
 		//Вкладка История выдач
 		private void ConfigureHistoty() { 

@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Gamma.Utilities;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -19,21 +21,28 @@ namespace Workwear.ViewModels.Regulations {
 	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>{
 		
 		private IInteractiveService interactive;
+		private readonly IEntityChangeWatcher changeWatcher;
 		public DutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			IInteractiveService interactive,
+			IEntityChangeWatcher changeWatcher,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null) 
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider){
 			this.interactive = interactive;
 			currentTab = Entity.Id == 0 ? 0 : 1;
-//711			
-//Пока обновление при открытии нормы			
+			
+			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
+			changeWatcher.BatchSubscribe(DutyNormChangeEvent)
+				.IfEntity<DutyNormIssueOperation>()
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
+			//Актуализация сроков при открытии			
 			Entity.UpdateNextIssues(UoW);
 		}
-
+		
 		#region Свойства
 
 		public List<RegulationDoc> RegulationDocs { get; set; }
@@ -79,13 +88,15 @@ namespace Workwear.ViewModels.Regulations {
 		public void AddExpense() {
 			if(!Save())
 				return;
-
 			var vm = NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
-//711 Не работает			
-			vm.PageClosed += UpdateDutyNorm; 
 		}
-
-		private void UpdateDutyNorm(object sender, PageClosedEventArgs e) {
+		
+		//Для синхронизации с изменениями внесёнными в базу при открытом диалоге.
+		private void DutyNormChangeEvent(EntityChangeEvent[] changeevents) {
+			foreach(var changeEvent in changeevents) {
+				var op = UoW.GetById<DutyNormIssueOperation>(changeEvent.Entity.GetId());
+				UoW.Session.Refresh(op);
+			}
 			Entity.UpdateNextIssues(UoW);
 		}
 
@@ -125,21 +136,6 @@ namespace Workwear.ViewModels.Regulations {
 				"<span color='orange'>●</span> — выдача потребуется в ближайшие 10 дней\n"
 			);
 		}
-	
-//711		
-		/*public override bool Save() {
-			if (SelectedStartMonth != null)
-				Entity.IssuanceStart = new DateTime(2001, SelectedStartMonth.Value.Month, StartDay ?? 1);
-			else
-				Entity.IssuanceStart = null;
-			if (SelectedEndMonth != null)
-				Entity.IssuanceEnd = new DateTime(2001, SelectedEndMonth.Value.Month, EndDay ?? 1);
-			else
-				Entity.IssuanceEnd = null;
-
-			if (!Validate()) return false;
-			UoW.Save(Entity); return true;
-		}*/
 		#endregion
 	}
 }

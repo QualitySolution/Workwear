@@ -161,18 +161,14 @@ namespace Workwear.Domain.Regulations {
 		/// Обновляет дату следующей выдачи.
 		/// </summary>
 		public virtual void UpdateNextIssue(IUnitOfWork uow) {
-			if(Graph == null) {
-//711 Пока по простому
 				if(Id == 0)
 					Graph = new IssueGraph<DutyNormIssueOperation>();
 				else {
 					var query = uow.Session.QueryOver<DutyNormIssueOperation>()
 						.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
 					Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
-				}
-			}
-
-			DateTime? wantIssue = new DateTime();
+				} 
+				DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				wantIssue = listReverse.First().StartDate;
@@ -185,7 +181,6 @@ namespace Workwear.Domain.Regulations {
 						break;
 				}
 			}
-//711 Дата создания, если нужна. Пока в базе дата для строки не хранится	
 			if(wantIssue == default(DateTime)) 
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
 			nextIssue = wantIssue;
@@ -295,7 +290,6 @@ namespace Workwear.Domain.Regulations {
 					return "black";
 			}
 		}
-
 		#endregion
 	}
 }

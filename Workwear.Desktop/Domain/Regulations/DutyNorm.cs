@@ -135,6 +135,7 @@ namespace Workwear.Domain.Regulations {
 		public virtual void UpdateNextIssues(IUnitOfWork uow) {
 			foreach (var item in items)
 				item.UpdateNextIssue(uow);
+			OnPropertyChanged(nameof(Items));
 		}
 		#endregion
 		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);

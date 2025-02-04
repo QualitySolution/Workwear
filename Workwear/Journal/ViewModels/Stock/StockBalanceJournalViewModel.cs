@@ -16,7 +16,6 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Journal.Search;
 using QS.Utilities;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
