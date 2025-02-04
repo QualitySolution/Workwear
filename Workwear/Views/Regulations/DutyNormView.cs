@@ -100,6 +100,11 @@ namespace Workwear.Views.Regulations {
 				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
 				menu.Add(menuItem);
 				
+				menuItem = new MenuItem("Открыть последнюю выдачу");
+				menuItem.Sensitive = selected != null;
+				menuItem.Activated += (sender, e) => ViewModel.OpenLastDocument(selected);
+				menu.Add(menuItem);
+				
 				menu.ShowAll();
 				menu.Popup();
 			}

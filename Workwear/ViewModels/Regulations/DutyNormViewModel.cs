@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamma.Utilities;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
@@ -14,7 +16,9 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations {
@@ -102,6 +106,24 @@ namespace Workwear.ViewModels.Regulations {
 
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(dutyNormItem.ProtectionTools.Id));
+		}
+		
+		public void OpenLastDocument(DutyNormItem dutyNormItem) {
+			ExpenseDutyNormItem documentItemAlias = null;
+			ExpenseDutyNorm documentAlias = null;
+
+			var result = UoW.Session.QueryOver<ExpenseDutyNormItem>(() => documentItemAlias)
+				.JoinAlias(() => documentItemAlias.Document, () => documentAlias)
+				.Where(x => x.ProtectionTools.Id == dutyNormItem.ProtectionTools.Id)
+				.Where(() => documentAlias.DutyNorm.Id == dutyNormItem.DutyNorm.Id)
+				.OrderBy(() => documentAlias.Date).Desc()
+				.Take(1);
+			var lastDocItem= result.List<ExpenseDutyNormItem>().FirstOrDefault();
+			
+			if (lastDocItem != null) 
+				NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(lastDocItem.Document.Id));
+			else 
+				interactive.ShowMessage(ImportanceLevel.Error, "Не найдена ссылка на документ выдачи");
 		}
 		
 		public void Print(DutyNormSheetPrint typeSheet) {
