@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Gamma.Binding.Converters;
+using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock.Documents;
@@ -29,11 +30,12 @@ namespace Workwear.Views.Stock {
 			yentryNorm.ViewModel = ViewModel.DutyNormEntryViewModel;
 			yentryWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 			yentryResponsible.ViewModel = ViewModel.ResponsibleEmployeeCardEntryViewModel;
-
-			ytreeItems.Binding.AddBinding(ViewModel, vm => vm.SelectedItem, w => (ExpenseDutyNormItem)w.SelectedRow);
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanDelSelectedItem, w => w.Sensitive);
 			
-			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<ExpenseDutyNormItem> ()
+			ytreeItems.Binding.AddBinding(ViewModel, vm => vm.SelectedItem, w => (ExpenseDutyNormItem)w.SelectedRow);
+			ytreeItems.ItemsDataSource = Entity.Items;
+			
+			ytreeItems.ColumnsConfig = FluentColumnsConfig<ExpenseDutyNormItem>.Create()
 				.AddColumn("Номенклатура нормы").Resizable().AddComboRenderer(x => x.ProtectionTools)
 					.SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.ProtectionToolsListFromNorm.ToList())
@@ -53,9 +55,8 @@ namespace Workwear.Views.Stock {
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
+				//.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
 				.Finish();
-			ytreeItems.ItemsDataSource = Entity.Items;
 
 		}
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
