@@ -132,10 +132,10 @@ namespace Workwear.Domain.Regulations {
 			return null;
 		}
 		
-		public virtual void UpdateNextIssues(IUnitOfWork uow) {
+		public virtual void UpdateItems(IUnitOfWork uow) {
 			bool change = false;
 			foreach (var item in items)
-				change = change || item.UpdateNextIssue(uow);
+				change = item.Update(uow) || change;
 			if(change)// Чтобы не тригерить Хибернейт
 				OnPropertyChanged(nameof(Items));
 		}

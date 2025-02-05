@@ -158,6 +158,25 @@ namespace Workwear.Domain.Regulations {
 		}
 
 		/// <summary>
+		/// Обновляет данные о выданом .
+		/// </summary>
+		/// <returns>Наличие изменений</returns>
+		public virtual bool Update(IUnitOfWork uow) {
+			if(Id == 0)
+				Graph = new IssueGraph<DutyNormIssueOperation>();
+			else {
+				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
+					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
+				Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
+			}
+
+			bool hasCange = UpdateNextIssue(uow);
+			if(hasCange) //Не дёргаем Хибернейт лишний раз
+				OnPropertyChanged(nameof(Issued));
+			return hasCange ;
+		}
+
+		/// <summary>
 		/// Обновляет дату следующей выдачи.
 		/// </summary>
 		public virtual bool UpdateNextIssue(IUnitOfWork uow) {
@@ -168,7 +187,6 @@ namespace Workwear.Domain.Regulations {
 					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
 				Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
 			}
-
 			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();

@@ -43,8 +43,9 @@ namespace Workwear.ViewModels.Regulations {
 				.IfEntity<DutyNormIssueOperation>()
 				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
-			//Актуализация сроков при открытии			
-			Entity.UpdateNextIssues(UoW);
+			
+			//Актуализация строк при открытии			
+			Entity.UpdateItems(UoW);
 		}
 		
 		#region Свойства
@@ -81,7 +82,7 @@ namespace Workwear.ViewModels.Regulations {
 			foreach(var protectionNode in e.SelectedObjects) {
 				var protectionTools = UoW.GetById<ProtectionTools>(protectionNode.GetId());
 				var item = Entity.AddItem(protectionTools);
-				item.UpdateNextIssue(UoW);
+				item.Update(UoW);
 			}
 		}
 
@@ -104,7 +105,7 @@ namespace Workwear.ViewModels.Regulations {
 				var op = UoW.GetById<DutyNormIssueOperation>(changeEvent.Entity.GetId());
 				UoW.Session.Refresh(op);
 			}
-			Entity.UpdateNextIssues(UoW);
+			Entity.UpdateItems(UoW);
 		}
 
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
