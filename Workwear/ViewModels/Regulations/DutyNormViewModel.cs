@@ -90,8 +90,11 @@ namespace Workwear.ViewModels.Regulations {
 		}
 
 		public void AddExpense() {
-			if(!Save())
-				return;
+			if(UoW.HasChanges && !interactive.Question("Перед выдачей норма будет сохранена. Продолжить?"))
+				if(!Save()) {
+					interactive.ShowMessage(ImportanceLevel.Error, "Не удалось сохранить");
+					return;
+				}
 			var vm = NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 		

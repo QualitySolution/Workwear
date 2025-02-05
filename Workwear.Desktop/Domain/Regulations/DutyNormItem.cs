@@ -160,20 +160,21 @@ namespace Workwear.Domain.Regulations {
 		/// <summary>
 		/// Обновляет дату следующей выдачи.
 		/// </summary>
-		public virtual void UpdateNextIssue(IUnitOfWork uow) {
-				if(Id == 0)
-					Graph = new IssueGraph<DutyNormIssueOperation>();
-				else {
-					var query = uow.Session.QueryOver<DutyNormIssueOperation>()
-						.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-					Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
-				} 
-				DateTime? wantIssue = new DateTime();
+		public virtual bool UpdateNextIssue(IUnitOfWork uow) {
+			if(Id == 0)
+				Graph = new IssueGraph<DutyNormIssueOperation>();
+			else {
+				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
+					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
+				Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
+			}
+
+			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				wantIssue = listReverse.First().StartDate;
 				//Ищем первый с конца интервал где не хватает выданного до нормы.
-				
+
 				foreach(var interval in listReverse) {
 					if(interval.CurrentCount < Amount)
 						wantIssue = interval.StartDate;
@@ -181,12 +182,16 @@ namespace Workwear.Domain.Regulations {
 						break;
 				}
 			}
-			if(wantIssue == default(DateTime)) 
+
+			if(wantIssue == default(DateTime))
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
-			nextIssue = wantIssue;
-			
-			OnPropertyChanged(nameof(NextIssue));
-			OnPropertyChanged(nameof(Issued));
+
+			if(nextIssue != wantIssue) { // Чтобы не тригерить Хибернейт
+				NextIssue = wantIssue;
+				return true;
+			}
+			else
+				return false;
 		}
 
 		#endregion

@@ -133,9 +133,11 @@ namespace Workwear.Domain.Regulations {
 		}
 		
 		public virtual void UpdateNextIssues(IUnitOfWork uow) {
+			bool change = false;
 			foreach (var item in items)
-				item.UpdateNextIssue(uow);
-			OnPropertyChanged(nameof(Items));
+				change = change || item.UpdateNextIssue(uow);
+			if(change)// Чтобы не тригерить Хибернейт
+				OnPropertyChanged(nameof(Items));
 		}
 		#endregion
 		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
