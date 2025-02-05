@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *
 FROM
@@ -31,7 +31,7 @@ FROM
          DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
             IFNULL(stock_income.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
          opwo.returned as 'Списано',
-         CONCAT(opwo.wear_percent * 100, '%') as 'Износ',
+         CONCAT(IF(opis.returned != 0, opis.wear_percent, 1) * 100, '%') as 'Износ', #У автосписанного износ 100
          DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
          opis.issued as 'Выдано',
          IF(opis.manual_operation, '+', '') as 'Ручная',
@@ -80,7 +80,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="Номер_документа_выдачи">
           <DataField>Номер документа выдачи</DataField>
           <rd:TypeName>System.String</rd:TypeName>
