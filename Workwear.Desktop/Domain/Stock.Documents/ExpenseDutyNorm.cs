@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -7,6 +9,8 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Repository.Stock;
+using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Masculine,
@@ -16,7 +20,7 @@ namespace Workwear.Domain.Stock.Documents {
 	)]
 	[HistoryTrace]
 
-	public class ExpenseDutyNorm : StockDocument{
+	public class ExpenseDutyNorm : StockDocument, IValidatableObject{
 		
 		#region Генерирумые Сввойства
 		public virtual string Title => $"Выдача по деж. норме №{DocNumberText} от {Date:d}";
@@ -94,6 +98,58 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		public virtual void RemoveItem(ExpenseDutyNormItem item) {
 			Items.Remove(item);
+		}
+		#endregion
+		
+		#region IValidatable
+		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext)
+		{
+			if (Date < new DateTime(2008, 1, 1))
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
+					new[] { nameof(Date)});
+			if (DocNumber != null && DocNumber.Length > 15)
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+					new[] { nameof(DocNumber)});
+			if(DutyNorm == null)
+				yield return new ValidationResult ("Норма должна быть указана", 
+					new[] { nameof (DutyNorm)});
+			if(Warehouse == null)
+				yield return new ValidationResult ("Склад должен быть указан", 
+					new[] { nameof (Warehouse)});
+			if(Items.All(i => i.Amount <= 0))
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
+					new[] { nameof (Items)});
+			if(Items.Any (i => i.ProtectionTools == null))
+				yield return new ValidationResult ("Документ не должен содержать строки с неуказанной потребностью (Номенклатурой нормы).", 
+					new[] { nameof (Items)});
+			
+			//Проверка наличия на складе
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
+			if(UoW != null && baseParameters.CheckBalances) {
+				var repository = new StockRepository();
+				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
+				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+
+				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
+				foreach(var position in positionGroups) {
+					var amount = position.Sum(x => x.Amount);
+					if(amount == 0)
+						continue;
+
+					var stockExist = balance.FirstOrDefault(x => x.StockPosition.Equals(position.Key));
+
+					if(stockExist == null) {
+						yield return new ValidationResult($"На складе отсутствует - {position.Key.Title}", new[] { nameof(Items) });
+						continue;
+					}
+
+					if(stockExist.Amount < amount) {
+						yield return new ValidationResult($"Недостаточное количество - {position.Key.Title}, Необходимо: {amount} На складе: {stockExist.Amount}", new[] { nameof(Items) });
+						continue;
+					}
+				}
+			}
 		}
 		#endregion
 	}

@@ -80,13 +80,40 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref height, value);
 		}
 		#endregion
-//711 не думаю, что нужно хранить в базе, это поле хранися в операции
-		private DutyNormItem dutyNormItem;
+		
+		[Display(Name = "Складская позиция")]
+        [IgnoreHistoryTrace]
+		public virtual StockPosition StockPosition {
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);
+			set {
+				Operation.Nomenclature = value.Nomenclature;
+				Operation.WearSize = value.WearSize;
+				Operation.Height = value.Height;
+				Operation.WearPercent = value.WearPercent;
+				WarehouseOperation.Owner = value.Owner;
+			}
+		}
+
 		[Display(Name = "Строка дежурной нормы")]
 		[IgnoreHistoryTrace]
 		public virtual DutyNormItem DutyNormItem {
-			get => dutyNormItem;
-			set => SetField(ref dutyNormItem, value);
+			get => Operation.DutyNormItem;
+			set { if(Operation.DutyNormItem != value) {
+					Operation.DutyNormItem = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		[Display(Name = "Износ")]
+		[IgnoreHistoryTrace]
+		public virtual decimal WearPercent {
+			get => Operation.WearPercent;
+			set { if(Operation.WearPercent != value) {
+					Operation.WearPercent = value;
+					OnPropertyChanged();
+				}
+			}
 		}
 
 		public virtual void UpdateOperation(IUnitOfWork uow) {

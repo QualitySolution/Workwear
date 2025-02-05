@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NLog;
@@ -18,6 +19,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -48,13 +50,13 @@ namespace Workwear.ViewModels.Stock {
 			INavigationManager navigation,
 			IInteractiveService interactive, 
 			IUserService userService,
+			IValidator validator,
 			BaseParameters baseParameters,
 			StockBalanceModel stockBalanceModel,
 			SizeService sizeService, 
 			FeaturesService featutesService,
 			StockRepository stockRepository,
 			DutyNorm dutyNorm = null,
-			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -75,8 +77,10 @@ namespace Workwear.ViewModels.Stock {
 					FillUnderreceivedp();
 				}
 			}
-			else 
+			else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+				Entity.DutyNorm.UpdateItems(UoW);
+			}
 			
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -90,6 +94,9 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<DutyNormsJournalViewModel>()
 				.UseViewModelDialog<DutyNormViewModel>()
 				.Finish();
+
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
 
 		#region ViewModels
@@ -122,14 +129,40 @@ namespace Workwear.ViewModels.Stock {
 				var stockPosition = node.GetStockPosition(UoW);
 				var item = Entity.AddItem(stockPosition);
 			}
+
 		}
 
 		public void DeleteItem(ExpenseDutyNormItem item) {
 			Entity.RemoveItem(item);
 		}
+
+		public void ChooseStockPosition(ExpenseDutyNormItem item) {
+			var selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = Entity.Warehouse;
+							filter.ProtectionTools = item.ProtectionTools;
+						});
+				});
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			selectJournal.Tag = item;
+			selectJournal.ViewModel.OnSelectResult += ChooseStockPositionLoad;
+		}
 		
+		public void ChooseStockPositionLoad(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var page = NavigationManager.FindPage((DialogViewModelBase)sender);
+			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+				var item = page.Tag as ExpenseDutyNormItem;
+					item.StockPosition = node.GetStockPosition(UoW);
+			}
+		}
+
 		private ExpenseDutyNormItem selectedItem;
 		[PropertyChangedAlso(nameof(CanDelSelectedItem))]
+		[PropertyChangedAlso(nameof(CanChooseStockPositionsSelectedItem))]
 		public virtual ExpenseDutyNormItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -154,7 +187,11 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Для view
+//711 Не нашёл как обновить при первой загрузке.		
+		public bool CanChooseWarhouse => true;//!Entity.Items.Any();
+		public bool CanChooseDutyNorm => true;//!Entity.Items.Any();
 		public bool CanDelSelectedItem => SelectedItem != null;
+		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -196,6 +233,8 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		public string GetRowColor(ExpenseDutyNormItem item) {
+			if(item.Document.Id != 0) return "black";
+			
 			var requiredIssue = item.DutyNormItem.CalculateRequiredIssue(baseParameters, Entity.Date);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return "red";
