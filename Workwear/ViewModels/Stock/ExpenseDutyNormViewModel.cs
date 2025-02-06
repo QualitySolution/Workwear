@@ -34,13 +34,10 @@ using Workwear.ViewModels.Regulations;
 namespace Workwear.ViewModels.Stock {
 	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>{
 		
-		private ILifetimeScope autofacScope;
 		private readonly IInteractiveService interactive;
-		private readonly StockRepository stockRepository;
 		private readonly BaseParameters baseParameters;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public SizeService SizeService { get; }
-//711 Возможно стоит хранить в объекте ,собирать в конструкторе
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 
 		public ExpenseDutyNormViewModel(
@@ -59,12 +56,10 @@ namespace Workwear.ViewModels.Stock {
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			if(Entity.Warehouse == null)
@@ -187,9 +182,6 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Для view
-//711 Не нашёл как обновить при первой загрузке.		
-		public bool CanChooseWarhouse => true;//!Entity.Items.Any();
-		public bool CanChooseDutyNorm => true;//!Entity.Items.Any();
 		public bool CanDelSelectedItem => SelectedItem != null;
 		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;

@@ -13,6 +13,7 @@ namespace Workwear.Views.Stock {
 			Build();
 			ConfigureDlg();
 			CommonButtonSubscription();
+			
 		}
 
 		private void ConfigureDlg() {
@@ -26,15 +27,12 @@ namespace Workwear.Views.Stock {
 			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
-			yentryNorm.ViewModel = ViewModel.DutyNormEntryViewModel;
-			yentryNorm.Binding.AddBinding(ViewModel, vm => vm.CanChooseDutyNorm, w => w.Sensitive);
-                      			
+			yentryNorm.ViewModel = ViewModel.DutyNormEntryViewModel;  			
 			yentryWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
-			yentryWarehouseExpense.Binding.AddBinding(ViewModel, vm => vm.CanChooseWarhouse, w => w.Sensitive);
 			
 			yentryResponsible.ViewModel = ViewModel.ResponsibleEmployeeCardEntryViewModel;
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanDelSelectedItem, w => w.Sensitive);
-			ybuttonChoosePositions.Binding.AddBinding(ViewModel, vm => vm.CanChooseStockPositionsSelectedItem, w => w.Sensitive);
+			ybuttonChoosePositions.Binding.AddBinding(ViewModel, vm => vm.CanChooseStockPositionsSelectedItem, w => w.Sensitive).InitializeFromSource();
 
 			ytreeItems.Binding.AddBinding(ViewModel, vm => vm.SelectedItem, w => (ExpenseDutyNormItem)w.SelectedRow);
 			ytreeItems.ItemsDataSource = Entity.Items;
@@ -63,15 +61,16 @@ namespace Workwear.Views.Stock {
 				.Finish();
 
 		}
+		
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) => 
+			ViewModel.ShowLegend();
+		protected void OnYbuttonChoosePositionsClicked(object sender, EventArgs e) =>
+			ViewModel.ChooseStockPosition(ytreeItems.GetSelectedObject<ExpenseDutyNormItem>());
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) => 
 			ViewModel.AddItems();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
 			foreach(var item in ytreeItems.GetSelectedObjects<ExpenseDutyNormItem>())
 				ViewModel.DeleteItem(item);
 		}
-		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) => 
-			ViewModel.ShowLegend();
-		protected void OnYbuttonChoosePositionsClicked(object sender, EventArgs e) =>
-			ViewModel.ChooseStockPosition(ytreeItems.GetSelectedObject<ExpenseDutyNormItem>());
 	}
 }
