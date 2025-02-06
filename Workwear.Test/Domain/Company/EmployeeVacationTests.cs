@@ -80,7 +80,7 @@ namespace Workwear.Test.Domain.Company
 		[TearDown]
 		public void RemoveStaticGaps()
 		{
-			IssueGraph<EmployeeIssueOperation>.MakeIssueGraphTestGap = null;
+			IssueGraph.MakeIssueGraphTestGap = null;
 		}
 	}
 }

@@ -64,7 +64,7 @@ namespace Workwear.Domain.Operations.Graph
 			{
 				if (issue.IssuedOperation == null)
 				{
-					logger.Error($"{nameof(IGraphIssueOperation)}:{issue.Id} списывает спецодежду с сотрудника при этом не имеет ссылки на операцию по которой эта одежда была выдана сотруднику. Операция была пропущена в построение графа выдачи.");
+					logger.Error($"{nameof(IGraphIssueOperation)}:{issue.Id} списывает спецодежду при этом не имеет ссылки на операцию по которой эта одежда была выдана. Операция была пропущена в построение графа выдачи.");
 					continue;
 				}
 

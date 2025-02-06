@@ -45,7 +45,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { operation1, operation2 };
 
-			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
+			var graph = new IssueGraph(operations as IList<IGraphIssueOperation>);
 			var issue = new EmployeeIssueOperation();
 			issue.ProtectionTools = protectionTools;
 			issue.Employee = employee;
@@ -86,7 +86,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { operation1 };
 
-			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
+			var graph = new IssueGraph(operations as IList<IGraphIssueOperation>);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
@@ -145,7 +145,7 @@ namespace Workwear.Test.Domain.Operations
 			};
 
 			var operations = new List<EmployeeIssueOperation>() { operation1, issue };
-			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
+			var graph = new IssueGraph(operations as IList<IGraphIssueOperation>);
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(Arg.Any<string>()).ReturnsForAnyArgs(false);
@@ -187,7 +187,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { };
 
-			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
+			var graph = new IssueGraph(operations  as IList<IGraphIssueOperation>);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
@@ -241,7 +241,7 @@ namespace Workwear.Test.Domain.Operations
 
 			var operations = new List<EmployeeIssueOperation>() { };
 
-			var graph = new IssueGraph<EmployeeIssueOperation>(operations);
+			var graph = new IssueGraph(operations as IList<IGraphIssueOperation>);
 			var issue = new EmployeeIssueOperation();
 			issue.Employee = employee;
 			issue.Nomenclature = nomenclature;
@@ -329,7 +329,7 @@ namespace Workwear.Test.Domain.Operations
 				ActiveItems = { new GraphItem(operation1) }
 			};
 			
-			var graph = new IssueGraph(list);
+			var graph = new IssueGraph(list as IList<IGraphIssueOperation>);
 			graph.Intervals.Add(graphInterval);
 
 			var item = new EmployeeCardItem();

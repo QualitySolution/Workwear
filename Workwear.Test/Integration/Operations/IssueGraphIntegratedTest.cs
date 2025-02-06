@@ -10,7 +10,7 @@ using Workwear.Domain.Stock;
 
 namespace Workwear.Test.Integration.Operations
 {
-	[TestFixture(TestOf = typeof(IssueGraph<EmployeeIssueOperation>), Description = "Граф числящегося за сотрудником")]
+	[TestFixture(TestOf = typeof(IssueGraph), Description = "Граф числящегося за сотрудником")]
 	public class IssueGraphIntegratedTest : InMemoryDBGlobalConfigTestFixtureBase
 	{
 		[OneTimeSetUp]
@@ -64,7 +64,7 @@ namespace Workwear.Test.Integration.Operations
 
 				uow.Commit();
 
-				var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, employee, protectionTools);
+				var graph = IssueGraph.MakeIssueGraph(uow, employee, protectionTools);
 				Assert.That(graph.Intervals.Count, Is.EqualTo(3));
 				var first = graph.OrderedIntervals.First();
 				Assert.That(first.StartDate, Is.EqualTo(new DateTime(2019, 1, 1)));

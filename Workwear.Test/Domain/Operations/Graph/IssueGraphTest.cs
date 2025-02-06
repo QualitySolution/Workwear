@@ -8,7 +8,7 @@ using Workwear.Domain.Operations.Graph;
 
 namespace Workwear.Test.Domain.Operations.Graph
 {
-	[TestFixture(TestOf = typeof(IssueGraph<IGraphIssueOperation>))]
+	[TestFixture(TestOf = typeof(IssueGraph))]
 	public class IssueGraphTest
 	{
 
@@ -32,7 +32,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 		[TestCaseSource(nameof(FineIntervalForDateCases))]
 		public DateTime FineIntervalForDateTest(DateTime fineDate, DateTime[] intervalDates)
 		{
-			var graph = new IssueGraph<IGraphIssueOperation>();
+			var graph = new IssueGraph();
 			graph.Intervals.AddRange(intervalDates.Select(x => new GraphInterval {StartDate = x}));
 
 			return graph.IntervalOfDate(fineDate).StartDate;
@@ -41,7 +41,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 		[Test(Description = "Возвращаем пустой интервал если ищем дату до любых интервалов.")]
 		public void FineIntervalForDateReturnNullBeforeIntervalsTest()
 		{
-			var graph = new IssueGraph<IGraphIssueOperation>();
+			var graph = new IssueGraph();
 			graph.Intervals.Add( new GraphInterval { StartDate = new DateTime(2018, 4, 1) });
 
 			Assert.That(graph.IntervalOfDate(new DateTime(2018, 2, 2)), Is.Null);
@@ -57,7 +57,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation1.Issued.Returns(10);
 
 			var list = new List<IGraphIssueOperation>() { operation1 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 
 			Assert.That(graph.OrderedIntervals.Last().CurrentCount, Is.EqualTo(0), "Количество в последнем интервале должно быть 0, при наличии автосписания.");
 			Assert.That(graph.OrderedIntervals.First().CurrentCount, Is.EqualTo(10), "Количество в первом интервале должно быть 10.");
@@ -76,7 +76,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation2.Returned.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1, operation2 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 
 			Assert.That(graph.Intervals.Count, Is.GreaterThanOrEqualTo(3));
 			Assert.That(graph.Intervals.Last().StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
@@ -97,7 +97,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation2.Issued.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1, operation2 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 
 			Assert.That(graph.Intervals.Count, Is.EqualTo(2));
 			Assert.That(graph.Intervals.First().StartDate, Is.EqualTo(new DateTime(2018, 1, 1)));
@@ -119,7 +119,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation2.Issued.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1, operation2 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 			
 			var interval = graph.IntervalOfDate(new DateTime(2018, 2, 7));
 			Assert.That(interval.StartDate, Is.EqualTo(new DateTime(2018, 2, 1)));
@@ -159,7 +159,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation5.Issued.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1, operation2, operation3, operation4, operation5 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 
 			//Assert.That(graph.Intervals.Count, Is.GreaterThanOrEqualTo(3));
 			Assert.That(graph.Intervals.Last().Issued, Is.EqualTo(3));
@@ -177,7 +177,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation1.Issued.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 
 			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2018, 1, 1)), Is.EqualTo(2));
 		}
@@ -212,7 +212,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operationOverride.Issued.Returns(5);
 			
 			var list = new List<IGraphIssueOperation>() { operation1, operation3, operationOverride };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 			
 			//Проверяем корректное начисление количества
 			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2019, 12, 15)), Is.EqualTo(2));
@@ -255,7 +255,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operationOverride.Issued.Returns(5);
 			
 			var list = new List<IGraphIssueOperation>() { operation1, operation3, operationOverride };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 			
 			//Проверяем корректное начисление количества
 			Assert.That(graph.UsedAmountAtEndOfDay(new DateTime(2019, 12, 15)), Is.EqualTo(3));
@@ -289,7 +289,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			operation2.Returned.Returns(2);
 
 			var list = new List<IGraphIssueOperation>() { operation1, operation2 };
-			var graph = new IssueGraph<IGraphIssueOperation>(list);
+			var graph = new IssueGraph(list);
 			
 			Assert.That(graph.AmountAtEndOfDay(new DateTime(2018, 3, 1)), Is.EqualTo(2));
 			Assert.That(graph.AmountAtEndOfDay(new DateTime(2018, 5, 1)), Is.EqualTo(2));

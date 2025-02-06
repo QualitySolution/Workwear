@@ -52,7 +52,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem,
 					ProtectionTools = protectionTools,
 					NextIssue = new DateTime(2022, 10, 5),
-					Graph = new IssueGraph(operations)
+					Graph = new IssueGraph(operations as IList<IGraphIssueOperation>)
 				}
 			};
 
@@ -96,7 +96,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem,
 					ProtectionTools = protectionTools,
 					NextIssue = new DateTime(2024, 1, 5),
-					Graph = new IssueGraph(operations)
+					Graph = new IssueGraph(operations as IList<IGraphIssueOperation>)
 				}
 			};
 
@@ -193,7 +193,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem1,
 					ProtectionTools = protectionTools1,
 					NextIssue = new DateTime(2024, 5, 1),
-					Graph = new IssueGraph(operations1)
+					Graph = new IssueGraph(operations1 as IList<IGraphIssueOperation>)
 				}
 			};
 			var employeeItems2 = new List<EmployeeCardItem> {
@@ -202,7 +202,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem2,
 					ProtectionTools = protectionTools2,
 					NextIssue = new DateTime(2022, 5, 1),
-					Graph = new IssueGraph(operations2)
+					Graph = new IssueGraph(operations2 as IList<IGraphIssueOperation>)
 				}
 			};
 			var employeeItems3 = new List<EmployeeCardItem> {
@@ -211,7 +211,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem3,
 					ProtectionTools = protectionTools3,
 					NextIssue = new DateTime(2024, 11, 10),
-					Graph = new IssueGraph(operations3)
+					Graph = new IssueGraph(operations3 as IList<IGraphIssueOperation>)
 				}
 			};
 
