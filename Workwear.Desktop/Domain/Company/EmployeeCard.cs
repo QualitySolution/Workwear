@@ -69,7 +69,6 @@ namespace Workwear.Domain.Company
 
 		private string lastName;
 		[StringLength(20)]
-		
 		[Display (Name = "Фамилия")]
 		public virtual string LastName {
 			get =>lastName; 
@@ -310,7 +309,7 @@ namespace Workwear.Domain.Company
 				yield return new ValidationResult(
 					$"Телефон должен быть задан в формате {PhoneFormat.RussiaOnlyHyphenated.GetEnumTitle()}",
 					new[] { nameof(PhoneNumber) });
-	
+			
 			if(!EmailHelper.Validate(Email, true))
 				yield return new ValidationResult(
 					$"Некорректный формат email адреса",

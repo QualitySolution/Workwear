@@ -42,12 +42,7 @@ namespace Workwear.Domain.Operations.Graph
 			operations = issues; 
 			Refresh();
 		} 
-		//Пока только для тестов	
-	/*	public IssueGraph(IList<IGraphIssueOperation> issues) {
-			operations = issues; 
-			Refresh();
-		}
-*/
+
 		/// <summary>
 		/// Метод перестраивает граф после изменения дат в его операциях.
 		/// Если необходимо добавить или удалить операции просто пересоздайте граф.

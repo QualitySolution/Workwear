@@ -172,7 +172,7 @@ namespace Workwear.Domain.Operations {
          	set => SetField(ref comment, value);
         }
         #endregion
-//Разбор опраций        
+    
         /// <summary>
         /// Для создания операций выдачи надо использовать конструктор с BaseParameters
         /// </summary>

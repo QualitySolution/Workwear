@@ -3,7 +3,6 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Testing.Values;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Company;

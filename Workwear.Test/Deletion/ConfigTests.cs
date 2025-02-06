@@ -22,9 +22,6 @@ namespace Workwear.Test.Deletion
 			ConfigureOneTime.ConfigureNh();
 			ConfigureOneTime.ConfigureDeletion();
 
-			AddIgnoredProperty<InspectionItem>(x => x.OperationIssue, "Потому что если мы удаляем строку переоценки, мы не должны при этом удалять исходную операцию выдачи.");
-			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
-			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<DutyNormIssueOperation>(x => x.WarehouseOperation, "Удаляется при удалении строки документа.");
 			AddIgnoredProperty<BarcodeOperation>(x => x.EmployeeIssueOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");
 			AddIgnoredProperty<BarcodeOperation>(x => x.WarehouseOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");

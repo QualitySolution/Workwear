@@ -134,7 +134,6 @@ namespace Workwear.Domain.Regulations {
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
 				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
-//711	bestChoice?.Sort((a,b) => (a.Amount > b.Amount) ? a : b);
 				return bestChoice;
 			}
 		}
