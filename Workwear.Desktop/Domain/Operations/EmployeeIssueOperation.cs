@@ -308,7 +308,7 @@ namespace Workwear.Domain.Operations
 				item.ExpenseDoc.Items
 					.Where(x => x.EmployeeIssueOperation != null && DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))
 					.Select(x => x.EmployeeIssueOperation).ToArray();
-			var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools, anotherRows);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 
@@ -340,7 +340,7 @@ namespace Workwear.Domain.Operations
 			if(item.EmployeeCardItem?.ProtectionTools != null)
 				ProtectionTools = item.EmployeeCardItem.ProtectionTools;
 				
-			var graph = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
+			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
 		
@@ -399,7 +399,7 @@ namespace Workwear.Domain.Operations
 		#endregion
 		#region Пересчет выдачи
 
-		public virtual void RecalculateDatesOfIssueOperation(IssueGraph<EmployeeIssueOperation> graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+		public virtual void RecalculateDatesOfIssueOperation(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			RecalculateStartOfUse(graph, baseParameters, askUser);
 			RecalculateExpiryByNorm(baseParameters, askUser);
 		}
@@ -430,7 +430,7 @@ namespace Workwear.Domain.Operations
 
 		private bool? lastAnswerRecalculateStartOfUse;
 		
-		public virtual void RecalculateStartOfUse(IssueGraph<EmployeeIssueOperation> graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			if(!CheckRecalculateCondition())
 				return;
 			

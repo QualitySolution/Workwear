@@ -107,7 +107,7 @@ namespace Workwear.Domain.Regulations {
 				Amount = 1,
 				NormPeriod = NormPeriodType.Year,
 				PeriodCount = 1,
-				Graph = new IssueGraph<DutyNormIssueOperation>(),
+				Graph = new IssueGraph(),
 			};
 
 			Items.Add (item);

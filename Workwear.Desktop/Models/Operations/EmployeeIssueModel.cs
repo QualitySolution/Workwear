@@ -21,7 +21,7 @@ namespace Workwear.Models.Operations {
 		
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly UnitOfWorkProvider unitOfWorkProvider;
-		private Dictionary<string, IssueGraph<EmployeeIssueOperation>> graphs = new Dictionary<string, IssueGraph<EmployeeIssueOperation>>();
+		private Dictionary<string, IssueGraph> graphs = new Dictionary<string, IssueGraph>();
 		
 		public EmployeeIssueModel(EmployeeIssueRepository employeeIssueRepository, UnitOfWorkProvider unitOfWorkProvider = null) {
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -197,16 +197,16 @@ namespace Workwear.Models.Operations {
 				foreach(var protectionToolsGroup in employeeGroup.GroupBy(o => o.ProtectionTools)) {
 					if(protectionToolsGroup.Key == null)
 						continue; //В пересчёте нет смысла без потребности
-					graphs[GetKey(employeeGroup.Key, protectionToolsGroup.Key)] = new IssueGraph<EmployeeIssueOperation>(protectionToolsGroup.ToList());
+					graphs[GetKey(employeeGroup.Key, protectionToolsGroup.Key)] = new IssueGraph(protectionToolsGroup.ToList<IGraphIssueOperation>());
 				}
 			}
 		}
 
-		private IssueGraph<EmployeeIssueOperation> GetPreparedOrEmptyGraph(EmployeeCard employee, ProtectionTools protectionTools) {
+		private IssueGraph GetPreparedOrEmptyGraph(EmployeeCard employee, ProtectionTools protectionTools) {
 			var key = GetKey(employee, protectionTools);
-			if(graphs.TryGetValue(key, out IssueGraph<EmployeeIssueOperation> graph))
+			if(graphs.TryGetValue(key, out IssueGraph graph))
 				return graph;
-			return new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>());
+			return new IssueGraph(new List<EmployeeIssueOperation>() as IList<IGraphIssueOperation>);
 		} 
 		
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
@@ -252,9 +252,9 @@ namespace Workwear.Models.Operations {
 			
 			foreach (var item in employeeCardItems) {
 				if(protectionGroups.ContainsKey((item.EmployeeCard.Id, item.ProtectionTools.Id))) 
-					item.Graph = new IssueGraph<EmployeeIssueOperation>(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList());
+					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList<IGraphIssueOperation>());
 				else 
-					item.Graph = new IssueGraph<EmployeeIssueOperation>(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph(new List<IGraphIssueOperation>() );
 			}
 		}
 		#endregion

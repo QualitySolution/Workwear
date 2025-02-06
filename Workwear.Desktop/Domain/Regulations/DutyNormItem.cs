@@ -143,7 +143,7 @@ namespace Workwear.Domain.Regulations {
 		
 		#region Граф
 
-		public virtual IssueGraph<DutyNormIssueOperation> Graph { get; set; }
+		public virtual IssueGraph Graph { get; set; }
 		
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
@@ -163,11 +163,11 @@ namespace Workwear.Domain.Regulations {
 		/// <returns>Наличие изменений</returns>
 		public virtual bool Update(IUnitOfWork uow) {
 			if(Id == 0)
-				Graph = new IssueGraph<DutyNormIssueOperation>();
+				Graph = new IssueGraph();
 			else {
 				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
 					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
+				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
 			}
 
 			bool hasCange = UpdateNextIssue(uow);
@@ -181,11 +181,11 @@ namespace Workwear.Domain.Regulations {
 		/// </summary>
 		public virtual bool UpdateNextIssue(IUnitOfWork uow) {
 			if(Id == 0)
-				Graph = new IssueGraph<DutyNormIssueOperation>();
+				Graph = new IssueGraph();
 			else {
 				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
 					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph<DutyNormIssueOperation>(query.List());
+				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
 			}
 			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {

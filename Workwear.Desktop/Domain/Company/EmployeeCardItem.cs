@@ -87,7 +87,7 @@ namespace Workwear.Domain.Company
 
 		#region Модели
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
-		public virtual IssueGraph<EmployeeIssueOperation> Graph { get; set; }
+		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) => (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;

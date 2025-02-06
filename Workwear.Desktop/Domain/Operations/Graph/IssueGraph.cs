@@ -10,18 +10,19 @@ using Workwear.Domain.Regulations;
 [assembly:InternalsVisibleTo("Workwear.Test")]
 namespace Workwear.Domain.Operations.Graph
 {
+	
 	public interface IGraphIssueOperation:IDomainObject {
 		DateTime OperationTime { get; }
 		DateTime? StartOfUse { get; }
 		DateTime? AutoWriteoffDate { get; }
 		int Issued { get; set; }
 		int Returned { get; }
+		bool OverrideBefore { get; }
 
 		IGraphIssueOperation IssuedOperation { get; }
-		bool OverrideBefore { get; }
 	};
 	
-	public class IssueGraph<TGraphOperation>
+	public class IssueGraph
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -37,16 +38,16 @@ namespace Workwear.Domain.Operations.Graph
 
 		public IEnumerable<GraphInterval> OrderedIntervalsReverse => Intervals.OrderByDescending(x => x.StartDate);
 
-		public IssueGraph(IList<TGraphOperation> issues) {
-			operations = issues.Select(x => (IGraphIssueOperation)x).ToList(); 
-			Refresh();
-		} 
-		//Пока только для тестов	
 		public IssueGraph(IList<IGraphIssueOperation> issues) {
 			operations = issues; 
 			Refresh();
+		} 
+		//Пока только для тестов	
+	/*	public IssueGraph(IList<IGraphIssueOperation> issues) {
+			operations = issues; 
+			Refresh();
 		}
-
+*/
 		/// <summary>
 		/// Метод перестраивает граф после изменения дат в его операциях.
 		/// Если необходимо добавить или удалить операции просто пересоздайте граф.
@@ -105,7 +106,7 @@ namespace Workwear.Domain.Operations.Graph
 
 		#region Методы
 
-		public void AddOperations(IList<EmployeeIssueOperation> operations) {
+		public void AddOperations(IList<IGraphIssueOperation> operations) {
 			foreach(var op in operations) 
 				this.operations.Add(op);
 			if(operations.Any())
@@ -118,8 +119,8 @@ namespace Workwear.Domain.Operations.Graph
 		/// </summary>
 		/// <param name="date"></param>
 		/// <returns></returns>
-		public EmployeeIssueOperation GetWrittenOffOperation(DateTime date) {
-			return (EmployeeIssueOperation)operations.FirstOrDefault(o => o.AutoWriteoffDate.GetValueOrDefault().Date == date.Date );
+		public IGraphIssueOperation GetWrittenOffOperation(DateTime date) {
+			return operations.FirstOrDefault(o => o.AutoWriteoffDate.GetValueOrDefault().Date == date.Date );
 		}
 		
 		public int AmountAtBeginOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
@@ -157,9 +158,9 @@ namespace Workwear.Domain.Operations.Graph
 
 		#region Статические
 
-		internal static Func<EmployeeCard, ProtectionTools, IssueGraph<EmployeeIssueOperation>> MakeIssueGraphTestGap;
-
-		public static IssueGraph<EmployeeIssueOperation> MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, EmployeeIssueOperation[] unsavedOprarations = null)
+		internal static Func<EmployeeCard, ProtectionTools, IssueGraph> MakeIssueGraphTestGap;
+		//Фабрика
+		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, EmployeeIssueOperation[] unsavedOprarations = null)
 		{
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
@@ -176,7 +177,7 @@ namespace Workwear.Domain.Operations.Graph
 						issues.Add(operation);
 				}
 			
-			return new IssueGraph<EmployeeIssueOperation>(issues);
+			return new IssueGraph(issues as IList<IGraphIssueOperation>);
 		}
 		#endregion
 	}

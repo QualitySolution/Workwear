@@ -19,7 +19,7 @@ namespace Workwear.ViewModels.Stock
             ProtectionTools protectionTools) : base(navigation)
         {
             using (var unitOfWork = factory.CreateWithoutRoot())
-                Intervals = IssueGraph<EmployeeIssueOperation>.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
+                Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
             Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
         }
     }
