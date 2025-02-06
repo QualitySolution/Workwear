@@ -6,10 +6,10 @@ namespace Workwear.Domain.Operations.Graph
 {
 	public class GraphItem
 	{
-		public EmployeeIssueOperation IssueOperation;
-		public List<EmployeeIssueOperation> WriteOffOperations = new List<EmployeeIssueOperation>();
+		public IGraphIssueOperation IssueOperation;
+		public List<IGraphIssueOperation> WriteOffOperations = new List<IGraphIssueOperation>();
 
-		public GraphItem(EmployeeIssueOperation issueOperation)
+		public GraphItem(IGraphIssueOperation issueOperation)
 		{
 			IssueOperation = issueOperation;
 		}
@@ -23,7 +23,7 @@ namespace Workwear.Domain.Operations.Graph
 		/// Количество числящееся на условно "начало" дня, включает только полученное в этот день, но не списанное в этот день.
 		/// </summary>
 		/// <param name="excludeOperation">Исключить из расчета указанные операции</param>
-		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public int AmountAtBeginOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
 				return 0;
@@ -42,7 +42,7 @@ namespace Workwear.Domain.Operations.Graph
 		/// Количество числящееся на конец дня, включает списания произведенные в этот день.
 		/// </summary>
 		/// <param name="excludeOperation">Исключить из расчета указанные операции</param>
-		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public int AmountAtEndOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			if (IssueOperation == excludeOperation || (IssueOperation.Id > 0 && IssueOperation.Id == excludeOperation?.Id))
 				return 0;

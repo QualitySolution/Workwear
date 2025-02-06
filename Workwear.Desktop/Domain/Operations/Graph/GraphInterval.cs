@@ -30,6 +30,6 @@ namespace Workwear.Domain.Operations.Graph
 		/// </summary>
 		public int Used => ActiveItems.Where(x => x.IssueOperation.StartOfUse <= StartDate).Sum(x => x.AmountAtEndOfDay(StartDate));
 
-		public int AmountAtEndOfDay(DateTime onDate, EmployeeIssueOperation excludeOperation = null) => ActiveIssues.Sum(x => x.AmountAtEndOfDay(onDate, excludeOperation));
+		public int AmountAtEndOfDay(DateTime onDate, IGraphIssueOperation excludeOperation = null) => ActiveIssues.Sum(x => x.AmountAtEndOfDay(onDate, excludeOperation));
 	}
 }
