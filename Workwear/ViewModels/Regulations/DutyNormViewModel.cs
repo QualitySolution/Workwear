@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate.Criterion;
@@ -163,5 +164,15 @@ namespace Workwear.ViewModels.Regulations {
 			);
 		}
 		#endregion
+	}
+	
+	public enum DutyNormSheetPrint
+	{
+		[Display(Name = "Лицевая сторона")]
+		[ReportIdentifier("DutyNorms.DutyNormPage1")]
+		DutyNormPage1,
+		[Display(Name = "Обратная сторона")]
+		[ReportIdentifier("DutyNorms.DutyNormPage2")]
+		DutyNormPage2,
 	}
 }

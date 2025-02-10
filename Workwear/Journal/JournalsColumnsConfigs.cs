@@ -283,9 +283,9 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<DutyNormsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
-					.AddColumn("Нчало действия").AddTextRenderer(node => node.DateFromString)
+					.AddColumn("Начало действия").AddTextRenderer(node => node.DateFromString)
 					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
-					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 			);
 

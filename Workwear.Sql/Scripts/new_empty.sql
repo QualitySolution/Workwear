@@ -2170,11 +2170,11 @@ create table duty_norms
 		primary key,
 	regulations_id       int unsigned                 null,
 	regulations_annex_id int unsigned                 null,
-	name                 varchar(200) charset utf8mb3 null,
-	ton_paragraph        varchar(15) charset utf8mb3  null,
+	name                 varchar(200) charset utf8mb4 null,
+	ton_paragraph        varchar(15) charset utf8mb4  null,
 	datefrom             datetime                     null,
 	dateto               datetime                     null,
-	comment              text charset utf8mb3         null,
+	comment              text charset utf8mb4         null,
 	constraint fk_duty_norms_regulations
 		foreign key (regulations_id) references regulations (id)
 			on update cascade,
@@ -2274,13 +2274,13 @@ create table stock_expense_duty_norm
 (
 	id int unsigned auto_increment primary key,
 	doc_number              varchar(16)  null,
+	creation_date           datetime     not null  default (CURRENT_DATE()),
 	date                    date         not null,
 	duty_norm_id            int unsigned null,
 	warehouse_id            int unsigned not null,
 	responsible_employee_id int unsigned null,
 	user_id                 int unsigned null,
 	comment                 text         null,
-	creation_date           datetime     null,
 
 	constraint fk_stock_expense_duty_norm_norm
 		foreign key (duty_norm_id) references duty_norms (id)
@@ -2295,7 +2295,7 @@ create table stock_expense_duty_norm
 		foreign key (user_id) references users (id)
 			on update cascade on delete set null
 )
-	charset = utf8mb3;
+	charset = utf8mb4;
 
 create index fk_stock_expense_duty_norm_warehouse_idx
 	on stock_expense_duty_norm (warehouse_id);

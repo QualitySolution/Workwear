@@ -161,18 +161,17 @@ namespace Workwear.Domain.Operations.Graph
 				return MakeIssueGraphTestGap(employee, protectionTools);
 			
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
-					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.ProtectionTools.Id == protectionTools.Id)
-					.OrderBy(x => x.OperationTime).Asc
-					.List();
+				.Where(x => x.Employee.Id == employee.Id)
+				.Where(x => x.ProtectionTools.Id == protectionTools.Id)
+				.OrderBy(x => x.OperationTime).Asc
+				.List<IGraphIssueOperation>();
 			if(unsavedOprarations != null)
-				foreach (var operation in unsavedOprarations)
-				{
-					if(!issues.Any(x => x.IsSame(operation)))
-						issues.Add(operation);
+				foreach (var operation in unsavedOprarations) {
+					if(!issues.Any(x => x.IsSame((IGraphIssueOperation)operation)))
+						issues.Add((IGraphIssueOperation)operation);
 				}
 			
-			return new IssueGraph(issues as IList<IGraphIssueOperation>);
+			return new IssueGraph(issues);
 		}
 		#endregion
 	}
