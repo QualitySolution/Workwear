@@ -391,6 +391,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
+		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
