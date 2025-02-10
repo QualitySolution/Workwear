@@ -65,6 +65,15 @@ namespace Workwear.Domain.Company {
 			Items.Add(item);
 			return item;
 		}
+
+		public virtual void RemoveEmployees(EmployeeGroupItem[] employees) {
+			foreach(var employee in employees) {
+				RemoveEmployee(employee);
+			}
+		}
+		public virtual void RemoveEmployee(EmployeeGroupItem employee) {
+			Items.RemoveAll(i => i.Employee.Id == employee.Employee.Id);
+		}
 		
 		#region IValidatableObject
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
