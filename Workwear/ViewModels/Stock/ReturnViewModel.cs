@@ -61,9 +61,10 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Id == 0) {
 				logger.Info("Создание Нового документа выдачи");
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				EmployeeCard = employee;
-				Entity.Warehouse = warehouse ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
-			} else 
+				EmployeeCard = UoW.GetInSession(employee);
+				Entity.Warehouse = UoW.GetInSession(warehouse) ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			} 
+			else 
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			var entryBuilder = new CommonEEVMBuilderFactory<Return>(this, Entity, UoW, navigation, autofacScope);
 			

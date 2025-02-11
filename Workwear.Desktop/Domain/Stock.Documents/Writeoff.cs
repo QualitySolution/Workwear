@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
@@ -85,7 +84,7 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
-					new[] { this.GetPropertyName (o => o.Date)});
+					new[] { nameof(Date)});
 			
 			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
@@ -93,12 +92,18 @@ namespace Workwear.Domain.Stock.Documents
 
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
 
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
 			
+			foreach(var item in Items) {
+				if(item.Amount > item.MaxAmount)
+					yield return new ValidationResult(
+						$" \"{item.Nomenclature.Name}\" указано колличество больше выданного.",
+						new[] { nameof(Items) });
+			}
 		}
 
 		#endregion

@@ -41,7 +41,9 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp)
 				.InitializeFromSource();
 
-			buttonAdd.Sensitive = ViewModel.Warehouse != null;
+			buttonAdd.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive)
+				.InitializeFromSource();
 
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
@@ -52,8 +54,6 @@ namespace Workwear.Views.Stock
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
 				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
 				.InitializeFromSource();
-
-			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
@@ -163,12 +163,6 @@ namespace Workwear.Views.Stock
 		#endregion
 		
 		#region События
-		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.Warehouse))
-				buttonAdd.Sensitive = ViewModel.Warehouse != null;
-		}
-
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {

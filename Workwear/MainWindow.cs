@@ -70,6 +70,7 @@ using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
@@ -129,8 +130,19 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) {
+			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
+				quitService.Quit();
+				return;
+			}
+			
+			if (updateInfo?.Status == UpdateStatus.ConnectionError) {
 				logger.Warn(updateInfo.Value.Message);
+			}
+
+			if(updateInfo?.Status == UpdateStatus.BaseError) {
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				quitService.Quit();
+				return;
 			}
 			
 			if (updateInfo?.Status == UpdateStatus.ExternalError) {
@@ -142,15 +154,19 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 
+		progress.CheckPoint("Настройка удаления");
+		//Настройка удаления
+		Configure.ConfigureDeletion();
+		
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
-			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
+			string message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			Users WinUser = new Users();
@@ -209,7 +225,7 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
-		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
+		//Если склады отсутствуют, создаём новый склад, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(!UoW.GetAll<Warehouse>().Any())
 			CreateDefaultWarehouse();
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
@@ -277,10 +293,6 @@ public partial class MainWindow : Gtk.Window {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
-		
-		progress.CheckPoint("Настройка удаления");
-		//Настройка удаления
-		Configure.ConfigureDeletion();
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
@@ -378,6 +390,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
@@ -560,10 +573,15 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e) {
-		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
-		page.ViewModel.ShowSummary = true;
-		page.ViewModel.Filter.ShowNegativeBalance = true;
-		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null,
+			configureViewModel: vm => vm.ShowSummary = true,
+			addingRegistrations: builder => {
+				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+					filter => {
+						filter.ShowNegativeBalance = true;
+						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+					});
+			});
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e) {
