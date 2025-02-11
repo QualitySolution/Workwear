@@ -1,7 +1,6 @@
 ﻿using System;
 using Gamma.ColumnConfig;
 using Gtk;
-using QS.Utilities.Text;
 using QS.Views.Dialog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -27,18 +26,15 @@ namespace Workwear.Views.Regulations {
 		private void ConfigureMainInfo() { 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter())
 				.InitializeFromSource();
-			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title, 160));
-			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title, 160));
-			yentryRegulationDoc.ItemsList = ViewModel.RegulationDocs;
-			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не участвовал в расчёте мин. ширины окна
-			ycomboAnnex.WidthRequest = 1;
-			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
-			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
-			yentryTonParagraph.Binding.AddBinding(Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource();
+			yentryParagraph.Binding.AddBinding(Entity, e => e.NormParagraph, w => w.Text).InitializeFromSource();
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+
+			entitySubdivision.ViewModel = ViewModel.SubdivisionEntryViewModel;
+			entityResponsibleEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
+			entityResponsibleLeader.ViewModel = ViewModel.LeaderEntryViewModel;
 		}
 		//Вкладка Норма (список РТ и баланс)
 		private void ConfigureDialog() { 
@@ -51,7 +47,7 @@ namespace Workwear.Views.Regulations {
 					.AddTextRenderer(i => i.AmountUnitText(i.Amount))
 				.AddColumn("Период").Resizable()
 					.AddNumericRenderer(i => i.PeriodCount).WidthChars(3).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
-						.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty)
+						.AddSetter((c, n) => c.Visible = n.NormPeriod != DutyNormPeriodType.Wearout)
 					.AddEnumRenderer(i => i.NormPeriod)
 						.AddSetter((c,n) => c.Text = n.PeriodText )
 						.Editing()
@@ -83,7 +79,7 @@ namespace Workwear.Views.Regulations {
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercent.ToString("P0"))
 				.AddColumn("Получено").AddNumericRenderer(e => e.Issued)
 				.AddColumn("Дата автосписания").AddReadOnlyTextRenderer(x => x.AutoWriteoffDate?.ToShortDateString() ?? "")
-				.Finish ();
+				.Finish();
 			ytreeviewHistory.ItemsDataSource = ViewModel.Operations;
 		}
 		

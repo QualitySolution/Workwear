@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
 
@@ -25,26 +26,33 @@ namespace Workwear.Domain.Regulations {
 
 		public virtual int Id { get; set; }
 
-		private RegulationDoc document;
-		[Display(Name = "Нормативный документ")]
-		public virtual RegulationDoc Document {
-			get => document;
-			set => SetField(ref document, value);
+		private Leader responsibleLeader;
+		[Display(Name = "Ответственное должностное лицо")]
+		public virtual Leader ResponsibleLeader {
+			get => responsibleLeader;
+			set => SetField(ref responsibleLeader, value);
 		}
 
-		private RegulationDocAnnex annex;
-		[Display(Name = "Приложение нормативного документа")]
-		public virtual RegulationDocAnnex Annex {
-			get => annex;
-			set => SetField(ref annex, value);
+		private EmployeeCard responsibleEmployee;
+		[Display(Name = "Ответственный сотрудник")]
+		public virtual EmployeeCard ResponsibleEmployee {
+			get => responsibleEmployee;
+			set => SetField(ref responsibleEmployee, value);
 		}
 
-		private string tonParagraph;
-		[Display(Name = "№ пункта приложения ТОН")]
-		[StringLength(15)]
-		public virtual string TONParagraph {
-			get => tonParagraph;
-			set => SetField(ref tonParagraph, value);
+		private Subdivision subdivision;
+		[Display(Name = "Подразделение")]
+		public virtual Subdivision Subdivision {
+			get => subdivision;
+			set => SetField(ref subdivision, value);
+		}
+		
+		private string normNormParagraph;
+		[Display(Name = "Пункт норм")]
+		[StringLength(200)]
+		public virtual string NormParagraph {
+			get => normNormParagraph;
+			set => SetField(ref normNormParagraph, value);
 		}
 
 		private string name;
@@ -54,6 +62,7 @@ namespace Workwear.Domain.Regulations {
 			get => name;
 			set => SetField(ref name, value);
 		}
+		
 		private DateTime? dateFrom;
 		[Display(Name = "Начало действия")]
 		public virtual DateTime? DateFrom {
@@ -103,7 +112,7 @@ namespace Workwear.Domain.Regulations {
 				DutyNorm = this,
 				ProtectionTools = tools,
 				Amount = 1,
-				NormPeriod = NormPeriodType.Year,
+				NormPeriod = DutyNormPeriodType.Year,
 				PeriodCount = 1,
 				Graph = new IssueGraph(),
 			};

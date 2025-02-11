@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Autofac;
 using Gamma.Utilities;
 using NHibernate.Criterion;
 using QS.Dialog;
@@ -14,12 +15,15 @@ using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Validation;
+using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
-using Workwear.Models.Operations;
+using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations {
@@ -27,10 +31,16 @@ namespace Workwear.ViewModels.Regulations {
 		
 		private IInteractiveService interactive;
 		private readonly IEntityChangeWatcher changeWatcher;
+		
+		public readonly EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
+		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public readonly EntityEntryViewModel<Leader> LeaderEntryViewModel;
+		
 		public DutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			ILifetimeScope autofacScope,
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			IValidator validator = null,
@@ -45,13 +55,26 @@ namespace Workwear.ViewModels.Regulations {
 				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
 			
+			
+			var entryBuilder = new CommonEEVMBuilderFactory<DutyNorm>(this, Entity, UoW, navigation, autofacScope);
+			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
+				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
+				.UseViewModelDialog<SubdivisionViewModel>()
+				.Finish();
+			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.ResponsibleEmployee)
+				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+				.UseViewModelDialog<EmployeeViewModel>()
+				.Finish();
+			LeaderEntryViewModel = entryBuilder.ForProperty(x => x.ResponsibleLeader)
+				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
+				.UseViewModelDialog<LeadersViewModel>()
+				.Finish();
+			
 			//Актуализация строк при открытии			
 			Entity.UpdateItems(UoW);
 		}
 		
 		#region Свойства
-
-		public List<RegulationDoc> RegulationDocs { get; set; }
 		
 		private DutyNormItem selectedItem;
 		public virtual DutyNormItem SelectedItem {

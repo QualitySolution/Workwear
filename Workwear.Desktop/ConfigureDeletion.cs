@@ -58,10 +58,10 @@ namespace Workwear
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)
 				.AddDeleteDependence<ServiceClaim>(x => x.Employee)
 				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
+				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<Leader>(x => x.Employee)
 				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
-				.AddClearDependence<Leader>(x => x.Employee)
 				;
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
@@ -81,6 +81,7 @@ namespace Workwear
 				.AddRemoveFromDependence<Inspection>(x => x.Members)
 				.AddClearDependence<Writeoff>(x => x.Director)
 				.AddClearDependence<Writeoff>(x => x.Chairman)
+				.AddClearDependence<DutyNorm>(x => x.ResponsibleLeader)
 				.AddRemoveFromDependence<Writeoff>(x => x.Members);
 
 			DeleteConfig.AddHibernateDeleteInfo<Organization>()
@@ -99,7 +100,8 @@ namespace Workwear
 				.AddDeleteDependence<Department>(x => x.Subdivision)
 				.AddDeleteDependence<Post>(x => x.Subdivision)
 				.AddClearDependence<EmployeeCard>(x => x.Subdivision)
-				.AddClearDependence<IssuanceSheet>(x => x.Subdivision);
+				.AddClearDependence<IssuanceSheet>(x => x.Subdivision)
+				.AddClearDependence<DutyNorm>(x => x.Subdivision);
 				
 			DeleteConfig.AddHibernateDeleteInfo<VacationType>()
 				.AddDeleteDependence<EmployeeVacation>(x => x.VacationType);
@@ -194,13 +196,11 @@ namespace Workwear
 				.AddClearDependence<DutyNormIssueOperation>(x => x.ProtectionTools);
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
-			            .AddDeleteDependence<DutyNorm>(x => x.Document)
 			            .AddDeleteDependence<Norm>(x => x.Document)
 						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
-				.AddClearDependence<Norm>(x => x.Annex)
-				.AddClearDependence<DutyNorm>(x => x.Annex);
+				.AddClearDependence<Norm>(x => x.Annex);
 
 			#endregion
 			#region Размеры

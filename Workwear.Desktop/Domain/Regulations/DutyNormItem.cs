@@ -46,12 +46,12 @@ namespace Workwear.Domain.Regulations {
 			set { SetField (ref amount, value, () => Amount); }
 		}
 
-		private NormPeriodType normPeriod;
+		private DutyNormPeriodType normPeriod;
 		[Display (Name = "Период нормы")]
-		public virtual NormPeriodType NormPeriod {
+		public virtual DutyNormPeriodType NormPeriod {
 			get { return normPeriod; }
 			set { SetField (ref normPeriod, value, () => NormPeriod);
-				if(value == NormPeriodType.Wearout)
+				if(value == DutyNormPeriodType.Wearout)
 					PeriodCount = 0;
 			}
 		}
@@ -92,9 +92,8 @@ namespace Workwear.Domain.Regulations {
 		/// </summary>
 		public virtual DateTime? CalculateExpireDate(DateTime issueDate, int amount)
 		{
-			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
+			if(NormPeriod == DutyNormPeriodType.Wearout)
 				return null;
-			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
@@ -107,9 +106,8 @@ namespace Workwear.Domain.Regulations {
 		/// </summary>
 		public virtual DateTime? CalculateExpireDate(DateTime issueDate, decimal wearPercent = 0.0m)
 		{
-			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
+			if(NormPeriod == DutyNormPeriodType.Wearout)
 				return null;
-			//TODO Некорректно считаем смены
 			var maxWriteofDate = issueDate.AddMonths(PeriodInMonths);
 			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
 		}
@@ -220,17 +218,13 @@ namespace Workwear.Domain.Regulations {
 				double years = -1;
 				switch(NormPeriod)
 				{
-					case NormPeriodType.Year:
+					case DutyNormPeriodType.Year:
 						years = PeriodCount;
 						break;
-					case NormPeriodType.Month:
+					case DutyNormPeriodType.Month:
 						years = (double)PeriodCount / 12;
 						break;
-					case NormPeriodType.Shift:
-						years = (double)PeriodCount / 247;
-						break;
-					case NormPeriodType.Duty:
-					case NormPeriodType.Wearout:
+					case DutyNormPeriodType.Wearout:
 						return 0;
 				}
 				return Amount / years;
@@ -242,14 +236,11 @@ namespace Workwear.Domain.Regulations {
 			get{
 				switch(NormPeriod)
 				{
-					case NormPeriodType.Year:
+					case DutyNormPeriodType.Year:
 						return PeriodCount * 12;
-					case NormPeriodType.Month:
+					case DutyNormPeriodType.Month:
 						return PeriodCount;
-					case NormPeriodType.Shift:
-						return PeriodCount / 21;
-					case NormPeriodType.Duty:
-					case NormPeriodType.Wearout:
+					case DutyNormPeriodType.Wearout:
 						return 0;
 				}
 				return -1;
@@ -259,13 +250,11 @@ namespace Workwear.Domain.Regulations {
 		public virtual string PeriodText{
 			get{
 				switch(NormPeriod) {
-					case NormPeriodType.Year:
+					case DutyNormPeriodType.Year:
 						return NumberToTextRus.FormatCase (PeriodCount, "год", "года", "лет");
-					case NormPeriodType.Month:
+					case DutyNormPeriodType.Month:
 						return NumberToTextRus.FormatCase (PeriodCount, "месяц", "месяца", "месяцев");
-					case NormPeriodType.Shift:
-						return NumberToTextRus.FormatCase (PeriodCount, "сменy", "смены", "смен");
-					case NormPeriodType.Wearout:
+					case DutyNormPeriodType.Wearout:
 						return "До износа";
 					default:
 						return String.Empty;

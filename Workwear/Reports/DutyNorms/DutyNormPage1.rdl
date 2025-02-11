@@ -19,7 +19,6 @@
     dni.norm_paragraph,
     mu.name as unit_of_measurement,
     CASE
-        WHEN dni.period_type = 'Shift' THEN CONCAT('на смену')
         WHEN dni.period_type = 'Wearout' THEN ',До износа'
         WHEN dni.period_type = 'Year' THEN CONCAT(dni.period_count,
             CASE
