@@ -198,6 +198,13 @@ namespace Workwear.Domain.Company
 			get => comment;
 			set => SetField(ref comment, value);
 		}
+		private bool printPromo;
+
+		[Display(Name = "Промоданные")]
+		public virtual bool PrintPromo {
+			get=> printPromo;
+			set => SetField(ref printPromo, value);
+		}
 
 		#endregion
 		#region Размеры одежды
