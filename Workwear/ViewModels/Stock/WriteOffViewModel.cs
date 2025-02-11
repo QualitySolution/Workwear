@@ -66,7 +66,7 @@ namespace Workwear.ViewModels.Stock
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
-            
+            Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
             if (Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
             }
@@ -252,7 +252,8 @@ namespace Workwear.ViewModels.Stock
 		        Title = String.Format("Акт списания №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
 		        Identifier = "Documents.WriteOffSheet",
 		        Parameters = new Dictionary<string, object> {
-			        { "id",  Entity.Id }
+			        { "id",  Entity.Id },
+			        {"printPromo", Entity.PrintPromo},
 		        }
 	        };
 	        NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
