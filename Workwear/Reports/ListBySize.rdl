@@ -148,6 +148,9 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
+          <BorderStyle  />
+          <BorderColor  />
+          <BorderWidth  />
         </Style>
       </Textbox>
     </ReportItems>
@@ -699,6 +702,23 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox10" >
+        <Height>12.00pt</Height>
+        <Width>271.78pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>287.10pt</Left>
+        <Top>1.00pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
@@ -810,6 +830,13 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
