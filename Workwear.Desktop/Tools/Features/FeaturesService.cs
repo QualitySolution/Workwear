@@ -218,6 +218,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
+				case WorkwearFeature.ReportWearCard:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -230,6 +231,12 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
+		#region Однопользовательская
+		#region Отчеты
+		[Display(Name="Отчет Список сотрудников")]
+		ReportWearCard,
+		#endregion
+		#endregion
 		#region Профессиональная
 		#region Документы
 		[Display(Name = "Коллективная выдача")]

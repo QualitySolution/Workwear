@@ -417,7 +417,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
 		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
-		
+		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
 		
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
