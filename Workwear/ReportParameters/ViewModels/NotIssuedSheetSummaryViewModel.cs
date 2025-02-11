@@ -38,7 +38,7 @@ namespace workwear.ReportParameters.ViewModels
 			Title = "Справка по невыданному (Суммарно)";
 			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetSummaryViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
-			
+			printPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
 				.Finish();
@@ -87,6 +87,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"all_warehouse", Warehouse.Id == -1},
 					{"warehouse_id", Warehouse.Id },
 					{"hide_worn", HideWorn},
+					{"printPromo", PrintPromo},
 				 };
 
 		#region Параметры
@@ -194,6 +195,12 @@ namespace workwear.ReportParameters.ViewModels
 						Subdivision = department?.Subdivision;
 				}
 			}
+		}
+
+		private bool printPromo;
+		public virtual bool PrintPromo {
+			get=>printPromo;
+			set=>SetField(ref printPromo, value);
 		}
 		#endregion
 		
