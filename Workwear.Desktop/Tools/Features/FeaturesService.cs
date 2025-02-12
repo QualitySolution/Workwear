@@ -218,6 +218,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
+				case WorkwearFeature.ReportWearCard:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -258,6 +259,8 @@ namespace Workwear.Tools.Features
 		ReportWrittenOff,
 		[Display(Name = "Отчет Заявка на спецодежду")]
 		ReportOrder,
+		[Display(Name="Отчет Список сотрудников")]
+		ReportWearCard,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]
