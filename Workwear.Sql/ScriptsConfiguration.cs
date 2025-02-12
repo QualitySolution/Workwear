@@ -233,6 +233,12 @@ namespace Workwear.Sql
 				new Version(2, 9, 0),
 				"Workwear.Sql.Scripts.2.9.sql"
 			);
+			
+			configuration.AddUpdate(
+				new Version(2, 9, 0),
+				new Version(2, 9, 1),
+				"Workwear.Sql.Scripts.2.9.1.sql"
+			);
 			return configuration;
 		}
 
