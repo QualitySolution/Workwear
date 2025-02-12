@@ -2170,18 +2170,22 @@ create table duty_norms
 	id                   int unsigned auto_increment
 		primary key,
 	name                 varchar(200) charset utf8mb4 null,
-	norm_paragraph       varchar(200) charset utf8mb4 null comment 'Пункт норм, основание выдачи',
+	norm_paragraph     	 varchar(200) charset utf8mb4 null,
 	responsible_leder_id int unsigned 				  null,
 	responsible_employee_id int unsigned 			  null,
+	subdivision_id 		 int unsigned 				  null,
 	datefrom             datetime                     null,
 	dateto               datetime                     null,
 	comment              text charset utf8mb4         null,
 	constraint duty_norms_employees_id_fk
 		foreign key (responsible_employee_id) references employees (id)
-			on delete set null,
+			on delete set null on update cascade,
 	constraint duty_norms_leaders_surname_fk
 		foreign key (responsible_leder_id) references leaders (surname)
-			on delete set null
+			on delete set null on update cascade,
+	constraint duty_norms_subdivisions_id_fk
+		foreign key (subdivision_id) references subdivisions (id)
+			on delete set null on update cascade
 );
 
 -- -----------------------------------------------------

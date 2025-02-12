@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
     dn.id,
@@ -49,11 +49,7 @@ WHERE dn.id = @duty_norm_id;
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
-        <Field Name="id">
-          <DataField>id</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
+      <Fields >
         <Field Name="name">
           <DataField>name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -73,6 +69,55 @@ WHERE dn.id = @duty_norm_id;
         <Field Name="amount">
           <DataField>amount</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="card" >
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT 
+    subdivisions.name as subdivisions_name,
+    IF(leaders.id is not null, CONCAT_WS(' ', leaders.surname, leaders.name, leaders.patronymic),
+        IF(employees.id is not null,  CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name),
+        '')      
+    )as resp_fio,
+    subdivisions.name as subdivisions_name,
+    IF(leaders.id is not null, CONCAT_WS(' ', leaders.surname, CONCAT_WS('.', LEFT(leaders.name, 1), LEFT(leaders.patronymic, 1),'')),
+       IF(employees.id is not null,  CONCAT_WS(' ', employees.last_name, CONCAT_WS('.',LEFT(employees.first_name, 1), LEFT(employees.patronymic_name, 1),'')),
+          '')
+    )as resp_fio_short,
+    IF(leaders.id is not null, leaders.position,
+       IF(employees.id is not null,  posts.name,
+          '')
+    )as resp_post    
+FROM duty_norms 
+    LEFT JOIN subdivisions on duty_norms.subdivision_id = subdivisions.id
+    LEFT JOIN employees on duty_norms.responsible_employee_id = employees.id
+    LEFT JOIN posts on employees.post_id = posts.id
+    LEFT JOIN leaders on duty_norms.responsible_leder_id = leaders.id
+WHERE duty_norms.id = @duty_norm_id</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="duty_norm_id">
+            <Value>={?duty_norm_id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="subdivisions_name">
+          <DataField>subdivisions_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="resp_fio">
+          <DataField>resp_fio</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="resp_post">
+          <DataField>resp_post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="resp_fio_short">
+          <DataField>resp_fio_short</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -407,7 +452,7 @@ WHERE dn.id = @duty_norm_id;
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value></Value>
+                      <Value>=First({resp_fio_short},"card") </Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -418,15 +463,17 @@ WHERE dn.id = @duty_norm_id;
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >General</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
+                  <ColSpan >1</ColSpan>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox17">
+                    <Textbox Name="Textbox18">
                       <Value></Value>
-                      <Style>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
                           <Left>None</Left>
@@ -436,6 +483,7 @@ WHERE dn.id = @duty_norm_id;
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <TextAlign >General</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -505,7 +553,7 @@ WHERE dn.id = @duty_norm_id;
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
-                      <Value>(фамилия, инициалы)</Value>
+                      <Value>Фамилия, инициалы</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -521,12 +569,13 @@ WHERE dn.id = @duty_norm_id;
                       </Style>
                     </Textbox>
                   </ReportItems>
+                  <ColSpan >1</ColSpan>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox33">
+                    <Textbox Name="Textbox15">
                       <Value></Value>
-                      <Style>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
                           <Left>None</Left>
@@ -536,6 +585,8 @@ WHERE dn.id = @duty_norm_id;
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                        <TextAlign>Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -546,7 +597,7 @@ WHERE dn.id = @duty_norm_id;
         </Footer>
       </Table>
       <Table Name="Table2">
-        <DataSetName>Data</DataSetName>
+        <DataSetName>card</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
@@ -1261,7 +1312,7 @@ WHERE dn.id = @duty_norm_id;
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox38">
-                      <Value></Value>
+                      <Value>={subdivisions_name}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -1276,41 +1327,7 @@ WHERE dn.id = @duty_norm_id;
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox67">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox39">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
+                  <ColSpan >3</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1419,7 +1436,7 @@ WHERE dn.id = @duty_norm_id;
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox44">
-                      <Value></Value>
+                      <Value>={resp_fio}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -1434,41 +1451,7 @@ WHERE dn.id = @duty_norm_id;
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox69">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox45">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
+                  <ColSpan >3</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1577,7 +1560,7 @@ WHERE dn.id = @duty_norm_id;
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value></Value>
+                      <Value>={resp_post}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -1592,41 +1575,7 @@ WHERE dn.id = @duty_norm_id;
                       </Style>
                     </Textbox>
                   </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox71">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox51">
-                      <Value></Value>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
+                  <ColSpan >3</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
@@ -1858,7 +1807,7 @@ WHERE dn.id = @duty_norm_id;
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
