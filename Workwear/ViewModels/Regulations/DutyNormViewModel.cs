@@ -167,7 +167,7 @@ namespace Workwear.ViewModels.Regulations {
 						+ $"  №{Entity.Id}",
 				Identifier = typeSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "duty_norm_id",  Entity.Id }
 				}
 			};
 

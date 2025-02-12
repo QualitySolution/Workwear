@@ -14,7 +14,6 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    dn.id,
     pt.name,
     dni.norm_paragraph,
     mu.name as unit_of_measurement,
@@ -72,7 +71,7 @@ WHERE dn.id = @duty_norm_id;
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="card" >
+    <DataSet Name="Card" >
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
@@ -81,7 +80,6 @@ WHERE dn.id = @duty_norm_id;
         IF(employees.id is not null,  CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name),
         '')      
     )as resp_fio,
-    subdivisions.name as subdivisions_name,
     IF(leaders.id is not null, CONCAT_WS(' ', leaders.surname, CONCAT_WS('.', LEFT(leaders.name, 1), LEFT(leaders.patronymic, 1),'')),
        IF(employees.id is not null,  CONCAT_WS(' ', employees.last_name, CONCAT_WS('.',LEFT(employees.first_name, 1), LEFT(employees.patronymic_name, 1),'')),
           '')
@@ -95,7 +93,7 @@ FROM duty_norms
     LEFT JOIN employees on duty_norms.responsible_employee_id = employees.id
     LEFT JOIN posts on employees.post_id = posts.id
     LEFT JOIN leaders on duty_norms.responsible_leder_id = leaders.id
-WHERE duty_norms.id = @duty_norm_id</CommandText>
+WHERE duty_norms.id = @duty_norm_id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="duty_norm_id">
             <Value>={?duty_norm_id}</Value>
@@ -111,12 +109,12 @@ WHERE duty_norms.id = @duty_norm_id</CommandText>
           <DataField>resp_fio</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="resp_post">
-          <DataField>resp_post</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="resp_fio_short">
           <DataField>resp_fio_short</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="resp_post">
+          <DataField>resp_post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -452,7 +450,7 @@ WHERE duty_norms.id = @duty_norm_id</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>=First({resp_fio_short},"card") </Value>
+                      <Value>=First({resp_fio_short},"Card") </Value>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -597,7 +595,7 @@ WHERE duty_norms.id = @duty_norm_id</CommandText>
         </Footer>
       </Table>
       <Table Name="Table2">
-        <DataSetName>card</DataSetName>
+        <DataSetName>Card</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
@@ -1807,11 +1805,11 @@ WHERE duty_norms.id = @duty_norm_id</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=plutus.srv.qsolution.ru;port=3306;</ConnectString>
+        <ConnectString>server=plutus.srv.qsolution.ru;port=3306;database=;user=;password=</ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
