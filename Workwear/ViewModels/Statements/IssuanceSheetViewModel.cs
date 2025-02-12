@@ -69,7 +69,6 @@ namespace Workwear.ViewModels.Statements
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson).MakeByType().Finish();
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
-			Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<ExpenseItem>(Expense_Changed);
 			NotifyConfiguration.Instance.BatchSubscribeOnEntity<CollectiveExpenseItem>(CollectiveExpense_Changed);
@@ -231,7 +230,7 @@ namespace Workwear.ViewModels.Statements
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id },
-					{"printPromo", Entity.PrintPromo}
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 

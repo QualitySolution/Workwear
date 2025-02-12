@@ -33,7 +33,6 @@ namespace workwear.ReportParameters.ViewModels
 			ShowSex = false;
 			ShowSize = true;
 			Summary = true;
-			printPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			
 			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
@@ -47,7 +46,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"show_size", ShowSize},
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
-					{"printPromo", PrintPromo},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
 		#region Параметры
@@ -61,12 +60,6 @@ namespace workwear.ReportParameters.ViewModels
 		public bool ShowSize { get; set; }
 		public bool Summary { get; set; }
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
-		private bool printPromo;
-		public virtual bool PrintPromo {
-			get => printPromo;
-			set=>SetField(ref printPromo, value);
-		}
-		
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);

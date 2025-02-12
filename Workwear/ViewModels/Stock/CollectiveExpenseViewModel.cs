@@ -116,8 +116,6 @@ namespace Workwear.ViewModels.Stock
 				logger.Info($"Создание Нового документа Коллективной выдачи выдачи.");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
-			Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
-						
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
@@ -221,7 +219,7 @@ namespace Workwear.ViewModels.Stock
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.IssuanceSheet.Id },
-					{"printPromo", Entity.PrintPromo}
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 

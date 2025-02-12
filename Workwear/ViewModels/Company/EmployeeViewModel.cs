@@ -92,7 +92,6 @@ namespace Workwear.ViewModels.Company
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
-			Entity.PrintPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			if(remainingEmployees < 0) {
 				remainingEmployees = 0;
 			}
@@ -650,7 +649,7 @@ namespace Workwear.ViewModels.Company
 					{ "id",  Entity.Id },
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
-					{"printPromo",Entity.PrintPromo},
+					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 

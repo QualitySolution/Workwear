@@ -58,13 +58,6 @@ namespace Workwear.Domain.Stock.Documents
 			get { return members; }
 			set { SetField(ref members, value, () => Members); }
 		}
-		private bool printPromo;
-
-		[Display(Name = "Промоданные")]
-		public virtual bool PrintPromo {
-			get=> printPromo;
-			set => SetField(ref printPromo, value);
-		}
 		#endregion
 
 		#region Methods

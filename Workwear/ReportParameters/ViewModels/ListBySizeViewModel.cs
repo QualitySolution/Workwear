@@ -21,7 +21,6 @@ namespace workwear.ReportParameters.ViewModels
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			Title = "Список по размерам";
 			this.featuresService=featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			printPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 		}
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		private Dictionary<string, object> SetParameters() {
@@ -40,7 +39,7 @@ namespace workwear.ReportParameters.ViewModels
 					parameters.Add($"size_id_{count}", sizesData[count].Id);
 					parameters.Add($"size_name_{count}", sizesData[count].Name);
 				}
-				parameters.Add("printPromo", PrintPromo);
+				parameters.Add("printPromo", featuresService.Available(WorkwearFeature.PrintPromo));
 			}
 			return parameters;
 		}
@@ -63,12 +62,6 @@ namespace workwear.ReportParameters.ViewModels
 				SetField(ref reportType, value); 
 				OnPropertyChanged(nameof(VisibleShowGroup));
 			}
-		}
-
-		private bool printPromo;
-		public virtual bool PrintPromo {
-			get => printPromo;
-			set => SetField(ref printPromo, value);
 		}
 		
 		public enum SizeReportType {

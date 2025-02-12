@@ -36,7 +36,6 @@ namespace workwear.ReportParameters.ViewModels
 			Title = "Справка по невыданному (Детально)";
 			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
-			printPromo = featuresService.Available(WorkwearFeature.PrintPromo);
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
 				.Finish();
@@ -80,7 +79,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
-					{"printPromo", PrintPromo},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
 		#region Параметры
@@ -157,12 +156,6 @@ namespace workwear.ReportParameters.ViewModels
 		public virtual bool HideWorn {
 			get =>  warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
-		}
-
-		private bool printPromo;
-		public virtual bool PrintPromo {
-			get=> printPromo;
-			set=> SetField(ref printPromo, value);
 		}
 		#endregion
 		

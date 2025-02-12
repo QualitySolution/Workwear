@@ -200,12 +200,6 @@ namespace Workwear.Domain.Company
 		}
 		private bool printPromo;
 
-		[Display(Name = "Промоданные")]
-		public virtual bool PrintPromo {
-			get=> printPromo;
-			set => SetField(ref printPromo, value);
-		}
-
 		#endregion
 		#region Размеры одежды
 		private IObservableList<EmployeeSize> sizes = new ObservableList<EmployeeSize>();

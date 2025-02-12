@@ -23,7 +23,6 @@ namespace workwear
 		public string Title => "Сводная ведомость";
 
 		public event EventHandler<LoadReportEventArgs> LoadReport;
-		public bool PrintPromo => featuresService.Available(WorkwearFeature.PrintPromo);
 
 		private ReportInfo GetReportInfo()
 		{
@@ -33,7 +32,7 @@ namespace workwear
 				Parameters = new Dictionary<string, object>
 				{
 					{ "id", ComboWorks.GetActiveId(comboObject) },
-					{"printPromo", PrintPromo},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 		}
