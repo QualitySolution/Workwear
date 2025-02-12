@@ -231,12 +231,6 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
-		#region Однопользовательская
-		#region Отчеты
-		[Display(Name="Отчет Список сотрудников")]
-		ReportWearCard,
-		#endregion
-		#endregion
 		#region Профессиональная
 		#region Документы
 		[Display(Name = "Коллективная выдача")]
@@ -265,6 +259,8 @@ namespace Workwear.Tools.Features
 		ReportWrittenOff,
 		[Display(Name = "Отчет Заявка на спецодежду")]
 		ReportOrder,
+		[Display(Name="Отчет Список сотрудников")]
+		ReportWearCard,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]
