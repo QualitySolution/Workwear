@@ -8,17 +8,14 @@ using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "строки выдачи дежурной нормы",
+		NominativePlural = "строки выдачи по дежурной нормы",
+		PrepositionalPlural = "строках выдачи по дежурной норме",
 		Nominative = "строка выдачи дежурной нормы",
 		Genitive = "строки выдачи дежурной нормы"
 		)]
 	[HistoryTrace]
 	public class ExpenseDutyNormItem : PropertyChangedBase, IDomainObject
 	{
-		#region Генерирумые Сввойства
-		public virtual string Title => $"Строка {Nomenclature?.Name ?? ProtectionTools.Name} в {Document.Title}";
-		#endregion
-		
 		#region Хранимые свойства
 
 		public virtual int Id { get; set; }
@@ -80,6 +77,9 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref height, value);
 		}
 		#endregion
+
+		#region Расчётные свойства и пробросы
+		public virtual string Title => $"Строка {Nomenclature?.Name ?? ProtectionTools.Name} в {Document.Title}";
 		
 		[Display(Name = "Складская позиция")]
         [IgnoreHistoryTrace]
@@ -115,16 +115,19 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
+		#endregion
 
+		#region Методы
 		public virtual void UpdateOperation(IUnitOfWork uow) {
-			if (Operation == null) 
-				Operation = new DutyNormIssueOperation();
+        	if (Operation == null) 
+        		Operation = new DutyNormIssueOperation();
 
-			Operation.Update(this);
-			uow.Save(Operation);
-			
-			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
-		}
+        	Operation.Update(this);
+        	uow.Save(Operation);
+        	
+        	WarehouseOperation.Update(uow, this);
+        	uow.Save(WarehouseOperation);
+        }
+		#endregion
 	}
 }

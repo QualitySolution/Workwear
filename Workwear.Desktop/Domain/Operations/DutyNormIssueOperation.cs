@@ -19,12 +19,11 @@ namespace Workwear.Domain.Operations {
 	[HistoryTrace]
 	public class DutyNormIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation {
 		
-		
-		#region Генерируемые Свойства
-		public virtual string Title => Issued > Returned
-			? $"Выдача {DutyNorm.Name} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
-			: $"Списание {DutyNorm.Name} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
-		#endregion
+		/// <summary>
+		/// Для создания операций выдачи надо использовать конструктор с BaseParameters
+		/// </summary>
+		public DutyNormIssueOperation() {
+		}
 		
 		#region Хранимые Свойства
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -173,12 +172,13 @@ namespace Workwear.Domain.Operations {
         }
         #endregion
     
-        /// <summary>
-        /// Для создания операций выдачи надо использовать конструктор с BaseParameters
-        /// </summary>
-        public DutyNormIssueOperation() {
-        }
-
+        #region Генерируемые Свойства
+        public virtual string Title => Issued > Returned
+	        ? $"Выдача {DutyNorm.Name} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
+	        : $"Списание {DutyNorm.Name} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
+        #endregion
+        
+        #region Методы
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if(OperationTime < new DateTime(1990, 1, 1))
 				yield return new ValidationResult("Можно сохранить дату операции только после 1990г.");
@@ -225,5 +225,6 @@ namespace Workwear.Domain.Operations {
                 AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
 	        }
         }
+        #endregion
 	}
 }

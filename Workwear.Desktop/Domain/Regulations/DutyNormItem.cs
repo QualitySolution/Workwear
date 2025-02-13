@@ -12,17 +12,15 @@ using Workwear.Tools;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative (Gender = GrammaticalGender.Feminine,
-		NominativePlural = "нормы выдачи",
-		Nominative = "норма выдачи",
-		PrepositionalPlural = "нормах выдачи",
-		Genitive = "нормы выдачи"
+		NominativePlural = "строки дежурной нормы",
+		Nominative = "строка дежурной нормы",
+		PrepositionalPlural = "строках дежурной нормы",
+		Genitive = "строки дежурной нормы"
 	)]
 	public class DutyNormItem : PropertyChangedBase, IDomainObject {
+		
 		#region Хранимые Свойства
 		public virtual int Id { get; set; }
-
-		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
-			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
 		
 		private DutyNorm dutyNorm;
 		[Display (Name = "Норма")]
@@ -50,9 +48,9 @@ namespace Workwear.Domain.Regulations {
 		[Display (Name = "Период нормы")]
 		public virtual DutyNormPeriodType NormPeriod {
 			get { return normPeriod; }
-			set { SetField (ref normPeriod, value, () => NormPeriod);
-				if(value == DutyNormPeriodType.Wearout)
-					PeriodCount = 0;
+			set { if( SetField (ref normPeriod, value, () => NormPeriod)) 
+					if(value == DutyNormPeriodType.Wearout)
+						PeriodCount = 0;
 			}
 		}
 
@@ -149,7 +147,7 @@ namespace Workwear.Domain.Regulations {
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)
-				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
+				throw new NullReferenceException($"Перед выполнением расчета {nameof(CalculateRequiredIssue)}, Graph должен быть заполнен!");
 			
 			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
 		}
@@ -211,7 +209,9 @@ namespace Workwear.Domain.Regulations {
 
 		#endregion
 		
-		#region Вывод
+		#region Методы и расчётные свойства для view
+		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
+			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
 		public virtual double AmountPerYear
 		{
 			get{
@@ -261,22 +261,7 @@ namespace Workwear.Domain.Regulations {
 				}
 			}
 		}
-
-		public virtual string AmountUnitText(int a) {
-			switch(ProtectionTools?.Type?.Units?.OKEI) {
-				case "796":
-					return NumberToTextRus.FormatCase(a, "штука", "штуки", "штук");
-				case "715":
-					return NumberToTextRus.FormatCase(a, "пара", "пары", "пар");
-				case "839":
-					return NumberToTextRus.FormatCase(a, "компл.", "компл.", "компл.");
-				case "704":
-					return NumberToTextRus.FormatCase(a, "набор", "набора", "наборов");
-				default:
-					return String.Empty;
-			}
-		}
-
+		
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -299,6 +284,20 @@ namespace Workwear.Domain.Regulations {
 					return "orange";
 				else
 					return "black";
+			}
+		}
+		public virtual string AmountUnitText(int a) {
+			switch(ProtectionTools?.Type?.Units?.OKEI) {
+				case "796":
+					return NumberToTextRus.FormatCase(a, "штука", "штуки", "штук");
+				case "715":
+					return NumberToTextRus.FormatCase(a, "пара", "пары", "пар");
+				case "839":
+					return NumberToTextRus.FormatCase(a, "компл.", "компл.", "компл.");
+				case "704":
+					return NumberToTextRus.FormatCase(a, "набор", "набора", "наборов");
+				default:
+					return String.Empty;
 			}
 		}
 		#endregion

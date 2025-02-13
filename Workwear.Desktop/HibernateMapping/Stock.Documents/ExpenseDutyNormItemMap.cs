@@ -18,8 +18,8 @@ namespace Workwear.HibernateMapping.Stock.Documents
 
 			References (x => x.Document).Column ("stock_expense_duty_norm_id").Not.Nullable ();
 			References (x => x.Nomenclature).Column ("nomenclature_id");
-			References(x => x.Operation).Column("operation_issued_by_duty_norm_id").Cascade.All();
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All();
+			References(x => x.Operation).Column("operation_issued_by_duty_norm_id");
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
 			References(x => x.ProtectionTools).Column("protection_tools_id");
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");

@@ -38,7 +38,14 @@ namespace Workwear.ViewModels.Stock {
 		private readonly BaseParameters baseParameters;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public SizeService SizeService { get; }
-		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
+		
+		#region ViewModels
+		public readonly EntityEntryViewModel<DutyNorm> DutyNormEntryViewModel;
+		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<EmployeeCard> ResponsibleEmployeeCardEntryViewModel;
+		public StockBalanceModel StockBalanceModel { get; set; }
+
+		#endregion
 
 		public ExpenseDutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -93,16 +100,8 @@ namespace Workwear.ViewModels.Stock {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
-
-		#region ViewModels
-		public readonly EntityEntryViewModel<DutyNorm> DutyNormEntryViewModel;
-		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
-		public readonly EntityEntryViewModel<EmployeeCard> ResponsibleEmployeeCardEntryViewModel;
-
-		public StockBalanceModel StockBalanceModel { get; set; }
-
-		#endregion
 		
+		#region Методы
 		public void AddItems() {
 			if(Entity.Warehouse is null || DutyNorm is null) {
 				interactive.ShowMessage(ImportanceLevel.Warning,
@@ -155,16 +154,6 @@ namespace Workwear.ViewModels.Stock {
 			}
 		}
 
-		private ExpenseDutyNormItem selectedItem;
-		[PropertyChangedAlso(nameof(CanDelSelectedItem))]
-		[PropertyChangedAlso(nameof(CanChooseStockPositionsSelectedItem))]
-		public virtual ExpenseDutyNormItem SelectedItem {
-			get => selectedItem;
-			set => SetField(ref selectedItem, value);
-		}
-		
-		#region Работа со складом
-
 		private void FillUnderreceivedp() {
 			Entity.Items.Clear();
 			if(Entity.DutyNorm == null)
@@ -180,11 +169,15 @@ namespace Workwear.ViewModels.Stock {
 
 
 		#endregion
-
-		#region Для view
-		public bool CanDelSelectedItem => SelectedItem != null;
-		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		
+		#region Свойства
+		private ExpenseDutyNormItem selectedItem;
+		[PropertyChangedAlso(nameof(CanDelSelectedItem))]
+		[PropertyChangedAlso(nameof(CanChooseStockPositionsSelectedItem))]
+		public virtual ExpenseDutyNormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
+		}
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -201,6 +194,14 @@ namespace Workwear.ViewModels.Stock {
 					Entity.DocNumber = value; 
 			}
 		}
+		#endregion
+		
+		#region Для View свойства, методы и пробросы
+		public bool CanDelSelectedItem => SelectedItem != null;
+		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+	
+		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;

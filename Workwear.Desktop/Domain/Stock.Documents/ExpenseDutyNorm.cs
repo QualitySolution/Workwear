@@ -15,8 +15,9 @@ using Workwear.Tools;
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "документы выдачи по дежурным нормам",
-		Nominative = "документ выдачи по дежурным нормам",
-		Genitive = "документа выдачи по дежурным нормам"
+		PrepositionalPlural = "документах выдачи по дежурным нормам",
+		Nominative = "документ выдачи по дежурной норме",
+		Genitive = "документа выдачи по дежурной норме"
 	)]
 	[HistoryTrace]
 

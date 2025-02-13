@@ -16,13 +16,14 @@ namespace Workwear.Domain.Regulations {
 		NominativePlural = "дежурные нормы",
 		Nominative = "дежурная норма",
 		PrepositionalPlural = "дежурных нормах",
-		Genitive = "дежурые нормы"
+		Genitive = "дежурной нормы"
 	)]
 	[HistoryTrace]
 	public class DutyNorm : PropertyChangedBase, IDomainObject {
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-
-		#region Свойства
+		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
+			
+		#region Хранимые Свойства
 
 		public virtual int Id { get; set; }
 
@@ -47,12 +48,12 @@ namespace Workwear.Domain.Regulations {
 			set => SetField(ref subdivision, value);
 		}
 		
-		private string normNormParagraph;
+		private string normParagraph;
 		[Display(Name = "Пункт норм")]
 		[StringLength(200)]
 		public virtual string NormParagraph {
-			get => normNormParagraph;
-			set => SetField(ref normNormParagraph, value);
+			get => String.IsNullOrWhiteSpace(normParagraph) ? null : normParagraph; //Чтобы в базе хранить null, а не пустую строку.
+			set => SetField(ref normParagraph, value);
 		}
 
 		private string name;
@@ -77,6 +78,7 @@ namespace Workwear.Domain.Regulations {
 			set => SetField(ref dateTo, value);
 		}
 		
+//TODO Не реализовано				
 		private bool archive;
 		[Display(Name = "Архивная(отключена)")]
 		public virtual bool Archive {
@@ -91,16 +93,15 @@ namespace Workwear.Domain.Regulations {
 			set => SetField(ref comment, value);
 		}
 
-		#endregion
-		
-		#region Строки нормы
 		private IObservableList<DutyNormItem> items = new ObservableList<DutyNormItem>();
-
 		[Display(Name = "Строки дежурных норм")]
 		public virtual IObservableList<DutyNormItem> Items {
 			get => items;
 			set => SetField(ref items, value);
 		}
+		#endregion
+		
+		#region Методы
 		
 		public virtual DutyNormItem AddItem(ProtectionTools tools) {
 			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.ProtectionTools, tools))) {
@@ -120,9 +121,6 @@ namespace Workwear.Domain.Regulations {
 			Items.Add (item);
 			return item;
 		}
-		#endregion
-
-		#region Методы
 
 		public virtual DutyNormItem GetItem(ProtectionTools protectionTools) {
 			if(protectionTools != null) {
@@ -132,9 +130,8 @@ namespace Workwear.Domain.Regulations {
 		}
 		public virtual DutyNormItem GetItem(Nomenclature nomenclature) {
 			if(nomenclature != null) {
-				var pto = items.Select(i => i.ProtectionTools)
-					.FirstOrDefault(pt => pt.Nomenclatures.Select(n => n.Id).Contains(nomenclature.Id));
-				return GetItem(pto);
+				return Items.FirstOrDefault(i => i.ProtectionTools.Nomenclatures
+					.Any(n => DomainHelper.EqualDomainObjects(n, nomenclature)));
 			}
 			return null;
 		}
@@ -147,6 +144,6 @@ namespace Workwear.Domain.Regulations {
 				OnPropertyChanged(nameof(Items));
 		}
 		#endregion
-		public virtual IEnumerable<ProtectionTools> ProtectionToolsList => Items.Select(x => x.ProtectionTools);
+
 	}
 }

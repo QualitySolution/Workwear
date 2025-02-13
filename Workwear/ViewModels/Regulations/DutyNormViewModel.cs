@@ -52,7 +52,6 @@ namespace Workwear.ViewModels.Regulations {
 			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			changeWatcher.BatchSubscribe(DutyNormChangeEvent)
 				.IfEntity<DutyNormIssueOperation>()
-				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
 			
 			
@@ -115,19 +114,26 @@ namespace Workwear.ViewModels.Regulations {
 		}
 
 		public void AddExpense() {
-			if(UoW.HasChanges && !interactive.Question("Перед выдачей норма будет сохранена. Продолжить?"))
-				if(!Save()) {
-					interactive.ShowMessage(ImportanceLevel.Error, "Не удалось сохранить");
-					return;
+			if(UoW.HasChanges) {
+				if(interactive.Question("Перед выдачей норма будет сохранена. Продолжить?")) {
+					if(!Save()) {
+						interactive.ShowMessage(ImportanceLevel.Error, "Не удалось сохранить");
+						return;
+					}
 				}
-			var vm = NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
+				else return;
+			}
+			NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 		
 		//Для синхронизации с изменениями внесёнными в базу при открытом диалоге.
 		private void DutyNormChangeEvent(EntityChangeEvent[] changeevents) {
 			foreach(var changeEvent in changeevents) {
-				var op = UoW.GetById<DutyNormIssueOperation>(changeEvent.Entity.GetId());
-				UoW.Session.Refresh(op);
+				if(changeEvent.EventType != TypeOfChangeEvent.Insert) {
+					var op = UoW.GetById<DutyNormIssueOperation>(changeEvent.Entity.GetId());
+					if (op != null)
+						UoW.Session.Evict(op);
+				}
 			}
 			Entity.UpdateItems(UoW);
 		}

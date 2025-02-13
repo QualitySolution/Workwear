@@ -22,7 +22,7 @@ namespace Workwear.Views.Regulations {
 			enumPrint.ItemsEnum = typeof(DutyNormSheetPrint);
 		}
 
-		//Вкладка Основное
+		#region Вкладка Основное
 		private void ConfigureMainInfo() { 
 			ylabelId.Binding.AddBinding(Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter())
 				.InitializeFromSource();
@@ -36,7 +36,9 @@ namespace Workwear.Views.Regulations {
 			entityResponsibleEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
 			entityResponsibleLeader.ViewModel = ViewModel.LeaderEntryViewModel;
 		}
-		//Вкладка Норма (список РТ и баланс)
+		#endregion
+		
+		#region Вкладка Норма (список РТ и баланс)
 		private void ConfigureDialog() { 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
 				.AddColumn("ИД").AddTextRenderer(p => p.ProtectionTools.Id.ToString())
@@ -68,23 +70,7 @@ namespace Workwear.Views.Regulations {
 			ytreeItems.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 		}
-		//Вкладка История выдач
-		private void ConfigureHistoty() { 
-			ytreeviewHistory.ColumnsConfig = FluentColumnsConfig<DutyNormIssueOperation>.Create()
-				.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.OperationTime.ToShortDateString())
-				.AddColumn("Номенклатура").Resizable()
-					.AddTextRenderer(e => e.Nomenclature != null ? e.Nomenclature.Name : "").WrapWidth(1000)
-				.AddColumn("Номенклатура нормы").Resizable()
-					.AddTextRenderer(e => e.ProtectionTools != null ? e.ProtectionTools.Name : "").WrapWidth(1000)
-				.AddColumn("% износа").AddTextRenderer(e => e.WearPercent.ToString("P0"))
-				.AddColumn("Получено").AddNumericRenderer(e => e.Issued)
-				.AddColumn("Дата автосписания").AddReadOnlyTextRenderer(x => x.AutoWriteoffDate?.ToShortDateString() ?? "")
-				.Finish();
-			ytreeviewHistory.ItemsDataSource = ViewModel.Operations;
-		}
-		
-		#region Контекстное меню
-
+		// Контекстное меню
 		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
 		{
 			if(args.Event.Button == 3) {
@@ -107,6 +93,23 @@ namespace Workwear.Views.Regulations {
 		}
 		#endregion
 		
+		#region Вкладка История выдач
+		private void ConfigureHistoty() { 
+			ytreeviewHistory.ColumnsConfig = FluentColumnsConfig<DutyNormIssueOperation>.Create()
+				.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.OperationTime.ToShortDateString())
+				.AddColumn("Номенклатура").Resizable()
+					.AddTextRenderer(e => e.Nomenclature != null ? e.Nomenclature.Name : "").WrapWidth(1000)
+				.AddColumn("Номенклатура нормы").Resizable()
+					.AddTextRenderer(e => e.ProtectionTools != null ? e.ProtectionTools.Name : "").WrapWidth(1000)
+				.AddColumn("% износа").AddTextRenderer(e => e.WearPercent.ToString("P0"))
+				.AddColumn("Получено").AddNumericRenderer(e => e.Issued)
+				.AddColumn("Дата автосписания").AddReadOnlyTextRenderer(x => x.AutoWriteoffDate?.ToShortDateString() ?? "")
+				.Finish();
+			ytreeviewHistory.ItemsDataSource = ViewModel.Operations;
+		}
+		#endregion
+		
+		#region Обработчики
 		void YtreeItems_Selection_Changed (object sender, EventArgs e) {
 			buttonRemoveItem.Sensitive = ytreeItems.Selection.CountSelectedRows () > 0;
 		}
@@ -121,5 +124,6 @@ namespace Workwear.Views.Regulations {
 			ViewModel.RemoveItem(ytreeItems.GetSelectedObject<DutyNormItem>());
 		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) => 
 			ViewModel.Print((DutyNormSheetPrint)e.ItemEnum);
+		#endregion
 	}
 }
