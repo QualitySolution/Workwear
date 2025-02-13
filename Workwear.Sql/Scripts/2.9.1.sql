@@ -18,7 +18,7 @@ create table duty_norms
 		foreign key (responsible_employee_id) references employees (id)
 			on delete set null on update cascade,
 	constraint duty_norms_leaders_surname_fk
-		foreign key (responsible_leder_id) references leaders (surname)
+		foreign key (responsible_leder_id) references leaders (id)
 			on delete set null on update cascade,
 	constraint duty_norms_subdivisions_id_fk
 		foreign key (subdivision_id) references subdivisions (id)

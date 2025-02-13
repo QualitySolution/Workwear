@@ -218,6 +218,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
+				case WorkwearFeature.DutyNorms:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -241,6 +242,8 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Журнал ведомостей")]
 		StatementJournal,
 		#endregion
+		[Display(Name = "Дежурные нормы")]
+		DutyNorms,
 		[Display(Name = "Отпуска")]
 		Vacation,
 		[Display(Name = "Загрузка из Excel")]
