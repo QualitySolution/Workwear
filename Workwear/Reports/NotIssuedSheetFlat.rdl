@@ -881,9 +881,28 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
-    <PrintOnFirstPage>false</PrintOnFirstPage>
-    <PrintOnLastPage>false</PrintOnLastPage>
+    <Height>13.9pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems>
+      <Textbox Name="Textbox37">
+        <Height>12pt</Height>
+        <Width>265.73pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2216.9pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility >
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -1382,6 +1401,13 @@ ORDER BY
           <Value>true</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

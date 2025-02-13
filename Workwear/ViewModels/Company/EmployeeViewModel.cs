@@ -651,6 +651,7 @@ namespace Workwear.ViewModels.Company
 					{ "id",  Entity.Id },
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
+					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 

@@ -181,6 +181,8 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
+				case WorkwearFeature.PrintPromo:
+					return ProductEdition == 0 || ProductEdition == 1;
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.Dashboard:
@@ -231,6 +233,10 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
+		#region Однопользовательская
+		[Display(Name="Промоданные")]
+		PrintPromo,
+		#endregion
 		#region Профессиональная
 		#region Документы
 		[Display(Name = "Коллективная выдача")]
