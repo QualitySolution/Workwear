@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
@@ -63,6 +63,8 @@ namespace Workwear.Domain.Stock.Documents
 					return typeof(Return);
 				case StockDocumentType.ExpenseEmployeeDoc:
 					return typeof(Expense);
+				case StockDocumentType.ExpenseDutyNormDoc:
+					return typeof(ExpenseDutyNorm);
 				case StockDocumentType.CollectiveExpense:
 					return typeof(CollectiveExpense);
 				case StockDocumentType.WriteoffDoc:
@@ -86,6 +88,8 @@ namespace Workwear.Domain.Stock.Documents
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
+		[Display(Name = "Выдача по дежурной норме")]
+		ExpenseDutyNormDoc,
 		[Display(Name = "Возврат от сотрудника")]
 		Return,
 		[Display(Name = "Перемещение")]

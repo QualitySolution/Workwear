@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using NHibernate.Mapping;
 using NUnit.Framework;
 using QS.Deletion.Configuration;
@@ -22,6 +22,7 @@ namespace Workwear.Test.Deletion
 			ConfigureOneTime.ConfigureNh();
 			ConfigureOneTime.ConfigureDeletion();
 
+			AddIgnoredProperty<DutyNormIssueOperation>(x => x.WarehouseOperation, "Удаляется при удалении строки документа.");
 			AddIgnoredProperty<BarcodeOperation>(x => x.EmployeeIssueOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");
 			AddIgnoredProperty<BarcodeOperation>(x => x.WarehouseOperation, "Является дочерней частью операции при удалении не должна тянуть за собой операцию.");
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");

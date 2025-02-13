@@ -15,5 +15,15 @@ namespace Workwear.Domain.Regulations
 		[Display(Name = "Дежурный")]
 		Duty
 	}
+	
+	public enum DutyNormPeriodType
+	{
+		[Display(Name = "Год")]
+		Year,
+		[Display(Name = "Месяц")]
+		Month,
+		[Display(Name = "До износа")]
+		Wearout,
+	}
 }
 

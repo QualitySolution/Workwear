@@ -81,7 +81,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			writeoff3.Returned.Returns(1);
 
 			var item = new GraphItem(issueOperation);
-			item.WriteOffOperations = new List<EmployeeIssueOperation> { writeoff1, writeoff2, writeoff3 };
+			item.WriteOffOperations = new List<IGraphIssueOperation> { writeoff1, writeoff2, writeoff3 };
 
 			//10-2-1 = 7
 			Assert.That(item.AmountAtBeginOfDay(startDate.AddDays(1), writeoff2), Is.EqualTo(7), "Количество на начало дня неверно.");
@@ -107,7 +107,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			writeoff3.Returned.Returns(1);
 
 			var item = new GraphItem(issueOperation);
-			item.WriteOffOperations = new List<EmployeeIssueOperation> { writeoff1, writeoff2, writeoff3 };
+			item.WriteOffOperations = new List<IGraphIssueOperation> { writeoff1, writeoff2, writeoff3 };
 
 			var writeoff2_copy = Substitute.For<EmployeeIssueOperation>();
 			writeoff2_copy.Id.Returns(144);
@@ -131,7 +131,7 @@ namespace Workwear.Test.Domain.Operations.Graph
 			writeoff1.Returned.Returns(2);
 
 			var item = new GraphItem(issueOperation);
-			item.WriteOffOperations = new List<EmployeeIssueOperation> { writeoff1 };
+			item.WriteOffOperations = new List<IGraphIssueOperation> { writeoff1 };
 
 			var writeoff1_copy = Substitute.For<EmployeeIssueOperation>();
 			writeoff1_copy.Id.Returns(0);
