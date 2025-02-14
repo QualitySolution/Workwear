@@ -127,7 +127,7 @@ namespace Workwear.Domain.Regulations {
 			}
 			return null;
 		}
-		
+
 		public virtual void UpdateItems(IUnitOfWork uow) {
 			foreach(var item in items)
 				item.Update(uow);

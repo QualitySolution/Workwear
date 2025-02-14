@@ -75,13 +75,9 @@ namespace Workwear.ViewModels.Stock {
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				if(dutyNorm != null) {
-					DutyNorm = dutyNorm;
-					StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
-					FillUnderreceivedp();
-				}
-			}
-			else {
+				Entity.DutyNorm = dutyNorm;
+				FillUnderreceivedp(dutyNorm);
+			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 				Entity.DutyNorm.UpdateItems(UoW);
 			}
@@ -156,12 +152,21 @@ namespace Workwear.ViewModels.Stock {
 					item.StockPosition = node.GetStockPosition(UoW);
 			}
 		}
-
-		private void FillUnderreceivedp() {
+		
+/// <summary>
+/// Заполнение документа по текущим потребностям
+/// </summary>
+/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
+		private void FillUnderreceivedp(DutyNorm dutyNorm) {
 			Entity.Items.Clear();
-			if(Entity.DutyNorm == null)
+			if(dutyNorm == null)
 				return;
-			foreach(var item in Entity.DutyNorm.Items) {
+			
+			dutyNorm.UpdateItems(UoW);
+			StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
+			
+			foreach(var item in dutyNorm.Items) {
+				item.StockBalanceModel = StockBalanceModel;
 				var position = item.BestChoiceInStock.FirstOrDefault()?.Position;
 				if(position != null)
 					Entity.AddItem(position, item.CalculateRequiredIssue(baseParameters, Entity.Date));
@@ -169,8 +174,6 @@ namespace Workwear.ViewModels.Stock {
 					Entity.AddItem(item.ProtectionTools);
 			}
 		}
-
-
 		#endregion
 		
 		#region Свойства
@@ -210,14 +213,10 @@ namespace Workwear.ViewModels.Stock {
 			get => Entity.DutyNorm;
 			set { if(Entity.DutyNorm != value){
 					if(Entity.Items.Count == 0
-					   || interactive.Question("Документ будет очищен и заполнен для новой нормы. Продолжить?",
+					   || interactive.Question("Документ будет очищен"+ (value != null ?" и заполнен для новой нормы":"") +". Продолжить?",
 						   "В документе уже есть строки.")) {
 						Entity.DutyNorm = value;
-						StockBalanceModel.AddNomenclatures(value.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
-						foreach(var item in value.Items)
-							item.StockBalanceModel = StockBalanceModel;
-						Entity.DutyNorm.UpdateItems(UoW);
-						FillUnderreceivedp();
+						FillUnderreceivedp(value);
 					}
 					OnPropertyChanged();
 				}
