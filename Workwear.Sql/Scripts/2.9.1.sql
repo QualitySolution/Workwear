@@ -7,7 +7,6 @@ create table duty_norms
 	id                   int unsigned auto_increment
         primary key,
 	name                 varchar(200) charset utf8mb4 null,
-	norm_paragraph     	 varchar(200) charset utf8mb4 null,
 	responsible_leder_id int unsigned 				  null,
 	responsible_employee_id int unsigned 			  null,
 	subdivision_id 		 int unsigned 				  null, 

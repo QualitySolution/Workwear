@@ -68,7 +68,9 @@ namespace Workwear.ViewModels.Stock {
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			
-			var entryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
+			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
+			var vmEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNormViewModel>(this, this, UoW, navigation, autofacScope);
+
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
@@ -84,15 +86,16 @@ namespace Workwear.ViewModels.Stock {
 				Entity.DutyNorm.UpdateItems(UoW);
 			}
 			
-			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
+			WarehouseEntryViewModel = entityEntryBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
-			ResponsibleEmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.ResponsibleEmployee)
+			ResponsibleEmployeeCardEntryViewModel = entityEntryBuilder.ForProperty(x => x.ResponsibleEmployee)
 				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
-			DutyNormEntryViewModel = entryBuilder.ForProperty(x => x.DutyNorm)
+			DutyNormEntryViewModel =
+				vmEntryBuilder.ForProperty(x => x.DutyNorm)
 				.UseViewModelJournalAndAutocompleter<DutyNormsJournalViewModel>()
 				.UseViewModelDialog<DutyNormViewModel>()
 				.Finish();
@@ -205,13 +208,19 @@ namespace Workwear.ViewModels.Stock {
 		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;
-			set {
-				Entity.DutyNorm = value;
-				StockBalanceModel.AddNomenclatures(value.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
-				foreach(var item in value.Items) {
-					item.StockBalanceModel = StockBalanceModel;
+			set { if(Entity.DutyNorm != value){
+					if(Entity.Items.Count == 0
+					   || interactive.Question("Документ будет очищен и заполнен для новой нормы. Продолжить?",
+						   "В документе уже есть строки.")) {
+						Entity.DutyNorm = value;
+						StockBalanceModel.AddNomenclatures(value.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
+						foreach(var item in value.Items)
+							item.StockBalanceModel = StockBalanceModel;
+						Entity.DutyNorm.UpdateItems(UoW);
+						FillUnderreceivedp();
+					}
+					OnPropertyChanged();
 				}
-				OnPropertyChanged();
 			}
 		}
 		

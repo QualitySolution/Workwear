@@ -156,7 +156,7 @@ namespace Workwear.Domain.Regulations {
 		/// Обновляет данные о выданом .
 		/// </summary>
 		/// <returns>Наличие изменений</returns>
-		public virtual bool Update(IUnitOfWork uow) {
+		public virtual void Update(IUnitOfWork uow) {
 			if(Id == 0)
 				Graph = new IssueGraph();
 			else {
@@ -164,30 +164,19 @@ namespace Workwear.Domain.Regulations {
 					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
 				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
 			}
-
-			bool hasCange = UpdateNextIssue(uow);
-			if(hasCange) //Не дёргаем Хибернейт лишний раз
-				OnPropertyChanged(nameof(Issued));
-			return hasCange ;
+			NextIssue = CalculateNextIssue();
+			OnPropertyChanged(nameof(Issued));
 		}
 
 		/// <summary>
-		/// Обновляет дату следующей выдачи.
+		/// Расчитывает дату следующей выдачи.
 		/// </summary>
-		public virtual bool UpdateNextIssue(IUnitOfWork uow) {
-			if(Id == 0)
-				Graph = new IssueGraph();
-			else {
-				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
-					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
-			}
+		public virtual DateTime? CalculateNextIssue() {
 			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				wantIssue = listReverse.First().StartDate;
 				//Ищем первый с конца интервал где не хватает выданного до нормы.
-
 				foreach(var interval in listReverse) {
 					if(interval.CurrentCount < Amount)
 						wantIssue = interval.StartDate;
@@ -198,13 +187,7 @@ namespace Workwear.Domain.Regulations {
 
 			if(wantIssue == default(DateTime))
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
-
-			if(nextIssue != wantIssue) { // Чтобы не тригерить Хибернейт
-				NextIssue = wantIssue;
-				return true;
-			}
-			else
-				return false;
+			return wantIssue;
 		}
 
 		#endregion

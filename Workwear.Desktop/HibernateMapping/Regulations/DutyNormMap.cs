@@ -15,7 +15,6 @@ namespace Workwear.HibernateMapping.Regulations
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map(x => x.Name).Column("name");
-			Map(x => x.NormParagraph).Column("norm_paragraph");
 			Map(x => x.DateFrom).Column("datefrom");
 			Map(x => x.DateTo).Column("dateto");
 			Map(x => x.Comment).Column("comment");

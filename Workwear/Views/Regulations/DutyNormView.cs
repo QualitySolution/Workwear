@@ -19,7 +19,7 @@ namespace Workwear.Views.Regulations {
 		}
 		//Общее
 		private void ConfigureBase() {
-			enumPrint.ItemsEnum = typeof(DutyNormSheetPrint);
+			enumSaveAndPrint.ItemsEnum = typeof(DutyNormSheetPrint);
 		}
 
 		#region Вкладка Основное
@@ -28,7 +28,6 @@ namespace Workwear.Views.Regulations {
 				.InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
-			yentryParagraph.Binding.AddBinding(Entity, e => e.NormParagraph, w => w.Text).InitializeFromSource();
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
@@ -118,12 +117,13 @@ namespace Workwear.Views.Regulations {
 			ViewModel.ShowLegend();
 		protected void OnButtonAddItemClicked (object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		protected void OnButtonGiveClicked(object sender, EventArgs e) =>
-			ViewModel.AddExpense();
 		protected void OnButtonRemoveItemClicked (object sender, EventArgs e) =>
 			ViewModel.RemoveItem(ytreeItems.GetSelectedObject<DutyNormItem>());
-		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) => 
-			ViewModel.Print((DutyNormSheetPrint)e.ItemEnum);
+		protected void OnEnumSaveAndPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) =>
+			ViewModel.SaveAndPrint((DutyNormSheetPrint)e.ItemEnum);
+		protected void OnButtonSaveAndGiveClicked(object sender, EventArgs e) =>
+			ViewModel.AddExpense();
+
 		#endregion
 	}
 }

@@ -47,14 +47,6 @@ namespace Workwear.Domain.Regulations {
 			get => subdivision;
 			set => SetField(ref subdivision, value);
 		}
-		
-		private string normParagraph;
-		[Display(Name = "Пункт норм")]
-		[StringLength(200)]
-		public virtual string NormParagraph {
-			get => String.IsNullOrWhiteSpace(normParagraph) ? null : normParagraph; //Чтобы в базе хранить null, а не пустую строку.
-			set => SetField(ref normParagraph, value);
-		}
 
 		private string name;
 		[Display(Name = "Название")]
@@ -137,11 +129,9 @@ namespace Workwear.Domain.Regulations {
 		}
 		
 		public virtual void UpdateItems(IUnitOfWork uow) {
-			bool change = false;
-			foreach (var item in items)
-				change = item.Update(uow) || change;
-			if(change)// Чтобы не тригерить Хибернейт
-				OnPropertyChanged(nameof(Items));
+			foreach(var item in items)
+				item.Update(uow);
+			OnPropertyChanged(nameof(Items));
 		}
 		#endregion
 
