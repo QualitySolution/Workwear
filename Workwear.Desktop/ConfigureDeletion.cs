@@ -136,7 +136,6 @@ namespace Workwear
 				.RequiredCascadeDeletion()
 				.AddDeleteDependence<ExpenseItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.WarehouseOperation)
-				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<IncomeItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<ReturnItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.WarehouseOperation)
@@ -191,7 +190,6 @@ namespace Workwear
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ProtectionTools)
 				.AddClearDependence<ExpenseItem>(x => x.ProtectionTools)
 				.AddClearDependence<CollectiveExpenseItem>(x => x.ProtectionTools)
-				.AddClearDependence<ExpenseDutyNormItem>(x => x.ProtectionTools)
 				.AddClearDependence<EmployeeIssueOperation>(x => x.ProtectionTools)
 				.AddClearDependence<DutyNormIssueOperation>(x => x.ProtectionTools);
 
@@ -213,8 +211,6 @@ namespace Workwear
 				.AddClearDependence<DutyNormIssueOperation>(x => x.WearSize)
 				.AddClearDependence<ExpenseItem>(x => x.Height)
 				.AddClearDependence<ExpenseItem>(x => x.WearSize)
-				.AddClearDependence<ExpenseDutyNormItem>(x => x.Height)
-				.AddClearDependence<ExpenseDutyNormItem>(x => x.WearSize)
 				.AddClearDependence<IncomeItem>(x => x.Height)
 				.AddClearDependence<IncomeItem>(x => x.WearSize)
 				.AddClearDependence<ReturnItem>(x => x.Height)
@@ -285,7 +281,6 @@ namespace Workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<ReturnItem> (x => x.Nomenclature)
-				.AddDeleteDependence<ExpenseDutyNormItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
@@ -322,9 +317,8 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNorm>()
 				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Document);
 
-			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNormItem> ()
-				.AddDeleteCascadeDependence(x => x.Operation)
-				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
+			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNormItem>()
+				.AddDeleteCascadeDependence(x => x.Operation);
 
 			DeleteConfig.AddHibernateDeleteInfo<Income> ()
 				.AddDeleteDependence<IncomeItem>(x => x.Document);

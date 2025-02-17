@@ -144,53 +144,23 @@ create index stock_expense_duty_norm_expense_date_idx
 create table stock_expense_duty_norm_items
 (
 	id                               int unsigned auto_increment
-        primary key,
+		primary key,
 	stock_expense_duty_norm_id       int unsigned not null,
-	nomenclature_id                  int unsigned not null,
-	quantity                         int unsigned not null,
 	operation_issued_by_duty_norm_id int unsigned null,
 	warehouse_operation_id           int unsigned not null,
-	protection_tools_id              int unsigned null,
-	size_id                          int unsigned null,
-	height_id                        int unsigned null,
-	constraint fk_stock_expense_duty_norm_items_height
-		foreign key (height_id) references sizes (id)
-			on update cascade,
-	constraint fk_stock_expense_duty_norm_items_nomenclature
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade,
 	constraint fk_stock_expense_duty_norm_items_operation_issued_by_duty_norm
 		foreign key (operation_issued_by_duty_norm_id) references operation_issued_by_duty_norm (id)
 			on update cascade,
 	constraint fk_stock_expense_duty_norm_items_operation_warehouse
 		foreign key (warehouse_operation_id) references operation_warehouse (id),
-	constraint fk_stock_expense_duty_norm_items_protection_tools
-		foreign key (protection_tools_id) references protection_tools (id),
-	constraint fk_stock_expense_duty_norm_items_size
-		foreign key (size_id) references sizes (id)
-			on update cascade,
 	constraint fk_stock_expense_duty_norm_items_stock_expense_duty_norm
 		foreign key (stock_expense_duty_norm_id) references stock_expense_duty_norm (id)
 			on update cascade on delete cascade
 );
 
-create index fk_stock_expense_duty_norm_items_height_idx
-	on stock_expense_duty_norm_items (height_id);
-
-create index fk_stock_expense_duty_norm_items_nomenclature_idx
-	on stock_expense_duty_norm_items (nomenclature_id);
-
 create index fk_stock_expense_duty_norm_items_operation_idx
 	on stock_expense_duty_norm_items (operation_issued_by_duty_norm_id);
-
-create index fk_stock_expense_duty_norm_items_protection_tools_idx
-	on stock_expense_duty_norm_items (protection_tools_id);
-
-create index fk_stock_expense_duty_norm_items_size_idx
-	on stock_expense_duty_norm_items (size_id);
-
-create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
-	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
-
 create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
 	on stock_expense_duty_norm_items (warehouse_operation_id);
+create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
+	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);

@@ -27,27 +27,6 @@ namespace Workwear.Domain.Stock.Documents {
 			get => document;
 			set { SetField (ref document, value); }
 		}
-
-		private ProtectionTools protectionTools;
-		[Display(Name = "Номенклатура нормы")]
-		public virtual ProtectionTools ProtectionTools {
-			get => protectionTools;
-			set => SetField(ref protectionTools, value);
-		}
-
-		private Nomenclature nomenclature;
-		[Display (Name = "Номенклатура")]
-		public virtual Nomenclature Nomenclature {
-			get => nomenclature;
-			set { SetField (ref nomenclature, value); }
-		}
-
-		private int amount;
-		[Display (Name = "Количество")]
-		public virtual int Amount {
-			get => amount;
-			set { SetField (ref amount, value); }
-		}
 		
 		private DutyNormIssueOperation operation = new DutyNormIssueOperation();
 		[Display(Name = "Операция")]
@@ -64,18 +43,6 @@ namespace Workwear.Domain.Stock.Documents {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
-		private Size wearSize;
-		[Display(Name = "Размер")]
-		public virtual Size WearSize {
-			get => wearSize;
-			set => SetField(ref wearSize, value);
-		}
-		private Size height;
-		[Display(Name = "Рост одежды")]
-		public virtual Size Height {
-			get => height;
-			set => SetField(ref height, value);
-		}
 		#endregion
 
 		#region Расчётные свойства и пробросы
@@ -86,10 +53,10 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual StockPosition StockPosition {
 			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, WarehouseOperation.Owner);
 			set {
-				Operation.Nomenclature = value.Nomenclature;
-				Operation.WearSize = value.WearSize;
-				Operation.Height = value.Height;
-				Operation.WearPercent = value.WearPercent;
+				Nomenclature = value.Nomenclature;
+				WearSize = value.WearSize;
+				Height = value.Height;
+				WearPercent = value.WearPercent;
 				WarehouseOperation.Owner = value.Owner;
 			}
 		}
@@ -104,13 +71,62 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
-
 		[Display(Name = "Износ")]
 		[IgnoreHistoryTrace]
 		public virtual decimal WearPercent {
 			get => Operation.WearPercent;
 			set { if(Operation.WearPercent != value) {
 					Operation.WearPercent = value;
+					OnPropertyChanged();
+				}
+			}
+		} 
+		[Display(Name = "Номенклатура нормы")]
+		[IgnoreHistoryTrace]
+		public virtual ProtectionTools ProtectionTools {
+			get => Operation.ProtectionTools;
+			set { if(Operation.ProtectionTools != value) {
+					Operation.ProtectionTools = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		[Display (Name = "Номенклатура")]
+		[IgnoreHistoryTrace]
+		public virtual Nomenclature Nomenclature {
+			get => Operation.Nomenclature;
+			set { if(Operation.Nomenclature != value) {
+					Operation.Nomenclature = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		[Display (Name = "Количество")]
+		[IgnoreHistoryTrace]
+		public virtual int Amount {
+			get => Operation.Issued;
+			set { if(Operation.Issued != value) {
+					Operation.Issued = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		[Display(Name = "Размер")]
+		[IgnoreHistoryTrace]
+		public virtual Size WearSize {
+			get => Operation.WearSize;
+			set { if(Operation.WearSize != value) {
+					Operation.WearSize = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		[Display(Name = "Рост одежды")]
+		[IgnoreHistoryTrace]
+		public virtual Size Height {
+			get => Operation.Height;
+			set { if(Operation.Height != value) {
+					Operation.Height = value;
 					OnPropertyChanged();
 				}
 			}

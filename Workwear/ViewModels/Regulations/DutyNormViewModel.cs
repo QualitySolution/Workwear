@@ -139,11 +139,13 @@ namespace Workwear.ViewModels.Regulations {
 		
 		public void OpenLastDocument(DutyNormItem dutyNormItem) {
 			ExpenseDutyNormItem documentItemAlias = null;
+			DutyNormIssueOperation operationAlias = null;
 			ExpenseDutyNorm documentAlias = null;
 
 			var result = UoW.Session.QueryOver<ExpenseDutyNormItem>(() => documentItemAlias)
 				.JoinAlias(() => documentItemAlias.Document, () => documentAlias)
-				.Where(x => x.ProtectionTools.Id == dutyNormItem.ProtectionTools.Id)
+				.JoinAlias(() => documentItemAlias.Operation, () => operationAlias)
+				.Where(() => operationAlias.ProtectionTools.Id == dutyNormItem.ProtectionTools.Id)
 				.Where(() => documentAlias.DutyNorm.Id == dutyNormItem.DutyNorm.Id)
 				.OrderBy(() => documentAlias.Date).Desc()
 				.Take(1);
