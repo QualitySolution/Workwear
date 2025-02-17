@@ -170,9 +170,9 @@ namespace Workwear.ViewModels.Stock {
 				item.StockBalanceModel = StockBalanceModel;
 				var position = item.BestChoiceInStock.FirstOrDefault()?.Position;
 				if(position != null)
-					Entity.AddItem(position, item.CalculateRequiredIssue(baseParameters, Entity.Date));
+					Entity.AddItem(position, item.CalculateRequiredIssue(baseParameters, Entity.Date), item);
 				else
-					Entity.AddItem(item.ProtectionTools);
+					Entity.AddItem(item.ProtectionTools, 0);
 			}
 		}
 		#endregion

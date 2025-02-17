@@ -63,7 +63,7 @@ namespace Workwear.Domain.Stock.Documents {
 		
 
 		#region Методы
-		public virtual ExpenseDutyNormItem AddItem(StockPosition position, int amount = 1) {
+		public virtual ExpenseDutyNormItem AddItem(StockPosition position, int amount = 1, DutyNormItem dutyNormItem = null) {
 			if(position == null)
 				return null;
 			var newItem = new ExpenseDutyNormItem() {
@@ -74,19 +74,19 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = position.Height,
 			};
 
-			newItem.DutyNormItem = DutyNorm.GetItem(position.Nomenclature);
-			newItem.ProtectionTools = newItem.DutyNormItem?.ProtectionTools;
+			newItem.DutyNormItem = dutyNormItem ?? DutyNorm.GetItem(position.Nomenclature);
+			newItem.ProtectionTools = dutyNormItem?.ProtectionTools ?? newItem.DutyNormItem?.ProtectionTools;
 			Items.Add(newItem);
 			return newItem;
 		}
 		
-		public virtual ExpenseDutyNormItem AddItem(ProtectionTools protectionTools) {
+		public virtual ExpenseDutyNormItem AddItem(ProtectionTools protectionTools, int amount = 1) {
 			if(protectionTools == null)
 				return null;
 			var newItem = new ExpenseDutyNormItem() {
 				Document = this,
 				ProtectionTools = protectionTools,
-				Amount = 0,
+				Amount = amount,
 			};
 			newItem.DutyNormItem = DutyNorm.GetItem(protectionTools);
 			Items.Add(newItem);
