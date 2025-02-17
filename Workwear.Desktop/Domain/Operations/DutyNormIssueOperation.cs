@@ -199,14 +199,8 @@ namespace Workwear.Domain.Operations {
 
 			DutyNorm = item.Document.DutyNorm;
 			DutyNormItem = item.DutyNormItem;
-			Nomenclature = item.Nomenclature;
-			WearSize = item.WearSize;
-			Height = item.Height;
-			WearPercent = item.WarehouseOperation.WearPercent;
-			Issued = item.Amount;
 			Returned = 0;
 			WarehouseOperation = item.WarehouseOperation;
-			ProtectionTools = item.ProtectionTools;
 			DutyNormItem = DutyNorm.GetItem(ProtectionTools);
 			
 			RecalculateExpiryByNorm();

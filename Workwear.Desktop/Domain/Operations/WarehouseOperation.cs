@@ -119,6 +119,7 @@ namespace Workwear.Domain.Operations
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
 			Height = item.Height;
+			WearPercent = item.WearPercent;
 			Amount = item.Amount;
 		}
 		public virtual void Update(IUnitOfWork uow, CollectiveExpenseItem item) {

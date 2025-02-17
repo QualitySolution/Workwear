@@ -150,6 +150,7 @@ namespace Workwear.ViewModels.Stock {
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
 				var item = page.Tag as ExpenseDutyNormItem;
 					item.StockPosition = node.GetStockPosition(UoW);
+					item.UpdateOperation(UoW);
 			}
 		}
 		
