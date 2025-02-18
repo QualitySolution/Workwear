@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
+using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
+using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -54,9 +58,18 @@ namespace Workwear.Domain.Stock.Documents {
 			get => creationDate;
 			set {creationDate = value;}
 		}
+		
+		private IObservableList<ProcurementItem> items = new ObservableList<ProcurementItem>();
+
+		[Display(Name = "Строки документа")]
+		public virtual IObservableList<ProcurementItem> Items {
+			get=>items;
+			set { items = value; }
+		}
 
 		#endregion
-		
+
+		public virtual string Title => $"Предполагаемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if (StartPeriod < new DateTime(2008, 1, 1))
@@ -67,6 +80,45 @@ namespace Workwear.Domain.Stock.Documents {
 					new[] { this.GetPropertyName(o => o.StartPeriod) });
 			
 		}
+		#endregion
+
+		#region Строки документа
+
+		public virtual ProcurementItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
+			var newItem = new ProcurementItem(this) {
+				Amount = 1,
+				Nomenclature = nomenclature,
+				Cost = nomenclature.SaleCost ?? 0m,
+			};
+			Items.Add(newItem);
+			return newItem;
+		}
+
+		public virtual ProcurementItem AddItem(Nomenclature nomenclature, Size size, Size height, int amount = 0, decimal price = 0m) {
+			var item = FindItem(nomenclature,size,height);
+			if(item == null) {
+				item = new ProcurementItem(this) {
+					Amount = amount,
+					Nomenclature = nomenclature,
+					WearSize = size,
+					Height = height,
+					Cost = price
+				};
+				Items.Add(item);
+			}
+			else {
+				item.Amount += amount;
+			}
+			return item;
+		}
+
+		public virtual void RemoveItem(ProcurementItem item) {
+			Items.Remove(item);
+		}
+
+		public virtual ProcurementItem FindItem(Nomenclature nomenclature, Size size, Size height) =>Items.
+			FirstOrDefault(i=>i.Nomenclature.Id == nomenclature.Id && i.Height==height&&i.WearSize==size);
+
 		#endregion
 	}
 }
