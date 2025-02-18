@@ -206,7 +206,7 @@ namespace Workwear.Models.Operations {
 			var key = GetKey(employee, protectionTools);
 			if(graphs.TryGetValue(key, out IssueGraph graph))
 				return graph;
-			return new IssueGraph(new List<EmployeeIssueOperation>() as IList<IGraphIssueOperation>);
+			return new IssueGraph(new List<IGraphIssueOperation>());
 		} 
 		
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";

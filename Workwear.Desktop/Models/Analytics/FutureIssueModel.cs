@@ -103,7 +103,7 @@ namespace Workwear.Models.Analytics {
 							if(opR != null)
 								opR.Issued = op.NormItem.Amount;
 
-					item.Graph.AddOperations(new List<EmployeeIssueOperation> { op } as IList<IGraphIssueOperation>);
+					item.Graph.AddOperations(new List<IGraphIssueOperation> { op });
 					item.UpdateNextIssue(null);
 				}
 			}

@@ -114,10 +114,8 @@ namespace Workwear.ViewModels.Regulations {
 		}
 
 		public void AddExpense() {
-			if(!Save()) {
-				interactive.ShowMessage(ImportanceLevel.Error, "Не удалось сохранить");
+			if(!Save()) 
 				return;
-			}
 			NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
 		}
 		
@@ -158,10 +156,9 @@ namespace Workwear.ViewModels.Regulations {
 		}
 		
 		public void SaveAndPrint(DutyNormSheetPrint typeSheet) {
-			if(!Save()) {
-				interactive.ShowMessage(ImportanceLevel.Error, "Не удалось сохранить");
+			if(!Save()) 
 				return;
-			}
+			
 			var reportInfo = new ReportInfo {
 				Title = (typeSheet == DutyNormSheetPrint.DutyNormPage1 ? $"Лицевая сторона карточки дежурной нормы" :
 						typeSheet == DutyNormSheetPrint.DutyNormPage2 ? $"Оборотная сторона карточки дежурной нормы" :

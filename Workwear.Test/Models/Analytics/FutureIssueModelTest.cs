@@ -37,7 +37,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 4
 			};
 			
-			var operations = new List<EmployeeIssueOperation>() {
+			var operations = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation {
 					OperationTime = new DateTime(2022, 10, 5),
 					Issued = 1,
@@ -52,7 +52,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem,
 					ProtectionTools = protectionTools,
 					NextIssue = new DateTime(2022, 10, 5),
-					Graph = new IssueGraph(operations as IList<IGraphIssueOperation>)
+					Graph = new IssueGraph(operations)
 				}
 			};
 
@@ -88,7 +88,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 3
 			};
 			
-			var operations = new List<EmployeeIssueOperation>();
+			var operations = new List<IGraphIssueOperation>();
 			
 			var employeeItems = new List<EmployeeCardItem> {
 				new EmployeeCardItem {
@@ -96,7 +96,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem,
 					ProtectionTools = protectionTools,
 					NextIssue = new DateTime(2024, 1, 5),
-					Graph = new IssueGraph(operations as IList<IGraphIssueOperation>)
+					Graph = new IssueGraph(operations)
 				}
 			};
 
@@ -163,7 +163,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 4
 			};
 			
-			var operations1 = new List<EmployeeIssueOperation>() {
+			var operations1 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Уже списано
 					OperationTime = new DateTime(2020, 5, 1),
 					Issued = 2,
@@ -171,7 +171,7 @@ namespace Workwear.Test.Models.Analytics {
 					ExpiryByNorm = new DateTime(2024, 5, 1)
 				}
 			};
-			var operations2 = new List<EmployeeIssueOperation>() {
+			var operations2 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Частичная
 					OperationTime = new DateTime(2022, 5, 1),
 					Issued = 1,
@@ -179,7 +179,7 @@ namespace Workwear.Test.Models.Analytics {
 					ExpiryByNorm = new DateTime(2026, 5, 1)
 				}
 			};
-			var operations3 = new List<EmployeeIssueOperation>() {
+			var operations3 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Возникнет если не учитываем переносы по отпуску
 					OperationTime = new DateTime(2020, 11, 10),
 					Issued = 2,
@@ -193,7 +193,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem1,
 					ProtectionTools = protectionTools1,
 					NextIssue = new DateTime(2024, 5, 1),
-					Graph = new IssueGraph(operations1 as IList<IGraphIssueOperation>)
+					Graph = new IssueGraph(operations1)
 				}
 			};
 			var employeeItems2 = new List<EmployeeCardItem> {
@@ -202,7 +202,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem2,
 					ProtectionTools = protectionTools2,
 					NextIssue = new DateTime(2022, 5, 1),
-					Graph = new IssueGraph(operations2 as IList<IGraphIssueOperation>)
+					Graph = new IssueGraph(operations2)
 				}
 			};
 			var employeeItems3 = new List<EmployeeCardItem> {
@@ -211,7 +211,7 @@ namespace Workwear.Test.Models.Analytics {
 					ActiveNormItem = normItem3,
 					ProtectionTools = protectionTools3,
 					NextIssue = new DateTime(2024, 11, 10),
-					Graph = new IssueGraph(operations3 as IList<IGraphIssueOperation>)
+					Graph = new IssueGraph(operations3)
 				}
 			};
 
