@@ -228,14 +228,14 @@ namespace Workwear.ViewModels.Stock {
 			MessageDialogHelper.RunInfoDialog(
 				"<span color='black'>●</span> — обычная выдача\n" +
 				"<span color='gray'>●</span> — выдача не требуется\n" +
-				"<span color='red'>●</span> — нет подходящих вариантов или не задана потребность\n" +
+				"<span color='red'>●</span> — нет подходящих вариантов или не выбрана номенклатура нормы\n" +
 				"<span color='orange'>●</span> — выдаваемого количества не достаточно\n" +
-				"<span color='green'>●</span> — выдаётся больше необходимого\n"
+				"<span color='purple'>●</span> — выдаётся больше необходимого\n"
 			);
 		}
 		
 		public string GetRowColor(ExpenseDutyNormItem item) {
-			if(item.ProtectionTools == null)
+			if(item.ProtectionTools == null || item.DutyNormItem == null)
 				return "red";
 			if(item.Document.Id != 0) 
 				return "black";
@@ -245,7 +245,7 @@ namespace Workwear.ViewModels.Stock {
 			if(requiredIssue <= 0 && item.Amount == 0)
 				return "gray";
 			if(requiredIssue < item.Amount)
-				return "green";
+				return "purple";
 			if(requiredIssue > item.Amount)
 				return "orange";
 			return "black";
