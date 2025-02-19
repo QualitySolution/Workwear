@@ -131,6 +131,7 @@
     <Compile Include="Journal\ViewModels\Postomats\FullnessJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsWithdrawJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\DutyNormsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseWriteOffJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
@@ -189,12 +190,14 @@
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentWithdrawViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
+    <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\CauseWriteOffViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseDutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\IncomeViewModel.cs" />
     <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureProtectionToolsViewModel.cs" />
@@ -482,6 +485,10 @@
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentWithdrawView.cs" />
     <Compile Include="Views\Analytics\ProtectionToolsCategoryView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
+    <Compile Include="Views\Regulations\DutyNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.DutyNormView.cs" />
+    <Compile Include="Views\Stock\ExpenseDutyNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDutyNormView.cs" />
     <Compile Include="Views\Stock\IncomeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.IncomeView.cs" />
     <Compile Include="Views\Stock\ReturnView.cs" />
@@ -806,7 +813,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountEmployeeGetWear.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -868,6 +875,12 @@
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\DutyNorms\DutyNormPage1.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

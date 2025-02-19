@@ -279,6 +279,16 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
+			TreeViewColumnsConfigFactory.Register<DutyNormsJournalViewModel>(
+				() => FluentColumnsConfig<DutyNormsJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
+					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.SubdivisionName).SearchHighlight()
+					.AddColumn("Начало действия").AddTextRenderer(node => node.DateFromString)
+					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.Finish()
+			);
 
 			TreeViewColumnsConfigFactory.Register<NormConditionJournalViewModel>(
 				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
