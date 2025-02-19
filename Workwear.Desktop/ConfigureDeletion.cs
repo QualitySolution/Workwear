@@ -340,6 +340,11 @@ namespace Workwear
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
 			
 			#endregion
+			#region Документ планируемой поставки
+			DeleteConfig.AddHibernateDeleteInfo<Procurement>()
+				.AddDeleteDependence<ProcurementItem>(x => x.Procurement);
+			DeleteConfig.AddHibernateDeleteInfo<ProcurementItem>();
+			#endregion
 			#region Пользователь
 
 			DeleteConfig.AddHibernateDeleteInfo<UserBase>()
