@@ -25,6 +25,7 @@ using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
@@ -40,6 +41,7 @@ namespace Workwear.ViewModels.Statements
 		private readonly BaseParameters baseParameters;
 		public ILifetimeScope AutofacScope;
 		private readonly CommonMessages commonMessages;
+		private readonly FeaturesService featuresService;
 
 		public IssuanceSheetViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -48,12 +50,14 @@ namespace Workwear.ViewModels.Statements
 			IValidator validator, 
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
+			FeaturesService featuresService,
 			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -225,7 +229,8 @@ namespace Workwear.ViewModels.Statements
 					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 

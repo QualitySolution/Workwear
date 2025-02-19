@@ -53,6 +53,7 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleEmployeeGroups;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage(7).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(8).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);

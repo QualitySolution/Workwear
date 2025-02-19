@@ -745,6 +745,23 @@
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox17" >
+        <Height>12pt</Height>
+        <Width>265.03pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>544.8pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
@@ -909,6 +926,13 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
       <Prompt />
     </ReportParameter>
     <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

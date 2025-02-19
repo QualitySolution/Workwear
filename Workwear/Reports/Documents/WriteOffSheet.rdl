@@ -1639,6 +1639,23 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox26" >
+        <Height>12pt</Height>
+        <Width>264.22pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>397.5pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
@@ -1657,6 +1674,13 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

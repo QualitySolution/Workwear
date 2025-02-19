@@ -779,6 +779,23 @@
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox22" >
+        <Height>12pt</Height>
+        <Width>267.32pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>540.5pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
@@ -949,6 +966,13 @@ CONCAT_WS(
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="isDocNumberInReturnSign">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
