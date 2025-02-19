@@ -142,7 +142,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
             <Width>193.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>38.6pt</Width>
+            <Width>50.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>71.1pt</Width>
@@ -306,8 +306,8 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>3.3pt</Left>
-        <Top>352.7pt</Top>
+        <Left>2.5pt</Left>
+        <Top>294.4pt</Top>
         <Footer>
           <TableRows>
             <TableRow>
@@ -798,7 +798,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>127.1pt</Height>
+              <Height>71.9pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -825,49 +825,12 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
-                        <FontSize>12pt</FontSize>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontWeight>Bold</FontWeight>
-                        <FontSize>12pt</FontSize>
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox9">
-                      <Value>Приложение N 3 к Правилам обеспечения работников средствами индивидуальной защиты и смывающими средствами, утвержденным приказом Минтруда России от 29 октября 2021 г. N 766н</Value>
+                      <Value>Приложение №3
+к Правилам обеспечения работников
+средствами индивидуальной защиты 
+и смывающими средствами, утвержденным
+приказом Минтруда России
+от 29 октября 2021 г. N 766н</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
@@ -884,6 +847,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                       </Style>
                     </Textbox>
                   </ReportItems>
+                  <ColSpan >3</ColSpan>
                 </TableCell>
               </TableCells>
             </TableRow>
