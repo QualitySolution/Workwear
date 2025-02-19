@@ -17,8 +17,7 @@ namespace Workwear.Domain.Stock.Documents {
 		Genitive = "предполагаемой поставки"
 	)]
 	[HistoryTrace]
-	public class Procurement: IValidatableObject 
-	{
+	public class Procurement: IDomainObject {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
@@ -52,9 +51,9 @@ namespace Workwear.Domain.Stock.Documents {
 			set { comment = value; }
 		}
 		
-		private DateTime? creationDate = DateTime.Now;
+		private DateTime creationDate = DateTime.Now;
 		[Display(Name = "Дата создания")]
-		public virtual DateTime? CreationDate {
+		public virtual DateTime CreationDate {
 			get => creationDate;
 			set {creationDate = value;}
 		}
