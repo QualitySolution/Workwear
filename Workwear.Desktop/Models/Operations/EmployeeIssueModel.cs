@@ -185,6 +185,15 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+
+		public int CalculateWrittenOff(EmployeeIssueOperation operation, IUnitOfWork uow, DateTime? onDate = null) {
+			var wo = uow.Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.IssuedOperation.Id == operation.Id);
+			if(onDate != null)
+				wo.Where(o => o.OperationTime <= onDate);
+			return wo.List()?.Sum(o => o.Returned) ?? 0;
+		}
+
 		#endregion
 
 		#region Graph

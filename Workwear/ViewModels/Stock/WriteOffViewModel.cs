@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NLog;
@@ -25,6 +26,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
@@ -33,7 +35,8 @@ namespace Workwear.ViewModels.Stock
 {
     public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>
     {
-	    private readonly EmployeeIssueModel issueModel;
+	    private readonly EmployeeIssueModel employeeIssueModel;
+	    private readonly StockBalanceModel stockBalanceModel;
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
@@ -47,18 +50,21 @@ namespace Workwear.ViewModels.Stock
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
             IUnitOfWorkFactory unitOfWorkFactory,
-            UnitOfWorkProvider unitOfWorkProvider,
             INavigationManager navigation,
             IInteractiveService interactive,
             ILifetimeScope autofacScope,
             IUserService userService,
+            BaseParameters baseParameters,
+            UnitOfWorkProvider unitOfWorkProvider,
             SizeService sizeService,
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
+            StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
             EmployeeCard employee = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
-	        this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+	        this.employeeIssueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+	        this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
@@ -96,6 +102,13 @@ namespace Workwear.ViewModels.Stock
 	            logger.Info($"Создание Нового документа Списания");
             } else 
 	            AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+            
+            Validations.Clear();
+            Validations.Add(
+	            new ValidationRequest(Entity, 
+		            new ValidationContext(Entity, 
+			            new Dictionary<object, object> { {nameof(BaseParameters), baseParameters} } 
+			            )));
         }
         
         #region ViewProperty
@@ -184,9 +197,12 @@ namespace Workwear.ViewModels.Stock
             var addedAmount = ((EmployeeBalanceJournalViewModel)sender).Filter.AddAmount;
             var balance = e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
 
-            foreach (var operation in operations)
-	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
-            
+            foreach(var operation in operations) {
+	            var item = Entity.AddItem(operation,
+		            addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
+	            item.MaxAmount = item.EmployeeWriteoffOperation.IssuedOperation.Issued -
+	                             employeeIssueModel.CalculateWrittenOff(item.EmployeeWriteoffOperation.IssuedOperation, UoW);
+            }
             CalculateTotal(null, null);
         }
         
@@ -194,6 +210,27 @@ namespace Workwear.ViewModels.Stock
             Entity.RemoveItem(item);
             CalculateTotal(null, null);
         }
+
+        public void FillMaxAmount(DateTime? date = null) {
+	        if(Entity.Items.Any(i => i.WriteoffFrom == WriteoffFrom.Warehouse)) {
+		        // для всех списаний со склада
+		        var itemsWh = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Warehouse).ToList();
+		        var nomenclatures = itemsWh.Select(i => i.Nomenclature);
+		        stockBalanceModel.OnDate = date;
+		        stockBalanceModel.AddNomenclatures(nomenclatures);
+		        foreach(var item in itemsWh)
+			        item.MaxAmount = stockBalanceModel.GetAmount(item.StockPosition);
+	        }
+
+	        if(Entity.Items.Any(i => i.WriteoffFrom == WriteoffFrom.Employee)) {
+		        // для всех списаний с сотрудника
+		        var itemsEmp = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Employee).ToList();
+		        foreach(var item in itemsEmp)
+			        item.MaxAmount = item.EmployeeWriteoffOperation.IssuedOperation.Issued -
+			                         employeeIssueModel.CalculateWrittenOff(item.EmployeeWriteoffOperation.IssuedOperation, UoW, date);
+	        }
+        }
+
         #endregion
 
         #region Members
@@ -215,8 +252,10 @@ namespace Workwear.ViewModels.Stock
         #region Save and print
         public override bool Save() {
             logger.Info ("Запись документа...");
-            
+
+            FillMaxAmount(Entity.Date);
             Entity.UpdateOperations(UoW);
+            
             if (Entity.Id == 0)
                 Entity.CreationDate = DateTime.Now;
             
@@ -234,7 +273,7 @@ namespace Workwear.ViewModels.Stock
 	            .ToArray();
             if(employeeOperations.Any()) {
                 logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
-                issueModel.UpdateNextIssue(employeeOperations, changeLog: (operation, s) => logger.Debug(s));
+                employeeIssueModel.UpdateNextIssue(employeeOperations, changeLog: (operation, s) => logger.Debug(s));
                 UoW.Commit();
             }
             logger.Info ("Ok");
