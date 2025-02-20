@@ -94,6 +94,10 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
+		public virtual StockPosition StockPosition => 
+			new StockPosition(Nomenclature, 0m,WearSize, Height, Owner);
+
+		public Owner Owner { get; set; }
 
 		#endregion
 
