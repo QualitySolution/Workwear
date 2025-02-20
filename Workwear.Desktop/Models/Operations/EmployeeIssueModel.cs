@@ -185,6 +185,25 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+
+		/// <summary>
+		/// Справочник (id операции выдачи / кол-во уже списанное из неё) 
+		/// </summary>
+		/// <param name="operations">Операции выдачи для которых нужно считать списания</param>
+		/// <param name="uow"></param>
+		/// <param name="onDate"></param>
+		/// <returns></returns>
+		public Dictionary<int, int> CalculateWrittenOff(EmployeeIssueOperation[] operations, IUnitOfWork uow, DateTime? onDate = null) {
+			var wo = uow.Session.QueryOver<EmployeeIssueOperation>()
+					.Where(o => o.IssuedOperation.Id
+						.IsIn(operations.Select(x => x.Id).ToArray()));
+			if(onDate != null)
+				wo.Where(o => o.OperationTime <= onDate);
+			
+			return wo.List()
+				?.GroupBy(o => o.Id)
+				.ToDictionary(g => g.Key, g => g.Sum(o => o.Returned));
+		}
 		#endregion
 
 		#region Graph
