@@ -32493,10 +32493,10 @@
                 <property name="CanFocus">True</property>
                 <property name="ShadowType">In</property>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yTextView" id="ytreeItems">
+                  <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeItems">
                     <property name="MemberName" />
                     <property name="CanFocus">True</property>
-                    <property name="Text" translatable="yes" />
+                    <property name="ShowScrollbars">True</property>
                   </widget>
                 </child>
               </widget>
@@ -32517,6 +32517,7 @@
                     <property name="Icon">stock:gtk-add Menu</property>
                     <property name="Label" translatable="yes">Добавить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddClicked" />
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -32534,6 +32535,7 @@
                     <property name="Icon">stock:gtk-remove Menu</property>
                     <property name="Label" translatable="yes">Удалить</property>
                     <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonDelClicked" />
                   </widget>
                   <packing>
                     <property name="Position">1</property>
