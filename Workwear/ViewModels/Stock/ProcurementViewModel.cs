@@ -83,11 +83,11 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
 		
-		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
+		public virtual IList<Size> GetSizeVariants(ProcurementItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
 		}
 		
-		public virtual IList<Size> GetHeightVariants(IncomeItem item) {
+		public virtual IList<Size> GetHeightVariants(ProcurementItem item) {
 			return sizeService.GetSize(UoW, item.HeightType, onlyUseInNomenclature: true).ToList();
 		}
 
