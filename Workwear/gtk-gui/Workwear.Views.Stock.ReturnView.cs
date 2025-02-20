@@ -20,7 +20,7 @@ namespace Workwear.Views.Stock
 
 		private global::QS.Views.Control.EntityEntry entityWarehouseIncome;
 
-		private global::Gtk.Label label3;
+		private global::Gtk.Label label_Warehouse;
 
 		private global::Gtk.Label label4;
 
@@ -156,13 +156,13 @@ namespace Workwear.Views.Stock
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.label3 = new global::Gtk.Label();
-			this.label3.Name = "label3";
-			this.label3.Xalign = 1F;
-			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Склад<span foreground=\"red\">*</span>:");
-			this.label3.UseMarkup = true;
-			this.table2.Add(this.label3);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.label3]));
+			this.label_Warehouse = new global::Gtk.Label();
+			this.label_Warehouse.Name = "label_Warehouse";
+			this.label_Warehouse.Xalign = 1F;
+			this.label_Warehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад<span foreground=\"red\">*</span>:");
+			this.label_Warehouse.UseMarkup = true;
+			this.table2.Add(this.label_Warehouse);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table2[this.label_Warehouse]));
 			w9.TopAttach = ((uint)(1));
 			w9.BottomAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));

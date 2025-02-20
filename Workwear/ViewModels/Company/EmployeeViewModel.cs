@@ -227,6 +227,8 @@ namespace Workwear.ViewModels.Company
 			get => visibleSpecCoinsViews;
 			set => SetField(ref visibleSpecCoinsViews, value);
 		}
+
+		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		#endregion
 
 		#region Sensetive
@@ -649,6 +651,7 @@ namespace Workwear.ViewModels.Company
 					{ "id",  Entity.Id },
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
+					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 

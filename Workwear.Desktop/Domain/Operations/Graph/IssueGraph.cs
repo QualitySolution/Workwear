@@ -16,21 +16,20 @@ namespace Workwear.Domain.Operations.Graph
 
 		public List<GraphInterval> Intervals = new List<GraphInterval>();
 
-		private readonly IList<EmployeeIssueOperation> operations;
+		private readonly IList<IGraphIssueOperation> operations;
 
-		public IssueGraph()
-		{
-
+		public IssueGraph() {
+			operations = new List<IGraphIssueOperation>();
 		}
-
+		
 		public IEnumerable<GraphInterval> OrderedIntervals => Intervals.OrderBy(x => x.StartDate);
 
 		public IEnumerable<GraphInterval> OrderedIntervalsReverse => Intervals.OrderByDescending(x => x.StartDate);
 
-		public IssueGraph(IList<EmployeeIssueOperation> issues) {
-			operations = issues;
+		public IssueGraph(IList<IGraphIssueOperation> issues) {
+			operations = issues; 
 			Refresh();
-		}
+		} 
 
 		/// <summary>
 		/// Метод перестраивает граф после изменения дат в его операциях.
@@ -48,14 +47,14 @@ namespace Workwear.Domain.Operations.Graph
 			{
 				if (issue.IssuedOperation == null)
 				{
-					logger.Error($"{nameof(EmployeeIssueOperation)}:{issue.Id} списывает спецодежду с сотрудника при этом не имеет ссылки на операцию по которой эта одежда была выдана сотруднику. Операция была пропущена в построение графа выдачи.");
+					logger.Error($"{nameof(IGraphIssueOperation)}:{issue.Id} списывает спецодежду при этом не имеет ссылки на операцию по которой эта одежда была выдана. Операция была пропущена в построение графа выдачи.");
 					continue;
 				}
 
 				var item = graphItems.FirstOrDefault(x => x.IssueOperation.Id == issue.IssuedOperation.Id);
 				if (item == null)
 				{
-					logger.Error($"{nameof(EmployeeIssueOperation)}:{issue.Id} ссылается на некоректную операцию выдачи. Операция была пропущена в построение графа выдачи.");
+					logger.Error($"{nameof(IGraphIssueOperation)}:{issue.Id} ссылается на некоректную операцию выдачи. Операция была пропущена в построение графа выдачи.");
 					continue;
 				}
 				item.WriteOffOperations.Add(issue);
@@ -90,7 +89,7 @@ namespace Workwear.Domain.Operations.Graph
 
 		#region Методы
 
-		public void AddOperations(IList<EmployeeIssueOperation> operations) {
+		public void AddOperations(IList<IGraphIssueOperation> operations) {
 			foreach(var op in operations) 
 				this.operations.Add(op);
 			if(operations.Any())
@@ -103,11 +102,11 @@ namespace Workwear.Domain.Operations.Graph
 		/// </summary>
 		/// <param name="date"></param>
 		/// <returns></returns>
-		public EmployeeIssueOperation GetWrittenOffOperation(DateTime date) {
+		public IGraphIssueOperation GetWrittenOffOperation(DateTime date) {
 			return operations.FirstOrDefault(o => o.AutoWriteoffDate.GetValueOrDefault().Date == date.Date );
 		}
 		
-		public int AmountAtBeginOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public int AmountAtBeginOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			var interval = IntervalOfDate(date);
 			if (interval == null)
@@ -115,7 +114,7 @@ namespace Workwear.Domain.Operations.Graph
 			return interval.ActiveItems.Sum(x => x.AmountAtBeginOfDay(date, excludeOperation));
 		}
 
-		public int AmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public int AmountAtEndOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			var interval = IntervalOfDate(date);
 			if (interval == null)
@@ -123,7 +122,7 @@ namespace Workwear.Domain.Operations.Graph
 			return interval.ActiveItems.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
 		}
 
-		public int UsedAmountAtEndOfDay(DateTime date, EmployeeIssueOperation excludeOperation = null)
+		public int UsedAmountAtEndOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
 			var interval = IntervalOfDate(date);
 			if(interval == null)
@@ -143,27 +142,25 @@ namespace Workwear.Domain.Operations.Graph
 		#region Статические
 
 		internal static Func<EmployeeCard, ProtectionTools, IssueGraph> MakeIssueGraphTestGap;
-
+		//Фабрика
 		public static IssueGraph MakeIssueGraph(IUnitOfWork uow, EmployeeCard employee, ProtectionTools protectionTools, EmployeeIssueOperation[] unsavedOprarations = null)
 		{
 			if(MakeIssueGraphTestGap != null)
 				return MakeIssueGraphTestGap(employee, protectionTools);
-
+			
 			var issues = uow.Session.QueryOver<EmployeeIssueOperation>()
-					.Where(x => x.Employee.Id == employee.Id)
-					.Where(x => x.ProtectionTools.Id == protectionTools.Id)
-					.OrderBy(x => x.OperationTime).Asc
-					.List();
+				.Where(x => x.Employee.Id == employee.Id)
+				.Where(x => x.ProtectionTools.Id == protectionTools.Id)
+				.OrderBy(x => x.OperationTime).Asc
+				.List<IGraphIssueOperation>();
 			if(unsavedOprarations != null)
-				foreach (var operation in unsavedOprarations)
-				{
-					if(!issues.Any(x => x.IsSame(operation)))
-						issues.Add(operation);
+				foreach (var operation in unsavedOprarations) {
+					if(!issues.Any(x => x.IsSame((IGraphIssueOperation)operation)))
+						issues.Add((IGraphIssueOperation)operation);
 				}
 			
 			return new IssueGraph(issues);
 		}
-
 		#endregion
 	}
 }

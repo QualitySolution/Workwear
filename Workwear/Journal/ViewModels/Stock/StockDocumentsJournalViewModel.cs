@@ -17,6 +17,7 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -56,6 +57,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryIncome);
 			dataLoader.AddQuery(QueryReturn);
 			dataLoader.AddQuery(QueryExpenseDoc);
+			dataLoader.AddQuery(QueryExpenseDutyNormDoc);
 			dataLoader.AddQuery(QueryCollectiveExpenseDoc);
 			dataLoader.AddQuery(QueryWriteoffDoc);
 			dataLoader.AddQuery(QueryTransferDoc);
@@ -68,8 +70,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), 
-				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return),
+				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm));
 		}
 
 		#region Опциональные зависимости
@@ -84,6 +86,7 @@ namespace workwear.Journal.ViewModels.Stock
 		private Warehouse warehouseReceiptAlias = null;
 		private Warehouse warehouseExpenseAlias = null;
 		private IssuanceSheet issuanceSheetAlias = null;  
+		private DutyNorm dutyNormAlias = null;
 
 		protected IQueryOver<Income> QueryIncome(IUnitOfWork uow)
 		{
@@ -229,6 +232,48 @@ namespace workwear.Journal.ViewModels.Stock
 			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
 
 			return expenseQuery;
+		}
+
+		protected IQueryOver<ExpenseDutyNorm> QueryExpenseDutyNormDoc(IUnitOfWork uow) {
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.ExpenseDutyNormDoc)
+				return null;
+
+			ExpenseDutyNorm expenseDutyNormAlias = null;
+
+			var expenseDutyNormQuery = uow.Session.QueryOver<ExpenseDutyNorm>(() => expenseDutyNormAlias);
+			if(Filter.StartDate.HasValue)
+				expenseDutyNormQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				expenseDutyNormQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if(Filter.Warehouse != null)
+				expenseDutyNormQuery.Where(x => x.Warehouse == Filter.Warehouse);
+
+			expenseDutyNormQuery.Where(GetSearchCriterion(
+				() => expenseDutyNormAlias.Id,
+				() => authorAlias.Name,
+				() => expenseDutyNormAlias.DocNumber,
+				() => dutyNormAlias.Name
+			));
+			
+			expenseDutyNormQuery
+				.JoinAlias(() => expenseDutyNormAlias.DutyNorm, () => dutyNormAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)	
+				.JoinAlias(() => expenseDutyNormAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.SelectList(list => list
+					.Select(() => expenseDutyNormAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+					.Select(() => expenseDutyNormAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => expenseDutyNormAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => StockDocumentType.ExpenseDutyNormDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => expenseDutyNormAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+				.OrderBy(() => expenseDutyNormAlias.Date).Desc
+				.ThenBy(() => expenseDutyNormAlias.CreationDate).Desc
+				.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+			
+			return expenseDutyNormQuery;
 		}
 
 		protected IQueryOver<CollectiveExpense> QueryCollectiveExpenseDoc(IUnitOfWork uow)
@@ -468,6 +513,7 @@ namespace workwear.Journal.ViewModels.Stock
 					case StockDocumentType.InspectionDoc when !FeaturesService.Available(WorkwearFeature.Inspection):
 					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
+					case StockDocumentType.ExpenseDutyNormDoc when !FeaturesService.Available(WorkwearFeature.DutyNorms):
 						continue;
 					default:
 					{

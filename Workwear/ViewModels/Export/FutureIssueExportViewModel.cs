@@ -185,8 +185,8 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.VirtualLastIssue ? "+" : "");},},
 				new ColumnInfo() {Label = 
 					"Дата последней выдачи", FillCell = (cell, item) => { 
-					if(item?.LastIssueOperation?.OperationTime.Date != null) 
-						cell.SetCellValue(item.LastIssueOperation.OperationTime.Date);},
+					if(item.LastIssueDate != null) 
+						cell.SetCellValue(item.LastIssueDate.Value);},
 					Type = CellType.Numeric,
 					SetStyle = (cell, item, col) => { cell.CellStyle = item.VirtualLastIssue ? cellStyleDateVirtual : cellStyleDate; },
 					Wight = 3000},

@@ -7,17 +7,20 @@ using QS.Report.ViewModels;
 using Workwear.Tools.Sizes;
 using QS.Report;
 using Gamma.Utilities;
+using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels
 {
 	public class ListBySizeViewModel : ReportParametersViewModelBase
 	{
 		private readonly SizeService sizeService;
+		private readonly FeaturesService featuresService;
 
-		public ListBySizeViewModel(RdlViewerViewModel rdlViewerViewModel, SizeService sizeService) : base(rdlViewerViewModel)
+		public ListBySizeViewModel(RdlViewerViewModel rdlViewerViewModel, SizeService sizeService, FeaturesService featuresService) : base(rdlViewerViewModel)
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			Title = "Список по размерам";
+			this.featuresService=featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 		}
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		private Dictionary<string, object> SetParameters() {
@@ -36,6 +39,7 @@ namespace workwear.ReportParameters.ViewModels
 					parameters.Add($"size_id_{count}", sizesData[count].Id);
 					parameters.Add($"size_name_{count}", sizesData[count].Name);
 				}
+				parameters.Add("printPromo", featuresService.Available(WorkwearFeature.PrintPromo));
 			}
 			return parameters;
 		}

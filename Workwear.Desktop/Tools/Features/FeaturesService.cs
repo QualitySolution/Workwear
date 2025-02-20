@@ -181,18 +181,23 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
+				case WorkwearFeature.PrintPromo:
+					return ProductEdition == 0 || ProductEdition == 1;
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.Dashboard:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
-				case WorkwearFeature.ExportExcel:
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Exchange1C:
+				case WorkwearFeature.ExportExcel:
 				case WorkwearFeature.HistoryLog:
 				case WorkwearFeature.Owners:
+				case WorkwearFeature.ReportEmployeesReceived:
+				case WorkwearFeature.ReportStockOperations:
+				case WorkwearFeature.ReportSupply:
 				case WorkwearFeature.StockForecasting:
 				case WorkwearFeature.Warehouses:
 					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
@@ -206,9 +211,17 @@ namespace Workwear.Tools.Features
 				// Профессиональная + Предприятие + СпецАутсорсинг
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
-				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
+				case WorkwearFeature.LoadExcel:
+				case WorkwearFeature.ReportIssued:
+				case WorkwearFeature.ReportOrder:
+				case WorkwearFeature.ReportStock:
+				case WorkwearFeature.ReportWrittenOff:
+				case WorkwearFeature.StatementJournal:
+				case WorkwearFeature.Vacation:
+				case WorkwearFeature.DutyNorms:
+				case WorkwearFeature.ReportWearCard:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -221,19 +234,43 @@ namespace Workwear.Tools.Features
 
 	public enum WorkwearFeature
 	{
+		#region Однопользовательская
+		[Display(Name="Промоданные")]
+		PrintPromo,
+		#endregion
 		#region Профессиональная
+		#region Документы
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
 		[Display(Name = "Комплектация")]
 		Completion,
 		[Display(Name = "Переоценки")]
 		Inspection,
+		[Display(Name = "Журнал ведомостей")]
+		StatementJournal,
+		#endregion
+		[Display(Name = "Дежурные нормы")]
+		DutyNorms,
+		[Display(Name = "Отпуска")]
+		Vacation,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
 		[Display(Name = "Пользовательские размеры")]
 		CustomSizes,
+		#region Отчеты
+		[Display(Name = "Отчет Складская ведомость")]
+		ReportStock,
+		[Display(Name = "Отчет Справка по выданному")]
+		ReportIssued,
+		[Display(Name = "Отчет Справка по списанному")]
+		ReportWrittenOff,
+		[Display(Name = "Отчет Заявка на спецодежду")]
+		ReportOrder,
+		[Display(Name="Отчет Список сотрудников")]
+		ReportWearCard,
+		#endregion
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Мобильный кабинет сотрудника")]
@@ -262,6 +299,14 @@ namespace Workwear.Tools.Features
 		Exchange1C,
 		[Display(Name = "Прогнозирование запасов")]
 		StockForecasting,
+		#region Отчеты
+		[Display(Name = "Отчет Справка по складским операциям")]
+		ReportStockOperations,
+		[Display(Name = "Отчет Количество получивших СИЗ")]
+		ReportEmployeesReceived,
+		[Display(Name = "Отчет по обеспеченности")]
+		ReportSupply,
+		#endregion
 		#region Платные
 		[Display(Name = "Штрихкоды")]
 		Barcodes,

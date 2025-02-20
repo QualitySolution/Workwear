@@ -147,7 +147,7 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanSetNomenclature => SelectedItem != null;
 		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
-		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
+		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -262,7 +262,8 @@ namespace Workwear.ViewModels.Stock {
 					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);

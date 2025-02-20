@@ -75,7 +75,6 @@ namespace Workwear.Domain.Statements
 			get => transferAgent;
 			set => SetField(ref transferAgent, value);
 		}
-		
 		#region Подписи
 
 		private Leader responsiblePerson;

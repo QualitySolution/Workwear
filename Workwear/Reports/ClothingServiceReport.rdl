@@ -3,7 +3,7 @@
   <Description>Обслуживание одежды</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.5in</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageWidth>15.5in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -14,34 +14,36 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT title AS 'Штрихкод',
-                TO_CHAR(start_date, 'DD.MM.YYYY') AS 'Дата',
-                name AS 'Номенклатура',
-                tab_num,
-                CASE WHEN need_for_repair = 1 THEN
-                         defect
-                     ELSE ''
-                    END AS 'Ремонт',
-                CASE WHEN state = 'WaitService' THEN
-                         'В ожидании'
-                     WHEN state = 'InReceiptTerminal' THEN
-                         'В терминале приёма'
-                     WHEN state = 'InTransit' THEN
-                         'В пути'
-                     WHEN state = 'InRepair' THEN
-                         'В ремонте'
-                     WHEN state = 'InWashing' THEN
-                         'В стирке'
-                     WHEN state = 'AwaitIssue' THEN
-                         'Ожидает выдачи'
-                     WHEN state = 'InDispenseTerminal' THEN
-                         'В терминале выдачи'
-                     WHEN state = 'Returned' THEN
-                         'Возвращена'
-                    END AS 'Статус заявки',
-                CASE WHEN  is_closed = 1 THEN
-                         'да'
-                     ELSE 'нет'
-                    END AS 'Закрыта'
+       TO_CHAR(start_date, 'DD.MM.YYYY') AS 'Дата',
+       name AS 'Номенклатура',
+       tab_num,
+       sub AS 'Подразделение',
+       employee_name  AS 'ФИО',
+       CASE WHEN need_for_repair = 1 THEN
+                defect
+            ELSE ''
+           END AS 'Ремонт',
+       CASE WHEN state = 'WaitService' THEN
+                'В ожидании'
+            WHEN state = 'InReceiptTerminal' THEN
+                'В терминале приёма'
+            WHEN state = 'InTransit' THEN
+                'В пути'
+            WHEN state = 'InRepair' THEN
+                'В ремонте'
+            WHEN state = 'InWashing' THEN
+                'В стирке'
+            WHEN state = 'AwaitIssue' THEN
+                'Ожидает выдачи'
+            WHEN state = 'InDispenseTerminal' THEN
+                'В терминале выдачи'
+            WHEN state = 'Returned' THEN
+                'Возвращена'
+           END AS 'Статус заявки',
+       CASE WHEN  is_closed = 1 THEN
+                'да'
+            ELSE 'нет'
+           END AS 'Закрыта'
 FROM (
          WITH state AS (
              SELECT claim_id, max(operation_time) as max_time FROM clothing_service_states cl1
@@ -52,14 +54,16 @@ FROM (
                   GROUP BY claim_id
               )
          SELECT
-                      barcodes.title ,
-                      CONVERT(start_date.min_time, DATE) AS start_date,
-                      nomenclature.name,
-                      employees.personnel_number AS tab_num,
-                      clothing_service_claim.need_for_repair,
-                      clothing_service_claim.defect,
-                      clothing_service_states.state,
-                      clothing_service_claim.is_closed
+             barcodes.title ,
+             CONVERT(start_date.min_time, DATE) AS start_date,
+             nomenclature.name,
+             employees.personnel_number AS tab_num,
+             clothing_service_claim.need_for_repair,
+             clothing_service_claim.defect,
+             clothing_service_states.state,
+             clothing_service_claim.is_closed,
+             subdivisions.name as sub,
+             Concat_ws(' ', employees.last_name,employees.first_name, employees.patronymic_name) as employee_name
          FROM
              postomat_document_items
                  JOIN clothing_service_claim
@@ -75,14 +79,14 @@ FROM (
                            ON barcodes.id = postomat_document_items.barcode_id
                  JOIN employees
                       ON employees.id = clothing_service_claim.employee_id
+                 LEFT JOIN subdivisions
+                              ON subdivisions.id = employees.subdivision_id
                  JOIN start_date
                       ON start_date.claim_id = clothing_service_states.claim_id
          WHERE (clothing_service_claim.is_closed = 0 OR clothing_service_claim.is_closed = IF(@show_closed, 1, 0))
            AND (IF(@show_closed, start_date.min_time BETWEEN @start_date AND DATE_ADD(@end_date, INTERVAL 1 DAY), start_date.min_time BETWEEN '1900-01-01' AND '2100-01-01'))
      ) q1
-ORDER BY start_date;
-
-</CommandText>
+ORDER BY start_date, sub, employee_name;</CommandText>
         <QueryParameters>
           <QueryParameter Name="show_closed">
             <Value>=Parameters!show_closed</Value>
@@ -110,6 +114,14 @@ ORDER BY start_date;
         </Field>
         <Field Name="tab_num">
           <DataField>tab_num</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Подразделение">
+          <DataField>Подразделение</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ФИО">
+          <DataField>ФИО</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Ремонт">
@@ -175,7 +187,13 @@ ORDER BY start_date;
             <Width>256.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>64.1pt</Width>
+            <Width>110.4pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>99.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>190.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>87.3pt</Width>
@@ -184,7 +202,7 @@ ORDER BY start_date;
             <Width>104.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>54.1pt</Width>
+            <Width>51.1pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -266,9 +284,45 @@ ORDER BY start_date;
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox5">
+                    <Textbox Name="Textbox19">
+                      <Value>Подразделение</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox23">
                       <Value>Табельный номер</Value>
-                      <Style>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>ФИО</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -412,10 +466,37 @@ ORDER BY start_date;
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox13">
+                    <Textbox Name="Textbox20">
+                      <Value>={Подразделение}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox24">
                       <Value>={tab_num}</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>={ФИО}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -477,7 +558,7 @@ ORDER BY start_date;
             </TableRow>
           </TableRows>
         </Details>
-        <Left>2.5pt</Left>
+        <Left>1.8pt</Left>
         <Top>5.6pt</Top>
       </Table>
     </ReportItems>
