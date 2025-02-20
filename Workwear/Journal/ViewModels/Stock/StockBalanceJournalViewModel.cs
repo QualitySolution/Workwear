@@ -82,7 +82,7 @@ namespace workwear.Journal.ViewModels.Stock
 				if(ShowSummary == false && Filter.Warehouse == null)
 					conductions.Add("operation.id = -1");
 
-				if (Filter.ProtectionTools != null)
+				if (Filter.ProtectionTools != null && Filter.ProtectionTools.Nomenclatures.Any())
 					conductions.Add($"nomenclature.id IN ({string.Join(",", Filter.ProtectionTools.Nomenclatures.Select(x => x.Id))})");
 				
 				var search = new SqlSearchCriterion(Search)
