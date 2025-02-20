@@ -637,9 +637,7 @@ FROM stock_income_detail
 WHERE stock_income.operation = 'Return';
 
 DELETE FROM stock_income_detail WHERE stock_income_detail.stock_income_id in
-									  (SELECT stock_income.id FROM stock_income_detail
-																	   LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
-									   WHERE stock_income.operation = 'Return');
+									  (SELECT id FROM stock_income WHERE operation = 'Return');
 
 DELETE FROM stock_income WHERE stock_income.operation = 'Return';
 
@@ -728,3 +726,4 @@ alter table stock_income
 	drop column employee_id;
 
 drop table stock_income_detail;
+
