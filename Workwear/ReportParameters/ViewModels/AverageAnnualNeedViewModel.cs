@@ -45,7 +45,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"summary", Summary},
 					{"show_size", ShowSize},
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
 		#region Параметры
@@ -59,7 +60,6 @@ namespace workwear.ReportParameters.ViewModels
 		public bool ShowSize { get; set; }
 		public bool Summary { get; set; }
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
-		
 		#endregion
 		#region Свойства
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);

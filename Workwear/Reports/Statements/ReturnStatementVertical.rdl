@@ -1288,6 +1288,13 @@ WHERE stock_return.id = @id</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
   </ReportParameters>
   <DataSources>
     <DataSource Name="DS1">

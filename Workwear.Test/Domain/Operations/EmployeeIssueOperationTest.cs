@@ -43,7 +43,7 @@ namespace Workwear.Test.Domain.Operations
 			operation2.ProtectionTools.Returns(protectionTools);
 			operation2.OperationTime.Returns(new DateTime(2018, 2, 1));
 
-			var operations = new List<EmployeeIssueOperation>() { operation1, operation2 };
+			var operations = new List<IGraphIssueOperation>() { operation1, operation2 };
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
@@ -84,7 +84,7 @@ namespace Workwear.Test.Domain.Operations
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.TypeName.Returns("fake");
 
-			var operations = new List<EmployeeIssueOperation>() { operation1 };
+			var operations = new List<IGraphIssueOperation>() { operation1 };
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
@@ -144,7 +144,7 @@ namespace Workwear.Test.Domain.Operations
 				Issued = 1
 			};
 
-			var operations = new List<EmployeeIssueOperation>() { operation1, issue };
+			var operations = new List<IGraphIssueOperation>() { operation1, issue };
 			var graph = new IssueGraph(operations);
 
 			var ask = Substitute.For<IInteractiveQuestion>();
@@ -185,7 +185,7 @@ namespace Workwear.Test.Domain.Operations
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.TypeName.Returns("fake");
 
-			var operations = new List<EmployeeIssueOperation>() { };
+			var operations = new List<IGraphIssueOperation>() { };
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
@@ -239,7 +239,7 @@ namespace Workwear.Test.Domain.Operations
 			var nomenclature = Substitute.For<Nomenclature>();
 			nomenclature.TypeName.Returns("fake");
 
-			var operations = new List<EmployeeIssueOperation>() { };
+			var operations = new List<IGraphIssueOperation>() { };
 
 			var graph = new IssueGraph(operations);
 			var issue = new EmployeeIssueOperation();
@@ -320,7 +320,7 @@ namespace Workwear.Test.Domain.Operations
 			operation1.WearPercent.Returns(beginWearPercent);
 			operation1.StartOfUse.Returns(startOfUse);
 
-			var list = new List<EmployeeIssueOperation> { operation1 };
+			var list = new List<IGraphIssueOperation> { operation1 };
 
 			var graphInterval = new GraphInterval 
 			{

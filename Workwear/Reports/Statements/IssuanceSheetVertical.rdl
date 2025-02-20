@@ -1858,6 +1858,23 @@
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox51" >
+        <Height>12pt</Height>
+        <Width>267.24pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>309.00pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility >
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
@@ -2065,6 +2082,13 @@ WHERE
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>

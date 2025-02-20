@@ -185,6 +185,25 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+
+		/// <summary>
+		/// Справочник (id операции выдачи / кол-во уже списанное из неё) 
+		/// </summary>
+		/// <param name="operations">Операции выдачи для которых нужно считать списания</param>
+		/// <param name="uow"></param>
+		/// <param name="onDate"></param>
+		/// <returns></returns>
+		public Dictionary<int, int> CalculateWrittenOff(EmployeeIssueOperation[] operations, IUnitOfWork uow, DateTime? onDate = null) {
+			var wo = uow.Session.QueryOver<EmployeeIssueOperation>()
+					.Where(o => o.IssuedOperation.Id
+						.IsIn(operations.Select(x => x.Id).ToArray()));
+			if(onDate != null)
+				wo.Where(o => o.OperationTime <= onDate);
+			
+			return wo.List()
+				?.GroupBy(o => o.Id)
+				.ToDictionary(g => g.Key, g => g.Sum(o => o.Returned));
+		}
 		#endregion
 
 		#region Graph
@@ -197,7 +216,7 @@ namespace Workwear.Models.Operations {
 				foreach(var protectionToolsGroup in employeeGroup.GroupBy(o => o.ProtectionTools)) {
 					if(protectionToolsGroup.Key == null)
 						continue; //В пересчёте нет смысла без потребности
-					graphs[GetKey(employeeGroup.Key, protectionToolsGroup.Key)] = new IssueGraph(protectionToolsGroup.ToList());
+					graphs[GetKey(employeeGroup.Key, protectionToolsGroup.Key)] = new IssueGraph(protectionToolsGroup.ToList<IGraphIssueOperation>());
 				}
 			}
 		}
@@ -206,7 +225,7 @@ namespace Workwear.Models.Operations {
 			var key = GetKey(employee, protectionTools);
 			if(graphs.TryGetValue(key, out IssueGraph graph))
 				return graph;
-			return new IssueGraph(new List<EmployeeIssueOperation>());
+			return new IssueGraph(new List<IGraphIssueOperation>());
 		} 
 		
 		private static string GetKey(EmployeeCard e, ProtectionTools p) => $"{e.Id}_{p.Id}";
@@ -252,9 +271,9 @@ namespace Workwear.Models.Operations {
 			
 			foreach (var item in employeeCardItems) {
 				if(protectionGroups.ContainsKey((item.EmployeeCard.Id, item.ProtectionTools.Id))) 
-					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList());
+					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList<IGraphIssueOperation>());
 				else 
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph(new List<IGraphIssueOperation>() );
 			}
 		}
 		#endregion

@@ -9,18 +9,6 @@
   <LeftMargin>.25in</LeftMargin>
   <RightMargin>.25in</RightMargin>
   <BottomMargin>.25in</BottomMargin>
-  <ReportParameters>
-    <ReportParameter Name="id">
-      <DataType>Integer</DataType>
-      <Nullable>False</Nullable>
-      <DefaultValue>
-        <Values>
-          <Value>1</Value>
-        </Values>
-      </DefaultValue>
-      <AllowBlank>False</AllowBlank>
-    </ReportParameter>
-  </ReportParameters>
   <DataSets>
     <DataSet Name="Data">
       <Query >
@@ -1182,6 +1170,7 @@ WHERE employees.subdivision_id = @id</CommandText>
       </List>
     </ReportItems>
     <Height>184.5pt</Height>
+    <Columns >1</Columns>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
@@ -1200,6 +1189,23 @@ WHERE employees.subdivision_id = @id</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox21" >
+        <Height>12pt</Height>
+        <Width>267.23pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>490.4pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
@@ -1213,4 +1219,27 @@ WHERE employees.subdivision_id = @id</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
+  <ReportParameters >
+    <ReportParameter Name="id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+  </ReportParameters>
+  <DataElementName >Report</DataElementName>
+  <DataElementStyle >AttributeNormal</DataElementStyle>
 </Report>

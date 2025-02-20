@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Stock {
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
 			
-			if(featuresService.Available(WorkwearFeature.Warehouses) && Entity.Warehouse == null)
+			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			

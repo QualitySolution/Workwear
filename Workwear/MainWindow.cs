@@ -130,8 +130,19 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) {
+			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
+				quitService.Quit();
+				return;
+			}
+			
+			if (updateInfo?.Status == UpdateStatus.ConnectionError) {
 				logger.Warn(updateInfo.Value.Message);
+			}
+
+			if(updateInfo?.Status == UpdateStatus.BaseError) {
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				quitService.Quit();
+				return;
 			}
 			
 			if (updateInfo?.Status == UpdateStatus.ExternalError) {
@@ -143,15 +154,19 @@ public partial class MainWindow : Gtk.Window {
 			}
 		}
 
+		progress.CheckPoint("Настройка удаления");
+		//Настройка удаления
+		Configure.ConfigureDeletion();
+		
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
-			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
+			string message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			Users WinUser = new Users();
@@ -210,7 +225,7 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
-		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
+		//Если склады отсутствуют, создаём новый склад, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(!UoW.GetAll<Warehouse>().Any())
 			CreateDefaultWarehouse();
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
@@ -278,10 +293,6 @@ public partial class MainWindow : Gtk.Window {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
-		
-		progress.CheckPoint("Настройка удаления");
-		//Настройка удаления
-		Configure.ConfigureDeletion();
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
@@ -379,6 +390,9 @@ public partial class MainWindow : Gtk.Window {
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
+		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
+		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
@@ -397,7 +411,15 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
-
+		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
+		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
+		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
+		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
+		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
+		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
+		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
+		
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
@@ -921,6 +943,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
+	}
+
+	protected void OnActionDutyNormActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(null);
 	}
 
 	protected void OnActionProvisionActivated(object sender, EventArgs e) {
