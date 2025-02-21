@@ -3,26 +3,27 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 
-namespace Workwear.Domain.Stock.Documents {
+namespace Workwear.Domain.Supply{
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "строки предполагаемой поставки",
 		Nominative = "строка предполагаемой поставки",
 		Genitive = "строки предполагаемой поставки"
 	)]
 	[HistoryTrace]
-	public class ProcurementItem: IDomainObject 
+	public class ShipmentItem: IDomainObject 
 	{
 		#region Свойства
 		public virtual int Id { get; set; }
 		
-		private Procurement procurement;
+		private Shipment shipment;
 		
 		[Display(Name = "Документ")]
 		[IgnoreHistoryTrace]
-		public virtual Procurement Procurement {
-			get => procurement;
-			set {procurement = value;}
+		public virtual Shipment Shipment {
+			get => shipment;
+			set {shipment = value;}
 		}
 		
 		Nomenclature nomenclature;
@@ -101,10 +102,10 @@ namespace Workwear.Domain.Stock.Documents {
 
 		#endregion
 
-		public ProcurementItem(){ }
+		public ShipmentItem(){ }
 
-		public ProcurementItem(Procurement procurement) {
-			this.procurement = procurement;
+		public ShipmentItem(Shipment shipment) {
+			this.shipment = shipment;
 		}
 	}
 }

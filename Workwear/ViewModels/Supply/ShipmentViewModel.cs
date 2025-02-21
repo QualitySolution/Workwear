@@ -13,17 +13,17 @@ using QS.Services;
 using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 
-namespace Workwear.ViewModels.Stock {
-	public class ProcurementViewModel :EntityDialogViewModelBase<Procurement> {
-		public ProcurementViewModel(
+namespace Workwear.ViewModels.Supply {
+	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment> {
+		public ShipmentViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
@@ -59,8 +59,8 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref total, value);
 		}
 		
-		private ProcurementItem selectedItem;
-		public virtual ProcurementItem SelectedItem {
+		private ShipmentItem selectedItem;
+		public virtual ShipmentItem SelectedItem {
 			get=>selectedItem;
 			set=>SetField(ref selectedItem, value);
 		}
@@ -74,7 +74,7 @@ namespace Workwear.ViewModels.Stock {
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual DateTime DocDate { get => Entity.CreationDate;set => Entity.CreationDate = value;}
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
-		public virtual IObservableList<ProcurementItem> Items => Entity.Items;
+		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
 		#endregion
 
@@ -83,11 +83,11 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
 		
-		public virtual IList<Size> GetSizeVariants(ProcurementItem item) {
+		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
 		}
 		
-		public virtual IList<Size> GetHeightVariants(ProcurementItem item) {
+		public virtual IList<Size> GetHeightVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.HeightType, onlyUseInNomenclature: true).ToList();
 		}
 
@@ -109,7 +109,7 @@ namespace Workwear.ViewModels.Stock {
 			CalculateTotal();
 		}
 		
-		public void DeleteItem(ProcurementItem item) {
+		public void DeleteItem(ShipmentItem item) {
 			Entity.RemoveItem(item); 
 			OnPropertyChanged(nameof(CanRemoveItem));
 			CalculateTotal();

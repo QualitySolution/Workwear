@@ -9,15 +9,16 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 
-namespace Workwear.Domain.Stock.Documents {
+namespace Workwear.Domain.Supply {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "предполагаемые поставки",
 		Nominative = "предполагаемая поставка",
 		Genitive = "предполагаемой поставки"
 	)]
 	[HistoryTrace]
-	public class Procurement: IDomainObject {
+	public class Shipment: IDomainObject {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
@@ -58,10 +59,10 @@ namespace Workwear.Domain.Stock.Documents {
 			set {creationDate = value;}
 		}
 		
-		private IObservableList<ProcurementItem> items = new ObservableList<ProcurementItem>();
+		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
 
 		[Display(Name = "Строки документа")]
-		public virtual IObservableList<ProcurementItem> Items {
+		public virtual IObservableList<ShipmentItem> Items {
 			get=>items;
 			set { items = value; }
 		}
@@ -83,8 +84,8 @@ namespace Workwear.Domain.Stock.Documents {
 
 		#region Строки документа
 
-		public virtual ProcurementItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
-			var newItem = new ProcurementItem(this) {
+		public virtual ShipmentItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
+			var newItem = new ShipmentItem(this) {
 				Amount = 1,
 				Nomenclature = nomenclature,
 				Cost = nomenclature.SaleCost ?? 0m,
@@ -93,10 +94,10 @@ namespace Workwear.Domain.Stock.Documents {
 			return newItem;
 		}
 
-		public virtual ProcurementItem AddItem(Nomenclature nomenclature, Size size, Size height, int amount = 0, decimal price = 0m) {
+		public virtual ShipmentItem AddItem(Nomenclature nomenclature, Size size, Size height, int amount = 0, decimal price = 0m) {
 			var item = FindItem(nomenclature,size,height);
 			if(item == null) {
-				item = new ProcurementItem(this) {
+				item = new ShipmentItem(this) {
 					Amount = amount,
 					Nomenclature = nomenclature,
 					WearSize = size,
@@ -111,11 +112,11 @@ namespace Workwear.Domain.Stock.Documents {
 			return item;
 		}
 
-		public virtual void RemoveItem(ProcurementItem item) {
+		public virtual void RemoveItem(ShipmentItem item) {
 			Items.Remove(item);
 		}
 
-		public virtual ProcurementItem FindItem(Nomenclature nomenclature, Size size, Size height) =>Items.
+		public virtual ShipmentItem FindItem(Nomenclature nomenclature, Size size, Size height) =>Items.
 			FirstOrDefault(i=>i.Nomenclature.Id == nomenclature.Id && i.Height==height&&i.WearSize==size);
 
 		#endregion

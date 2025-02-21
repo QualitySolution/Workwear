@@ -12,6 +12,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using Workwear.Domain.Users;
 
 namespace Workwear
@@ -341,9 +342,9 @@ namespace Workwear
 			
 			#endregion
 			#region Документ планируемой поставки
-			DeleteConfig.AddHibernateDeleteInfo<Procurement>()
-				.AddDeleteDependence<ProcurementItem>(x => x.Procurement);
-			DeleteConfig.AddHibernateDeleteInfo<ProcurementItem>();
+			DeleteConfig.AddHibernateDeleteInfo<Shipment>()
+				.AddDeleteDependence<ShipmentItem>(x => x.Shipment);
+			DeleteConfig.AddHibernateDeleteInfo<ShipmentItem>();
 			#endregion
 			#region Пользователь
 
