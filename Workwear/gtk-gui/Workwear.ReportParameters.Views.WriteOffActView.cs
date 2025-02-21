@@ -14,9 +14,9 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckShowDocWriteOff;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckShowAutoWriteOff;
-
 		private global::Gamma.GtkWidgets.yCheckButton ycheckShowIncome;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckShowAutoWriteOff;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -28,6 +28,7 @@ namespace Workwear.ReportParameters.Views
 			this.Name = "Workwear.ReportParameters.Views.WriteOffActView";
 			// Container child Workwear.ReportParameters.Views.WriteOffActView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
@@ -69,18 +70,6 @@ namespace Workwear.ReportParameters.Views
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.ycheckShowAutoWriteOff = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckShowAutoWriteOff.CanFocus = true;
-			this.ycheckShowAutoWriteOff.Name = "ycheckShowAutoWriteOff";
-			this.ycheckShowAutoWriteOff.Label = global::Mono.Unix.Catalog.GetString("Показать автосписания");
-			this.ycheckShowAutoWriteOff.DrawIndicator = true;
-			this.ycheckShowAutoWriteOff.UseUnderline = true;
-			this.vbox1.Add(this.ycheckShowAutoWriteOff);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckShowAutoWriteOff]));
-			w5.Position = 2;
-			w5.Expand = false;
-			w5.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
 			this.ycheckShowIncome = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckShowIncome.CanFocus = true;
 			this.ycheckShowIncome.Name = "ycheckShowIncome";
@@ -88,7 +77,19 @@ namespace Workwear.ReportParameters.Views
 			this.ycheckShowIncome.DrawIndicator = true;
 			this.ycheckShowIncome.UseUnderline = true;
 			this.vbox1.Add(this.ycheckShowIncome);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckShowIncome]));
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckShowIncome]));
+			w5.Position = 2;
+			w5.Expand = false;
+			w5.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.ycheckShowAutoWriteOff = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckShowAutoWriteOff.CanFocus = true;
+			this.ycheckShowAutoWriteOff.Name = "ycheckShowAutoWriteOff";
+			this.ycheckShowAutoWriteOff.Label = global::Mono.Unix.Catalog.GetString("Показать автосписания");
+			this.ycheckShowAutoWriteOff.DrawIndicator = true;
+			this.ycheckShowAutoWriteOff.UseUnderline = true;
+			this.vbox1.Add(this.ycheckShowAutoWriteOff);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckShowAutoWriteOff]));
 			w6.Position = 3;
 			w6.Expand = false;
 			w6.Fill = false;

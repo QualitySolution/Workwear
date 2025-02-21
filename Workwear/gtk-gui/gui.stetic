@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -31312,10 +31312,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowAutoWriteOff">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowIncome">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Показать автосписания</property>
+            <property name="Label" translatable="yes">Показать возвраты на склад</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -31328,10 +31328,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowIncome">
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowAutoWriteOff">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Показать возвраты на склад</property>
+            <property name="Label" translatable="yes">Показать автосписания</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
