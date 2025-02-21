@@ -281,9 +281,10 @@ public partial class MainWindow : Gtk.Window {
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
 				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
+				var stableChannelText = UpdateChannel.Stable.ToString();
+				if(channel != stableChannelText) { //Устанавливаем канал в Stable принудительно. Так как версия из этого канала.
+					channel = stableChannelText;
+					configuration[$"AppUpdater:Channel"] = stableChannelText;
 				}
 				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
 				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
