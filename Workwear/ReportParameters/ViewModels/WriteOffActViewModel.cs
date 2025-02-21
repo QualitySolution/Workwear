@@ -46,7 +46,7 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
-		private bool showAutoWriteOff=true;
+		private bool showAutoWriteOff=false;
 		public virtual bool ShowAutoWriteOff {
 			get=> showAutoWriteOff;
 			set {
