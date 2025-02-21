@@ -730,7 +730,7 @@ alter table stock_income
 drop table stock_income_detail;
 
 -- Документ закупки
-create table stock_procurement
+create table shipment
 (
 	id int unsigned auto_increment primary key,
 	start_period date not null,
@@ -739,46 +739,46 @@ create table stock_procurement
 	comment text null,
 	creation_date datetime null
 );
-create index index_stock_procurement_start_period
-	on stock_procurement (start_period);
-create index index_stock_procurement_end_period
-	on stock_procurement (end_period);
+create index index_shipment_start_period
+	on shipment (start_period);
+create index index_shipment_end_period
+	on shipment (end_period);
 
 -- Строки документа закупки
-create table stock_procurement_items
+create table shipment_items
 (
 	id int unsigned auto_increment primary key,
-	stock_procurement_id int unsigned not null,
+	shipment_id int unsigned not null,
 	nomenclature_id int unsigned not null,
 	quantity int unsigned not null,
 	cost decimal(10, 2) unsigned default 0.00 not null,
 	size_id int unsigned null,
 	height_id int unsigned null,
 	comment varchar(120) null,
-	constraint fk_stock_procurement_items_doc
-		foreign key (stock_procurement_id) references stock_procurement (id)
+	constraint fk_shipment_items_doc
+		foreign key (shipment_id) references shipment (id)
 			on update cascade on delete cascade,
-	constraint fk_stock_procurement_items_nomenclature
+	constraint fk_shipment_items_nomenclature
 		foreign key (nomenclature_id) references nomenclature (id)
 			on update cascade,
-	constraint fk_stock_procurement_items_size_id
+	constraint fk_shipment_items_size_id
 		foreign key (size_id) references sizes (id)
 			on update cascade,
-	constraint fk_stock_procurement_items_height_id
+	constraint fk_shipment_items_height_id
 		foreign key (height_id) references sizes (id)
 			on update cascade 
 );
-create index index_stock_procurement_items_doc
-	on stock_procurement_items (stock_procurement_id);
+create index index_shipment_items_doc
+	on shipment_items (shipment_id);
 
-create index index_stock_procurement_items_height
-	on stock_procurement_items (height_id);
+create index index_shipment_items_height
+	on shipment_items (height_id);
 
-create index index_stock_procurement_items_nomenclature
-	on stock_procurement_items (nomenclature_id);
+create index index_shipment_items_nomenclature
+	on shipment_items (nomenclature_id);
 
-create index index_stock_procurement_items_size
-	on stock_procurement_items (size_id);
+create index index_shipment_items_size
+	on shipment_items (size_id);
 
 
 
