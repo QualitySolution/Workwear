@@ -125,7 +125,25 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-
+		
+		progress.CheckPoint("Настройка каналов обновления");
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var appInfo = releaseScope.Resolve<IApplicationInfo>();
+			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
+				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+				var channel = configuration[$"AppUpdater:Channel"];
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+					channel = UpdateChannel.Current.ToString();
+					configuration[$"AppUpdater:Channel"] = channel;
+				}
+				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+			}
+			else {
+				ActionUpdateChannel.Visible = false;
+			}
+		}
+		
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -274,25 +292,6 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-
-		//Настраиваем каналы обновлений
-		progress.CheckPoint("Настройка каналов обновления");
-		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
-			var appInfo = releaseScope.Resolve<IApplicationInfo>();
-			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
-				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-			}
-			else {
-				ActionUpdateChannel.Visible = false;
-			}
-		}
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
