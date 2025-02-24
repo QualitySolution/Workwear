@@ -139,7 +139,6 @@ namespace Workwear.ViewModels.Stock {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание Нового документа выдачи");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-			
 			//Переопределяем параметры валидации
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
@@ -159,12 +158,19 @@ namespace Workwear.ViewModels.Stock {
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
-		public string DocNumber {
-			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
-			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
 		}
 		#endregion
 
@@ -248,7 +254,12 @@ namespace Workwear.ViewModels.Stock {
 			}
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
-
+			
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+				Entity.DocNumber = Entity.DocNumberText;	
+			
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
 				logger.Warn("Необходимо обновить штрихкоды.");
@@ -318,7 +329,8 @@ namespace Workwear.ViewModels.Stock {
 					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id }
+					{ "id",  Entity.IssuanceSheet.Id },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 			

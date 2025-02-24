@@ -1,9 +1,12 @@
 using System;
-using Gamma.Utilities;
+using System.Collections.Generic;
+using System.Linq;
+using NHibernate;
 using QS.DomainModel.Entity;
 using QS.Utilities;
 using Workwear.Domain.Operations;
 using Workwear.Models.Operations;
+using Workwear.Domain.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
@@ -13,9 +16,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public OperationToDocumentReference EmployeeIssueReference { get; set; }
 
 		public DateTime Date => Operation.OperationTime;
-		public string NomenclatureName => Operation.Nomenclature?.Name ?? Operation.ProtectionTools.Name;
+		public string NomenclatureName => Operation.Nomenclature?.Name ?? String.Empty;
 		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
-		public decimal? WearPercet => Operation.WearPercent;
+		public decimal? WearPercent => Operation.WearPercent;
 		public decimal? Cost => Operation.WarehouseOperation?.Cost;
 
 		public int AmountReceived => Operation.Issued;
@@ -27,7 +30,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public string CostText => Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
 
-		public string WearPercentText => WearPercet.HasValue ? WearPercet.Value.ToString("P0") : String.Empty;
+		public string WearPercentText => WearPercent.HasValue ? WearPercent.Value.ToString("P0") : String.Empty;
+
+		public IEnumerable<Barcode> Barcodes => Operation.BarcodeOperations.Select(bo => bo.Barcode);
 
 		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
 		public bool UseAutoWriteOff {
@@ -59,15 +64,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public bool IsSigned => !String.IsNullOrEmpty(Operation.SignCardKey);
 
-		public string DocumentTitle {
+		public string  DocumentTitle {
 			get {
 				if(EmployeeIssueReference?.DocumentType != null)
-					return $"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
+					return EmployeeIssueReference.DocumentTitle;//$"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
 				if(Operation.ManualOperation)
 					return "Ручная операция";
 				return String.Empty;
 			}
 		}
+
+		public string BarcodesString {
+			get {
+				if(!NHibernateUtil.IsInitialized(Barcodes) || !Barcodes.Any())
+					return String.Empty;
+				return Barcodes.DefaultIfEmpty().Select(bc => bc.Title).Aggregate((a,b) => a + "\n" + b);
+			}
+		}
+
 		public string ProtectionTools {
 			get {
 				return Operation?.ProtectionTools?.Name ?? String.Empty;

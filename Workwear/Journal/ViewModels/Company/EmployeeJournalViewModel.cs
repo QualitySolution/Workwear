@@ -28,26 +28,16 @@ namespace workwear.Journal.ViewModels.Company
 		public object Tag;
 
 		public readonly FeaturesService FeaturesService;
-		private readonly Norm norm;
-
 		public EmployeeFilterViewModel Filter { get; private set; }
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null,
-										//Ограничения журнала
-										Norm norm = null) 
+										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			this.norm = norm;
-
-			if(norm != null) {
-				norm = UoW.GetById<Norm>(norm.Id); //Загружаем из своей сессии.
-				Title = "Использующие норму: " + norm.Title;
-			}
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -65,19 +55,21 @@ namespace workwear.Journal.ViewModels.Company
 				.Where(ev => ev.BeginDate <= DateTime.Today && ev.EndDate >= DateTime.Today)
 				.Select(ev => ev.Id)
 				.Take(1);
-
+			
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
 				employees.Where(x => x.DismissDate == null);
+			if(Filter.ExcludeInVacation)
+				employees.WithSubquery.WhereNotExists(vacationSubquery);
 			if(Filter.Subdivision != null)
 				employees.Where(x => x.Subdivision.Id == Filter.Subdivision.Id);
 			if(Filter.Department != null)
 				employees.Where(x => x.Department.Id == Filter.Department.Id);
-
-			if(norm != null) {
+			if(Filter.Post != null)
+				employees.Where(x => x.Post.Id == Filter.Post.Id);
+			if(Filter.Norm != null) 
 				employees.JoinAlias(x => x.UsedNorms, () => normAlias)
-				 .Where(x => normAlias.Id == norm.Id);
-			}
+						 .Where(x => normAlias.Id == Filter.Norm.Id);
 
 			return employees
 				.Where(MakeSearchCriterion<EmployeeCard>().By(
@@ -107,6 +99,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(x => x.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(x => x.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(x => x.Sex).WithAlias(() => resultAlias.Sex)
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
@@ -143,11 +136,10 @@ namespace workwear.Journal.ViewModels.Company
 		public string Patronymic { get; set; }
 
 		[SearchHighlight]
-		public string FIO {
-			get {
-				return String.Join(" ", LastName, FirstName, Patronymic);
-			}
-		}
+		public string FIO => String.Join(" ", LastName, FirstName, Patronymic);
+		
+		public Sex Sex { get; set; }
+
 		[SearchHighlight]
 		public string Post { get; set; }
 		[SearchHighlight]
@@ -160,7 +152,7 @@ namespace workwear.Journal.ViewModels.Company
 		public int? VacationId { get; private set; }
 
 		public bool InVocation => VacationId.HasValue;
-
+		
 		[SearchHighlight]
 		public string Comment { get; set; }
 

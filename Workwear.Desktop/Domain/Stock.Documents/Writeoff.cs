@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -76,7 +76,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		public virtual string Title{
-			get{ return String.Format ("Акт списания №{0} от {1:d}", DocNumber ?? Id.ToString(), Date);}
+			get{ return String.Format ("Акт списания №{0} от {1:d}", DocNumberText, Date);}
 		}
 
 		#region IValidatableObject implementation
@@ -85,7 +85,7 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
-					new[] { this.GetPropertyName (o => o.Date)});
+					new[] { nameof(Date)});
 			
 			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
@@ -93,12 +93,29 @@ namespace Workwear.Domain.Stock.Documents
 
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
 
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
-					new[] { this.GetPropertyName (o => o.Items)});
+					new[] { nameof(Items)});
 			
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
+			foreach(var item in Items) {
+				switch(item.WriteoffFrom) {
+					case WriteoffFrom.Warehouse:
+						if(baseParameters.CheckBalances && item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится на складе.",
+								new[] { nameof(Items) });
+						break;
+					case WriteoffFrom.Employee:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится за сотрудником.",
+								new[] { nameof(Items) });
+						break;
+				}
+			}
 		}
 
 		#endregion

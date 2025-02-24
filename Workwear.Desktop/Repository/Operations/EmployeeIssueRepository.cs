@@ -197,31 +197,44 @@ namespace Workwear.Repository.Operations
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			Expense expenseAlias = null;
 			ExpenseItem expenseItemAlias = null;
-			IncomeItem incomeItemAlias = null;
+			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
+			CollectiveExpense collectiveExpenseAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
+			Writeoff writeoffAlias = null;
 			WriteoffItem writeoffItemAlias = null;
+			Inspection inspectionAlias = null;
 			InspectionItem inspectionItemAlias = null;
 			
 			var result = RepoUow.Session.QueryOver<EmployeeIssueOperation>(() => employeeIssueOperationAlias)
 				.JoinEntityAlias(() => expenseItemAlias, () => expenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
-				.Left.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias)
+				.JoinAlias(() => expenseItemAlias.ExpenseDoc, () => expenseAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => collectiveExpenseItemAlias, () => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => incomeItemAlias, () => incomeItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => collectiveExpenseItemAlias.Document, () => collectiveExpenseAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => returnItemAlias, () => returnItemAlias.ReturnFromEmployeeOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.Document, () => returnAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => writeoffItemAlias, () => writeoffItemAlias.EmployeeWriteoffOperation.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => writeoffItemAlias.Document, () => writeoffAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => inspectionItemAlias, () => inspectionItemAlias.NewOperationIssue.Id == employeeIssueOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => inspectionItemAlias.Document, () => inspectionAlias, JoinType.LeftOuterJoin)
 				.Where(x => x.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
-					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
-					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
+					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenseItemId)
+					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenseId)
+					.Select(() => expenseAlias.DocNumber).WithAlias(() => docAlias.ExpenseDocNumber)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
-					.Select(() => incomeItemAlias.Id).WithAlias(() => docAlias.IncomeItemId)
-					.Select(() => incomeItemAlias.Document.Id).WithAlias(() => docAlias.IncomeId)
+					.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => docAlias.CollectiveExpenseDocNumber)
+					.Select(() => returnItemAlias.Id).WithAlias(() => docAlias.ReturnItemId)
+					.Select(() => returnItemAlias.Document.Id).WithAlias(() => docAlias.ReturnId)
+					.Select(() => returnAlias.DocNumber).WithAlias(() => docAlias.ReturnDocNumber)
 					.Select(() => writeoffItemAlias.Id).WithAlias(() => docAlias.WriteoffItemId)
 					.Select(() => writeoffItemAlias.Document.Id).WithAlias(() => docAlias.WriteoffId)
+					.Select(() => writeoffAlias.DocNumber).WithAlias(() => docAlias.WriteoffDocNumber)
 					.Select(() => inspectionItemAlias.Id).WithAlias(() => docAlias.InspectionItemId)
 					.Select(() => inspectionItemAlias.Document.Id).WithAlias(() => docAlias.InspectionId)
+					.Select(() => inspectionAlias.DocNumber).WithAlias(() => docAlias.InspectionDocNumber)
 				)
 				.TransformUsing(Transformers.AliasToBean<OperationToDocumentReference>())
 				.List<OperationToDocumentReference>();

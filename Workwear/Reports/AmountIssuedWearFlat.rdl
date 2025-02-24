@@ -3,7 +3,7 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>30in</PageWidth>
+  <PageWidth>31.2in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.20in</TopMargin>
   <LeftMargin>.20in</LeftMargin>
@@ -119,6 +119,12 @@
               <Hidden>=!{?byOperation}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn >
+            <Width>157.4pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>132.6pt</Width>
+          </TableColumn>
         </TableColumns>
         <Details>
           <TableRows>
@@ -128,7 +134,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
-                      <Value>={object}</Value>
+                      <Value>={subdivision}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -403,6 +409,38 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox32">
+                      <Value>={operation_comment}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox37">
+                      <Value>={document_comment}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -411,7 +449,7 @@
         <Top>7.6pt</Top>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>16.4pt</Height>
               <TableCells>
                 <TableCell>
@@ -421,17 +459,17 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Left</TextAlign>
                         <BackgroundColor>#E9E9E9</BackgroundColor>
-                        <FontWeight >Bold</FontWeight>
-                        <FontSize >12pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -444,10 +482,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -464,10 +502,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -484,10 +522,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -504,10 +542,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -524,10 +562,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -544,10 +582,10 @@
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
@@ -560,6 +598,46 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox62">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -855,6 +933,38 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>Комментарий операции</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>Комментарий документа</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -872,27 +982,27 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>select
-    if(@summary, NULL, objects.id) as subdivision_id,
-    if(@summary, NULL, objects.name) as object,
-    if(@summary, NULL, objects.code) as subdivision_code,
-    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)  
-                               FROM wear_cards_cost_allocation as wcca 
-                                   JOIN cost_center as cc on wcca.cost_center_id = cc.id 
-                               WHERE wear_cards.id = wcca.wear_card_id
+    if(@summary, NULL, subdivisions.id) as subdivision_id,
+    if(@summary, NULL, subdivisions.name) as subdivision,
+    if(@summary, NULL, subdivisions.code) as subdivision_code,
+    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)
+                               FROM employees_cost_allocation as ecca
+                                        JOIN cost_center as cc on ecca.cost_center_id = cc.id
+                               WHERE employees.id = ecca.employee_id
                                LIMIT 1),
-                             CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
-    IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
-    IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
+                              CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
+    IF(@byEmployee, employees.personnel_number, NULL) AS personnel_number,
+    IF(@byEmployee, CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
-    IF(@byEmployee, IF(wear_cards.sex = 'M','М',IF(wear_cards.sex = 'F','Ж','-')) , NULL) AS sex,
-    nomenclature.name as nomen, 
-    sum(issued) as amount, 
-    nomenclature.number, 
-    if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size, 
-    heightAlias.name as growth, 
+    IF(@byEmployee, IF(employees.sex = 'M','М',IF(employees.sex = 'F','Ж','-')) , NULL) AS sex,
+    nomenclature.name as nomen,
+    sum(issued) as amount,
+    nomenclature.number,
+    if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size,
+    heightAlias.name as growth,
     if(@showOwners, owners.name, null) as owner_name,
     (nomenclature.sale_cost) AS cost,
     (sum(issued) * nomenclature.sale_cost) AS cost_sum,
@@ -901,18 +1011,20 @@
         WHEN 'Month' THEN norms_item.period_count
         END AS wearing_period,
     GROUP_CONCAT(DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y')) as operation_date,
-    GROUP_CONCAT(issuance_sheet_items.issuance_sheet_id) as issuance_sheet,
+    GROUP_CONCAT(IFNULL(issuance_sheet.doc_number, issuance_sheet.id)) as issuance_sheet,
     IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
         FROM operation_issued_by_employee as op2
-        LEFT JOIN operation_issued_by_employee as op3 on op2.operation_write_off_id = op3.id
+             LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
         WHERE op2.employee_id = operation_issued_by_employee.employee_id 
           AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
           AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
-    ,NULL) AS date_need
+    ,NULL) AS date_need,
+    operation_issued_by_employee.comment AS operation_comment,
+    IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment
 FROM operation_issued_by_employee
-         LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
-         LEFT JOIN objects on objects.id = wear_cards.object_id
-         LEFT JOIN posts ON posts.id = wear_cards.post_id
+       LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
+       LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+       LEFT JOIN posts ON posts.id = employees.post_id
          LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
          LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
          LEFT JOIN item_types ON item_types.id = nomenclature.type_id
@@ -923,16 +1035,28 @@ FROM operation_issued_by_employee
          LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
          LEFT JOIN norms_item ON norms_item.id = operation_issued_by_employee.norm_item_id
          LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+         LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
+         LEFT JOIN stock_expense_detail ON operation_issued_by_employee.id = stock_expense_detail.employee_issue_operation_id
+         LEFT JOIN stock_expense ON stock_expense_detail.stock_expense_id = stock_expense.id
+         LEFT JOIN stock_collective_expense_detail ON operation_issued_by_employee.id = stock_collective_expense_detail.employee_issue_operation_id
+         LEFT JOIN stock_collective_expense ON stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
   AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
   AND (@issue_type = '' OR item_types.issue_type = @issue_type)
   and operation_issued_by_employee.returned = 0
-  AND ((-1 IN (@subdivisions)) OR (@withoutsub AND objects.id IS NULL) OR (objects.id IN (@subdivisions)))
+           AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
   and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
   and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
   AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
-GROUP BY IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
+AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = operation_issued_by_employee.employee_id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                    WHERE gi.employee_id = operation_issued_by_employee.employee_id
+                      AND gi.employee_group_id IN (@employee_groups_ids))) )
+GROUP BY IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
 ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -989,15 +1113,45 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <QueryParameter Name="byOperation">
             <Value>={?byOperation}</Value>
           </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
-        <Field Name="object">
-          <DataField>object</DataField>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="subdivision_code">
+          <DataField>subdivision_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="cost_center_name">
+          <DataField>cost_center_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="sex">
+          <DataField>sex</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="nomen">
@@ -1020,24 +1174,8 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>growth</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>subdivision_code</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="owner_name">
           <DataField>owner_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="employee">
-          <DataField>employee</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="post">
-          <DataField>post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="cost">
@@ -1048,28 +1186,28 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <DataField>cost_sum</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="issuance_sheet">
-          <DataField>issuance_sheet</DataField>
-          <TypeName>System.UInt32</TypeName>
-        </Field>
         <Field Name="wearing_period">
           <DataField>wearing_period</DataField>
           <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="cost_center_name">
-          <DataField>cost_center_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="sex">
-          <DataField>sex</DataField>
-          <TypeName>System.String</TypeName>
         </Field>
         <Field Name="operation_date">
           <DataField>operation_date</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="issuance_sheet">
+          <DataField>issuance_sheet</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
         <Field Name="date_need">
           <DataField>date_need</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="operation_comment">
+          <DataField>operation_comment</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="document_comment">
+          <DataField>document_comment</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1226,6 +1364,30 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
       <DefaultValue>
         <Values>
           <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

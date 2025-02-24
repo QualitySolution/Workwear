@@ -75,7 +75,6 @@ namespace Workwear.Domain.Statements
 			get => transferAgent;
 			set => SetField(ref transferAgent, value);
 		}
-		
 		#region Подписи
 
 		private Leader responsiblePerson;
@@ -106,7 +105,7 @@ namespace Workwear.Domain.Statements
 
 		#region Вычисляемые свойства
 
-		public virtual string Title => $"Ведомость №{DocNumber ?? Id.ToString()}";
+		public virtual string Title => $"Ведомость №{(String.IsNullOrWhiteSpace(DocNumber) ? Id.ToString() : DocNumber)}";
 
 		#endregion
 

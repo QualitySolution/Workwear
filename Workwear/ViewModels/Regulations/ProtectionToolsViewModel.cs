@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Autofac;
@@ -11,10 +13,12 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Analytics;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
@@ -44,8 +48,23 @@ namespace Workwear.ViewModels.Regulations
 				.MakeByType()
 				.Finish();
 
-			Entity.Nomenclatures.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			Entity.Nomenclatures.CollectionChanged += EntityNomenclaturesChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
+		}
+
+		private IList<EmployeeIssueOperation> usedOperations;
+		private IList<EmployeeIssueOperation> UsedOperations {
+			get {//Устанавливаем только при первом обращении
+				if(usedOperations == null) {
+					if(Entity.Id == 0)
+						usedOperations = new List<EmployeeIssueOperation>();
+					else {
+						var repo = new EmployeeIssueRepository();
+						usedOperations = repo.AllOperationsFor(protectionTools: new[] { Entity }, uow: UoW);
+					}
+				}
+				return usedOperations;
+			}
 		}
 
 		#region События
@@ -57,10 +76,25 @@ namespace Workwear.ViewModels.Regulations
 					break;
 			}
 		}
+		
+		private void EntityNomenclaturesChanged(object sender, NotifyCollectionChangedEventArgs e) {
+			OnPropertyChanged(nameof(SensitiveCreateNomenclature));
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureUnisex)))
+				ClearSupplyNomenclatureUnisex();
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureMale)))
+				ClearSupplyNomenclatureMale();
+			if(!Entity.Nomenclatures.Any(n => DomainHelper.EqualDomainObjects(n, Entity.SupplyNomenclatureFemale)))
+				ClearSupplyNomenclatureFemale();
+		}
 		#endregion
 
-		#region Visible
+		#region Visible Sensitive
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel);
+		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
+		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
+		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
+		public bool SensitiveDispenser => Entity.DermalPpe;
 		#endregion
 
 		#region EntityViewModels
@@ -68,6 +102,47 @@ namespace Workwear.ViewModels.Regulations
 		public readonly EntityEntryViewModel<ProtectionToolsCategory> CategoriesEntryViewModel;
 		#endregion
 
+		#region Проброс свойств
+		public virtual SupplyType SupplyType {
+			get => Entity.SupplyType;
+			set {
+				if(Entity.SupplyType == value)
+					return;
+				Entity.SupplyType = value;
+				OnPropertyChanged(nameof(ShowSupplyUnisex));
+				OnPropertyChanged(nameof(ShowSupplyTwosex));
+			}
+		}
+
+		public virtual bool Dispenser {
+			get => Entity.Dispenser;
+			set {
+				if(Entity.Dispenser == value)
+					return;
+				if(value && UsedOperations.Count != 0) {
+					interactiveService.ShowMessage(ImportanceLevel.Warning,
+						$"По этой номенклатуре нормы уже совершено {UsedOperations.Count} выдач." +
+						$" Её нельзя перевести в выдаваемую дозатором - создайте новую.");
+					OnPropertyChanged();
+					return;
+				}
+
+				Entity.Dispenser = value;
+			}
+		}
+
+		public virtual bool WashingPPE {
+			get => Entity.DermalPpe;
+			set {
+				if(Entity.DermalPpe == value)
+					return;
+				Entity.DermalPpe = value;
+				if(!Entity.DermalPpe)
+					Entity.Dispenser = false;
+				OnPropertyChanged(nameof(SensitiveDispenser));
+			}
+		}
+		#endregion
 		#region Действия View
 		#region Номеклатуры
 		public void AddNomenclature()
@@ -91,6 +166,18 @@ namespace Workwear.ViewModels.Regulations
 			foreach(var item in tools) {
 				Entity.RemoveNomenclature(item);
 			}
+		}
+
+		public void ClearSupplyNomenclatureUnisex() {
+			Entity.SupplyNomenclatureUnisex = null;
+		}
+
+		public void ClearSupplyNomenclatureMale() {
+			Entity.SupplyNomenclatureMale = null;
+		}
+
+		public void ClearSupplyNomenclatureFemale() {
+			Entity.SupplyNomenclatureFemale = null;
 		}
 
 		public bool SensitiveCreateNomenclature => !String.IsNullOrWhiteSpace(Entity.Name)

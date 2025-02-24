@@ -149,7 +149,8 @@ namespace workwear.Journal.ViewModels.Regulations
 		private void ShowEmployees(object[] nodes)
 		{
 			foreach(NormJournalNode node in nodes) {
-				NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
+				var journal = NavigationManager.OpenViewModel<EmployeeJournalViewModel, Norm>(this, new Norm {Id = node.Id}, OpenPageOptions.IgnoreHash); //Фейковая норма для передачи id
+				journal.ViewModel.Filter.Norm = new Norm {Id = node.Id}; //Фейковая норма для передачи id в фильтр
 			}
 		}
 

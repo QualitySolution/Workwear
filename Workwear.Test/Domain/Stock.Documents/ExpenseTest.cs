@@ -33,8 +33,8 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.NormItem = norm;
 			operation.IssuedOperation = incomeOperation;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation });
-
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { operation });
+			
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
 			expenseItem.EmployeeIssueOperation = operation;
@@ -76,7 +76,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.OperationTime = new DateTime(2019, 1, 15);
 			operation.NormItem = norm;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationBeforeAndEnough });
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { operation, operationBeforeAndEnough });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -126,7 +126,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			operation.OperationTime = new DateTime(2019, 1, 15);
 			operation.NormItem = norm;
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { operation, operationIssue, operationWriteoff });
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { operation, operationIssue, operationWriteoff });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -166,7 +166,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var warehouse = Substitute.For<Warehouse>();
 
-			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<EmployeeIssueOperation>() { });
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { });
 
 			var expenseItem = new ExpenseItem();
 			expenseItem.Nomenclature = nomenclature;
@@ -191,6 +191,37 @@ namespace Workwear.Test.Domain.Stock.Documents
 			Assert.That(expense.Items[0].EmployeeIssueOperation.SignCardKey, Is.EqualTo("80313E3A437A04"));
 			Assert.That(expense.Items[0].EmployeeIssueOperation.SignTimestamp, Is.Not.Null);
 			Assert.That((expense.Items[0].EmployeeIssueOperation.SignTimestamp.Value - DateTime.Now).TotalMinutes, Is.LessThan(1));
+		}
+		
+		[Test(Description = "Проверяем что при создании операции мы действительно используем настройку базы выключения автосписания.")]
+		[TestCase(true)]
+		[TestCase(false)]
+		public void UpdateOperations_DefaultAutoWriteoffTest(bool defaultAutowriteoff)
+		{
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			var norm = Substitute.For<NormItem>();
+			norm.Amount.Returns(1);
+			var nomenclature = Substitute.For<Nomenclature>();
+
+			var expenseItem = new ExpenseItem();
+			expenseItem.Nomenclature = nomenclature;
+			expenseItem.Amount = 1;
+			var expense = new Expense();
+			expense.Employee = employee;
+			expense.Date = new DateTime(2019, 1, 15);
+			expense.Items.Add(expenseItem);
+			expenseItem.ExpenseDoc = expense;
+
+			var ask = Substitute.For<IInteractiveQuestion>();
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.DefaultAutoWriteoff.Returns(defaultAutowriteoff);
+
+			//Выполняем
+			expense.UpdateOperations(uow, baseParameters, ask);
+
+			Assert.That(expense.Items[0].EmployeeIssueOperation.UseAutoWriteoff, Is.EqualTo(defaultAutowriteoff));
 		}
 		#endregion
 		

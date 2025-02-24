@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
-using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -52,30 +52,27 @@ namespace Workwear.Views.Company.EmployeeChildren
 		void ConfigureTable()
 		{
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
-				.AddColumn("ТОН").AddTextRenderer(node => node.TonText)
+				.AddColumn("ТОН").AddTextRenderer(item => item.TonText)
 				.AddColumn("Тип выдачи").Visible(ViewModel.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
-					.AddTextRenderer(x => x.ProtectionTools.Type.IssueType.GetEnumTitle())
-				.AddColumn("Наименование").Resizable().AddTextRenderer(node => node.ProtectionTools.Name).WrapWidth(700)
-				.AddColumn("По норме").AddTextRenderer(node => node.AmountByNormText)
-				.AddColumn("Срок службы").AddTextRenderer(node => node.NormLifeText)
+					.AddTextRenderer(item => item.ProtectionTools.Type.IssueType.GetEnumTitle())
+				.AddColumn("Наименование").Resizable().AddTextRenderer(item => item.ProtectionTools.Name).WrapWidth(700)
+				.AddColumn("По норме").AddTextRenderer(item => item.AmountByNormText)
+				.AddColumn("Срок службы").AddTextRenderer(item => item.NormLifeText)
 				.AddColumn("Послед. получения")
-					.AddPixbufRenderer(node => node.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null)
-					.AddTextRenderer(node => MakeLastIssuedText(node), useMarkup: true)
-				.AddColumn("Числится").AddTextRenderer(node => node.AmountText)
-					.AddSetter((w, node) => w.Foreground = node.AmountColor)
+					.AddPixbufRenderer(item => item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => ((EmployeeIssueOperation)x.item.IssueOperation).ManualOperation) ? handIcon : null)
+					.AddTextRenderer(item => MakeLastIssuedText(item), useMarkup: true)
+				.AddColumn("Числится").AddTextRenderer(item => item.AmountText)
+					.AddSetter((w, item) => w.Foreground = item.AmountColor)
 				.AddColumn("След. получение")
-					.ToolTipText(node => node.NextIssueAnnotation)
-					.AddTextRenderer(node => $"{node.NextIssue:d}")
-					.AddSetter((w, node) => w.Foreground = node.NextIssueColor(ViewModel.BaseParameters))
-					.AddPixbufRenderer(node => String.IsNullOrEmpty(node.NextIssueAnnotation) ? null : infoIcon)
-				.AddColumn("Просрочка").AddTextRenderer(
-					node => node.NextIssue.HasValue && node.NextIssue.Value < DateTime.Today
-					? NumberToTextRus.FormatCase((int)(DateTime.Today - node.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
-					: String.Empty)
-				.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
-				 .AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
-				.AddColumn("Подходящая номенклатура").AddTextRenderer(node => node.MatchedNomenclatureShortText)
-				.AddSetter((w, node) => w.Foreground = node.InStockState.GetEnumColor())
+					.ToolTipText(item => item.NextIssueAnnotation)
+					.AddTextRenderer(item => item.NextIssueText)
+					.AddSetter((w, item) => w.Foreground = item.NextIssueColor(ViewModel.BaseParameters))
+					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.NextIssueAnnotation) ? null : infoIcon)
+				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
+				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
+				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
+				.AddColumn("Подходящая номенклатура").AddTextRenderer(item => item.MatchedNomenclatureShortText)
+				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;

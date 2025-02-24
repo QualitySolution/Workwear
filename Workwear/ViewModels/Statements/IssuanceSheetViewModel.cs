@@ -25,6 +25,7 @@ using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
 
@@ -40,6 +41,7 @@ namespace Workwear.ViewModels.Statements
 		private readonly BaseParameters baseParameters;
 		public ILifetimeScope AutofacScope;
 		private readonly CommonMessages commonMessages;
+		private readonly FeaturesService featuresService;
 
 		public IssuanceSheetViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -48,12 +50,14 @@ namespace Workwear.ViewModels.Statements
 			IValidator validator, 
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
+			FeaturesService featuresService,
 			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -85,12 +89,18 @@ namespace Workwear.ViewModels.Statements
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
-		public string DocNumber {
+		public bool AutoDocNumber {
+			get => autoDocNumber; 
+			set => SetField(ref autoDocNumber, value);
+		}
+		public string DocNumberText {
 			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
-			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
 		}
 		#endregion
 
@@ -219,7 +229,8 @@ namespace Workwear.ViewModels.Statements
 					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()} (МБ-7)",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
 
@@ -228,6 +239,12 @@ namespace Workwear.ViewModels.Statements
 				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		public override bool Save() {
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			return base.Save();
 		}
 
 		#endregion

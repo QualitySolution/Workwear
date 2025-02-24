@@ -24,7 +24,7 @@ namespace Workwear.Views.Statements
 		private void ConfigureDlg()
 		{
 			entryId.Binding.AddSource(ViewModel)
-				.AddBinding(vm => vm.DocNumber, w => w.Text)
+				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
 			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource();

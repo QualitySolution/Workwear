@@ -38,7 +38,6 @@ namespace workwear.ReportParameters.ViewModels
 			Title = "Справка по невыданному (Суммарно)";
 			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetSummaryViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
-			
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
 				.Finish();
@@ -87,6 +86,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"all_warehouse", Warehouse.Id == -1},
 					{"warehouse_id", Warehouse.Id },
 					{"hide_worn", HideWorn},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
 		#region Параметры
@@ -201,7 +201,7 @@ namespace workwear.ReportParameters.ViewModels
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleCondition => featuresService.Available(WorkwearFeature.ConditionNorm);
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
-		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected;
+		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public bool VisibleShowEmployees => ReportType == NotIssuedSheetSummaryReportType.Flat;
 		public bool StockElementsSensetive => warehouse.Id != -2;
 
@@ -209,6 +209,8 @@ namespace workwear.ReportParameters.ViewModels
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)==e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion

@@ -174,24 +174,24 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
 ifnull(operation_issued_by_employee.operation_time, barcodes.creation_date) as operation_time,
-LEFT(barcodes.title, 2) AS number_system,
-SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
-SUBSTRING(barcodes.title, 8, 5) AS product_code,
-objects.name AS subdivision,
+    LEFT(barcodes.title, 2) AS number_system,
+    SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
+    SUBSTRING(barcodes.title, 8, 5) AS product_code,
+    subdivisions.name AS subdivision,
 barcodes.label,
-CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) AS employee,
-wear_cards.personnel_number,
-nomenclature.name AS nomenclature,
-wear_size.name as wear_size,
-wear_height.name as wear_height
+    CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) AS employee,
+    employees.personnel_number,
+    nomenclature.name AS nomenclature,
+    wear_size.name as wear_size,
+    wear_height.name as wear_height
 FROM operation_issued_by_employee
 RIGHT JOIN operation_barcodes ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
-JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
-LEFT JOIN wear_cards ON wear_cards.id = operation_issued_by_employee.employee_id
-LEFT JOIN objects ON objects.id = wear_cards.object_id
-LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
-LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
-LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
+         JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
+         LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
+         LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
+         LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
+         LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
+         LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
 WHERE operation_barcodes.barcode_id IN (@barcodes)
 GROUP BY operation_barcodes.barcode_id
 ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>

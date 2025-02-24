@@ -1,5 +1,4 @@
-﻿using System;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
@@ -19,7 +18,13 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.Name).Column("name").Not.Nullable();
 			Map(x => x.Comment).Column("comments");
 			Map(x => x.AssessedCost).Column("assessed_cost");
+			Map(x => x.SupplyType).Column("supply_type").Not.Nullable();
+			Map(x => x.DermalPpe).Column("dermal_ppe").Not.Nullable();
+			Map(x => x.Dispenser).Column("dispenser").Not.Nullable();
 
+			References(x => x.SupplyNomenclatureUnisex).Column("supply_uni_id").Nullable();
+			References(x => x.SupplyNomenclatureMale).Column("supply_male_id").Nullable();
+			References(x => x.SupplyNomenclatureFemale).Column("supply_female_id").Nullable();
 			References(x => x.CategoryForAnalytic).Column("category_for_analytic_id").Nullable();
 			References(x => x.Type).Column("item_types_id");
 

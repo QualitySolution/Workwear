@@ -207,11 +207,37 @@ namespace Workwear.Sql
 				new Version(2, 8, 20),
 				"Workwear.Sql.Scripts.2.8.20.sql"
 			);
+			configuration.AddUpdate(
+				new Version(2, 8, 20),
+				new Version(2, 8, 22),
+				"Workwear.Sql.Scripts.2.8.22.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 22),
+				new Version(2, 8, 25),
+				"Workwear.Sql.Scripts.2.8.25.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 25),
+				new Version(2, 8, 26),
+				"Workwear.Sql.Scripts.2.8.26.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 26),
+				new Version(2, 8, 28),
+				"Workwear.Sql.Scripts.2.8.28.sql"
+			);
 
 			configuration.AddUpdate(
-				new Version(2, 8, 18),//FIXME
-				new Version(2, 9, 0),
+				new Version(2, 8, 28),
+				new Version(2, 9),
 				"Workwear.Sql.Scripts.2.9.sql"
+			);
+			
+			configuration.AddUpdate(
+				new Version(2, 9),
+				new Version(2, 9, 1),
+				"Workwear.Sql.Scripts.2.9.1.sql"
 			);
 			return configuration;
 		}

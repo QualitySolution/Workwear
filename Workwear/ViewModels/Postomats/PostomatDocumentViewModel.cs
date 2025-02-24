@@ -105,7 +105,8 @@ namespace Workwear.ViewModels.Postomats {
 
 		#region Команды View
 		public void ReturnFromService() {
-			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave,
+				model => model.ExcludeInDocs = true);
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectPage.ViewModel.Filter.SensitiveShowClosed = false;
 			selectPage.ViewModel.Filter.ShowClosed = false;

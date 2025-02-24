@@ -19,7 +19,7 @@ namespace Workwear.Domain.Stock.Documents {
 
 		#region Свойства
 		public virtual string Title{
-			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", DocNumber ?? Id.ToString(), Date);}
+			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", DocNumberText, Date);}
 		}
 
 		private IObservableList<InspectionItem> items = new ObservableList<InspectionItem>();

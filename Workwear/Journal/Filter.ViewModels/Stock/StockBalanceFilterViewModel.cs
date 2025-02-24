@@ -115,7 +115,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
-			FeaturesService featuresService,CurrentUserSettings currentUserSettings): base(journal, unitOfWorkFactory)
+			FeaturesService featuresService,
+			CurrentUserSettings currentUserSettings,
+			Action<StockBalanceFilterViewModel> setFilterParameters = null
+			): base(journal, unitOfWorkFactory)
 		{
 			FeaturesService = featuresService;
 			this.currentUserSettings = currentUserSettings;
@@ -133,6 +136,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			
 			if(FeaturesService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
+			
+			CanNotify = false;
+			setFilterParameters?.Invoke(this);
+			CanNotify = true;
 		}
 	}
 }

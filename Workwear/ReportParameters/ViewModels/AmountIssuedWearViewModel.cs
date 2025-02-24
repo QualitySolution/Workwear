@@ -19,6 +19,7 @@ namespace workwear.ReportParameters.ViewModels {
 	{
 		public readonly FeaturesService FeaturesService;
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
+		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
@@ -30,6 +31,8 @@ namespace workwear.ReportParameters.ViewModels {
 
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -59,7 +62,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"byEmployee", ByEmployee},
 					{"showCost", ShowCost},
 					{"showCostCenter", ShowCostCenter},
-					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm}
+					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm},
+					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
 		};
 
 		public override string Identifier { 
@@ -104,7 +109,7 @@ namespace workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(ByEmployee))]
 		[PropertyChangedAlso(nameof(BySize))]
 		public virtual bool ByOperation {
-			get => byOperation;
+			get => ReportType == AmountIssuedWearReportType.Flat && byOperation;
 			set => SetField(ref byOperation, ReportType == AmountIssuedWearReportType.Flat && value);
 		}
 
@@ -174,19 +179,23 @@ namespace workwear.ReportParameters.ViewModels {
 			get => owners;
 			set => SetField(ref owners, value);
 		}
+		public bool VisibleChoiceEmployeeGroup => FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 
 		#region Visible and Sensitive
 		public bool VisibleOwners;
 		public bool VisibleCostCenter;
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleByOperation => ReportType == AmountIssuedWearReportType.Flat;
-		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate;
+		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate
+									&& !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public bool SensetiveBySubdiviion => !ByOperation;
 		public bool SensetiveByEmployee => !ByOperation;
 		public bool SensetiveBySize => !ByOperation;
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)== e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion

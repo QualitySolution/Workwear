@@ -146,6 +146,7 @@ namespace Workwear.ViewModels.Operations
 					OnPropertyChanged(nameof(WearPercent));
 					OnPropertyChanged(nameof(IssueDate));
 					OnPropertyChanged(nameof(AutoWriteoffDate));
+					OnPropertyChanged(nameof(BarcodesText));
 					changingOperation = false;
 				}
 			}
@@ -220,7 +221,6 @@ namespace Workwear.ViewModels.Operations
 				OnPropertyChanged(nameof(Size));
 				OnPropertyChanged(nameof(Height));
 				OnPropertyChanged(nameof(BarcodesText));
-				OnPropertyChanged(nameof(BarcodesColor));
 				OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 				OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			}
@@ -333,8 +333,14 @@ namespace Workwear.ViewModels.Operations
 		public string ButtonCreateOrRemoveBarcodesTitle => 
 			(Nomenclature?.UseBarcode ?? false) && (SelectOperation?.BarcodeOperations.Count ?? 0) > Issued
 				? "Обновить штрихкоды" : "Создать штрихкоды";
-		public string BarcodesText => NeedCreateBarcodes ? "необходимо создать" 
-			: String.Join("\n", SelectOperation.BarcodeOperations.Select(x => x.Barcode.Title));
+		
+		public string BarcodesText {
+			get {
+				OnPropertyChanged(nameof(BarcodesColor));
+				return NeedCreateBarcodes ?
+					"необходимо создать" : String.Join("\n", SelectOperation.BarcodeOperations.Select(x => x.Barcode.Title));
+			}
+		}
 
 		public string BarcodesColor => NeedCreateBarcodes ? "red" : null;
 		public void ReleaseBarcodes() {
@@ -346,7 +352,6 @@ namespace Workwear.ViewModels.Operations
 			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 			OnPropertyChanged(nameof(BarcodesText));
-			OnPropertyChanged(nameof(BarcodesColor));
 		}
 
 		public void PrintBarcodes() {
@@ -417,12 +422,13 @@ namespace Workwear.ViewModels.Operations
 				ProtectionTools = protectionTools,
 				Returned = 0,
 				WearPercent = WearPercent,
-				UseAutoWriteoff = true,
 				OperationTime =  startDate,
 				StartOfUse = startDate,
 				AutoWriteoffDate = endDate,
 				ExpiryByNorm = endDate
 			};
+			//после создания чтобы не исправилось установкой даты.
+			issue.UseAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			
 			if(!Operations.Any())
 				issue.OverrideBefore = true;

@@ -17,6 +17,7 @@ using workwear;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -51,6 +52,8 @@ namespace Workwear.ViewModels.Stock
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+			else 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse
@@ -84,6 +87,7 @@ namespace Workwear.ViewModels.Stock
 		#region View
 		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
 		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
 		public string ResultAmountText => $"Общее количество: {Entity.ResultItems.Sum(x=>x.Amount)}";
 		public string SourceAmountText => $"Общее количество: {Entity.SourceItems.Sum(x=>x.Amount)}";
@@ -113,6 +117,22 @@ namespace Workwear.ViewModels.Stock
 			get => owners;
 			set => SetField(ref owners, value);
 		}
+		
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
+		}
 
 		#endregion
 		#region EntityViewModels
@@ -137,14 +157,19 @@ namespace Workwear.ViewModels.Stock
 		#region Items
 		public void AddSourceItems(){
 			var selectJournal = MainClass.MainWin.NavigationManager.
-				OpenViewModel<StockBalanceJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave);
-			if (Entity.SourceWarehouse != null) {
-				selectJournal.ViewModel.Filter.Warehouse = Entity.SourceWarehouse;
-				selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			}
-
+				OpenViewModel<StockBalanceJournalViewModel>(this, QS.Navigation.OpenPageOptions.AsSlave,
+					addingRegistrations: builder => {
+						builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+							filter => {
+								if (Entity.SourceWarehouse != null) {
+									filter.WarehouseEntry.IsEditable = false;
+									filter.Warehouse = Entity.SourceWarehouse;
+									filter.CanChooseAmount = true;
+								}
+							});
+					});
+			
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.Filter.CanChooseAmount = true;
 			selectJournal.ViewModel.OnSelectResult += SelectFromStock_OnSelectResult;
 		}
 
@@ -195,6 +220,10 @@ namespace Workwear.ViewModels.Stock
 		public override bool Save() {
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			//else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+			//	Entity.DocNumber = DocNumberText;
 			Entity.UpdateItems();
 			return base.Save();
 		}

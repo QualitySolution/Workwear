@@ -78,6 +78,15 @@ namespace Workwear.ViewModels.Regulations
 			NormConditions = normConditionQuery.ToList();
 			NormConditions.Insert(0, null);
 			RegulationDocs = regulationQuery.ToList();
+			if(Entity.Id == 0)
+				LastUpdate = "Новая норма";
+			else {
+				List<DateTime> lastUpdates = new List<DateTime>();
+				lastUpdates.Add(Entity.LastUpdate);
+				if(Entity.Items.Any())
+					lastUpdates.Add(Entity.Items.Max(x => x.LastUpdate));
+				LastUpdate = lastUpdates.Max().ToString("dd/M/yyyy");
+			}
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
 
@@ -86,7 +95,7 @@ namespace Workwear.ViewModels.Regulations
 			EmployeesViewModel = autofacScope.Resolve<NormEmployeesViewModel>(thisViewModel);
 			performance.CheckPoint("Создание дочерних вию моделей");
 			
-			this.changeWatcher.BatchSubscribe(Subscriber).OnlyForUow(UoW)
+			this.changeWatcher.BatchSubscribe(SubscriberItems).OnlyForUow(UoW)
 				.IfEntity<NormItem>()
 				.AndWhere(x => x.Norm.Id == Entity.Id)
 				.AndChangeType(TypeOfChangeEvent.Update)
@@ -97,6 +106,12 @@ namespace Workwear.ViewModels.Regulations
 					x => x.NormCondition,
 					x => x.NormPeriod,
 					x => x.PeriodCount);
+
+			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
+				.IfEntity<Norm>()
+				.AndWhere(x => x.Id == Entity.Id)
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndDiffAnyOfProperties(x => x.Archival);
 			
 			performance.CheckPoint("Конец");
 			performance.PrintAllPoints(logger);
@@ -157,7 +172,8 @@ namespace Workwear.ViewModels.Regulations
 					EmployeesViewModel.OnShow();
 			}
 		}
-
+		public virtual String LastUpdate { get; }
+		
 		#endregion
 
 		#region Действия View
@@ -343,7 +359,7 @@ namespace Workwear.ViewModels.Regulations
 		List<NormItem> needRecalculateIssue = new List<NormItem>();
 		bool needUpdateEmployees;
 		
-		private void Subscriber(EntityChangeEvent[] changeevents) {
+		private void SubscriberItems(EntityChangeEvent[] changeevents) {
 			needUpdateEmployees = true;
 			needRecalculateIssue = changeevents.Where(x => x.EventType == TypeOfChangeEvent.Update)
 				.Select(x => x.GetEntity<NormItem>()).ToList();
@@ -355,7 +371,7 @@ namespace Workwear.ViewModels.Regulations
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-
+			
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(

@@ -53,6 +53,7 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleEmployeeGroups;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleListedItem;
 			notebook1.GetNthPage(7).Visible = ViewModel.VisibleHistory;
+			notebook1.GetNthPage(8).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
 			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
@@ -110,11 +111,18 @@ namespace Workwear.Views.Company {
 				.AddBinding(ViewModel, v => v.LkPassword, w => w.Text)
 				.AddBinding(ViewModel, v => v.ShowLkPassword, w => w.Visibility)
 				.InitializeFromSource();
-			buttonDeductSpecCoins.Binding.AddBinding(ViewModel, vm => vm.SensitiveDeductSpecCoins, w => w.Sensitive).InitializeFromSource();
-			buttonDeductSpecCoins.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			buttonSpecCoinOperations.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
+				.InitializeFromSource();
+			buttonDeductSpecCoins.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.SensitiveDeductSpecCoins, w => w.Sensitive)
+				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
+				.InitializeFromSource();
 			labelSpecCoinsSymbol.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
-			labelSpecCoinsBalance.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
-			labelSpecCoinsBalance.Binding.AddBinding(ViewModel, vm => vm.SpecCoinsBalance, w => w.Text, new IntToStringConverter()).InitializeFromSource();
+			labelSpecCoinsBalance.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
+			    .AddBinding(vm => vm.SpecCoinsBalance, w => w.Text, new IntToStringConverter())
+				.InitializeFromSource();
 			
 			ViewModel.Performance.CheckPoint("Пароль");
 			//Устанавливаем последовательность фокуса по Tab
@@ -250,6 +258,10 @@ namespace Workwear.Views.Company {
 		protected void OnButtonDeductSpecCoinsClicked(object sender, EventArgs e) 
 		{
 			ViewModel.OpenDeductCoinsView();
+		}
+
+		protected void OnButtonSpecCoinOperationsClicked(object sender, EventArgs e) {
+			ViewModel.OpenCoinsOperations();
 		}
 
 		#endregion

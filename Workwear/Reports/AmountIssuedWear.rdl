@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
-  <PageHeight>297mm</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageHeight>391.5mm</PageHeight>
+  <PageWidth>14.5in</PageWidth>
   <Width>210mm</Width>
   <TopMargin>.10in</TopMargin>
   <LeftMargin>.10in</LeftMargin>
@@ -68,6 +68,12 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
+            <Width>124.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>124.7pt</Width>
+          </TableColumn>
+          <TableColumn>
             <Width>60.4pt</Width>
           </TableColumn>
           <TableColumn>
@@ -121,7 +127,7 @@
                           <Value>=Iif(String.IsNullOrEmpty({cost_center_name}), "Без МВЗ", {cost_center_name})</Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>4</ColSpan>
+                      <ColSpan>6</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -285,6 +291,42 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox87">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox93">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>None</Default>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>None</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox69">
                           <Style>
                             <BorderStyle>
@@ -432,6 +474,44 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox89">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox95">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox9" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                           <Value>=Sum({sum})</Value>
                           <CanGrow>false</CanGrow>
@@ -523,7 +603,7 @@
               </TableRows>
               <RepeatOnNewPage>true</RepeatOnNewPage>
             </Footer>
-            <Grouping Name="objectGroup">
+            <Grouping Name="subdivisionGroup">
               <GroupExpressions>
                 <GroupExpression>=Fields!subdivision_id.Value</GroupExpression>
               </GroupExpressions>
@@ -539,7 +619,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox23">
-                          <Value>= Iif(Fields!object.IsMissing, "      Без подразделения", "  " + {code} + "      " + {object})</Value>
+                          <Value>= Iif(Fields!subdivision.IsMissing, "      Без подразделения", "  " + {subdivision_code} + "      " + {subdivision})</Value>
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -560,7 +640,7 @@
                           </Visibility>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>4</ColSpan>
+                      <ColSpan>6</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -709,6 +789,38 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox88">
+                          <Value>Комментарий операции</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox94">
+                          <Value>Комментарий документа</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox28">
                           <Value>Количество</Value>
                           <Style>
@@ -816,7 +928,7 @@
                           </Visibility>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>4</ColSpan>
+                      <ColSpan>6</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -964,6 +1076,30 @@
                     </TableCell>
                     <TableCell>
                       <ReportItems>
+                        <Textbox Name="Textbox90">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox96">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
                         <Textbox Name="Textbox25">
                           <Style>
                             <BorderStyle>
@@ -1062,7 +1198,7 @@
                           <Value>= "Ведомость №" + {issuance_sheet}</Value>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan>4</ColSpan>
+                      <ColSpan>6</ColSpan>
                     </TableCell>
                     <TableCell>
                       <ReportItems>
@@ -1203,6 +1339,38 @@
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>={owner_name}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox85">
+                      <Value>={operation_comment}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox91">
+                      <Value>={document_comment}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1373,6 +1541,42 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox86">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox92">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox41">
                       <Style>
                         <BorderStyle>
@@ -1467,20 +1671,20 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>select 
-    if(@summary, NULL, objects.id) as subdivision_id, 
-    if(@summary, NULL, objects.name) as object, 
-    if(@summary, NULL, objects.code) as subdivision_code,
-    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)  
-                               FROM wear_cards_cost_allocation as wcca 
-                                   JOIN cost_center as cc on wcca.cost_center_id = cc.id 
-                               WHERE wear_cards.id = wcca.wear_card_id
-                               LIMIT 1),    
-                             CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
-    IF(@byEmployee, wear_cards.personnel_number, NULL) AS personnel_number,
-    IF(@byEmployee, CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name), NULL) AS employee,
+        <CommandText>select
+    if(@summary, NULL, subdivisions.id) as subdivision_id,
+    if(@summary, NULL, subdivisions.name) as subdivision,
+    if(@summary, NULL, subdivisions.code) as subdivision_code,
+    if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)
+                               FROM employees_cost_allocation as ecca
+                                        JOIN cost_center as cc on ecca.cost_center_id = cc.id
+                               WHERE employees.id = ecca.employee_id
+                               LIMIT 1),
+                              CONCAT_WS(' ', cost_center.code, cost_center.name)), NULL) as cost_center_name,
+    IF(@byEmployee, employees.personnel_number, NULL) AS personnel_number,
+    IF(@byEmployee, CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name), NULL) AS employee,
     IF(@byEmployee, posts.name, NULL) AS post,
-    IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL) as issuance_sheet,
+    IF(@byEmployee, IFNULL(issuance_sheet.doc_number, issuance_sheet.id), NULL) as issuance_sheet,
     nomenclature.name as nomen, 
     sum(issued) as sum, 
     nomenclature.number, 
@@ -1488,11 +1692,13 @@
     heightAlias.name as growth,
     if(@showOwners, owners.name, null) as owner_name,
     (nomenclature.sale_cost) AS cost,
-    (sum(issued) * nomenclature.sale_cost) AS cost_sum
+    (sum(issued) * nomenclature.sale_cost) AS cost_sum,
+    operation_issued_by_employee.comment AS operation_comment,
+    IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment
 FROM operation_issued_by_employee
-LEFT JOIN wear_cards on wear_cards.id = operation_issued_by_employee.employee_id
-LEFT JOIN objects on objects.id = wear_cards.object_id
-LEFT JOIN posts ON posts.id = wear_cards.post_id
+LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
+LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+LEFT JOIN posts ON posts.id = employees.post_id
 LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
 LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
@@ -1502,16 +1708,28 @@ LEFT JOIN operation_warehouse ON warehouse_operation_id = operation_warehouse.id
 LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
 LEFT JOIN protection_tools ON protection_tools.id = operation_issued_by_employee.protection_tools_id
 LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_employee.id
+LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
+LEFT JOIN stock_expense_detail ON operation_issued_by_employee.id = stock_expense_detail.employee_issue_operation_id
+LEFT JOIN stock_expense ON stock_expense_detail.stock_expense_id = stock_expense.id
+LEFT JOIN stock_collective_expense_detail ON operation_issued_by_employee.id = stock_collective_expense_detail.employee_issue_operation_id
+LEFT JOIN stock_collective_expense ON stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
 AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
 AND operation_issued_by_employee.returned = 0 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
-AND ((-1 IN (@subdivisions)) OR (@withoutsub AND objects.id IS NULL) OR (objects.id IN (@subdivisions)))
+AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
 AND (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 AND (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
-GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, objects.id), IF(@byEmployee, wear_cards.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
+AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = operation_issued_by_employee.employee_id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                    WHERE gi.employee_id = operation_issued_by_employee.employee_id
+                      AND gi.employee_group_id IN (@employee_groups_ids))) )
+GROUP BY IF(@showCostCenter, cost_center.id, NULL), IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), IF(@byEmployee, issuance_sheet_items.issuance_sheet_id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL)
 ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
@@ -1565,6 +1783,12 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           <QueryParameter Name="showOnlyWithoutNorm">
             <Value>={?showOnlyWithoutNorm}</Value>
           </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -1572,9 +1796,33 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
         </Field>
-        <Field Name="object">
-          <DataField>object</DataField>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="subdivision_code">
+          <DataField>subdivision_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="cost_center_name">
+          <DataField>cost_center_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="issuance_sheet">
+          <DataField>issuance_sheet</DataField>
+          <TypeName>System.UInt32</TypeName>
         </Field>
         <Field Name="nomen">
           <DataField>nomen</DataField>
@@ -1596,24 +1844,8 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           <DataField>growth</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="code">
-          <DataField>subdivision_code</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="owner_name">
           <DataField>owner_name</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="employee">
-          <DataField>employee</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="personnel_number">
-          <DataField>personnel_number</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="post">
-          <DataField>post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="cost">
@@ -1624,12 +1856,12 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
           <DataField>cost_sum</DataField>
           <TypeName>System.Decimal</TypeName>
         </Field>
-        <Field Name="issuance_sheet">
-          <DataField>issuance_sheet</DataField>
-          <TypeName>System.UInt32</TypeName>
+        <Field Name="operation_comment">
+          <DataField>operation_comment</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="cost_center_name">
-          <DataField>cost_center_name</DataField>
+        <Field Name="document_comment">
+          <DataField>document_comment</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1765,6 +1997,30 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), employee, nomen, 
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

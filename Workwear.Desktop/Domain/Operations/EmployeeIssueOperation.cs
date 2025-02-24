@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -135,11 +135,13 @@ namespace Workwear.Domain.Operations
 		}
 
 		private EmployeeIssueOperation issuedOperation;
-		[Display(Name = "Операция выдачи")]
+		[Display(Name = "Списать операцию выдачи")]
 		public virtual EmployeeIssueOperation IssuedOperation {
 			get => issuedOperation;
 			set => SetField(ref issuedOperation, value);
 		}
+
+		IGraphIssueOperation IGraphIssueOperation.IssuedOperation => issuedOperation;
 
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Сопутствующая складская операция")]
@@ -341,8 +343,8 @@ namespace Workwear.Domain.Operations
 			var graph = IssueGraph.MakeIssueGraph(uow, Employee, NormItem.ProtectionTools);
 			RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 		}
-
-		public virtual void Update(IUnitOfWork uow, IInteractiveQuestion askUser, IncomeItem item) {
+		
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
@@ -426,7 +428,7 @@ namespace Workwear.Domain.Operations
 			return true;
 		}
 
-		private bool? lastAnswaerRecalculateStartOfUse;
+		private bool? lastAnswerRecalculateStartOfUse;
 		
 		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
 			if(!CheckRecalculateCondition())
@@ -444,12 +446,12 @@ namespace Workwear.Domain.Operations
 				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
-							if(lastAnswaerRecalculateStartOfUse == null)
-								lastAnswaerRecalculateStartOfUse = askUser.Question(
+							if(lastAnswerRecalculateStartOfUse == null)
+								lastAnswerRecalculateStartOfUse = askUser.Question(
 									$"На {operationTime:d} за {Employee.ShortName} уже числится {amountAtEndDay} " +
-									$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.Amount} на {normItem.LifeText}. " +
+									$"x {ProtectionTools.Name}, при этом по нормам положено {NormItem.AmountText} на {normItem.LifeText}. " +
 									$"Передвинуть начало эксплуатации вновь выданных {Issued} на {firstLessNorm.StartDate:d}?");
-							if(lastAnswaerRecalculateStartOfUse.Value)
+							if(lastAnswerRecalculateStartOfUse.Value)
 								StartOfUse = firstLessNorm.StartDate;
 							break;
 						case AnswerOptions.Yes:

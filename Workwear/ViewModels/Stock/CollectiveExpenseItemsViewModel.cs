@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -13,6 +14,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
@@ -153,6 +155,7 @@ namespace Workwear.ViewModels.Stock
 		public void AddEmployees(){
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
@@ -226,7 +229,7 @@ namespace Workwear.ViewModels.Stock
 			performance.CheckPoint("Загружаем складские остатки");
 			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
-			performance.CheckPoint("Подготавливаем потребностей");
+			performance.CheckPoint("Подготавливаем список потребностей");
 			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
 			
 			var needs = employees
@@ -287,11 +290,16 @@ namespace Workwear.ViewModels.Stock
 		
 		private void ChangeItemPositions(List<CollectiveExpenseItem> items)
 		{
-			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.ProtectionTools = items.First().ProtectionTools;
+			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
+							filter.ProtectionTools = items.First().ProtectionTools;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = items;
 			selectJournal.ViewModel.OnSelectResult +=SetNomenclatureForRows;

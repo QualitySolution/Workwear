@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author>Тимирева Екатерина</Author>
+  <PageHeight>11in</PageHeight>
+  <PageWidth>10in</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>-- потребности
+SELECT
+    employees.id as 'employee_id',
+    employee_cards_item.id as 'need_id',
+    issue.issue_id,
+    employees.personnel_number as 'personnel_number',
+    Concat_ws(' ', employees.last_name,employees.first_name, employees.patronymic_name) as 'employee_name',
+    IF(@group_by_subdivision, employees.subdivision_id, NULL) as 'subdivision_id',
+    IF(@group_by_subdivision, subdivisions.name, NULL)  as 'subdivision',
+    posts.name as 'post',
+    protection_tools.id as 'pr_id',
+    protection_tools.name as 'protection_tool',
+    issue.name_SIZ_issue,
+    issue.model_issue,
+    issue.operation_date_string_issue,
+    issue.amount_issue,
+    CASE
+        WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
+        WHEN norms_item.period_type = 'Wearout' THEN ',До износа'
+        WHEN norms_item.period_type = 'Duty' THEN 'Деж.'
+        WHEN norms_item.period_type = 'Year' THEN CONCAT(norms_item.amount, ' на ', norms_item.period_count,
+                                                         CASE
+                                                             WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' лет'
+                                                             WHEN norms_item.period_count % 10 = 1 THEN ' год'
+                                                             WHEN norms_item.period_count % 10 BETWEEN 2 AND 4 THEN ' года'
+                                                             ELSE ' лет'
+                                                             END)
+        WHEN norms_item.period_type = 'Month' THEN CONCAT(norms_item.amount, ' на ',norms_item.period_count,
+                                                          CASE
+                                                              WHEN norms_item.period_count BETWEEN 11 AND 19 THEN ' месяцев'
+                                                              WHEN norms_item.period_count % 10 = 1 THEN ' месяц'
+                                                              WHEN norms_item.period_count % 10 BETWEEN 2 AND 4 THEN ' месяца'
+                                                              ELSE ' месяцев'
+                                                              END)
+        END as 'wear_period'
+FROM employees
+         LEFT JOIN employee_cards_item on employees.id = employee_cards_item.employee_id
+         LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+         LEFT JOIN protection_tools on protection_tools.id = employee_cards_item.protection_tools_id
+         LEFT JOIN norms_item on norms_item.id = employee_cards_item.norm_item_id
+         LEFT JOIN posts on posts.id = employees.post_id
+         LEFT JOIN (SELECT                                          -- операции выдачи
+                        employees.id as 'employee_id',
+                        o1.id as 'issue_id',
+                        o1.protection_tools_id as 'pr_id',
+                        nomenclature.name as 'name_SIZ_issue',
+                        nomenclature.number as 'model_issue',
+                        DATE_FORMAT(o1.operation_time, '%d.%m.%Y') as 'operation_date_string_issue',
+                        o1.operation_time as 'operation_date_issue',
+                        o1.issued as 'amount_issue',
+                        '-' as 'wear_period_issue'
+                    FROM employees
+                             LEFT JOIN operation_issued_by_employee o1 on o1.employee_id = employees.id
+                             LEFT JOIN protection_tools on o1.protection_tools_id = protection_tools.id
+                             LEFT JOIN nomenclature on o1.nomenclature_id = nomenclature.id
+                        #LEFT JOIN warehouse on operation_warehouse.warehouse_expense_id = warehouse.id
+                             LEFT JOIN posts on posts.id = employees.post_id
+                             LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+                             LEFT JOIN operation_issued_by_employee o2 on o1.id = o2.issued_operation_id
+                    WHERE o1.issued != 0 AND (o1.auto_writeoff_date &gt; (SELECT now()) OR o1.auto_writeoff_date IS NULL) AND
+                        employees.dismiss_date IS NULL
+                      AND o1.issued_operation_id IS NULL) issue on issue.employee_id = employees.id AND (issue.pr_id=protection_tools.id)
+WHERE employees.dismiss_date IS NULL
+AND employee_cards_item.id is NOT null
+  AND (NOT @exclude_in_vacation
+    OR (NOT EXISTS(SELECT *
+                   FROM employees_vacations as vac
+                   WHERE vac.employee_id = employee_cards_item.employee_id
+                     AND (CURRENT_DATE BETWEEN vac.begin_date AND vac.end_date)
+                  )
+        )
+        )
+AND ((-1 IN (@employee_groups_ids))
+         OR (@without_groups AND (NOT EXISTS
+              (SELECT * FROM employee_group_items as gi
+               WHERE gi.employee_id = employee_cards_item.employee_id)))
+         OR (EXISTS (SELECT * FROM employee_group_items as gi2
+                      WHERE gi2.employee_id = employee_cards_item.employee_id
+                        AND gi2.employee_group_id IN (@employee_groups_ids))) )
+AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
+AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivision_ids)))
+GROUP BY subdivision_id,
+         employee_id,
+         pr_id
+ORDER BY  subdivision,
+         employee_name,
+         protection_tool;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="group_by_subdivision">
+            <Value>={?group_by_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="subdivision_ids">
+            <Value>={?subdivision_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="exclude_in_vacation">
+            <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_subdivision">
+            <Value>={?without_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="employee_id">
+          <DataField>employee_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="need_id">
+          <DataField>need_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="issue_id">
+          <DataField>issue_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="employee_name">
+          <DataField>employee_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pr_id">
+          <DataField>pr_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="protection_tool">
+          <DataField>protection_tool</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="name_SIZ_issue">
+          <DataField>name_SIZ_issue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="model_issue">
+          <DataField>model_issue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="operation_date_string_issue">
+          <DataField>operation_date_string_issue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amount_issue">
+          <DataField>amount_issue</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="wear_period">
+          <DataField>wear_period</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>.5in</Height>
+    <ReportItems>
+      <Textbox Name="Textbox1">
+        <Top>.1in</Top>
+        <Left>.1in</Left>
+        <Width>6in</Width>
+        <Height>.25in</Height>
+        <Value>= "Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
+        <Style>
+          <FontSize>15pt</FontSize>
+          <FontWeight>Bold</FontWeight>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <ReportItems>
+      <Table Name="Table1">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>109.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>358.7pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>63.5pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>69.1pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Наименование_СИЗ">
+                      <Value>=Iif(Fields!issue_id.IsMissing, "СИЗ не числится", Fields!name_SIZ_issue.Value)</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Модель__марка__артикул__класс_защиты_СИЗ__дерматологических_СИЗ">
+                      <Value>=Fields!model_issue.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Дата">
+                      <Value>=Fields!operation_date_string_issue.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Количество">
+                      <Value>=Fields!amount_issue.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>7.4pt</Left>
+        <Top>5.8pt</Top>
+        <TableGroups>
+          <TableGroup>
+            <Grouping Name="subdivisionGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={subdivision_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>true</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>17.4pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox2">
+                          <Value>=Iif({?group_by_subdivision},Iif(Fields!subdivision.IsMissing, "      Без подразделения", {subdivision}),"По всем выбранным подразделениям")</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <BackgroundColor></BackgroundColor>
+                            <TextAlign>Left</TextAlign>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>4</ColSpan>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+                <TableRow>
+                  <Height>27.4pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox27">
+                          <Value>Наименование СИЗ</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox96">
+                          <Value>Модель, марка, артикул, класс защиты СИЗ, дерматологических СИЗ</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox97">
+                          <Value>Дата</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox98">
+                          <Value>Количество</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#E9E9E9</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={subdivision}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
+            <Grouping Name="employeeGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={employee_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox48">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                          <Value>=Iif(Fields!personnel_number.IsMissing, "",{personnel_number}) + " " + {employee_name} + " " + Iif(Fields!post.IsMissing, "",  "(" + {post} + ")") </Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>4</ColSpan>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={employee_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
+            <Grouping Name="needGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={pr_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox72">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                          <Value>={protection_tool} + " " + {wear_period}</Value>
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>4</ColSpan>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={protection_tool}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+        </TableGroups>
+      </Table>
+    </ReportItems>
+    <Height>101.1pt</Height>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>14pt</Height>
+    <ReportItems>
+      <Textbox Name="Textbox14">
+        <Top>1pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
+        <Style>
+          <FontSize>10pt</FontSize>
+          <FontWeight>Normal</FontWeight>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=plutus.srv.qsolution.ru;port=3306; </ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="group_by_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_in_vacation">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

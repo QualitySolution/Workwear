@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -12,11 +13,16 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.Report;
+using QS.Report.ViewModels;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -24,6 +30,7 @@ namespace Workwear.ViewModels.Stock
 {
 	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
 	{
+		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
 		public readonly FeaturesService FeaturesService;
@@ -41,17 +48,26 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator, 
 			IUserService userService,
 			BaseParameters baseParameters,
+			OrganizationRepository organizationRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveQuestion interactive,
 			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator, unitOfWorkProvider) {
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			if(UoW.IsNew)
+			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+				Entity.Organization =
+					organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
+			}else 
+				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+
+			autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 
 			var entryBuilder = new CommonEEVMBuilderFactory<Transfer>(this, Entity, UoW, navigationManager) {
 				AutofacScope = autofacScope
 			};
+			
+			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
 			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
 			
@@ -99,13 +115,39 @@ namespace Workwear.ViewModels.Stock
 		}
 		#region Sensetive
 		public bool CanAddItem => Entity.WarehouseFrom != null;
+		public bool SensitiveDocNumber => !AutoDocNumber;
+		#endregion
+
+		#region Свойства
+
+		private bool autoDocNumber = true;
+		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
+		[PropertyChangedAlso(nameof(DocNumberText))]
+		public bool AutoDocNumber {
+			get => autoDocNumber;
+			set => SetField(ref autoDocNumber, value);
+		}
+
+		public string DocNumberText {
+			get => AutoDocNumber ? (Entity.Id == 0 ? "авто" : Entity.Id.ToString()) : Entity.DocNumberText;
+			set { 
+				if(!AutoDocNumber) 
+					Entity.DocNumber = value; 
+			}
+		}
+
 		#endregion
 		public void AddItems() {
-			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = Entity.WarehouseFrom;
+							filter.CanChooseAmount = true;
+						});
+				});
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.Filter.CanChooseAmount = true;
-			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
-			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 
@@ -134,6 +176,10 @@ namespace Workwear.ViewModels.Stock
 				this, EntityUoWBuilder.ForOpen(nomenclature.Id));
 		}
 		public override bool Save() {
+			if(AutoDocNumber)
+				Entity.DocNumber = null;
+			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
+				Entity.DocNumber = Entity.DocNumberText;				
 			Entity.UpdateOperations(UoW, null); 
 			return base.Save();
 		}
@@ -143,6 +189,22 @@ namespace Workwear.ViewModels.Stock
 		}
 		public bool ValidateNomenclature(TransferItem transferItem) {
 			return transferItem.Amount <= transferItem.AmountInStock;
+		}
+		
+		public void Print() {
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Накладная на внутреннее перемещение №{0}", Entity.DocNumber ?? Entity.Id.ToString()),
+				Identifier = "Documents.TransferInvoice",
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.Id }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }

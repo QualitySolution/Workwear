@@ -95,14 +95,13 @@ namespace Workwear.Test.Integration.Stock
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2017, 1, 1)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
 				var incomeItem2 = income.AddItem(nomenclature2, ask);
 				incomeItem2.Amount = 5;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var expense = new Expense {
@@ -119,6 +118,7 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem2.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
+				baseParameters.DefaultAutoWriteoff.Returns(true);
 				baseParameters.ColDayAheadOfShedule.Returns(0);
 
 				//Обновление операций
@@ -145,6 +145,7 @@ namespace Workwear.Test.Integration.Stock
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.DefaultAutoWriteoff.Returns(true);
 			baseParameters.ColDayAheadOfShedule.Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -195,23 +196,21 @@ namespace Workwear.Test.Integration.Stock
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2017, 1, 1)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var income2 = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2018, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2018, 1, 1)
 				};
 				var incomeItem2 = income2.AddItem(nomenclature, ask);
 				incomeItem2.WearSize = size;
 				incomeItem2.Amount = 5;
-				income2.UpdateOperations(uow, ask);
+				income2.UpdateOperations(uow);
 				uow.Save(income2);
 
 				var expense = new Expense {
@@ -318,12 +317,11 @@ namespace Workwear.Test.Integration.Stock
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2017, 1, 1)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var expense = new Expense {
@@ -410,12 +408,11 @@ namespace Workwear.Test.Integration.Stock
 
 				var income = new Income {
 					Warehouse = warehouse,
-					Date = new DateTime(2017, 1, 1),
-					Operation = IncomeOperations.Enter
+					Date = new DateTime(2017, 1, 1)
 				};
 				var incomeItem1 = income.AddItem(nomenclature, ask);
 				incomeItem1.Amount = 10;
-				income.UpdateOperations(uow, ask);
+				income.UpdateOperations(uow);
 				uow.Save(income);
 
 				var expense = new Expense {
