@@ -31,8 +31,8 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.node = node ?? throw new ArgumentNullException(nameof(node));
 
 			var nomenclature = uow.GetById<Nomenclature>(node.NomeclatureId);
-			var size = uow.GetById<Size>(node.SizeId);
-			var height = uow.GetById<Size>(node.HeightId);
+			var size = uow.GetById<Size>(node.SizeIdn);
+			var height = uow.GetById<Size>(node.HeightIdn);
 			
 			NomenclatureAmount = node.Amount;
 			WithBarcodesAmount = barcodeService.CountAllBarcodes(uow, nomenclature, size, height);

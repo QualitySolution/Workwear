@@ -121,6 +121,7 @@ namespace Workwear.Views.Stock
 			w5.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -140,7 +141,7 @@ namespace Workwear.Views.Stock
 			w6.RightAttach = ((uint)(2));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.enumTypesComboBox = new Gamma.Widgets.yEnumComboBox();
+			this.enumTypesComboBox = new global::Gamma.Widgets.yEnumComboBox();
 			this.enumTypesComboBox.Name = "enumTypesComboBox";
 			this.enumTypesComboBox.ShowSpecialStateAll = false;
 			this.enumTypesComboBox.ShowSpecialStateNot = false;

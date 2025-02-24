@@ -168,7 +168,8 @@ SELECT
 				return result;
 			}
 		}
-		
+//1289		
+		/*
 		private IQueryOver<WarehouseOperation> BarcodesStockBalanceQuery(IUnitOfWork uow) 
 		{
 			StockBalanceJournalNode resultAlias = null;
@@ -279,7 +280,7 @@ SELECT
 
 			return queryStock.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
 		}
-		
+		*/
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
@@ -290,7 +291,8 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
-			
+//1289			
+			/*
 			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
 				(selected) => selected.Any(x => 
 				{
@@ -302,6 +304,7 @@ SELECT
 			);
 			
 			NodeActionsList.Add(releaseBarcodesAction);
+		*/
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
@@ -374,5 +377,10 @@ SELECT
 			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
 			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
 			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
+		
+		public int NomeclatureId { get; set; }
+		public int SizeIdn => SizeId ?? 0;
+		public int HeightIdn => HeightId ?? 0;
+		public int WarehouseId { get; set; }
 	}
 }
