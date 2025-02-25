@@ -72,5 +72,11 @@ namespace Workwear.Views.Stock {
 			foreach(var item in ytreeItems.GetSelectedObjects<ExpenseDutyNormItem>())
 				ViewModel.DeleteItem(item);
 		}
+
+		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e) {
+		}
+
+		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e) {
+		}
 	}
 }
