@@ -126,7 +126,25 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-
+		
+		progress.CheckPoint("Настройка каналов обновления");
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var appInfo = releaseScope.Resolve<IApplicationInfo>();
+			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
+				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+				var channel = configuration[$"AppUpdater:Channel"];
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+					channel = UpdateChannel.Current.ToString();
+					configuration[$"AppUpdater:Channel"] = channel;
+				}
+				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+			}
+			else {
+				ActionUpdateChannel.Visible = false;
+			}
+		}
+		
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -275,25 +293,6 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-
-		//Настраиваем каналы обновлений
-		progress.CheckPoint("Настройка каналов обновления");
-		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
-			var appInfo = releaseScope.Resolve<IApplicationInfo>();
-			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
-				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-			}
-			else {
-				ActionUpdateChannel.Visible = false;
-			}
-		}
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
@@ -391,6 +390,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
+		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
 		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
@@ -943,6 +943,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionClothingServiceActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
+	}
+
+	protected void OnActionDutyNormActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(null);
 	}
 
 	protected void OnActionProvisionActivated(object sender, EventArgs e) {

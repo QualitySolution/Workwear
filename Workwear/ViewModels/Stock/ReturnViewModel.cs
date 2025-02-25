@@ -147,7 +147,7 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanSetNomenclature => SelectedItem != null;
 		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
-		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Exchange1C);
+		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;

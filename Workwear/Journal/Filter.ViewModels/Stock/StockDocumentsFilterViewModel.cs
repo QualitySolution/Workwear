@@ -30,6 +30,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		public IEnumerable<object> HidenStockDocumentTypeList {
 			get {
+				if(!FeaturesService.Available(WorkwearFeature.DutyNorms))
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.ExpenseDutyNormDoc;
 				if(!FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					yield return Workwear.Domain.Stock.Documents.StockDocumentType.CollectiveExpense;
 				if(!FeaturesService.Available(WorkwearFeature.Inspection))

@@ -5,6 +5,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -62,9 +63,9 @@ namespace Workwear.Models.Analytics {
 					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
 					if(need == 0)
 						break;
-					//Операция приведшая к возникновению потребности
-					var lastIssue = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue);
-					
+					//Операция приведшая к возникновению потребности 
+					var lastIssueDate = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue)?.OperationTime;
+
 					var op = new EmployeeIssueOperation(baseParameters) {
 						OperationTime = issueDate,
 						StartOfUse = issueDate,
@@ -86,9 +87,10 @@ namespace Workwear.Models.Analytics {
 							OperationDate = op.OperationTime,
 							Nomenclature = nomenclature,
 							Amount = op.Issued,
-							LastIssueOperation = lastIssue,
+							LastIssueDate = lastIssueDate,
 							DelayIssueDate = delayIssue,
-							VirtualLastIssue = virtualOperations.Any(o => o == lastIssue)
+//TODO протестировать 							
+							VirtualLastIssue = virtualOperations.Any(o => o.OperationTime == lastIssueDate)
 						});
 						delayIssue = null;
 					}
@@ -101,7 +103,7 @@ namespace Workwear.Models.Analytics {
 							if(opR != null)
 								opR.Issued = op.NormItem.Amount;
 
-					item.Graph.AddOperations(new List<EmployeeIssueOperation> { op });
+					item.Graph.AddOperations(new List<IGraphIssueOperation> { op });
 					item.UpdateNextIssue(null);
 				}
 			}
@@ -117,7 +119,7 @@ namespace Workwear.Models.Analytics {
 	public class FutureIssue {
 		public EmployeeCardItem EmployeeCardItem { get; set; }
 		public Nomenclature Nomenclature { get; set; }
-		public EmployeeIssueOperation LastIssueOperation { get; set; }
+		public DateTime ? LastIssueDate { get; set; }
 		public bool VirtualLastIssue { get; set; }
 
 		public EmployeeCard Employee => EmployeeCardItem.EmployeeCard;
@@ -137,7 +139,6 @@ namespace Workwear.Models.Analytics {
 		/// Дата планируемой выдачи
 		/// </summary>
 		public DateTime ? OperationDate { get; set; }
-		public DateTime ? LastIssueDate { get; set; }
 		public DateTime ? DelayIssueDate { get; set; }
 		public int Amount { get; set; }
 	}
