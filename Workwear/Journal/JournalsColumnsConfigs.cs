@@ -14,6 +14,7 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
 using Workwear.Tools.Features;
 
@@ -497,6 +498,20 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
 					.Finish()
 			);
+			#endregion
+
+			#region Supply
+
+			TreeViewColumnsConfigFactory.Register<ShipmentJournalViewModel>(
+				(jvm) => FluentColumnsConfig<ShipmentJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Период").AddTextRenderer(node=>$"{node.StartPeriod.ToShortDateString()} - {node.EndPeriod.ToShortDateString()}")
+					.AddColumn("Создал").AddTextRenderer(node=>node.Author).SearchHighlight()
+					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreationDate.ToShortDateString())
+					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.Finish()
+				);
+
 			#endregion
 		}
 	}

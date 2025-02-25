@@ -16,9 +16,11 @@ namespace Workwear.Views.Supply {
 		private void ConfigureDlg() {
 			ylabelNumber.Binding.AddBinding(ViewModel, v=>v.DocID, w=>w.LabelProp)
 				.InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v=>v.DocCreatedbyUser!=null ? v.DocCreatedbyUser.Name: null, w=>w.LabelProp)
+			datePeriod.Binding.AddSource(ViewModel)
+				.AddBinding(v=>v.StartPeriod, w=>w.StartDateOrNull)
+				.AddBinding(v=>v.EndPeriod,w=>w.EndDateOrNull)
 				.InitializeFromSource();
-			ydatepicker1.Binding.AddBinding(ViewModel, v=>v.DocDate, w=>w.Date)
+			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v=>v.DocCreatedbyUser!=null? v.DocCreatedbyUser.Name: null, w=>w.LabelProp)
 				.InitializeFromSource();
 			ytextComment.Binding.AddBinding(ViewModel, v=>v.DocComment,w=>w.Buffer.Text)
 				.InitializeFromSource();

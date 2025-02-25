@@ -72,6 +72,7 @@ using workwear;
 using Workwear;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
+using workwear.Journal.ViewModels.Supply;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
@@ -995,5 +996,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
+	}
+
+	protected void OnActionShipmentActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
 	}
 }

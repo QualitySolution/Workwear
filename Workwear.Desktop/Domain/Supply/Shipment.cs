@@ -13,25 +13,25 @@ using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Supply {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "предполагаемые поставки",
-		Nominative = "предполагаемая поставка",
-		Genitive = "предполагаемой поставки"
+		NominativePlural = "планируемые поставки",
+		Nominative = "планируемая поставка",
+		Genitive = "планируемой поставки"
 	)]
 	[HistoryTrace]
-	public class Shipment: IDomainObject {
+	public class Shipment: IDomainObject, IValidatableObject {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
 		public virtual int Id { get; set; }
 		
-		private DateTime startPeriod;
+		private DateTime startPeriod = DateTime.Today;
 		[Display(Name="Начало периода")]
 		public virtual DateTime StartPeriod {
 			get=> startPeriod;
 			set {startPeriod = value;}
 		}
 		
-		private DateTime endPeriod;
+		private DateTime endPeriod = DateTime.Today.AddDays(1);
 		[Display(Name="Окончание периода")]
 		public virtual DateTime EndPeriod {
 			get=> endPeriod;
@@ -69,15 +69,23 @@ namespace Workwear.Domain.Supply {
 
 		#endregion
 
-		public virtual string Title => $"Предполагаемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
+		public virtual string Title => $"Планируемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			if (StartPeriod < new DateTime(2008, 1, 1))
-				yield return new ValidationResult ("Дата начала периода должна быть указана (не ранее 2008-го)", 
+			if (StartPeriod < new DateTime(2025, 1, 1))
+				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го)", 
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
 			if(StartPeriod > EndPeriod)
 				yield return new ValidationResult("Дата начала периода должна быть меньше его окончания",
 					new[] { this.GetPropertyName(o => o.StartPeriod) });
+			if(Items.Count == 0)
+				yield return new ValidationResult ("Поставка должна содержать хотя бы одну строку.", 
+					new[] { this.GetPropertyName (o => o.Items)});
+
+			if(Items.Any (i => i.Amount <= 0))
+				yield return new ValidationResult ("Поставка не должна содержать строк с нулевым количеством.", 
+					new[] { this.GetPropertyName (o => o.Items)});
+			
 			
 		}
 		#endregion

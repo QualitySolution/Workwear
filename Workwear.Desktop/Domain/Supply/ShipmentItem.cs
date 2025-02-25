@@ -98,7 +98,7 @@ namespace Workwear.Domain.Supply{
 		public virtual StockPosition StockPosition => 
 			new StockPosition(Nomenclature, 0m,WearSize, Height, Owner);
 
-		public Owner Owner { get; set; }
+		public virtual Owner Owner { get; set; }
 
 		#endregion
 

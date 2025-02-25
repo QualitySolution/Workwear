@@ -28,7 +28,6 @@ namespace Workwear.ViewModels.Supply {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			IInteractiveService interactive,
-			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
 			IUserService userService,
 			IValidator validator = null,
@@ -36,20 +35,18 @@ namespace Workwear.ViewModels.Supply {
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
-			
+			CalculateTotal();
 		}
 
 		#region Свойства ViewModel
 
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
-		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService = new SizeService();
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		
@@ -60,6 +57,7 @@ namespace Workwear.ViewModels.Supply {
 		}
 		
 		private ShipmentItem selectedItem;
+		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		public virtual ShipmentItem SelectedItem {
 			get=>selectedItem;
 			set=>SetField(ref selectedItem, value);
@@ -69,11 +67,17 @@ namespace Workwear.ViewModels.Supply {
 
 		#region Проброс свойств документа
 
-		public virtual int DocID => Entity.Id;
+		public virtual string DocID {
+			get {
+				return Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
+			}
+		}
 		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual DateTime DocDate { get => Entity.CreationDate;set => Entity.CreationDate = value;}
-		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
+		public virtual DateTime StartPeriod { get => Entity.StartPeriod;set=>Entity.StartPeriod = value; }
+		public virtual DateTime EndPeriod {get=>Entity.EndPeriod;set=>Entity.EndPeriod = value;}
+		public virtual string DocComment {get=>Entity.Comment;set=>Entity.Comment = value;}
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
 		#endregion
@@ -143,8 +147,10 @@ namespace Workwear.ViewModels.Supply {
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
-			
-			
+
+			if(Entity.Id == 0) 
+				Entity.CreationDate = DateTime.Today;
+			UoWGeneric.Save ();
 			logger.Info ("Документ сохранён.");
 			return true;
 		}
