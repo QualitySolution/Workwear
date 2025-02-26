@@ -316,9 +316,11 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNorm>()
-				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Document);
+				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Document)
+				.AddDeleteDependence<IssuanceSheet>(x => x.ExpenseDutyNorm);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNormItem>()
+				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseDutyNormItem)
 				.AddDeleteCascadeDependence(x => x.Operation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
