@@ -187,8 +187,11 @@ namespace Workwear.ViewModels.Stock
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
 			OverNormModel.UseBarcodes = ((StockBalanceJournalViewModel)sender).Filter.ShowWithBarcodes;
 			var nomenclature = UoW.GetById<Nomenclature>(node.NomeclatureId);
-			var size = UoW.GetById<Size>(node.SizeIdn);
-			var height = UoW.GetById<Size>(node.HeightIdn);
+			Size size = node.SizeId != null ? UoW.GetById<Size>((int)node.SizeId) : null;
+			Size height = node.HeightId != null ? UoW.GetById<Size>((int)node.HeightId) : null;
+//1289			
+//var size = UoW.GetById<Size>(node.SizeIdn);
+//var height = UoW.GetById<Size>(node.HeightIdn);
 
 			Barcode barcode = null;
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);

@@ -376,7 +376,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.Id.ToString()).SearchHighlight()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()

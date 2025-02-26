@@ -103,7 +103,7 @@ SELECT
     stock.*,
     (SELECT SUM(operation_sub.amount)/DATEDIFF(NOW(), MIN(operation_sub.operation_time))
      FROM operation_warehouse operation_sub
-     WHERE operation_sub.nomenclature_id = stock.Id
+     WHERE operation_sub.nomenclature_id = stock.NomeclatureId
          AND operation_sub.size_id <=> stock.SizeId
          AND operation_sub.height_id <=> stock.HeightId
          AND operation_sub.owner_id <=> stock.OwnerId
@@ -112,7 +112,7 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption
-    FROM (SELECT nomenclature.id        AS Id,
+    FROM (SELECT nomenclature.id        AS NomeclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
                  nomenclature.sex       AS Sex,
@@ -128,10 +128,12 @@ SELECT
                      - SUM(IF((operation.warehouse_expense_id IS NOT NULL AND
                                (@all_warehouse OR operation.warehouse_expense_id = @warehouse_id)),
                               operation.amount, 0))
-                     )                  AS Amount,
-                 owners.id              AS OwnerId,
-                 owners.name            AS OwnerName,
-                 nomenclature.sale_cost AS SaleCost
+	                 )                      AS Amount,
+	             owners.id                  AS OwnerId,
+	             owners.name                AS OwnerName,
+	             nomenclature.use_barcode   AS UseBarcode,	             
+             	 operation.warehouse_receipt_id AS WarehouseId,
+	             nomenclature.sale_cost     AS SaleCost
           FROM nomenclature
                    JOIN operation_warehouse AS operation
                              on (operation.operation_time < ADDDATE(@report_date, INTERVAL 1 DAY)
@@ -292,19 +294,19 @@ SELECT
 					);
 			NodeActionsList.Add(updateStatusAction);
 //1289			
-			/*
+			
 			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
 				(selected) => selected.Any(x => 
-				{
-					StockBalanceJournalNode node = (x as StockBalanceJournalNode);
-					return node != null && node.UseBarcode && node.Amount > 0;
-				}),
+					x is StockBalanceJournalNode node && 
+					node.UseBarcode && 
+					node.Amount > 0),
 				(selected) => !Filter.ShowWithBarcodes,
-				(selected) => OpenReleaseBarcodesWindow(selected.First() as StockBalanceJournalNode)
+				(selected) => NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
+						(this, selected.First() as StockBalanceJournalNode, Filter.Warehouse)
+//OpenReleaseBarcodesWindow( selected.First() as StockBalanceJournalNode)
 			);
-			
+
 			NodeActionsList.Add(releaseBarcodesAction);
-		*/
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
@@ -317,6 +319,9 @@ SELECT
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		private void OpenReleaseBarcodesWindow(StockBalanceJournalNode node) =>
+			NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
+				(this, node, Filter.Warehouse);
 		
 		public override string FooterInfo {
 			get => $"Суммарная стоимость: " +
@@ -329,10 +334,7 @@ SELECT
 
 	public class StockBalanceJournalNode
 	{
-		/// <summary>
-		/// NomenclatureId
-		/// </summary>
-		public int Id { get; set; }
+		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
@@ -372,15 +374,12 @@ SELECT
 		public string WearPercentText => WearPercent.ToString("P0");
 
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
-			uow.GetById<Nomenclature>(Id), 
+			uow.GetById<Nomenclature>(NomeclatureId), 
 			WearPercent, 
 			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
 			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
 			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
 		
-		public int NomeclatureId { get; set; }
-		public int SizeIdn => SizeId ?? 0;
-		public int HeightIdn => HeightId ?? 0;
 		public int WarehouseId { get; set; }
 	}
 }

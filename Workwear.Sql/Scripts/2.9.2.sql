@@ -26,7 +26,7 @@ create table if not exists `operation_over_norm`
 	foreign key (`operation_warehouse_id`) references `operation_warehouse` (`id`)
 																														   on update cascade on delete cascade ,
 	constraint `FK_over_norm_employee`
-	foreign key (`employee_id`) references `wear_cards` (`id`)
+	foreign key (`employee_id`) references `employees` (`id`)
 																														   on update cascade on delete cascade
 	);
 
