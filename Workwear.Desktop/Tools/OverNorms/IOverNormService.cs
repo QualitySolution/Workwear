@@ -10,12 +10,12 @@ namespace Workwear.Tools.OverNorms
 	public interface IOverNormService 
 	{
 		/// <summary>
-		/// Получить список выданных операций сверх нормы для конкретного сотрудника 
+		/// Получить список выданных операций выдачи вне нормы для конкретного сотрудника 
 		/// </summary>
-		/// <param name="param">Условия для поиска операций сверх нормы</param>
-		/// <param name="type">Тип операции сверх нормы</param>
+		/// <param name="param">Условия для поиска операций выдачи вне нормы</param>
+		/// <param name="type">Тип операции выдачи вне нормы</param>
 		/// <param name="warehouse">Склад для поиска</param>
-		/// <returns>Список выданных операций сверх нормы для конкретного сотурдника, удовлетворяющих условиям</returns>
+		/// <returns>Список выданных операций выдачи вне нормы для конкретного сотурдника, удовлетворяющих условиям</returns>
 		IList<OverNormOperation> GetActualOverNormIssued(OverNormParam param = null, OverNormType? type = null, Warehouse warehouse = null);
 	}
 }

@@ -8,8 +8,8 @@ using Workwear.Domain.Company;
 
 namespace Workwear.Domain.Operations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "операции сверх нормы",
-		Nominative = "операция сверх нормы"
+		NominativePlural = "операции выдачи вне нормы",
+		Nominative = "операция выдачи вне нормы"
 	)]
 	[HistoryTrace]
 	public class OverNormOperation : PropertyChangedBase, IDomainObject 
@@ -34,7 +34,7 @@ namespace Workwear.Domain.Operations {
 		}
 
 		private OverNormType type;
-		[Display(Name = "Тип операции сверх нормы")]
+		[Display(Name = "Тип операции выдачи вне нормы")]
 		public virtual OverNormType Type 
 		{
 			get => type;
@@ -66,7 +66,7 @@ namespace Workwear.Domain.Operations {
 		}
 
 		private OverNormOperation writeOffOverNormOperation;
-		[Display(Name = "Операция возврата операции вдачи сверх нормы")]
+		[Display(Name = "Операция возврата операции вдачи выдачи вне нормы")]
 		public virtual OverNormOperation WriteOffOverNormOperation 
 		{
 			get => writeOffOverNormOperation;
@@ -83,17 +83,17 @@ namespace Workwear.Domain.Operations {
 		#endregion
 
 		#region Not Mapped Propertis
-		public virtual string Title => $"Операция выдачи сверх нормы ({Type.GetAttribute<DisplayAttribute>().Name}) {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
+		public virtual string Title => $"Операция выдачи выдачи вне нормы ({Type.GetAttribute<DisplayAttribute>().Name}) {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
 		#endregion
 	}
 	
 	public enum OverNormType
 	{
-		[Display(Name = "Остановочный ремонт")]
-		Repair,
-		[Display(Name = "Подменный фонд")]
+		[Display(Name = "Разовая")]
+		Simple,
+		[Display(Name = "Подменная")]
 		Substitute,
-		[Display(Name = "Гостевой склад")]
+		[Display(Name = "Гостевая")]
 		Guest
 	}
 }

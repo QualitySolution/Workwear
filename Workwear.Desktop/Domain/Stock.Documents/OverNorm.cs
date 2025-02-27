@@ -13,9 +13,9 @@ using Workwear.Tools.OverNorms.Impl;
 namespace Workwear.Domain.Stock.Documents 
 {
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "выдачи сверх нормы",
-		Nominative = "выдача сверх нормы",
-		Genitive = "выдачи сверх нормы"
+		NominativePlural = "выдачи вне нормы",
+		Nominative = "выдача вне нормы",
+		Genitive = "выдачи вне нормы"
 	)]
 	[HistoryTrace]
 	public class OverNorm : StockDocument, IValidatableObject
@@ -30,7 +30,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private OverNormType type;
-		[Display(Name = "Тип операции сверх нормы")]
+		[Display(Name = "Тип операции выдачи вне нормы")]
 		public virtual OverNormType Type 
 		{
 			get => type;
@@ -47,7 +47,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Not Mapped Propertis
-		public virtual string Title => $"Выдача сверх нормы ({Type.GetAttribute<DisplayAttribute>().Name}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
+		public virtual string Title => $"Выдача вне нормы ({Type.GetAttribute<DisplayAttribute>().Name}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
 		
 		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null) 
 		{

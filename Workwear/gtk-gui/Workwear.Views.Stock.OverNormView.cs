@@ -206,7 +206,7 @@ namespace Workwear.Views.Stock
 			this.ylabelType = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelType.Name = "ylabelType";
 			this.ylabelType.Xalign = 1F;
-			this.ylabelType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип:");
+			this.ylabelType.LabelProp = global::Mono.Unix.Catalog.GetString("Тип выдачи:");
 			this.table2.Add(this.ylabelType);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelType]));
 			w12.TopAttach = ((uint)(1));
@@ -217,7 +217,7 @@ namespace Workwear.Views.Stock
 			this.ylabelWarehouseExpense = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelWarehouseExpense.Name = "ylabelWarehouseExpense";
 			this.ylabelWarehouseExpense.Xalign = 1F;
-			this.ylabelWarehouseExpense.LabelProp = global::Mono.Unix.Catalog.GetString("Склад списания<span foreground=\"red\">*</span>:");
+			this.ylabelWarehouseExpense.LabelProp = global::Mono.Unix.Catalog.GetString("Склад<span foreground=\"red\">*</span>:");
 			this.ylabelWarehouseExpense.UseMarkup = true;
 			this.table2.Add(this.ylabelWarehouseExpense);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelWarehouseExpense]));
@@ -332,7 +332,7 @@ namespace Workwear.Views.Stock
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 0F;
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Выдача из подменного фонда");
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Выдаваемые номенклатуры:");
 			this.hbox7.Add(this.label1);
 			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.hbox7[this.label1]));
 			w24.Position = 0;

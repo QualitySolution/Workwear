@@ -45,7 +45,7 @@ namespace Workwear.Tools.OverNorms.Models
 		/// <summary>
 		/// Создание нового документа
 		/// </summary>
-		/// <param name="params">Параметры операций сверх нормы</param>
+		/// <param name="params">Параметры операций выдачи вне нормы</param>
 		/// <param name="expenseWarehouse">Склад списания</param>
 		/// <param name="createdByUser">Пользователь, создавший документ</param>
 		/// <param name="docNumber">Пользовательский номер документа</param>
@@ -67,14 +67,14 @@ namespace Workwear.Tools.OverNorms.Models
 		/// Обновить/изменить операцию
 		/// </summary>
 		/// <param name="item">Строка документа, которую необходимо изменить</param>
-		/// <param name="param">Параметры операции сверх нормы</param>
+		/// <param name="param">Параметры операции выдачи вне нормы</param>
 		public abstract void UpdateOperation(OverNormItem item, OverNormParam param);
 
 		/// <summary>
 		/// Добавить новую строку в документ
 		/// </summary>
 		/// <param name="document">Документ для добавления</param>
-		/// <param name="param">Параметры операции сверх нормы</param>
+		/// <param name="param">Параметры операции выдачи вне нормы</param>
 		/// <param name="expenseWarehouse">Склад списания</param>
 		public abstract void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse);
 	}

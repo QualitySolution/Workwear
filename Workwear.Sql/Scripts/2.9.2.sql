@@ -1,4 +1,4 @@
--- операции сверх нормы
+-- операции выдачи вне нормы
 ALTER TABLE `operation_barcodes`
 	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
 	ADD CONSTRAINT `FK_operation_barcodes_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -11,7 +11,7 @@ create table if not exists `operation_over_norm`
 	`id`                              int unsigned                           not null auto_increment primary key,
 	`operation_time`                  datetime                               not null,
 	`last_update`                     timestamp                              not null default current_timestamp() not null on update current_timestamp(),
-	`type`                            enum ('Repair', 'Substitute', 'Guest') not null,
+	`type`                            enum ('Simple', 'Substitute', 'Guest') not null,
 	`employee_id` 					  int unsigned 							 not null,
 	`operation_warehouse_id`          int unsigned                           not null,
 	`operation_issued_by_employee_id` int unsigned                           null     default null,
@@ -42,7 +42,7 @@ create table if not exists `over_norm_documents`
 	`doc_number`    varchar(16)                            null,
 	`date`          date                                   not null,
 	`creation_date` timestamp                                   default current_timestamp() not null on update current_timestamp(),
-	`type`          enum ('Repair', 'Substitute', 'Guest') not null,
+	`type`          enum ('Simple', 'Substitute', 'Guest') not null,
 	`user_id`       int unsigned                           null default null,
 	`warehouse_id`  int unsigned                           not null,
 	`comment`       text                                   null,

@@ -143,7 +143,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		#endregion
 
-		#region Guest and Repair
+		#region Guest and Simple
 		public void SelectEmployee() 
 		{
 			IPage<EmployeeJournalViewModel> selectJournal = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);

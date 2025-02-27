@@ -44,7 +44,7 @@ namespace Workwear.Domain.Operations {
 		}
 
 		private OverNormOperation overNormOperation;
-		[Display(Name = "Операция сверх нормы")]
+		[Display(Name = "Операция выдачи вне нормы")]
 		public virtual OverNormOperation OverNormOperation 
 		{
 			get => overNormOperation;

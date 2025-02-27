@@ -6,18 +6,17 @@ using QS.Project.Domain;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Tools.OverNorms.Models.Impl 
 {
 	/// <summary>
 	/// Модель для создания операций остановочного ремонта
 	/// </summary>
-	public class RepairModel : OverNormModelBase
+	public class SimpleModel : OverNormModelBase
 	{
 		private readonly IUnitOfWork uow;
 
-		public RepairModel(IUnitOfWork uow)
+		public SimpleModel(IUnitOfWork uow)
 		{
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
@@ -42,7 +41,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			{
 				Warehouse = expenseWarehouse,
 				Comment = comment,
-				Type = OverNormType.Repair,
+				Type = OverNormType.Simple,
 				CreatedbyUser = createdByUser,
 				DocNumber = docNumber,
 			};
@@ -80,7 +79,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			OverNormOperation overNormOp = new OverNormOperation() 
 			{
 				WarehouseOperation = newWarehouseOp,
-				Type = OverNormType.Repair,
+				Type = OverNormType.Simple,
 				Employee = param.Employee
 			};
 			
@@ -120,7 +119,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			OverNormOperation newOverNormOp = new OverNormOperation() 
 			{
 				WarehouseOperation = newWarehouseOp,
-				Type = OverNormType.Repair,
+				Type = OverNormType.Simple,
 				Employee = param.Employee
 			};
 			

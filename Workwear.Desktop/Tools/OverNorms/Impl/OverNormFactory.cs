@@ -14,8 +14,8 @@ namespace Workwear.Tools.OverNorms.Impl
 
 			switch(type) 
 			{
-				case OverNormType.Repair:
-					return new RepairModel(uow);
+				case OverNormType.Simple:
+					return new SimpleModel(uow);
 				case OverNormType.Substitute:
 					return new SubstituteFundModel(uow);
 				case OverNormType.Guest:

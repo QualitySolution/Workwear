@@ -47,7 +47,7 @@ namespace Workwear.Tools.OverNorms
 			Employee = employee ?? throw new ArgumentNullException(nameof(employee));
 		}
 		
-		/// <param name="employee">Сотрудник, для которого определяется операция сверх нормы</param>
+		/// <param name="employee">Сотрудник, для которого определяется операция выдачи вне нормы</param>
 		/// <param name="amount">Количетсво выдаваемой номенклатуры</param>
 		/// <param name="employeeIssueOperation">Операция выдачи сотруднику для сопосталвения подменной вещи и заменяемой</param>
 		/// <param name="barcodes">Список штрихкодов выдаваемых вещей</param>
