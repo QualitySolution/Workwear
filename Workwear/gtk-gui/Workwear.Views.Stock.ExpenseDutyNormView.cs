@@ -22,7 +22,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonIssuanceSheetOpen;
 
-		private global::QSOrmProject.EnumMenuButton enummenubutton2;
+		private global::QS.Widgets.EnumMenuButton enumPrint;
 
 		private global::Gtk.Label label3;
 
@@ -170,18 +170,18 @@ namespace Workwear.Views.Stock
 			w9.Expand = false;
 			w9.Fill = false;
 			// Container child hboxIssuanceSheet.Gtk.Box+BoxChild
-			this.enummenubutton2 = new global::QSOrmProject.EnumMenuButton();
-			this.enummenubutton2.CanFocus = true;
-			this.enummenubutton2.Name = "enummenubutton2";
-			this.enummenubutton2.UseUnderline = true;
-			this.enummenubutton2.UseMarkup = false;
-			this.enummenubutton2.LabelXAlign = 0F;
-			this.enummenubutton2.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.enumPrint = new global::QS.Widgets.EnumMenuButton();
+			this.enumPrint.CanFocus = true;
+			this.enumPrint.Name = "enumPrint";
+			this.enumPrint.UseUnderline = true;
+			this.enumPrint.UseMarkup = false;
+			this.enumPrint.LabelXAlign = 0F;
+			this.enumPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
 			global::Gtk.Image w10 = new global::Gtk.Image();
 			w10.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.enummenubutton2.Image = w10;
-			this.hboxIssuanceSheet.Add(this.enummenubutton2);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hboxIssuanceSheet[this.enummenubutton2]));
+			this.enumPrint.Image = w10;
+			this.hboxIssuanceSheet.Add(this.enumPrint);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hboxIssuanceSheet[this.enumPrint]));
 			w11.Position = 2;
 			w11.Expand = false;
 			w11.Fill = false;
@@ -525,6 +525,7 @@ namespace Workwear.Views.Stock
 			this.Hide();
 			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
 			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
+			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.buttonColorsLegend.Clicked += new global::System.EventHandler(this.OnButtonColorsLegendClicked);
 			this.ybuttonAdd.Clicked += new global::System.EventHandler(this.OnYbuttonAddClicked);
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);

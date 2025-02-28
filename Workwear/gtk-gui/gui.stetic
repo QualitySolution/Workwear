@@ -29649,7 +29649,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="QSOrmProject.EnumMenuButton" id="enummenubutton2">
+                      <widget class="QS.Widgets.EnumMenuButton" id="enumPrint">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
@@ -29658,6 +29658,7 @@
                         <property name="UseUnderline">True</property>
                         <property name="UseMarkup">False</property>
                         <property name="LabelXAlign">0</property>
+                        <signal name="EnumItemClicked" handler="OnEnumPrintEnumItemClicked" />
                       </widget>
                       <packing>
                         <property name="Position">2</property>
