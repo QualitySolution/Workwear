@@ -99,6 +99,7 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.MakeNewStatusTargetForNlog();
 		toolbarMain.Sensitive = false;
 		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -321,6 +322,7 @@ public partial class MainWindow : Gtk.Window {
 		QSSaaS.Session.StartSessionRefresh ();
 		toolbarMain.Sensitive = true;
 		menubar1.Sensitive = true;
+		entitySearchEmployee.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
