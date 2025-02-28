@@ -62,6 +62,12 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeCardAlias = null;
 
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
+			query.Where(GetSearchCriterion(
+				() => employeeCardAlias.LastName,
+				() => employeeCardAlias.FirstName,
+				() => employeeCardAlias.Patronymic,
+				() => nomenclatureAlias.Name)
+			);
 
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
