@@ -35,8 +35,10 @@ namespace workwear.Journal.ViewModels.Company
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
 	        JournalFilter = Filter = autofacScope.Resolve<EmployeeBalanceFilterViewModel>(
-		        new TypedParameter(typeof(JournalViewModelBase), this));
-	        this.Filter.Employee = employeeCard;
+		        new TypedParameter(typeof(JournalViewModelBase), this),
+		        new TypedParameter(typeof(EmployeeCard), employeeCard)
+		        );
+	        
 	        Title = employeeCard != null 
 		        ? $"Числится за сотрудником - {Filter.Employee.Title}" 
 		        : "Остатки по сотрудникам";
