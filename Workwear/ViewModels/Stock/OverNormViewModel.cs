@@ -19,7 +19,9 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Features;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.OverNorms.Models;
 
@@ -38,15 +40,20 @@ namespace Workwear.ViewModels.Stock
 		public OverNormViewModel(IEntityUoWBuilder uowBuilder,
 			ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation, IUserService userService,
-			IOverNormFactory overNormFactory, BarcodeService barcodeService,
-			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
+			IOverNormFactory overNormFactory,
+			BarcodeService barcodeService,
+			StockRepository stockRepository,
+			FeaturesService featuresService,
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null
+			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
 		{
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			this.overNormFactory = overNormFactory ?? throw new ArgumentNullException(nameof(overNormFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
+			if(featuresService == null) throw new ArgumentNullException(nameof(featuresService));
 			
-			foreach (OverNormItem item in Entity.Items)
-			{
+			foreach (OverNormItem item in Entity.Items) {
 				OverNormOperation operation = item.OverNormOperation;
 				item.Param =
 					new OverNormParam(operation.Employee, operation.WarehouseOperation.Nomenclature, operation.WarehouseOperation.Amount, operation.WarehouseOperation.WearSize,
@@ -59,15 +66,15 @@ namespace Workwear.ViewModels.Stock
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			EntryWarehouseViewModel.Changed += (sender, args) => 
-			{
 				OnPropertyChanged(nameof(CanAddItems));
-			};
 			
 			OverNormModel = overNormFactory.CreateModel(UoW, Entity.Type);
 			if (Entity.Id < 1)
-			{
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-			}
+			
+			if(Entity.Warehouse == null)
+				Entity.Warehouse =
+					stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			Entity.Items.ContentChanged += CalculateTotal;
 			CalculateTotal(null, null);
@@ -75,37 +82,42 @@ namespace Workwear.ViewModels.Stock
 
 		#region View Properties
 		public bool CanAddItems => Entity.Warehouse != null && OverNormModel.Editable;
+		public bool CanRemoveActiveItem => SelectedItem != null;
+		public bool CanChoiseForActiveItem => true;
+		public bool SensitiveDocNumber => !AutoDocNumber;
 		
-		public OverNormType DocType 
-		{
+		public OverNormType DocType {
 			get => Entity.Type;
-			set 
-			{
-				if (Entity.Type == value) return;
+			set {
+				if (Entity.Type == value) 
+					return;
 				Entity.Type = value;
 				Entity.Items.Clear();
 				OverNormModel = overNormFactory.CreateModel(UoW, value);
 			}
 		}
 		
-		public bool SensitiveDocNumber => !AutoDocNumber;
-		
 		private string total;
-		public string Total 
-		{
+		public string Total {
 			get => total;
 			set => SetField(ref total, value);
 		}
 		
 		private bool autoDocNumber = true;
-
 		[PropertyChangedAlso(nameof(DocNumber))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
 		public bool AutoDocNumber { get => autoDocNumber; set => SetField(ref autoDocNumber, value); }
-		public string DocNumber 
-		{
+		public string DocNumber {
 			get => AutoDocNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.DocNumber;
 			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
+		}
+		
+		private OverNormItem selectedItem;
+		[PropertyChangedAlso(nameof(CanRemoveActiveItem))]
+		[PropertyChangedAlso(nameof(CanChoiseForActiveItem))]
+		public OverNormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
 		}
 		#endregion
 
@@ -135,9 +147,9 @@ namespace Workwear.ViewModels.Stock
 			IList<EmployeeIssueOperation> operations = 
 				UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
 
-			foreach (EmployeeIssueOperation empOp in operations) 
-			{
-				if (Entity.Items.Any(x => x.OverNormOperation.EmployeeIssueOperation.Id == empOp.Id)) continue;
+			foreach (EmployeeIssueOperation empOp in operations) {
+				if (Entity.Items.Any(x => x.OverNormOperation.EmployeeIssueOperation.Id == empOp.Id)) 
+					continue;
 				Entity.AddItem(new OverNormOperation() { Employee = empOp.Employee, EmployeeIssueOperation = empOp });
 			}
 		}
@@ -156,9 +168,7 @@ namespace Workwear.ViewModels.Stock
 			IList<EmployeeCard> employees = 
 				UoW.GetById<EmployeeCard>(e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id));
 			foreach (EmployeeCard employee in employees) 
-			{
 				Entity.AddItem(new OverNormOperation() { Employee = employee });
-			}
 		}
 		#endregion
 		
@@ -174,10 +184,7 @@ namespace Workwear.ViewModels.Stock
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
 			
 			if (OverNormModel.RequiresEmployeeIssueOperation) 
-			{
 				selectJournal.ViewModel.Filter.ItemsType = item.OverNormOperation.EmployeeIssueOperation.Nomenclature.Type;
-			}
-
 			selectJournal.Tag = item;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
@@ -196,8 +203,7 @@ namespace Workwear.ViewModels.Stock
 			Barcode barcode = null;
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
-			if (OverNormModel.UseBarcodes) 
-			{
+			if (OverNormModel.UseBarcodes) {
 				IPage<BarcodeJournalViewModel> barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 				barcodeJournal.ViewModel.Nomenclature = nomenclature;
@@ -205,8 +211,7 @@ namespace Workwear.ViewModels.Stock
 				barcodeJournal.ViewModel.Height = height;
 				barcodeJournal.ViewModel.OnlyFreeBarcodes = true;
 				barcodeJournal.ViewModel.Warehouse = Entity.Warehouse;
-				barcodeJournal.ViewModel.OnSelectResult += (o, args) => 
-				{
+				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
 					IList<BarcodeJournalNode> nodes = args.GetSelectedObjects<BarcodeJournalNode>();
 					IList<Barcode> barcodes = UoW.GetById<Barcode>(nodes.Select(x => x.Id));
 					item.Param =
@@ -223,15 +228,12 @@ namespace Workwear.ViewModels.Stock
 			AddOrUpdateItem(item);
 		}
 
-		public void DeleteItem(OverNormItem item) 
-		{
+		public void DeleteItem(OverNormItem item) {
 			Entity.DeleteItem(item);
 		}
 
-		public void DeleteBarcodeFromItem(OverNormItem item, Barcode barcode) 
-		{
-			if (item.Param.Barcodes.Count == 1) 
-			{
+		public void DeleteBarcodeFromItem(OverNormItem item, Barcode barcode) {
+			if (item.Param.Barcodes.Count == 1) {
 				DeleteItem(item);
 				return;
 			}
@@ -246,18 +248,13 @@ namespace Workwear.ViewModels.Stock
 		public override bool Save() 
 		{
 			if (!Validate()) 
-			{
 				return false;
-			}
 
-			foreach(OverNormItem item in Entity.Items)
-			{
+			foreach(OverNormItem item in Entity.Items) {
 				UoW.Save(item.OverNormOperation.WarehouseOperation);
 				UoW.Save(item.OverNormOperation);
 				foreach(BarcodeOperation bo in item.OverNormOperation.BarcodeOperations) 
-				{
 					UoW.Save(bo);
-				}
 			}
 			
 			return base.Save();
@@ -266,36 +263,30 @@ namespace Workwear.ViewModels.Stock
 		
 		private void AddOrUpdateItem(OverNormItem item)
 		{
-			if (Entity.Id < 1 || item.Id < 1) 
-			{
+			if (Entity.Id < 1 || item.Id < 1) {
 				Entity.Items.Remove(item);
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
-			}
-			else 
-			{
+			} else 
 				OverNormModel.UpdateOperation(item, item.Param);
-			}
+			
 		}
 	}
 
 	public class OverNormTempItem : PropertyChangedBase 
 	{
 		private OverNormItem item;
-		public OverNormItem Item 
-		{
+		public OverNormItem Item {
 			get => item;
 			set => SetField(ref item, value);
 		}
 
 		private OverNormParam param;
-		public OverNormParam Param 
-		{
+		public OverNormParam Param {
 			get => param;
 			set => SetField(ref param, value);
 		}
 
-		public OverNormTempItem(OverNormItem item, OverNormParam param) 
-		{
+		public OverNormTempItem(OverNormItem item, OverNormParam param) {
 			Item = item;
 			Param = param;
 		}

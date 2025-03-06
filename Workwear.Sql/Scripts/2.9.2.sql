@@ -1,10 +1,4 @@
 -- операции выдачи вне нормы
-ALTER TABLE `operation_barcodes`
-	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
-	ADD CONSTRAINT `FK_operation_barcodes_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `barcodes`
-	ADD COLUMN `label` varchar(50) null default null;
 
 create table if not exists `operation_over_norm`
 (
@@ -31,10 +25,17 @@ create table if not exists `operation_over_norm`
 	);
 
 alter table operation_barcodes
-	add column `over_norm_id` int unsigned null,
+	add column `operation_over_norm_id` int unsigned null,
 	add constraint `FK_op_barcodes_op_over_norm`
-		foreign key (`over_norm_id`) references `operation_over_norm` (`id`)
-			on update cascade on delete cascade;
+		foreign key (`operation_over_norm_id`) references `operation_over_norm` (`id`)
+			on update cascade on delete cascade,
+	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
+	ADD CONSTRAINT `FK_operation_barcodes_warehouse` 
+		FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`) 
+			ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `barcodes`
+	ADD COLUMN `label` varchar(50) null default null;
 
 create table if not exists `over_norm_documents`
 (
@@ -58,11 +59,11 @@ create table if not exists `over_norm_document_items`
 (
 	`id`           int unsigned not null auto_increment primary key,
 	`document_id`  int unsigned not null,
-	`over_norm_id` int unsigned not null,
+	`operation_over_norm_id` int unsigned not null,
 	constraint `FK_over_norm_document`
 	foreign key (`document_id`) references `over_norm_documents` (`id`)
 	on update cascade on delete cascade ,
 	constraint `FK_op_over_norm`
-	foreign key (`over_norm_id`) references `operation_over_norm` (`id`)
+	foreign key (`operation_over_norm_id`) references `operation_over_norm` (`id`)
 	on update cascade on delete cascade
 	);

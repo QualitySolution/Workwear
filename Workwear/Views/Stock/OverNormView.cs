@@ -54,8 +54,7 @@ namespace Workwear.Views.Stock
 			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);
 			enumTypesComboBox.Binding.AddBinding(ViewModel, vm => vm.DocType, w => w.SelectedItem).InitializeFromSource();
-			enumTypesComboBox.EnumItemSelected += (sender, args) => 
-			{
+			enumTypesComboBox.EnumItemSelected += (sender, args) => {
 				buttonAddEmployee.Visible = !ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
 				buttonAddEmployeeIssue.Visible = ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
 
@@ -111,7 +110,7 @@ namespace Workwear.Views.Stock
 					.AddReadOnlyTextRenderer(x =>  string.Join(", ", x.OverNormOperation.BarcodeOperations?.Select(b => b.Barcode.Title) ?? Array.Empty<string>()))
 				.Finish();
 			
-			ytreeItems.ItemsDataSource = ViewModel.Items;
+			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
 		}
 
@@ -128,15 +127,12 @@ namespace Workwear.Views.Stock
 			                              ViewModel.OverNormModel.CanUseWithBarcodes &&
 			                              item.OverNormOperation.BarcodeOperations != null &&
 			                              item.OverNormOperation.BarcodeOperations.Any();
-			if (buttonDelBarcodes.Sensitive) 
-			{
+			if (buttonDelBarcodes.Sensitive) {
 				Menu barcodesMenu = new Menu();
 				yMenuItem menuItem;
-				foreach (var bo in item.OverNormOperation.BarcodeOperations) 
-				{
+				foreach (var bo in item.OverNormOperation.BarcodeOperations) {
 					menuItem = new yMenuItem(bo.Barcode.Title);
-					menuItem.Activated += (o, eventArgs) => 
-					{
+					menuItem.Activated += (o, eventArgs) => {
 						ViewModel.DeleteBarcodeFromItem(item, bo.Barcode);
 						barcodesMenu.Remove(o as Widget);
 						ytreeItems.QueueDraw();

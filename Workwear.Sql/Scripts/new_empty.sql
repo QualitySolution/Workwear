@@ -2007,7 +2007,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `employee_issue_operation_id` INT UNSIGNED NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   `warehouse_id` INT UNSIGNED NULL,
-  `over_norm_id` int unsigned null,
+  `operation_over_norm_id` int unsigned null,
 	PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
@@ -2034,7 +2034,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
 	ON DELETE CASCADE
 	ON UPDATE CASCADE,
   constraint `FK_op_barcodes_op_over_norm`
-	  foreign key (`over_norm_id`) references `operation_over_norm` (`id`)
+	  foreign key (`operation_over_norm_id`) references `operation_over_norm` (`id`)
 		  on update cascade 
 	      on delete cascade)
 ENGINE = InnoDB;
@@ -2094,12 +2094,12 @@ create table if not exists `over_norm_document_items`
 (
 	`id`           int unsigned not null auto_increment primary key,
 	`document_id`  int unsigned not null,
-	`over_norm_id` int unsigned not null,
+	`operation_over_norm_id` int unsigned not null,
 	constraint `FK_over_norm_document`
 		foreign key (`document_id`) references `over_norm_documents` (`id`)
-			on update cascade on delete cascade ,
+		on update cascade on delete cascade ,
 	constraint `FK_op_over_norm`
-		foreign key (`over_norm_id`) references `operation_over_norm` (`id`)
+		foreign key (`operation_over_norm_id`) references `operation_over_norm` (`id`)
 			on update cascade on delete cascade
 );
 
