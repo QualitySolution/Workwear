@@ -48,3 +48,6 @@ create index index_shipment_items_nomenclature
 
 create index index_shipment_items_size
     on shipment_items (size_id);
+
+alter table shipment
+	add status text not null default 'Заказано' after end_period;
