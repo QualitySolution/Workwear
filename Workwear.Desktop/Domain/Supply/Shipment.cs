@@ -67,6 +67,14 @@ namespace Workwear.Domain.Supply {
 			set { items = value; }
 		}
 
+		private string status;
+
+		[Display(Name = "Статус поставки")]
+		public virtual string Status {
+			get=>status;
+			set{status=value;}
+		}
+
 		#endregion
 
 		public virtual string Title => $"Планируемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
