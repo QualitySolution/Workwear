@@ -197,9 +197,9 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<EmployeeBalanceJournalViewModel>(
 				(jwm) => FluentColumnsConfig<EmployeeBalanceJournalNode>.Create()
 					.AddColumn("Сотрудник").Resizable()
-					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName)
+					.Visible(jwm.Filter.Employee is null).AddTextRenderer(e => e.EmployeeName).SearchHighlight()
 					.AddColumn ("Наименование").Resizable()
-					.AddTextRenderer(e => e.ItemName).WrapWidth(1000)
+					.AddTextRenderer(e => e.ItemName).WrapWidth(1000).SearchHighlight()
 					.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
 					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize)
 					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height)
