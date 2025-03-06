@@ -7,7 +7,6 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Tools.OverNorms.Models.Impl 
 {
@@ -26,9 +25,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 		//public override bool Editable { get; }
 
 		public override bool CanUseWithBarcodes => true;
-		
 		public override bool CanUseWithoutBarcodes => true;
-		
 		public override bool RequiresEmployeeIssueOperation => false;
 
 		public override OverNorm CreateDocument(IList<OverNormParam> @params, Warehouse expenseWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) 
@@ -39,8 +36,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (UseBarcodes && @params.Any(x => !x.Barcodes.Any())) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 			if (expenseWarehouse == null) throw new ArgumentNullException(nameof(expenseWarehouse));
 			
-			OverNorm document = new OverNorm() 
-			{
+			OverNorm document = new OverNorm() {
 				Warehouse = expenseWarehouse,
 				Comment = comment,
 				Type = OverNormType.Guest,
@@ -49,10 +45,8 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			};
 			
 			foreach (OverNormParam param in @params) 
-			{
 				AddItem(document, param, expenseWarehouse);
-			}
-
+			
 			return document;
 		}
 
@@ -61,8 +55,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (operation == null) throw new ArgumentNullException(nameof(operation));
 			if (receiptWarehouse == null) throw new ArgumentNullException(nameof(receiptWarehouse));
 
-			WarehouseOperation newWarehouseOp = new WarehouseOperation() 
-			{
+			WarehouseOperation newWarehouseOp = new WarehouseOperation() {
 				ReceiptWarehouse = receiptWarehouse,
 				Amount = operation.WarehouseOperation.Amount,
 				Nomenclature = operation.WarehouseOperation.Nomenclature,
@@ -100,42 +93,29 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			item.OverNormOperation.WarehouseOperation.Height = param.Height;
 			List<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id).ToList();
 			if (!UseBarcodes) 
-			{
 				item.OverNormOperation.BarcodeOperations.Clear();
-			}
-			else if (UseBarcodes && (param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id)) || param.Barcodes.Count != currentBarcodeIds.Count)) 
-			{
+			else if (UseBarcodes && (param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id)) || param.Barcodes.Count != currentBarcodeIds.Count)) {
 				int amountToUpdate = item.OverNormOperation.BarcodeOperations.Count > param.Amount
 					? param.Amount
 					: item.OverNormOperation.BarcodeOperations.Count;   
-				if (item.OverNormOperation.BarcodeOperations.Count > param.Amount) 
-				{
+				if (item.OverNormOperation.BarcodeOperations.Count > param.Amount) {
 					int count = item.OverNormOperation.BarcodeOperations.Count;
 					for (int i = count - 1; i >= count - param.Amount; i--) 
-					{
 						item.OverNormOperation.BarcodeOperations.RemoveAt(i);
-					}
-				}
-				else 
-				{
+				} else 
 					FillOverNormOperation(item.OverNormOperation, param.Barcodes.Skip(amountToUpdate));
-				}
 				
-				for (int i = 0; i < amountToUpdate; i++) 
-				{
+				for (int i = 0; i < amountToUpdate; i++) {
 					BarcodeOperation bo = item.OverNormOperation.BarcodeOperations[i];
 					if (bo.Barcode.Id != param.Barcodes[i].Id) 
-					{
 						bo.Barcode = param.Barcodes[i];
-					}
 				}
 			}
 		}
 		
 		private void AddItem(OverNorm document, OverNormParam param, Warehouse expenseWarehouse)
 		{
-			WarehouseOperation newWarehouseOp = new WarehouseOperation 
-			{
+			WarehouseOperation newWarehouseOp = new WarehouseOperation {
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
 				Nomenclature = param.Nomenclature,
@@ -146,13 +126,9 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 			OverNormOperation newOverNormOp;
 			if (UseBarcodes && param.Barcodes.Any()) 
-			{
 				newOverNormOp = CreateOperationWithBarcodes(newWarehouseOp, param.Employee,  param.Barcodes);
-			}
-			else
-			{
-				newOverNormOp = new OverNormOperation() 
-				{
+			else {
+				newOverNormOp = new OverNormOperation() {
 					WarehouseOperation = newWarehouseOp,
 					Type = OverNormType.Guest,
 					Employee = param.Employee
@@ -164,8 +140,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 		
 		private OverNormOperation CreateOperationWithBarcodes(WarehouseOperation newWarehouseOp, EmployeeCard employee, IEnumerable<Barcode> barcodes) 
 		{
-			OverNormOperation newOverNormOp = new OverNormOperation() 
-			{
+			OverNormOperation newOverNormOp = new OverNormOperation() {
 				WarehouseOperation = newWarehouseOp,
 				Type = OverNormType.Guest,
 				Employee = employee
@@ -177,10 +152,8 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 		private void FillOverNormOperation(OverNormOperation overNormOp, IEnumerable<Barcode> barcodes) 
 		{
-			foreach (Barcode substituteBarcode in barcodes) 
-			{
-				BarcodeOperation barcodeOperation = new BarcodeOperation() 
-				{
+			foreach (Barcode substituteBarcode in barcodes) {
+				BarcodeOperation barcodeOperation = new BarcodeOperation() {
 					Barcode = substituteBarcode,
 					OverNormOperation = overNormOp
 				};

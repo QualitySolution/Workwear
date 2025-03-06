@@ -81,7 +81,24 @@ namespace Workwear.Tools.OverNorms
 
 		private bool NomeclatureMatch(Nomenclature nomenclature, Size size, Size height, IList<Barcode> barcodes) 
 		{
-			return barcodes.All(x => x.Nomenclature.Id == nomenclature?.Id && x.Size.Id == size?.Id && x.Height.Id == height?.Id);
+			return barcodes.All(x => x.Nomenclature.Id == nomenclature?.Id && x.Size?.Id == size?.Id && x.Height?.Id == height?.Id);
+		}
+
+		public override bool Equals(object obj) {
+			if(obj is OverNormParam param)
+				return
+					Nomenclature?.Id == param.Nomenclature?.Id &&
+					Size?.Id == param.Size?.Id &&
+					Height?.Id == param.Height?.Id &&
+					amount == param.Amount &&
+					Employee?.Id == param.Employee?.Id &&
+					EmployeeIssueOperation?.Id == param.EmployeeIssueOperation?.Id &&
+					Barcodes.Count == param.Barcodes.Count &&
+					Enumerable.SequenceEqual(
+						Barcodes.Select(b => b.Id).OrderBy(e => e),
+						param.Barcodes.Select(b => b.Id).OrderBy(e => e));
+			else
+				return false;
 		}
 	}
 }

@@ -33,23 +33,25 @@ namespace Workwear.Views.Stock
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
-			
 			ydateDoc.Binding
 				.AddBinding(Entity, e => e.Date, w => w.Date)
 				.InitializeFromSource();
-			
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
 				.InitializeFromSource();
-			
 			buttonAddEmployee.Binding
 				.AddBinding(ViewModel, wm => wm.CanAddItems, w => w.Sensitive)
 				.InitializeFromSource();
-			
 			buttonAddEmployeeIssue.Binding
 				.AddBinding(ViewModel, wm => wm.CanAddItems, w => w.Sensitive)
 				.InitializeFromSource();
-
+			buttonDel.Binding
+				.AddBinding(ViewModel, wm => wm.CanRemoveActiveItem, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonAddNomenclature.Binding
+				.AddBinding(ViewModel, wm => wm.CanChoiseForActiveItem, w => w.Sensitive)
+				.InitializeFromSource();
+			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);
 			enumTypesComboBox.Binding.AddBinding(ViewModel, vm => vm.DocType, w => w.SelectedItem).InitializeFromSource();
 			enumTypesComboBox.EnumItemSelected += (sender, args) => 
@@ -109,17 +111,19 @@ namespace Workwear.Views.Stock
 					.AddReadOnlyTextRenderer(x =>  string.Join(", ", x.OverNormOperation.BarcodeOperations?.Select(b => b.Barcode.Title) ?? Array.Empty<string>()))
 				.Finish();
 			
-			ytreeItems.ItemsDataSource = ViewModel.Entity.Items;
-			ytreeItems.Selection.Changed += (sender, args) => 
-			{
-				buttonAddNomenclature.Sensitive = buttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-				UpdateDelBarcodesMenu();
-			};
+			ytreeItems.ItemsDataSource = ViewModel.Items;
+			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
 		}
 
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
+			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<OverNormItem>();
+		
 		private void UpdateDelBarcodesMenu() 
 		{
 			OverNormItem item = ytreeItems.GetSelectedObject<OverNormItem>();
+			ViewModel.SelectedItem = item;
+			
+			//UpdateDelBarcodesMenu
 			buttonDelBarcodes.Sensitive = buttonDel.Sensitive && 
 			                              ViewModel.OverNormModel.CanUseWithBarcodes &&
 			                              item.OverNormOperation.BarcodeOperations != null &&

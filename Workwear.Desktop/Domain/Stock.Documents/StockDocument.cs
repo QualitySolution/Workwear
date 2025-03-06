@@ -88,7 +88,7 @@ namespace Workwear.Domain.Stock.Documents
 		Income,
 		[Display(Name = "Выдача сотруднику")]
 		ExpenseEmployeeDoc,
-		[Display(Name = "Выдача свех нормы")]
+		[Display(Name = "Выдача вне нормы")]
 		OverNormDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,

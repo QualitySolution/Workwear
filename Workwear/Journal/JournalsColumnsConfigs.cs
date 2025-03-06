@@ -464,6 +464,7 @@ namespace workwear.Journal
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)
 					.AddColumn("Рост").AddTextRenderer(node => node.Height)
 					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FullName).SearchHighlight()
+					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Label).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 				);

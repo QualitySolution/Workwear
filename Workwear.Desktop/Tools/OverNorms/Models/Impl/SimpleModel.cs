@@ -23,7 +23,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 		//public override bool Editable { get; }
 
-		public override bool CanUseWithBarcodes => false;
+		public override bool CanUseWithBarcodes => true;
 		
 		public override bool CanUseWithoutBarcodes => true;
 		

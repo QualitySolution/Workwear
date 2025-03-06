@@ -53,11 +53,16 @@ namespace Workwear.Domain.Operations {
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
-		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ?? WarehouseOperation?.OperationTime;
+
+		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ??
+		                                          WarehouseOperation?.OperationTime ??
+		                                          (Warehouse != null ? Barcode.CreateDate : (DateTime?)null);
 		public virtual string OperationTitle {
 			get {
 				if(EmployeeIssueOperation?.Issued > 0)
 					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				if(Warehouse != null)
+					return $"Маркировка на складе ({Warehouse.Name})";
 				return "???";
 			}
 		}
