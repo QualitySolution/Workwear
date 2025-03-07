@@ -67,3 +67,61 @@ create table if not exists `over_norm_document_items`
 	foreign key (`operation_over_norm_id`) references `operation_over_norm` (`id`)
 	on update cascade on delete cascade
 	);
+
+-- Документ маркировки
+
+-- -----------------------------------------------------
+-- Table `stock_barcoding`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_barcoding`
+(
+	`id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`doc_number`    VARCHAR(16)  NULL DEFAULT NULL,
+	`date`          DATE         NOT NULL,
+	`creation_date` DATETIME     NULL DEFAULT NULL,
+	`user_id`       INT UNSIGNED NULL DEFAULT NULL,
+	`warehouse_id`  int unsigned not null,
+	PRIMARY KEY (`id`),
+	INDEX `stock_inspection_fk_1_idx` (`user_id` ASC),
+	INDEX `index_stock_inspection_date` (`date` ASC),
+	CONSTRAINT `stock_barcoding_fk_users`
+		FOREIGN KEY (`user_id`)
+			REFERENCES `users` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE NO ACTION,
+	CONSTRAINT `stock_barcoding_fk_users`
+		FOREIGN KEY (`warehouse_id`)
+			REFERENCES `warehouse` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE cascade
+)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `stock_barcoding_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
+(
+	`id`                 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`stock_barcoding_id` 		INT UNSIGNED NOT NULL,
+	`operation_expence_id`      int unsigned not null,
+	`operation_receipt_id`      int unsigned not null,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `stock_barcoding_items_fk_doc`
+		FOREIGN KEY (`stock_barcoding_id`)
+			REFERENCES `stock_barcoding` (`id`)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	CONSTRAINT `stock_barcoding_items_fk_op_expence`
+		FOREIGN KEY (`operation_expence_id`)
+			REFERENCES `operation_warehouse` (`id`)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	CONSTRAINT `stock_barcoding_items_fk_op_receipt`
+		FOREIGN KEY (`operation_receipt_id`)
+			REFERENCES `operation_warehouse` (`id`)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+)
+	ENGINE = InnoDB;
