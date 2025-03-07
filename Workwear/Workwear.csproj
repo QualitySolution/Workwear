@@ -138,6 +138,7 @@
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Supply\ShipmentJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentWithdrawViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
+    <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
@@ -510,6 +512,8 @@
     <Compile Include="Journal\Filter.ViewModels\Regulations\ProtectionToolsFilterViewModel.cs" />
     <Compile Include="ReportParameters\Views\WearCardsReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WearCardsReportView.cs" />
+    <Compile Include="Views\Supply\ShipmentView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -747,6 +751,7 @@
     <Folder Include="Views\Export\" />
     <Folder Include="Journal\Filter.Views\Postomats\" />
     <Folder Include="Views\Analytics\" />
+    <Folder Include="Views\Supply\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

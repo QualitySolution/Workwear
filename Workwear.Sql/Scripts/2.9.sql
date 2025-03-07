@@ -727,3 +727,8 @@ alter table stock_income
 
 drop table stock_income_detail;
 
+
+
+
+
+
