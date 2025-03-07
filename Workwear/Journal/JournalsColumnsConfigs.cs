@@ -520,8 +520,19 @@ namespace workwear.Journal
 					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreationDate.ToShortDateString())
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
 					.AddColumn("Статус").AddTextRenderer(node=>node.StatusText)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColorShipment(x))
 					.Finish()
 				);
+			string ForegroundColorShipment(ShipmentJournalNode n)
+			{
+				if(n.StatusText=="Отменено"||n.StatusText=="Получено")
+					return "gray";
+				if(n.EndPeriod < DateTime.Today)
+					return "red";
+				if(n.StartPeriod<=DateTime.Today&&n.EndPeriod>=DateTime.Today)
+					return "orange";
+				return "black";
+			}
 
 			#endregion
 		}
