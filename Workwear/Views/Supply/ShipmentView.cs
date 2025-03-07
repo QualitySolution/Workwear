@@ -5,7 +5,6 @@ using Workwear.Domain.Supply;
 using Workwear.ViewModels.Supply;
 
 namespace Workwear.Views.Supply {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ShipmentView : EntityDialogViewBase<ShipmentViewModel,Shipment> {
 		public ShipmentView(ShipmentViewModel viewModel): base(viewModel) {
 			this.Build();
