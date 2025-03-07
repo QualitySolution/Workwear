@@ -80,7 +80,6 @@ namespace Workwear.ViewModels.Supply {
 		public virtual DateTime EndPeriod {get=>Entity.EndPeriod;set=>Entity.EndPeriod = value;}
 		public virtual string DocComment {get=>Entity.Comment;set=>Entity.Comment = value;}
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
-		public virtual string Status => Entity.Status;
 		
 		#endregion
 
@@ -158,18 +157,6 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		#endregion
-
-		public enum StatusOfShipment {
-			[Display(Name="Заказано")]
-			ordered,
-			[Display(Name = "В пути")]
-			on_the_way,
-			[Display(Name="Ожидает оплаты")]
-			awaiting_payment,
-			[Display(Name="Отменено")]
-			cancelled,
-			[Display(Name = "Получено")]
-			received
-		}
+		
 	}
 }

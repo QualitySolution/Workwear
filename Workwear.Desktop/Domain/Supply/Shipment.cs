@@ -18,7 +18,7 @@ namespace Workwear.Domain.Supply {
 		Genitive = "планируемой поставки"
 	)]
 	[HistoryTrace]
-	public class Shipment: IDomainObject, IValidatableObject {
+	public class Shipment: PropertyChangedBase, IDomainObject, IValidatableObject {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
 
@@ -67,10 +67,10 @@ namespace Workwear.Domain.Supply {
 			set { items = value; }
 		}
 
-		private string status;
+		private ShipmentStatus status;
 
 		[Display(Name = "Статус поставки")]
-		public virtual string Status {
+		public virtual ShipmentStatus Status {
 			get=>status;
 			set{status=value;}
 		}

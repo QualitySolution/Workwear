@@ -28,6 +28,10 @@ namespace Workwear.Views.Supply {
 				.InitializeFromSource();
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			yenumcomboboxStatus.ItemsEnum=typeof(ShipmentStatus);
+			yenumcomboboxStatus.Binding
+				.AddBinding(Entity,v=>v.Status,w=>w.SelectedItem)
+				.InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
