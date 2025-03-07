@@ -1,6 +1,6 @@
 ﻿using System;
-using Autofac;
 using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -11,7 +11,6 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Supply;
-using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Supply;
 
@@ -51,6 +50,7 @@ namespace workwear.Journal.ViewModels.Supply {
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.StartPeriod).WithAlias(() => resultAlias.StartPeriod)
 					.Select(x => x.EndPeriod).WithAlias(() => resultAlias.EndPeriod)
+					.Select(x=>shipmentAlias.Status).WithAlias(() => resultAlias.Status)
 					.Select(x => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(x => x.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
@@ -65,6 +65,8 @@ namespace workwear.Journal.ViewModels.Supply {
 		public int Id { get; set; }
 		public DateTime StartPeriod { get; set; }
 		public DateTime EndPeriod { get; set; }
+		public ShipmentStatus Status { get; set; }
+		public string StatusText => Status.GetEnumTitle();
 		[SearchHighlight]
 		public string Author { get; set; }
 		public DateTime CreationDate { get; set; }

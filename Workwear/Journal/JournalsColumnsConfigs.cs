@@ -519,6 +519,7 @@ namespace workwear.Journal
 					.AddColumn("Создал").AddTextRenderer(node=>node.Author).SearchHighlight()
 					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreationDate.ToShortDateString())
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node=>node.StatusText)
 					.Finish()
 				);
 
