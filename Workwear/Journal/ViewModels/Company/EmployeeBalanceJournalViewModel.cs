@@ -132,6 +132,13 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+					.Where(GetSearchCriterion(
+						() => employeeCardAlias.LastName,
+						() => employeeCardAlias.FirstName,
+						() => employeeCardAlias.Patronymic,
+						() => nomenclatureAlias.Name,
+						() => sizeAlias.Name,
+						() => heightAlias.Name))
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)

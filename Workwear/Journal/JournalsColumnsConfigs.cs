@@ -14,6 +14,7 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using Workwear.Tools.Features;
 
@@ -201,8 +202,8 @@ namespace workwear.Journal
 					.AddColumn ("Наименование").Resizable()
 					.AddTextRenderer(e => e.ItemName).WrapWidth(1000).SearchHighlight()
 					.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
-					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize)
-					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height)
+					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize).SearchHighlight()
+					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height).SearchHighlight()
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 					.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
@@ -376,7 +377,7 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.Id.ToString()).SearchHighlight()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.NomeclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
 					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()
@@ -464,6 +465,7 @@ namespace workwear.Journal
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)
 					.AddColumn("Рост").AddTextRenderer(node => node.Height)
 					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FullName).SearchHighlight()
+					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Label).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 				);

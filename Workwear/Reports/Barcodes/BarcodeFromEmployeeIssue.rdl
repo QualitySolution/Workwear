@@ -26,7 +26,7 @@
           <Textbox Name="Textbox1">
             <Height>16.52pt</Height>
             <Width>214.14pt</Width>
-            <Value>={employee}</Value>
+            <Value>=Iif(Fields!employee.IsMissing, "", {employee})</Value>
             <ZIndex>0</ZIndex>
             <Left>0.8pt</Left>
             <Top>62.0pt</Top>
@@ -117,7 +117,7 @@
           <Textbox Name="Textbox2">
             <Height>36.01pt</Height>
             <Width>134.71pt</Width>
-            <Value>={subdivision}</Value>
+            <Value>=Iif(Fields!subdivision.IsMissing, {label}, {subdivision})</Value>
             <ZIndex>0</ZIndex>
             <Left>0.00pt</Left>
             <Top>18.00pt</Top>
@@ -133,7 +133,7 @@
           <Textbox Name="Textbox3">
             <Height>11.25pt</Height>
             <Width>54.27pt</Width>
-            <Value>={personnel_number}</Value>
+            <Value>=Iif(Fields!personnel_number.IsMissing, "", {personnel_number})</Value>
             <ZIndex>0</ZIndex>
             <Left>74.20pt</Left>
             <Top>51.20pt</Top>
@@ -173,18 +173,19 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    operation_issued_by_employee.operation_time,
+ifnull(operation_issued_by_employee.operation_time, barcodes.creation_date) as operation_time,
     LEFT(barcodes.title, 2) AS number_system,
     SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
     SUBSTRING(barcodes.title, 8, 5) AS product_code,
     subdivisions.name AS subdivision,
+barcodes.label,
     CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) AS employee,
     employees.personnel_number,
     nomenclature.name AS nomenclature,
     wear_size.name as wear_size,
     wear_height.name as wear_height
 FROM operation_issued_by_employee
-         JOIN operation_barcodes ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
+RIGHT JOIN operation_barcodes ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
          JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
          LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
          LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
@@ -241,6 +242,10 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
           <DataField>personnel_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="label">
+          <DataField>label</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -253,7 +258,7 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <DefaultValue>

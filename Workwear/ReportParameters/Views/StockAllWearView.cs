@@ -1,6 +1,5 @@
 using System;
 using QS.Views;
-using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {

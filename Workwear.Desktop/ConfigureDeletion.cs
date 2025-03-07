@@ -62,7 +62,7 @@ namespace Workwear
 				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<Leader>(x => x.Employee)
 				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
-				;
+				.AddClearDependence<Leader>(x => x.Employee);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
 
@@ -114,7 +114,7 @@ namespace Workwear
 			#endregion
 			#region Операции
 			DeleteConfig.AddHibernateDeleteInfo<BarcodeOperation>();
-			
+
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeIssueOperation>()
 				.RequiredCascadeDeletion()
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
@@ -125,7 +125,9 @@ namespace Workwear
 				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
 				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
-				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
+				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue)
+				.AddDeleteDependence<OverNormOperation>(x => x.EmployeeIssueOperation);
+				//.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation.EmployeeIssueOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<DutyNormIssueOperation>()
 				.RequiredCascadeDeletion()
@@ -145,8 +147,13 @@ namespace Workwear
 				.AddDeleteDependence<DutyNormIssueOperation>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CompletionResultItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<CompletionSourceItem>(x => x.WarehouseOperation)
-				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation);
+				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation)
+				.AddDeleteDependence<OverNormOperation>(x => x.WarehouseOperation);
+				//.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation.WarehouseOperation);
 
+			DeleteConfig.AddHibernateDeleteInfo<OverNormOperation>()
+				.AddDeleteCascadeDependence(x => x.WarehouseOperation)
+				.AddDeleteDependence<BarcodeOperation>(x => x.OverNormOperation);
 			#endregion
 			#region Постаматы
 			DeleteConfig.AddHibernateDeleteInfo<PostomatDocument>()
@@ -269,14 +276,16 @@ namespace Workwear
 				.AddClearDependence<Subdivision>(x => x.Warehouse)
 				.AddClearDependence<UserSettings>(x => x.DefaultWarehouse)
 				.AddDeleteDependence<Completion>(x => x.ResultWarehouse)
-				.AddDeleteDependence<Completion>(x => x.SourceWarehouse);
+				.AddDeleteDependence<Completion>(x => x.SourceWarehouse)
+				.AddDeleteDependence<BarcodeOperation>(x => x.Warehouse)
+				.AddDeleteDependence<OverNorm>(x => x.Warehouse);
 
 			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
 				.AddClearDependence<ItemsType>(x => x.Units);
 
-			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
+			DeleteConfig.AddHibernateDeleteInfo<Nomenclature>()
 				.AddDeleteDependence<Barcode>(x => x.Nomenclature)
-				.AddDeleteDependence<CollectiveExpenseItem> (x => x.Nomenclature)
+				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Nomenclature)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<DutyNormIssueOperation>(x => x.Nomenclature)
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
@@ -370,6 +379,12 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			
+			DeleteConfig.AddHibernateDeleteInfo<OverNorm>()
+				.AddDeleteDependence<OverNormItem>(x => x.Document);
+
+			DeleteConfig.AddHibernateDeleteInfo<OverNormItem>()
+				.AddDeleteCascadeDependence(x => x.OverNormOperation);
 			
 			#endregion
 			#region Пользователь

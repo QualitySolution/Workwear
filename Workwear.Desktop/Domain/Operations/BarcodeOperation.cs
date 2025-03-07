@@ -35,14 +35,34 @@ namespace Workwear.Domain.Operations {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
+		
+		private Warehouse warehouse;
+		[Display(Name = "Склад")]
+		public virtual Warehouse Warehouse {
+			get => warehouse;
+			set => SetField(ref warehouse, value);
+		}
+
+		private OverNormOperation overNormOperation;
+		[Display(Name = "Операция выдачи вне нормы")]
+		public virtual OverNormOperation OverNormOperation 
+		{
+			get => overNormOperation;
+			set => SetField(ref overNormOperation, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
-		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ?? WarehouseOperation?.OperationTime;
+
+		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ??
+		                                          WarehouseOperation?.OperationTime ??
+		                                          (Warehouse != null ? Barcode.CreateDate : (DateTime?)null);
 		public virtual string OperationTitle {
 			get {
 				if(EmployeeIssueOperation?.Issued > 0)
 					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				if(Warehouse != null)
+					return $"Маркировка на складе ({Warehouse.Name})";
 				return "???";
 			}
 		}

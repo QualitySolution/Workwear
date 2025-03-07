@@ -39,9 +39,7 @@ namespace Workwear.ViewModels.Stock {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-				
-			if(UoW.IsNew)
-				Entity.CreatedbyUser = userService.GetCurrentUser();
+
 			Employee = UoW.GetInSession(employee);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))

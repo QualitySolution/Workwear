@@ -20,6 +20,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock.Widgets;
 using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -102,7 +103,7 @@ SELECT
     stock.*,
     (SELECT SUM(operation_sub.amount)/DATEDIFF(NOW(), MIN(operation_sub.operation_time))
      FROM operation_warehouse operation_sub
-     WHERE operation_sub.nomenclature_id = stock.Id
+     WHERE operation_sub.nomenclature_id = stock.NomeclatureId
          AND operation_sub.size_id <=> stock.SizeId
          AND operation_sub.height_id <=> stock.HeightId
          AND operation_sub.owner_id <=> stock.OwnerId
@@ -111,7 +112,7 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption
-    FROM (SELECT nomenclature.id        AS Id,
+    FROM (SELECT nomenclature.id        AS NomeclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
                  nomenclature.sex       AS Sex,
@@ -127,10 +128,12 @@ SELECT
                      - SUM(IF((operation.warehouse_expense_id IS NOT NULL AND
                                (@all_warehouse OR operation.warehouse_expense_id = @warehouse_id)),
                               operation.amount, 0))
-                     )                  AS Amount,
-                 owners.id              AS OwnerId,
-                 owners.name            AS OwnerName,
-                 nomenclature.sale_cost AS SaleCost
+	                 )                      AS Amount,
+	             owners.id                  AS OwnerId,
+	             owners.name                AS OwnerName,
+	             nomenclature.use_barcode   AS UseBarcode,	             
+             	 operation.warehouse_receipt_id AS WarehouseId,
+	             nomenclature.sale_cost     AS SaleCost
           FROM nomenclature
                    JOIN operation_warehouse AS operation
                              on (operation.operation_time < ADDDATE(@report_date, INTERVAL 1 DAY)
@@ -167,7 +170,119 @@ SELECT
 				return result;
 			}
 		}
+//1289		
+		/*
+		private IQueryOver<WarehouseOperation> BarcodesStockBalanceQuery(IUnitOfWork uow) 
+		{
+			StockBalanceJournalNode resultAlias = null;
+			
+			Barcode bSubAlias = null;
+			BarcodeOperation boSubAlias = null;
+			
+			Barcode bSub1Alias = null;
+			BarcodeOperation boSubAlias1 = null;
+			OverNormOperation oonSubAlias1 = null;
+			WarehouseOperation woSubAlias1 = null;
+			
+			BarcodeOperation boAlias = null;
+			WarehouseOperation woAlias = null;
+			OverNormOperation onAlias = null;
+			Barcode bAlias = null;
+			Nomenclature nAlias = null;
+			ItemsType itAlias = null;
+			MeasurementUnits unitsAlias = null;
+			Size sizeAlias = null;
+			Size heightAlias = null;
+			Owner ownerAlias = null;
+			
+			var subQuery = QueryOver.Of(() => boSubAlias)
+				.JoinAlias(() => boSubAlias.Barcode, () => bSubAlias, JoinType.InnerJoin)
+				.Select(Projections.Group(() => bSubAlias.Id))
+				.Where(Restrictions.Eq(Projections.Count(() => bSubAlias.Id), 1))
+				.Where(x => x.Barcode == boAlias.Barcode);
+				
+			var subQuery1 = QueryOver.Of(() => boSubAlias1)
+				.JoinAlias(() => boSubAlias1.Barcode, () => bSub1Alias)
+				.JoinAlias(() => boSubAlias1.OverNormOperation, () => oonSubAlias1)
+				.JoinAlias(() => oonSubAlias1.WarehouseOperation, () => woSubAlias1)
+				.Where(() => boSubAlias1.OverNormOperation != null)
+				.SelectList(list => list
+					.SelectGroup(() => bSub1Alias.Id)
+					.SelectMax(() => oonSubAlias1.OperationTime))
+				.Where(x => x.Barcode == boAlias.Barcode && onAlias.OperationTime > oonSubAlias1.OperationTime);
+			
+			var queryStock = uow.Session.QueryOver(() => woAlias)
+				.JoinEntityAlias(() => onAlias, () => onAlias.WarehouseOperation.Id == woAlias.Id, JoinType.RightOuterJoin)
+				.JoinEntityAlias(() => boAlias, () => boAlias.OverNormOperation.Id == onAlias.Id, JoinType.RightOuterJoin)
+				.JoinAlias(() => boAlias.Barcode, () => bAlias, JoinType.InnerJoin)
+				.JoinAlias(() => bAlias.Size, () => sizeAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => bAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => bAlias.Nomenclature, () => nAlias, JoinType.InnerJoin)
+				.JoinAlias(() => nAlias.Type, () => itAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => woAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => itAlias.Units, () => unitsAlias)
+				.Where(Restrictions.Disjunction()
+					.Add(Subqueries.WhereExists(subQuery))
+					.Add(Subqueries.WhereExists(subQuery1)))
+				.Where(Restrictions.Or(
+					Restrictions.Where(() => boAlias.Warehouse != null && (Filter.Warehouse == null || boAlias.Warehouse == Filter.Warehouse)),
+					Restrictions.Where(() =>
+						woAlias.ReceiptWarehouse != null && (Filter.Warehouse == null || woAlias.ReceiptWarehouse == Filter.Warehouse)))
+				)
+				.Where(GetSearchCriterion(
+					() => nAlias.Id,
+					() => nAlias.Number,
+					() => nAlias.Name,
+					() => sizeAlias.Name,
+					() => heightAlias.Name))
+				.SelectList(list => list
+					.Select(() => boAlias.Warehouse.Id.Coalesce(woAlias.ReceiptWarehouse.Id)).WithAlias(() => resultAlias.WarehouseId)
+					.Select(() => nAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
+					.Select(() => nAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+					.Select(() => nAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
+					.Select(() => nAlias.Sex).WithAlias(() => resultAlias.Sex)
+					.Select(() => nAlias.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
+					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
+					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
+					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
+					.Select(() => woAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					.Select(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
+					.SelectCount(() => bAlias.Id).WithAlias(() => resultAlias.Amount)
+					.SelectGroup(() => nAlias.Id).WithAlias(() => resultAlias.Id)
+					.SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
+					.SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
+				)
+				.OrderBy(() => nAlias.Name).Asc
+				.ThenBy(Projections.SqlFunction(
+					new SQLFunctionTemplate(
+						NHibernateUtil.String,
+						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
+					NHibernateUtil.String,
+					Projections.Property(() => sizeAlias.Name))).Asc
+				.ThenBy(Projections.SqlFunction(
+					new SQLFunctionTemplate(
+						NHibernateUtil.String,
+						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
+					NHibernateUtil.String,
+					Projections.Property(() => heightAlias.Name))).Asc;
+			
+			if (Filter.Warehouse != null) 
+			{
+				queryStock.Where(() => woAlias.ReceiptWarehouse == Filter.Warehouse || boAlias.Warehouse == Filter.Warehouse);
+			}
+			if (Filter.ProtectionTools != null) 
+			{
+				queryStock.Where(() 
+					=> woAlias.Nomenclature.IsIn(Filter.ProtectionTools.Nomenclatures.ToArray()));
+			}
+			if (Filter.ItemsType != null) 
+			{
+				queryStock.Where(() => itAlias.Id == Filter.ItemsType.Id);
+			}
 
+			return queryStock.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
+		}
+		*/
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
@@ -178,6 +293,20 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+//1289			
+			
+			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
+				(selected) => selected.Any(x => 
+					x is StockBalanceJournalNode node && 
+					node.UseBarcode && 
+					node.Amount > 0),
+				(selected) => !Filter.ShowWithBarcodes,
+				(selected) => NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
+						(this, selected.First() as StockBalanceJournalNode, Filter.Warehouse)
+//OpenReleaseBarcodesWindow( selected.First() as StockBalanceJournalNode)
+			);
+
+			NodeActionsList.Add(releaseBarcodesAction);
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
@@ -190,6 +319,9 @@ SELECT
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		private void OpenReleaseBarcodesWindow(StockBalanceJournalNode node) =>
+			NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
+				(this, node, Filter.Warehouse);
 		
 		public override string FooterInfo {
 			get => $"Суммарная стоимость: " +
@@ -202,10 +334,7 @@ SELECT
 
 	public class StockBalanceJournalNode
 	{
-		/// <summary>
-		/// NomenclatureId
-		/// </summary>
-		public int Id { get; set; }
+		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
@@ -219,6 +348,7 @@ SELECT
 		public int Amount { get; set; }
 		public int? OwnerId { get; set; }
 		public string OwnerName { get; set; }
+		public bool UseBarcode { get; set; }
 		public decimal SaleCost { get; set; }
 		public double? DailyConsumption { get; set; }
 
@@ -242,11 +372,14 @@ SELECT
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");
+
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
-			uow.GetById<Nomenclature>(Id), 
+			uow.GetById<Nomenclature>(NomeclatureId), 
 			WearPercent, 
 			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
 			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
 			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
+		
+		public int WarehouseId { get; set; }
 	}
 }

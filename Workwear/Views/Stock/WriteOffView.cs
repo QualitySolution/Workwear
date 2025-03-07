@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gamma.ColumnConfig;
 using Gtk;
@@ -69,19 +69,12 @@ namespace Workwear.Views.Stock
 						.AddSetter((w, item) => w.Foreground = item.Nomenclature != null ? "black" : "blue")
 						.WrapWidth(700)
 					.AddColumn("Размер").MinWidth(60)
-						.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+						.AddReadOnlyTextRenderer(x => x.WearSize?.Name)
 					.AddColumn("Рост").MinWidth(70)
-						.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-						.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+						.AddReadOnlyTextRenderer(x => x.Height?.Name)
 					.AddColumn("Собственники")
 						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
-					.AddComboRenderer(x => x.Owner)
-						.SetDisplayFunc(x => x.Name)
-						.FillItems(ViewModel.Owners, "Нет")
-						.AddSetter((c, n) => c.Editable = n.CanSetOwner)
+						.AddReadOnlyTextRenderer(x => x.Owner?.Name ?? "Нет")
 					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)

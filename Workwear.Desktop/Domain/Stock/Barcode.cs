@@ -53,6 +53,15 @@ namespace Workwear.Domain.Stock
 			set => SetField(ref height, value);
 		}
 		
+		private string label;
+		[Display(Name = "Название")]
+		[StringLength(50)]
+		public virtual string Label 
+		{
+			get => label;
+			set => SetField(ref label, value, () => Label);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {

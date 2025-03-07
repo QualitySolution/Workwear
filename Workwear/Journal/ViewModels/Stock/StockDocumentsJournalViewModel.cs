@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
@@ -24,6 +24,7 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
 using Workwear.Tools.Features;
+using Workwear.Domain.Operations;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -63,6 +64,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.AddQuery(QueryInspectionDoc);
+			dataLoader.AddQuery(QueryOverNormDoc);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
 			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
@@ -72,6 +74,8 @@ namespace workwear.Journal.ViewModels.Stock
 
 			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return),
 				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), 
+				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(OverNorm));
 		}
 
 		#region Опциональные зависимости
@@ -496,7 +500,61 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return inspectionQuery;
 		}
+
+		protected IQueryOver<OverNorm> QueryOverNormDoc(IUnitOfWork uow) 
+		{
+			if (Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.OverNormDoc) 
+			{
+				return null;
+			}
+
+			OverNorm ondAlias = null;
+			OverNormItem ondiAlias = null;
+			OverNormOperation onAlias = null;
+			WarehouseOperation woAlias = null;
+			var query = uow.Session.QueryOver(() => ondAlias);
+			if (Filter.StartDate.HasValue) 
+			{
+				query.Where(x => x.Date >= Filter.StartDate.Value);
+			}
+			if (Filter.EndDate.HasValue) 
+			{
+				query.Where(x => x.Date < Filter.EndDate.Value.AddDays(1));
+			}
+			if (Filter.Warehouse != null) 
+			{
+				query.Where(x => x.Warehouse == Filter.Warehouse);
+			}			
+
+			query.JoinAlias(() => ondAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => ondAlias.Items, () => ondiAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => ondiAlias.OverNormOperation, () => onAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => onAlias.WarehouseOperation, () => woAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => woAlias.ReceiptWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => woAlias.ExpenseWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Where(GetSearchCriterion(
+					() => ondAlias.Id, 
+					() => authorAlias.Name)
+				)
+				.SelectList(list => list
+					.SelectGroup(() => ondAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => ondAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => ondAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+					.Select(() => ondAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => StockDocumentType.OverNormDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => ondAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+			.OrderBy(() => ondAlias.Date).Desc
+			.ThenBy(() => ondAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return query;
+		}
 		#endregion
+		
 		#region Действия
 		void CreateDocumentsActions()
 		{

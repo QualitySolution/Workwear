@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Data;
-using Mono.Unix.Native;
+using Autofac;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -18,13 +18,19 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Journal.ViewModels.Stock 
+namespace Workwear.Journal.ViewModels.Stock 
 {
 	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
 	{
+		private readonly BarcodeService barcodeService;
+		public BarcodeJournalFilterViewModel Filter { get; private set; }
 		public BarcodeJournalViewModel(
+			BarcodeService barcodeService,
+			ILifetimeScope autofacScope, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager, 
@@ -32,8 +38,12 @@ namespace workwear.Journal.ViewModels.Stock
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			UseSlider = true;
 			VisibleCreateAction = false;
+			
+			JournalFilter = Filter = autofacScope.Resolve<BarcodeJournalFilterViewModel>
+				(new TypedParameter(typeof(JournalViewModelBase), this));
 			
 			TableSelectionMode = JournalSelectionMode.Multiple;
 
@@ -52,7 +62,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			
-			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
+			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(GetSearchCriterion(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
@@ -60,8 +70,16 @@ namespace workwear.Journal.ViewModels.Stock
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				))
-				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
+				));
+			
+			query.Where(() => barcodeAlias.Id.IsIn(barcodeService.GetFreeBarcodesIds(uow,
+					Filter.Nomenclature,
+					Filter.Size,
+					Filter.Height,
+					Filter.Warehouse)
+				.ToArray()));
+			
+			query.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)
 				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
@@ -71,6 +89,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
+					.Select(x => x.Label).WithAlias(() => resultAlias.Label)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.Size)
@@ -80,7 +99,68 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
 				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
+			
+			return query;
 		}
+		
+		#region Constraint
+
+		private Nomenclature nomenclature;
+		public Nomenclature Nomenclature 
+		{
+			get => nomenclature;
+			set 
+			{
+				SetField(ref nomenclature, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Size size;
+		public Size Size 
+		{
+			get => size;
+			set 
+			{
+				SetField(ref size, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Size height;
+		public Size Height 
+		{
+			get => height;
+			set 
+			{
+				SetField(ref height, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private Warehouse warehouse;
+		public Warehouse Warehouse 
+		{
+			get => warehouse;
+			set 
+			{
+				SetField(ref warehouse, value); 
+				DataLoader.LoadData(false);
+			}
+		}
+
+		private bool onlyFreeBarcodes;
+		public bool OnlyFreeBarcodes 
+		{
+			get => onlyFreeBarcodes;
+			set 
+			{
+				SetField(ref onlyFreeBarcodes, value);
+				DataLoader.LoadData(false);
+			}
+		}
+
+		#endregion
 		
 		#region Actions
 
@@ -116,6 +196,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Size { get; set; }
 		public string Height { get; set; }
 		public DateTime CreateDate { get; set; }
+		public string Label { get; set; }
 		public string Comment { get; set; }
 		public string LastName { get; set; }
 		public string FirstName { get; set; }

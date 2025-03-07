@@ -20,7 +20,7 @@ namespace Workwear.Domain.Operations
 	{
 		public virtual int Id { get; set; }
 
-		private DateTime operationTime;
+		private DateTime operationTime = DateTime.Now;
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
 			get => operationTime;
