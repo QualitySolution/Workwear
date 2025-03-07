@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Tools.OverNorms;
 
@@ -44,6 +45,8 @@ namespace Workwear.Domain.Stock.Documents
 			get => param;
 			set => SetField(ref param, value);
 		}
+
+		public virtual EmployeeCard Employee => OverNormOperation.Employee;
 
 		public virtual string Title => $"Строка выдачи вне нормы ({OverNormOperation.Type.GetAttribute<DisplayAttribute>().Name}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
 		#endregion

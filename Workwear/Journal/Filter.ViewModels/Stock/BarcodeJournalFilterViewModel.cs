@@ -5,6 +5,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.ViewModels.Control.EEVM;
+using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Sizes;
@@ -39,9 +40,22 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 		[PropertyChangedAlso(nameof(HasHeight))]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
-			set => SetField(ref nomenclature, value);
+			set {
+				if(SetField(ref nomenclature, value) && Employee != null) {
+					Size = Employee.Sizes.FirstOrDefault(s => s.SizeType.Id == value?.Type?.SizeType.Id)?.Size;
+					Height = Employee.Sizes.FirstOrDefault(s => s.SizeType.Id == value?.Type?.HeightType.Id)?.Size;
+				}
+				
+			}
 		}
-		
+
+		private EmployeeCard employee;
+		//Скрытый фильтр для автоподстановки разммеров
+		public virtual EmployeeCard Employee {
+			get => employee;
+			set => SetField(ref employee, value);
+		}
+
 		private Size size;
 		public virtual Size Size {
 			get => size;
