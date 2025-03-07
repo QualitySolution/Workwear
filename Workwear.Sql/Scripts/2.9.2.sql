@@ -49,26 +49,6 @@ create index index_shipment_items_nomenclature
 create index index_shipment_items_size
     on shipment_items (size_id);
 
-create table shipment_status
-(
-	id int unsigned auto_increment primary key,
-	status text not null
-);
-
-insert into shipment_status (status)
-values('Заказано'),
-      ('В пути'),
-      ('Ожидает оплаты'),
-      ('Отменено'),
-      ('Получено');
-
 alter table shipment
-	add status_id int unsigned not null default 1 after end_period;
+	add status text not null default 'ordered' after end_period;
 
-alter table shipment
-	add constraint status_fk
-		foreign key (status_id) references shipment_status(id)
-			on update cascade;
-
-create index index_shipment_status
-on shipment (status_id);

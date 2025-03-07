@@ -2340,14 +2340,6 @@ create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
 create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
 	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
 
--- Table `shipment_status`
-
-create table shipment_status
-(
-	id int unsigned auto_increment primary key,
-	status text not null
-);
-
 -- Table `shipment`
 
 create table shipment
@@ -2355,20 +2347,15 @@ create table shipment
 	id int unsigned auto_increment primary key,
 	start_period date not null,
 	end_period date not null,
-	status_id int unsigned not null default 1,
+	status text not null default 'ordered',
 	user_id int unsigned null,
 	comment text null,
-	creation_date datetime null,
-	constraint status_fk
-		foreign key (status_id) references shipment_status(id)
-			on update cascade 
+	creation_date datetime null
 );
 create index index_shipment_start_period
 	on shipment (start_period);
 create index index_shipment_end_period
 	on shipment (end_period);
-create index index_shipment_status
-	on shipment (status_id);
 
 -- Table `shipment_items`
 
@@ -2978,16 +2965,7 @@ INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (139, 96);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (139, 97);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 103);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 104);
-COMMIT;
--- -----------------------------------------------------
--- Data for table `shipment_status`
--- -----------------------------------------------------
-START TRANSACTION;
-INSERT INTO shipment_status (`id`,`status`) VALUES (1,'Заказано');
-INSERT INTO shipment_status (`id`,`status`) VALUES (2,'В пути');
-INSERT INTO shipment_status (`id`,`status`) VALUES (3,'Ожидает оплаты');
-INSERT INTO shipment_status (`id`,`status`) VALUES (4,'Отменено');
-INSERT INTO shipment_status (`id`,`status`) VALUES (5,'Получено');
 
 COMMIT;
+
 
