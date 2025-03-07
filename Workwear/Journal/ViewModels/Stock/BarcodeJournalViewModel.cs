@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -17,20 +18,22 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
 
-namespace workwear.Journal.ViewModels.Stock 
+namespace Workwear.Journal.ViewModels.Stock 
 {
 	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
 	{
 		private readonly BarcodeService barcodeService;
-
+		public BarcodeJournalFilterViewModel Filter { get; private set; }
 		public BarcodeJournalViewModel(
+			BarcodeService barcodeService,
+			ILifetimeScope autofacScope, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager, 
-			BarcodeService barcodeService,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
@@ -38,6 +41,9 @@ namespace workwear.Journal.ViewModels.Stock
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			UseSlider = true;
 			VisibleCreateAction = false;
+			
+			JournalFilter = Filter = autofacScope.Resolve<BarcodeJournalFilterViewModel>
+				(new TypedParameter(typeof(JournalViewModelBase), this));
 			
 			TableSelectionMode = JournalSelectionMode.Multiple;
 
@@ -64,8 +70,16 @@ namespace workwear.Journal.ViewModels.Stock
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				))
-				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
+				));
+			
+			query.Where(() => barcodeAlias.Id.IsIn(barcodeService.GetFreeBarcodesIds(uow,
+					Filter.Nomenclature,
+					Filter.Size,
+					Filter.Height,
+					Filter.Warehouse)
+				.ToArray()));
+			
+			query.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)
 				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
@@ -85,12 +99,6 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
 				).OrderBy(x => x.Title).Asc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
-
-			if (OnlyFreeBarcodes) 
-			{
-				int[] ids = barcodeService.GetFreeBarcodesIds(uow, Nomenclature, Size, Height, warehouse).ToArray(); 
-				query.Where(() => barcodeAlias.Id.IsIn(ids));
-			}
 			
 			return query;
 		}

@@ -72,6 +72,7 @@ using workwear;
 using Workwear;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
+using Workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
