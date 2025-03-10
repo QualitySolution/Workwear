@@ -52,15 +52,6 @@ namespace Workwear.Domain.Stock.Documents {
 			get => issuanceSheetItem;
 			set => SetField(ref issuanceSheetItem, value);
 		}
-		
-		private EmployeeIssueOperation employeeIssueOperation;
-		[Display(Name = "Операция выдачи сотруднику")]
-		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation EmployeeIssueOperation
-		{
-			get => employeeIssueOperation;
-			set => SetField(ref employeeIssueOperation, value);
-		}
 		#endregion
 
 		#region Расчётные свойства и пробросы
