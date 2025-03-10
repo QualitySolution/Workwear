@@ -2347,7 +2347,7 @@ create table shipment
 	id int unsigned auto_increment primary key,
 	start_period date not null,
 	end_period date not null,
-	status enum('Ordered','On_the_way', 'Awaiting_payment','Cancelled','Received') not null default 'Ordered',
+	status enum('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') not null default 'Ordered',
 	user_id int unsigned null,
 	comment text null,
 	creation_date datetime null
