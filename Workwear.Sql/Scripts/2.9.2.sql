@@ -4,6 +4,7 @@ create table shipment
     id int unsigned auto_increment primary key,
     start_period date not null,
     end_period date not null,
+	status enum('Ordered','On_the_way', 'Awaiting_payment','Cancelled','Received') not null default 'Ordered',
     user_id int unsigned null,
     comment text null,
     creation_date datetime null
@@ -49,6 +50,4 @@ create index index_shipment_items_nomenclature
 create index index_shipment_items_size
     on shipment_items (size_id);
 
-alter table shipment
-	add status text not null default 'ordered' after end_period;
 
