@@ -3,15 +3,15 @@
 namespace Workwear.Domain.Supply {
 	public enum ShipmentStatus {
 		[Display(Name="Заказано")]
-		ordered,
+		Ordered,
 		[Display(Name = "В пути")]
-		on_the_way,
+		On_the_way,
 		[Display(Name="Ожидает оплаты")]
-		awaiting_payment,
+		Awaiting_payment,
 		[Display(Name="Отменено")]
-		cancelled,
+		Cancelled,
 		[Display(Name = "Получено")]
-		received
+		Received
 	
 	}
 }
