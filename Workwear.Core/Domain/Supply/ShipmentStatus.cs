@@ -5,9 +5,9 @@ namespace Workwear.Domain.Supply {
 		[Display(Name="Заказано")]
 		Ordered,
 		[Display(Name = "В пути")]
-		On_the_way,
+		OnTheWay,
 		[Display(Name="Ожидает оплаты")]
-		Awaiting_payment,
+		AwaitPayment,
 		[Display(Name="Отменено")]
 		Cancelled,
 		[Display(Name = "Получено")]
