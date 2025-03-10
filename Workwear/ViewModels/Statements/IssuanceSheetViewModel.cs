@@ -207,7 +207,7 @@ namespace Workwear.ViewModels.Statements
 
 		#region Visible
 
-		public bool VisibleExpense => Entity.Expense != null || Entity.CollectiveExpense != null;
+		public bool VisibleExpense => Entity.Expense != null || Entity.CollectiveExpense != null || Entity.ExpenseDutyNorm != null;
 		public bool VisibleFillBy => CanEditItems;
 		public bool VisibleCloseFillBy => FillByViewModel != null;
 
@@ -259,6 +259,9 @@ namespace Workwear.ViewModels.Statements
 			else if(Entity.CollectiveExpense != null)
 				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(
 					this, EntityUoWBuilder.ForOpen(Entity.CollectiveExpense.Id));
+			else if(Entity.ExpenseDutyNorm != null)
+				NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(
+					this, EntityUoWBuilder.ForOpen(Entity.ExpenseDutyNorm.Id));
 			else
 				throw new NotSupportedException();
 
