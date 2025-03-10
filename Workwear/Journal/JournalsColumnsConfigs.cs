@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities.Numeric;
+using Workwear.Domain.Supply;
 using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
@@ -525,7 +526,7 @@ namespace workwear.Journal
 				);
 			string ForegroundColorShipment(ShipmentJournalNode n)
 			{
-				if(n.StatusText=="Отменено"||n.StatusText=="Получено")
+				if(n.Status==ShipmentStatus.Cancelled||n.Status==ShipmentStatus.Received)
 					return "gray";
 				if(n.EndPeriod < DateTime.Today)
 					return "red";
