@@ -68,6 +68,13 @@ namespace Workwear.Domain.Statements
 			get => collectiveExpenseItem;
 			set => SetField(ref collectiveExpenseItem, value);
 		}
+		private ExpenseDutyNormItem expenseDutyNormItem;
+
+		[Display(Name = "Строка выдачи по дежурной норме")]
+		public virtual ExpenseDutyNormItem ExpenseDutyNormItem {
+			get=> expenseDutyNormItem;
+			set => SetField(ref expenseDutyNormItem, value);
+		}
 
 		private EmployeeIssueOperation issueOperation;
 
@@ -166,6 +173,19 @@ namespace Workwear.Domain.Statements
 			StartOfUse = CollectiveExpenseItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
 			Lifetime = CollectiveExpenseItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
 			IssueOperation = CollectiveExpenseItem.EmployeeIssueOperation;
+		}
+
+		public virtual void UpdateFromExpenseDuty() {
+			if(ExpenseDutyNormItem == null)
+				return;
+			Employee = ExpenseDutyNormItem.Document.ResponsibleEmployee;
+			Nomenclature = ExpenseDutyNormItem.Nomenclature;
+			Amount=(uint)ExpenseDutyNormItem.Amount;
+			WearSize = ExpenseDutyNormItem.WearSize;
+			Height = ExpenseDutyNormItem.Height;
+			StartOfUse=ExpenseDutyNormItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = ExpenseDutyNormItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
+			IssueOperation = ExpenseDutyNormItem.EmployeeIssueOperation;
 		}
 		#endregion
 
