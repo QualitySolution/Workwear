@@ -119,6 +119,7 @@
     <Compile Include="Journal\Filter.ViewModels\ClothingService\ClaimsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\DutyNormBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Analytics\ProtectionToolsCategoryJournalViewModel.cs" />
@@ -514,6 +515,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WearCardsReportView.cs" />
     <Compile Include="Views\Supply\ShipmentView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentView.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\DutyNormBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormBalanceFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
