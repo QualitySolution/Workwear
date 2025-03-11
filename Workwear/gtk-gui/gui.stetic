@@ -9051,7 +9051,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Увеличить период эксплуатации пропорционально кол-ву:</property>
+                        <property name="LabelProp" translatable="yes">Увеличить период эксплуатации пропорционально количеству:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">5</property>
@@ -9071,7 +9071,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel5">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Сворачивать дублирующуюся информацию в ведомсти:</property>
+                        <property name="LabelProp" translatable="yes">Сворачивать дублирующуюся информацию в ведомости:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">7</property>

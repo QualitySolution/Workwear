@@ -383,6 +383,9 @@ public partial class MainWindow : Gtk.Window {
 
 	#region Workwear featrures
 	private void DisableFeatures() {
+		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
+		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
+		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
@@ -392,16 +395,15 @@ public partial class MainWindow : Gtk.Window {
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
-		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
-		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
+		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
 		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
@@ -409,18 +411,17 @@ public partial class MainWindow : Gtk.Window {
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
+		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
+		ActionShipment.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
-		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
-		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
-		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
-		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
-		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
-		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
-		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
 		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
+		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
 		
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
