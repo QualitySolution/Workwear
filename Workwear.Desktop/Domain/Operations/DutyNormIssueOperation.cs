@@ -230,5 +230,23 @@ namespace Workwear.Domain.Operations {
 	        }
         }
         #endregion
+
+        #region Статические методы
+
+        public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) 
+        {
+	        if(startOfUse == null || expiryByNorm == null)
+		        return 0;
+	        if(beginWearPercent >= 1)
+		        return beginWearPercent;
+			
+	        var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+	        if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
+		        return beginWearPercent;
+
+	        return Math.Round(beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent, 2);
+        }
+
+        #endregion
 	}
 }

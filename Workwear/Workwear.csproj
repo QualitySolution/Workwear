@@ -132,6 +132,7 @@
     <Compile Include="Journal\ViewModels\Postomats\FullnessJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsWithdrawJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\DutyNormBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Regulations\DutyNormsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseWriteOffJournalViewModel.cs" />
