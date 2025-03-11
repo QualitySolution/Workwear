@@ -83,6 +83,13 @@ namespace Workwear.Domain.Statements
 			get { return issueOperation; }
 			set { SetField(ref issueOperation, value); }
 		}
+		private DutyNormIssueOperation dutyNormIssueOperation;
+
+		[Display(Name = "Операция выдачи по дежурной норме")]
+		public virtual DutyNormIssueOperation DutyNormIssueOperation {
+			get => dutyNormIssueOperation;
+			set => SetField(ref dutyNormIssueOperation, value);
+		}
 
 		private uint amount;
 
@@ -183,9 +190,9 @@ namespace Workwear.Domain.Statements
 			Amount=(uint)ExpenseDutyNormItem.Amount;
 			WearSize = ExpenseDutyNormItem.WearSize;
 			Height = ExpenseDutyNormItem.Height;
-			StartOfUse=ExpenseDutyNormItem.EmployeeIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
-			Lifetime = ExpenseDutyNormItem.EmployeeIssueOperation?.LifetimeMonth ?? 0;
-			IssueOperation = ExpenseDutyNormItem.EmployeeIssueOperation;
+			StartOfUse = ExpenseDutyNormItem.DutyNormIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = ExpenseDutyNormItem.DutyNormIssueOperation?.LifetimeMonth ?? 0;
+			DutyNormIssueOperation = ExpenseDutyNormItem.DutyNormIssueOperation;
 		}
 		#endregion
 

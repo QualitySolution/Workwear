@@ -133,6 +133,7 @@ namespace Workwear.Domain.Stock.Documents {
 				throw new NullReferenceException("Для обновления ведомости ответственный сотрудник должен быть указан.");
 
 			IssuanceSheet.Date = Date;
+			IssuanceSheet.TransferAgent = ResponsibleEmployee;
 			if(ResponsibleEmployee.Subdivision != null)
 				IssuanceSheet.Subdivision = ResponsibleEmployee.Subdivision;
 

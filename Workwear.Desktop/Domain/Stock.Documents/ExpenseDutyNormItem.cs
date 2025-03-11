@@ -52,14 +52,13 @@ namespace Workwear.Domain.Stock.Documents {
 			get => issuanceSheetItem;
 			set => SetField(ref issuanceSheetItem, value);
 		}
-		
-		private EmployeeIssueOperation employeeIssueOperation;
-		[Display(Name = "Операция выдачи сотруднику")]
+		private DutyNormIssueOperation dutyNormIssueOperation;
+		[Display(Name = "Операция выдачи по дежурной норме")]
 		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation EmployeeIssueOperation
+		public virtual DutyNormIssueOperation DutyNormIssueOperation
 		{
-			get => employeeIssueOperation;
-			set => SetField(ref employeeIssueOperation, value);
+			get => dutyNormIssueOperation;
+			set => SetField(ref dutyNormIssueOperation, value);
 		}
 		#endregion
 
