@@ -5,6 +5,7 @@ using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Statements;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative (Gender = GrammaticalGender.Feminine,
@@ -42,6 +43,14 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual WarehouseOperation WarehouseOperation {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
+		}
+		
+		private IssuanceSheetItem issuanceSheetItem;
+
+		[Display(Name = "Строка ведомости")]
+		public virtual IssuanceSheetItem IssuanceSheetItem {
+			get => issuanceSheetItem;
+			set => SetField(ref issuanceSheetItem, value);
 		}
 		#endregion
 

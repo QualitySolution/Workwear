@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
+using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
@@ -176,6 +177,15 @@ namespace Workwear.Domain.Operations {
         public virtual string Title => Issued > Returned
 	        ? $"Выдача {DutyNorm.Name} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
 	        : $"Списание {DutyNorm.Name} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
+        public virtual decimal? LifetimeMonth {
+	        get {
+		        if(StartOfUse == null || ExpiryByNorm == null)
+			        return null;
+
+		        var range = new DateRange(StartOfUse.Value, ExpiryByNorm.Value);
+		        return range.Months;
+	        }
+        }
         #endregion
         
         #region Методы

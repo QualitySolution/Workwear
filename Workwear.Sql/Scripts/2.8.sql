@@ -761,15 +761,22 @@ WHERE growth IS NOT NULL;
 -- Операции выдачи сотруднику
 ALTER TABLE `operation_issued_by_employee` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-UPDATE operation_issued_by_employee SET size_id = (SELECT DISTINCT sizes.id
-    FROM sizes
-    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
-    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
-    WHERE sizes.name = operation_issued_by_employee.size
-        AND (operation_issued_by_employee.nomenclature_id = nomenclature.id OR operation_issued_by_employee.protection_tools_id = protection_tools.id)
-)
-WHERE size IS NOT NULL;
+UPDATE operation_issued_by_employee AS oibe
+SET size_id = (
+	SELECT sizes.id
+	FROM sizes
+			 JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+			 LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+			 LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+	WHERE sizes.name = oibe.size
+	  AND (
+		(oibe.nomenclature_id = nomenclature.id)
+			OR (oibe.protection_tools_id = protection_tools.id AND oibe.nomenclature_id IS NULL)
+		)
+	ORDER BY oibe.nomenclature_id IS NULL -- Если есть связь с nomenclature, она идет первой
+	LIMIT 1
+	)
+WHERE oibe.size IS NOT NULL;
 
 UPDATE operation_issued_by_employee SET height_id = (SELECT DISTINCT sizes.id
     FROM sizes
@@ -849,15 +856,22 @@ WHERE growth IS NOT NULL;
 -- Документ выдачи 
 ALTER TABLE `stock_expense_detail` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-UPDATE stock_expense_detail SET size_id = (SELECT DISTINCT sizes.id
-   FROM sizes
-    JOIN item_types ON item_types.size_type_id = sizes.size_type_id
-    LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
-    LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
-   WHERE sizes.name = stock_expense_detail.size
-     AND (stock_expense_detail.nomenclature_id = nomenclature.id OR stock_expense_detail.protection_tools_id = protection_tools.id)
-)
-WHERE size IS NOT NULL;
+UPDATE stock_expense_detail AS sed
+SET size_id = (
+	SELECT sizes.id
+	FROM sizes
+			 JOIN item_types ON item_types.size_type_id = sizes.size_type_id
+			 LEFT JOIN nomenclature ON item_types.id = nomenclature.type_id
+			 LEFT JOIN protection_tools ON item_types.id = protection_tools.item_types_id
+	WHERE sizes.name = sed.size
+	  AND (
+		(sed.nomenclature_id = nomenclature.id)
+			OR (sed.protection_tools_id = protection_tools.id AND sed.nomenclature_id IS NULL)
+		)
+	ORDER BY sed.nomenclature_id IS NULL -- Сначала ищем по nomenclature, если нет - берем protection_tools
+	LIMIT 1
+	)
+WHERE sed.size IS NOT NULL;
 
 UPDATE stock_expense_detail SET height_id = (SELECT DISTINCT sizes.id
      FROM sizes

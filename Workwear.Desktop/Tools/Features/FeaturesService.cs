@@ -186,6 +186,7 @@ namespace Workwear.Tools.Features
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.Dashboard:
+				case WorkwearFeature.Shipment:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
@@ -329,6 +330,8 @@ namespace Workwear.Tools.Features
 		Selling,
 		[Display(Name = "Дашборды")]
 		Dashboard,
+		[Display(Name = "Поставки")]
+		Shipment,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]
