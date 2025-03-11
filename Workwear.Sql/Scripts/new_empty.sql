@@ -2340,6 +2340,60 @@ create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
 create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
 	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
 
+-- Table `shipment`
+
+create table shipment
+(
+	id int unsigned auto_increment primary key,
+	start_period date not null,
+	end_period date not null,
+	status enum('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') not null default 'Ordered',
+	user_id int unsigned null,
+	comment text null,
+	creation_date datetime null
+);
+create index index_shipment_start_period
+	on shipment (start_period);
+create index index_shipment_end_period
+	on shipment (end_period);
+
+-- Table `shipment_items`
+
+create table shipment_items
+(
+	id int unsigned auto_increment primary key,
+	shipment_id int unsigned not null,
+	nomenclature_id int unsigned not null,
+	quantity int unsigned not null,
+	cost decimal(10, 2) unsigned default 0.00 not null,
+	size_id int unsigned null,
+	height_id int unsigned null,
+	comment varchar(120) null,
+	constraint fk_shipment_items_doc
+		foreign key (shipment_id) references shipment (id)
+			on update cascade on delete cascade,
+	constraint fk_shipment_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_shipment_items_size_id
+		foreign key (size_id) references sizes (id)
+			on update cascade,
+	constraint fk_shipment_items_height_id
+		foreign key (height_id) references sizes (id)
+			on update cascade
+);
+create index index_shipment_items_doc
+	on shipment_items (shipment_id);
+
+create index index_shipment_items_height
+	on shipment_items (height_id);
+
+create index index_shipment_items_nomenclature
+	on shipment_items (nomenclature_id);
+
+create index index_shipment_items_size
+	on shipment_items (size_id);
+	
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------
@@ -2356,7 +2410,7 @@ ALTER TABLE issuance_sheet_items
 	ADD CONSTRAINT fk_stock_expense_duty_norm_item_id
 		FOREIGN KEY (stock_expense_duty_norm_item_id) REFERENCES stock_expense_duty_norm_items (id)
 			ON UPDATE CASCADE ON DELETE CASCADE ;
-	
+
 -- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
@@ -2415,7 +2469,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9.1');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9.2');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
@@ -2929,4 +2983,5 @@ INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 103);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 104);
 
 COMMIT;
+
 
