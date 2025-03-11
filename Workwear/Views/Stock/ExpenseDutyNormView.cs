@@ -3,6 +3,8 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
+using QS.Widgets;
+using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
@@ -33,6 +35,12 @@ namespace Workwear.Views.Stock {
 			yentryResponsible.ViewModel = ViewModel.ResponsibleEmployeeCardEntryViewModel;
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanDelSelectedItem, w => w.Sensitive);
 			ybuttonChoosePositions.Binding.AddBinding(ViewModel, vm => vm.CanChooseStockPositionsSelectedItem, w => w.Sensitive).InitializeFromSource();
+			buttonIssuanceSheetOpen.Binding.AddBinding(ViewModel,v=>v.IssuanceSheetOpenVisible, w=>w.Visible).InitializeFromSource();
+			buttonIssuanceSheetCreate.Binding.AddSource(ViewModel)
+				.AddBinding(v=>v.IssuanceSheetCreateVisible, w=>w.Visible)
+				.InitializeFromSource();
+			enumPrint.ItemsEnum=typeof(IssuedSheetPrint);
+			enumPrint.Binding.AddBinding(ViewModel, v=>v.IssuanceSheetPrintVisible, w=>w.Visible).InitializeFromSource();
 
 			ytreeItems.Binding.AddBinding(ViewModel, vm => vm.SelectedItem, w => (ExpenseDutyNormItem)w.SelectedRow);
 			ytreeItems.ItemsDataSource = Entity.Items;
@@ -71,6 +79,18 @@ namespace Workwear.Views.Stock {
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
 			foreach(var item in ytreeItems.GetSelectedObjects<ExpenseDutyNormItem>())
 				ViewModel.DeleteItem(item);
+		}
+
+		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e) {
+			ViewModel.CreateIssuanceSheet();
+		}
+
+		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e) {
+			ViewModel.OpenIssuanceSheet();
+		}
+
+		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e) {
+			ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
 		}
 	}
 }

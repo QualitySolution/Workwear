@@ -12,6 +12,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using Workwear.Domain.Users;
 
 namespace Workwear
@@ -316,9 +317,11 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNorm>()
-				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Document);
+				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Document)
+				.AddDeleteDependence<IssuanceSheet>(x => x.ExpenseDutyNorm);
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseDutyNormItem>()
+				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseDutyNormItem)
 				.AddDeleteCascadeDependence(x => x.Operation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 
@@ -371,6 +374,11 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
 			
+			#endregion
+			#region Документ планируемой поставки
+			DeleteConfig.AddHibernateDeleteInfo<Shipment>()
+				.AddDeleteDependence<ShipmentItem>(x => x.Shipment);
+			DeleteConfig.AddHibernateDeleteInfo<ShipmentItem>();
 			#endregion
 			#region Пользователь
 
