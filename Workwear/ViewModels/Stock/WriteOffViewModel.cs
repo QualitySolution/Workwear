@@ -18,11 +18,13 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
@@ -40,6 +42,7 @@ namespace Workwear.ViewModels.Stock
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
+        public DutyNorm DutyNorm { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
         private OrganizationRepository organizationRepository;
@@ -201,6 +204,28 @@ namespace Workwear.ViewModels.Stock
 	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
             
             CalculateTotal(null, null);
+        }
+
+        public void AddFromDutyNorm() 
+        {
+	        var selectJournal = NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
+		        this,
+		        DutyNorm,
+		        OpenPageOptions.AsSlave);
+	        selectJournal.ViewModel.Filter.DateSensitive = false;
+	        selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
+	        selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
+	        selectJournal.ViewModel.Filter.Date = Entity.Date;
+	        selectJournal.ViewModel.OnSelectResult += SelectFromDutyNorm_Selected;
+        }
+
+        private void SelectFromDutyNorm_Selected(object sender, JournalSelectedEventArgs e) 
+        {
+	        var operations=UoW.GetById<DutyNormIssueOperation>(e.GetSelectedObjects<DutyNormBalanceJournalNode>().Select(x => x.Id));
+	        var balance = e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+	        foreach(var operation in operations)
+		        Entity.AddItem(operation, balance[operation.Id]);
+	        CalculateTotal(null,null);
         }
         
         public void FillMaxAmount(DateTime? date = null) {
