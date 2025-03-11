@@ -329,6 +329,8 @@ namespace Workwear.Tools.Features
 		Selling,
 		[Display(Name = "Дашборды")]
 		Dashboard,
+		[Display(Name = "Поставки")]
+		Shipment,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]
