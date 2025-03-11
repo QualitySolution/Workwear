@@ -190,9 +190,9 @@ namespace Workwear.Domain.Statements
 			Amount=(uint)ExpenseDutyNormItem.Amount;
 			WearSize = ExpenseDutyNormItem.WearSize;
 			Height = ExpenseDutyNormItem.Height;
-			StartOfUse = ExpenseDutyNormItem.DutyNormIssueOperation?.StartOfUse ?? IssuanceSheet.Date;
-			Lifetime = ExpenseDutyNormItem.DutyNormIssueOperation?.LifetimeMonth ?? 0;
-			DutyNormIssueOperation = ExpenseDutyNormItem.DutyNormIssueOperation;
+			StartOfUse = ExpenseDutyNormItem.Operation?.StartOfUse ?? IssuanceSheet.Date;
+			Lifetime = ExpenseDutyNormItem.Operation?.LifetimeMonth ?? 0;
+			DutyNormIssueOperation = ExpenseDutyNormItem.Operation;
 		}
 		#endregion
 

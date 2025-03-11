@@ -52,14 +52,6 @@ namespace Workwear.Domain.Stock.Documents {
 			get => issuanceSheetItem;
 			set => SetField(ref issuanceSheetItem, value);
 		}
-		private DutyNormIssueOperation dutyNormIssueOperation;
-		[Display(Name = "Операция выдачи по дежурной норме")]
-		[IgnoreHistoryTrace]
-		public virtual DutyNormIssueOperation DutyNormIssueOperation
-		{
-			get => dutyNormIssueOperation;
-			set => SetField(ref dutyNormIssueOperation, value);
-		}
 		#endregion
 
 		#region Расчётные свойства и пробросы
