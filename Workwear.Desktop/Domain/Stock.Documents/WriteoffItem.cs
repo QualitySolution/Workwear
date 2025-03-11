@@ -50,6 +50,15 @@ namespace Workwear.Domain.Stock.Documents
 			get => employeeWriteoffOperation;
 			set => SetField(ref employeeWriteoffOperation, value);
 		}
+
+		private DutyNormIssueOperation dutyNormWriteOffOperation;
+
+		[Display(Name = "Операция списания с дежурной нормы")]
+		[IgnoreHistoryTrace]
+		public virtual DutyNormIssueOperation DutyNormWriteOffOperation {
+			get=> dutyNormWriteOffOperation;
+			set => SetField(ref dutyNormWriteOffOperation, value);
+		}
 		
 		[Display(Name = "Собственник имущества")]
 		public virtual Owner Owner {
@@ -183,6 +192,25 @@ namespace Workwear.Domain.Stock.Documents
 			document = writeOff;
 			employeeWriteoffOperation = new EmployeeIssueOperation {
 				Employee = issueOperation.Employee,
+				ProtectionTools = issueOperation.ProtectionTools,
+				Returned = amount,
+				IssuedOperation = issueOperation,
+				OperationTime = document.Date,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+			};
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			this.amount = amount;
+		}
+
+		public WriteoffItem(Writeoff writeoff, DutyNormIssueOperation issueOperation, int amount) {
+			document = writeoff;
+			dutyNormWriteOffOperation = new DutyNormIssueOperation {
+				DutyNorm = issueOperation.DutyNorm,
 				ProtectionTools = issueOperation.ProtectionTools,
 				Returned = amount,
 				IssuedOperation = issueOperation,

@@ -229,6 +229,8 @@ namespace Workwear.Domain.Operations {
                 AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
 	        }
         }
+        public virtual decimal CalculatePercentWear(DateTime atDate) => 
+	        CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
         #endregion
 
         #region Статические методы
