@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
@@ -10,6 +12,8 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -17,6 +21,7 @@ using QS.ViewModels.Dialog;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -28,8 +33,10 @@ using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock {
 	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>{
@@ -37,6 +44,9 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
+		private readonly CurrentUserSettings currentUserSettings;
+		private readonly CommonMessages commonMessages;
+		private readonly FeaturesService featuresService;
 		public SizeService SizeService { get; }
 		
 		#region ViewModels
@@ -54,11 +64,13 @@ namespace Workwear.ViewModels.Stock {
 			INavigationManager navigation,
 			IInteractiveService interactive, 
 			IUserService userService,
+			CurrentUserSettings currentUserSettings,
 			IValidator validator,
 			BaseParameters baseParameters,
 			StockBalanceModel stockBalanceModel,
 			SizeService sizeService, 
-			FeaturesService featutesService,
+			CommonMessages commonMessages,
+			FeaturesService featuresService,
 			StockRepository stockRepository,
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
@@ -66,13 +78,16 @@ namespace Workwear.ViewModels.Stock {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			var vmEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNormViewModel>(this, this, UoW, navigation, autofacScope);
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.DutyNorm = dutyNorm;
@@ -90,12 +105,14 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
+			ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
 			DutyNormEntryViewModel =
 				vmEntryBuilder.ForProperty(x => x.DutyNorm)
 				.UseViewModelJournalAndAutocompleter<DutyNormsJournalViewModel>()
 				.UseViewModelDialog<DutyNormViewModel>()
 				.Finish();
-
+			Entity.PropertyChanged += EntityChange;
+			
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
@@ -210,6 +227,11 @@ namespace Workwear.ViewModels.Stock {
 	
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 		
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool ResponsibleEmployeeCleanSensitive => Entity.IssuanceSheet == null;
+		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;
 			set { if(Entity.DutyNorm != value){
@@ -275,6 +297,10 @@ namespace Workwear.ViewModels.Stock {
 			
 			foreach(var item in Entity.Items.Where(x => x.Amount <= 0).ToList()) 
 				DeleteItem(item);
+			
+			Entity.UpdateIssuanceSheet();
+			if(Entity.IssuanceSheet != null)
+				UoW.Save(Entity.IssuanceSheet);
 
 			Entity.UpdateOperations(UoW, interactive);
 			UoW.Session.SaveOrUpdate(Entity);
@@ -283,5 +309,69 @@ namespace Workwear.ViewModels.Stock {
 			return true;
 		}
 		#endregion
+
+		#region Ведомость
+
+		public void OpenIssuanceSheet()
+		{
+			if(UoW.HasChanges) {
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+					return;
+			}
+			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
+		}
+		public void CreateIssuanceSheet()
+		{
+			if(Entity.ResponsibleEmployee == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning,"Ответственный сотрудник должен быть указан");
+				return;
+			}
+
+			if(Validate()) {
+				var defaultOrganization = UoW.GetInSession(currentUserSettings.Settings.DefaultOrganization);
+				var defaultLeader = UoW.GetInSession(currentUserSettings.Settings.DefaultLeader);
+				var defaultResponsiblePerson = UoW.GetInSession(currentUserSettings.Settings.DefaultResponsiblePerson);
+				Entity.CreateIssuanceSheet(defaultOrganization, defaultLeader, defaultResponsiblePerson);
+			}
+			
+		}
+		
+		public void PrintIssuanceSheet(IssuedSheetPrint doc)
+		{
+			if(UoW.HasChanges) {
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+					return;
+			}
+
+			var reportInfo = new ReportInfo {
+				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
+					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
+				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
+				Parameters = new Dictionary<string, object> {
+					{ "id",  Entity.IssuanceSheet.Id },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
+				}
+			};
+			
+			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
+			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
+				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		#endregion
+		
+		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch(e.PropertyName) {
+				case nameof(Entity.IssuanceSheet):
+					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
+					break;
+			}
+		}
 	}
 }

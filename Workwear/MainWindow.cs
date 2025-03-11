@@ -72,6 +72,7 @@ using workwear;
 using Workwear;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
+using workwear.Journal.ViewModels.Supply;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
@@ -100,6 +101,7 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.MakeNewStatusTargetForNlog();
 		toolbarMain.Sensitive = false;
 		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -125,7 +127,25 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-
+		
+		progress.CheckPoint("Настройка каналов обновления");
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var appInfo = releaseScope.Resolve<IApplicationInfo>();
+			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
+				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+				var channel = configuration[$"AppUpdater:Channel"];
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+					channel = UpdateChannel.Current.ToString();
+					configuration[$"AppUpdater:Channel"] = channel;
+				}
+				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+			}
+			else {
+				ActionUpdateChannel.Visible = false;
+			}
+		}
+		
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -274,25 +294,6 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-
-		//Настраиваем каналы обновлений
-		progress.CheckPoint("Настройка каналов обновления");
-		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
-			var appInfo = releaseScope.Resolve<IApplicationInfo>();
-			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
-				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-			}
-			else {
-				ActionUpdateChannel.Visible = false;
-			}
-		}
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
@@ -322,6 +323,7 @@ public partial class MainWindow : Gtk.Window {
 		QSSaaS.Session.StartSessionRefresh ();
 		toolbarMain.Sensitive = true;
 		menubar1.Sensitive = true;
+		entitySearchEmployee.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
@@ -381,6 +383,9 @@ public partial class MainWindow : Gtk.Window {
 
 	#region Workwear featrures
 	private void DisableFeatures() {
+		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
+		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
+		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
@@ -390,16 +395,15 @@ public partial class MainWindow : Gtk.Window {
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
-		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
-		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
-		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
+		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
 		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
@@ -407,18 +411,17 @@ public partial class MainWindow : Gtk.Window {
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
+		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
+		ActionShipment.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
-		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
-		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
-		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
-		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
-		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
-		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
-		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
 		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
+		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
 		
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
@@ -1000,5 +1003,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
+	}
+
+	protected void OnActionShipmentActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
 	}
 }

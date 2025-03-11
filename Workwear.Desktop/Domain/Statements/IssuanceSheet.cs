@@ -69,6 +69,13 @@ namespace Workwear.Domain.Statements
 			set => SetField(ref collectiveExpense, value);
 		}
 
+		private ExpenseDutyNorm expenseDutyNorm;
+		[Display(Name = "Документ выдачи по дежурной норме")]
+		public virtual ExpenseDutyNorm ExpenseDutyNorm {
+			get => expenseDutyNorm;
+			set => SetField(ref expenseDutyNorm, value);
+		}
+
 		private EmployeeCard transferAgent;
 		[Display(Name = "Ответственный за передачу СИЗ")]
 		public virtual EmployeeCard TransferAgent {
@@ -160,6 +167,16 @@ namespace Workwear.Domain.Statements
 				StartOfUse = employeeItem.NextIssue ?? Date,
 			};
 			Items.Add(item);
+			return item;
+		}
+
+		public virtual IssuanceSheetItem AddItem(ExpenseDutyNormItem expenseDutyNormItem) {
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				ExpenseDutyNormItem = expenseDutyNormItem
+			};
+			Items.Add(item);
+			item.UpdateFromExpenseDuty();
 			return item;
 		}
 		#endregion

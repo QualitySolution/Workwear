@@ -50,6 +50,10 @@ namespace workwear.Journal.Filter.Views.Communications
 			choiceProtectionToolsView.Binding
 				.AddBinding(ViewModel, vm => vm.PeriodSensitive, w => w.Sensitive)
 				.InitializeFromSource();
+			yenumcomboboxSex.ItemsEnum = typeof(SexType);
+			yenumcomboboxSex.Binding.AddSource(viewModel)
+				.AddBinding(v=>v.SexType,w=>w.SelectedItem)
+				.InitializeFromSource();
 		}
 	}
 }

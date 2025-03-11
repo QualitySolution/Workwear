@@ -9,6 +9,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Statements;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
@@ -30,7 +31,7 @@ namespace Workwear.Domain.Stock.Documents {
 		#region Хранимые Сввойства
 
 		private EmployeeCard responsibleEmployee;
-		[Display (Name = "Ответственый сотрудник")]
+		[Display (Name = "Ответственный сотрудник")]
 		public virtual EmployeeCard ResponsibleEmployee {
 			get { return responsibleEmployee; }
 			set { SetField (ref responsibleEmployee, value); }
@@ -58,6 +59,14 @@ namespace Workwear.Domain.Stock.Documents {
 			get { return items; }
 			set { SetField (ref items, value); }
 		}
+		
+		private IssuanceSheet issuanceSheet;
+		[Display(Name = "Связанная ведомость")]
+		public virtual IssuanceSheet IssuanceSheet {
+			get => issuanceSheet;
+			set => SetField(ref issuanceSheet, value);
+		}
+		
 
 		#endregion
 		
@@ -100,6 +109,44 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual void RemoveItem(ExpenseDutyNormItem item) {
 			Items.Remove(item);
 		}
+		
+		#region Ведомость
+		public virtual void CreateIssuanceSheet(Organization defaultOrganization, Leader defaultLeader, Leader defaultResponsiblePerson)
+		{
+			if(IssuanceSheet != null)
+				return;
+
+			IssuanceSheet = new IssuanceSheet {
+				ExpenseDutyNorm = this,
+				Organization = defaultOrganization,
+				HeadOfDivisionPerson = defaultLeader,
+				ResponsiblePerson = defaultResponsiblePerson,
+			};
+			UpdateIssuanceSheet();
+		}
+		public virtual void UpdateIssuanceSheet()
+		{
+			if(IssuanceSheet == null)
+				return;
+			
+			if(ResponsibleEmployee==null)
+				throw new NullReferenceException("Для обновления ведомости ответственный сотрудник должен быть указан.");
+
+			IssuanceSheet.Date = Date;
+			IssuanceSheet.TransferAgent = ResponsibleEmployee;
+			if(ResponsibleEmployee.Subdivision != null)
+				IssuanceSheet.Subdivision = ResponsibleEmployee.Subdivision;
+
+			foreach(var item in Items.ToList()) {
+				if(item.IssuanceSheetItem == null && item.Amount > 0) 
+					item.IssuanceSheetItem = IssuanceSheet.AddItem(item);
+
+				if(item.IssuanceSheetItem != null)
+					item.IssuanceSheetItem.UpdateFromExpenseDuty();
+			}
+		}
+		
+		#endregion
 		#endregion
 		
 		#region IValidatable

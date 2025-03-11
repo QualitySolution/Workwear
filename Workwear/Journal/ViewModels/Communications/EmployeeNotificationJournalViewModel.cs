@@ -189,6 +189,17 @@ namespace workwear.Journal.ViewModels.Communications
 					break;
 			}
 
+			switch(Filter.SexType) {
+				case (SexType.F):
+					employees
+						.Where(() => employeeAlias.Sex == Sex.F);
+					break;
+				case (SexType.M):
+					employees
+						.Where(() => employeeAlias.Sex == Sex.M);
+					break;
+			}
+
 			employees
 				.Where(GetSearchCriterion(
 					() => employeeAlias.Id,

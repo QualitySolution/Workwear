@@ -79,6 +79,7 @@ namespace workwear.Journal.ViewModels.Statements
 					.Select(() => subdivisionAlias.Code).WithAlias(() => resultAlias.SubdivisionCode)
 					.Select(x => x.Expense.Id).WithAlias(() => resultAlias.DocExpenseId)
 					.Select(x => x.CollectiveExpense.Id).WithAlias(() => resultAlias.DocCollectiveExpenseId)
+					.Select(x=>x.ExpenseDutyNorm.Id).WithAlias(()=>resultAlias.DocExpenseDutyNormId)
 					.SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Employees)
 				)
 				.OrderBy(() => issuanceSheetAlias.Date).Desc
@@ -100,6 +101,7 @@ namespace workwear.Journal.ViewModels.Statements
 		public int? DocExpenseId { get; set; }
 		public int? DocMassExpenseId { get; set; }
 		public int? DocCollectiveExpenseId { get; set; }
+		public int? DocExpenseDutyNormId { get; set; }
 		public string Document { 
 			get{
 				if(DocExpenseId != null)
@@ -108,6 +110,8 @@ namespace workwear.Journal.ViewModels.Statements
 					return $"Массовая выдача №{DocMassExpenseId}";
 				if(DocCollectiveExpenseId != null)
 					return $"Коллективная выдача №{DocCollectiveExpenseId}";
+				if(DocExpenseDutyNormId != null)
+					return $"Выдача по деж. норме №{DocExpenseDutyNormId}";
 				return null;
 			} }
 

@@ -46,6 +46,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 			set => SetField(ref isueType, value);
 		}
 
+		private SexType sexType;
+		public SexType SexType {
+			get => sexType;
+			set => SetField(ref sexType, value);
+		}
+
 		private DateTime startDateIssue;
 		public DateTime StartDateIssue {
 			get => startDateIssue;
@@ -168,5 +174,15 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 		Personal,
 		[Display(Name = "Коллективная")]
 		Сollective
+	}
+
+	public enum SexType 
+	{
+		[Display(Name="Все")]
+		All,
+		[Display(Name="Мужской")]
+		M,
+		[Display(Name="Женский")]
+		F
 	}
 }
