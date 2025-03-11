@@ -46,6 +46,9 @@
           </TableColumn>
           <TableColumn>
             <Width>41.2pt</Width>
+            <Visibility >
+              <Hidden>=!{?show_size}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>46.5pt</Width>
@@ -1226,6 +1229,13 @@ ORDER BY
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_size">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>
