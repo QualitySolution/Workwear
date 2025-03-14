@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
+using Workwear.Domain.Operations;
 
 namespace Workwear.Domain.Stock.Documents {
 	[Appellative(Gender = GrammaticalGender.Masculine,
@@ -40,17 +41,41 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual void RemoveItem(BarcodingItem item) {
 			Items.Remove (item);
 		}
-		public virtual void AddItem() {
+		public virtual void AddItem(StockPosition stockPosition, Warehouse warehouse, int amount) {
 			var item = (new BarcodingItem() {
-				Document = this
+				Document = this,
+				OperationExpence = new WarehouseOperation() {
+					OperationTime = Date,
+					ExpenseWarehouse = warehouse,
+					Amount = amount,
+					StockPosition = stockPosition },
+				OperationReceipt = new WarehouseOperation() {
+					OperationTime = Date,
+					ReceiptWarehouse = warehouse,
+					Amount = amount,
+					StockPosition = stockPosition },
 			});
 			Items.Add(item);
+			UoW.Save(item);
 		}
 		
 		#endregion
 		
-		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			throw new System.NotImplementedException();
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) { 
+			if(false) //затычка
+				yield return new ValidationResult ("");
+        
+		}
+
+		public virtual BarcodingItem AddItem(WarehouseOperation operationExpance, WarehouseOperation operationReceipt, IEnumerable<Barcode> barcodes) {
+			var item = (new BarcodingItem() {
+				Document = this,
+				OperationExpence = operationExpance,
+				OperationReceipt = operationReceipt,
+				Barcodes = barcodes
+			});
+			Items.Add(item);
+			return item;
 		}
 	}
 }

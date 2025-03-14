@@ -59,7 +59,16 @@ namespace Workwear.Tools.Barcodes
 			}
 		}
 		
-		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height) {
+		/// <summary>
+		/// Сгенерировать набор штрихкодов
+		/// </summary>
+		/// <param name="unitOfWork">В котором будут созданы и сохранены, без комита</param>
+		/// <param name="label">до 100 символов</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height, string label = "") {
+			if (label?.Length > 100)
+				throw new ArgumentOutOfRangeException(nameof(label));
 			var barCodeList = new List<Barcode>();
 			for(var i = 1; i < amount + 1; i++) {
 				var newBarCode = new Barcode();
@@ -96,36 +105,10 @@ namespace Workwear.Tools.Barcodes
 		#endregion
 		
 		#region Barcodes In Stock
-		public IEnumerable<Barcode> CreateBarcodesInStock(IUnitOfWork uow, Warehouse warehouse, StockPosition stockPosition, int amount, string label = null)
-		{
-			if (uow == null) throw new ArgumentNullException(nameof(uow));
-			if (warehouse == null) throw new ArgumentNullException(nameof(warehouse));
-			if (stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
-			if (label?.Length > 100) throw new ArgumentOutOfRangeException(nameof(label));
-			if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
-			
-			IList<Barcode> barcodes = Create(uow, amount, stockPosition.Nomenclature, stockPosition.WearSize, stockPosition.Height);
-			foreach (Barcode barcode in barcodes) 
-			{
-				barcode.Label = label;
-				BarcodeOperation barcodeOperation = new BarcodeOperation()
-				{
-					Barcode = barcode,
-					Warehouse = warehouse
-				};
-				
-				uow.Save(barcode, false);
-				uow.Save(barcodeOperation, false);
-			}
-			
-			uow.Commit();
-			return barcodes;
-		}
-
 		public int CountBalanceInStock(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
 		{
 			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
-			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height, warehouse).RowCount();
+			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height).RowCount();
 		}
 
 		public IList<Barcode> GetFreeBarcodes(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
@@ -133,7 +116,7 @@ namespace Workwear.Tools.Barcodes
 			if (uow == null) throw new ArgumentNullException(nameof(uow));
 			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
 
-			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height, warehouse).Select(x => x.Barcode).List<Barcode>();
+			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height).Select(x => x.Barcode).List<Barcode>();
 		}
 
 		public IList<int> GetFreeBarcodesIds(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
@@ -141,7 +124,7 @@ namespace Workwear.Tools.Barcodes
 			if (uow == null) throw new ArgumentNullException(nameof(uow));
 			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
 			
-			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height, warehouse).Select(x => x.Barcode.Id).List<int>();
+			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height).Select(x => x.Barcode.Id).List<int>();
 		}
 		#endregion
 		
@@ -160,7 +143,7 @@ namespace Workwear.Tools.Barcodes
 			return cs == 10? 0: cs;
 		}
 		
-		private IQueryOver<BarcodeOperation, BarcodeOperation> BalanceFreeBarcodesQuery(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
+		private IQueryOver<BarcodeOperation, BarcodeOperation> BalanceFreeBarcodesQuery(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null) 
 		{
 			Barcode bSubAlias = null;
 			BarcodeOperation boSubAlias = null;
@@ -199,12 +182,7 @@ namespace Workwear.Tools.Barcodes
 				.JoinAlias(() => oonAlias.WarehouseOperation, () => woAlias, JoinType.LeftOuterJoin)
 				.Where(Restrictions.Disjunction()
 					.Add(Subqueries.WhereExists(subQuery))
-					.Add(Subqueries.WhereExists(subQuery1)))
-				.Where(Restrictions.Or(
-					Restrictions.Where(() => boAlias.Warehouse != null && (warehouse == null || boAlias.Warehouse == warehouse)),
-					Restrictions.Where(() =>
-						woAlias.ReceiptWarehouse != null && (warehouse == null || woAlias.ReceiptWarehouse == warehouse)))
-				);
+					.Add(Subqueries.WhereExists(subQuery1)));
 		}
 
 		#endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
@@ -28,8 +29,8 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
-
 			ytreeItems.Selection.Changed += Items_Selection_Changed;
+			entityWarehouse.ViewModel = ViewModel.EntryWarehouseViewModel;
 			ybuttonAdd.Clicked += OnButtonAddClicked;
 			ybuttonDel.Clicked += OnButtonDelClicked;
 			buttonPrint.Clicked += OnButtonPrintClicked;
@@ -37,26 +38,28 @@ namespace Workwear.Views.Stock {
 
 		private void ConfigureItems()
 		{
-		/*	ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<BarcodingItem> ()
-					.AddColumn ("Сотрудник").Resizable().AddReadOnlyTextRenderer(e => e.Employee.FullName)
-					.AddColumn("Номер\nкарточки").AddTextRenderer(e => e.EmployeeNumber)
-					.AddColumn ("Номенклатура").Resizable().AddReadOnlyTextRenderer(e => e?.Nomenclature?.Name).WrapWidth(1000)
-					.AddColumn ("Выдано").AddReadOnlyTextRenderer(e => e.Amount.ToString())
-					.AddColumn ("Дата\nвыдачи").AddReadOnlyTextRenderer(e => e.IssueDate?.ToShortDateString() ?? "")
-					.AddColumn ("Выдано до").AddReadOnlyTextRenderer(e => e.ExpiryByNormBefore?.ToShortDateString() ??  "до износа")
-					.AddColumn ("% износа на\nдату выдачи").AddReadOnlyTextRenderer((e => ((int)(e.WearPercentBefore * 100))
-						.Clamp(0, 100) + "%"))
-					.AddColumn ("Установить\n% износа").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
-						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
-						.AddTextRenderer (e => "%", expand: false)
-					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing()
-					.AddColumn ("Продлить").AddDateRenderer(e => e.ExpiryByNormAfter).Editable()
-					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
-					.Finish ();
+			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<BarcodingItem> ()
+				.AddColumn ("Наименование").Resizable()
+					.ToolTipText(x => $"ИД номенклатуры: {x.Nomenclature.Id}")
+					.AddTextRenderer (e => e.Nomenclature.Name).WrapWidth(500)
+				.AddColumn ("Размер")
+					.AddTextRenderer (e => e.SizeName)
+				.AddColumn ("Рост")
+					.AddTextRenderer (e => e.HeightName)
+				.AddColumn("Количество")
+					.AddTextRenderer (e => e.Amount.ToString())
+				.AddColumn("Собственник").Resizable()
+					.Visible(ViewModel.OwnersVisible)
+					.AddTextRenderer(e => e.OwnerName)
+				.AddColumn("Износ")
+					.AddTextRenderer(e => e.WearPercent.ToString("P0"))
+				.AddColumn ("Штрихкоды")
+					.AddTextRenderer (e => e.Barcodes.Select(b => b.Title)
+						.Aggregate((a, b) => (a+'\n'+b)))
+				.Finish();
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
-				*/
 		}
 		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<BarcodingItem>());

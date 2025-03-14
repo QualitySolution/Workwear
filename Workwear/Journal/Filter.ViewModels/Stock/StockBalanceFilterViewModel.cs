@@ -99,6 +99,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		#region Visible
 
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+//1289		
+		public bool SensetiveWarehouse { get; set; } = true;
 		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
 		private bool canChooseAmount = false;
 		public bool CanChooseAmount {

@@ -86,6 +86,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CompletionSourceItem completionSourceItemAlias = null;
 			IssuanceSheet issuanceSheetAlias = null;
 			IssuanceSheetItem issuanceSheetItem = null;
+///1289
+//TODO  Нужно ли отображать маркировку в движениях?
 
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemTypesAlias = null;

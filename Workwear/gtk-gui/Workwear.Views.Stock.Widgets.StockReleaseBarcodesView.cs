@@ -38,6 +38,8 @@ namespace Workwear.Views.Stock.Widgets
 
 		private global::Gamma.GtkWidgets.yButton createBarcodesButton;
 
+		private global::Gamma.GtkWidgets.yButton createAndPrintBarcodesButton;
+
 		private global::Gamma.GtkWidgets.yButton ybuttonCancel;
 
 		protected virtual void Build()
@@ -220,32 +222,50 @@ namespace Workwear.Views.Stock.Widgets
 			w16.Expand = false;
 			w16.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
+			this.createAndPrintBarcodesButton = new global::Gamma.GtkWidgets.yButton();
+			this.createAndPrintBarcodesButton.WidthRequest = 0;
+			this.createAndPrintBarcodesButton.HeightRequest = 0;
+			this.createAndPrintBarcodesButton.CanFocus = true;
+			this.createAndPrintBarcodesButton.Name = "createAndPrintBarcodesButton";
+			this.createAndPrintBarcodesButton.UseUnderline = true;
+			this.createAndPrintBarcodesButton.FocusOnClick = false;
+			this.createAndPrintBarcodesButton.Xalign = 0F;
+			this.createAndPrintBarcodesButton.Yalign = 0F;
+			this.createAndPrintBarcodesButton.Label = global::Mono.Unix.Catalog.GetString("Создать и напечатать");
+			global::Gtk.Image w17 = new global::Gtk.Image();
+			w17.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
+			this.createAndPrintBarcodesButton.Image = w17;
+			this.yhbox1.Add(this.createAndPrintBarcodesButton);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.createAndPrintBarcodesButton]));
+			w18.PackType = ((global::Gtk.PackType)(1));
+			w18.Position = 1;
+			w18.Expand = false;
+			w18.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ybuttonCancel = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonCancel.CanFocus = true;
 			this.ybuttonCancel.Name = "ybuttonCancel";
 			this.ybuttonCancel.UseUnderline = true;
 			this.ybuttonCancel.Label = global::Mono.Unix.Catalog.GetString("Отменить");
-			global::Gtk.Image w17 = new global::Gtk.Image();
-			w17.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-cancel", global::Gtk.IconSize.Menu);
-			this.ybuttonCancel.Image = w17;
+			global::Gtk.Image w19 = new global::Gtk.Image();
+			w19.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-cancel", global::Gtk.IconSize.Menu);
+			this.ybuttonCancel.Image = w19;
 			this.yhbox1.Add(this.ybuttonCancel);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonCancel]));
-			w18.PackType = ((global::Gtk.PackType)(1));
-			w18.Position = 1;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonCancel]));
+			w20.PackType = ((global::Gtk.PackType)(1));
+			w20.Position = 2;
+			w20.Expand = false;
+			w20.Fill = false;
 			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w19.Position = 6;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w21.Position = 6;
+			w21.Fill = false;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Show();
-			this.ybuttonCancel.Clicked += new global::System.EventHandler(this.OnButtonCancel);
-			this.createBarcodesButton.Clicked += new global::System.EventHandler(this.OnCreateBarcodesButtonClicked);
 		}
 	}
 }

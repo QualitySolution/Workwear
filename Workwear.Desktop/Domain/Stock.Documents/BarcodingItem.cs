@@ -1,7 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
 		[Appellative(Gender = GrammaticalGender.Feminine,
@@ -13,12 +17,11 @@ namespace Workwear.Domain.Stock.Documents {
 		
 	public class BarcodingItem : PropertyChangedBase, IDomainObject {
 		
-		#region Свойства
+		#region Хранимые Свойства
 
-		public int Id { get; }
+		public virtual int Id { get; }
 
-		public virtual string Title => "";
-			//$"{Employee.ShortName} - переоценка {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
+		public virtual string Title => $"Маркировка №{Document.DocNumberText}, {Amount} {Nomenclature?.Type?.Units?.Name} {StockPosition.Title}";
 		
 		private Barcoding document;
 		[Display(Name = "Документ маркировки")]
@@ -44,5 +47,24 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref operationExpence, value);
 		}
 		#endregion
+
+		#region Динамические свойства
+
+		[Display(Name = "Номенклатура")] public virtual Nomenclature Nomenclature => OperationExpence?.Nomenclature;
+		[Display(Name = "Количество")] public virtual int Amount => OperationExpence?.Amount ?? 0;
+		[Display(Name = "Рост одежды")] public virtual Size Size => OperationExpence?.WearSize;
+		[Display(Name = "Рост одежды")] public virtual Size Height  => OperationExpence?.Height;
+		[Display(Name = "Собственник имущества")] public virtual Owner Owner => OperationExpence?.Owner;
+		[Display(Name = "Количество")] public virtual decimal WearPercent => OperationExpence?.WearPercent ?? 0;
+		[Display(Name = "Единица измерения")] public virtual MeasurementUnits Units => Nomenclature?.Type.Units;
+		public virtual string SizeName => Size?.Name ?? String.Empty;
+		public virtual string HeightName  => Height?.Name ?? String.Empty;
+		public virtual string OwnerName => Owner?.Name ?? String.Empty;
+		public virtual string UnitsName => Units?.Name ?? String.Empty;
+		[Display(Name = "Складская позиция")] public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, Size, Height, Owner);
+		
+		[Display(Name = "Штрихкоды")] 
+		public virtual IEnumerable<Barcode> Barcodes { get; set; }
+	    #endregion
 	}
 }

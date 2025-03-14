@@ -19,9 +19,6 @@ namespace Workwear.Views.Stock.Widgets
 				.AddBinding(vm => vm.WithoutBarcodesAmount, w => w.Adjustment.Upper)
 				.AddBinding(vm => vm.SelectedAmount, w => w.ValueAsInt)
 				.InitializeFromSource();
-			createBarcodesButton.Binding
-				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
-				.InitializeFromSource();
 			
 			labelAllNomenclature.Binding
 				.AddBinding(ViewModel, vm => vm.NomenclatureAmount, w => w.Text, new IntToStringConverter())
@@ -37,17 +34,26 @@ namespace Workwear.Views.Stock.Widgets
 				.InitializeFromSource();
 			
 			entryBarcodesLabel.Binding.AddBinding(ViewModel, vm => vm.Label, w => w.Text).InitializeFromSource();
-			
+
+			ybuttonCancel.Clicked += OnButtonCancelClicked;
+			createBarcodesButton.Clicked += OnCreateBarcodesButtonClicked;
+			createBarcodesButton.Binding
+				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
+				.InitializeFromSource();
+			createAndPrintBarcodesButton.Clicked += OnCreateAndPrintBarcodesButtonClicked;
+			createAndPrintBarcodesButton.Binding
+				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
+				.InitializeFromSource();
+				
 			ConfigureAutocomplete();
 		}
 
+		//Автоподсказака на основании уже сделанных штрихкодов
 		private void ConfigureAutocomplete() 
 		{
 			ListStore store = new ListStore(typeof(string));
 			foreach(string label in ViewModel.Labels) 
-			{
 				store.AppendValues(label);
-			}
 			
 			entryBarcodesLabel.Completion = new EntryCompletion();
 			entryBarcodesLabel.Completion.Model = store;
@@ -82,14 +88,13 @@ namespace Workwear.Views.Stock.Widgets
 			(cell as CellRendererText).Markup = value;
 		}
 		
-		protected void OnButtonCancel(object sender, System.EventArgs e)
-		{
-			ViewModel.Close(false, CloseSource.Self);
-		}
+		protected void OnButtonCancelClicked(object sender, System.EventArgs e) => 
+			ViewModel.Close(false, CloseSource.Cancel);
 
-		protected void OnCreateBarcodesButtonClicked(object sender, System.EventArgs e) 
-		{
-			ViewModel.CreateBarcodes();
-		}
+		protected void OnCreateBarcodesButtonClicked(object sender, System.EventArgs e) =>
+			ViewModel.CreateAndClose();
+
+		protected void OnCreateAndPrintBarcodesButtonClicked(object sender, EventArgs e) =>
+			ViewModel.CreateAndPrint();
 	}
 }

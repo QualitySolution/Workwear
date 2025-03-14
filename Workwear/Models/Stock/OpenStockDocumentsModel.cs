@@ -52,6 +52,9 @@ namespace workwear.Models.Stock
 				case StockDocumentType.OverNormDoc:
 					navigation.OpenViewModel<OverNormViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
+				case StockDocumentType.BarcodingDoc:
+					navigation.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
+					break;
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}
@@ -96,6 +99,8 @@ namespace workwear.Models.Stock
 					return navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StockDocumentType.OverNormDoc:
 					return navigation.OpenViewModel<OverNormViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
+				case StockDocumentType.BarcodingDoc:
+					return navigation.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}

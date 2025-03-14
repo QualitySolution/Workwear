@@ -80,16 +80,16 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding`
 	`date`          DATE         NOT NULL,
 	`creation_date` DATETIME     NULL DEFAULT NULL,
 	`user_id`       INT UNSIGNED NULL DEFAULT NULL,
+	`comment`		text 		 null,
 	`warehouse_id`  int unsigned not null,
 	PRIMARY KEY (`id`),
-	INDEX `stock_inspection_fk_1_idx` (`user_id` ASC),
 	INDEX `index_stock_inspection_date` (`date` ASC),
 	CONSTRAINT `stock_barcoding_fk_users`
 		FOREIGN KEY (`user_id`)
 			REFERENCES `users` (`id`)
 			ON DELETE NO ACTION
 			ON UPDATE NO ACTION,
-	CONSTRAINT `stock_barcoding_fk_users`
+	CONSTRAINT `stock_barcoding_fk_warehouse`
 		FOREIGN KEY (`warehouse_id`)
 			REFERENCES `warehouse` (`id`)
 			ON DELETE NO ACTION

@@ -65,6 +65,7 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.AddQuery(QueryInspectionDoc);
 			dataLoader.AddQuery(QueryOverNormDoc);
+			dataLoader.AddQuery(QueryBarcoding);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
 			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
@@ -72,10 +73,8 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreateDocumentsActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return),
-				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm));
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), 
-				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(OverNorm));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return), typeof(Writeoff),
+				typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm), typeof(OverNorm), typeof(Barcoding));
 		}
 
 		#region Опциональные зависимости
@@ -504,27 +503,20 @@ namespace workwear.Journal.ViewModels.Stock
 		protected IQueryOver<OverNorm> QueryOverNormDoc(IUnitOfWork uow) 
 		{
 			if (Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.OverNormDoc) 
-			{
 				return null;
-			}
 
 			OverNorm ondAlias = null;
 			OverNormItem ondiAlias = null;
 			OverNormOperation onAlias = null;
 			WarehouseOperation woAlias = null;
+			
 			var query = uow.Session.QueryOver(() => ondAlias);
-			if (Filter.StartDate.HasValue) 
-			{
+			if (Filter.StartDate.HasValue)
 				query.Where(x => x.Date >= Filter.StartDate.Value);
-			}
-			if (Filter.EndDate.HasValue) 
-			{
+			if (Filter.EndDate.HasValue)
 				query.Where(x => x.Date < Filter.EndDate.Value.AddDays(1));
-			}
 			if (Filter.Warehouse != null) 
-			{
 				query.Where(x => x.Warehouse == Filter.Warehouse);
-			}			
 
 			query.JoinAlias(() => ondAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => ondAlias.Items, () => ondiAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -553,6 +545,47 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return query;
 		}
+		
+///1289				
+		protected IQueryOver<Barcoding> QueryBarcoding(IUnitOfWork uow) {
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.BarcodingDoc)
+				return null;
+
+			Barcoding barcodingAlias = null;
+			
+			var barcodingQuery = uow.Session.QueryOver<Barcoding>(() => barcodingAlias);
+			if(Filter.StartDate.HasValue)
+				barcodingQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				barcodingQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if (Filter.Warehouse != null) 
+				barcodingQuery.Where(x => x.Warehouse == Filter.Warehouse);
+				
+			
+			barcodingQuery.Where(GetSearchCriterion(
+				() => barcodingAlias.Id,
+				() => barcodingAlias.DocNumber,
+				() => barcodingAlias.Comment,
+				() => authorAlias.Name
+			));
+
+			barcodingQuery
+				.JoinAlias(() => barcodingAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.SelectList(list => list
+					.SelectGroup(() => barcodingAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => barcodingAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+					.Select(() => barcodingAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => StockDocumentType.BarcodingDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => barcodingAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => barcodingAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+				.OrderBy(() => barcodingAlias.Date).Desc
+				.ThenBy(() => barcodingAlias.CreationDate).Desc
+				.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return barcodingQuery;
+		}
 		#endregion
 		
 		#region Действия
@@ -572,6 +605,7 @@ namespace workwear.Journal.ViewModels.Stock
 					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
 					case StockDocumentType.ExpenseDutyNormDoc when !FeaturesService.Available(WorkwearFeature.DutyNorms):
+					case StockDocumentType.BarcodingDoc when !FeaturesService.Available(WorkwearFeature.Barcodes):
 						continue;
 					default:
 					{

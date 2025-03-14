@@ -293,8 +293,8 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
-//1289			
 			
+//1289
 			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
 				(selected) => selected.Any(x => 
 					x is StockBalanceJournalNode node && 

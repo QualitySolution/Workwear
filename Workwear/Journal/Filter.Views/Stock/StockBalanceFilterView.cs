@@ -17,6 +17,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			chShowNegative.Binding.AddBinding(viewModel, vm => vm.ShowNegativeBalance, w => w.Active).InitializeFromSource();
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entityWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
+			entityWarehouse.Binding.AddBinding(viewModel, v => v.SensetiveWarehouse, w => w.Sensitive).InitializeFromSource();
 			labelWarehouse.Binding.AddBinding(viewModel, v => v.VisibleWarehouse, w => w.Visible).InitializeFromSource();
 			ylabelOwner.Binding.AddBinding(viewModel, v => v.VisibleOwners, w => w.Visible).InitializeFromSource();
 			yspeccomboboxOwners.Binding.AddBinding(viewModel, v => v.VisibleOwners, w => w.Visible).InitializeFromSource();
