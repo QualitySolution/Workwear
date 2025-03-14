@@ -12,7 +12,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Button buttonCancel;
 
-		private global::Gtk.Button buttonPrint;
+		private global::Gtk.Button buttonPrintAll;
 
 		private global::Gtk.HBox hbox1;
 
@@ -57,6 +57,8 @@ namespace Workwear.Views.Stock
 		private global::Gamma.GtkWidgets.yButton ybuttonAdd;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonDel;
+
+		private global::Gtk.Button buttonPrintSelect;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
@@ -103,16 +105,16 @@ namespace Workwear.Views.Stock
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.buttonPrint = new global::Gtk.Button();
-			this.buttonPrint.CanFocus = true;
-			this.buttonPrint.Name = "buttonPrint";
-			this.buttonPrint.UseUnderline = true;
-			this.buttonPrint.Label = global::Mono.Unix.Catalog.GetString("Печать");
+			this.buttonPrintAll = new global::Gtk.Button();
+			this.buttonPrintAll.CanFocus = true;
+			this.buttonPrintAll.Name = "buttonPrintAll";
+			this.buttonPrintAll.UseUnderline = true;
+			this.buttonPrintAll.Label = global::Mono.Unix.Catalog.GetString("Печать все");
 			global::Gtk.Image w5 = new global::Gtk.Image();
 			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
-			this.buttonPrint.Image = w5;
-			this.hbox3.Add(this.buttonPrint);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.buttonPrint]));
+			this.buttonPrintAll.Image = w5;
+			this.hbox3.Add(this.buttonPrintAll);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.buttonPrintAll]));
 			w6.Position = 2;
 			w6.Expand = false;
 			w6.Fill = false;
@@ -344,21 +346,35 @@ namespace Workwear.Views.Stock
 			w29.Expand = false;
 			w29.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.buttonPrintSelect = new global::Gtk.Button();
+			this.buttonPrintSelect.CanFocus = true;
+			this.buttonPrintSelect.Name = "buttonPrintSelect";
+			this.buttonPrintSelect.UseUnderline = true;
+			this.buttonPrintSelect.Label = global::Mono.Unix.Catalog.GetString("Печать выбранные");
+			global::Gtk.Image w30 = new global::Gtk.Image();
+			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-print", global::Gtk.IconSize.Menu);
+			this.buttonPrintSelect.Image = w30;
+			this.hbox8.Add(this.buttonPrintSelect);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonPrintSelect]));
+			w31.Position = 2;
+			w31.Expand = false;
+			w31.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w30.Position = 2;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w32.Position = 3;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w31.Position = 1;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w33.Position = 1;
+			w33.Expand = false;
+			w33.Fill = false;
 			this.dialog_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.dialog_VBox[this.vbox2]));
-			w32.Position = 2;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog_VBox[this.vbox2]));
+			w34.Position = 2;
 			this.Add(this.dialog_VBox);
 			if ((this.Child != null))
 			{

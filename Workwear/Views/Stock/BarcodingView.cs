@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock.Documents;
@@ -33,7 +34,8 @@ namespace Workwear.Views.Stock {
 			entityWarehouse.ViewModel = ViewModel.EntryWarehouseViewModel;
 			ybuttonAdd.Clicked += OnButtonAddClicked;
 			ybuttonDel.Clicked += OnButtonDelClicked;
-			buttonPrint.Clicked += OnButtonPrintClicked;
+			buttonPrintAll.Clicked += OnButtonPrintAllClicked;
+			buttonPrintSelect.Clicked += OnButtonPrintSelectClicked;
 		}
 
 		private void ConfigureItems()
@@ -64,9 +66,11 @@ namespace Workwear.Views.Stock {
 		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<BarcodingItem>());
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
-		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
+		private void OnButtonPrintSelectClicked(object sender, EventArgs e) => 
+			ViewModel.PrintBarcodesforItems(new List<BarcodingItem>() {ytreeItems.GetSelectedObject<BarcodingItem>()});
+		private void OnButtonPrintAllClicked(object sender, EventArgs e) => ViewModel.PrintBarcodesforItems();
 		private void Items_Selection_Changed(object sender, EventArgs e){
-			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			ybuttonDel.Sensitive = buttonPrintSelect.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 	}
 }

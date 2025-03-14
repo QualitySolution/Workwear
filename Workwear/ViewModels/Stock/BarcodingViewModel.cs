@@ -114,6 +114,14 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		public void DeleteItem(BarcodingItem item) {
+			if(item.Id > 0) {
+////1289 Пока не придумал, как задать через мапинг, возможно сделать через удалялку
+				foreach(var operationBarcode in
+				        item.Barcodes.SelectMany(b => b.BarcodeOperations
+					        .Where(o => o.WarehouseOperation.Id == item.OperationReceipt.Id))) 
+					UoW.Delete(operationBarcode);
+				UoW.Delete(item);
+			}
 			Entity.RemoveItem(item);
 			CalculateTotal();
 		}
@@ -163,9 +171,6 @@ namespace Workwear.ViewModels.Stock {
 					ReceiptWarehouse = warehouse,
 					Amount = widgetVm.SelectedAmount
 				};
-//1289					
-//UoW.Save(operationExpance);
-//UoW.Save(operationReceipt);
 				
 				IList<Barcode> barcodes = barcodeService.Create(
 					UoW,
@@ -187,20 +192,23 @@ namespace Workwear.ViewModels.Stock {
 				Entity.AddItem(operationExpance, operationReceipt, barcodes);
 				Save();
 				
-				if(widgetVm.NeedPrint) {
-					ReportInfo reportInfo = new ReportInfo() {
-						Title = "Штрихкод",
-						Identifier = "Barcodes.BarcodeFromEmployeeIssue",
-						Parameters = new Dictionary<string, object> {
-							{ "barcodes", barcodes.Select(x => x.Id).ToList() }
-						}
-					};
-					NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
-				}
+				if(widgetVm.NeedPrint) 
+					PrintBarcodes(barcodes);
 			}
 		}
 
+		private void PrintBarcodes(IList<Barcode> barcodes) {
+			ReportInfo reportInfo = new ReportInfo() {
+				Title = "Штрихкод",
+				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Parameters = new Dictionary<string, object> {
+					{ "barcodes", barcodes.Select(x => x.Id).ToList() }
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}
 
+////1289
 		private void LoadItems(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var addedAmount = ((StockBalanceJournalViewModel)sender).Filter.AddAmount;
 			
@@ -252,11 +260,17 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Ok");
 			return true;
 		}
-		
+////1289		
 		private void CalculateTotal() {
 			Total = $"Позиций в документе: {Entity.Items.Count}";
 		}
-		
+
+		public void PrintBarcodesforItems(IList<BarcodingItem> items = null) {
+			if(items == null)
+				items = Entity.Items;
+			PrintBarcodes(items.SelectMany(i => i.Barcodes).ToList());
+		}
+
 		public void Print() {
 			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
 				return;
@@ -270,7 +284,6 @@ namespace Workwear.ViewModels.Stock {
 					{ "id",  Entity.Id }
 				}
 			};
-			//NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 	}
 }
