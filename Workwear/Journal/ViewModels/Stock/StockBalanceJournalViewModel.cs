@@ -11,6 +11,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Journal.Search;
@@ -20,6 +21,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
 using ArgumentNullException = System.ArgumentNullException;
 
@@ -68,7 +70,6 @@ namespace workwear.Journal.ViewModels.Stock
 		private IList<StockBalanceJournalNode> GetNodes(CancellationToken cancellation) {
 			using(var connection = connectionFactory.OpenConnection()) {
 				
-				
 				var conductions = new List<string>();
 				if(Filter.SelectOwner != null)
 					switch(Filter.SelectOwner) {
@@ -85,6 +86,9 @@ namespace workwear.Journal.ViewModels.Stock
 
 				if (Filter.ProtectionTools != null && Filter.ProtectionTools.Nomenclatures.Any())
 					conductions.Add($"nomenclature.id IN ({string.Join(",", Filter.ProtectionTools.Nomenclatures.Select(x => x.Id))})");
+				
+				if(Filter.ShowWithBarcodes)
+					conductions.Add("nomenclature.use_barcode = 1");
 				
 				var search = new SqlSearchCriterion(Search)
 					.WithLikeMode(LikeMatchMode.UnsignedNumberEqual)
@@ -170,119 +174,6 @@ SELECT
 				return result;
 			}
 		}
-//1289		
-		/*
-		private IQueryOver<WarehouseOperation> BarcodesStockBalanceQuery(IUnitOfWork uow) 
-		{
-			StockBalanceJournalNode resultAlias = null;
-			
-			Barcode bSubAlias = null;
-			BarcodeOperation boSubAlias = null;
-			
-			Barcode bSub1Alias = null;
-			BarcodeOperation boSubAlias1 = null;
-			OverNormOperation oonSubAlias1 = null;
-			WarehouseOperation woSubAlias1 = null;
-			
-			BarcodeOperation boAlias = null;
-			WarehouseOperation woAlias = null;
-			OverNormOperation onAlias = null;
-			Barcode bAlias = null;
-			Nomenclature nAlias = null;
-			ItemsType itAlias = null;
-			MeasurementUnits unitsAlias = null;
-			Size sizeAlias = null;
-			Size heightAlias = null;
-			Owner ownerAlias = null;
-			
-			var subQuery = QueryOver.Of(() => boSubAlias)
-				.JoinAlias(() => boSubAlias.Barcode, () => bSubAlias, JoinType.InnerJoin)
-				.Select(Projections.Group(() => bSubAlias.Id))
-				.Where(Restrictions.Eq(Projections.Count(() => bSubAlias.Id), 1))
-				.Where(x => x.Barcode == boAlias.Barcode);
-				
-			var subQuery1 = QueryOver.Of(() => boSubAlias1)
-				.JoinAlias(() => boSubAlias1.Barcode, () => bSub1Alias)
-				.JoinAlias(() => boSubAlias1.OverNormOperation, () => oonSubAlias1)
-				.JoinAlias(() => oonSubAlias1.WarehouseOperation, () => woSubAlias1)
-				.Where(() => boSubAlias1.OverNormOperation != null)
-				.SelectList(list => list
-					.SelectGroup(() => bSub1Alias.Id)
-					.SelectMax(() => oonSubAlias1.OperationTime))
-				.Where(x => x.Barcode == boAlias.Barcode && onAlias.OperationTime > oonSubAlias1.OperationTime);
-			
-			var queryStock = uow.Session.QueryOver(() => woAlias)
-				.JoinEntityAlias(() => onAlias, () => onAlias.WarehouseOperation.Id == woAlias.Id, JoinType.RightOuterJoin)
-				.JoinEntityAlias(() => boAlias, () => boAlias.OverNormOperation.Id == onAlias.Id, JoinType.RightOuterJoin)
-				.JoinAlias(() => boAlias.Barcode, () => bAlias, JoinType.InnerJoin)
-				.JoinAlias(() => bAlias.Size, () => sizeAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => bAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => bAlias.Nomenclature, () => nAlias, JoinType.InnerJoin)
-				.JoinAlias(() => nAlias.Type, () => itAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => woAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => itAlias.Units, () => unitsAlias)
-				.Where(Restrictions.Disjunction()
-					.Add(Subqueries.WhereExists(subQuery))
-					.Add(Subqueries.WhereExists(subQuery1)))
-				.Where(Restrictions.Or(
-					Restrictions.Where(() => boAlias.Warehouse != null && (Filter.Warehouse == null || boAlias.Warehouse == Filter.Warehouse)),
-					Restrictions.Where(() =>
-						woAlias.ReceiptWarehouse != null && (Filter.Warehouse == null || woAlias.ReceiptWarehouse == Filter.Warehouse)))
-				)
-				.Where(GetSearchCriterion(
-					() => nAlias.Id,
-					() => nAlias.Number,
-					() => nAlias.Name,
-					() => sizeAlias.Name,
-					() => heightAlias.Name))
-				.SelectList(list => list
-					.Select(() => boAlias.Warehouse.Id.Coalesce(woAlias.ReceiptWarehouse.Id)).WithAlias(() => resultAlias.WarehouseId)
-					.Select(() => nAlias.Id).WithAlias(() => resultAlias.NomeclatureId)
-					.Select(() => nAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-					.Select(() => nAlias.Number).WithAlias(() => resultAlias.NomenclatureNumber)
-					.Select(() => nAlias.Sex).WithAlias(() => resultAlias.Sex)
-					.Select(() => nAlias.UseBarcode).WithAlias(() => resultAlias.UseBarcode)
-					.Select(() => unitsAlias.Name).WithAlias(() => resultAlias.UnitsName)
-					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.SizeName)
-					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
-					.Select(() => woAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-					.Select(() => ownerAlias.Id).WithAlias(() => resultAlias.OwnerId)
-					.SelectCount(() => bAlias.Id).WithAlias(() => resultAlias.Amount)
-					.SelectGroup(() => nAlias.Id).WithAlias(() => resultAlias.Id)
-					.SelectGroup(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
-					.SelectGroup(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
-				)
-				.OrderBy(() => nAlias.Name).Asc
-				.ThenBy(Projections.SqlFunction(
-					new SQLFunctionTemplate(
-						NHibernateUtil.String,
-						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
-					NHibernateUtil.String,
-					Projections.Property(() => sizeAlias.Name))).Asc
-				.ThenBy(Projections.SqlFunction(
-					new SQLFunctionTemplate(
-						NHibernateUtil.String,
-						"CAST(SUBSTRING_INDEX(?1, '-', 1) AS DECIMAL(5,1))"),
-					NHibernateUtil.String,
-					Projections.Property(() => heightAlias.Name))).Asc;
-			
-			if (Filter.Warehouse != null) 
-			{
-				queryStock.Where(() => woAlias.ReceiptWarehouse == Filter.Warehouse || boAlias.Warehouse == Filter.Warehouse);
-			}
-			if (Filter.ProtectionTools != null) 
-			{
-				queryStock.Where(() 
-					=> woAlias.Nomenclature.IsIn(Filter.ProtectionTools.Nomenclatures.ToArray()));
-			}
-			if (Filter.ItemsType != null) 
-			{
-				queryStock.Where(() => itAlias.Id == Filter.ItemsType.Id);
-			}
-
-			return queryStock.TransformUsing(Transformers.AliasToBean<StockBalanceJournalNode>());
-		}
-		*/
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
@@ -294,18 +185,15 @@ SELECT
 					);
 			NodeActionsList.Add(updateStatusAction);
 			
-//1289
-			JournalAction releaseBarcodesAction = new JournalAction("Создать штрихкоды",
-				(selected) => selected.Any(x => 
-					x is StockBalanceJournalNode node && 
-					node.UseBarcode && 
+			JournalAction releaseBarcodesAction = new JournalAction("Промаркировать",
+				(selected) => selected.Any(x =>
+					x is StockBalanceJournalNode node &&
+					node.UseBarcode &&
 					node.Amount > 0),
-				(selected) => !Filter.ShowWithBarcodes,
-				(selected) => NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
-						(this, selected.First() as StockBalanceJournalNode, Filter.Warehouse)
-//OpenReleaseBarcodesWindow( selected.First() as StockBalanceJournalNode)
+				(selected) => FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.VisibleBarcodes,
+				(selected) => NavigationManager.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder, StockBalanceJournalNode, Warehouse>
+                	(null, EntityUoWBuilder.ForCreate(), selected.First() as StockBalanceJournalNode, Filter.Warehouse)
 			);
-
 			NodeActionsList.Add(releaseBarcodesAction);
 		}
 

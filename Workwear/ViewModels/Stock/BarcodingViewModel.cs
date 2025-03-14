@@ -42,6 +42,8 @@ namespace Workwear.ViewModels.Stock {
 			BaseParameters baseParameters,
 			FeaturesService featuresService,
 			StockRepository stockRepository,
+			Warehouse warehouse = null,
+			StockBalanceJournalNode  stockBalanceJournalNode = null,
 			IValidator validator = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
@@ -61,15 +63,17 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				logger.Info($"Создание Нового документа маркировки");	
+				logger.Info($"Создание Нового документа маркировки");
+				Entity.Warehouse = warehouse;
 				if(Entity.Warehouse == null)
 					Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 				 loadBarcodes();
 			}
-				
 			
+			if(stockBalanceJournalNode != null)
+				OpenReleaseBarcodesWindow(Entity.Warehouse,stockBalanceJournalNode);
 		}
 //1289		
 		private IInteractiveService interactive; 
@@ -121,12 +125,13 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.CanChooseAmount = true;
 			selectJournal.ViewModel.Filter.AddAmount = AddedAmount.All;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			selectJournal.ViewModel.OnSelectResult += OpenReleaseBarcodesWindow;
+			selectJournal.ViewModel.OnSelectResult += (s, e) =>
+				OpenReleaseBarcodesWindow(
+					((StockBalanceJournalViewModel)s).Filter.Warehouse,
+					e.GetSelectedObjects<StockBalanceJournalNode>().First());
 		}
 
-		private void OpenReleaseBarcodesWindow(object sender, JournalSelectedEventArgs e) {
-			var node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
-			var warehouse = ((StockBalanceJournalViewModel)sender).Filter.Warehouse;
+		private void OpenReleaseBarcodesWindow(Warehouse warehouse, StockBalanceJournalNode node) {
 			var widget = NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
 				(this, node, warehouse);
 			widget.PageClosed += LoadFromWidget;
