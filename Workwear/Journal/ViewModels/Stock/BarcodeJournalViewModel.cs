@@ -59,12 +59,26 @@ namespace Workwear.Journal.ViewModels.Stock
 			EmployeeCard employeeAlias = null;
 			BarcodeOperation barcodeOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
+			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
-			
+////1289
+/*	
+			var subqueryLastOperation = QueryOver.Of<BarcodeOperation>(() => barcodeOperationAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => employeeIssueOperationAlias)
+				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
+				//.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
+				.OrderBy(() => stateOperationAlias.OperationTime).Desc
+				.Select(x => x.State)
+				.Take(1);
+*/			
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(GetSearchCriterion(
 					() => barcodeAlias.Title,
+					() => barcodeAlias.Label,
 					() => nomenclatureAlias.Name,
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
@@ -72,19 +86,23 @@ namespace Workwear.Journal.ViewModels.Stock
 					() => barcodeAlias.Comment
 				));
 			
-			query.Where(() => barcodeAlias.Id.IsIn(barcodeService.GetFreeBarcodesIds(uow,
-					Filter.Nomenclature,
-					Filter.Size,
-					Filter.Height,
-					Filter.Warehouse)
-				.ToArray()));
-			
+			if(Filter.Nomenclature != null)
+				query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);			
+			if(Filter.Size != null)
+				query.Where(x => x.Size.Id == Filter.Size.Id);			
+			if(Filter.Height != null)
+				query.Where(x => x.Height.Id == Filter.Height.Id);			
+			if(Filter.Warehouse != null)
+				query.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == Filter.Warehouse.Id);
+
 			query.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)
 				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
 				.Left.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => employeeIssueOperationAlias)
 				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
