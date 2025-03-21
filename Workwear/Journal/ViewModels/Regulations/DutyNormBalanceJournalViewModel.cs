@@ -29,6 +29,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 			DutyNorm dutyNorm = null
 		) : base(unitOfWorkFactory, interactiveService, navigationManager) {
 			var dataLoader = new ThreadDataLoader<DutyNormBalanceJournalNode>(unitOfWorkFactory);
+			dataLoader.AddQuery(ItemsQuery);
+			DataLoader = dataLoader;
 			JournalFilter =  Filter = autofacScope.Resolve<DutyNormBalanceFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this),
 				new TypedParameter(typeof(DutyNorm), dutyNorm)

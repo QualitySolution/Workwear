@@ -65,6 +65,7 @@ namespace Workwear.ViewModels.Stock
             StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
             EmployeeCard employee = null,
+            DutyNorm dutyNorm = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 	        this.employeeIssueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 	        this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
@@ -79,6 +80,7 @@ namespace Workwear.ViewModels.Stock
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
             }
             Employee = UoW.GetInSession(employee);
+            DutyNorm = UoW.GetInSession(dutyNorm);
             Owners = UoW.GetAll<Owner>().ToList();
             CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
