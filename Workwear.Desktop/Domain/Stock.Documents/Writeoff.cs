@@ -145,7 +145,7 @@ namespace Workwear.Domain.Stock.Documents
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation))) {
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.DutyNormWriteOffOperation?.IssuedOperation, operation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}

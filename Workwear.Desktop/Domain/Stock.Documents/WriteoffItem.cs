@@ -126,6 +126,8 @@ namespace Workwear.Domain.Stock.Documents
 					return Warehouse.Name;
 				if(EmployeeWriteoffOperation != null)
 					return EmployeeWriteoffOperation.Employee.ShortName;
+				if(DutyNormWriteOffOperation != null)
+					return DutyNormWriteOffOperation.DutyNorm.Name;
 
 				return String.Empty;
 			}
@@ -151,6 +153,8 @@ namespace Workwear.Domain.Stock.Documents
 					return WarehouseOperation.WearPercent;
 				if(EmployeeWriteoffOperation != null)
 					return EmployeeWriteoffOperation.WearPercent;
+				if(DutyNormWriteOffOperation != null)
+					return DutyNormWriteOffOperation.WearPercent;
 
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
@@ -161,6 +165,8 @@ namespace Workwear.Domain.Stock.Documents
 					WarehouseOperation.WearPercent = value;
 				if(EmployeeWriteoffOperation != null)
 					EmployeeWriteoffOperation.WearPercent = value;
+				if(DutyNormWriteOffOperation!=null)
+					DutyNormWriteOffOperation.WearPercent = value;
 			}
 		}
 
@@ -173,11 +179,13 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
-				if(EmployeeWriteoffOperation != null && WarehouseOperation == null)
+				if(EmployeeWriteoffOperation != null && WarehouseOperation == null && DutyNormWriteOffOperation == null)
 					return WriteoffFrom.Employee;
 
-				if(EmployeeWriteoffOperation == null && WarehouseOperation != null)
+				if(EmployeeWriteoffOperation == null && WarehouseOperation != null && DutyNormWriteOffOperation == null)
 					return WriteoffFrom.Warehouse;
+				if(EmployeeWriteoffOperation == null && WarehouseOperation == null && DutyNormWriteOffOperation != null)
+					return WriteoffFrom.DutyNorm;
 
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
@@ -254,6 +262,9 @@ namespace Workwear.Domain.Stock.Documents
 				case WriteoffFrom.Warehouse:
 					WarehouseOperation.Update(uow, this);
 					break;
+				case WriteoffFrom.DutyNorm:
+					DutyNormWriteOffOperation.Update(uow, this);
+					break;
 				default:
 					throw new NotImplementedException();
 			}
@@ -264,7 +275,8 @@ namespace Workwear.Domain.Stock.Documents
 	}
 	public enum WriteoffFrom {
 		Employee,
-		Warehouse
+		Warehouse,
+		DutyNorm
 	}
 }
 

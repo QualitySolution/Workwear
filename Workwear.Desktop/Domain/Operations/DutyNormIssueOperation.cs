@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
@@ -214,6 +215,23 @@ namespace Workwear.Domain.Operations {
 			DutyNormItem = DutyNorm.GetItem(ProtectionTools);
 			
 			RecalculateExpiryByNorm();
+        }
+
+        public virtual void Update(IUnitOfWork uow, WriteoffItem item) 
+        {
+	        //Внимание здесь сравниваются даты без времени.
+	        if(item.Document.Date.Date != OperationTime.Date)
+		        OperationTime = item.Document.Date;
+				
+	        Nomenclature = item.Nomenclature;
+	        Issued = 0;
+	        Returned = item.Amount;
+	        WarehouseOperation = item.WarehouseOperation;
+	        DutyNormItem = null;
+	        ExpiryByNorm = null;
+	        AutoWriteoffDate = null;
+	        WearSize = item.WearSize;
+	        Height = item.Height;
         }
         
         public virtual void RecalculateExpiryByNorm(){
