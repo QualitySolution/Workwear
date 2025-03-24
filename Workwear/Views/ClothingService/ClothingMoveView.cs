@@ -21,7 +21,7 @@ namespace Workwear.Views.ClothingService {
 				.InitializeFromSource();
 
 			comboState.ItemsEnum = typeof(ClaimState);
-			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal };
+			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			comboState.Binding
 				.AddBinding(ViewModel, v => v.State, w => w.SelectedItem)
 				.InitializeFromSource();

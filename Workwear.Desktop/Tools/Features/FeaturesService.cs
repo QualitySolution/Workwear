@@ -186,6 +186,7 @@ namespace Workwear.Tools.Features
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.Dashboard:
+				case WorkwearFeature.Shipment:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
