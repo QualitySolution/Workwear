@@ -114,6 +114,12 @@ namespace Workwear.Domain.Stock.Documents
 								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится за сотрудником.",
 								new[] { nameof(Items) });
 						break;
+					case WriteoffFrom.DutyNorm:
+						if(item.Amount>item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится по дежурной норме.",
+								new[] { nameof(Items) });
+						break;
 				}
 			}
 		}

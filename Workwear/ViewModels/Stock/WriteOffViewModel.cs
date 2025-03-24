@@ -28,6 +28,7 @@ using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -49,6 +50,7 @@ namespace Workwear.ViewModels.Stock
         private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
         public IList<CausesWriteOff> CausesWriteOffs { get; }
+        private DutyNormRepository dutyNormRepository;
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
@@ -64,6 +66,7 @@ namespace Workwear.ViewModels.Stock
             EmployeeIssueModel issueModel,
             StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
+            DutyNormRepository dutyNormRepository,
             EmployeeCard employee = null,
             DutyNorm dutyNorm = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -74,6 +77,7 @@ namespace Workwear.ViewModels.Stock
             NavigationManager = navigation;
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             if (Entity.Id == 0) {
@@ -256,6 +260,20 @@ namespace Workwear.ViewModels.Stock
 						(writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
 		        }
 	        }
+	        var itemsDutyNorm = Entity.Items.Where(i=>i.WriteoffFrom==WriteoffFrom.DutyNorm).ToList();
+	        if(itemsDutyNorm.Any()) {
+		        // для всех списаний с дежурной нормы
+		        var operations = itemsDutyNorm
+			        .Select(i=>i.DutyNormWriteOffOperation)
+			        .Select(o=>o.IssuedOperation)
+			        .ToArray();
+		        var writtenOff=dutyNormRepository.CalculateWrittenOff(operations, UoW, date);
+		        foreach(var item in itemsDutyNorm) {
+			        var operation = item.DutyNormWriteOffOperation.IssuedOperation;
+			        item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+		        }
+	        }
+	        
         }
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);
