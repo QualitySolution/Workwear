@@ -232,7 +232,7 @@ namespace Workwear.ViewModels.Stock
 	        var balance = e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
 	        foreach(var operation in operations)
 		        Entity.AddItem(operation, balance[operation.Id]);
-	        CalculateTotal(null,null);
+	        CalculateTotal();
         }
         
         public void FillMaxAmount(DateTime? date = null) {
