@@ -80,19 +80,18 @@ namespace workwear.Journal.ViewModels.Regulations {
 				Projections.SubQuery(subQueryRemove)
 			);
 			
-			if(Filter.DutyNorm != null)
-				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.DutyNorm, () => dutyNormAlias)
-					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+			query
+				.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.DutyNorm, () => dutyNormAlias)
+				.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
@@ -109,37 +108,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
 						.Select(balance).WithAlias(() => resultAlias.Balance));
-			else {
-				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.DutyNorm, () => dutyNormAlias)
-					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
-					.SelectList(list => list
-						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
-						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-						.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.NomenclatureUnitsName)
-						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
-						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
-						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
-						.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
-						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
-						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
-						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
-						.Select(() => dutyNormAlias.Name).WithAlias(() => resultAlias.DutyNormName)
-						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
-						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
-						.Select(balance).WithAlias(() => resultAlias.Balance));
-				query = query.OrderBy(()=>dutyNormAlias.Name).Asc;
-			}
+			
+			query = query.OrderBy(()=>dutyNormAlias.Name).Asc;
 			return query.TransformUsing(Transformers.AliasToBean<DutyNormBalanceJournalNode>());
 		}
 
