@@ -18,14 +18,17 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -40,12 +43,14 @@ namespace Workwear.ViewModels.Stock
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
+        public DutyNorm DutyNorm { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
         private OrganizationRepository organizationRepository;
         private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
         public IList<CausesWriteOff> CausesWriteOffs { get; }
+        private DutyNormRepository dutyNormRepository;
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
@@ -61,7 +66,9 @@ namespace Workwear.ViewModels.Stock
             EmployeeIssueModel issueModel,
             StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
+            DutyNormRepository dutyNormRepository,
             EmployeeCard employee = null,
+            DutyNorm dutyNorm = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 	        this.employeeIssueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 	        this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
@@ -70,12 +77,14 @@ namespace Workwear.ViewModels.Stock
             NavigationManager = navigation;
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
             Entity.Items.ContentChanged += CalculateTotal;
             CalculateTotal(null, null);
             if (Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
             }
             Employee = UoW.GetInSession(employee);
+            DutyNorm = UoW.GetInSession(dutyNorm);
             Owners = UoW.GetAll<Owner>().ToList();
             CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
@@ -202,6 +211,28 @@ namespace Workwear.ViewModels.Stock
             
             CalculateTotal(null, null);
         }
+
+        public void AddFromDutyNorm() 
+        {
+	        var selectJournal = NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
+		        this,
+		        DutyNorm,
+		        OpenPageOptions.AsSlave);
+	        selectJournal.ViewModel.Filter.DateSensitive = false;
+	        selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
+	        selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
+	        selectJournal.ViewModel.Filter.Date = Entity.Date;
+	        selectJournal.ViewModel.OnSelectResult += SelectFromDutyNorm_Selected;
+        }
+
+        private void SelectFromDutyNorm_Selected(object sender, JournalSelectedEventArgs e) 
+        {
+	        var operations=UoW.GetById<DutyNormIssueOperation>(e.GetSelectedObjects<DutyNormBalanceJournalNode>().Select(x => x.Id));
+	        var balance = e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+	        foreach(var operation in operations)
+		        Entity.AddItem(operation, balance[operation.Id]);
+	        CalculateTotal(null,null);
+        }
         
         public void FillMaxAmount(DateTime? date = null) {
 	        var itemsWh = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Warehouse).ToList();
@@ -229,6 +260,20 @@ namespace Workwear.ViewModels.Stock
 						(writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
 		        }
 	        }
+	        var itemsDutyNorm = Entity.Items.Where(i=>i.WriteoffFrom==WriteoffFrom.DutyNorm).ToList();
+	        if(itemsDutyNorm.Any()) {
+		        // для всех списаний с дежурной нормы
+		        var operations = itemsDutyNorm
+			        .Select(i=>i.DutyNormWriteOffOperation)
+			        .Select(o=>o.IssuedOperation)
+			        .ToArray();
+		        var writtenOff=dutyNormRepository.CalculateWrittenOff(operations, UoW, date);
+		        foreach(var item in itemsDutyNorm) {
+			        var operation = item.DutyNormWriteOffOperation.IssuedOperation;
+			        item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+		        }
+	        }
+	        
         }
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);

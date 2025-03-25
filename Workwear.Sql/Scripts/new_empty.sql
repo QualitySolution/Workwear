@@ -1191,6 +1191,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,	
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `cause_write_off_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1203,6 +1204,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   INDEX `fk_stock_write_off_detail_3_idx` (`warehouse_id` ASC),
   INDEX `fk_stock_write_off_detail_5_idx` (`size_id` ASC),
   INDEX `fk_stock_write_off_detail_6_idx` (`height_id` ASC),
+  INDEX `fk_stock_write_off_detail_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_stock_write_off_detail_1`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
@@ -1242,7 +1244,12 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
 	foreign key (cause_write_off_id) 
 	references causes_write_off (id)
 	on update cascade
-	on delete set null)
+	on delete set null,
+CONSTRAINT fk_stock_write_off_detail_duty_norm_issue_operation
+    FOREIGN KEY (`duty_norm_issue_operation_id`)
+    REFERENCES `operation_issued_by_duty_norm` (id)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.HistoryLog;
 using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
@@ -215,6 +216,23 @@ namespace Workwear.Domain.Operations {
 			
 			RecalculateExpiryByNorm();
         }
+
+        public virtual void Update(IUnitOfWork uow, WriteoffItem item) 
+        {
+	        //Внимание здесь сравниваются даты без времени.
+	        if(item.Document.Date.Date != OperationTime.Date)
+		        OperationTime = item.Document.Date;
+				
+	        Nomenclature = item.Nomenclature;
+	        Issued = 0;
+	        Returned = item.Amount;
+	        WarehouseOperation = item.WarehouseOperation;
+	        DutyNormItem = null;
+	        ExpiryByNorm = null;
+	        AutoWriteoffDate = null;
+	        WearSize = item.WearSize;
+	        Height = item.Height;
+        }
         
         public virtual void RecalculateExpiryByNorm(){
 	        if(StartOfUse == null)
@@ -229,6 +247,26 @@ namespace Workwear.Domain.Operations {
                 AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
 	        }
         }
+        public virtual decimal CalculatePercentWear(DateTime atDate) => 
+	        CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
+        #endregion
+
+        #region Статические методы
+
+        public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) 
+        {
+	        if(startOfUse == null || expiryByNorm == null)
+		        return 0;
+	        if(beginWearPercent >= 1)
+		        return beginWearPercent;
+			
+	        var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+	        if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
+		        return beginWearPercent;
+
+	        return Math.Round(beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent, 2);
+        }
+
         #endregion
 	}
 }
