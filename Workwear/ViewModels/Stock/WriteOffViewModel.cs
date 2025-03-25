@@ -71,8 +71,8 @@ namespace Workwear.ViewModels.Stock
             NavigationManager = navigation;
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-            Entity.Items.ContentChanged += CalculateTotal;
-            CalculateTotal(null, null);
+            Entity.Items.ContentChanged += (sender, args) =>  CalculateTotal();
+            CalculateTotal();
             
             if (UoW.IsNew) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -149,7 +149,7 @@ namespace Workwear.ViewModels.Stock
         }
         #endregion
 
-        private void CalculateTotal(object sender, EventArgs eventArgs) {
+        private void CalculateTotal() {
             Total = $"Позиций в документе: {Entity.Items.Count}  " +
                     $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
         }
@@ -177,7 +177,7 @@ namespace Workwear.ViewModels.Stock
 	        foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
 		        Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, 
 					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
-	        CalculateTotal(null, null);
+	        CalculateTotal();
         }
 
         public void AddFromEmployee() {
@@ -203,7 +203,7 @@ namespace Workwear.ViewModels.Stock
             foreach (var operation in operations)
 	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
             
-            CalculateTotal(null, null);
+            CalculateTotal();
         }
         
         public void FillMaxAmount(DateTime? date = null) {
@@ -235,7 +235,7 @@ namespace Workwear.ViewModels.Stock
         }
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);
-            CalculateTotal(null, null);
+            CalculateTotal();
         }
         #endregion
 
