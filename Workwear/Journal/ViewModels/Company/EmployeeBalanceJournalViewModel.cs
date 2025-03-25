@@ -88,73 +88,43 @@ namespace workwear.Journal.ViewModels.Company
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
-			if (Filter.Employee != null)
-				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)					
-					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
-					.SelectList(list => list
-						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
-						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-						.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.NomenclatureUnitsName)
-						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
-						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
-						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
-						.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
-						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
-						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
-						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
-						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
-						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
-						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
-						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
-						.Select(balance).WithAlias(() => resultAlias.Balance));
-			else {
-				query
-					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
-					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
-					.SelectList(list => list
-						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
-						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
-						.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.NomenclatureUnitsName)
-						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
-						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
-						.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
-						.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
-						.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
-						.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
-						.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
-						.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
-						.Select(() => expenseOperationAlias.FixedOperation).WithAlias(() => resultAlias.FixedOperation)
-						.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
-						.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
-						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
-						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
-						.Select(balance).WithAlias(() => resultAlias.Balance));
-				query = query.OrderBy(() => employeeCardAlias.LastName).Asc
-					.ThenBy(() => employeeCardAlias.FirstName).Asc
-					.ThenBy(() => employeeCardAlias.Patronymic).Asc;
-			}
+
+			query
+				.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.ProtectionTools, () => protectionToolsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
+				.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
+				.SelectList(list => list
+					.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
+					.Select(() => nomenclatureUnitsAlias.Name).WithAlias(() => resultAlias.NomenclatureUnitsName)
+					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
+					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
+					.Select(() => warehouseOperationAlias.Cost).WithAlias(() => resultAlias.AvgCost)
+					.Select(() => expenseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					.Select(() => expenseOperationAlias.OperationTime).WithAlias(() => resultAlias.IssuedDate)
+					.Select(() => expenseOperationAlias.StartOfUse).WithAlias(() => resultAlias.StartUseDate)
+					.Select(() => expenseOperationAlias.ExpiryByNorm).WithAlias(() => resultAlias.ExpiryDate)
+					.Select(() => expenseOperationAlias.AutoWriteoffDate).WithAlias(() => resultAlias.AutoWriteoffDate)
+					.Select(() => expenseOperationAlias.FixedOperation).WithAlias(() => resultAlias.FixedOperation)
+					.Select(() => employeeCardAlias.FirstName).WithAlias(() => resultAlias.FirstName)
+					.Select(() => employeeCardAlias.LastName).WithAlias(() => resultAlias.LastName)
+					.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
+					.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
+					.Select(balance).WithAlias(() => resultAlias.Balance));
+			query = query.OrderBy(() => employeeCardAlias.LastName).Asc
+				.ThenBy(() => employeeCardAlias.FirstName).Asc
+				.ThenBy(() => employeeCardAlias.Patronymic).Asc
+				.ThenBy(() => nomenclatureAlias.Name).Asc;
+			
 			return query.TransformUsing(Transformers.AliasToBean<EmployeeBalanceJournalNode>());
         }
         #endregion
