@@ -37,6 +37,7 @@ namespace Workwear.ViewModels.Stock {
 		public ReturnViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
+			StockDocumentType documentType,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			IUserService userService,
@@ -53,6 +54,7 @@ namespace Workwear.ViewModels.Stock {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
+			this.documentType = documentType;
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
@@ -119,6 +121,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private IInteractiveService interactiveService;
+		private StockDocumentType documentType;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -147,7 +150,9 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanSetNomenclature => SelectedItem != null;
 		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
-		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool WarehouseVisible => (featuresService.Available(WorkwearFeature.Warehouses) && documentType==StockDocumentType.Return);
+		public virtual bool EmployeeVisible => documentType == StockDocumentType.Return;
+		public virtual bool DutyNormVisible => (featuresService.Available(WorkwearFeature.DutyNorms) && documentType == StockDocumentType.ReturnDutyNormDoc);
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		private bool autoDocNumber = true;

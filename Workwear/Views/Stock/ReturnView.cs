@@ -30,10 +30,14 @@ namespace Workwear.Views.Stock {
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
+			labelWorker.Visible = ViewModel.EmployeeVisible;
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
+			yentryEmployee.Visible=ViewModel.EmployeeVisible;
 			label_Warehouse.Visible = ViewModel.WarehouseVisible;
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel;
 			entityWarehouseIncome.Visible = ViewModel.WarehouseVisible;
+			ylabelDutyNorm.Visible = ViewModel.DutyNormVisible;
+			yentryDutyNorm.Visible = ViewModel.DutyNormVisible;
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
 				.InitializeFromSource();
