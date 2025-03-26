@@ -30,19 +30,12 @@ namespace Workwear.Views.Stock {
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.InitializeFromSource();
-			labelWorker.Visible = ViewModel.EmployeeVisible;
-			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
-			yentryEmployee.Visible=ViewModel.EmployeeVisible;
 			label_Warehouse.Visible = ViewModel.WarehouseVisible;
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel;
 			entityWarehouseIncome.Visible = ViewModel.WarehouseVisible;
-			ylabelDutyNorm.Visible = ViewModel.DutyNormVisible;
-			yentryDutyNorm.Visible = ViewModel.DutyNormVisible;
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
 				.InitializeFromSource();
-
-			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonSetNomenclature.Binding.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
 			enumPrint.ItemsEnum = typeof(ReturnViewModel.ReturnDocReportEnum);
@@ -88,9 +81,13 @@ namespace Workwear.Views.Stock {
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ReturnItem>();
 		}
-
-		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+		
+		protected void OnYbuttonAddWorkerClicked(object sender, EventArgs e) {
 			ViewModel.AddFromEmployee();
+		}
+
+		protected void OnYbuttonAddDutyNormClicked(object sender, EventArgs e) {
+			
 		}
 
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {

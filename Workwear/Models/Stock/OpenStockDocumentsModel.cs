@@ -35,7 +35,7 @@ namespace workwear.Models.Stock
 					navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
 				case StockDocumentType.Return:
-					navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, StockDocumentType>(master, EntityUoWBuilder.ForCreate(), documentType);
+					navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
 				case StockDocumentType.Income:
 					navigation.OpenViewModel<IncomeViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
@@ -48,9 +48,6 @@ namespace workwear.Models.Stock
 					break;
 				case StockDocumentType.InspectionDoc:
 					navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
-					break;
-				case StockDocumentType.ReturnDutyNormDoc:
-					navigation.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, StockDocumentType>(master, EntityUoWBuilder.ForCreate(), documentType);
 					break;
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
