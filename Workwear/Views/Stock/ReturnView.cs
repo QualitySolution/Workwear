@@ -73,9 +73,6 @@ namespace Workwear.Views.Stock {
 			
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
-			yvboxItems.Binding
-				.AddBinding(ViewModel, vm => vm.CanEditItems, w => w.Sensitive)
-				.InitializeFromSource();
 		}
 
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {

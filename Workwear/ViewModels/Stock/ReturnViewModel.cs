@@ -71,23 +71,9 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
-			
-			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.EmployeeCard)
-				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
-				.UseViewModelDialog<EmployeeViewModel>()
-				.Finish();
-			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
-			CanEditEmployee = Entity.Id == 0;
-			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
 
 			CalculateTotal();
 		}
-
-		private void EmployeeCardEntryViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(EmployeeCardEntryViewModel.Entity))
-				OnPropertyChanged(nameof(CanEditItems));
-		}
-
 		#region Проброс свойств документа
 
 		public virtual int DocID => Entity.Id;
@@ -115,7 +101,6 @@ namespace Workwear.ViewModels.Stock {
 		private readonly FeaturesService featuresService;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
-		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private IInteractiveService interactiveService;
@@ -140,12 +125,8 @@ namespace Workwear.ViewModels.Stock {
 		#endregion 
 		
 		#region Свойства для View
-
-		public bool CanEditEmployee;
-		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
 		public virtual bool CanSetNomenclature => SelectedItem != null;
-		public virtual bool CanEditItems => EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		
@@ -178,8 +159,8 @@ namespace Workwear.ViewModels.Stock {
 					OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.Filter.DateSensitive = false;
 			selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-			selectJournal.ViewModel.Filter.SubdivisionSensitive = false;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = false;
+			selectJournal.ViewModel.Filter.SubdivisionSensitive = true;
+			selectJournal.ViewModel.Filter.EmployeeSensitive = true;
 			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.Filter.CanChooseAmount = false;
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionary(

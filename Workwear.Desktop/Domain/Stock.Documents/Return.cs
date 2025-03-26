@@ -57,10 +57,6 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
-			if(EmployeeCard == null)
-				yield return new ValidationResult ("Сотрудник должен быть указан", 
-					new[] { this.GetPropertyName (o => o.EmployeeCard)});
-
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
 					new[] { this.GetPropertyName (o => o.Items)});
