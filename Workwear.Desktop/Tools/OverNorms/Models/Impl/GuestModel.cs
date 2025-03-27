@@ -64,7 +64,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			};
 			
 			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.BarcodeOperations.Select(x => x.Barcode));
-			operation.WriteOffOverNormOperation = writeOff;
+			operation.ReturnFromOperation = writeOff;
 		}
 
 		public override void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 
@@ -85,7 +85,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.EmployeeIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.EmployeeIssueOperation;
+			item.OverNormOperation.SubstitutedIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.SubstitutedIssueOperation;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;

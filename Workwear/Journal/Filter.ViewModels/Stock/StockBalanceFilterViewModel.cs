@@ -79,22 +79,19 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		}
 
 		private bool showWithBarcodes;
-		public bool ShowWithBarcodes 
-		{
+		public bool ShowWithBarcodes {
 			get => showWithBarcodes;
 			set => SetField(ref showWithBarcodes, value);
 		}
 
 		private bool canChangeShowWithBarcodes = true;
-		public bool CanChangeShowWithBarcodes 
-		{
+		public bool CanChangeShowWithBarcodes {
 			get => canChangeShowWithBarcodes;
 			set => SetField(ref canChangeShowWithBarcodes, value);
 		}
-
+	
 		private ItemsType itemsType;
-        public ItemsType ItemsType 
-        {
+        public ItemsType ItemsType {
 	        get => itemsType;
 	        set => SetField(ref itemsType, value);
         }
@@ -102,10 +99,9 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		public readonly FeaturesService FeaturesService;
 
-		#region Visible
-
+		#region Visible and Sensetive
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
-//1289		
+////1289		
 		public bool SensetiveWarehouse { get; set; } = true;
 		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
 		public bool VisibleBarcodes => FeaturesService.Available(WorkwearFeature.Barcodes) && NomenclaturesWithBarcodes.Any();

@@ -8,7 +8,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 	{
 		public OverNormMap() 
 		{
-			Table("over_norm_documents");
+			Table("stock_over_norms");
 			if (MappingParams.UseIdsForTest) 
 			{
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");

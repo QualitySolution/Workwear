@@ -29,7 +29,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		
 		private OverNormOperation overNormOperation;
-		[Display(Name = "Оперерация на выдачу подменного фонда")]
+		[Display(Name = "Оперерация")]
 		public virtual OverNormOperation OverNormOperation 
 		{
 			get => overNormOperation;

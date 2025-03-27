@@ -182,6 +182,7 @@
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeOverNormViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeVacationViewModel.cs" />
@@ -522,6 +523,8 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Stock.BarcodeJournalFilterView.cs" />
     <Compile Include="Views\Stock\BarcodingView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.BarcodingView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmployeeOverNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -721,11 +724,9 @@
     <Folder Include="Views\Stock\NomenclatureChildren\" />
     <Folder Include="ViewModels\Tools\" />
     <Folder Include="Views\Tools\" />
-    <Folder Include="Journal\ViewModels\Company\" />
     <Folder Include="Journal\ViewModels\Statements\" />
     <Folder Include="Journal\Filter.Views\Company\" />
     <Folder Include="Views\Company\EmployeeChildren\" />
-    <Folder Include="ViewModels\Company\EmployeeChildren\" />
     <Folder Include="Journal\ViewModels\Regulations\" />
     <Folder Include="ViewModels\Regulations\" />
     <Folder Include="Views\Regulations\" />

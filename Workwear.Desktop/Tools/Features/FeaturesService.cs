@@ -190,6 +190,7 @@ namespace Workwear.Tools.Features
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.CostCenter:
+				case WorkwearFeature.OverNorm:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Exchange1C:
 				case WorkwearFeature.ExportExcel:
@@ -293,6 +294,8 @@ namespace Workwear.Tools.Features
 		Owners,
 		[Display(Name = "Место возникновения затрат")]
 		CostCenter,
+		[Display(Name = "Выдачи вне нормы")]
+		OverNorm,
 		[Display(Name = "История изменений")]
 		HistoryLog,
 		[Display(Name = "Обмен с 1С")]

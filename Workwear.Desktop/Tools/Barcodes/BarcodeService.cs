@@ -86,15 +86,16 @@ namespace Workwear.Tools.Barcodes
 		#endregion
 
 		#region Barcodes Info
-		public int CountAllBarcodes(IUnitOfWork unitOfWork, Nomenclature nomenclature, Size size = null, Size height = null) 
+		public int CountAllBarcodes(IUnitOfWork unitOfWork, StockPosition stockPosition)
+//public int CountAllBarcodes(IUnitOfWork unitOfWork, Nomenclature nomenclature, Size size = null, Size height = null) 
 		{
 			if (unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
-			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
+			if (stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
 
 			Barcode bAlias = null;
 			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
 				.JoinAlias(bo => bo.Barcode, () => bAlias)
-				.Where(b => bAlias.Nomenclature == nomenclature && bAlias.Size == size && bAlias.Height == height)
+				.Where(b => bAlias.Nomenclature == stockPosition.Nomenclature && bAlias.Size == stockPosition.WearSize && bAlias.Height == stockPosition.Height)
 				.SelectList(list => list
 					.SelectCountDistinct(() => bAlias.Id)
 				)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NHibernate;
-using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -85,15 +84,27 @@ namespace Workwear.Journal.ViewModels.Stock
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
 				));
-			
-			if(Filter.Nomenclature != null)
-				query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);			
-			if(Filter.Size != null)
-				query.Where(x => x.Size.Id == Filter.Size.Id);			
-			if(Filter.Height != null)
-				query.Where(x => x.Height.Id == Filter.Height.Id);			
-			if(Filter.Warehouse != null)
-				query.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == Filter.Warehouse.Id);
+
+				if(Filter.Nomenclature != null)
+					query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);
+				if(Filter.Size != null)
+					query.Where(x => x.Size.Id == Filter.Size.Id);
+				if(Filter.Height != null)
+					query.Where(x => x.Height.Id == Filter.Height.Id);
+////1289 что если операция не единственная
+				if(Filter.Warehouse != null) {
+					query.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == Filter.Warehouse.Id);
+				}
+////1289 пока хз
+				if(Filter.OnlyFreeBarcodes)
+					;
+				if(Filter.StockPosition != null){
+					query.Where(() => warehouseOperationAlias.WearPercent == Filter.StockPosition.WearPercent);
+					if(Filter.StockPosition.Owner != null)
+						query.Where(() => warehouseOperationAlias.Owner.Id == Filter.StockPosition.Owner.Id);
+					else
+						query.Where(() => warehouseOperationAlias.Owner == null);
+			}
 
 			query.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
@@ -166,7 +177,8 @@ namespace Workwear.Journal.ViewModels.Stock
 				DataLoader.LoadData(false);
 			}
 		}
-
+////1289
+/*
 		private bool onlyFreeBarcodes;
 		public bool OnlyFreeBarcodes 
 		{
@@ -177,7 +189,7 @@ namespace Workwear.Journal.ViewModels.Stock
 				DataLoader.LoadData(false);
 			}
 		}
-
+*/
 		#endregion
 		
 		#region Actions

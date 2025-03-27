@@ -28,12 +28,14 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.balanceNode = node ?? throw new ArgumentNullException(nameof(node));
 
-			var nomenclature = uow.GetById<Nomenclature>(node.NomeclatureId);
-			Size size = node.SizeId != null ? uow.GetById<Size>((int)node.SizeId) : null;
-			Size height = node.HeightId != null ? uow.GetById<Size>((int)node.HeightId) : null;
+			StockPosition stockPosition = node.GetStockPosition(uow);
+////1289			
+var nomenclature = stockPosition.Nomenclature;
+Size size = stockPosition.WearSize;
+Size height = stockPosition.Height;
 			
 			NomenclatureAmount = node.Amount;
-			WithBarcodesAmount = barcodeService.CountAllBarcodes(uow, nomenclature, size, height);
+			WithBarcodesAmount = barcodeService.CountAllBarcodes(uow, stockPosition);
 			WithoutBarcodesAmount = node.Amount - WithBarcodesAmount;
 			BarcodesInStockAmount = this.barcodeService.CountBalanceInStock(uow, nomenclature, size, height, warehouse);
 			WarehouseId = warehouse.Id;

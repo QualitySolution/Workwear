@@ -48,11 +48,14 @@ namespace Workwear.Domain.Operations {
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
 
 		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ??
+		                                          OverNormOperation?.OperationTime ??
 		                                          WarehouseOperation?.OperationTime;
 		public virtual string OperationTitle {
 			get {
 				if(EmployeeIssueOperation?.Issued > 0)
 					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				if(OverNormOperation != null)
+					return $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}";
 				if(WarehouseOperation != null)
 ////1289
 //TODO Отделить маркировку от возврата

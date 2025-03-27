@@ -94,7 +94,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.EmployeeIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.EmployeeIssueOperation;
+			item.OverNormOperation.SubstitutedIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.SubstitutedIssueOperation;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;

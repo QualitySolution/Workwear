@@ -58,7 +58,7 @@ namespace Workwear.ViewModels.Stock
 				OverNormOperation operation = item.OverNormOperation;
 				item.Param =
 					new OverNormParam(operation.Employee, operation.WarehouseOperation.Nomenclature, operation.WarehouseOperation.Amount, operation.WarehouseOperation.WearSize,
-						operation.WarehouseOperation.Height, operation.EmployeeIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode).ToList());
+						operation.WarehouseOperation.Height, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode).ToList());
 			}
 			
 			var builder = new CommonEEVMBuilderFactory<OverNorm>(this, Entity, UoW, NavigationManager, autofacScope);
@@ -149,22 +149,22 @@ namespace Workwear.ViewModels.Stock
 				UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
 
 			foreach (EmployeeIssueOperation empOp in operations) {
-				if (Entity.Items.Any(x => x.OverNormOperation.EmployeeIssueOperation.Id == empOp.Id)) 
+				if (Entity.Items.Any(x => x.OverNormOperation.SubstitutedIssueOperation.Id == empOp.Id)) 
 					continue;
-				Entity.AddItem(new OverNormOperation() { Employee = empOp.Employee, EmployeeIssueOperation = empOp });
+				Entity.AddItem(new OverNormOperation() { Employee = empOp.Employee, SubstitutedIssueOperation = empOp });
 			}
 		}
 		#endregion
 
 		#region Guest and Simple
-		public void SelectEmployee() 
+		public void SelectEmployees() 
 		{
 			IPage<EmployeeJournalViewModel> selectJournal = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			selectJournal.ViewModel.OnSelectResult += AddEmployee;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += AddEmployees;
 		}
 		
-		private void AddEmployee(object sender, JournalSelectedEventArgs e) 
+		private void AddEmployees(object sender, JournalSelectedEventArgs e) 
 		{
 			IList<EmployeeCard> employees = 
 				UoW.GetById<EmployeeCard>(e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id));
@@ -178,55 +178,79 @@ namespace Workwear.ViewModels.Stock
 			IPage<StockBalanceJournalViewModel> selectJournal = 
 				NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.Filter.ShowWithBarcodes = OverNormModel.UseBarcodes;
-			selectJournal.ViewModel.Filter.CanChangeShowWithBarcodes = OverNormModel.CanChangeUseBarcodes;
+////1289 Выдача без штрихкода отдельно			
+			selectJournal.ViewModel.Filter.CanChangeShowWithBarcodes = false; //OverNormModel.CanChangeUseBarcodes;
+			//selectJournal.ViewModel.Filter.AddAmount = AddedAmount.One;
+			//selectJournal.ViewModel.Filter.CanChooseAmount = true;
 			selectJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.AddAmount = AddedAmount.One;
+			selectJournal.ViewModel.Filter.SensetiveWarehouse = false;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
 			
-			if (OverNormModel.RequiresEmployeeIssueOperation) 
-				selectJournal.ViewModel.Filter.ItemsType = item.OverNormOperation.EmployeeIssueOperation.Nomenclature.Type;
+			//if (OverNormModel.RequiresEmployeeIssueOperation) 
+			//	selectJournal.ViewModel.Filter.ItemsType = item.OverNormOperation.EmployeeIssueOperation.Nomenclature.Type;
 			selectJournal.Tag = item;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
-		
-		public void AddNomenclature(object sender, JournalSelectedEventArgs e) 
-		{
+
+		public void AddNomenclature(object sender, JournalSelectedEventArgs e) {
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
-			OverNormModel.UseBarcodes = ((StockBalanceJournalViewModel)sender).Filter.ShowWithBarcodes;
-			var nomenclature = UoW.GetById<Nomenclature>(node.NomeclatureId);
-			Size size = node.SizeId != null ? UoW.GetById<Size>((int)node.SizeId) : null;
-			Size height = node.HeightId != null ? UoW.GetById<Size>((int)node.HeightId) : null;
-//1289			
+//OverNormModel.UseBarcodes = node.UseBarcode;
+			//var nomenclature = UoW.GetById<Nomenclature>(node.NomeclatureId);
+			//Size size = node.SizeId != null ? UoW.GetById<Size>((int)node.SizeId) : null;
+			//Size height = node.HeightId != null ? UoW.GetById<Size>((int)node.HeightId) : null;
+			StockPosition stockPosition = node.GetStockPosition(UoW);
+////1289			
 //var size = UoW.GetById<Size>(node.SizeIdn);
 //var height = UoW.GetById<Size>(node.HeightIdn);
 
 			Barcode barcode = null;
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
-			if (OverNormModel.UseBarcodes) {
-				IPage<BarcodeJournalViewModel> barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var employee = item.Employee;
+
+			if(stockPosition.Nomenclature.UseBarcode) {
+				IPage<BarcodeJournalViewModel> barcodeJournal =
+					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
+				barcodeJournal.ViewModel.Filter.CanUseFilter = false;
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-				barcodeJournal.ViewModel.Nomenclature = nomenclature;
-				barcodeJournal.ViewModel.Size = size;
-				barcodeJournal.ViewModel.Height = height;
-				barcodeJournal.ViewModel.OnlyFreeBarcodes = true;
-				barcodeJournal.ViewModel.Warehouse = Entity.Warehouse;
+				barcodeJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
+				barcodeJournal.ViewModel.Filter.StockPosition= node.GetStockPosition(UoW);
+////1289 не реализовано
+				barcodeJournal.ViewModel.Filter.OnlyFreeBarcodes = true;
 				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
 					IList<BarcodeJournalNode> nodes = args.GetSelectedObjects<BarcodeJournalNode>();
 					IList<Barcode> barcodes = UoW.GetById<Barcode>(nodes.Select(x => x.Id));
-					item.Param =
-						new OverNormParam(item.OverNormOperation.Employee, nomenclature, barcodes.Count, size, height, item.OverNormOperation.EmployeeIssueOperation, barcodes);
+
+					Entity.DeleteItem(item);
 					
-					AddOrUpdateItem(item);
+					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height });
+					foreach(var i in addedItems.ToList()) {
+						var param = new OverNormParam(
+							employee,
+							i.Key.Nomenclature,
+							i.Count(),
+							i.Key.Size,
+							i.Key.Height,
+							null,
+							i.ToList());
+						if(!Entity.Items.Any(x => x.Param.Equals(param))) {
+							OverNormItem newItem = new OverNormItem(Entity, new OverNormOperation());
+							newItem.Param = param;
+							AddOrUpdateItem(newItem);
+						}
+
+						item.Param =
+							new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, barcodes.Count, stockPosition.WearSize, stockPosition.Height,
+								item.OverNormOperation.SubstitutedIssueOperation, barcodes);
+						AddOrUpdateItem(item);
+					} 
 				};
-				
-				return;
+
+				item.Param =
+					new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, 1, stockPosition.WearSize, stockPosition.Height,
+						item.OverNormOperation.SubstitutedIssueOperation);
+				AddOrUpdateItem(item);
 			}
-			
-			item.Param =
-				new OverNormParam(item.OverNormOperation.Employee, nomenclature, 1, size, height, item.OverNormOperation.EmployeeIssueOperation);
-			AddOrUpdateItem(item);
 		}
 
 		public void DeleteItem(OverNormItem item) {
@@ -269,10 +293,9 @@ namespace Workwear.ViewModels.Stock
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
 			} else 
 				OverNormModel.UpdateOperation(item, item.Param);
-			
 		}
 	}
-
+////1289
 	public class OverNormTempItem : PropertyChangedBase 
 	{
 		private OverNormItem item;

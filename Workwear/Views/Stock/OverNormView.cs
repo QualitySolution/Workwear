@@ -73,7 +73,7 @@ namespace Workwear.Views.Stock
 			buttonAddEmployeeIssue.Visible = ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
 			
 			buttonDel.Clicked += (sender, args) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<OverNormItem>());
-			buttonAddEmployee.Clicked += (sender, args) => ViewModel.SelectEmployee();
+			buttonAddEmployee.Clicked += (sender, args) => ViewModel.SelectEmployees();
 			buttonAddEmployeeIssue.Clicked += (sender, args) => ViewModel.SelectEmployeeIssue();
 			buttonAddNomenclature.Clicked += (sender, args) =>
 				ViewModel.SelectNomenclature(ytreeItems.GetSelectedObject<OverNormItem>());
@@ -93,7 +93,7 @@ namespace Workwear.Views.Stock
 					.Tag(SubstituteColumn)
 					.Visible(ViewModel.OverNormModel.RequiresEmployeeIssueOperation)
 					.Resizable()
-					.AddReadOnlyTextRenderer(x => x.OverNormOperation.EmployeeIssueOperation?.Nomenclature?.Name ?? x.OverNormOperation.EmployeeIssueOperation?.ProtectionTools?.Name)
+					.AddReadOnlyTextRenderer(x => x.OverNormOperation.SubstitutedIssueOperation?.Nomenclature?.Name ?? x.OverNormOperation.SubstitutedIssueOperation?.ProtectionTools?.Name)
 				.AddColumn("Выдаваемая номеклатура")
 					.Resizable()
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Nomenclature.Name)

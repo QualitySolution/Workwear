@@ -11,6 +11,10 @@ namespace Workwear.Journal.Filter.Views.Stock {
 			entityWarehouse.ViewModel = ViewModel.WarehouseEntry;
 			entryNomenclature.ViewModel = ViewModel.NomenclatureEntry;
 			
+			ytable1.Binding
+				.AddBinding(ViewModel, v=> v.CanUseFilter, w => w.Sensitive)
+				.InitializeFromSource();
+			
 			yspeccomboboxSize.SetRenderTextFunc<Size>(x => x.Title);
 			yspeccomboboxSize.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Size, w => w.SelectedItem)
@@ -23,7 +27,6 @@ namespace Workwear.Journal.Filter.Views.Stock {
 				.AddBinding(v => v.Heights, w => w.ItemsList)
 				.AddBinding(v => v.HasHeight, w => w.Sensitive)
 				.InitializeFromSource();
-			
 		}
 	}
 }

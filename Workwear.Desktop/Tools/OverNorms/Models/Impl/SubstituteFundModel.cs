@@ -70,8 +70,8 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 				Height = operation.WarehouseOperation.Height
 			};
 
-			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.EmployeeIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode));
-			operation.WriteOffOverNormOperation = writeOff;
+			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode));
+			operation.ReturnFromOperation = writeOff;
 		}
 
 		public override void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 
@@ -92,7 +92,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.EmployeeIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.EmployeeIssueOperation;
+			item.OverNormOperation.SubstitutedIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.SubstitutedIssueOperation;
 
 			item.OverNormOperation.WarehouseOperation.OperationTime = DateTime.Now;
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
@@ -155,7 +155,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 		{
 			OverNormOperation newOverNormOp = new OverNormOperation() 
 			{
-				EmployeeIssueOperation = employeeIssueOperation,
+				SubstitutedIssueOperation = employeeIssueOperation,
 				WarehouseOperation = newWarehouseOp,
 				Type = OverNormType.Substitute,
 				Employee = employee

@@ -7,7 +7,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 	{
 		public OverNormItemMap() 
 		{
-			Table("over_norm_document_items");
+			Table("stock_over_norm_items");
 			if (MappingParams.UseIdsForTest) 
 			{
 				Id(x => x.Id).Column("id").GeneratedBy.HiLo("0");
@@ -16,9 +16,8 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			{
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
 			}
-
 			References(x => x.Document).Column("document_id").Not.Nullable();
-			References(x => x.OverNormOperation).Column("over_norm_id").Not.Nullable().Cascade.All();
+			References(x => x.OverNormOperation).Column("over_norm_operation_id").Not.Nullable().Cascade.All();
 		}
 	}
 }

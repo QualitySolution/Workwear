@@ -126,7 +126,7 @@ namespace Workwear
 				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
 				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
 				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue)
-				.AddDeleteDependence<OverNormOperation>(x => x.EmployeeIssueOperation);
+				.AddDeleteDependence<OverNormOperation>(x => x.SubstitutedIssueOperation);
 //1289				
 //.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation.EmployeeIssueOperation);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
@@ -69,14 +70,23 @@ namespace Workwear.Domain.Stock
 			set { SetField(ref comment, value, () => Comment); }
 		}
 
-		#region Списки
+		#region Операции
 
+		private Dictionary<DateTime, BarcodeOperation> operationsWithDates;
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
 		[Display(Name = "Операции")]
 		public virtual IList<BarcodeOperation> BarcodeOperations {
 			get => barcodeOperations;
-			set => SetField(ref barcodeOperations, value);
+			set {
+				if(SetField(ref barcodeOperations, value))
+					operationsWithDates = BarcodeOperations.ToDictionary(o => o.OperationDate ?? DateTime.MinValue);
+			}
 		}
+		
+////1289 проверить коментарий
+		//Предворительно нужно загрузиоть все BarcodeOperation и связанные с ними операции иначе будет много запросов в базу
+		public virtual BarcodeOperation LastOperation => operationsWithDates[LastOperationTime];
+		public virtual DateTime LastOperationTime => operationsWithDates.Keys.Max();
 
 		#endregion
 	}

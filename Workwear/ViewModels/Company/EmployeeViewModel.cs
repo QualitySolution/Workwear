@@ -179,6 +179,7 @@ namespace Workwear.ViewModels.Company
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
+			EmployeeOverNormViewModel = AutofacScope.Resolve<EmployeeOverNormViewModel>(parameter);
 			InGroupsViewModel = AutofacScope.Resolve<EmployeeInGroupsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 			//Панели
@@ -212,6 +213,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
+		public bool VisibleOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
@@ -492,7 +494,9 @@ namespace Workwear.ViewModels.Company
 		public EmployeeInGroupsViewModel InGroupsViewModel;			//5
 		public EmployeeListedItemsViewModel ListedItemsViewModel;	//6
 		public EmployeeMovementsViewModel MovementsViewModel;       //7
-		public EmployeeVacationsViewModel VacationsViewModel;       //8
+////1289 После сделать дочерней		
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8
+		public EmployeeVacationsViewModel VacationsViewModel;       //9
 
 
 		private int lastTab;
@@ -526,9 +530,11 @@ namespace Workwear.ViewModels.Company
 					break;
 				case 6: ListedItemsViewModel.OnShow();
 					break;
-				case 7: MovementsViewModel.OnShow();
+				case 7: EmployeeOverNormViewModel.OnShow();
 					break;
-				case 8:
+				case 8: MovementsViewModel.OnShow();
+					break;
+				case 9:
 					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {

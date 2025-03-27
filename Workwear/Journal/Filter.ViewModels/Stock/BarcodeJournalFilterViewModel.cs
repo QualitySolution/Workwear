@@ -45,7 +45,6 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 					Size = Employee.Sizes.FirstOrDefault(s => s.SizeType.Id == value?.Type?.SizeType.Id)?.Size;
 					Height = Employee.Sizes.FirstOrDefault(s => s.SizeType.Id == value?.Type?.HeightType.Id)?.Size;
 				}
-				
 			}
 		}
 
@@ -74,6 +73,23 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 			set => SetField(ref warehouse, value);
 		}
 		
+		private StockPosition stockPosition;
+		/// <summary>
+		/// конкреттные позиции на складе
+		/// </summary>
+		[PropertyChangedAlso(nameof(Nomenclature))]
+		[PropertyChangedAlso(nameof(Size))]
+		[PropertyChangedAlso(nameof(Height))]
+		public virtual StockPosition StockPosition {
+			get => stockPosition;
+			set {
+				SetField(ref stockPosition, value);
+				Nomenclature = value.Nomenclature;
+				Size = value.WearSize;
+				Height = value.Height;
+			}
+		}
+
 		public Size[] Sizes => 
 			nomenclature is null ? 
 				sizeService.GetSizeByCategory(UoW, CategorySizeType.Size, false, true).ToArray() : 
@@ -85,6 +101,20 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 				sizeService.GetSizeByCategory(UoW, CategorySizeType.Height, false, true).ToArray() : 
 				nomenclature.Type?.HeightType is null ? new Size[]{} : 
 					sizeService.GetSize(UoW, nomenclature?.Type?.HeightType, false, true).ToArray();
-
+		
+		private bool onlyFreeBarcodes;
+		public virtual bool OnlyFreeBarcodes {
+			get => onlyFreeBarcodes;
+			set => SetField(ref onlyFreeBarcodes, value);
+		}
+		
+		/// <summary>
+		/// All filters
+		/// </summary>
+		private bool canUseFilter = true;
+		public virtual bool CanUseFilter {
+			get => canUseFilter;
+			set => SetField(ref canUseFilter, value);
+		}
 	}
 }

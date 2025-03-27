@@ -37,7 +37,7 @@ namespace Workwear.Tools.OverNorms.Impl
 				              (woAlias.Nomenclature == param.Nomenclature && woAlias.WearSize == param.Size &&
 				               woAlias.Height == param.Height)))
 				.WithSubquery.WhereNotExists(QueryOver.Of<OverNormOperation>()
-					.Where(oon => oon.WriteOffOverNormOperation.Id == oonAlias.Id)
+					.Where(oon => oon.ReturnFromOperation.Id == oonAlias.Id)
 					.Select(oon => oon.Id))
 				.Where(() => type == null || oonAlias.Type == type)
 				.Where(() => woAlias.ExpenseWarehouse != null && (warehouse == null || woAlias.ExpenseWarehouse == warehouse));

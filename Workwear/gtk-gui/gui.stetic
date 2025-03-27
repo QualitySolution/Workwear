@@ -1362,7 +1362,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Company.EmployeeView" design-size="1035 565">
+  <widget class="Gtk.Bin" id="Workwear.Views.Company.EmployeeView" design-size="1115 565">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -1536,7 +1536,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="notebook1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">7</property>
             <signal name="SwitchPage" handler="OnNotebook1SwitchPage" />
             <child>
               <widget class="Gtk.HBox" id="hbox1">
@@ -2717,6 +2717,24 @@
               </packing>
             </child>
             <child>
+              <widget class="Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView" id="employeeovernormview">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">7</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelovernorm1">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Вне норм</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.VBox" id="vbox8">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
@@ -2732,7 +2750,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">7</property>
+                <property name="Position">8</property>
               </packing>
             </child>
             <child>
@@ -2750,11 +2768,11 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">8</property>
+                <property name="Position">9</property>
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label30">
+              <widget class="Gtk.Label" id="labelovernorm">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Отпуска</property>
               </widget>
@@ -3545,7 +3563,7 @@
                   <widget class="Gtk.Label" id="label7">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Ответствеый за передачу СИЗ:</property>
+                    <property name="LabelProp" translatable="yes">Ответственный за передачу СИЗ:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -10434,7 +10452,7 @@
               <widget class="Gtk.Label" id="label7">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Ответствеый за передачу СИЗ:</property>
+                <property name="LabelProp" translatable="yes">Ответственный за передачу СИЗ:</property>
                 <property name="UseMarkup">True</property>
               </widget>
               <packing>
@@ -34949,6 +34967,23 @@
             <property name="Position">2</property>
             <property name="AutoSize">True</property>
           </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+        <property name="MemberName" />
+        <property name="ShadowType">In</property>
+        <child>
+          <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewOverNorm">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="ShowScrollbars">True</property>
+          </widget>
         </child>
       </widget>
     </child>
