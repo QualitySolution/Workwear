@@ -3,7 +3,9 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
@@ -113,6 +115,27 @@ namespace Workwear.Domain.Stock.Documents {
 					OnPropertyChanged();
 				}
 			}
+		}
+		private EmployeeCard employeeCard;
+		[Display (Name = "Сотрудник")]
+		public virtual EmployeeCard EmployeeCard {
+			get => employeeCard;
+			set => SetField(ref employeeCard, value);
+		} 
+		
+		private DutyNorm dutyNorm;
+		[Display(Name = "Дежурная норма")]
+		public virtual DutyNorm DutyNorm {
+			get => dutyNorm;
+			set => SetField (ref dutyNorm, value);
+		}
+		
+		private DutyNormIssueOperation returnFromDutyNormOperation;
+		[IgnoreHistoryTrace]
+		[Display(Name = "Операция возврата с дежурной нормы")]
+		public virtual DutyNormIssueOperation ReturnFromDutyNormOperation {
+			get => returnFromDutyNormOperation;
+			set => SetField(ref returnFromDutyNormOperation, value);
 		}
 
 		#endregion
