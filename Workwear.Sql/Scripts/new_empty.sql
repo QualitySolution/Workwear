@@ -637,17 +637,12 @@ create table stock_return
 	doc_number    varchar(16)  null,
 	date          date         not null,
 	warehouse_id  int unsigned not null,
-	employee_id   int unsigned not null,
 	user_id       int unsigned null,
 	comment       text         null,
 	creation_date datetime     null,
 	INDEX `index_stock_income_date` (`date` ASC),
 	INDEX `stock_return_doc_number_index` (`doc_number` ASC),
-	INDEX `stock_return_employee_id_index` (`employee_id` ASC),
 	INDEX `stock_income_warehouse_id_index` (`warehouse_id` ASC),
-	constraint stock_return_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
 	constraint stock_return_users_id_fk
 		foreign key (user_id) references users (id)
 			on update cascade on delete set null,
@@ -669,8 +664,11 @@ create table stock_return_items
 	stock_return_id             int unsigned not null,
 	nomenclature_id             int unsigned not null,
 	quantity                    int unsigned not null,
-	employee_issue_operation_id int unsigned not null,
+	employee_id					int unsigned null,
+	employee_issue_operation_id int unsigned null,
 	warehouse_operation_id      int unsigned not null,
+	duty_norm_id				int unsigned null,
+	duty_norm_issue_operation_id int unsigned null,
 	size_id                     int unsigned null,
 	height_id                   int unsigned null,
 	comment_return              varchar(120) null,
@@ -679,6 +677,10 @@ create table stock_return_items
 	INDEX `index_stock_return_items_height` (`height_id` ASC),
 	INDEX `index_stock_return_items_nomenclature` (`nomenclature_id` ASC),
 	INDEX `index_stock_return_items_warehouse_operation` (`warehouse_operation_id` ASC),
+	INDEX `stock_return_items_employee_id_index` (`employee_id` ASC),
+	INDEX `stock_return_items_duty_norm_id_index` (`duty_norm_id` ASC),
+	INDEX `stock_return_items_duty_norm_issue_operation_id_index` (`duty_norm_issue_operation_id` ASC),
+	INDEX `stock_return_items_employee_issue_operation_id_index` (`employee_issue_operation_id` ASC),
 	constraint fk_stock_return_items_doc
 		foreign key (stock_return_id) references stock_return (id)
 			on update cascade on delete cascade,
@@ -694,7 +696,17 @@ create table stock_return_items
 		foreign key (warehouse_operation_id) references operation_warehouse (id),
 	constraint fk_stock_return_items_size
 		foreign key (size_id) references sizes (id)
+			on update cascade,
+	constraint stock_return_items_employee_id_fk
+		foreign key (employee_id) references employees(id)
+			on update cascade 
+			on delete restrict,
+	constraint stock_return_items_duty_norm_id_fk
+		foreign key (duty_norm_id) references duty_norms (id)
 			on update cascade
+			on delete restrict,
+	constraint stock_return_items_duty_norm_issue_operation_id_fk
+		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
