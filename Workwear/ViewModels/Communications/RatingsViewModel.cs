@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Cloud.WearLk.Client;
@@ -6,11 +7,14 @@ using QS.Cloud.WearLk.Manage;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Company;
+using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Communications 
@@ -18,15 +22,20 @@ namespace Workwear.ViewModels.Communications
 	public class RatingsViewModel : UowDialogViewModelBase
 	{
 		private readonly RatingManagerService ratingManagerService;
+		private readonly EmployeeRepository employeeRepository;
+
 		public RatingsViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			RatingManagerService ratingManagerService,
+			EmployeeRepository employeeRepository,
 			Nomenclature nomenclature = null,
 			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator) 
 		{
-			this.ratingManagerService = ratingManagerService;
+			this.ratingManagerService = ratingManagerService ?? throw new ArgumentNullException(nameof(ratingManagerService));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.employeeRepository.RepoUow = UoW;
 			var builder = new CommonEEVMBuilderFactory<RatingsViewModel>(
 				this, this, UoW, NavigationManager, autofacScope);
 
@@ -54,6 +63,7 @@ namespace Workwear.ViewModels.Communications
 		}
 		
 		public virtual bool NomenclatureColumnVisible => SelectNomenclature == null;
+		public bool SensitiveOpenEmployee => SelectedRating != null;
 
 		private IList<Rating> ratings;
 
@@ -61,8 +71,15 @@ namespace Workwear.ViewModels.Communications
 			get => ratings;
 			set => SetField(ref ratings, value);
 		}
-		#endregion
 
+		private Rating selectedRating;
+		[PropertyChangedAlso(nameof(SensitiveOpenEmployee))]
+		public Rating SelectedRating {
+			get => selectedRating;
+			set => SetField(ref selectedRating, value);
+		}
+		
+		#endregion
 		#region Названия номеклатуры
 
 		private Dictionary<int, string> nomenclatureNames = new Dictionary<int, string>();
@@ -79,6 +96,13 @@ namespace Workwear.ViewModels.Communications
 		
 		#region Entry
 		public EntityEntryViewModel<Nomenclature> EntryNomenclature;
+		#endregion
+
+		#region Команды
+		public void OpenEmployee() {
+			var employee = employeeRepository.GetEmployeeByPhone(SelectedRating.UserPhone);
+			NavigationManager.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(employee.Id));
+		}
 		#endregion
 	}
 }
