@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -33,6 +32,7 @@ using QS.Tdi.Gtk;
 using QS.Tdi;
 using QS.Updater.App;
 using QS.Updater;
+using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
 using QSOrmProject;
@@ -431,18 +431,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 	#endregion
 
-	#region Helpers
-	void OpenUrl(string url) {
-		//Здесь пробуем исправить ошибку 35026 на нашем багтрекере.
-		//Предположил что проблема в этом https://github.com/dotnet/runtime/issues/28005
-		//Но проверить действительно ли это так негде.
-		ProcessStartInfo psi = new ProcessStartInfo {
-			FileName = url,
-			UseShellExecute = true
-		};
-		Process.Start(psi);
-	}
-
+	#region Helper
 	void SetChannel(UpdateChannel channel) {
 		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
 			var configuration = releaseScope.Resolve<IChangeableConfiguration>();
@@ -539,7 +528,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			OpenUrl("user-guide.pdf");
+			OpenHelper.OpenUrl("user-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -747,7 +736,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
-		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
@@ -863,7 +852,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			OpenUrl("admin-guide.pdf");
+			OpenHelper.OpenUrl("admin-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
