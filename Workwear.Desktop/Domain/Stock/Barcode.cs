@@ -72,21 +72,18 @@ namespace Workwear.Domain.Stock
 
 		#region Операции
 
-		private Dictionary<DateTime, BarcodeOperation> operationsWithDates;
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
 		[Display(Name = "Операции")]
 		public virtual IList<BarcodeOperation> BarcodeOperations {
 			get => barcodeOperations;
-			set {
-				if(SetField(ref barcodeOperations, value))
-					operationsWithDates = BarcodeOperations.ToDictionary(o => o.OperationDate ?? DateTime.MinValue);
-			}
+			set => SetField(ref barcodeOperations, value);
 		}
 		
 ////1289 проверить коментарий
 		//Предворительно нужно загрузиоть все BarcodeOperation и связанные с ними операции иначе будет много запросов в базу
-		public virtual BarcodeOperation LastOperation => operationsWithDates[LastOperationTime];
-		public virtual DateTime LastOperationTime => operationsWithDates.Keys.Max();
+		public virtual IList<BarcodeOperation> SortedOperations => BarcodeOperations.OrderBy(x => x.OperationDate).ToList();
+		public virtual BarcodeOperation LastOperation => SortedOperations.Last();
+		public virtual DateTime LastOperationTime => BarcodeOperations.Max(x => x.OperationDate);
 
 		#endregion
 	}

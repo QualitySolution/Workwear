@@ -119,14 +119,7 @@ namespace Workwear.Tools.Barcodes
 
 			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height).Select(x => x.Barcode).List<Barcode>();
 		}
-////1298 Возможно удалить
-		public IList<int> GetFreeBarcodesIds(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
-		{
-			if (uow == null) throw new ArgumentNullException(nameof(uow));
-			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
-			
-			return BalanceFreeBarcodesQuery(uow, nomenclature, size, height).Select(x => x.Barcode.Id).List<int>();
-		}
+
 		#endregion
 		
 		#region Private Methods

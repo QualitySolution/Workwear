@@ -32,6 +32,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 		#region Visible
 		public bool OnlyWithRatingVisible => NomenclatureJournalViewModel.FeaturesService.Available(WorkwearFeature.Ratings);
+		public bool OnlyMarkingVisible => NomenclatureJournalViewModel.FeaturesService.Available(WorkwearFeature.Barcodes);
 		#endregion
 		
 		#region Ограничения
@@ -57,6 +58,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public bool OnlyWithRating {
 			get => onlyWithRating;
 			set => SetField(ref onlyWithRating, value);
+		}
+		
+		private bool onlyMarking;
+		public bool OnlyMarking {
+			get => onlyMarking;
+			set => SetField(ref onlyMarking, value);
 		}
 
 		#endregion

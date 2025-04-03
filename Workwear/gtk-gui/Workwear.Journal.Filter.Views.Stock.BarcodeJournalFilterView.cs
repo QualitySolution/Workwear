@@ -4,6 +4,8 @@ namespace Workwear.Journal.Filter.Views.Stock
 {
 	public partial class BarcodeJournalFilterView
 	{
+		private global::Gamma.GtkWidgets.yVBox yvbox1;
+
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
 		private global::QS.Views.Control.EntityEntry entityWarehouse;
@@ -29,6 +31,10 @@ namespace Workwear.Journal.Filter.Views.Stock
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Journal.Filter.Views.Stock.BarcodeJournalFilterView";
 			// Container child Workwear.Journal.Filter.Views.Stock.BarcodeJournalFilterView.Gtk.Container+ContainerChild
+			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox1.Name = "yvbox1";
+			this.yvbox1.Spacing = 6;
+			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
 			this.ytable1.NRows = ((uint)(3));
@@ -41,6 +47,8 @@ namespace Workwear.Journal.Filter.Views.Stock
 			this.entityWarehouse.Name = "entityWarehouse";
 			this.ytable1.Add(this.entityWarehouse);
 			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entityWarehouse]));
+			w1.TopAttach = ((uint)(1));
+			w1.BottomAttach = ((uint)(2));
 			w1.LeftAttach = ((uint)(1));
 			w1.RightAttach = ((uint)(2));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
@@ -50,8 +58,6 @@ namespace Workwear.Journal.Filter.Views.Stock
 			this.entryNomenclature.Name = "entryNomenclature";
 			this.ytable1.Add(this.entryNomenclature);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.entryNomenclature]));
-			w2.TopAttach = ((uint)(1));
-			w2.BottomAttach = ((uint)(2));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(2));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
@@ -75,8 +81,6 @@ namespace Workwear.Journal.Filter.Views.Stock
 			this.ylabelNomenclature.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура:");
 			this.ytable1.Add(this.ylabelNomenclature);
 			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelNomenclature]));
-			w4.TopAttach = ((uint)(1));
-			w4.BottomAttach = ((uint)(2));
 			w4.XOptions = ((global::Gtk.AttachOptions)(4));
 			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -94,9 +98,11 @@ namespace Workwear.Journal.Filter.Views.Stock
 			this.ylabelWarehouse = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelWarehouse.Name = "ylabelWarehouse";
 			this.ylabelWarehouse.Xalign = 1F;
-			this.ylabelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад:");
+			this.ylabelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("На складе:");
 			this.ytable1.Add(this.ylabelWarehouse);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelWarehouse]));
+			w6.TopAttach = ((uint)(1));
+			w6.BottomAttach = ((uint)(2));
 			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -129,7 +135,10 @@ namespace Workwear.Journal.Filter.Views.Stock
 			w8.RightAttach = ((uint)(4));
 			w8.XOptions = ((global::Gtk.AttachOptions)(4));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.Add(this.ytable1);
+			this.yvbox1.Add(this.ytable1);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
+			w9.Position = 0;
+			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();

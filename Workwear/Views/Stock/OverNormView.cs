@@ -72,11 +72,10 @@ namespace Workwear.Views.Stock
 			buttonAddEmployee.Visible = !ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
 			buttonAddEmployeeIssue.Visible = ViewModel.OverNormModel.RequiresEmployeeIssueOperation;
 			
-			buttonDel.Clicked += (sender, args) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<OverNormItem>());
-			buttonAddEmployee.Clicked += (sender, args) => ViewModel.SelectEmployees();
-			buttonAddEmployeeIssue.Clicked += (sender, args) => ViewModel.SelectEmployeeIssue();
-			buttonAddNomenclature.Clicked += (sender, args) =>
-				ViewModel.SelectNomenclature(ytreeItems.GetSelectedObject<OverNormItem>());
+			buttonDel.Clicked += (s, a) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<OverNormItem>());
+			buttonAddEmployee.Clicked += (s, a) => ViewModel.SelectEmployees();
+			buttonAddEmployeeIssue.Clicked += (s, a) => ViewModel.SelectEmployeeIssue();
+			buttonAddNomenclature.Clicked += (s, a) => ViewModel.SelectNomenclature(ytreeItems.GetSelectedObject<OverNormItem>());
 			
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
@@ -107,7 +106,7 @@ namespace Workwear.Views.Stock
 					.Tag(BarcodesColumn)
 					.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
 					.Resizable()
-					.AddReadOnlyTextRenderer(x =>  string.Join(", ", x.OverNormOperation.BarcodeOperations?.Select(b => b.Barcode.Title) ?? Array.Empty<string>()))
+					.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.OverNormOperation.Barcodes?.Select(b => b.Title) ?? Array.Empty<string>()))
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = Entity.Items;

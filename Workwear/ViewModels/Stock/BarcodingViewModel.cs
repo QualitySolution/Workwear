@@ -69,7 +69,7 @@ namespace Workwear.ViewModels.Stock {
 					Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-				 loadBarcodes();
+				loadBarcodes();
 			}
 			
 			if(stockBalanceJournalNode != null)
@@ -224,11 +224,12 @@ namespace Workwear.ViewModels.Stock {
 			BarcodeOperation barcodeOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			BarcodingItem barcodingItemAlias = null;
-
+			
 			var barcodes = UoW.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
-				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
-				.JoinEntityAlias(() => barcodingItemAlias, () => barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id,
+				.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.JoinEntityAlias(() => barcodingItemAlias,
+					() => barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id,
 					JoinType.LeftOuterJoin)
 				.Where(() => barcodingItemAlias.Document.Id == Entity.Id)
 				.List();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -15,11 +16,11 @@ using QS.Services;
 using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
+using Size = Workwear.Domain.Sizes.Size;
 
 namespace Workwear.Journal.ViewModels.Stock 
 {
@@ -62,18 +63,7 @@ namespace Workwear.Journal.ViewModels.Stock
 			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
-////1289
-/*	
-			var subqueryLastOperation = QueryOver.Of<BarcodeOperation>(() => barcodeOperationAlias)
-				.Left.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => employeeIssueOperationAlias)
-				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
-				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
-				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
-				//.Where(() => serviceClaimAlias.Id == stateOperationAlias.Claim.Id)
-				.OrderBy(() => stateOperationAlias.OperationTime).Desc
-				.Select(x => x.State)
-				.Take(1);
-*/			
+			
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(GetSearchCriterion(
 					() => barcodeAlias.Title,
@@ -91,13 +81,27 @@ namespace Workwear.Journal.ViewModels.Stock
 					query.Where(x => x.Size.Id == Filter.Size.Id);
 				if(Filter.Height != null)
 					query.Where(x => x.Height.Id == Filter.Height.Id);
-////1289 что если операция не единственная
 				if(Filter.Warehouse != null) {
-					query.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == Filter.Warehouse.Id);
+					BarcodeOperation barcodeOperationSubAlias = null;
+					EmployeeIssueOperation empIsOperationSubAlias = null;
+					WarehouseOperation whOperationSubAlias = null;
+					OverNormOperation overNormOperationSubAlias = null;
+
+					var subQuery = QueryOver.Of(() => barcodeOperationSubAlias)
+						.Left.JoinAlias(() => barcodeOperationSubAlias.WarehouseOperation, () => whOperationSubAlias)
+						.Left.JoinAlias(() => barcodeOperationSubAlias.OverNormOperation, () => overNormOperationSubAlias)
+						.Left.JoinAlias(() => barcodeOperationSubAlias.EmployeeIssueOperation, () => empIsOperationSubAlias)
+						.Where(() => barcodeOperationSubAlias.Barcode.Id == barcodeAlias.Id)
+						.OrderBy(Projections.SqlFunction("coalesce", NHibernateUtil.Date,
+                        	Projections.Property(() => whOperationSubAlias.OperationTime),
+                        	Projections.Property(() => empIsOperationSubAlias.OperationTime),
+                        	Projections.Property(() => overNormOperationSubAlias.OperationTime)))
+                        	.Desc
+                        .Select(x => whOperationSubAlias.ReceiptWarehouse.Id)
+                        .Take(1);
+					query.Where(Restrictions.Eq(Projections.SubQuery(subQuery), Filter.Warehouse.Id));
 				}
-////1289 пока хз
-				if(Filter.OnlyFreeBarcodes)
-					;
+
 				if(Filter.StockPosition != null){
 					query.Where(() => warehouseOperationAlias.WearPercent == Filter.StockPosition.WearPercent);
 					if(Filter.StockPosition.Owner != null)
@@ -177,19 +181,7 @@ namespace Workwear.Journal.ViewModels.Stock
 				DataLoader.LoadData(false);
 			}
 		}
-////1289
-/*
-		private bool onlyFreeBarcodes;
-		public bool OnlyFreeBarcodes 
-		{
-			get => onlyFreeBarcodes;
-			set 
-			{
-				SetField(ref onlyFreeBarcodes, value);
-				DataLoader.LoadData(false);
-			}
-		}
-*/
+
 		#endregion
 		
 		#region Actions

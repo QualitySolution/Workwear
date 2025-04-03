@@ -15,35 +15,25 @@ namespace Workwear.Tools.OverNorms
 		public Nomenclature Nomenclature { get; }
 
 		private int amount;
-		public int Amount 
-		{
-			get 
-			{
+		public int Amount {
+			get {
 				if (amount != Barcodes.Count && Barcodes.Any()) 
-				{
 					return amount = Barcodes.Count;
-				}
-
 				return amount;
 			}
 			set => amount = value;
 		}
 
 		public Size Size { get; }
-		
 		public Size Height { get; }
-		
+		public decimal WearPercent { get; }
+		public Owner Owner { get; }
 		public EmployeeIssueOperation EmployeeIssueOperation { get; }
-		
 		public IList<Barcode> Barcodes { get; }
-
-		private OverNormParam() 
-		{
+		private OverNormParam() {
 			Barcodes = new List<Barcode>();
 		}
-
-		public OverNormParam(EmployeeCard employee) : this() 
-		{
+		public OverNormParam(EmployeeCard employee) : this() {
 			Employee = employee ?? throw new ArgumentNullException(nameof(employee));
 		}
 		
@@ -66,8 +56,7 @@ namespace Workwear.Tools.OverNorms
 			
 			if (amount < 1) throw new ArgumentOutOfRangeException(nameof(amount));
 			if (employeeIssueOperation != null && employee.Id != employeeIssueOperation.Employee.Id) throw new InvalidOperationException("Сотрудник в операции выдачи отличается от переданного");
-			if (Barcodes.Any()) 
-			{
+			if (Barcodes.Any()) {
 				if (amount != Barcodes.Count) throw new InvalidOperationException("Количество штрихкодов должно соответствовать указанному количеству");
 				if (employeeIssueOperation != null && !ItemsTypeMatch(employeeIssueOperation, Barcodes)) throw new InvalidOperationException("Группа номенклатур подменных вещей не соответсвует заменяемой у сотрудника");
 				if (!NomeclatureMatch(nomenclature, size, height, Barcodes)) throw new InvalidOperationException("Номенклатура штрихкодов должна соответствовать указанным");
@@ -90,6 +79,8 @@ namespace Workwear.Tools.OverNorms
 					Nomenclature?.Id == param.Nomenclature?.Id &&
 					Size?.Id == param.Size?.Id &&
 					Height?.Id == param.Height?.Id &&
+					WearPercent == param.WearPercent &&
+					Owner?.Id == param.Owner?.Id &&
 					amount == param.Amount &&
 					Employee?.Id == param.Employee?.Id &&
 					EmployeeIssueOperation?.Id == param.EmployeeIssueOperation?.Id &&

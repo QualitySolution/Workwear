@@ -21,7 +21,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		//public override bool Editable { get; }
+//public override bool Editable { get; }
 
 		public override bool CanUseWithBarcodes => true;
 		
@@ -37,8 +37,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (UseBarcodes && @params.Any(x => !x.Barcodes.Any())) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 			if (expenseWarehouse == null) throw new ArgumentNullException(nameof(expenseWarehouse));
 			
-			OverNorm document = new OverNorm() 
-			{
+			OverNorm document = new OverNorm() {
 				Warehouse = expenseWarehouse,
 				Comment = comment,
 				Type = OverNormType.Simple,
@@ -47,16 +46,15 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			};
 			
 			foreach (OverNormParam param in @params) 
-			{
 				AddItems(document, param, expenseWarehouse);
-			}
-
+			
 			return document;
 		}
 
 		public override void WriteOffOperation(OverNormOperation operation, Warehouse receiptWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) 
 		{
-			throw new InvalidOperationException("Операции остановочного ремонта не списываются");
+////1289			
+			throw new InvalidOperationException("Разовые операции не списываются");
 		}
 
 		public override void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 
@@ -66,23 +64,28 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (UseBarcodes && !param.Barcodes.Any()) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 			if (expenseWarehouse == null) throw new ArgumentNullException(nameof(expenseWarehouse));
 			
-			WarehouseOperation newWarehouseOp = new WarehouseOperation 
-			{
+			WarehouseOperation newWarehouseOp = new WarehouseOperation {
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
 				Nomenclature = param.Nomenclature,
 				WearSize = param.Size,
-				Height = param.Height
-				//TODO: owner
+				Height = param.Height,
+				Owner = param.Owner
 			};
 			
-			OverNormOperation overNormOp = new OverNormOperation() 
-			{
+			OverNormOperation overNormOp = new OverNormOperation() {
 				WarehouseOperation = newWarehouseOp,
 				Type = OverNormType.Simple,
-				Employee = param.Employee
+				Employee = param.Employee,
+				Nomenclature = param.Nomenclature,
+				WearSize = param.Size,
+				Height = param.Height,
+				WearPercent = param.WearPercent,
+				Barcodes = param.Barcodes,
 			};
 			
+			foreach(var barcode in param.Barcodes) 
+				barcode.BarcodeOperations.Add(new BarcodeOperation(){Barcode = barcode, OverNormOperation = overNormOp});
 			document.AddItem(overNormOp, param);
 		}
 		
@@ -94,14 +97,15 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.SubstitutedIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.SubstitutedIssueOperation;
+			item.OverNormOperation.Barcodes = param.Barcodes;
+			item.OverNormOperation.BarcodeOperations = param.Barcodes.SelectMany(b => b.BarcodeOperations) as IList<BarcodeOperation>;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
 			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
 			item.OverNormOperation.WarehouseOperation.Height = param.Height;
-			
-			
+			item.OverNormOperation.WarehouseOperation.WearPercent = param.WearPercent;
+			item.OverNormOperation.WarehouseOperation.Owner = param.Owner;
 		}
 		
 		private void AddItems(OverNorm document, OverNormParam param, Warehouse expenseWarehouse)
@@ -112,8 +116,9 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 				Amount = param.Amount,
 				Nomenclature = param.Nomenclature,
 				WearSize = param.Size,
-				Height = param.Height
-				//TODO: owner
+				Height = param.Height,
+				Owner = param.Owner,
+				WearPercent = param.WearPercent
 			};
 
 			OverNormOperation newOverNormOp = new OverNormOperation() 

@@ -47,9 +47,10 @@ namespace Workwear.Domain.Operations {
 		#region Расчетные
 		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
 
-		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ??
+		public virtual DateTime OperationDate => EmployeeIssueOperation?.OperationTime ??
 		                                          OverNormOperation?.OperationTime ??
-		                                          WarehouseOperation?.OperationTime;
+		                                          WarehouseOperation?.OperationTime ??
+		                                          throw new Exception("Нет даты связанной операции");
 		public virtual string OperationTitle {
 			get {
 				if(EmployeeIssueOperation?.Issued > 0)

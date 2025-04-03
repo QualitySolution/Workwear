@@ -13,10 +13,10 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Stock;
@@ -157,7 +157,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 
 		#region Guest and Simple
-		public void SelectEmployees() 
+		public void SelectEmployees()
 		{
 			IPage<EmployeeJournalViewModel> selectJournal = NavigationManager.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
@@ -175,29 +175,26 @@ namespace Workwear.ViewModels.Stock
 		
 		public void SelectNomenclature(OverNormItem item)
 		{
-			IPage<StockBalanceJournalViewModel> selectJournal = 
-				NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.ShowWithBarcodes = OverNormModel.UseBarcodes;
-////1289 Выдача без штрихкода отдельно			
-			selectJournal.ViewModel.Filter.CanChangeShowWithBarcodes = false; //OverNormModel.CanChangeUseBarcodes;
-			//selectJournal.ViewModel.Filter.AddAmount = AddedAmount.One;
-			//selectJournal.ViewModel.Filter.CanChooseAmount = true;
-			selectJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
-			selectJournal.ViewModel.Filter.SensetiveWarehouse = false;
-			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			
-			//if (OverNormModel.RequiresEmployeeIssueOperation) 
-			//	selectJournal.ViewModel.Filter.ItemsType = item.OverNormOperation.EmployeeIssueOperation.Nomenclature.Type;
+			IPage<StockBalanceJournalViewModel> selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>
+				(this,
+				OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.ShowNegativeBalance = false;
+////1289 Выдача без штрихкода отдельно
+							filter.ShowWithBarcodes = true; //OverNormModel.UseBarcodes;
+							filter.CanChangeShowWithBarcodes = false; //OverNormModel.CanChangeUseBarcodes;
+							filter.Warehouse = Entity.Warehouse;
+							filter.SensetiveWarehouse = false;
+						});
+				});
 			selectJournal.Tag = item;
-			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+            selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
-
 		public void AddNomenclature(object sender, JournalSelectedEventArgs e) {
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
-//OverNormModel.UseBarcodes = node.UseBarcode;
-			//var nomenclature = UoW.GetById<Nomenclature>(node.NomeclatureId);
-			//Size size = node.SizeId != null ? UoW.GetById<Size>((int)node.SizeId) : null;
-			//Size height = node.HeightId != null ? UoW.GetById<Size>((int)node.HeightId) : null;
 			StockPosition stockPosition = node.GetStockPosition(UoW);
 ////1289			
 //var size = UoW.GetById<Size>(node.SizeIdn);
@@ -211,12 +208,10 @@ namespace Workwear.ViewModels.Stock
 			if(stockPosition.Nomenclature.UseBarcode) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
 					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
-				barcodeJournal.ViewModel.Filter.CanUseFilter = false;
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+				barcodeJournal.ViewModel.Filter.CanUseFilter = false;
 				barcodeJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
 				barcodeJournal.ViewModel.Filter.StockPosition= node.GetStockPosition(UoW);
-////1289 не реализовано
-				barcodeJournal.ViewModel.Filter.OnlyFreeBarcodes = true;
 				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
 					IList<BarcodeJournalNode> nodes = args.GetSelectedObjects<BarcodeJournalNode>();
 					IList<Barcode> barcodes = UoW.GetById<Barcode>(nodes.Select(x => x.Id));
@@ -237,19 +232,15 @@ namespace Workwear.ViewModels.Stock
 							OverNormItem newItem = new OverNormItem(Entity, new OverNormOperation());
 							newItem.Param = param;
 							AddOrUpdateItem(newItem);
+						} else {
+							item.Param =
+								new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, barcodes.Count,
+									stockPosition.WearSize, stockPosition.Height,
+									item.OverNormOperation.SubstitutedIssueOperation, barcodes);
+							AddOrUpdateItem(item);
 						}
-
-						item.Param =
-							new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, barcodes.Count, stockPosition.WearSize, stockPosition.Height,
-								item.OverNormOperation.SubstitutedIssueOperation, barcodes);
-						AddOrUpdateItem(item);
-					} 
+					}
 				};
-
-				item.Param =
-					new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, 1, stockPosition.WearSize, stockPosition.Height,
-						item.OverNormOperation.SubstitutedIssueOperation);
-				AddOrUpdateItem(item);
 			}
 		}
 
@@ -276,10 +267,14 @@ namespace Workwear.ViewModels.Stock
 				return false;
 
 			foreach(OverNormItem item in Entity.Items) {
+				item.OverNormOperation.WarehouseOperation.OperationTime = Entity.Date;
 				UoW.Save(item.OverNormOperation.WarehouseOperation);
+				
+				item.OverNormOperation.OperationTime = Entity.Date;
 				UoW.Save(item.OverNormOperation);
+				
 				foreach(BarcodeOperation bo in item.OverNormOperation.BarcodeOperations) 
-					UoW.Save(bo);
+                    UoW.Save(bo);
 			}
 			
 			return base.Save();
@@ -288,7 +283,7 @@ namespace Workwear.ViewModels.Stock
 		
 		private void AddOrUpdateItem(OverNormItem item)
 		{
-			if (Entity.Id < 1 || item.Id < 1) {
+			if (item.Id < 1) {
 				Entity.Items.Remove(item);
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
 			} else 

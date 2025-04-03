@@ -46,7 +46,7 @@ namespace Workwear.Views.Stock
 			
 			buttonPrintBarcode.Clicked += (sender, args) => ViewModel.PrintBarcodes();
 			
-			treeviewOperations.ItemsDataSource = Entity.BarcodeOperations;
+			treeviewOperations.ItemsDataSource = Entity.SortedOperations;
 		}
 	}
 }

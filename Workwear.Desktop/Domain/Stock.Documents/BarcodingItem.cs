@@ -62,9 +62,9 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual string OwnerName => Owner?.Name ?? String.Empty;
 		public virtual string UnitsName => Units?.Name ?? String.Empty;
 		[Display(Name = "Складская позиция")] public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, Size, Height, Owner);
+		[Display(Name = "Штрихкоды")] public virtual IEnumerable<Barcode> Barcodes  { get; set; }
+		[Display(Name = "Операции штрихкодов")] public virtual IList<BarcodeOperation> BarcodeOperations { get; set; }
 		
-		[Display(Name = "Штрихкоды")] 
-		public virtual IEnumerable<Barcode> Barcodes { get; set; }
 	    #endregion
 	}
 }

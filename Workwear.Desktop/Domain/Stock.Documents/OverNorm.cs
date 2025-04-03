@@ -23,24 +23,21 @@ namespace Workwear.Domain.Stock.Documents
 		#region Propertires
 		private IObservableList<OverNormItem> items = new ObservableList<OverNormItem>();
 		[Display (Name = "Строки документа")]
-		public virtual IObservableList<OverNormItem> Items 
-		{
+		public virtual IObservableList<OverNormItem>Items {
 			get => items;
 			set => SetField (ref items, value);
 		}
 
 		private OverNormType type;
 		[Display(Name = "Тип операции выдачи вне нормы")]
-		public virtual OverNormType Type 
-		{
+		public virtual OverNormType Type {
 			get => type;
 			set => SetField(ref type, value);
 		}
 		
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
-		public virtual Warehouse Warehouse 
-		{
+		public virtual Warehouse Warehouse {
 			get => warehouse;
 			set => SetField(ref warehouse, value);
 		}
@@ -49,9 +46,10 @@ namespace Workwear.Domain.Stock.Documents
 		#region Not Mapped Propertis
 		public virtual string Title => $"Выдача вне нормы ({Type.GetAttribute<DisplayAttribute>().Name}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
 		
-		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null) 
+		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null)
 		{
-			if (operation == null) throw new ArgumentNullException(nameof(operation));
+			if (operation == null) 
+				throw new ArgumentNullException(nameof(operation));
 			Items.Add(new OverNormItem(this, operation) { Param = param });
 		}
 		#endregion
@@ -64,26 +62,20 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
 			if (Warehouse == null) 
-			{
 				yield return new ValidationResult("Склад должен быть указан",
 					new[] { nameof(Warehouse) });
-			}
+			
 			if (Date < new DateTime(2008, 1, 1)) 
-			{
 				yield return new ValidationResult("Дата должна быть не ранее 2008-го года",
 					new[] { nameof(Date) });
-			}
+			
 			if (!Items.Any()) 
-			{
 				yield return new ValidationResult("Документ должен содержать хотя бы одну строку",
 					new[] { nameof(Items) });
-			}
-
+		
 			if (Items.Any(x => x.Param == null)) 
-			{
 				yield return new ValidationResult("Строки документа должны быть заполнены",
 					new[] { nameof(Items) });
-			}
 		}
 	}
 }

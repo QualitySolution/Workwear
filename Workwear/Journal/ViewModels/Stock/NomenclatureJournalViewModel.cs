@@ -73,6 +73,8 @@ namespace workwear.Journal.ViewModels.Stock
 				query.Where(x => !x.Archival);
 			if(Filter.OnlyWithRating)
 				query.Where(x => x.Rating != null);
+			if(Filter.OnlyMarking)
+				query.Where(x => x.UseBarcode);
 			if(Filter.ProtectionTools != null)
 				query.Left.JoinAlias(n => n.ProtectionTools, () => protectionToolsAlias)
 					.Where(() => protectionToolsAlias.Id == Filter.ProtectionTools.Id);

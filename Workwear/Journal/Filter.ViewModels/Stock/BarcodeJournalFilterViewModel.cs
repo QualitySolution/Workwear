@@ -8,7 +8,10 @@ using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.Journal.Filter.ViewModels.Stock {
 	public class BarcodeJournalFilterViewModel : JournalFilterViewModelBase<BarcodeJournalFilterViewModel> {
@@ -24,7 +27,10 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 			var builder = new CommonEEVMBuilderFactory<BarcodeJournalFilterViewModel>(journalViewModel, this, UoW, navigation, autofacScope);
 			
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-			NomenclatureEntry = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
+			NomenclatureEntry = builder.ForProperty(x => x.Nomenclature)
+				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel, NomenclatureFilterViewModel>(f => f.OnlyMarking = true)
+                .UseViewModelDialog<NomenclatureViewModel>()
+				.Finish();
 		}
 		
 		private readonly SizeService sizeService;

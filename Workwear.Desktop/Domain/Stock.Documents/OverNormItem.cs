@@ -22,16 +22,14 @@ namespace Workwear.Domain.Stock.Documents
 
 		private OverNorm document;
 		[Display(Name = "Документ выдачи вне нормы")]
-		public virtual OverNorm Document 
-		{
+		public virtual OverNorm Document {
 			get => document;
 			set => SetField(ref document, value);
 		}
 		
 		private OverNormOperation overNormOperation;
 		[Display(Name = "Оперерация")]
-		public virtual OverNormOperation OverNormOperation 
-		{
+		public virtual OverNormOperation OverNormOperation {
 			get => overNormOperation;
 			set => SetField(ref overNormOperation, value);
 		}
@@ -40,8 +38,7 @@ namespace Workwear.Domain.Stock.Documents
 		
 		#region Not Mapped Propertis
 		private OverNormParam param;
-		public virtual OverNormParam Param 
-		{
+		public virtual OverNormParam Param {
 			get => param;
 			set => SetField(ref param, value);
 		}
