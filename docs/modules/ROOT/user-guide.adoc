@@ -1,0 +1,47 @@
+:title-separator: {sp}|
+= QS: Спецодежда | Руководство пользователя
+Quality Solution 2024
+версия 2.8
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:!chapter-signifier:
+:toc: left
+:icons: font
+:toc-title: Содержание
+:toclevels: 3
+:imagesdir: images
+
+:leveloffset: 1
+
+include::pages/introduction.adoc[]
+
+include::pages/interface.adoc[]
+
+include::pages/organization.adoc[]
+
+include::pages/regulations.adoc[]
+
+include::pages/employees.adoc[]
+
+include::pages/stock.adoc[]
+
+include::pages/stock-documents.adoc[]
+
+include::pages/reports.adoc[]
+
+include::pages/settings.adoc[]
+
+include::pages/manipulation.adoc[]
+
+include::pages/history-log.adoc[]
+
+include::pages/import.adoc[]
+
+include::pages/export.adoc[]
+
+include::pages/mobile-app.adoc[]
+
+include::pages/postomat.adoc[]
+
+:leveloffset: 0
