@@ -4,11 +4,13 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class WarehouseTransferReportViewModel : ReportParametersUowViewModelBase {
+	public class WarehouseTransferReportViewModel : ReportParametersUowViewModelBase, IDialogDocumentation {
 		public readonly FeaturesService FeaturesService;
 		public WarehouseTransferReportViewModel(RdlViewerViewModel rdlViewerViewModel, 
 			IUnitOfWorkFactory unitOfWorkFactory, FeaturesService featuresService) : base(rdlViewerViewModel, unitOfWorkFactory) {
@@ -34,6 +36,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			selectReceiptWarehouse = warehousesReceipt?.First();
 			selectOwner = owners?.First();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#stock-operations");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
 			{ "start_date", StartDate },

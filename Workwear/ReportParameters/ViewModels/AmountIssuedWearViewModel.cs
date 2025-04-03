@@ -9,13 +9,15 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase
+	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
 		public readonly FeaturesService FeaturesService;
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
@@ -43,6 +45,11 @@ namespace workwear.ReportParameters.ViewModels {
 				VisibleCostCenter = UoW.GetAll<CostCenter>().Any();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#amount-issued");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
+		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},

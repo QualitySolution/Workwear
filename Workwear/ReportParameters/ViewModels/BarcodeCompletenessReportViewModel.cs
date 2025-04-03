@@ -6,9 +6,11 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
+using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase {
+	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
 		
 		public BarcodeCompletenessReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
@@ -24,8 +26,13 @@ namespace Workwear.ReportParameters.ViewModels {
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#barcode-completeness");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip("Отчёт по покрытию маркировкой");
+		#endregion
+		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			//Двойная проверка страхует от несинхронных изменений незваний полей в разных классах.
+			//Двойная проверка страхует от несинхронных изменений названий полей в разных классах.
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName 
 			   || nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
@@ -46,7 +53,7 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		IUnitOfWork UoW;
-		public override string Title => $"Отчёт по маркированной спецодежде от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+		public override string Title => $"Отчёт по покрытию маркировкой от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 			set => throw new InvalidOperationException();

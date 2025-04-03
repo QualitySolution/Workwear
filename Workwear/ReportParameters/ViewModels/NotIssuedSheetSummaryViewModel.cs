@@ -8,19 +8,20 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetSummaryViewModel : ReportParametersViewModelBase, IDisposable
+	public class NotIssuedSheetSummaryViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		IUnitOfWork UoW;
@@ -64,6 +65,11 @@ namespace workwear.ReportParameters.ViewModels
 			}
 			warehouse = warehousesList.First();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#unissued");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },

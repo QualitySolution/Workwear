@@ -7,11 +7,13 @@ using Gamma.Widgets;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class StockAllWearViewModel : ReportParametersViewModelBase{
+	public class StockAllWearViewModel : ReportParametersViewModelBase, IDialogDocumentation{
 		public StockAllWearViewModel(RdlViewerViewModel rdlViewerViewModel,
 		IUnitOfWorkFactory unitOfWorkFactory,
 		FeaturesService featuresService)
@@ -23,6 +25,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			//warehouse 
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#stock-list");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 		
 		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;

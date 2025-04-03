@@ -6,10 +6,12 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ProvisionReportViewModel : ReportParametersViewModelBase {
+	public class ProvisionReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
 		
 		private readonly FeaturesService featuresService;
 		
@@ -31,6 +33,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#provision");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			//Двойная проверка страхует от несинхронных изменений названий полей в разных классах.

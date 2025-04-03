@@ -38,6 +38,9 @@ namespace Workwear.Tools {
 			return "Открыть онлайн документацию";
 		}
 		
+		public static string GetReportDocTooltip(string reportName) {
+			return $"Открыть онлайн документацию для отчета '{reportName}'";
+		}
 		public static string GetDialogDocTooltip(string dialogName) {
 			return $"Открыть онлайн документацию для диалога '{dialogName}'";
 		}

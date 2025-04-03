@@ -8,15 +8,17 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using Workwear.ReportParameters.ViewModels;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 
@@ -55,6 +57,11 @@ namespace workwear.ReportParameters.ViewModels {
 			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(uow);
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#request-sheet");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		private readonly IUnitOfWork uow;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
