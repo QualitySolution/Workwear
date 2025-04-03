@@ -10,26 +10,26 @@ Quality Solution 2023
 :chapter-label:
 :toc-title: Содержание
 :toclevels: 3
-:imagesdir: ../images
+:imagesdir: images
 
 :sectnums:
 
 :leveloffset: 1
 
-include::requirements.adoc[]
+include::pages/requirements.adoc[]
 
-include::install.adoc[]
+include::pages/install.adoc[]
 
-include::cloud.adoc[]
+include::pages/cloud.adoc[]
 
-include::users.adoc[]
+include::pages/users.adoc[]
 
-include::update.adoc[]
+include::pages/update.adoc[]
 
-include::technical.adoc[]
+include::pages/technical.adoc[]
 
-include::transfer_base.adoc[]
+include::pages/transfer_base.adoc[]
 
-include::problems.adoc[]
+include::pages/problems.adoc[]
 
 :leveloffset: 0

@@ -1,0 +1,45 @@
+:title-separator: {sp}|
+= QS: Спецодежда и имущество | Руководство пользователя
+Quality Solution 2023
+версия 2.7
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:chapter-label:
+:toc-title: Содержание
+:toclevels: 3
+:imagesdir: images
+
+:sectnums:
+
+:leveloffset: 1
+
+include::pages/introduction.adoc[]
+
+include::pages/interface.adoc[]
+
+include::pages/organization.adoc[]
+
+include::pages/nomenclature.adoc[]
+
+include::pages/regulations.adoc[]
+
+include::pages/employees.adoc[]
+
+include::pages/stock-documents.adoc[]
+
+include::pages/reports.adoc[]
+
+include::pages/settings.adoc[]
+
+include::pages/manipulation.adoc[]
+
+include::pages/history-log.adoc[]
+
+include::pages/import.adoc[]
+
+include::mobile-app.adoc[]
+
+:leveloffset: 0
