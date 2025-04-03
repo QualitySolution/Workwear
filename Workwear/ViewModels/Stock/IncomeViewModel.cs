@@ -14,6 +14,7 @@ using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -25,7 +26,7 @@ using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock {
-	public class IncomeViewModel  : EntityDialogViewModelBase<Income> {
+	public class IncomeViewModel  : EntityDialogViewModelBase<Income>, IDialogDocumentation {
 		public IncomeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -63,6 +64,11 @@ namespace Workwear.ViewModels.Stock {
 			CalculateTotal();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#stock-income");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Свойства VikewModel
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;

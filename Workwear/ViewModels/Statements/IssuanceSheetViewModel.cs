@@ -17,6 +17,7 @@ using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
@@ -31,7 +32,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Statements
 {
-	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>
+	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
@@ -80,6 +81,11 @@ namespace Workwear.ViewModels.Statements
 			
 			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#issuance-sheet");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		#region Поля View
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +

@@ -312,6 +312,7 @@ public partial class MainWindow : Gtk.Window {
 				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
 				MainTelemetry.StartUpdateByTimer(600);
 				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
+				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
 		#else
 			MainTelemetry.DoNotTrack = true;

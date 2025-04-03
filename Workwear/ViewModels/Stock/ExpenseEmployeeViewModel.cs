@@ -20,6 +20,7 @@ using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
@@ -37,7 +38,7 @@ using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock {
-	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem
+	public class ExpenseEmployeeViewModel : EntityDialogViewModelBase<Expense>, ISelectItem, IDialogDocumentation
 	{
 		private ILifetimeScope autofacScope;
 		private readonly SizeService sizeService;
@@ -137,7 +138,7 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				logger.Info("Создание Нового документа выдачи");
+				logger.Info("Создание нового документа выдачи");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			//Переопределяем параметры валидации
 			Validations.Clear();
@@ -145,6 +146,11 @@ namespace Workwear.ViewModels.Stock {
 			performance.End();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#employee-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region EntityViewModels
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;

@@ -5,13 +5,11 @@ using System.Linq;
 using Autofac;
 using MySqlConnector;
 using NHibernate;
-using NHibernate.Criterion;
 using NLog;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
@@ -19,12 +17,14 @@ using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using QSProjectsLib;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Postomats {
-	public class PostomatDocumentWithdrawViewModel : EntityDialogViewModelBase<PostomatDocumentWithdraw> 
+	public class PostomatDocumentWithdrawViewModel : EntityDialogViewModelBase<PostomatDocumentWithdraw>, IDialogDocumentation
 	{
 		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
@@ -53,6 +53,11 @@ namespace Workwear.ViewModels.Postomats {
 				item.Postomat = postomats.FirstOrDefault(p => p.Id == item.TerminalId);
 			}
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-document");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region View Properties
 

@@ -18,6 +18,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -39,11 +40,11 @@ using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock {
-	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>{
+	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>, IDialogDocumentation{
 		
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
-		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly CurrentUserSettings currentUserSettings;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
@@ -116,6 +117,10 @@ namespace Workwear.ViewModels.Stock {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#duty-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region Методы
 		public void AddItems() {

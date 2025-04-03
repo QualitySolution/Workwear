@@ -31,7 +31,7 @@ namespace Workwear.ViewModels.ClothingService {
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			Title = "Перемещение спецодежды";
-			//Создаем UoW чтобы передать его через провайдер внутреннему виджету.
+			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			var uow = UoW;
 			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 		}

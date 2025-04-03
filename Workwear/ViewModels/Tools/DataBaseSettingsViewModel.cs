@@ -2,12 +2,13 @@
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Tools
 {
-	public class DataBaseSettingsViewModel : UowDialogViewModelBase
+	public class DataBaseSettingsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly BaseParameters baseParameters;
 
@@ -32,6 +33,11 @@ namespace Workwear.ViewModels.Tools
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("settings.html#accounting-settings");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances

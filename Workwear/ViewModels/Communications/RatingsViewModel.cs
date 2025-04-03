@@ -11,15 +11,17 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class RatingsViewModel : UowDialogViewModelBase
+	public class RatingsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly RatingManagerService ratingManagerService;
 		private readonly EmployeeRepository employeeRepository;
@@ -31,7 +33,7 @@ namespace Workwear.ViewModels.Communications
 			RatingManagerService ratingManagerService,
 			EmployeeRepository employeeRepository,
 			Nomenclature nomenclature = null,
-			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator) 
+			IValidator validator = null) : base(unitOfWorkFactory, navigation, validator)
 		{
 			this.ratingManagerService = ratingManagerService ?? throw new ArgumentNullException(nameof(ratingManagerService));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
@@ -47,6 +49,10 @@ namespace Workwear.ViewModels.Communications
 			SelectNomenclature = nomenclature == null ? null : UoW.GetById<Nomenclature>(nomenclature.Id);
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#ratings");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip("Отзывы на продукцию");
+		#endregion
 		#region Свойства
 
 		private Nomenclature selectNomenclature;

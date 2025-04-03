@@ -15,6 +15,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
@@ -24,7 +25,7 @@ using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
-	public class InspectionViewModel : EntityDialogViewModelBase<Inspection> {
+	public class InspectionViewModel : EntityDialogViewModelBase<Inspection>, IDialogDocumentation {
 		public InspectionViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -66,6 +67,11 @@ namespace Workwear.ViewModels.Stock {
 			} else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#inspection");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		private IInteractiveService interactive;
 		private BaseParameters baseParameters;

@@ -16,6 +16,7 @@ using QS.Services;
 using QS.Utilities;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
@@ -29,7 +30,7 @@ using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Export {
 	
-	public class FutureIssueExportViewModel : UowDialogViewModelBase {
+	public class FutureIssueExportViewModel : UowDialogViewModelBase, IDialogDocumentation {
 		public FeaturesService FeaturesService { get; }
 
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -74,6 +75,11 @@ namespace Workwear.ViewModels.Export {
 			
 			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("export.html#forecast-of-issues");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)

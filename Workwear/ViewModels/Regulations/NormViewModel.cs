@@ -13,6 +13,7 @@ using QS.Project.Domain;
 using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
@@ -26,7 +27,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem
+	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem, IDialogDocumentation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
@@ -117,6 +118,11 @@ namespace Workwear.ViewModels.Regulations
 			performance.PrintAllPoints(logger);
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norms");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		/// <summary>
 		/// Копирует существующую в базе норму по id
 		/// </summary>

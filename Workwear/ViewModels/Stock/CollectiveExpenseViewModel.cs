@@ -20,6 +20,7 @@ using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -35,7 +36,7 @@ using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
+	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem, IDialogDocumentation
 	{
 		private ILifetimeScope autofacScope;
 		private readonly CurrentUserSettings currentUserSettings;
@@ -122,6 +123,11 @@ namespace Workwear.ViewModels.Stock
 			performance.End();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#collective-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;

@@ -7,15 +7,17 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Models.Sizes;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class ItemTypeViewModel : EntityDialogViewModelBase<ItemsType>
+	public class ItemTypeViewModel : EntityDialogViewModelBase<ItemsType>, IDialogDocumentation
 	{
 		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
@@ -43,6 +45,11 @@ namespace Workwear.ViewModels.Stock
 			lastHeightType = Entity.HeightType;
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#items-type");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		private SizeType lastSizeType;
 		private SizeType lastHeightType;
 

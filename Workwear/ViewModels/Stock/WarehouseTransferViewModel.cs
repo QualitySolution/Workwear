@@ -15,6 +15,7 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -28,7 +29,7 @@ using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
+	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
@@ -93,6 +94,11 @@ namespace Workwear.ViewModels.Stock
 			}
 		}
 
+		#region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#transfer");
+        public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+        #endregion
+        
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(Entity.WarehouseFrom) && Entity.WarehouseFrom != stockBalanceModel.Warehouse) {
 				if(Entity.Items.Any()) {
