@@ -867,7 +867,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockMovementsActivated(object sender, EventArgs e) {
-		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
+		NavigationManager.OpenViewModel<StockMovementsJournalViewModel>(null);
 	}
 
 	protected void OnActionConversatoinsActivated(object sender, EventArgs e) {

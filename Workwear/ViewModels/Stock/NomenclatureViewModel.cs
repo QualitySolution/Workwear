@@ -97,7 +97,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Actions
 		public void OpenMovements() {
-			NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this,
+			NavigationManager.OpenViewModel<StockMovementsJournalViewModel>(this,
 					addingRegistrations: builder => builder.RegisterInstance(Entity));
 		}
 

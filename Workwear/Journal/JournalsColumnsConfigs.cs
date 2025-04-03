@@ -436,7 +436,7 @@ namespace workwear.Journal
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
+			TreeViewColumnsConfigFactory.Register<StockMovementsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssueSheetNumberText}").SearchHighlight()
 					.AddColumn("Дата").ToolTipText(n => n.RowTooltip).AddTextRenderer(node => node.OperationTimeText)

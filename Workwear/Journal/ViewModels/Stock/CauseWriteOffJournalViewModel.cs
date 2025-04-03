@@ -1,9 +1,9 @@
-﻿using QS.Project.Journal;
+﻿using NHibernate.Transform;
 using NHibernate;
-using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using Workwear.Domain.Stock;

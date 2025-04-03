@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
@@ -128,7 +128,7 @@ namespace workwear.Journal.ViewModels.Stock
 				var nomenclature = new Nomenclature {
 					Id = node.Id
 				};
-				NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this, 
+				NavigationManager.OpenViewModel<StockMovementsJournalViewModel>(this, 
 					addingRegistrations: builder => builder.RegisterInstance(nomenclature));
 			}
 		}
