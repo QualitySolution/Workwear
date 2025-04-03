@@ -10,33 +10,33 @@ Quality Solution 2022
 :chapter-label:
 :toc-title: Содержание
 :toclevels: 3
-:imagesdir: ../images
+:imagesdir: images
 
 :sectnums:
 
 :leveloffset: 1
 
-include::introduction.adoc[]
+include::pages/introduction.adoc[]
 
-include::interface.adoc[]
+include::pages/interface.adoc[]
 
-include::organization.adoc[]
+include::pages/organization.adoc[]
 
-include::nomenclature.adoc[]
+include::pages/nomenclature.adoc[]
 
-include::regulations.adoc[]
+include::pages/regulations.adoc[]
 
-include::employees.adoc[]
+include::pages/employees.adoc[]
 
-include::stock-documents.adoc[]
+include::pages/stock-documents.adoc[]
 
-include::reports.adoc[]
+include::pages/reports.adoc[]
 
-include::settings.adoc[]
+include::pages/settings.adoc[]
 
-include::manipulation.adoc[]
+include::pages/manipulation.adoc[]
 
-include::import.adoc[]
+include::pages/import.adoc[]
 
 include::mobile-app.adoc[]
 
