@@ -9,11 +9,16 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
+using QS.ViewModels.Extension;
+using Workwear.Tools;
 
 namespace workwear.Journal.ViewModels.Postomats {
-	public class FullnessJournalViewModel : JournalViewModelBase {
+	public class FullnessJournalViewModel : JournalViewModelBase, IDialogDocumentation {
 		private readonly PostomatManagerService postomatService;
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-fullness");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public FullnessJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigation,

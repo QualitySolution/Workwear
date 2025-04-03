@@ -16,7 +16,8 @@ namespace Workwear.Domain.Statements
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",
 		Nominative = "ведомость на выдачу",
-		Genitive = "ведомости на выдачу"
+		Genitive = "ведомости на выдачу",
+		GenitivePlural = "ведомостей на выдачу"
 		)]
 	[HistoryTrace]
 	public class IssuanceSheet : PropertyChangedBase, IDomainObject, IValidatableObject

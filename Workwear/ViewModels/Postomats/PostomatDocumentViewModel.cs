@@ -62,7 +62,7 @@ namespace Workwear.ViewModels.Postomats {
 		}
 
 		#region IDialogDocumentation
-		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-pickup-document");
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-document");
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		

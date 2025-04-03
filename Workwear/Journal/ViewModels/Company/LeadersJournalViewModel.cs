@@ -6,13 +6,19 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class LeadersJournalViewModel : EntityJournalViewModelBase<Leader, LeadersViewModel, LeaderJournalNode>
+	public class LeadersJournalViewModel : EntityJournalViewModelBase<Leader, LeadersViewModel, LeaderJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#leaders");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Leader));
+		#endregion
 		public LeadersJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;

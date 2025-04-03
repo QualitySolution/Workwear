@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Autofac;
 using NHibernate;
-using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Cloud.Postomat.Client;
-using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -15,14 +10,19 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Postomats;
+using Workwear.Tools;
 using Workwear.ViewModels.Postomats;
 
 namespace workwear.Journal.ViewModels.Postomats {
-	public class PostomatDocumentsWithdrawJournalViewModel : EntityJournalViewModelBase<PostomatDocumentWithdraw, PostomatDocumentWithdrawViewModel, PostomatDocumentWithdrawJournalNode>
+	public class PostomatDocumentsWithdrawJournalViewModel : EntityJournalViewModelBase<PostomatDocumentWithdraw, PostomatDocumentWithdrawViewModel, PostomatDocumentWithdrawJournalNode>, IDialogDocumentation
 	{
 		private readonly PostomatManagerService postomatService;
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-pickup-document");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(PostomatDocumentWithdraw));
+		#endregion
 		public PostomatDocumentsWithdrawJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,

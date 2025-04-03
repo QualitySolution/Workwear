@@ -12,16 +12,22 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
-	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
+	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
+		#endregion
 		public BarcodeJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

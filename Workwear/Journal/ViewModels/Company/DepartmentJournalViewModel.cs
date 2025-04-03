@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using FluentNHibernate.Utils;
 using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -8,14 +7,20 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Tools;
 
 namespace workwear.Journal.ViewModels.Company {
 
-	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode> {
+	public class DepartmentJournalViewModel : EntityJournalViewModelBase<Department, DepartmentViewModel, DepartmentJournalNode>, IDialogDocumentation {
 		private DepartmentFilterViewModel Filter;
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#departments");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Department));
+		#endregion
 		public DepartmentJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService,

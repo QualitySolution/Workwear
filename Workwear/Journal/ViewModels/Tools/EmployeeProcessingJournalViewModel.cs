@@ -19,6 +19,7 @@ using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Extension;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -34,7 +35,7 @@ using Workwear.ViewModels.Company;
 namespace workwear.Journal.ViewModels.Tools
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>
+	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>, IDialogDocumentation
 	{
 		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeProcessing");
 		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
@@ -51,7 +52,10 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly ModalProgressCreator progressCreator;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("manipulation.html#employee-processing");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
 			NormRepository normRepository,

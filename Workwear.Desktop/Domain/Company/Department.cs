@@ -7,7 +7,8 @@ namespace Workwear.Domain.Company
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "отделы",
 		Nominative = "отдел",
-		Genitive = "отдела"
+		Genitive = "отдела",
+		GenitivePlural = "отделов"
 		)]
 	[HistoryTrace]
 	public class Department : PropertyChangedBase, IDomainObject

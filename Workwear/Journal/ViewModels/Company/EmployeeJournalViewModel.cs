@@ -13,15 +13,17 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Numeric;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
+	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>, IDialogDocumentation
 	{
 		/// <summary>
 		/// Для хранения пользовательской информации как в WinForms
@@ -31,6 +33,11 @@ namespace workwear.Journal.ViewModels.Company
 		public readonly FeaturesService FeaturesService;
 		private readonly PhoneFormatter phoneFormatter;
 		public EmployeeFilterViewModel Filter { get; private set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employees");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(EmployeeCard));
+		#endregion
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService,

@@ -13,17 +13,22 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Postomats;
 using Workwear.Journal.Filter.ViewModels.Postomats;
+using Workwear.Tools;
 using Workwear.ViewModels.Postomats;
 
 namespace workwear.Journal.ViewModels.Postomats {
-	public class PostomatDocumentsJournalViewModel : EntityJournalViewModelBase<PostomatDocument, PostomatDocumentViewModel, PostomatDocumentJournalNode>
+	public class PostomatDocumentsJournalViewModel : EntityJournalViewModelBase<PostomatDocument, PostomatDocumentViewModel, PostomatDocumentJournalNode>, IDialogDocumentation
 	{
 		private readonly PostomatManagerService postomatManagerService;
 		private readonly IInteractiveQuestion interactive;
 		public PostomatDocumentsJournalFilterViewModel Filter { get; set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-journal");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(PostomatDocument));
+		#endregion
 		public PostomatDocumentsJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,

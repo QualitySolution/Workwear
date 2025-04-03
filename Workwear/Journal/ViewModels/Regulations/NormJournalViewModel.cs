@@ -15,20 +15,25 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {
-	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>
+	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>, IDialogDocumentation
 	{
 		private readonly ILifetimeScope autofacScope;
 		public NormFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norms");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Norm));
+		#endregion
 		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));

@@ -7,17 +7,22 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class ItemsTypeJournalViewModel : EntityJournalViewModelBase<ItemsType, ItemTypeViewModel, ItemsTypeJournalNode>
+	public class ItemsTypeJournalViewModel : EntityJournalViewModelBase<ItemsType, ItemTypeViewModel, ItemsTypeJournalNode>, IDialogDocumentation
 	{
 		public FeaturesService FeaturesService { get; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#items-type");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(ItemsType));
+		#endregion
 		public ItemsTypeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, FeaturesService featuresService, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;

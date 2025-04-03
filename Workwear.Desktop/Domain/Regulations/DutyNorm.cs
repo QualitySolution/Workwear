@@ -16,7 +16,8 @@ namespace Workwear.Domain.Regulations {
 		NominativePlural = "дежурные нормы",
 		Nominative = "дежурная норма",
 		PrepositionalPlural = "дежурных нормах",
-		Genitive = "дежурной нормы"
+		Genitive = "дежурной нормы",
+		GenitivePlural = "дежурных норм"
 	)]
 	[HistoryTrace]
 	public class DutyNorm : PropertyChangedBase, IDomainObject {

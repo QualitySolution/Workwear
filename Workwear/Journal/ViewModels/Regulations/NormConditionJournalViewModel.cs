@@ -9,13 +9,19 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {
-	public class NormConditionJournalViewModel: EntityJournalViewModelBase<NormCondition, NormConditionViewModel, NormConditionJournalNode>
+	public class NormConditionJournalViewModel: EntityJournalViewModelBase<NormCondition, NormConditionViewModel, NormConditionJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norm-conditions");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(NormCondition));
+		#endregion
 		public NormConditionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;

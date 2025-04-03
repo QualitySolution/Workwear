@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
@@ -16,24 +16,29 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Models.Sizes;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>
+	public class NomenclatureJournalViewModel : EntityJournalViewModelBase<Nomenclature, NomenclatureViewModel, NomenclatureJournalNode>, IDialogDocumentation
 	{
 		private readonly IInteractiveService interactiveService;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
 		private readonly ModalProgressCreator progressCreator;
 		public FeaturesService FeaturesService { get; }
 		public NomenclatureFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#nomenclatures");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Nomenclature));
+		#endregion
 		public NomenclatureJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

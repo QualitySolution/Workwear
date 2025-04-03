@@ -10,17 +10,23 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Sizes;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Sizes;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-    public class SizeJournalViewModel: EntityJournalViewModelBase<Size, SizeViewModel, SizeJournalNode>
+    public class SizeJournalViewModel: EntityJournalViewModelBase<Size, SizeViewModel, SizeJournalNode>, IDialogDocumentation
     {
         public SizeFilterViewModel Filter { get;}
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#sizes");
+        public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Size));
+        #endregion
         public SizeJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 

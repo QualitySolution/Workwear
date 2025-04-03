@@ -6,14 +6,20 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-    public class VacationTypeJournalViewModel : EntityJournalViewModelBase<VacationType, VacationTypeViewModel, VacationTypeJournalNode>
+    public class VacationTypeJournalViewModel : EntityJournalViewModelBase<VacationType, VacationTypeViewModel, VacationTypeJournalNode>, IDialogDocumentation
     {
-        public VacationTypeJournalViewModel(
+	    #region IDialogDocumentation
+	    public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#vacations-types");
+	    public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(VacationType));
+	    #endregion
+	    public VacationTypeJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
             INavigationManager navigationManager, 

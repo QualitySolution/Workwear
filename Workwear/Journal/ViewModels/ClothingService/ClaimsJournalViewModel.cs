@@ -14,16 +14,18 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
-	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
+	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode>, IDialogDocumentation {
 		private IInteractiveService interactive;
 		public readonly FeaturesService FeaturesService;
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
@@ -33,6 +35,11 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		#endregion
 		
 		public ClaimsJournalFilterViewModel Filter { get; set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employees");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(ServiceClaim));
+		#endregion
 		public ClaimsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,

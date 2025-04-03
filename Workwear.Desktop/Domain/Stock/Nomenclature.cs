@@ -16,7 +16,8 @@ namespace Workwear.Domain.Stock {
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатура",
 		Nominative = "номенклатура",
-		Genitive = "номенклатуры"
+		Genitive = "номенклатуры",
+		GenitivePlural = "номенклатур"
 		)]
 	[HistoryTrace]
 	public class Nomenclature: PropertyChangedBase, IDomainObject, IValidatableObject

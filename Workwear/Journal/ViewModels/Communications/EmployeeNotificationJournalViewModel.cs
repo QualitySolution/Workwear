@@ -20,6 +20,7 @@ using QS.Project.Services;
 using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -34,7 +35,7 @@ using Workwear.ViewModels.Company;
 namespace workwear.Journal.ViewModels.Communications
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
+	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>, IDialogDocumentation
 	{
 		private readonly UnitOfWorkProvider unitOfWorkProvider;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -45,6 +46,11 @@ namespace workwear.Journal.ViewModels.Communications
 		private bool alreadyLoaded;
 		
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#send-notification");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService, INavigationManager navigationManager,

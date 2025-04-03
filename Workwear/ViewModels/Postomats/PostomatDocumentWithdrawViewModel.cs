@@ -55,7 +55,7 @@ namespace Workwear.ViewModels.Postomats {
 		}
 		
 		#region IDialogDocumentation
-		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-document");
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-pickup-document");
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		
@@ -146,7 +146,7 @@ namespace Workwear.ViewModels.Postomats {
 				if (serviceClaim == null) continue;
 
 				PostomatInfo postomat = postomats.FirstOrDefault(x => x.Id == terminalId);
-				Entity.AddItem(serviceClaim, postomat, userService.GetCurrentUser());
+				Entity.AddItem(serviceClaim, postomat);
 			}
 		}
 		#endregion

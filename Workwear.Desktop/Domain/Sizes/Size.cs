@@ -13,7 +13,8 @@ namespace Workwear.Domain.Sizes
     [Appellative (Gender = GrammaticalGender.Masculine,
         NominativePlural = "размеры",
         Nominative = "размер",
-        Genitive = "размера"
+        Genitive = "размера",
+        GenitivePlural = "размеров"
     )]
     [HistoryTrace]
     public class Size: PropertyChangedBase, IDomainObject, IValidatableObject
