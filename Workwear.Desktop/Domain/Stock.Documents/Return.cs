@@ -30,14 +30,7 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
-
-		private EmployeeCard employeeCard;
-		[Display (Name = "Сотрудник")]
-		public virtual EmployeeCard EmployeeCard {
-			get => employeeCard;
-			set { SetField (ref employeeCard, value, () => EmployeeCard); }
-		}
-
+		
 		private IObservableList<ReturnItem> items = new ObservableList<ReturnItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ReturnItem> Items {
@@ -64,14 +57,14 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
-		
-			if(EmployeeCard != null)
-				foreach (var item in items) {
-					if(item.IssuedEmployeeOnOperation == null || !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, EmployeeCard))
-						yield return new ValidationResult(
-							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
-							new[] { nameof(Items) });
-				}
+			foreach(var item in items) {
+				if(item.EmployeeCard == null) continue;
+				if(item.IssuedEmployeeOnOperation == null ||
+				   !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, item.EmployeeCard))
+					yield return new ValidationResult(
+						$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником",
+						new[] { nameof(Items) });
+			}
 
 			foreach(var item in items) {
 				if(item.Nomenclature == null)
@@ -100,6 +93,7 @@ namespace Workwear.Domain.Stock.Documents
 				//FIXME не учитываются другие операции (потенциальные списания)
 				Amount = maxCount != -1 ? maxCount : issuedOperation.Issued,
 				Nomenclature = issuedOperation.Nomenclature,
+				EmployeeCard = issuedOperation.Employee,
 				WearSize = issuedOperation.WearSize,
 				Height = issuedOperation.Height,
 				IssuedEmployeeOnOperation = issuedOperation,
@@ -120,10 +114,13 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
-			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-			EmployeeCard.UpdateNextIssue(Items
-				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
-				.Where(x => x != null).Distinct().ToArray());
+			foreach(var item in items) {
+				item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+				item.EmployeeCard.UpdateNextIssue(Items
+					.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
+					.Where(x => x != null).Distinct().ToArray());
+			}
+			
 		}
 	}
 }

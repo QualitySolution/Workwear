@@ -91,9 +91,15 @@ namespace Workwear.ViewModels.Stock {
 				issueModel.PreloadWearItems(value.Id);
 				issueModel.FillWearInStockInfo(new[] { value }, stockBalanceModel);
 				issueModel.FillWearReceivedInfo(new[] { value });
-				Entity.EmployeeCard = value;
+				foreach(var item in Items) {
+					item.EmployeeCard = value;
+				}
 			}
-			get { return Entity.EmployeeCard; }
+			get {
+				foreach(var item in Items)
+					return item.EmployeeCard;
+				return null;
+			}
 		}
 		#endregion
 

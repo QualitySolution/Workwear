@@ -137,6 +137,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
 
 			var returnQuery = uow.Session.QueryOver<Return>(() => returnAlias);
 			if(Filter.StartDate.HasValue)
@@ -157,9 +158,10 @@ namespace workwear.Journal.ViewModels.Stock
 			));
 
 			returnQuery
-				.JoinQueryOver(() => returnAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(()=>returnAlias.Items, ()=>returnItemAlias,NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(()=>returnItemAlias.EmployeeCard, ()=>employeeAlias,NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
