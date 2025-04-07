@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,6 +22,7 @@ using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
 using workwear.Journal.ViewModels.ClothingService;
+using Workwear.ViewModels.ClothingService;
 using Workwear.Tools;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
 
@@ -141,6 +142,12 @@ namespace Workwear.ViewModels.Postomats {
 		}
 
 		public void RemoveItem(PostomatDocumentItem item) {
+			if(item.Id == 0)
+				item.ServiceClaim.States.RemoveAll(s => s.Id == 0);
+			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Продолжить?"))
+				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim);
+			else 
+				return;
 			Entity.Items.Remove(item);
 		}
 		#endregion
