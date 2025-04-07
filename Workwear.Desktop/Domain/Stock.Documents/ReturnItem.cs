@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -121,8 +122,10 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual EmployeeCard EmployeeCard {
 			get => employeeCard;
 			set => SetField(ref employeeCard, value);
-		} 
-		
+		}
+
+		#region Возврат с дежурной нормы
+
 		private DutyNorm dutyNorm;
 		[Display(Name = "Дежурная норма")]
 		public virtual DutyNorm DutyNorm {
@@ -139,26 +142,74 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 
 		#endregion
+		
+
+		#endregion
 		#region Расчетные
 		public virtual string Title =>
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
+
+		public virtual ReturnFrom ReturnFrom {
+			get {
+				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null)
+					return ReturnFrom.Employee;
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null)
+					return ReturnFrom.DutyNorm;
+				throw new InvalidOperationException(
+					"Строка документа списания находится в поломанном состоянии. " +
+					"Должна быть заполнена хотя бы одна операция.");
+			}
+		}
+		public virtual string LastOwnText{
+			get{
+				if(IssuedEmployeeOnOperation != null)
+					return IssuedEmployeeOnOperation.Employee.ShortName;
+				if(IssuedDutyNormOnOperation != null)
+					return IssuedDutyNormOnOperation.DutyNorm.Name;
+
+				return String.Empty;
+			}
+		}
+		
+		//Нужно предварительно заполнять
+		private int maxAmount;
+		public virtual int MaxAmount {
+			get => maxAmount;
+			set => SetField(ref maxAmount, value);
+		}
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get {
+				if(IssuedEmployeeOnOperation != null)
+					return IssuedEmployeeOnOperation.WearPercent;
+				if(IssuedDutyNormOnOperation != null)
+					return IssuedDutyNormOnOperation.WearPercent;
+
+				throw new InvalidOperationException(
+					"Строка документа списания находится в поломанном состоянии. " +
+					"Должна быть заполнена хотя бы одна операция.");
+			}
+			set {
+				if(IssuedEmployeeOnOperation != null)
+					IssuedEmployeeOnOperation.WearPercent = value;
+				if(IssuedDutyNormOnOperation!=null)
+					IssuedDutyNormOnOperation.WearPercent = value;
+			}
+		}
+		
 		#endregion
 		
 		#region Не сохраняемые в базу свойства
 		//FIXME не учитывает прошлые операции (уже списанное)
-		private int maxAmount = -1;
+		/*private int maxAmount = -1;
 		public virtual int MaxAmount {
 			get => maxAmount == -1 ? IssuedEmployeeOnOperation.Issued : maxAmount;
 			set => maxAmount = value;
-		}
+		}*/
 
-		[Display(Name = "Процент износа")]
-		public virtual decimal WearPercent {
-			get => WarehouseOperation.WearPercent;
-			set => WarehouseOperation.WearPercent = value;
-		}
+		
 
 		private EmployeeIssueOperation issuedEmployeeOnOperation;
 		/// <summary>
@@ -171,24 +222,81 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref issuedEmployeeOnOperation, value);
 		}
 
+		private DutyNormIssueOperation issuedDutyNormOnOperation;
+
+		[Display(Name = "Операция выдачи по дежурной норме")]
+		public virtual DutyNormIssueOperation IssuedDutyNormOnOperation {
+			get=>issuedDutyNormOnOperation?? ReturnFromDutyNormOperation?.IssuedOperation;
+			set => SetField(ref issuedDutyNormOnOperation, value);
+		}
+
 		#endregion
+
+		#region Конструкторы
 		
 		protected ReturnItem () { }
-		public ReturnItem(Return Return) {
+		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount) {
 			document = Return;
+			returnFromEmployeeOperation = new EmployeeIssueOperation{
+				Employee = issueOperation.Employee,
+				ProtectionTools = issueOperation.ProtectionTools,
+				Returned = amount,
+				IssuedOperation = issueOperation,
+				OperationTime = document.Date,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+			};
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			this.amount = amount;
 		}
+		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount) {
+			document = Return;
+			returnFromDutyNormOperation = new DutyNormIssueOperation {
+				DutyNorm = issueOperation.DutyNorm,
+				ProtectionTools = issueOperation.ProtectionTools,
+				Returned = amount,
+				IssuedOperation = issueOperation,
+				OperationTime = document.Date,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+			};
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			this.amount = amount;
+		}
+
+		#endregion
+		
 		
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
-
-			if(ReturnFromEmployeeOperation == null)
-				ReturnFromEmployeeOperation = new EmployeeIssueOperation();
-
-			ReturnFromEmployeeOperation.Update(uow, this);
-			uow.Save(ReturnFromEmployeeOperation);
+			switch(ReturnFrom) {
+				case ReturnFrom.Employee:
+					ReturnFromEmployeeOperation.Update(uow,this);
+					uow.Save(ReturnFromEmployeeOperation);
+					break;
+				case ReturnFrom.DutyNorm:
+					ReturnFromDutyNormOperation.Update(uow,this);
+					uow.Save(ReturnFromDutyNormOperation);
+					break;
+				default:
+					throw new NotImplementedException();
+			}
 		}
 		#endregion
+	}
+
+	public enum ReturnFrom {
+		Employee,
+		DutyNorm
 	}
 }

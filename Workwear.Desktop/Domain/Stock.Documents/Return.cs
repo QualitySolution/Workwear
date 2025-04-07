@@ -71,17 +71,27 @@ namespace Workwear.Domain.Stock.Documents
 					yield return new ValidationResult(
 						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
 						new[] { nameof(Items) });
-				if(item.Amount > item.MaxAmount)
-					yield return new ValidationResult(
-						$" \"{item.ItemName}\" указано колличество больше выданного.",
-						new[] { nameof(Items) });
+				switch(item.ReturnFrom) {
+					case ReturnFrom.Employee:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше выданного сотруднику.",
+								new[] { nameof(Items) });
+						break;
+					case ReturnFrom.DutyNorm:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше выданного по дежурной норме.",
+								new[] { nameof(Items) });
+						break;
+				}
 			}
 		}
 
 		#endregion
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int maxCount = -1) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -89,17 +99,21 @@ namespace Workwear.Domain.Stock.Documents
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}
-			var newItem = new ReturnItem(this) {
-				//FIXME не учитываются другие операции (потенциальные списания)
-				Amount = maxCount != -1 ? maxCount : issuedOperation.Issued,
-				Nomenclature = issuedOperation.Nomenclature,
-				EmployeeCard = issuedOperation.Employee,
-				WearSize = issuedOperation.WearSize,
-				Height = issuedOperation.Height,
-				IssuedEmployeeOnOperation = issuedOperation,
-				Cost = issuedOperation.CalculateDepreciationCost(Date),
-				WearPercent = issuedOperation.CalculatePercentWear(Date),
-			};
+
+			var newItem = new ReturnItem(this, issuedOperation, count);
+
+			Items.Add(newItem);
+			return newItem;
+		}
+		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count) {
+			if(issuedOperation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
+				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+				return null;
+			}
+			var newItem = new ReturnItem(this, issuedOperation, count);
 
 			Items.Add(newItem);
 			return newItem;

@@ -22,10 +22,12 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
@@ -47,12 +49,14 @@ namespace Workwear.ViewModels.Stock {
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
-			Warehouse warehouse = null
+			Warehouse warehouse = null,
+			DutyNorm dutyNorm = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
+			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
@@ -127,6 +131,7 @@ namespace Workwear.ViewModels.Stock {
 			get => total;
 			set => SetField(ref total, value);
 		}
+		public DutyNorm DutyNorm { get; }
 
 		#endregion 
 		
@@ -178,6 +183,23 @@ namespace Workwear.ViewModels.Stock {
 			);
 		}
 
+		public void AddFromDutyNorm() {
+			var selectJournal =
+				NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
+					this,
+					DutyNorm,
+					OpenPageOptions.AsSlave
+				);
+			selectJournal.ViewModel.Filter.DateSensitive = false;
+			selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
+			selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
+			selectJournal.ViewModel.Filter.Date = Entity.Date;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionaryDutyNorm(
+				e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(
+					k => k.Id,
+					v => v.Balance));
+		}
+
 		/// <param name="returningOperation">Dictionary(operationId,amount)</param>
 		public void AddFromDictionary(Dictionary<int, int> returningOperation) {
 			var operations = UoW.Session.QueryOver<EmployeeIssueOperation>()
@@ -185,6 +207,21 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.NormItem)
 				.Fetch(SelectMode.Fetch, x => x.IssuedOperation)
 				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.List(); 
+			foreach(var operation in operations) {
+				Entity.AddItem(operation, returningOperation[operation.Id]);
+			}
+			CalculateTotal();
+		}
+		public void AddFromDictionaryDutyNorm(Dictionary<int, int> returningOperation) {
+			var operations = UoW.Session.QueryOver<DutyNormIssueOperation>()
+				.Where(x => x.Id.IsIn(returningOperation.Select(i => i.Key).ToList()))
+				.Fetch(SelectMode.Fetch, x => x.DutyNormItem)
+				.Fetch(SelectMode.Fetch, x => x.IssuedOperation)
+				.Fetch(SelectMode.Fetch, x => x.DutyNorm)
 				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
 				.Fetch(SelectMode.Fetch, x => x.WearSize)
 				.Fetch(SelectMode.Fetch, x => x.Height)

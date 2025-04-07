@@ -84,7 +84,7 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnYbuttonAddDutyNormClicked(object sender, EventArgs e) {
-			
+			ViewModel.AddFromDutyNorm();
 		}
 
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
