@@ -14,6 +14,7 @@ namespace Workwear.Views.ClothingService {
 
 			entrySearchBarcode.Binding
 				.AddBinding(ViewModel.BarcodeInfoViewModel, e => e.BarcodeText, w => w.Text)
+				.AddBinding(ViewModel, v => v.SensitiveBarcode, w => w.Sensitive)
 				.InitializeFromSource();
 
 			buttonAccept.Binding
