@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -23,8 +26,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			UoW = uowFactory.CreateWithoutRoot();
 			
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+
+			var ptList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(ptList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
 			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
@@ -81,7 +85,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		                                                && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 
 		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		#endregion
 		

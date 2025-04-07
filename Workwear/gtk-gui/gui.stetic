@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -27933,7 +27933,7 @@
             <property name="Expanded">True</property>
             <signal name="Activated" handler="OnExpander1Activated" />
             <child>
-              <widget class="Workwear.ReportParameters.Views.ChoiceProtectionToolsView" id="choiceprotectiontoolsview1">
+              <widget class="QS.Views.Control.ChoiceListView" id="choiceprotectiontoolsview1">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
