@@ -1,5 +1,4 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NLog;

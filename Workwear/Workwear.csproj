@@ -172,6 +172,7 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
+    <Compile Include="Tools\Permissions\PermissionsService.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingItem.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />

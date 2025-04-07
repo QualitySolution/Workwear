@@ -1,5 +1,4 @@
 ﻿using System;
-using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
 using Workwear.Domain.Statements;
