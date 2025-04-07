@@ -24,7 +24,8 @@ namespace Workwear.ViewModels.ClothingService {
 			INavigationManager navigation,
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUserService userService,
-			BarcodeRepository barcodeRepository
+			BarcodeRepository barcodeRepository,
+			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -33,7 +34,12 @@ namespace Workwear.ViewModels.ClothingService {
 			Title = "Перемещение спецодежды";
 			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			var uow = UoW;
-			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
+			if(serviceClaim != null) {
+				claim = serviceClaim;
+				BarcodeInfoViewModel.BarcodeText = serviceClaim.Barcode.Title;
+				MoveDefiniteClaim = true;
+			} else
+				BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 		}
 		
 		
@@ -75,6 +81,9 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 		
 		public virtual bool SensitiveAccept => Claim != null;
+		public virtual bool MoveDefiniteClaim { get; } = false; //Движение единственного объекта
+		public virtual bool SensitiveBarcode => !MoveDefiniteClaim;
+	
 		#endregion
 		
 		#region Действия View
@@ -91,6 +100,11 @@ namespace Workwear.ViewModels.ClothingService {
 			if(State == ClaimState.Returned)
 				Claim.IsClosed = true;
 			
+			if(MoveDefiniteClaim) {
+				Close(false, CloseSource.Self);
+				return;
+			}
+
 			UoW.Save(Claim);
 			UoW.Commit();
 			

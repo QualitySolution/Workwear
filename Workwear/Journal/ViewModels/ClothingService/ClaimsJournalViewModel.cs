@@ -67,6 +67,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			ClaimsJournalNode resultAlias = null;
 			ServiceClaim serviceClaimAlias = null;
 			StateOperation stateOperationAlias = null;
+			PostomatDocument postomatDocumentAlias = null;
 			Barcode barcodeAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			EmployeeCard employeeAlias = null;
@@ -84,6 +85,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Take(1);
 
 			var subqueryInDocument = QueryOver.Of<PostomatDocumentItem>()
+				.Left.JoinAlias(x => x.Document, () => postomatDocumentAlias)
+				.Where(() => postomatDocumentAlias.Status != DocumentStatus.Deleted)
 				.Where(item => item.ServiceClaim.Id == serviceClaimAlias.Id)
 				.Select(item => item.Id);
 
