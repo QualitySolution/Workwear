@@ -10,11 +10,12 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -46,9 +47,13 @@ namespace workwear.ReportParameters.ViewModels
 				.Finish();
 			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, SubdivisionEntry);
 			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
@@ -204,8 +209,8 @@ namespace workwear.ReportParameters.ViewModels
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public EntityEntryViewModel<Department> DepartmentEntry;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
 

@@ -99,8 +99,7 @@ namespace workwear.Journal.ViewModels.Communications
 				issueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 				issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 				issueModel.FillWearReceivedInfo(employees.ToArray());
-				foreach (EmployeeCard employee in employees) 
-				{
+				foreach (EmployeeCard employee in employees) {
 					IEnumerable<EmployeeCardItem> cardtems = employee.GetUnderreceivedItems(baseParameters, Filter.EndDateIssue)
 						.Where(x => Filter.SelectedProtectionToolsIds.Contains(x.ProtectionTools.Id));
 					if (cardtems.All(x => x.InStock.Sum(c => c.Amount) == 0)) 
@@ -345,7 +344,7 @@ namespace workwear.Journal.ViewModels.Communications
 				{ "employeeIds", ids },
 				{ "warehouseId", Filter.SelectedWarehouse.Id },
 				{ "endDateIssue", endDateIssue },
-				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds.ToArray() }
+				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds }
 			});
 		}
 		void ShowHistoryNotificationAction(object[] nodes)
@@ -457,7 +456,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSandNotification => LkRegistered || !string.IsNullOrWhiteSpace(Email);
+		public bool CanSandNotification => StatusInfo.Status != LkStatus.Missing || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 

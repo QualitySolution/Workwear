@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
@@ -17,12 +22,20 @@ namespace Workwear.ReportParameters.ViewModels {
 			IUnitOfWorkFactory uowFactory)
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
-			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+
+			Nomenclature nomenclatureAlias = null;
+
+			var protectionToolsList =  UoW.Session.QueryOver<ProtectionTools>()
+				.Left.JoinAlias(x => x.Nomenclatures, () => nomenclatureAlias)
+				.Where(() => nomenclatureAlias.UseBarcode)
+				.List();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			ChoiceProtectionToolsViewModel.UnSelectAll();
 			
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
@@ -66,9 +79,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
-
-		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		#endregion
 		
 		#region Свойства

@@ -56,15 +56,15 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Expander expander1;
 
-		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+		private global::QS.Views.Control.ChoiceListView choiceprotectiontoolsview1;
 
 		private global::Gtk.Label GtkLabel14;
 
 		private global::Gtk.Expander expander2;
 
-		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview2;
+		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
-		private global::Gtk.Label GtkLabel16;
+		private global::Gtk.Label GtkLabel17;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -402,10 +402,9 @@ namespace workwear.ReportParameters.Views
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
-			this.expander1.Name = "expander1";
 			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
-			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
 			this.expander1.Add(this.choiceprotectiontoolsview1);
@@ -422,15 +421,15 @@ namespace workwear.ReportParameters.Views
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
 			// Container child expander2.Gtk.Container+ContainerChild
-			this.choiceemployeegroupview2 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
-			this.choiceemployeegroupview2.Events = ((global::Gdk.EventMask)(256));
-			this.choiceemployeegroupview2.Name = "choiceemployeegroupview2";
-			this.expander2.Add(this.choiceemployeegroupview2);
-			this.GtkLabel16 = new global::Gtk.Label();
-			this.GtkLabel16.Name = "GtkLabel16";
-			this.GtkLabel16.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
-			this.GtkLabel16.UseUnderline = true;
-			this.expander2.LabelWidget = this.GtkLabel16;
+			this.choiceemployeegroupview1 = new global::QS.Views.Control.ChoiceListView();
+			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
+			this.expander2.Add(this.choiceemployeegroupview1);
+			this.GtkLabel17 = new global::Gtk.Label();
+			this.GtkLabel17.Name = "GtkLabel17";
+			this.GtkLabel17.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
+			this.GtkLabel17.UseUnderline = true;
+			this.expander2.LabelWidget = this.GtkLabel17;
 			this.dialog1_VBox.Add(this.expander2);
 			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
 			w28.Position = 2;

@@ -9,6 +9,7 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -27,14 +28,18 @@ namespace Workwear.ReportParameters.ViewModels {
 			
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
-			var ptList = UoW.GetAll<ProtectionTools>().ToList();
-			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(ptList);
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 		
@@ -84,9 +89,9 @@ namespace Workwear.ReportParameters.ViewModels {
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected 
 		                                                && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 
-		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
 		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 		
 		#region Свойства
