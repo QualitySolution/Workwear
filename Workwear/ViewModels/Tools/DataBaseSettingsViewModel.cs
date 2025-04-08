@@ -39,7 +39,8 @@ namespace Workwear.ViewModels.Tools
 		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
 		#endregion
 
-		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
+		public override bool HasChanges => EditLockDate != baseParameters.EditLockDate
+										   || DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
 		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
@@ -51,6 +52,7 @@ namespace Workwear.ViewModels.Tools
 		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
 
 		#region Parameters
+		public DateTime? EditLockDate { get; set; }
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
@@ -86,6 +88,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInIssueSign = IsDocNumberInIssueSign;
 			if(IsDocNumberInReturnSign!=baseParameters.IsDocNumberInReturnSign)
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
+			if(EditLockDate != baseParameters.EditLockDate)
+				baseParameters.EditLockDate = EditLockDate;
 			return true;
 		}
 	}

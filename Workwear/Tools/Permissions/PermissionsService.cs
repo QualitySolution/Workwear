@@ -4,12 +4,20 @@ using QSProjectsLib;
 
 namespace Workwear.Tools.Permissions {
 	public class PermissionsService: ICurrentPermissionService {
-		public IPermissionResult ValidateEntityPermission(Type entityType) {
+		private readonly BaseParameters baseParameters;
+
+		public PermissionsService(BaseParameters baseParameters) {
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+		}
+
+		public IPermissionResult ValidateEntityPermission(Type entityType, DateTime? documentDate = null) {
+			var canEditByDate =
+				documentDate == null || baseParameters.EditLockDate == null || documentDate >= baseParameters.EditLockDate.Value.AddDays(1);
 			return new SimplePermissionResult {
 				CanCreate = true,
 				CanRead = true,
-				CanUpdate = true,
-				CanDelete = QSMain.User.Permissions["can_delete"]
+				CanUpdate = canEditByDate,
+				CanDelete = QSMain.User.Permissions["can_delete"] && canEditByDate,
 			};
 		}
 

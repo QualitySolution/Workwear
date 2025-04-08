@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8617,7 +8617,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="780 506">
+  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="1015 454">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -8684,9 +8684,6 @@
                     <property name="NColumns">2</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
-                    <child>
-                      <placeholder />
-                    </child>
                     <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="checkCheckBalances">
                         <property name="MemberName" />
@@ -8765,12 +8762,18 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gtk.Label" id="label1">
+                      <widget class="Gamma.Widgets.yDatePicker" id="dateEditLock">
                         <property name="MemberName" />
-                        <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Авто списание с сотрудника:</property>
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, начиная с которой и ранее редактирование документов и других учетных данных будет запрещено. Используется для закрытия отчетного периода с целью предотвращения случайных или несанкционированных изменений в уже утвержденных данных.</property>
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="WithTime">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
                       </widget>
                       <packing>
+                        <property name="LeftAttach">1</property>
+                        <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -8783,16 +8786,15 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gtk.Label" id="label2">
+                      <widget class="Gtk.Label" id="label1">
                         <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Это значение будет применено только к новым выдачам. На старые выдачи это не повлияет. Для старых выдач автосписание можно отключить вручную для каждой позиции.</property>
-                        <property name="Wrap">True</property>
+                        <property name="Tooltip" translatable="yes">Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке "История выдач" в карточке сотрудника для каждой выдачи.</property>
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Авто списание с сотрудника:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">1</property>
                         <property name="BottomAttach">2</property>
-                        <property name="LeftAttach">1</property>
-                        <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -8827,6 +8829,7 @@
                     <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAutoWriteoff">
                         <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке "История выдач" в карточке сотрудника для каждой выдачи.</property>
                         <property name="CanFocus">True</property>
                         <property name="Label" translatable="yes">Включено</property>
                         <property name="DrawIndicator">True</property>
@@ -8834,6 +8837,8 @@
                         <property name="UseUnderline">True</property>
                       </widget>
                       <packing>
+                        <property name="TopAttach">1</property>
+                        <property name="BottomAttach">2</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
@@ -9132,6 +9137,25 @@
                       <packing>
                         <property name="TopAttach">9</property>
                         <property name="BottomAttach">10</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabel8">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, начиная с которой и ранее редактирование документов и других учетных данных будет запрещено. Используется для закрытия отчетного периода с целью предотвращения случайных или несанкционированных изменений в уже утвержденных данных.</property>
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Дата запрета редактирования:</property>
+                      </widget>
+                      <packing>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -31436,32 +31460,6 @@
             <child>
               <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouse">
                 <property name="MemberName" />
-                <property name="IsTextCombo">False</property>
-                <property name="Items" translatable="yes" />
-                <property name="AddIfNotExist">False</property>
-                <property name="DefaultFirst">False</property>
-                <property name="ShowSpecialStateAll">True</property>
-                <property name="ShowSpecialStateNot">False</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
-                <property name="AutoSize">False</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouse">
-                <property name="MemberName" />
                 <property name="IsTextCombo">True</property>
                 <property name="Items" translatable="yes" />
                 <property name="AddIfNotExist">False</property>
@@ -31475,6 +31473,32 @@
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouse">
+                <property name="MemberName" />
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="AddIfNotExist">False</property>
+                <property name="DefaultFirst">False</property>
+                <property name="ShowSpecialStateAll">True</property>
+                <property name="ShowSpecialStateNot">False</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">False</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
