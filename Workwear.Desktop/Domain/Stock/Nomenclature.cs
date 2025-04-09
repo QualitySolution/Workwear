@@ -60,7 +60,7 @@ namespace Workwear.Domain.Stock {
 		[StringLength(20)]
 		public virtual string Number {
 			get => number;
-			set => SetField(ref number, value);
+			set => SetField(ref number, value?.Trim());
 		}
 		private bool archival;
 		[Display(Name ="Архивная")]
