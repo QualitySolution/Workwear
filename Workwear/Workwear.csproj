@@ -147,9 +147,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
@@ -467,10 +464,6 @@
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingMoveView.cs" />
     <Compile Include="Views\ClothingService\ServiceClaimView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceClaimView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceProtectionToolsView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceProtectionToolsView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceSubdivisionView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceSubdivisionView.cs" />
     <Compile Include="ReportParameters\Views\ProvisionReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ProvisionReportView.cs" />
     <Compile Include="Journal\Filter.Views\ClothingService\ClaimsJournalFilterView.cs" />
@@ -479,8 +472,6 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
     <Compile Include="Views\Export\FutureIssueExportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Postomats\PostomatDocumentsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Postomats\PostomatDocumentsJournalFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Postomats.PostomatDocumentsJournalFilterView.cs" />

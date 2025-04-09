@@ -7,9 +7,10 @@ using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Extension;
 using System.ComponentModel;
+using System.Linq;
+using QS.ViewModels.Control;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 
@@ -35,8 +36,10 @@ namespace workwear.ReportParameters.ViewModels
 			ShowSex = false;
 			ShowSize = true;
 			Summary = true;
-			
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
@@ -80,7 +83,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		public void Dispose()
