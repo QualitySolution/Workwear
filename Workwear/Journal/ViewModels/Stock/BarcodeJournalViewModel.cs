@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -57,14 +58,16 @@ namespace workwear.Journal.ViewModels.Stock
 			Size heightAlias = null;
 			
 			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
-				.Where(GetSearchCriterion(
+				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				))
+				).WithLikeMode(MatchMode.Exact).By(
+					() => employeeAlias.PersonnelNumber
+				).Finish())
 				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)
