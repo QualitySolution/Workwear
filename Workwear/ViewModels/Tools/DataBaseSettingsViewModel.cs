@@ -21,6 +21,7 @@ namespace Workwear.ViewModels.Tools
 		{
 			Title = "Настройки учёта";
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			EditLockDate = baseParameters.EditLockDate;
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
