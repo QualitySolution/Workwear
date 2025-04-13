@@ -29,7 +29,7 @@ namespace Workwear.Views.Stock {
 				.InitializeFromSource ();
 			ydateDoc.Binding
 				.AddSource(ViewModel)
-				.AddBinding(vm => vm.DocDate, w => w.Date)
+				.AddBinding(vm => vm.DocumentDate, w => w.Date)
 				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource ();
 			yentryNumber.Binding

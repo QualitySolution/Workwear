@@ -67,7 +67,7 @@ namespace workwear.Journal.ViewModels.Stock
                 .TransformUsing(Transformers.AliasToBean<SizeTypeJournalNode>());
         }
         private void OverrideDeleteAction() {
-            NodeActionsList.RemoveAll(x => x.Title == "Удалить");
+            NodeActionsList.RemoveAll(x => x.GetTitle(new object[]{}) == "Удалить");
             var deleteAction = new JournalAction("Удалить",
                 (selected) => selected.Length == 1 && selected.First().GetId() >= SizeService.MaxStandardSizeTypeId,
                 (selected) => VisibleDeleteAction,

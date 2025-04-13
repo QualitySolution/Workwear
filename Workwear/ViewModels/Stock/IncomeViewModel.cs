@@ -40,12 +40,12 @@ namespace Workwear.ViewModels.Stock {
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, validator, unitOfWorkProvider)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			GetDocumentDateFunc = () => Entity.Date;
+			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -73,7 +73,7 @@ namespace Workwear.ViewModels.Stock {
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		
-		#region Свойства VikewModel
+		#region Свойства ViewModel
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -92,22 +92,8 @@ namespace Workwear.ViewModels.Stock {
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
 		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
-		public virtual DateTime DocDate {
-			get => Entity.Date;
-			set {
-				if(Entity.Date == value)
-					return;
-				if(CanDocumentDateChange(value))
-					Entity.Date = value;
-				else {
-					OnPropertyChanged(); //Чтобы вернуть назад дату в виджете.
-					interactive.ShowMessage(ImportanceLevel.Error, "Нельзя изменить дату документа на закрытый период.");
-				}
-			}
-		}
 
 		public virtual IObservableList<IncomeItem> Items => Entity.Items;
-
 		#endregion
 
 		#region Свойства ViewModel
