@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -8762,14 +8762,16 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.Widgets.yDatePicker" id="dateEditLock">
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="dateEditLock">
                         <property name="MemberName" />
                         <property name="Tooltip" translatable="yes">Устанавливает дату, начиная с которой и ранее редактирование документов и других учетных данных будет запрещено. Используется для закрытия отчетного периода с целью предотвращения случайных или несанкционированных изменений в уже утвержденных данных.</property>
                         <property name="Events">ButtonPressMask</property>
                         <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
                         <property name="Date">0</property>
                         <property name="IsEditable">True</property>
                         <property name="AutoSeparation">True</property>
+                        <property name="HideButtonClearDate">False</property>
                       </widget>
                       <packing>
                         <property name="LeftAttach">1</property>
