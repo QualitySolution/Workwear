@@ -233,6 +233,22 @@ namespace Workwear.Domain.Operations {
 	        WearSize = item.WearSize;
 	        Height = item.Height;
         }
+        public virtual void Update(IUnitOfWork uow, ReturnItem item) 
+        {
+	        //Внимание здесь сравниваются даты без времени.
+	        if(item.Document.Date.Date != OperationTime.Date)
+		        OperationTime = item.Document.Date;
+				
+	        Nomenclature = item.Nomenclature;
+	        Issued = 0;
+	        Returned = item.Amount;
+	        WarehouseOperation = item.WarehouseOperation;
+	        DutyNormItem = null;
+	        ExpiryByNorm = null;
+	        AutoWriteoffDate = null;
+	        WearSize = item.WearSize;
+	        Height = item.Height;
+        }
         
         public virtual void RecalculateExpiryByNorm(){
 	        if(StartOfUse == null)
@@ -249,6 +265,8 @@ namespace Workwear.Domain.Operations {
         }
         public virtual decimal CalculatePercentWear(DateTime atDate) => 
 	        CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
+        public virtual decimal CalculateDepreciationCost(DateTime atDate) =>
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation?.Cost ?? 0m);
         #endregion
 
         #region Статические методы
@@ -265,6 +283,16 @@ namespace Workwear.Domain.Operations {
 		        return beginWearPercent;
 
 	        return Math.Round(beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent, 2);
+        }
+        public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
+	        if(startOfUse == null || expiryByNorm == null)
+		        return 0;
+
+	        var removePercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+	        if(double.IsNaN(removePercent) || double.IsInfinity(removePercent))
+		        return beginCost;
+
+	        return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
         }
 
         #endregion

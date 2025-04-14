@@ -90,7 +90,7 @@ namespace Workwear.Domain.Stock.Documents
 		CollectiveExpense,
 		[Display(Name = "Выдача по дежурной норме")]
 		ExpenseDutyNormDoc,
-		[Display(Name = "Возврат от сотрудника")]
+		[Display(Name = "Возврат")]
 		Return,
 		[Display(Name = "Перемещение")]
 		TransferDoc,
