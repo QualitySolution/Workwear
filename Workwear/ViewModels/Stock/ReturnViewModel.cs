@@ -30,6 +30,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -46,6 +47,7 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactiveService,
+			DutyNormRepository dutyNormRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
@@ -56,6 +58,7 @@ namespace Workwear.ViewModels.Stock {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
+			this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
@@ -114,6 +117,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private IInteractiveService interactiveService;
+		private DutyNormRepository dutyNormRepository;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -231,6 +235,36 @@ namespace Workwear.ViewModels.Stock {
 			}
 			CalculateTotal();
 		}
+
+		public void FillMaxAmount(DateTime? date = null) {
+			var itemsEmp = Entity.Items.Where(i=>i.ReturnFrom==ReturnFrom.Employee).ToList();
+			if(itemsEmp.Any()) {
+				// для всех списаний/возвратов с сотрудника
+				var operations = itemsEmp
+					.Select(i=>i.ReturnFromEmployeeOperation)
+					.Select(o=>o.IssuedOperation)
+					.ToArray();
+				var writtenOff=issueModel.CalculateWrittenOff(operations, UoW, date);
+				foreach(var item in itemsEmp) {
+					var operation = item.ReturnFromEmployeeOperation.IssuedOperation;
+					item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+				}
+			}
+			var itemsDutyNorm = Entity.Items.Where(i=>i.ReturnFrom==ReturnFrom.DutyNorm).ToList();
+			if(itemsDutyNorm.Any()) {
+				// для всех списаний/возвратов с дежурной нормы
+				var operations = itemsDutyNorm
+					.Select(i=>i.ReturnFromDutyNormOperation)
+					.Select(o=>o.IssuedOperation)
+					.ToArray();
+				var writtenOff=dutyNormRepository.CalculateWrittenOff(operations, UoW, date);
+				foreach(var item in itemsDutyNorm) {
+					var operation = item.ReturnFromDutyNormOperation.IssuedOperation;
+					item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+				}
+			}
+		}
+		
 		public void DeleteItem(ReturnItem item) {
 			Entity.RemoveItem(item); 
 			OnPropertyChanged(nameof(CanRemoveItem));
@@ -257,6 +291,7 @@ namespace Workwear.ViewModels.Stock {
 		public override bool Save() {
 			logger.Info ("Запись документа...");
 
+			FillMaxAmount(Entity.Date);
 			Entity.UpdateOperations(UoW);
 			if (Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
@@ -266,10 +301,15 @@ namespace Workwear.ViewModels.Stock {
             	return false;
             }
 
-			logger.Debug ("Обновляем записи о выданной одежде в карточке сотрудника...");
-			Entity.UpdateEmployeeWearItems(UoW);
-
-			UoW.Commit();
+			var employeeOperations = Entity.Items.Where(r => r.ReturnFrom == ReturnFrom.Employee)
+				.Select(w => w.ReturnFromEmployeeOperation)
+				.Where(w => w.ProtectionTools != null)
+				.ToArray();
+			if(employeeOperations.Any()) {
+				logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
+				Entity.UpdateEmployeeWearItems(UoW);
+				UoW.Commit();
+			}
 			
 			logger.Info ("Ok");
 			return true;

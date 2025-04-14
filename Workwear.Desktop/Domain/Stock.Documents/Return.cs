@@ -129,10 +129,14 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
 			foreach(var item in items) {
-				item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				item.EmployeeCard.UpdateNextIssue(Items
-					.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
-					.Where(x => x != null).Distinct().ToArray());
+				if(item.IssuedEmployeeOnOperation!=null) {
+					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
+							DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
+						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
+						.Where(x => x != null).Distinct().ToArray());
+				}
+				// TODO Реализовать пересчет даты следующей выдачи для дежурной нормы
 			}
 			
 		}

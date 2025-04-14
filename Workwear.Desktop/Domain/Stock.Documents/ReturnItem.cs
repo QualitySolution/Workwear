@@ -251,6 +251,7 @@ namespace Workwear.Domain.Stock.Documents {
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
+			employeeCard = issueOperation.Employee;
 			this.amount = amount;
 		}
 		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount) {
@@ -282,11 +283,9 @@ namespace Workwear.Domain.Stock.Documents {
 			switch(ReturnFrom) {
 				case ReturnFrom.Employee:
 					ReturnFromEmployeeOperation.Update(uow,this);
-					uow.Save(ReturnFromEmployeeOperation);
 					break;
 				case ReturnFrom.DutyNorm:
 					ReturnFromDutyNormOperation.Update(uow,this);
-					uow.Save(ReturnFromDutyNormOperation);
 					break;
 				default:
 					throw new NotImplementedException();
