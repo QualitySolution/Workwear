@@ -136,7 +136,7 @@ namespace Workwear.Domain.Stock.Documents
 						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 						.Where(x => x != null).Distinct().ToArray());
 				}
-				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании
+				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании деж. нормы
 			}
 			
 		}
