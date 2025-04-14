@@ -22,7 +22,7 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.Widgets.yEnumComboBox ComboShirtExpluatacion;
 
-		private global::Gamma.Widgets.yDatePicker dateEditLock;
+		private global::QS.Widgets.GtkUI.DatePicker dateEditLock;
 
 		private global::Gtk.Label label1;
 
@@ -169,7 +169,7 @@ namespace Workwear.Views.Tools
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.dateEditLock = new global::Gamma.Widgets.yDatePicker();
+			this.dateEditLock = new global::QS.Widgets.GtkUI.DatePicker();
 			this.dateEditLock.TooltipMarkup = "Устанавливает дату, начиная с которой и ранее редактирование документов и других " +
 				"учетных данных будет запрещено. Используется для закрытия отчетного периода с це" +
 				"лью предотвращения случайных или несанкционированных изменений в уже утвержденны" +
@@ -177,9 +177,11 @@ namespace Workwear.Views.Tools
 			this.dateEditLock.Events = ((global::Gdk.EventMask)(256));
 			this.dateEditLock.Name = "dateEditLock";
 			this.dateEditLock.WithTime = false;
+			this.dateEditLock.HideCalendarButton = false;
 			this.dateEditLock.Date = new global::System.DateTime(0);
 			this.dateEditLock.IsEditable = true;
 			this.dateEditLock.AutoSeparation = true;
+			this.dateEditLock.HideButtonClearDate = false;
 			this.table1.Add(this.dateEditLock);
 			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.dateEditLock]));
 			w10.LeftAttach = ((uint)(1));
