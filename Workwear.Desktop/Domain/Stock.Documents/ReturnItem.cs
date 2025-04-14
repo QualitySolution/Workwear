@@ -202,15 +202,6 @@ namespace Workwear.Domain.Stock.Documents {
 		#endregion
 		
 		#region Не сохраняемые в базу свойства
-		//FIXME не учитывает прошлые операции (уже списанное)
-		/*private int maxAmount = -1;
-		public virtual int MaxAmount {
-			get => maxAmount == -1 ? IssuedEmployeeOnOperation.Issued : maxAmount;
-			set => maxAmount = value;
-		}*/
-
-		
-
 		private EmployeeIssueOperation issuedEmployeeOnOperation;
 		/// <summary>
 		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
