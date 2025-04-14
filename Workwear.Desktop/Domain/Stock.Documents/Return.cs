@@ -136,7 +136,7 @@ namespace Workwear.Domain.Stock.Documents
 						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 						.Where(x => x != null).Distinct().ToArray());
 				}
-				// TODO Реализовать пересчет даты следующей выдачи для дежурной нормы
+				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании
 			}
 			
 		}
