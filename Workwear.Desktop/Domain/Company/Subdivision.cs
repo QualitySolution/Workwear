@@ -11,7 +11,8 @@ namespace Workwear.Domain.Company
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "подразделения",
 		Nominative = "подразделение",
-		Genitive ="подразделения"
+		Genitive ="подразделения",
+		GenitivePlural = "подразделений"
 		)]
 	[HistoryTrace]
 	public class Subdivision : PropertyChangedBase, IDomainObject, IValidatableObject

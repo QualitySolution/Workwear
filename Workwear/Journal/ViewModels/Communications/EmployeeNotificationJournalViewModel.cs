@@ -14,12 +14,13 @@ using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -34,7 +35,7 @@ using Workwear.ViewModels.Company;
 namespace workwear.Journal.ViewModels.Communications
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>
+	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>, IDialogDocumentation
 	{
 		private readonly UnitOfWorkProvider unitOfWorkProvider;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -45,6 +46,11 @@ namespace workwear.Journal.ViewModels.Communications
 		private bool alreadyLoaded;
 		
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#send-notification");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		public EmployeeNotificationJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService, INavigationManager navigationManager,
@@ -93,8 +99,7 @@ namespace workwear.Journal.ViewModels.Communications
 				issueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 				issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 				issueModel.FillWearReceivedInfo(employees.ToArray());
-				foreach (EmployeeCard employee in employees) 
-				{
+				foreach (EmployeeCard employee in employees) {
 					IEnumerable<EmployeeCardItem> cardtems = employee.GetUnderreceivedItems(baseParameters, Filter.EndDateIssue)
 						.Where(x => Filter.SelectedProtectionToolsIds.Contains(x.ProtectionTools.Id));
 					if (cardtems.All(x => x.InStock.Sum(c => c.Amount) == 0)) 
@@ -339,7 +344,7 @@ namespace workwear.Journal.ViewModels.Communications
 				{ "employeeIds", ids },
 				{ "warehouseId", Filter.SelectedWarehouse.Id },
 				{ "endDateIssue", endDateIssue },
-				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds.ToArray() }
+				{ "protectionToolsIds", Filter.SelectedProtectionToolsIds }
 			});
 		}
 		void ShowHistoryNotificationAction(object[] nodes)
@@ -451,7 +456,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSandNotification => LkRegistered || !string.IsNullOrWhiteSpace(Email);
+		public bool CanSandNotification => StatusInfo.Status != LkStatus.Missing || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 

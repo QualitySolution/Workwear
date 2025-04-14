@@ -16,6 +16,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -36,7 +37,7 @@ using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock
 {
-    public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>
+    public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>, IDialogDocumentation
     {
 	    private readonly EmployeeIssueModel employeeIssueModel;
 	    private readonly StockBalanceModel stockBalanceModel;
@@ -120,6 +121,11 @@ namespace Workwear.ViewModels.Stock
 			            new Dictionary<object, object> { {nameof(BaseParameters), baseParameters} } 
 		            )));
         }
+        
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#writeoff");
+        public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+        #endregion
         
         #region ViewProperty
         

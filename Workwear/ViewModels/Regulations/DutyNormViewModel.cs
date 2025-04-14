@@ -17,17 +17,19 @@ using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations {
-	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>{
+	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>, IDialogDocumentation{
 		
 		private IInteractiveService interactive;
 		private readonly IEntityChangeWatcher changeWatcher;
@@ -72,6 +74,11 @@ namespace Workwear.ViewModels.Regulations {
 			//Актуализация строк при открытии			
 			Entity.UpdateItems(UoW);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#duty-norms");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region Свойства
 		

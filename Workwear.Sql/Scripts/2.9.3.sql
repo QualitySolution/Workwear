@@ -11,3 +11,8 @@ ALTER TABLE stock_write_off_detail
 			ON UPDATE NO ACTION;
 CREATE INDEX fk_stock_write_off_detail_duty_norm_issue_operation_idx
 	ON stock_write_off_detail (duty_norm_issue_operation_id ASC);
+
+-- Права на удаление
+
+ALTER TABLE users
+	ADD COLUMN can_delete TINYINT(1) NOT NULL DEFAULT 1 AFTER admin;

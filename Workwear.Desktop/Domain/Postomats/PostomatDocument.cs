@@ -13,7 +13,8 @@ namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, 
 		NominativePlural = "документы постамата",
 		Nominative = "документ постамата",
-		Genitive = "документ постамата")]
+		Genitive = "документа постамата",
+		GenitivePlural = "документов постамата")]
 	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	

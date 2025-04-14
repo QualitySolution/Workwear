@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` VARCHAR(60) NULL DEFAULT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `admin` TINYINT(1) NOT NULL DEFAULT FALSE,
+  `can_delete` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -2417,7 +2418,7 @@ create index index_shipment_items_size
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------
 ALTER TABLE issuance_sheet
-	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;;
+	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;
 ALTER TABLE issuance_sheet
 	ADD CONSTRAINT fk_stock_expense_duty_norm_id
 		FOREIGN KEY (stock_expense_duty_norm_id) REFERENCES stock_expense_duty_norm (id)

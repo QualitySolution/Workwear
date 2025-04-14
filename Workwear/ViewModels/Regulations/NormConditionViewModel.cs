@@ -6,16 +6,24 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class NormConditionViewModel : EntityDialogViewModelBase<NormCondition>
+	public class NormConditionViewModel : EntityDialogViewModelBase<NormCondition>, IDialogDocumentation
 	{
 		public NormConditionViewModel(IEntityUoWBuilder uowBuilder, IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation, IValidator validator = null) : base(uowBuilder, unitOfWorkFactory,
 			navigation, validator) {
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norm-conditions");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		public List<int> StartDays => DayInMonth(SelectedStartMonth);
 		public List<int> EndDays => DayInMonth(SelectedEndMonth);
 

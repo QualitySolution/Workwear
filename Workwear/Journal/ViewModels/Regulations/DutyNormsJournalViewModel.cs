@@ -6,15 +6,21 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations {
-	public class DutyNormsJournalViewModel : EntityJournalViewModelBase<DutyNorm, DutyNormViewModel, DutyNormsJournalNode>{
+	public class DutyNormsJournalViewModel : EntityJournalViewModelBase<DutyNorm, DutyNormViewModel, DutyNormsJournalNode>, IDialogDocumentation{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#duty-norms");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(DutyNorm));
+		#endregion
 		public DutyNormsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

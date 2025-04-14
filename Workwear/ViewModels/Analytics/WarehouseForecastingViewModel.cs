@@ -15,6 +15,7 @@ using QS.Services;
 using QS.Utilities.Text;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
@@ -22,11 +23,12 @@ using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Analytics {
-	public class WarehouseForecastingViewModel : UowDialogViewModelBase
+	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly EmployeeIssueModel issueModel;
 		private readonly FutureIssueModel futureIssueModel;
@@ -61,6 +63,11 @@ namespace Workwear.ViewModels.Analytics {
 				.Finish();
 			Granularity = Granularity.Weekly;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#warehouse-forecast");
+		public string ButtonTooltip => "Онлайн документация по прогнозированию складских запасов";
+		#endregion
 
 		#region Свойства View
 		public IProgressBarDisplayable ProgressTotal { get; set; }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -14,8 +12,8 @@ using QS.Services;
 using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Tools;
-using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -23,7 +21,7 @@ using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Supply {
-	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment> {
+	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
 		public ShipmentViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -44,6 +42,11 @@ namespace Workwear.ViewModels.Supply {
 			CalculateTotal();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#planned-shipment");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Свойства ViewModel
 
 		private readonly IInteractiveService interactive;

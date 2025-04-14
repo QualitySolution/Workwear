@@ -15,7 +15,8 @@ namespace Workwear.Domain.Supply {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "планируемые поставки",
 		Nominative = "планируемая поставка",
-		Genitive = "планируемой поставки"
+		Genitive = "планируемой поставки",
+		GenitivePlural = "планируемых поставок"
 	)]
 	[HistoryTrace]
 	public class Shipment: PropertyChangedBase, IDomainObject, IValidatableObject {

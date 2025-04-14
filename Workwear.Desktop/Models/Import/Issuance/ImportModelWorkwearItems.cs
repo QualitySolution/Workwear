@@ -27,6 +27,7 @@ namespace Workwear.Models.Import.Issuance
 
 		#region Параметры
 		public string ImportName => "Загрузка выдачи";
+		public string DocumentationLink => "import.html#excel-import-issue";
 
 		public string DataColumnsRecommendations => "Для каждой значимой колонки проставьте тип данных которые находится в таблице.\nОбязательными данными являются Табельный номер или ФИО, Номенклатура нормы и Дата выдачи. Если колонка с количеством отсутствует, количество будет взято из нормы.";
 

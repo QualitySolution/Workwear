@@ -1,25 +1,31 @@
 ﻿using System;
 using Autofac;
-using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
+using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
+using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
-using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
-using QS.Project.DB;
+using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class SubdivisionJournalViewModel : EntityJournalViewModelBase<Subdivision, SubdivisionViewModel, SubdivisionJournalNode>
+	public class SubdivisionJournalViewModel : EntityJournalViewModelBase<Subdivision, SubdivisionViewModel, SubdivisionJournalNode>, IDialogDocumentation
 	{
 		public SubdivisionFilterViewModel Filter { get; }
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#subdivisions");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Subdivision));
+		#endregion
 		public SubdivisionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager, 

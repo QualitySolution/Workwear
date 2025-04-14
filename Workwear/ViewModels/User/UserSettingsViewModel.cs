@@ -6,18 +6,20 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.User
 {
-	public class UserSettingsViewModel : EntityDialogViewModelBase<UserSettings>
+	public class UserSettingsViewModel : EntityDialogViewModelBase<UserSettings>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Leader> LeaderFromEntryViewModel;
@@ -55,6 +57,11 @@ namespace Workwear.ViewModels.User
 				 .Finish();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("settings.html#user-settings");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Свойства для View
 
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);

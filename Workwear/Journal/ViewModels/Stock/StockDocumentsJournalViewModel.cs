@@ -10,12 +10,13 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
@@ -23,17 +24,21 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class StockDocumentsJournalViewModel : JournalViewModelBase
+	public class StockDocumentsJournalViewModel : JournalViewModelBase, IDialogDocumentation
 	{
 		public readonly FeaturesService FeaturesService;
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public StockDocumentsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

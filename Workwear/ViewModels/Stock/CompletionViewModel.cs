@@ -13,6 +13,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -27,7 +28,7 @@ using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class CompletionViewModel: EntityDialogViewModelBase<Completion>
+	public class CompletionViewModel: EntityDialogViewModelBase<Completion>, IDialogDocumentation
 	{
 		private readonly IInteractiveQuestion interactive;
 		public readonly FeaturesService featuresService;
@@ -83,7 +84,10 @@ namespace Workwear.ViewModels.Stock
 
 			Owners = UoW.GetAll<Owner>().ToList();
 		}
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#complectation");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		#region View
 		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => SelectedResultItem != null;

@@ -11,7 +11,8 @@ namespace Workwear.Domain.Stock
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "штрихкоды",
 		Nominative = "штрихкод",
-		Genitive = "штрихкода"
+		Genitive = "штрихкода",
+		GenitivePlural = "штрихкодов"
 		)]
 	[HistoryTrace]
 	public class Barcode : PropertyChangedBase, IDomainObject
