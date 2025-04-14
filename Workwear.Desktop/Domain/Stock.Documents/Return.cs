@@ -129,7 +129,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
 			foreach(var item in items) {
-				if(item.IssuedEmployeeOnOperation!=null) {
+				if(item.EmployeeCard!=null && item.DutyNorm==null) {
 					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
 							DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
