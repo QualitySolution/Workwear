@@ -20,16 +20,18 @@ namespace Workwear.Views.Stock {
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
+			checkAuto.Binding
+				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource(); 
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(ViewModel, vm => vm.DocCreatedbyUser != null ? vm.DocCreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
 			ydateDoc.Binding
-				.AddBinding(ViewModel, vm => vm.DocDate, w => w.Date)
-				.InitializeFromSource ();
+				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource ();
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
-				.InitializeFromSource();
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
 			label_Warehouse.Visible = ViewModel.WarehouseVisible;
 			entityWarehouseIncome.ViewModel = ViewModel.WarehouseEntryViewModel;
@@ -38,9 +40,12 @@ namespace Workwear.Views.Stock {
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
 				.InitializeFromSource();
 
-			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
-			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
-			ybuttonSetNomenclature.Binding.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
+			ybuttonAdd.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonDel.Binding
+				.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonSetNomenclature.Binding
+				.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
 			enumPrint.ItemsEnum = typeof(ReturnViewModel.ReturnDocReportEnum);
 		}
 		
@@ -60,43 +65,32 @@ namespace Workwear.Views.Stock {
 					.AddComboRenderer(i => i.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "нет")
-					.Editing()
+					.Editing(ViewModel.CanEdit)
 				.AddColumn("Процент износа")
 					.AddNumericRenderer(i => i.WearPercent, new MultiplierToPercentConverter())
-					.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
+					.Editing(new Adjustment(0, 0, 999, 1, 10, 0), ViewModel.CanEdit).WidthChars(6).Digits(0)
 					.AddTextRenderer(i => "%", expand: false)
 				.AddColumn("Количество")
 					.AddNumericRenderer(i => i.Amount)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(2)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(2)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Отметка о износе")
 					.AddTextRenderer(e => e.СommentReturn)
-					.Editable()
+					.Editable(ViewModel.CanEdit)
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
-			yvboxItems.Binding
-				.AddBinding(ViewModel, vm => vm.CanEditItems, w => w.Sensitive)
-				.InitializeFromSource();
 		}
 
-		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ReturnItem>();
-		}
-
-		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddFromEmployee();
-		}
-
-		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
+		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ReturnItem>());
-		}
-
-		protected void OnYbuttonSetNomenclatureClicked(object sender, EventArgs e) {
+		protected void OnYbuttonSetNomenclatureClicked(object sender, EventArgs e) =>
 			ViewModel.SetNomenclature(ytreeItems.GetSelectedObject<ReturnItem>());
-		}
-
 		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
 			var doc = (ReturnViewModel.ReturnDocReportEnum)e.ItemEnum;
 			ViewModel.PrintReturnDoc(doc);

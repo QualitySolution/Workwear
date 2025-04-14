@@ -91,6 +91,7 @@ namespace workwear.Journal.ViewModels.Statements
 				.ThenBy(() => issuanceSheetAlias.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<IssuanceSheetJournalNode>());
 		}
+
 	}
 
 	public class IssuanceSheetJournalNode

@@ -12,6 +12,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Report;
@@ -35,7 +36,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
-	public class ReturnViewModel  : EntityDialogViewModelBase<Return>, IDialogDocumentation {
+	public class ReturnViewModel  : PermittingEntityDialogViewModelBase<Return>, IDialogDocumentation {
 		public ReturnViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -46,16 +47,18 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactiveService,
+			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
 			Warehouse warehouse = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactiveService, validator, unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
 			featuresService = autofacScope.Resolve<FeaturesService>();
+			SetDocumentDateProperty(e => e.Date);
 			
 			if(featuresService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
@@ -73,14 +76,14 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseEntryViewModel.IsEditable = CanEdit;
 			
 			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.EmployeeCard)
 				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
 			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
-			CanEditEmployee = Entity.Id == 0;
-			EmployeeCardEntryViewModel.IsEditable = CanEditEmployee;
+			EmployeeCardEntryViewModel.IsEditable = CanEdit && Entity.Id == 0;
 
 			CalculateTotal();
 		}
@@ -96,12 +99,8 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		#region Проброс свойств документа
-
-		public virtual int DocID => Entity.Id;
-		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
-		public virtual DateTime DocDate { get => Entity.Date;set => Entity.Date = value;}
 		public virtual IObservableList<ReturnItem> Items => Entity.Items;
 		public virtual EmployeeCard EmployeeCard {
 			set {
@@ -148,14 +147,13 @@ namespace Workwear.ViewModels.Stock {
 		
 		#region Свойства для View
 
-		public bool CanEditEmployee;
-		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => SelectedItem != null;
-		public virtual bool CanSetNomenclature => SelectedItem != null;
-		public virtual bool CanEditItems => EmployeeCard != null;
+		public virtual bool CanAddItem => CanEdit;
+		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
+		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
+		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
