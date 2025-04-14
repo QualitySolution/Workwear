@@ -8,6 +8,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Report;
@@ -37,7 +38,7 @@ using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock
 {
-    public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>, IDialogDocumentation
+    public class WriteOffViewModel : PermittingEntityDialogViewModelBase<Writeoff>, IDialogDocumentation
     {
 	    private readonly EmployeeIssueModel employeeIssueModel;
 	    private readonly StockBalanceModel stockBalanceModel;
@@ -58,6 +59,7 @@ namespace Workwear.ViewModels.Stock
             IUnitOfWorkFactory unitOfWorkFactory,
             INavigationManager navigation,
             IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
             ILifetimeScope autofacScope,
             IUserService userService,
             BaseParameters baseParameters,
@@ -70,7 +72,7 @@ namespace Workwear.ViewModels.Stock
             DutyNormRepository dutyNormRepository,
             EmployeeCard employee = null,
             DutyNorm dutyNorm = null,
-            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
 	        this.employeeIssueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 	        this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 	        FeaturesService = featuresService;
@@ -79,6 +81,8 @@ namespace Workwear.ViewModels.Stock
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+            SetDocumentDateProperty(e => e.Date);
+            
             Entity.Items.ContentChanged += (sender, args) =>  CalculateTotal();
             CalculateTotal();
             
@@ -97,14 +101,20 @@ namespace Workwear.ViewModels.Stock
 	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 	            .UseViewModelDialog<LeadersViewModel>()
 	            .Finish();
+            ResponsibleDirectorPersonEntryViewModel.IsEditable = CanEdit;
+	            
             ResponsibleChairmanPersonEntryViewModel = entryBuilder.ForProperty(x => x.Chairman)
 	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 	            .UseViewModelDialog<LeadersViewModel>()
 	            .Finish();
+            ResponsibleChairmanPersonEntryViewModel.IsEditable = CanEdit;
+	            
             ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
 	            .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 	            .UseViewModelDialog<OrganizationViewModel>()
 	            .Finish();
+            ResponsibleOrganizationEntryViewModel.IsEditable = CanEdit;
+	            
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 
@@ -132,7 +142,7 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
-        public bool SensitiveDocNumber => !AutoDocNumber;
+        public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
         private bool autoDocNumber = true;
         [PropertyChangedAlso(nameof(DocNumberText))]
@@ -157,7 +167,7 @@ namespace Workwear.ViewModels.Stock
         }
         private bool delSensitive;
         public bool DelSensitive {
-            get => delSensitive;
+            get => CanEdit && delSensitive;
             set => SetField(ref delSensitive, value);
         }
         #endregion

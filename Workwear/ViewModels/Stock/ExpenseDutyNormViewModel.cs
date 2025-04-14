@@ -11,6 +11,7 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -40,7 +41,7 @@ using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock {
-	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>, IDialogDocumentation{
+	public class ExpenseDutyNormViewModel : PermittingEntityDialogViewModelBase<ExpenseDutyNorm>, IDialogDocumentation{
 		
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly IInteractiveService interactive;
@@ -63,7 +64,8 @@ namespace Workwear.ViewModels.Stock {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			ILifetimeScope autofacScope, 
 			INavigationManager navigation,
-			IInteractiveService interactive, 
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			IUserService userService,
 			CurrentUserSettings currentUserSettings,
 			IValidator validator,
@@ -75,7 +77,7 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
@@ -83,6 +85,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			SetDocumentDateProperty(e => e.Date);
 			
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			var vmEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNormViewModel>(this, this, UoW, navigation, autofacScope);
@@ -102,16 +105,22 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseEntryViewModel.IsEditable = CanEdit;
+				
 			ResponsibleEmployeeCardEntryViewModel = entityEntryBuilder.ForProperty(x => x.ResponsibleEmployee)
 				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
 			ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
+			ResponsibleEmployeeCardEntryViewModel.IsEditable = CanEdit;
+			
 			DutyNormEntryViewModel =
 				vmEntryBuilder.ForProperty(x => x.DutyNorm)
 				.UseViewModelJournalAndAutocompleter<DutyNormsJournalViewModel>()
 				.UseViewModelDialog<DutyNormViewModel>()
 				.Finish();
+			DutyNormEntryViewModel.IsEditable = CanEdit;
+				
 			Entity.PropertyChanged += EntityChange;
 			
 			Validations.Clear();
@@ -226,16 +235,17 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 		
 		#region Для View свойства, методы и пробросы
-		public bool CanDelSelectedItem => SelectedItem != null;
-		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanDelSelectedItem => CanEdit && SelectedItem != null;
+		public bool CanChooseStockPositionsSelectedItem => CanEdit && SelectedItem != null && SelectedItem.ProtectionTools != null;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 	
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
 		
+		public bool IssuanceSheetCreateSensitive => CanEdit && Entity.IssuanceSheet == null;		
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
-		public bool ResponsibleEmployeeCleanSensitive => Entity.IssuanceSheet == null;
+		public bool ResponsibleEmployeeCleanSensitive => CanEdit && Entity.IssuanceSheet == null;
 		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;

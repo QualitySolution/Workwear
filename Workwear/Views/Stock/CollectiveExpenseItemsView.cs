@@ -36,11 +36,13 @@ namespace Workwear.Views.Stock
 				.AddSource(ViewModel)
 					.AddBinding(v => v.SelectedItem, w => w.SelectedRow)
 				.AddSource(ViewModel.Entity)
-					.AddBinding(e => e.Items, w => w.ItemsDataSource)
-				.InitializeFromSource();
-			buttonAdd.Binding.AddBinding(viewModel,v =>v.SensitiveAddButton,w=>w.Sensitive).InitializeFromSource();
-			buttonDel.Binding.AddBinding(viewModel,v =>v.SensitiveButtonDel,w=>w.Sensitive).InitializeFromSource();
-			buttonChange.Binding.AddBinding(viewModel,v =>v.SensitiveButtonChange,w=>w.Sensitive).InitializeFromSource();
+				.AddBinding(e => e.Items, w => w.ItemsDataSource).InitializeFromSource();
+			buttonAdd.Binding
+				.AddBinding(viewModel,v =>v.SensitiveAddButton,w=>w.Sensitive).InitializeFromSource();
+			buttonDel.Binding
+				.AddBinding(viewModel,v =>v.SensitiveButtonDel,w=>w.Sensitive).InitializeFromSource();
+			buttonChange.Binding
+				.AddBinding(viewModel,v =>v.SensitiveButtonChange,w=>w.Sensitive).InitializeFromSource();
 			labelSum.Binding.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			MakeMenu();
@@ -57,25 +59,25 @@ namespace Workwear.Views.Stock
 					.SetDisplayFunc(x => x.Position.Nomenclature?.Name)
 					.SetDisplayListFunc(x => x.Position.Title + " - " + x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount))
 					.DynamicFillListFunc(x => x.EmployeeCardItem.BestChoiceInStock.ToList())
-					.AddSetter((c, n) => c.Editable = n.EmployeeCardItem != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.EmployeeCardItem != null)
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
-					.Editing()
+					.Editing(ViewModel.CanEdit)
 				.AddColumn("Процент износа").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
-				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
+				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit)
 					.AddTextRenderer(e => e.Nomenclature != null && e.Nomenclature.Type != null && 
 					                      e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = ViewModel.GetRowColor(n))
@@ -167,20 +169,13 @@ namespace Workwear.Views.Stock
 			menu.Popup();
 		}
 
-		void ItemOpenEmployee_Activated(object sender, EventArgs e)
-		{
+		void ItemOpenEmployee_Activated(object sender, EventArgs e) =>
 			viewModel.OpenEmployee(((MenuItemId<CollectiveExpenseItem>) sender).ID);
-		}	
-
-		void Item_Activated(object sender, EventArgs e)
-		{
+		void Item_Activated(object sender, EventArgs e) =>
 			viewModel.OpenNomenclature(((MenuItemId<CollectiveExpenseItem>) sender).ID);
-		}
-
-		void ItemOpenProtection_Activated(object sender, EventArgs e)
-		{
+		void ItemOpenProtection_Activated(object sender, EventArgs e) =>
 			viewModel.OpenProtectionTools(((MenuItemId<CollectiveExpenseItem>) sender).ID);
-		}
+		
 		#endregion
 		#region События
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

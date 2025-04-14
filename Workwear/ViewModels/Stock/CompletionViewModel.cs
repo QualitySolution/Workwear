@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Services;
@@ -28,13 +29,14 @@ using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class CompletionViewModel: EntityDialogViewModelBase<Completion>, IDialogDocumentation
+	public class CompletionViewModel: PermittingEntityDialogViewModelBase<Completion>, IDialogDocumentation
 	{
 		private readonly IInteractiveQuestion interactive;
 		public readonly FeaturesService featuresService;
 		private Warehouse lastWarehouse;
 		public SizeService SizeService { get; }
-		public CompletionViewModel(IEntityUoWBuilder uowBuilder, 
+		public CompletionViewModel(
+			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			IUserService userService,
@@ -42,14 +44,20 @@ namespace Workwear.ViewModels.Stock
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			SizeService sizeService,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
+			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator)
 		{
+			if(autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
+			if(userService == null) throw new ArgumentNullException(nameof(userService));
+			if(baseParameters == null) throw new ArgumentNullException(nameof(baseParameters));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			SetDocumentDateProperty(e => e.Date);
+			
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
-			this.interactive = interactive;
-			this.featuresService = featuresService;
-			SizeService = sizeService;
 			
 			if(UoW.IsNew) 
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -64,6 +72,7 @@ namespace Workwear.ViewModels.Stock
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseExpenseEntryViewModel.IsEditable = CanEdit;
 
 			if(Entity.ResultWarehouse == null)
 				Entity.ResultWarehouse = stockRepository.GetDefaultWarehouse
@@ -73,6 +82,7 @@ namespace Workwear.ViewModels.Stock
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseReceiptEntryViewModel.IsEditable = CanEdit;
 
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
@@ -89,10 +99,10 @@ namespace Workwear.ViewModels.Stock
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		#region View
-		public bool SensitiveDellSourceItemButton => SelectedSourceItem != null;
-		public bool SensitiveDellResultItemButton => SelectedResultItem != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
-		public bool SensitiveAddSizesResultButton => SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
+		public bool SensitiveDellSourceItemButton => CanEdit && SelectedSourceItem != null;
+		public bool SensitiveDellResultItemButton => CanEdit && SelectedResultItem != null;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool SensitiveAddSizesResultButton => CanEdit && SelectedResultItem != null && SelectedResultItem.WearSizeType != null;
 		public string ResultAmountText => $"Общее количество: {Entity.ResultItems.Sum(x=>x.Amount)}";
 		public string SourceAmountText => $"Общее количество: {Entity.SourceItems.Sum(x=>x.Amount)}";
 		
@@ -226,8 +236,6 @@ namespace Workwear.ViewModels.Stock
 				Entity.CreationDate = DateTime.Now;
 			if(AutoDocNumber)
 				Entity.DocNumber = null;
-			//else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
-			//	Entity.DocNumber = DocNumberText;
 			Entity.UpdateItems();
 			return base.Save();
 		}

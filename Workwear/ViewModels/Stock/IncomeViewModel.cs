@@ -87,8 +87,6 @@ namespace Workwear.ViewModels.Stock {
 		
 		#region Проброс свойств документа
 
-		public virtual int DocID => Entity.Id;
-		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
 		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
