@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
@@ -29,7 +30,7 @@ using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>, IDialogDocumentation
+	public class WarehouseTransferViewModel : PermittingEntityDialogViewModelBase<Transfer>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
@@ -51,10 +52,15 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters baseParameters,
 			OrganizationRepository organizationRepository,
 			StockBalanceModel stockBalanceModel,
-			IInteractiveQuestion interactive,
-			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator, unitOfWorkProvider) {
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
+			FeaturesService featuresService
+			) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator, unitOfWorkProvider)
+		{
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			SetDocumentDateProperty(e => e.Date);
+			
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Organization =
@@ -69,8 +75,11 @@ namespace Workwear.ViewModels.Stock
 			};
 			
 			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
+			OrganizationEntryViewModel.IsEditable = CanEdit;
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
+			WarehouseFromEntryViewModel.IsEditable = CanEdit;
 			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
+			WarehouseToEntryViewModel.IsEditable = CanEdit;
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Owners = UoW.GetAll<Owner>().ToList();
@@ -120,8 +129,8 @@ namespace Workwear.ViewModels.Stock
 				stockBalanceModel.OnDate = Entity.Date;
 		}
 		#region Sensetive
-		public bool CanAddItem => Entity.WarehouseFrom != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanAddItem => CanEdit && Entity.WarehouseFrom != null;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		#endregion
 
 		#region Свойства

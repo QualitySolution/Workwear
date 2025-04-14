@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Gamma.Binding.Converters;
 using Gtk;
 using QS.Views.Dialog;
 using QSWidgetLib;
@@ -22,10 +21,18 @@ namespace Workwear.Views.Stock
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
-			datepicker.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource(); 
-			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			checkAuto.Binding
+				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource(); 
+			datepicker.Binding
+				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+			ylabelCreatedBy.Binding
+				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource(); 
+			ytextComment.Binding
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+			
 			entityentryOrganization.ViewModel = ViewModel.OrganizationEntryViewModel;
 			entityentryWarehouseFrom.ViewModel = ViewModel.WarehouseFromEntryViewModel;
 			entityentryWarehouseTo.ViewModel = ViewModel.WarehouseToEntryViewModel;
@@ -39,11 +46,11 @@ namespace Workwear.Views.Stock
 				.AddComboRenderer(x => x.Owner)
 				.SetDisplayFunc(x => x.Name)
 				.FillItems(ViewModel.Owners, "Нет")
-				.Editing()
+				.Editing(ViewModel.CanEdit)
 			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false)
-					.Editing(true).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10)).WidthChars(8)
+				.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(8)
 				.AddReadOnlyTextRenderer(x => x.Nomenclature?.Type?.Units?.Name,  false)
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
@@ -80,21 +87,19 @@ namespace Workwear.Views.Stock
 			ViewModel.OpenNomenclature(item?.Nomenclature);
 		}
 		#endregion
-		private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+		private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
-		}
-		private void Selection_Changed(object sender, EventArgs e) {
-			buttonRemoveItem.Sensitive =  table.Selection.CountSelectedRows() > 0 ;
-		}
-		private void OnButtonAddClicked(object sender, EventArgs e) {
+		private void Selection_Changed(object sender, EventArgs e) =>
+			buttonRemoveItem.Sensitive =  ViewModel.CanEdit && table.Selection.CountSelectedRows() > 0 ;
+		private void OnButtonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItems();
-		}
 		private void OnButtonDelClicked(object sender, EventArgs e) {
 			var items = table.GetSelectedObjects<TransferItem>();
 			ViewModel.RemoveItems(items);
 		}
-		private string GetRowColor(TransferItem item) 
-			=> !ViewModel.ValidateNomenclature(item) ? "red" : null;
-		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
+		private string GetRowColor(TransferItem item) =>
+			!ViewModel.ValidateNomenclature(item) ? "red" : null;
+		private void OnButtonPrintClicked(object sender, EventArgs e) => 
+			ViewModel.Print();
 	}
 }

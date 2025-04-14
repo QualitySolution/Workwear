@@ -536,7 +536,7 @@ namespace workwear.Journal.ViewModels.Stock
 				}
 			}
 
-			var editAction = new JournalAction("Изменить",
+			var editAction = new JournalAction("Открыть",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => selected.Cast<StockDocumentsJournalNode>().ToList()
@@ -548,14 +548,16 @@ namespace workwear.Journal.ViewModels.Stock
 				RowActivatedAction = editAction;
 
 			var deleteAction = new JournalAction("Удалить",
-					(selected) => selected.Any(),
-					(selected) => true,
-					(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
-					"Delete"
-					);
+				(selected) => selected.Any()&& selected.All(node => CurrentPermissionService
+						.ValidateEntityPermission(StockDocument.GetDocClass(((StockDocumentsJournalNode)node).DocTypeEnum),
+							((StockDocumentsJournalNode)node).Date).CanDelete),
+				(selected) => true,
+				(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
+				"Delete"
+			);
 			NodeActionsList.Add(deleteAction);
 		}
-
+		
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)
 		{
 			foreach(var node in nodes) {

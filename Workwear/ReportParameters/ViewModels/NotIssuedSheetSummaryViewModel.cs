@@ -16,7 +16,6 @@ using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;

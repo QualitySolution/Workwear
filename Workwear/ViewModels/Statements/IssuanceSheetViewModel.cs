@@ -9,6 +9,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -32,7 +33,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Statements
 {
-	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>, IDialogDocumentation
+	public class IssuanceSheetViewModel : PermittingEntityDialogViewModelBase<IssuanceSheet>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
@@ -50,15 +51,19 @@ namespace Workwear.ViewModels.Statements
 			INavigationManager navigationManager, 
 			IValidator validator, 
 			ILifetimeScope autofacScope,
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			SizeService sizeService,
 			FeaturesService featuresService,
-			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
+			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			SetDocumentDateProperty(e => e.Date);
+			
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -68,6 +73,12 @@ namespace Workwear.ViewModels.Statements
 			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
 			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson).MakeByType().Finish();
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson).MakeByType().Finish();
+			
+			OrganizationEntryViewModel.IsEditable = CanEdit;
+			SubdivisionEntryViewModel.IsEditable = CanEdit;
+			TransferAgentEntryViewModel.IsEditable = CanEdit;
+			ResponsiblePersonEntryViewModel.IsEditable = CanEdit;
+			HeadOfDivisionPersonEntryViewModel.IsEditable = CanEdit;
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
@@ -92,7 +103,7 @@ namespace Workwear.ViewModels.Statements
 			$" Сотрудников: <u>{Entity.Items.Where(x => x.Employee != null).Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 			$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
 		
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -206,7 +217,7 @@ namespace Workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null && Entity.ExpenseDutyNorm == null;
+		public bool CanEditItems => CanEdit && Entity.Expense == null && Entity.CollectiveExpense == null && Entity.ExpenseDutyNorm == null;
 		public bool CanEditTransferAgent => Entity.CollectiveExpense == null;
 
 		#endregion

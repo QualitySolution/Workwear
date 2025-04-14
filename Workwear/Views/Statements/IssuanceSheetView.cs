@@ -27,9 +27,11 @@ namespace Workwear.Views.Statements
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource();
+			checkAuto.Binding
+				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 			
-			dateOfPreparation.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
+			dateOfPreparation.Binding.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date).InitializeFromSource();
 
 			entityentryOrganization.ViewModel = ViewModel.OrganizationEntryViewModel;
 			entityentrySubdivision.ViewModel = ViewModel.SubdivisionEntryViewModel;
@@ -40,7 +42,6 @@ namespace Workwear.Views.Statements
 			hboxExpense.Visible = ViewModel.VisibleExpense;
 			buttonFillBy.Visible = ViewModel.VisibleFillBy;
 			labelExpense.LabelProp = Entity.Expense?.Title;
-			ytreeviewItems.Sensitive = ViewModel.CanEditItems;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
 			entityTransferAgent.Sensitive = ViewModel.CanEditTransferAgent;
 			buttonCloseFillBy.Binding.AddBinding(ViewModel, v => v.VisibleCloseFillBy, w => w.Visible).InitializeFromSource();
@@ -52,11 +53,11 @@ namespace Workwear.Views.Statements
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEditItems && n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-				.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-				.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEditItems && n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Количество")
 					.AddNumericRenderer(x => x.Amount)
 					.Editing(ViewModel.CanEditItems).Adjustment(new Adjustment(1, 0, 100000, 1, 10, 10))
