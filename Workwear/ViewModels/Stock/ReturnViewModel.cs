@@ -88,11 +88,6 @@ namespace Workwear.ViewModels.Stock {
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#employee-return");
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
-		
-		private void EmployeeCardEntryViewModelPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(EmployeeCardEntryViewModel.Entity))
-				OnPropertyChanged(nameof(CanEditItems));
-		}
 
 		#region Проброс свойств документа
 
