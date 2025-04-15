@@ -89,6 +89,13 @@ namespace Workwear.Domain.Supply{
 			get =>comment;
 			set { comment = value; }
 		}
+		
+		private string diffСause;
+		[Display(Name = "Причина расхождений")]
+		public virtual string DiffСause {
+			get => diffСause;
+			set { diffСause = value; }
+		}
 		#endregion
 		
 		#region Расчетные

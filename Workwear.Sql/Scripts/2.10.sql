@@ -15,7 +15,7 @@ CREATE INDEX fk_stock_write_off_detail_duty_norm_issue_operation_idx
 -- Права на удаление
 
 ALTER TABLE users
-	ADD COLUMN can_delete TINYINT(1) NOT NULL DEFAULT 1 AFTER admin
+	ADD COLUMN can_delete TINYINT(1) NOT NULL DEFAULT 1 AFTER admin;
 
 -- Добавление id сотрудника в строки документа возврата
 
@@ -68,4 +68,11 @@ UPDATE stock_return_items
 ALTER TABLE stock_return
 DROP CONSTRAINT stock_return_employees_id_fk;
 ALTER TABLE stock_return
-DROP COLUMN employee_id;
+DROP COLUMN employee_id;    
+     
+-- Измененппия в документе поставки
+alter table shipment_items
+	add diff_cause varchar(120) null after height_id;
+
+alter table shipment
+	modify status enum ('New', 'Ordered', 'OnTheWay', 'AwaitPayment', 'Cancelled', 'Received') default 'Ordered' not null;

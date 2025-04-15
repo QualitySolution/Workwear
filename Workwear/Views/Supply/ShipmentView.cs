@@ -57,6 +57,12 @@ namespace Workwear.Views.Supply {
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.Total).Digits(2)
+				.AddColumn("Комментарий")
+					.AddTextRenderer(e=>e.Comment)
+					.Editable()
+				.AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
+					.AddTextRenderer(e=>e.DiffСause)
+					.Editable()
 				.Finish();
 			
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;

@@ -2,6 +2,8 @@
 
 namespace Workwear.Domain.Supply {
 	public enum ShipmentStatus {
+		[Display(Name="Новый")]
+		New,
 		[Display(Name="Заказано")]
 		Ordered,
 		[Display(Name = "В пути")]
