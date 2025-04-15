@@ -670,6 +670,7 @@ create table stock_return_items
 	warehouse_operation_id      int unsigned not null,
 	duty_norm_id				int unsigned null,
 	duty_norm_issue_operation_id int unsigned null,
+	claim_id					int unsigned null,
 	size_id                     int unsigned null,
 	height_id                   int unsigned null,
 	comment_return              varchar(120) null,
@@ -682,6 +683,7 @@ create table stock_return_items
 	INDEX `stock_return_items_duty_norm_id_index` (`duty_norm_id` ASC),
 	INDEX `stock_return_items_duty_norm_issue_operation_id_index` (`duty_norm_issue_operation_id` ASC),
 	INDEX `stock_return_items_employee_issue_operation_id_index` (`employee_issue_operation_id` ASC),
+	INDEX `stock_return_items_claim_id_index` (`claim_id` ASC),
 	constraint fk_stock_return_items_doc
 		foreign key (stock_return_id) references stock_return (id)
 			on update cascade on delete cascade,
@@ -707,7 +709,9 @@ create table stock_return_items
 			on update cascade
 			on delete restrict,
 	constraint stock_return_items_duty_norm_issue_operation_id_fk
-		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
+		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id),
+	constraint stock_return_items_claim_id_fk
+		foreign key (claim_id) references clothing_service_claim(id)
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1

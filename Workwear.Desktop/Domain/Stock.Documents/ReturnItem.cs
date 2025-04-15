@@ -4,6 +4,7 @@ using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -142,7 +143,17 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 
 		#endregion
+
+		#region Возврат со стирки
+		private ServiceClaim serviceClaim;
+		[Display(Name="Завершаемая заявка на обслуживание")]
+		public virtual ServiceClaim ServiceClaim {
+			get=> serviceClaim;
+			set=>SetField(ref serviceClaim, value);
+		}
 		
+
+		#endregion
 
 		#endregion
 		#region Расчетные

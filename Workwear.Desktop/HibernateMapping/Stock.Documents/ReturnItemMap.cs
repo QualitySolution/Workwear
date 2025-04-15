@@ -26,6 +26,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.EmployeeCard).Column("employee_id");
 			References(x => x.DutyNorm).Column("duty_norm_id");
 			References(x=>x.ReturnFromDutyNormOperation).Column("duty_norm_issue_operation_id").Cascade.All();
+			References(x => x.ServiceClaim).Column("claim_id").Cascade.All();
 		}
 	}
 }
