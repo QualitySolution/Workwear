@@ -62,6 +62,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddDutyNorm;
 
+		private global::Gamma.GtkWidgets.yButton ybuttonAddClaim;
+
 		private global::Gamma.GtkWidgets.yButton ybuttonDel;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonSetNomenclature;
@@ -376,20 +378,34 @@ namespace Workwear.Views.Stock
 			w31.Expand = false;
 			w31.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.ybuttonAddClaim = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonAddClaim.CanFocus = true;
+			this.ybuttonAddClaim.Name = "ybuttonAddClaim";
+			this.ybuttonAddClaim.UseUnderline = true;
+			this.ybuttonAddClaim.Label = global::Mono.Unix.Catalog.GetString("Со стирки");
+			global::Gtk.Image w32 = new global::Gtk.Image();
+			w32.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.ybuttonAddClaim.Image = w32;
+			this.hbox8.Add(this.ybuttonAddClaim);
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonAddClaim]));
+			w33.Position = 2;
+			w33.Expand = false;
+			w33.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.ybuttonDel = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonDel.Sensitive = false;
 			this.ybuttonDel.CanFocus = true;
 			this.ybuttonDel.Name = "ybuttonDel";
 			this.ybuttonDel.UseUnderline = true;
 			this.ybuttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w32 = new global::Gtk.Image();
-			w32.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.ybuttonDel.Image = w32;
+			global::Gtk.Image w34 = new global::Gtk.Image();
+			w34.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.ybuttonDel.Image = w34;
 			this.hbox8.Add(this.ybuttonDel);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonDel]));
-			w33.Position = 2;
-			w33.Expand = false;
-			w33.Fill = false;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonDel]));
+			w35.Position = 3;
+			w35.Expand = false;
+			w35.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.ybuttonSetNomenclature = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonSetNomenclature.Sensitive = false;
@@ -397,30 +413,30 @@ namespace Workwear.Views.Stock
 			this.ybuttonSetNomenclature.Name = "ybuttonSetNomenclature";
 			this.ybuttonSetNomenclature.UseUnderline = true;
 			this.ybuttonSetNomenclature.Label = global::Mono.Unix.Catalog.GetString("Выбрать номенклатуру");
-			global::Gtk.Image w34 = new global::Gtk.Image();
-			w34.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-preferences", global::Gtk.IconSize.Menu);
-			this.ybuttonSetNomenclature.Image = w34;
+			global::Gtk.Image w36 = new global::Gtk.Image();
+			w36.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-preferences", global::Gtk.IconSize.Menu);
+			this.ybuttonSetNomenclature.Image = w36;
 			this.hbox8.Add(this.ybuttonSetNomenclature);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonSetNomenclature]));
-			w35.Position = 3;
-			w35.Expand = false;
-			w35.Fill = false;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonSetNomenclature]));
+			w37.Position = 4;
+			w37.Expand = false;
+			w37.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w36.Position = 4;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w38.Position = 5;
 			this.yvboxItems.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.yvboxItems[this.hbox8]));
-			w37.Position = 2;
-			w37.Expand = false;
-			w37.Fill = false;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yvboxItems[this.hbox8]));
+			w39.Position = 2;
+			w39.Expand = false;
+			w39.Fill = false;
 			this.dialog1_VBox.Add(this.yvboxItems);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.yvboxItems]));
-			w38.Position = 2;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.yvboxItems]));
+			w40.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -430,6 +446,7 @@ namespace Workwear.Views.Stock
 			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.ybuttonAddWorker.Clicked += new global::System.EventHandler(this.OnYbuttonAddWorkerClicked);
 			this.ybuttonAddDutyNorm.Clicked += new global::System.EventHandler(this.OnYbuttonAddDutyNormClicked);
+			this.ybuttonAddClaim.Clicked += new global::System.EventHandler(this.OnYbuttonAddClaimClicked);
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
 			this.ybuttonSetNomenclature.Clicked += new global::System.EventHandler(this.OnYbuttonSetNomenclatureClicked);
 		}

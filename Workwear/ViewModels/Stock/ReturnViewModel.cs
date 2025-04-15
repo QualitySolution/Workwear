@@ -148,11 +148,13 @@ namespace Workwear.ViewModels.Stock {
 		#region Свойства для View
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
+		public virtual bool CanAddClaim => CanEdit;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
 		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
 		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool ClaimVisible => featuresService.Available(WorkwearFeature.Claims);
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
