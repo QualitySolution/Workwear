@@ -38,8 +38,10 @@ namespace Workwear.Views.Stock {
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
 				.InitializeFromSource();
-			ybuttonAdd.Binding
-				.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			ybuttonAddWorker.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddEmployee, w => w.Sensitive).InitializeFromSource();
+			ybuttonAddDutyNorm.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddDutyNorms, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding
 				.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonSetNomenclature.Binding
@@ -83,11 +85,10 @@ namespace Workwear.Views.Stock {
 
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ReturnItem>();
-		}
 		protected void OnYbuttonAddDutyNormClicked(object sender, EventArgs e) {
 			ViewModel.AddFromDutyNorm();
 		}
-		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
+		protected void OnYbuttonAddWorkerClicked(object sender, EventArgs e) =>
 			ViewModel.AddFromEmployee();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ReturnItem>());

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
@@ -36,7 +35,6 @@ using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
 	public class ReturnViewModel  : PermittingEntityDialogViewModelBase<Return>, IDialogDocumentation {
@@ -84,13 +82,6 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
-			
-			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.EmployeeCard)
-				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
-				.UseViewModelDialog<EmployeeViewModel>()
-				.Finish();
-			EmployeeCardEntryViewModel.PropertyChanged += EmployeeCardEntryViewModelPropertyChanged;
-			EmployeeCardEntryViewModel.IsEditable = CanEdit && Entity.Id == 0;
 
 			CalculateTotal();
 		}
@@ -155,7 +146,8 @@ namespace Workwear.ViewModels.Stock {
 		#endregion 
 		
 		#region Свойства для View
-		public virtual bool CanAddItem => CanEdit;
+		public virtual bool CanAddEmployee => CanEdit;
+		public virtual bool CanAddDutyNorms => CanEdit;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
 		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
 		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
