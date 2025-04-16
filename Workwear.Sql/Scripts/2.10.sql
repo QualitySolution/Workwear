@@ -75,4 +75,4 @@ alter table shipment_items
 	add diff_cause varchar(120) null after height_id;
 
 alter table shipment
-	modify status enum ('New', 'Ordered', 'OnTheWay', 'AwaitPayment', 'Cancelled', 'Received') default 'Ordered' not null;
+	modify status enum ('New', 'Present', 'Accepted', 'Ordered', 'Received') default 'New' not null;

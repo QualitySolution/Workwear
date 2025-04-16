@@ -63,20 +63,37 @@ namespace workwear.Journal.ViewModels.Supply {
 				.TransformUsing(Transformers.AliasToBean<ShipmentJournalNode>());
 		}
 		
+		string ForegroundColorShipment(ShipmentJournalNode n)
+		{
+			if(n.Status==ShipmentStatus.Received)
+				return "gray";
+			if(n.EndPeriod < DateTime.Today)
+				return "red";
+			if(n.StartPeriod<=DateTime.Today&&n.EndPeriod>=DateTime.Today)
+				return "orange";
+			return "black";
+		}
 	}
 
 	public class ShipmentJournalNode {
-		[SearchHighlight]
-		public int Id { get; set; }
+		[SearchHighlight] public int Id { get; set; }
 		public DateTime StartPeriod { get; set; }
 		public DateTime EndPeriod { get; set; }
 		public ShipmentStatus Status { get; set; }
 		public string StatusText => Status.GetEnumTitle();
-		[SearchHighlight]
-		public string Author { get; set; }
+		[SearchHighlight] public string Author { get; set; }
 		public DateTime CreationDate { get; set; }
-		[SearchHighlight]
-		public String Comment { get; set; }
-		
+		[SearchHighlight] public String Comment { get; set; }
+		public string RowColor {
+			get {
+				if(Status == ShipmentStatus.Received)
+					return "gray";
+				if(EndPeriod < DateTime.Today)
+					return "red";
+				if(StartPeriod <= DateTime.Today && EndPeriod >= DateTime.Today)
+					return "orange";
+				return "black";
+			}
+		}
 	}
 }
