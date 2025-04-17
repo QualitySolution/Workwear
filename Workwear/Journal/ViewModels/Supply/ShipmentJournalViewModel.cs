@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
@@ -61,17 +61,6 @@ namespace workwear.Journal.ViewModels.Supply {
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 				).OrderBy(x => x.StartPeriod).Desc
 				.TransformUsing(Transformers.AliasToBean<ShipmentJournalNode>());
-		}
-		
-		string ForegroundColorShipment(ShipmentJournalNode n)
-		{
-			if(n.Status==ShipmentStatus.Received)
-				return "gray";
-			if(n.EndPeriod < DateTime.Today)
-				return "red";
-			if(n.StartPeriod<=DateTime.Today&&n.EndPeriod>=DateTime.Today)
-				return "orange";
-			return "black";
 		}
 	}
 

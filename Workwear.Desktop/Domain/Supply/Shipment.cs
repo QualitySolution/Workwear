@@ -91,7 +91,7 @@ namespace Workwear.Domain.Supply {
 				yield return new ValidationResult ("Поставка должна содержать хотя бы одну строку.", 
 					new[] { this.GetPropertyName (o => o.Items)});
 
-			if(Items.Any (i => i.Amount <= 0))
+			if(Items.Any (i => i.Requested <= 0))
 				yield return new ValidationResult ("Поставка не должна содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
 			
@@ -103,7 +103,7 @@ namespace Workwear.Domain.Supply {
 
 		public virtual ShipmentItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
 			var newItem = new ShipmentItem(this) {
-				Amount = 1,
+				Requested = 1,
 				Nomenclature = nomenclature,
 				Cost = nomenclature.SaleCost ?? 0m,
 			};
@@ -115,7 +115,7 @@ namespace Workwear.Domain.Supply {
 			var item = FindItem(nomenclature,size,height);
 			if(item == null) {
 				item = new ShipmentItem(this) {
-					Amount = amount,
+					Requested = amount,
 					Nomenclature = nomenclature,
 					WearSize = size,
 					Height = height,
@@ -124,7 +124,7 @@ namespace Workwear.Domain.Supply {
 				Items.Add(item);
 			}
 			else {
-				item.Amount += amount;
+				item.Requested += amount;
 			}
 			return item;
 		}

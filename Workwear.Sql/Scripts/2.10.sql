@@ -72,7 +72,10 @@ DROP COLUMN employee_id;
      
 -- Измененппия в документе поставки
 alter table shipment_items
-	add diff_cause varchar(120) null after height_id;
+	add diff_cause varchar(120) null after height_id
+	add ordered int unsigned not null after quantity;
 
 alter table shipment
 	modify status enum ('New', 'Present', 'Accepted', 'Ordered', 'Received') default 'New' not null;
+alter table shipment_items
+

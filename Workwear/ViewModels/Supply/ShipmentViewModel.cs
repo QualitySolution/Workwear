@@ -125,8 +125,8 @@ namespace Workwear.ViewModels.Supply {
 		}
 		private void CalculateTotal() {
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
-			        $"Количество единиц: {Entity.Items.Sum(x => x.Amount)} " +
-			        $"Сумма: {Entity.Items.Sum(x => x.Amount * x.Cost)}{baseParameters.UsedCurrency}";
+			        $"Количество единиц: {Entity.Items.Sum(x => x.Requested)} " +
+			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
 		}
 
 		#endregion
@@ -148,7 +148,7 @@ namespace Workwear.ViewModels.Supply {
 			foreach(var duplicate in Entity.Items.GroupBy(x => x.StockPosition).Where(x => x.Count() > 1)) {
 				duplicateMessage += $"- {duplicate.First().StockPosition.Title} указано " +
 				                    $"{NumberToTextRus.FormatCase(duplicate.Count(), "{0} раз", "{0} раза", "{0} раз")}" 
-				                    + $", общим количеством {duplicate.Sum(x=>x.Amount)} \n";
+				                    + $", общим количеством {duplicate.Sum(x=>x.Requested)} \n";
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;

@@ -53,17 +53,26 @@ namespace Workwear.Domain.Supply{
 			get => nomenclature?.Type.Units; 
 		}
 		
-		private int amount;
-		[Display (Name = "Количество")]
-		[PropertyChangedAlso("Total")]
-		public virtual int Amount {
-			get => amount;
-			set {amount = value; }
+		private int requested;
+		[Display (Name = "Количество запрошено")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Requested {
+			get => requested;
+			set {requested = value; }
+		}	
+		
+		private int ordered;
+		[Display (Name = "Количество заказано")]
+		[PropertyChangedAlso(nameof(TotalOrdered))]
+		public virtual int Ordered {
+			get => ordered;
+			set {ordered = value; }
 		}
 
 		private decimal cost;
 		[Display (Name = "Цена")]
-		[PropertyChangedAlso("Total")]
+		[PropertyChangedAlso(nameof(TotalOrdered))]
+		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual decimal Cost {
 			get => cost;
 			set { cost = value; }
@@ -100,8 +109,9 @@ namespace Workwear.Domain.Supply{
 		
 		#region Расчетные
 
-		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
-		public virtual decimal Total => Cost * Amount;
+		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Requested} {Nomenclature?.Type?.Units?.Name}";
+		public virtual decimal TotalRequested => Cost * Requested;
+		public virtual decimal TotalOrdered => Cost * Ordered;
 		public virtual StockPosition StockPosition => 
 			new StockPosition(Nomenclature, 0m,WearSize, Height, Owner);
 
