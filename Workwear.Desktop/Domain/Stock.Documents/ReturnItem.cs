@@ -162,12 +162,14 @@ namespace Workwear.Domain.Stock.Documents {
 					"Должна быть заполнена хотя бы одна операция.");
 			}
 		}
-		public virtual string LastOwnText{
+		public virtual string ReturnFromText{
 			get{
 				if(IssuedEmployeeOnOperation != null)
-					return IssuedEmployeeOnOperation.Employee.ShortName;
+					return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
 				if(IssuedDutyNormOnOperation != null)
-					return IssuedDutyNormOnOperation.DutyNorm.Name;
+					return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
+
+				return String.Empty;
 
 				return String.Empty;
 			}
