@@ -331,7 +331,7 @@ namespace Workwear.ViewModels.Stock {
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = doc == ReturnDocReportEnum.ReturnSheet ? $"Документ №{Entity.DocNumber ?? Entity.Id.ToString()}"
+				Title = doc == ReturnDocReportEnum.ReturnSheet ? $"Возврат №{Entity.DocNumber ?? Entity.Id.ToString()}"
 					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {

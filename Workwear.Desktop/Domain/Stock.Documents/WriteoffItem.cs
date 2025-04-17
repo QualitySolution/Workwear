@@ -120,14 +120,14 @@ namespace Workwear.Domain.Stock.Documents
 
 		#endregion
 		#region Вычисляемые
-		public virtual string LastOwnText{
+		public virtual string WriteoffFromText{
 			get{
 				if (Warehouse != null)
-					return Warehouse.Name;
+					return $"Склад: {Warehouse.Name}";
 				if(EmployeeWriteoffOperation != null)
-					return EmployeeWriteoffOperation.Employee.ShortName;
+					return $"Сотрудник: {EmployeeWriteoffOperation.Employee.ShortName}";
 				if(DutyNormWriteOffOperation != null)
-					return DutyNormWriteOffOperation.DutyNorm.Name;
+					return $"Дежурное: {DutyNormWriteOffOperation.DutyNorm.Name}";
 
 				return String.Empty;
 			}
