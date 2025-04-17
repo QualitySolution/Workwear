@@ -13,7 +13,8 @@ namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, 
 		NominativePlural = "документы постамата",
 		Nominative = "документ постамата",
-		Genitive = "документ постамата")]
+		Genitive = "документа постамата",
+		GenitivePlural = "документов постамата")]
 	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
@@ -89,7 +90,7 @@ namespace Workwear.Domain.Postomats {
 				Location = location,
 			};
 			Items.Add(newItem);
-			claim.ChangeState(ClaimState.InTransit, TerminalId, user, $"Перемещение в постамат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
+			claim.ChangeState(ClaimState.DeliveryToDispenseTerminal, TerminalId, user, $"Перемещение в постамат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
 		}
 
 		#endregion

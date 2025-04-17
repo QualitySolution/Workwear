@@ -10,12 +10,13 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
@@ -23,17 +24,21 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class StockDocumentsJournalViewModel : JournalViewModelBase
+	public class StockDocumentsJournalViewModel : JournalViewModelBase, IDialogDocumentation
 	{
 		public readonly FeaturesService FeaturesService;
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public StockDocumentsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
@@ -137,6 +142,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
 
 			var returnQuery = uow.Session.QueryOver<Return>(() => returnAlias);
 			if(Filter.StartDate.HasValue)
@@ -157,9 +163,10 @@ namespace workwear.Journal.ViewModels.Stock
 			));
 
 			returnQuery
-				.JoinQueryOver(() => returnAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(()=>returnAlias.Items, ()=>returnItemAlias,NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(()=>returnItemAlias.EmployeeCard, ()=>employeeAlias,NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -529,7 +536,7 @@ namespace workwear.Journal.ViewModels.Stock
 				}
 			}
 
-			var editAction = new JournalAction("Изменить",
+			var editAction = new JournalAction("Открыть",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => selected.Cast<StockDocumentsJournalNode>().ToList()
@@ -541,14 +548,16 @@ namespace workwear.Journal.ViewModels.Stock
 				RowActivatedAction = editAction;
 
 			var deleteAction = new JournalAction("Удалить",
-					(selected) => selected.Any(),
-					(selected) => true,
-					(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
-					"Delete"
-					);
+				(selected) => selected.Any()&& selected.All(node => CurrentPermissionService
+						.ValidateEntityPermission(StockDocument.GetDocClass(((StockDocumentsJournalNode)node).DocTypeEnum),
+							((StockDocumentsJournalNode)node).Date).CanDelete),
+				(selected) => true,
+				(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
+				"Delete"
+			);
 			NodeActionsList.Add(deleteAction);
 		}
-
+		
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)
 		{
 			foreach(var node in nodes) {

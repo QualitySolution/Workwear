@@ -6,18 +6,23 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Supply;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Supply;
 
 namespace workwear.Journal.ViewModels.Supply {
-	public class ShipmentJournalViewModel: EntityJournalViewModelBase<Shipment, ShipmentViewModel, ShipmentJournalNode> {
+	public class ShipmentJournalViewModel: EntityJournalViewModelBase<Shipment, ShipmentViewModel, ShipmentJournalNode>, IDialogDocumentation {
 		public FeaturesService FeaturesService { get; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#planned-shipment");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Shipment));
+		#endregion
 		public ShipmentJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,

@@ -9,10 +9,12 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Company {
-	public class EmployeeGroupViewModel : EntityDialogViewModelBase<EmployeeGroup> {
+	public class EmployeeGroupViewModel : EntityDialogViewModelBase<EmployeeGroup>, IDialogDocumentation {
 		private readonly IInteractiveMessage interactive;
 
 		public EmployeeGroupViewModel(
@@ -35,6 +37,11 @@ namespace Workwear.ViewModels.Company {
 			ItemsViewModel = autofacScope.Resolve<EmployeeGroupItemsViewModel>(thisViewModel);
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#employees-groups");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Свойства
 		public EmployeeGroupItemsViewModel ItemsViewModel { get; }
 

@@ -20,18 +20,27 @@ namespace Workwear.Views.Stock {
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
+			checkAuto.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
+				.InitializeFromSource(); 
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(ViewModel, vm => vm.DocCreatedbyUser != null ? vm.DocCreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
 			ydateDoc.Binding
-				.AddBinding(ViewModel, vm => vm.DocDate, w => w.Date)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocumentDate, w => w.Date)
+				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource ();
 			yentryNumber.Binding
-				.AddBinding(ViewModel, vm => vm.NumberTN, w => w.Text)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.NumberTN, w => w.Text)
+				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
 			ytextComment.Binding
-				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.DocComment, w => w.Buffer.Text)
+				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
 			ylabelWarehouse.Binding
 				.AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
@@ -62,32 +71,32 @@ namespace Workwear.Views.Stock {
 					.AddTextRenderer(e => e.ItemName).WrapWidth(700)
 					.AddSetter((w, item) => w.Foreground = item.Nomenclature != null ? "black" : "red")
 				.AddColumn("Сертификат").Resizable()
-					.AddTextRenderer(e => e.Certificate).Editable()
+					.AddTextRenderer(e => e.Certificate).Editable(ViewModel.CanEdit)
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.GetSizeVariants(x))
-					.AddSetter((c, n) => c.Editable = n.WearSizeType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.WearSizeType != null)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
-					.AddSetter((c, n) => c.Editable = n.HeightType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.HeightType != null)
 				.AddColumn("Собственники").Resizable()
 					.Visible(ViewModel.OwnersVisible)
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
-					.Editing()
+					.Editing(ViewModel.CanEdit)
 				.AddColumn("Процент износа")
 					.AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
-					.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
+					.Editing(new Adjustment(0, 0, 999, 1, 10, 0), ViewModel.CanEdit).WidthChars(6).Digits(0)
 					.AddTextRenderer(e => "%", expand: false)
 				.AddColumn("Количество")
 					.AddNumericRenderer(e => e.Amount)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Стоимость")
 					.AddNumericRenderer(e => e.Cost)
-					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
+					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0), ViewModel.CanEdit).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.Total).Digits(2) 
 				.Finish();

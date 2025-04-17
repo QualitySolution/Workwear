@@ -1,17 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
-using QS.DomainModel.Entity;
+using QS.ViewModels.Extension;
+using System.Collections.Generic;
+using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ClothingServiceReportViewModel: ReportParametersViewModelBase {
+	public class ClothingServiceReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
 
 		public ClothingServiceReportViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel)
 		{
 			Title = "Обслуживание одежды";
 			Identifier = "ClothingServiceReport";
 		}
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		
 		private Dictionary<string, object> SetParameters() {

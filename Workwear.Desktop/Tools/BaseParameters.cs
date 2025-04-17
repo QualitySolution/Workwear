@@ -98,6 +98,14 @@ namespace Workwear.Tools
 			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
 			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
 		}
+		
+		/// <summary>
+		/// Дата запрета редактирования документов.
+		/// </summary>
+		public virtual DateTime? EditLockDate {
+			get => Dynamic.EditLockDate(typeof(DateTime?));
+			set => Dynamic[nameof(EditLockDate)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {

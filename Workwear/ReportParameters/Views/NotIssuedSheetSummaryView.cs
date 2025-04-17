@@ -46,8 +46,8 @@ namespace workwear.ReportParameters.Views
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
 			entityDepartment.ViewModel = ViewModel.DepartmentEntry;
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
-			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
-			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 

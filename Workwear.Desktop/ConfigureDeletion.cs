@@ -53,7 +53,7 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
-				.AddDeleteDependence<Return>(x => x.EmployeeCard)
+				.AddDeleteDependence<ReturnItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)

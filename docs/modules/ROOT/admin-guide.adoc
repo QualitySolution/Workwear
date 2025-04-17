@@ -1,0 +1,33 @@
+:title-separator: {sp}|
+= QS: Спецодежда | Руководство системного администратора
+Quality Solution 2025
+версия 2.9
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:!chapter-signifier:
+:toc: left
+:icons: font
+:toc-title: Содержание
+:toclevels: 3
+:imagesdir: images
+
+:leveloffset: 1
+
+include::pages/requirements.adoc[]
+
+include::pages/install.adoc[]
+
+include::pages/cloud.adoc[]
+
+include::pages/users.adoc[]
+
+include::pages/update.adoc[]
+
+include::pages/technical.adoc[]
+
+include::pages/transfer_base.adoc[]
+
+include::pages/problems.adoc[]
+
+:leveloffset: 0

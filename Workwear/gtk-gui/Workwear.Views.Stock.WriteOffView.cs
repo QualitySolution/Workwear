@@ -86,6 +86,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Button buttonAddWorker;
 
+		private global::Gamma.GtkWidgets.yButton buttonAddDutyNorm;
+
 		private global::Gamma.GtkWidgets.yButton buttonDel;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
@@ -527,6 +529,20 @@ namespace Workwear.Views.Stock
 			w45.Expand = false;
 			w45.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.buttonAddDutyNorm = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAddDutyNorm.CanFocus = true;
+			this.buttonAddDutyNorm.Name = "buttonAddDutyNorm";
+			this.buttonAddDutyNorm.UseUnderline = true;
+			this.buttonAddDutyNorm.Label = global::Mono.Unix.Catalog.GetString("С дежурной нормы");
+			global::Gtk.Image w46 = new global::Gtk.Image();
+			w46.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAddDutyNorm.Image = w46;
+			this.hbox8.Add(this.buttonAddDutyNorm);
+			global::Gtk.Box.BoxChild w47 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonAddDutyNorm]));
+			w47.Position = 2;
+			w47.Expand = false;
+			w47.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
@@ -534,26 +550,26 @@ namespace Workwear.Views.Stock
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = "gtk-remove";
 			this.hbox8.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w46 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
-			w46.Position = 2;
-			w46.Expand = false;
-			w46.Fill = false;
+			global::Gtk.Box.BoxChild w48 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
+			w48.Position = 3;
+			w48.Expand = false;
+			w48.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w47 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w47.Position = 3;
+			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w49.Position = 4;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w48 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w48.Position = 2;
-			w48.Expand = false;
-			w48.Fill = false;
+			global::Gtk.Box.BoxChild w50 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w50.Position = 2;
+			w50.Expand = false;
+			w50.Fill = false;
 			this.dialog1_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
-			w49.Position = 2;
+			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
+			w51.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

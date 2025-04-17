@@ -12,6 +12,7 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Analytics;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -19,12 +20,13 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Operations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>
+	public class ProtectionToolsViewModel : EntityDialogViewModelBase<ProtectionTools>, IDialogDocumentation
 	{
 		private readonly IInteractiveService interactiveService;
 		private readonly FeaturesService featuresService;
@@ -51,6 +53,11 @@ namespace Workwear.ViewModels.Regulations
 			Entity.Nomenclatures.CollectionChanged += EntityNomenclaturesChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#protection-tools");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		private IList<EmployeeIssueOperation> usedOperations;
 		private IList<EmployeeIssueOperation> UsedOperations {

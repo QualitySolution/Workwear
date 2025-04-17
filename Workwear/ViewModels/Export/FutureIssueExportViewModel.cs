@@ -14,13 +14,15 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
-using Workwear.ReportParameters.ViewModels;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -29,7 +31,7 @@ using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Export {
 	
-	public class FutureIssueExportViewModel : UowDialogViewModelBase {
+	public class FutureIssueExportViewModel : UowDialogViewModelBase, IDialogDocumentation {
 		public FeaturesService FeaturesService { get; }
 
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -69,11 +71,17 @@ namespace Workwear.ViewModels.Export {
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
 			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("export.html#forecast-of-issues");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
@@ -82,7 +90,7 @@ namespace Workwear.ViewModels.Export {
 		
 		#region Поля и свойства
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;

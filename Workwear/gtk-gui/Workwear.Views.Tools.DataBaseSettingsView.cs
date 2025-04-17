@@ -22,9 +22,9 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.Widgets.yEnumComboBox ComboShirtExpluatacion;
 
-		private global::Gtk.Label label1;
+		private global::QS.Widgets.GtkUI.DatePicker dateEditLock;
 
-		private global::Gtk.Label label2;
+		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label4;
 
@@ -59,6 +59,8 @@ namespace Workwear.Views.Tools
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel7;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel8;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCollectiveIssueWithPersonal;
 
@@ -167,26 +169,35 @@ namespace Workwear.Views.Tools
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.dateEditLock = new global::QS.Widgets.GtkUI.DatePicker();
+			this.dateEditLock.TooltipMarkup = "Устанавливает дату, начиная с которой и ранее редактирование документов и других " +
+				"учетных данных будет запрещено. Используется для закрытия отчетного периода с це" +
+				"лью предотвращения случайных или несанкционированных изменений в уже утвержденны" +
+				"х данных.";
+			this.dateEditLock.Events = ((global::Gdk.EventMask)(256));
+			this.dateEditLock.Name = "dateEditLock";
+			this.dateEditLock.WithTime = false;
+			this.dateEditLock.HideCalendarButton = false;
+			this.dateEditLock.Date = new global::System.DateTime(0);
+			this.dateEditLock.IsEditable = true;
+			this.dateEditLock.AutoSeparation = true;
+			this.dateEditLock.HideButtonClearDate = false;
+			this.table1.Add(this.dateEditLock);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.dateEditLock]));
+			w10.LeftAttach = ((uint)(1));
+			w10.RightAttach = ((uint)(2));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
+			this.label1.TooltipMarkup = @"Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке ""История выдач"" в карточке сотрудника для каждой выдачи.";
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Авто списание с сотрудника:");
 			this.table1.Add(this.label1);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table1.Gtk.Table+TableChild
-			this.label2 = new global::Gtk.Label();
-			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Это значение будет применено только к новым выдачам. На старые выдачи это не повл" +
-					"ияет. Для старых выдач автосписание можно отключить вручную для каждой позиции.");
-			this.label2.Wrap = true;
-			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.label1]));
 			w11.TopAttach = ((uint)(1));
 			w11.BottomAttach = ((uint)(2));
-			w11.LeftAttach = ((uint)(1));
-			w11.RightAttach = ((uint)(2));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -202,6 +213,7 @@ namespace Workwear.Views.Tools
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckAutoWriteoff = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckAutoWriteoff.TooltipMarkup = @"Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке ""История выдач"" в карточке сотрудника для каждой выдачи.";
 			this.ycheckAutoWriteoff.CanFocus = true;
 			this.ycheckAutoWriteoff.Name = "ycheckAutoWriteoff";
 			this.ycheckAutoWriteoff.Label = global::Mono.Unix.Catalog.GetString("Включено");
@@ -209,6 +221,8 @@ namespace Workwear.Views.Tools
 			this.ycheckAutoWriteoff.UseUnderline = true;
 			this.table1.Add(this.ycheckAutoWriteoff);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckAutoWriteoff]));
+			w13.TopAttach = ((uint)(1));
+			w13.BottomAttach = ((uint)(2));
 			w13.LeftAttach = ((uint)(1));
 			w13.RightAttach = ((uint)(2));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -394,21 +408,34 @@ namespace Workwear.Views.Tools
 			w28.XOptions = ((global::Gtk.AttachOptions)(4));
 			w28.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.ylabel8 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel8.TooltipMarkup = "Устанавливает дату, начиная с которой и ранее редактирование документов и других " +
+				"учетных данных будет запрещено. Используется для закрытия отчетного периода с це" +
+				"лью предотвращения случайных или несанкционированных изменений в уже утвержденны" +
+				"х данных.";
+			this.ylabel8.Name = "ylabel8";
+			this.ylabel8.Xalign = 1F;
+			this.ylabel8.LabelProp = global::Mono.Unix.Catalog.GetString("Дата запрета редактирования:");
+			this.table1.Add(this.ylabel8);
+			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel8]));
+			w29.XOptions = ((global::Gtk.AttachOptions)(4));
+			w29.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.ylabelCollectiveIssueWithPersonal = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelCollectiveIssueWithPersonal.Name = "ylabelCollectiveIssueWithPersonal";
 			this.ylabelCollectiveIssueWithPersonal.Xalign = 1F;
 			this.ylabelCollectiveIssueWithPersonal.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллективной:");
 			this.table1.Add(this.ylabelCollectiveIssueWithPersonal);
-			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelCollectiveIssueWithPersonal]));
-			w29.TopAttach = ((uint)(6));
-			w29.BottomAttach = ((uint)(7));
-			w29.XOptions = ((global::Gtk.AttachOptions)(4));
-			w29.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w30 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelCollectiveIssueWithPersonal]));
+			w30.TopAttach = ((uint)(6));
+			w30.BottomAttach = ((uint)(7));
+			w30.XOptions = ((global::Gtk.AttachOptions)(4));
+			w30.YOptions = ((global::Gtk.AttachOptions)(4));
 			w6.Add(this.table1);
 			this.GtkScrolledWindow.Add(w6);
 			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w32.Position = 1;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
+			w33.Position = 1;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

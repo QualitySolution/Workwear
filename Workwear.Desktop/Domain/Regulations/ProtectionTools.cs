@@ -12,7 +12,8 @@ namespace Workwear.Domain.Regulations
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатуры нормы",
 		Nominative = "номенклатура нормы",
-		Genitive = "номенклатуры нормы"
+		Genitive = "номенклатуры нормы",
+		GenitivePlural = "номенклатур нормы"
 		)]
 	[HistoryTrace]
 	public class ProtectionTools : PropertyChangedBase, IDomainObject

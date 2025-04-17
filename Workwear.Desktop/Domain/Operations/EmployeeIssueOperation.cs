@@ -349,7 +349,7 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			Employee = item.Document.EmployeeCard;
+			Employee = item.EmployeeCard;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
 			Height = item.Height;

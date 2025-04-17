@@ -2,12 +2,13 @@
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Tools
 {
-	public class DataBaseSettingsViewModel : UowDialogViewModelBase
+	public class DataBaseSettingsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly BaseParameters baseParameters;
 
@@ -20,6 +21,7 @@ namespace Workwear.ViewModels.Tools
 		{
 			Title = "Настройки учёта";
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			EditLockDate = baseParameters.EditLockDate;
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
@@ -32,8 +34,14 @@ namespace Workwear.ViewModels.Tools
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("settings.html#accounting-settings");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
-		public override bool HasChanges => DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
+		public override bool HasChanges => EditLockDate != baseParameters.EditLockDate
+										   || DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
 		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
@@ -45,6 +53,7 @@ namespace Workwear.ViewModels.Tools
 		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
 
 		#region Parameters
+		public DateTime? EditLockDate { get; set; }
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
@@ -80,6 +89,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInIssueSign = IsDocNumberInIssueSign;
 			if(IsDocNumberInReturnSign!=baseParameters.IsDocNumberInReturnSign)
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
+			if(EditLockDate != baseParameters.EditLockDate)
+				baseParameters.EditLockDate = EditLockDate;
 			return true;
 		}
 	}

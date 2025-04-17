@@ -209,7 +209,6 @@ namespace Workwear.Test.Integration.Stock
 
 				var returnOnStock = new Return() {
 					Warehouse = warehouse,
-					EmployeeCard = employee,
 					Date = new DateTime(2018, 11, 2)
 				};
 				returnOnStock.AddItem(expense.Items.First().EmployeeIssueOperation, 1);

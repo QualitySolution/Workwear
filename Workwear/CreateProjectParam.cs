@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using Autofac;
@@ -29,15 +30,16 @@ using QS.HistoryLog;
 using QS.Journal.GtkUI;
 using QS.Navigation;
 using QS.NewsFeed;
+using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Search;
 using QS.Project.Search.GtkUI;
-using QS.Project.Services.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.FileDialog;
+using QS.Project.Services.GtkUI;
 using QS.Project.Versioning.Product;
 using QS.Project.Versioning;
 using QS.Project.ViewModels;
@@ -64,7 +66,6 @@ using Workwear.Tools;
 using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock.Documents;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -85,6 +86,7 @@ using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Permissions;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
@@ -117,6 +119,11 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
 
 			});
+			
+			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
+			QSMain.ProjectPermission.Add ("can_delete", new UserPermission ("can_delete", "Удаление объектов",
+				"Пользователь может удалять документы и элементы справочников"));
+			QSMain.User.LoadUserInfo();
 
 			#if DEBUG
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
@@ -224,6 +231,8 @@ namespace workwear
 					ServicesConfig.UserService = new UserService(user);
 				}
 			}
+			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
+			builder.RegisterType<PermissionsService>().As<ICurrentPermissionService>().SingleInstance();
 			#endregion
 			
 			#region Сервисы
@@ -356,10 +365,6 @@ namespace workwear
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf().SingleInstance();
 			builder.RegisterModule<FeaturesAutofacModule>();
-			#endregion
-
-			#region Настройка
-			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Работа со считывателями

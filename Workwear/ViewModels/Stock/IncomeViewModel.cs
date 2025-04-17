@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Services;
@@ -14,6 +15,7 @@ using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -25,11 +27,12 @@ using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock {
-	public class IncomeViewModel  : EntityDialogViewModelBase<Income> {
+	public class IncomeViewModel  : PermittingEntityDialogViewModelBase<Income>, IDialogDocumentation {
 		public IncomeViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			ICurrentPermissionService permissionService,
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
@@ -37,11 +40,12 @@ namespace Workwear.ViewModels.Stock {
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -59,11 +63,17 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseEntryViewModel.IsEditable = CanEdit;
 			
 			CalculateTotal();
 		}
 
-		#region Свойства VikewModel
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#stock-income");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
+		#region Свойства ViewModel
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
@@ -77,14 +87,11 @@ namespace Workwear.ViewModels.Stock {
 		
 		#region Проброс свойств документа
 
-		public virtual int DocID => Entity.Id;
-		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
 		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
-		public virtual DateTime DocDate { get => Entity.Date;set => Entity.Date = value;}
-		public virtual IObservableList<IncomeItem> Items => Entity.Items;
 
+		public virtual IObservableList<IncomeItem> Items => Entity.Items;
 		#endregion
 
 		#region Свойства ViewModel
@@ -126,10 +133,10 @@ namespace Workwear.ViewModels.Stock {
 		
 		#region Свойства для View
 
-		public virtual bool SensitiveDocNumber => !AutoDocNumber;
-		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => SelectedItem != null;
-		public virtual bool CanAddSize => SelectedItem != null && (SelectedItem.WearSizeType != null || SelectedItem.HeightType != null);
+		public virtual bool SensitiveDocNumber => !AutoDocNumber && CanEdit;
+		public virtual bool CanAddItem => CanEdit;
+		public virtual bool CanRemoveItem => SelectedItem != null && CanEdit;
+		public virtual bool CanAddSize => SelectedItem != null && (SelectedItem.WearSizeType != null || SelectedItem.HeightType != null) && CanEdit;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public virtual bool ReadInFileVisible  => featuresService.Available(WorkwearFeature.Exchange1C);
