@@ -247,6 +247,7 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount) {
 			document = Return;
+			dutyNorm = issueOperation.DutyNorm;
 			returnFromDutyNormOperation = new DutyNormIssueOperation {
 				DutyNorm = issueOperation.DutyNorm,
 				ProtectionTools = issueOperation.ProtectionTools,
