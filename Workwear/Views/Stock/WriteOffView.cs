@@ -10,7 +10,6 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
-using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock
 {

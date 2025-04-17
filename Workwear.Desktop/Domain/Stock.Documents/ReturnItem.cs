@@ -170,8 +170,6 @@ namespace Workwear.Domain.Stock.Documents {
 					return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
 
 				return String.Empty;
-
-				return String.Empty;
 			}
 		}
 		
