@@ -1242,7 +1242,7 @@
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
-          <TextAlign >Right</TextAlign>
+          <TextAlign>Right</TextAlign>
         </Style>
         <CanGrow>true</CanGrow>
         <Visibility>
@@ -1255,7 +1255,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     nomenclature.name as nomenclature_name,
@@ -1309,7 +1309,7 @@ WHERE stock_return_items.stock_return_id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_name">
           <DataField>nomenclature_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1376,7 +1376,8 @@ FROM stock_return
          LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
          LEFT JOIN departments ON departments.id = employees.department_id
 
-WHERE stock_return.id = @id</CommandText>
+WHERE stock_return.id = @id
+GROUP BY stock_return.id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
