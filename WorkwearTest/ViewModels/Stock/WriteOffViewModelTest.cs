@@ -25,6 +25,7 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
@@ -61,6 +62,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<OrganizationRepository>().AsSelf();
+			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.Register(x => Substitute.For<FeaturesService>()).As<FeaturesService>();
 			builder.Register(x => validator).As<IValidator>();
@@ -71,6 +73,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => Substitute.For<CurrentUserSettings>()).As<CurrentUserSettings>();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+			builder.Register(x => Substitute.For<BaseParameters>()).AsSelf();
 			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
