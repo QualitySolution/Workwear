@@ -79,3 +79,10 @@ alter table shipment
 	modify status enum ('New', 'Present', 'Accepted', 'Ordered', 'Received') default 'New' not null;
 alter table shipment_items
 
+alter table stock_income
+	add shipment_id int unsigned default null null after warehouse_id;
+alter table stock_income
+	add constraint fk_stock_income_shipment
+		foreign key (shipment_id) references shipment (id);
+
+

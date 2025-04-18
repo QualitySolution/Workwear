@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
@@ -52,6 +52,7 @@ namespace workwear.Journal.ViewModels.Supply {
 				)
 				.JoinAlias(()=>shipmentAlias.CreatedbyUser, ()=>authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list
+					.SelectGroup(x => x.Id)
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.StartPeriod).WithAlias(() => resultAlias.StartPeriod)
 					.Select(x => x.EndPeriod).WithAlias(() => resultAlias.EndPeriod)
@@ -59,7 +60,8 @@ namespace workwear.Journal.ViewModels.Supply {
 					.Select(x => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(x => x.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
-				).OrderBy(x => x.StartPeriod).Desc
+				)
+				.OrderBy(x => x.StartPeriod).Desc
 				.TransformUsing(Transformers.AliasToBean<ShipmentJournalNode>());
 		}
 	}

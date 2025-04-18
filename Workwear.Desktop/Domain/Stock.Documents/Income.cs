@@ -9,6 +9,7 @@ using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Supply;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -22,23 +23,6 @@ namespace Workwear.Domain.Stock.Documents
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
-
-		//TODO При переводе диалога на VVMM перенести в VM
-		public virtual bool SensitiveDocNumber => !AutoDocNumber;
-		private bool autoDocNumber = true;
-		[PropertyChangedAlso(nameof(DocNumberText))]
-		[PropertyChangedAlso(nameof(SensitiveDocNumber))]
-		public virtual bool AutoDocNumber {
-			get => autoDocNumber;
-			set => SetField(ref autoDocNumber, value);
-		}
-		public virtual string DocNumberText {
-			get => AutoDocNumber ? (Id != 0 ? Id.ToString() : "авто" ) : DocNumber;
-			set { 
-				if(!AutoDocNumber) 
-					DocNumber = value; 
-			}
-		}
 		
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
@@ -53,6 +37,13 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual string Number {
 			get => number;
 			set { SetField (ref number, value, () => Number); }
+		}
+		
+		private Shipment shipment;
+		[Display(Name = "Поставка")]
+		public virtual Shipment Shipment {
+			get => shipment;
+			set { SetField(ref shipment, value, () => Shipment); }
 		}
 
 		private IObservableList<IncomeItem> items = new ObservableList<IncomeItem>();
