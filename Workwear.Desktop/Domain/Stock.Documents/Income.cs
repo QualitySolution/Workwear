@@ -129,6 +129,14 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IncomeItem FindItem(Nomenclature nomenclature, Size size, Size height, Owner owner) => Items
 			.FirstOrDefault(i => i.Nomenclature.Id == nomenclature.Id
 			                     && i.Height == height && i.WearSize == size && i.Owner == owner);
+
+		public virtual void FillFromShipment(Shipment doc) {
+			foreach(var s in doc.Items) {
+				if(s.Ordered - s.Received > 0)
+					AddItem(s.Nomenclature, s.WearSize, s.Height, s.Ordered - s.Received);
+			}
+		}
+			
 		#endregion
 
 		public virtual void UpdateOperations(IUnitOfWork uow) {

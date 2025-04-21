@@ -59,14 +59,15 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
-			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
-			
-			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
+			var entryEntityBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
+			var entryVmBuilder = new CommonEEVMBuilderFactory<IncomeViewModel>(this, this, UoW, navigation, autofacScope);
+            			
+			WarehouseEntryViewModel = entryEntityBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
-			ShipmentEntryViewModel = entryBuilder.ForProperty(x => x.Shipment)
+			ShipmentEntryViewModel = entryVmBuilder.ForProperty(t => t.Shipment)
 				.UseViewModelJournalAndAutocompleter<ShipmentJournalViewModel>()
 				.UseViewModelDialog<ShipmentViewModel>()
 				.Finish();
@@ -129,8 +130,21 @@ namespace Workwear.ViewModels.Stock {
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
 		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
+
 		[PropertyChangedAlso(nameof(ShipmentLabel))]
-		public virtual Shipment Shipment { get => Entity.Shipment; set => Entity.Shipment = value;}
+		public virtual Shipment Shipment {
+			get => Entity.Shipment;
+			set {
+				if(Entity.Shipment != value &&
+				   (Entity.Items.Count == 0 ||
+				    interactive.Question(
+					    "При привязке поставки текущий документ будет очищен и заполнен заново из документа поставки. Продолжить?"))) {
+					Items.Clear();
+					Entity.FillFromShipment(value);
+					Entity.Shipment = value;
+				}
+			}
+		}
 
 		public virtual IObservableList<IncomeItem> Items => Entity.Items;
 		#endregion
@@ -205,17 +219,6 @@ namespace Workwear.ViewModels.Stock {
 			}
 
 			CalculateTotal();
-		}
-		
-		public void CreateFromShipment() {
-			var selectJournal = NavigationManager
-				.OpenViewModel<ShipmentJournalViewModel> (null, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			selectJournal.ViewModel.OnSelectResult += (s, e) => {
-				UoW.GetById<Shipment>(e.SelectedObjects.Select(x => x.GetId()).First());
-				
-				//.ToList().ForEach(n => Entity.AddItem(n, interactive));
-			};
 		}
 		
 		public void ReadInFile() {

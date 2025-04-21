@@ -33,26 +33,6 @@ namespace Workwear.Domain.Supply{
 			set { nomenclature = value; }
 		}
 		
-		[Display (Name = "Наименование")]
-		public virtual string ItemName {
-			get => nomenclature?.Name; 
-		}
-		
-		[Display(Name = "Тип Роста")]
-		public virtual SizeType HeightType {
-			get => nomenclature?.Type.HeightType;
-		}
-		
-		[Display(Name = "Тип размера одежды")]
-		public virtual SizeType WearSizeType {
-			get => nomenclature?.Type.SizeType;
-		}
-		
-		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units {
-			get => nomenclature?.Type.Units; 
-		}
-		
 		private int requested;
 		[Display (Name = "Количество запрошено")]
 		[PropertyChangedAlso(nameof(TotalRequested))]
@@ -95,7 +75,7 @@ namespace Workwear.Domain.Supply{
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
-			get =>comment;
+			get => comment;
 			set { comment = value; }
 		}
 		
@@ -107,15 +87,41 @@ namespace Workwear.Domain.Supply{
 		}
 		#endregion
 		
-		#region Расчетные
+		#region Расчетные свойства
 
 		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Requested} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal TotalRequested => Cost * Requested;
 		public virtual decimal TotalOrdered => Cost * Ordered;
 		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, 0m,WearSize, Height, Owner);
-
-		public virtual Owner Owner { get; set; }
+			new StockPosition(Nomenclature, 0m,WearSize, Height, null);
+		
+		[Display (Name = "Наименование")]
+		public virtual string ItemName {
+			get => nomenclature?.Name; 
+		}
+		
+		[Display(Name = "Тип Роста")]
+		public virtual SizeType HeightType {
+			get => nomenclature?.Type.HeightType;
+		}
+		
+		[Display(Name = "Тип размера одежды")]
+		public virtual SizeType WearSizeType {
+			get => nomenclature?.Type.SizeType;
+		}
+		
+		[Display(Name = "Единица измерения")]
+		public virtual MeasurementUnits Units {
+			get => nomenclature?.Type.Units; 
+		}
+		
+		private int received;
+		[Display (Name = "Количество поставлено")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Received {
+			get => received;
+			set {received = value; }
+		}	
 
 		#endregion
 

@@ -121,7 +121,5 @@ namespace Workwear.Views.Stock {
 			ViewModel.AddSize(ytreeItems.GetSelectedObject<IncomeItem>());
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<IncomeItem>();
-		protected void OnYbuttonCreateFromShipmentClicked(object sender, EventArgs e) =>
-			ViewModel.CreateFromShipment();
 	}
 }
