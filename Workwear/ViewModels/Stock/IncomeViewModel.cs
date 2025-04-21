@@ -135,6 +135,8 @@ namespace Workwear.ViewModels.Stock {
 		public virtual Shipment Shipment {
 			get => Entity.Shipment;
 			set {
+				if(value == null)
+					Entity.Shipment = value;
 				if(Entity.Shipment != value &&
 				   (Entity.Items.Count == 0 ||
 				    interactive.Question(

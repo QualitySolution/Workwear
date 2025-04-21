@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -119,13 +120,19 @@ namespace Workwear.Domain.Supply{
 		[Display (Name = "Количество поставлено")]
 		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual int Received {
-			get => received;
-			set {received = value; }
+			get => Shipment.Incomes
+				.SelectMany(doc => doc.Items)
+				.Where(i => 
+					DomainHelper.EqualDomainObjects(i.Nomenclature, Nomenclature) &&
+					(i.WearSize == null && WearSize == null || DomainHelper.EqualDomainObjects(i.WearSize, WearSize))  &&
+					(i.Height == null && Height == null || DomainHelper.EqualDomainObjects(i.Height, Height))
+				)
+				.Sum(i => i.Amount);
 		}	
 
 		#endregion
-
-		public ShipmentItem(){ }
+////10.1
+public ShipmentItem(){ }
 
 		public ShipmentItem(Shipment shipment) {
 			this.shipment = shipment;

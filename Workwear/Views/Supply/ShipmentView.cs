@@ -61,6 +61,8 @@ namespace Workwear.Views.Supply {
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
+				.AddColumn("Получено")
+					.AddReadOnlyTextRenderer(e => e.Received.ToString() + ' ' + e.Units?.Name)
 				.AddColumn("Комментарий")
 					.AddTextRenderer(e=>e.Comment)
 					.Editable()

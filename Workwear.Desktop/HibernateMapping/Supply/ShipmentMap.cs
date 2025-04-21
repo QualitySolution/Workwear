@@ -24,7 +24,10 @@ namespace Workwear.HibernateMapping.Supply {
 				.KeyColumn("shipment_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
-
+			HasMany (x => x.Incomes)
+				.Inverse()
+				.KeyColumn ("shipment_id").Not.KeyNullable()
+				.LazyLoad();
 		}
 	}
 }

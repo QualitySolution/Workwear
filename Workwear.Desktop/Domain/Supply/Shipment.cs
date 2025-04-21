@@ -10,6 +10,7 @@ using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Supply {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -21,6 +22,7 @@ namespace Workwear.Domain.Supply {
 	[HistoryTrace]
 	public class Shipment: PropertyChangedBase, IDomainObject, IValidatableObject {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
 		#region Свойства
 
 		public virtual int Id { get; set; }
@@ -59,23 +61,27 @@ namespace Workwear.Domain.Supply {
 			get => creationDate;
 			set {creationDate = value;}
 		}
-		
-		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
-
-		[Display(Name = "Строки документа")]
-		public virtual IObservableList<ShipmentItem> Items {
-			get=>items;
-			set { items = value; }
-		}
 
 		private ShipmentStatus status;
-
 		[Display(Name = "Статус поставки")]
 		public virtual ShipmentStatus Status {
 			get=>status;
 			set{status=value;}
 		}
-
+		
+		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
+		[Display(Name = "Строки документа")]
+		public virtual IObservableList<ShipmentItem> Items {
+			get => items;
+			set { items = value; }
+		}
+		
+		private IObservableList<Income> incomes = new ObservableList<Income>();
+		[Display(Name = "Связанные документы поступления")]
+		public virtual IObservableList<Income> Incomes {
+			get => incomes;
+			set { incomes = value; }
+		}
 		#endregion
 
 		public virtual string Title => $"Планируемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";

@@ -20,6 +20,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 
+
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
 		public ShipmentViewModel(
@@ -38,7 +39,9 @@ namespace Workwear.ViewModels.Supply {
 			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-			
+////10.1
+//TODO реализовать
+//PreloadingDoc();
 			CalculateTotal();
 		}
 
@@ -127,6 +130,9 @@ namespace Workwear.ViewModels.Supply {
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
 			        $"Количество единиц: {Entity.Items.Sum(x => x.Requested)} " +
 			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
+		}
+		
+		private void PreloadingDoc() {
 		}
 
 		#endregion
