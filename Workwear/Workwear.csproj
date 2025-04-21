@@ -510,6 +510,9 @@
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentView.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\DutyNormBalanceFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormBalanceFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Supply\ShipmentJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Supply.ShipmentJournalFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -748,6 +751,8 @@
     <Folder Include="Journal\Filter.Views\Postomats\" />
     <Folder Include="Views\Analytics\" />
     <Folder Include="Views\Supply\" />
+    <Folder Include="Journal\Filter.Views\Supply\" />
+    <Folder Include="Journal\Filter.ViewModels\Supply\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

@@ -79,12 +79,11 @@ namespace Workwear.ViewModels.Supply {
 				return Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
 			}
 		}
-		public virtual string DocTitle => Entity.Title;
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime DocDate { get => Entity.CreationDate;set => Entity.CreationDate = value;}
-		public virtual DateTime StartPeriod { get => Entity.StartPeriod;set=>Entity.StartPeriod = value; }
-		public virtual DateTime EndPeriod {get=>Entity.EndPeriod;set=>Entity.EndPeriod = value;}
-		public virtual string DocComment {get=>Entity.Comment;set=>Entity.Comment = value;}
+		public virtual DateTime DocDate { get => Entity.CreationDate; set => Entity.CreationDate = value; }
+		public virtual DateTime StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
+		public virtual DateTime EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
+		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
 		#endregion

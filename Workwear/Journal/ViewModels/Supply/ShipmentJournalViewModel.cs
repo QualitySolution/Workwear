@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
@@ -12,6 +13,7 @@ using QS.Project.Journal;
 using QS.Project.Services;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Supply;
+using Workwear.Journal.Filter.ViewModels.Supply;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Supply;
@@ -19,11 +21,14 @@ using Workwear.ViewModels.Supply;
 namespace workwear.Journal.ViewModels.Supply {
 	public class ShipmentJournalViewModel: EntityJournalViewModelBase<Shipment, ShipmentViewModel, ShipmentJournalNode>, IDialogDocumentation {
 		public FeaturesService FeaturesService { get; }
+		public ShipmentJournalFilterViewModel Filter { get; }
+		
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#planned-shipment");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Shipment));
 		#endregion
 		public ShipmentJournalViewModel(
+			ILifetimeScope autofacScope,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
@@ -36,6 +41,8 @@ namespace workwear.Journal.ViewModels.Supply {
 			
 			TableSelectionMode = JournalSelectionMode.Multiple;
 			
+			JournalFilter = Filter = autofacScope.Resolve<ShipmentJournalFilterViewModel>(
+				new TypedParameter(typeof(JournalViewModelBase), this));
 		}
 
 		protected override IQueryOver<Shipment> ItemsQuery(IUnitOfWork uow) {
@@ -43,20 +50,26 @@ namespace workwear.Journal.ViewModels.Supply {
 			Shipment shipmentAlias = null;
 			UserBase authorAlias = null;
 
-			var query = uow.Session.QueryOver<Shipment>(() => shipmentAlias);
-			return query
+			var query = uow.Session.QueryOver<Shipment>(() => shipmentAlias)
 				.Where(GetSearchCriterion(
 					() => shipmentAlias.Id, 
 						()=>authorAlias.Name,
 						()=>shipmentAlias.Comment)
 				)
 				.JoinAlias(()=>shipmentAlias.CreatedbyUser, ()=>authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+					() => shipmentAlias.Id,
+					() => authorAlias.Name,
+					() => shipmentAlias.Comment)
+				);
+			
+			return query
+				.JoinAlias(() => shipmentAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id)
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.StartPeriod).WithAlias(() => resultAlias.StartPeriod)
 					.Select(x => x.EndPeriod).WithAlias(() => resultAlias.EndPeriod)
-					.Select(x=>shipmentAlias.Status).WithAlias(() => resultAlias.Status)
+					.Select(x => shipmentAlias.Status).WithAlias(() => resultAlias.Status)
 					.Select(x => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(x => x.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
