@@ -103,6 +103,7 @@ namespace Workwear.Views.Stock {
 		}
 
 		protected void OnYbuttonAddClaimClicked(object sender, EventArgs e) {
+			ViewModel.AddFromClaim();
 		}
 	}
 }

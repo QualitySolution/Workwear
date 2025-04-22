@@ -7,8 +7,10 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Domain.Stock.Documents
@@ -115,6 +117,12 @@ namespace Workwear.Domain.Stock.Documents
 			}
 			var newItem = new ReturnItem(this, issuedOperation, count);
 
+			Items.Add(newItem);
+			return newItem;
+		}
+
+		public virtual ReturnItem AddItem(ServiceClaim claim, int count) {
+			var newItem = new ReturnItem(this, claim, count);
 			Items.Add(newItem);
 			return newItem;
 		}

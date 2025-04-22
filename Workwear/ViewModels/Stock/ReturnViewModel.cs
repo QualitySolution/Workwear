@@ -21,12 +21,14 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -142,6 +144,7 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref total, value);
 		}
 		public DutyNorm DutyNorm { get; }
+		public ServiceClaim ServiceClaim { get; }
 
 		#endregion 
 		
@@ -212,6 +215,39 @@ namespace Workwear.ViewModels.Stock {
 				e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(
 					k => k.Id,
 					v => v.Balance));
+		}
+
+		public void AddFromClaim() {
+			var selectJournal =
+				NavigationManager.OpenViewModel<ClaimsJournalViewModel, ServiceClaim>(
+					this,
+					ServiceClaim,
+					OpenPageOptions.AsSlave
+				);
+			selectJournal.ViewModel.Filter.ShowClosed = false;
+			selectJournal.ViewModel.Filter.SensitiveShowClosed = false;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromNode(
+				e.GetSelectedObjects<ClaimsJournalNode>().ToDictionary(
+					k=>k.Id,
+					v=>v.Balance
+					));
+		}
+
+		public void AddFromNode(Dictionary<int, int> returningOperation) {
+			Barcode barcodeAlias = null;
+			var claims = UoW.Session.QueryOver<ServiceClaim>()
+				.Where(x=>x.Id.IsIn(returningOperation.Select(i=>i.Key).ToList()))
+				.JoinAlias(x=>x.Barcode,  () => barcodeAlias)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, () => barcodeAlias.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => barcodeAlias.Size)
+				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
+				.List();
+			foreach(var claim  in claims) {
+				Entity.AddItem(claim, returningOperation[claim.Id]);
+			}
+			CalculateTotal();
 		}
 
 		/// <param name="returningOperation">Dictionary(operationId,amount)</param>

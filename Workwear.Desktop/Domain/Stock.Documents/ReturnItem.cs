@@ -168,6 +168,8 @@ namespace Workwear.Domain.Stock.Documents {
 					return ReturnFrom.Employee;
 				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null)
 					return ReturnFrom.DutyNorm;
+				if(ServiceClaim != null)
+					return ReturnFrom.Claim;
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
 					"Должна быть заполнена хотя бы одна операция.");
@@ -275,6 +277,14 @@ namespace Workwear.Domain.Stock.Documents {
 			this.amount = amount;
 		}
 
+		public ReturnItem(Return Return, ServiceClaim claim, int amount) {
+			document = Return;
+			this.nomenclature = claim.Barcode.Nomenclature;
+			this.wearSize = claim.Barcode.Size;
+			this.height = claim.Barcode.Height;
+			this.amount = amount;
+		}
+
 		#endregion
 		
 		
@@ -298,6 +308,7 @@ namespace Workwear.Domain.Stock.Documents {
 
 	public enum ReturnFrom {
 		Employee,
-		DutyNorm
+		DutyNorm,
+		Claim
 	}
 }
