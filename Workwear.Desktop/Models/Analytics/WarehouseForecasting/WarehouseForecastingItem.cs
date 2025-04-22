@@ -5,22 +5,21 @@ using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
 
-namespace Workwear.ViewModels.Analytics {
+namespace Workwear.Models.Analytics.WarehouseForecasting {
 	public class WarehouseForecastingItem : PropertyChangedBase {
-		private readonly WarehouseForecastingViewModel model;
+		private readonly IForecastColumnsModel columnsModel;
 		private List<FutureIssue> futureIssues;
 		
 		public WarehouseForecastingItem(
-			WarehouseForecastingViewModel model,
+			IForecastColumnsModel model,
 			(ProtectionTools ProtectionTools, Size Size, Size Height) key,
 			List<FutureIssue> issues,
 			StockBalance[] stocks,
 			ClothesSex sex) {
-			this.model = model ?? throw new ArgumentNullException(nameof(model));
+			this.columnsModel = model ?? throw new ArgumentNullException(nameof(model));
 			ProtectionTool = key.ProtectionTools;
 			Size = key.Size;
 			Height = key.Height;
@@ -49,6 +48,18 @@ namespace Workwear.ViewModels.Analytics {
 		public ProtectionTools ProtectionTool {
 			get => protectionTool;
 			set => SetField(ref protectionTool, value);
+		}
+		
+		private string name;
+		public string Name {
+			get => name;
+			set => SetField(ref name, value);
+		}
+		
+		private string[] suitableNomenclature = {};
+		public string[] SuitableNomenclature {
+			get => suitableNomenclature;
+			set => SetField(ref suitableNomenclature, value);
 		}
 
 		private Size size;
@@ -98,31 +109,32 @@ namespace Workwear.ViewModels.Analytics {
 			set => SetField(ref forecastColours, value);
 		}
 
+		//FIXME возможно временно, потом наверно надо будет удалить.
 		public Nomenclature Nomenclature { get; }
 		
 		#region Рассчеты
 
 		public void FillForecast() {
 			Unissued = 0;
-			Forecast = new int[model.ForecastColumns.Length];
-			ForecastBalance = new int[model.ForecastColumns.Length];
-			ForecastColours = new string[model.ForecastColumns.Length];
+			Forecast = new int[columnsModel.ForecastColumns.Length];
+			ForecastBalance = new int[columnsModel.ForecastColumns.Length];
+			ForecastColours = new string[columnsModel.ForecastColumns.Length];
 			foreach(var issue in futureIssues) {
-				if(issue.DelayIssueDate < model.ForecastColumns[0].StartDate) {
+				if(issue.DelayIssueDate < columnsModel.ForecastColumns[0].StartDate) {
 					Unissued += issue.Amount;
 					continue;
 				}
 
-				for(int i = 0; i < model.ForecastColumns.Length; i++) {
+				for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 					var issueDate = issue.DelayIssueDate ?? issue.OperationDate;
-					if(issueDate >= model.ForecastColumns[i].StartDate && issueDate <= model.ForecastColumns[i].EndDate) {
+					if(issueDate >= columnsModel.ForecastColumns[i].StartDate && issueDate <= columnsModel.ForecastColumns[i].EndDate) {
 						Forecast[i] += issue.Amount;
 						break;
 					}
 				}
 			}
 			//Раскраска
-			for(int i = 0; i < model.ForecastColumns.Length; i++) {
+			for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 				var onStock = InStock - Forecast.Take(i + 1).Sum();
 				ForecastBalance[i] = onStock;
 				if(onStock < 0) {
@@ -140,7 +152,7 @@ namespace Workwear.ViewModels.Analytics {
 		#region Расчетные для отображения
 		public string SizeText => SizeService.SizeTitle(size, height);
 		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
-		public string NomenclaturesText => ProtectionTool.Nomenclatures.Any() ? "Выдаваемые номенклатуры:" + String.Concat(ProtectionTool.Nomenclatures.Select(x => $"\n* {x.Name}")) : null;
+		public string NomenclaturesText => SuitableNomenclature.Any() ? "Подходящие номенклатуры:" + String.Concat(SuitableNomenclature.Select(x => $"\n* {x}")) : null;
 		public string StockText => Stocks.Any() ? "В наличии:" + String.Concat(Stocks.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
 		#endregion
 	}
