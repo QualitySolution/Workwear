@@ -77,6 +77,7 @@ namespace Workwear.Views.Stock {
 					.AddNumericRenderer(i => i.Amount)
 					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(2)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
+				.AddColumn ("Возврат из").AddTextRenderer (e => e.ReturnFromText)
 				.AddColumn("Отметка о износе")
 					.AddTextRenderer(e => e.СommentReturn)
 					.Editable(ViewModel.CanEdit)

@@ -55,7 +55,7 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
+	`state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
 	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
@@ -709,7 +709,9 @@ create table stock_return_items
 			on update cascade
 			on delete restrict,
 	constraint stock_return_items_duty_norm_issue_operation_id_fk
-		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id),
+		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
+			on update cascade
+			on delete restrict
 	constraint stock_return_items_claim_id_fk
 		foreign key (claim_id) references clothing_service_claim(id)
 )
@@ -2493,8 +2495,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9.2');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10');
 
 COMMIT;
 
