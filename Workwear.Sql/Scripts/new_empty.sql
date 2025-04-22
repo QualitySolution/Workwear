@@ -711,7 +711,7 @@ create table stock_return_items
 	constraint stock_return_items_duty_norm_issue_operation_id_fk
 		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
 			on update cascade
-			on delete restrict
+			on delete restrict,
 	constraint stock_return_items_claim_id_fk
 		foreign key (claim_id) references clothing_service_claim(id)
 )
