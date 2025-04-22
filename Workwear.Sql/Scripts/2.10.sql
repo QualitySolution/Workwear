@@ -69,20 +69,6 @@ ALTER TABLE stock_return
 DROP CONSTRAINT stock_return_employees_id_fk;
 ALTER TABLE stock_return
 DROP COLUMN employee_id;    
-     
--- Измененппия в документе поставки
-alter table shipment_items
-	add diff_cause varchar(120) null after height_id
-	add ordered int unsigned not null after quantity;
 
-alter table shipment
-	modify status enum ('New', 'Present', 'Accepted', 'Ordered', 'Received') default 'New' not null;
-alter table shipment_items
-
-alter table stock_income
-	add shipment_id int unsigned default null null after warehouse_id;
-alter table stock_income
-	add constraint fk_stock_income_shipment
-		foreign key (shipment_id) references shipment (id);
 
 

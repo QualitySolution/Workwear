@@ -80,7 +80,6 @@ namespace Workwear.ViewModels.Supply {
 			}
 		}
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime DocDate { get => Entity.CreationDate; set => Entity.CreationDate = value; }
 		public virtual DateTime StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
 		public virtual DateTime EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
@@ -158,6 +157,8 @@ namespace Workwear.ViewModels.Supply {
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
 
+			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
+			
 			if(Entity.Id == 0) 
 				Entity.CreationDate = DateTime.Today;
 			UoWGeneric.Save ();

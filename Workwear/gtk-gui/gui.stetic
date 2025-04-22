@@ -33827,10 +33827,10 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonNotFullReceived">
+              <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonNotFullOrdered">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes">Не показывать полностью поставленные</property>
+                <property name="Label" translatable="yes">Не показывать полностью заказанные</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>

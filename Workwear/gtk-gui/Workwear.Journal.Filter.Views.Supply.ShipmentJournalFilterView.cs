@@ -12,7 +12,7 @@ namespace Workwear.Journal.Filter.Views.Supply
 
 		private global::Gamma.Widgets.yEnumComboBox enumcomboStatus;
 
-		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonNotFullReceived;
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonNotFullOrdered;
 
 		private global::Gamma.GtkWidgets.yButton buttonColorsLegend;
 
@@ -53,14 +53,14 @@ namespace Workwear.Journal.Filter.Views.Supply
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.ycheckbuttonNotFullReceived = new global::Gamma.GtkWidgets.yCheckButton();
-			this.ycheckbuttonNotFullReceived.CanFocus = true;
-			this.ycheckbuttonNotFullReceived.Name = "ycheckbuttonNotFullReceived";
-			this.ycheckbuttonNotFullReceived.Label = global::Mono.Unix.Catalog.GetString("Не показывать полностью поставленные");
-			this.ycheckbuttonNotFullReceived.DrawIndicator = true;
-			this.ycheckbuttonNotFullReceived.UseUnderline = true;
-			this.yhbox1.Add(this.ycheckbuttonNotFullReceived);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonNotFullReceived]));
+			this.ycheckbuttonNotFullOrdered = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonNotFullOrdered.CanFocus = true;
+			this.ycheckbuttonNotFullOrdered.Name = "ycheckbuttonNotFullOrdered";
+			this.ycheckbuttonNotFullOrdered.Label = global::Mono.Unix.Catalog.GetString("Не показывать полностью заказанные");
+			this.ycheckbuttonNotFullOrdered.DrawIndicator = true;
+			this.ycheckbuttonNotFullOrdered.UseUnderline = true;
+			this.yhbox1.Add(this.ycheckbuttonNotFullOrdered);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonNotFullOrdered]));
 			w3.Position = 2;
 			w3.Expand = false;
 			w3.Fill = false;

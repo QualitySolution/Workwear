@@ -30,28 +30,28 @@ namespace Workwear.Domain.Supply {
 		private DateTime startPeriod = DateTime.Today;
 		[Display(Name="Начало периода")]
 		public virtual DateTime StartPeriod {
-			get=> startPeriod;
-			set {startPeriod = value;}
+			get => startPeriod;
+			set { startPeriod = value; }
 		}
 		
 		private DateTime endPeriod = DateTime.Today.AddDays(1);
 		[Display(Name="Окончание периода")]
 		public virtual DateTime EndPeriod {
-			get=> endPeriod;
+			get => endPeriod;
 			set { endPeriod = value; }
 		}
 		
 		private UserBase createdbyUser;
 		[Display(Name = "Документ создал")]
 		public virtual UserBase CreatedbyUser {
-			get =>createdbyUser; 
+			get => createdbyUser; 
 			set { createdbyUser = value; }
 		}
 		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
-			get =>comment;
+			get => comment;
 			set { comment = value; }
 		}
 		
@@ -59,14 +59,21 @@ namespace Workwear.Domain.Supply {
 		[Display(Name = "Дата создания")]
 		public virtual DateTime CreationDate {
 			get => creationDate;
-			set {creationDate = value;}
+			set { creationDate = value; }
 		}
 
 		private ShipmentStatus status;
 		[Display(Name = "Статус поставки")]
 		public virtual ShipmentStatus Status {
-			get=>status;
-			set{status=value;}
+			get => status;
+			set { status=value; }
+		}
+		
+		private bool fullOrdered;
+		[Display(Name = "Заказаны все запрошенные позиции")]
+		public virtual bool FullOrdered {
+			get => fullOrdered;
+			set { fullOrdered = value; }
 		}
 		
 		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();

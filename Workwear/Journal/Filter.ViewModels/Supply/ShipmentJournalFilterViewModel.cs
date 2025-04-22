@@ -18,16 +18,16 @@ namespace Workwear.Journal.Filter.ViewModels.Supply {
 
 		#region Ограничения
 
-		private ShipmentStatus status;
-		public ShipmentStatus Status {
+		private ShipmentStatus? status;
+		public ShipmentStatus? Status {
 			get => status;
 			set => SetField(ref status, value);
 		}
 		
-		private bool notFullReceived;
-		public bool NotFullReceived {
-			get => notFullReceived;
-			set => SetField(ref notFullReceived, value);
+		private bool notFullOrdered;
+		public bool NotFullOrdered {
+			get => notFullOrdered;
+			set => SetField(ref notFullOrdered, value);
 		}
 		
 		#endregion

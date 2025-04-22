@@ -52,16 +52,17 @@ namespace workwear.Journal.ViewModels.Supply {
 
 			var query = uow.Session.QueryOver<Shipment>(() => shipmentAlias)
 				.Where(GetSearchCriterion(
-					() => shipmentAlias.Id, 
-						()=>authorAlias.Name,
-						()=>shipmentAlias.Comment)
-				)
-				.JoinAlias(()=>shipmentAlias.CreatedbyUser, ()=>authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 					() => shipmentAlias.Id,
 					() => authorAlias.Name,
 					() => shipmentAlias.Comment)
 				);
-			
+
+			if(Filter.NotFullOrdered)
+				query.WhereNot(x => x.FullOrdered);
+
+			if(Filter.Status != null) 
+				query.Where(x => x.Status == Filter.Status);
+
 			return query
 				.JoinAlias(() => shipmentAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.SelectList((list) => list

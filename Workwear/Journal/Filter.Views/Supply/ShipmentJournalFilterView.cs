@@ -8,11 +8,11 @@ namespace Workwear.Journal.Filter.Views.Supply {
 		{
 			this.Build();
 			
-			enumcomboStatus.ItemsEnum = typeof(ShipmentStatus);
+			enumcomboStatus.ItemsEnum = typeof(ShipmentStatus); 
 			enumcomboStatus.Binding
-				.AddBinding(ViewModel, v => v.Status, w => w.SelectedItem).InitializeFromSource();
-			ycheckbuttonNotFullReceived.Binding
-				.AddBinding(ViewModel, vm => vm.NotFullReceived, w => w.Active).InitializeFromSource();
+				.AddBinding(ViewModel, v => v.Status, w => w.SelectedItemOrNull).InitializeFromSource();
+			ycheckbuttonNotFullOrdered.Binding
+				.AddBinding(ViewModel, vm => vm.NotFullOrdered, w => w.Active).InitializeFromSource();
 		}
 	}
 }
