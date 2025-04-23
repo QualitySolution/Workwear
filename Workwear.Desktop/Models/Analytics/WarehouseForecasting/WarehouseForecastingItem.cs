@@ -24,6 +24,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			Size = key.Size;
 			Height = key.Height;
 			Sex = sex;
+			Name = key.ProtectionTools.Name;
 			futureIssues = issues;
 			Stocks = stocks
 				.Where(x => x.Position.Nomenclature.Sex == Sex || x.Position.Nomenclature.Sex == ClothesSex.Universal)
@@ -42,8 +43,19 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 					?? ProtectionTool.Nomenclatures.FirstOrDefault();
 			FillForecast();
 		}
+
+		public WarehouseForecastingItem(IForecastColumnsModel model) {
+			this.columnsModel = model ?? throw new ArgumentNullException(nameof(model));
+			futureIssues = new List<FutureIssue>();
+		}
+		
+		public void AddFutureIssue(IEnumerable<FutureIssue> issues) {
+			futureIssues.AddRange(issues);
+		}
 		
 		#region Группировка
+		public Nomenclature Nomenclature { get; set; }
+		
 		private ProtectionTools protectionTool;
 		public ProtectionTools ProtectionTool {
 			get => protectionTool;
@@ -109,9 +121,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			set => SetField(ref forecastColours, value);
 		}
 
-		//FIXME возможно временно, потом наверно надо будет удалить.
-		public Nomenclature Nomenclature { get; }
-		
+		public bool SupplyNomenclatureNotSet;
 		#region Рассчеты
 
 		public void FillForecast() {
@@ -150,9 +160,20 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		#endregion
 
 		#region Расчетные для отображения
+		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
 		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
-		public string NomenclaturesText => SuitableNomenclature.Any() ? "Подходящие номенклатуры:" + String.Concat(SuitableNomenclature.Select(x => $"\n* {x}")) : null;
+		public string NomenclaturesText {
+			get {
+				string text = "";
+				if(SupplyNomenclatureNotSet)
+					text += "Номенклатура для закупки не установлена! В прогнозе используется номенклатура нормы.\n";
+				if (SuitableNomenclature.Any())
+					text += "Подходящие номенклатуры:" + String.Concat(SuitableNomenclature.Select(x => $"\n* {x}"));
+				return String.IsNullOrEmpty(text) ? null : text.Trim();
+			}
+		}
+
 		public string StockText => Stocks.Any() ? "В наличии:" + String.Concat(Stocks.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
 		#endregion
 	}

@@ -246,7 +246,7 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressTotal.Add(text: "Формируем прогноз");
 			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);
 			ProgressLocal.Add(text: "Сортировка");
-			InternalItems = result.OrderBy(x => x.ProtectionTool.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
+			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
 			ProgressLocal.Close();
 			ProgressTotal.Close();
