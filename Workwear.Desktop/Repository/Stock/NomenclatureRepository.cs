@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Stock;
 using NHibernate.Criterion;

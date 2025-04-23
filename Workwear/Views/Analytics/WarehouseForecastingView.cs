@@ -53,6 +53,8 @@ namespace Workwear.Views.Analytics {
 				.AddBinding(v => v.PriceType, w => w.SelectedItem)
 				.AddBinding(v => v.SensitiveSettings, w => w.Sensitive)
 				.InitializeFromSource();
+
+			choiceNomenclature.Binding.AddBinding(ViewModel, v => v.ChoiceGoodsViewModel, w => w.ViewModel).InitializeFromSource();
 		}
 
 		private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {

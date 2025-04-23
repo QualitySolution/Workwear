@@ -12,6 +12,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Services.FileDialog;
 using QS.Services;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
@@ -79,6 +80,28 @@ namespace Workwear.ViewModels.Analytics {
 		
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntry;
 
+		#region Выбор номенклатур
+
+		private ChoiceListViewModel<ProtectionTools> choiceProtectionToolsViewModel;
+		private ChoiceListViewModel<Nomenclature> choiceNomenclatureViewModel;
+		public IChoiceListViewModel ChoiceGoodsViewModel {
+			get {
+				switch(NomenclatureType) {
+					case ForecastingNomenclatureType.Nomenclature:
+						if(choiceNomenclatureViewModel == null)
+							choiceNomenclatureViewModel =
+								new ChoiceListViewModel<Nomenclature>(nomenclatureRepository.GetActiveNomenclatures());
+						return choiceNomenclatureViewModel;
+					case ForecastingNomenclatureType.ProtectionTools:
+						if(choiceProtectionToolsViewModel == null)
+							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(UoW.GetAll<ProtectionTools>().ToList());
+						return choiceProtectionToolsViewModel;
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+		#endregion
 		private Warehouse warehouse;
 		public Warehouse Warehouse {
 			get => warehouse;
@@ -157,11 +180,15 @@ namespace Workwear.ViewModels.Analytics {
 		}
 		
 		private ForecastingNomenclatureType nomenclatureType = ForecastingNomenclatureType.Nomenclature;
+		[PropertyChangedAlso(nameof(ChoiceGoodsViewModel))]
 		public ForecastingNomenclatureType NomenclatureType {
 			get => nomenclatureType;
-			set => SetField(ref nomenclatureType, value);
+			set { 
+				if(SetField(ref nomenclatureType, value))
+					MakeForecast();
+			}
 		}
-		
+
 		private ForecastingPriceType priceType = ForecastingPriceType.AssessedCost;
 		public ForecastingPriceType PriceType {
 			get => priceType;
@@ -184,7 +211,10 @@ namespace Workwear.ViewModels.Analytics {
 					case ForecastingNomenclatureType.ProtectionTools:
 						return autofacScope.Resolve<ProtectionToolsForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
 					case ForecastingNomenclatureType.Nomenclature:
-						return autofacScope.Resolve<NomenclatureForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
+						var model = autofacScope.Resolve<NomenclatureForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
+						model.RestrictNomenclatures =
+							choiceNomenclatureViewModel.AllSelected ? null : choiceNomenclatureViewModel.SelectedEntities;
+						return model;
 					default:
 						throw new NotImplementedException();
 				}
@@ -241,7 +271,7 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressTotal.Add(text: "Получение складских остатков");
 			var nomenclatures = NomenclatureType == ForecastingNomenclatureType.ProtectionTools 
 				? issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray()
-				: nomenclatureRepository.GetActiveNomenclatures().ToArray();
+				: choiceNomenclatureViewModel.SelectedEntities.ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
 			ProgressTotal.Add(text: "Формируем прогноз");
 			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);

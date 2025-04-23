@@ -12,6 +12,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 	public class NomenclatureForecastingModel : IForecastingModel {
 		private readonly StockBalanceModel stockBalance;
 		private readonly IForecastColumnsModel columnsModel;
+		public IEnumerable<Nomenclature> RestrictNomenclatures { get; set; }
 
 		public NomenclatureForecastingModel(StockBalanceModel stockBalance, IForecastColumnsModel columnsModel) {
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
@@ -23,7 +24,9 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			var groupsByProtectionTools = futureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
 			var result = new List<WarehouseForecastingItem>();
 			progress.Add(text: "Группировка складских запасов");
-			var groupsByNomenclature = stockBalance.Balances.GroupBy(x => (x.Position.Nomenclature, x.Position.WearSize, x.Position.Height)).ToList();
+			var groupsByNomenclature = stockBalance.Balances
+				.Where(x => RestrictNomenclatures == null || RestrictNomenclatures.Contains(x.Position.Nomenclature))
+				.GroupBy(x => (x.Position.Nomenclature, x.Position.WearSize, x.Position.Height)).ToList();
 			foreach(var nomenclatureGroup in groupsByNomenclature) {
 				result.Add(new WarehouseForecastingItem(columnsModel) {
 					Nomenclature = nomenclatureGroup.Key.Nomenclature,
@@ -72,7 +75,9 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			return result;
 		}
 
-		private WarehouseForecastingItem AddForecastingItem(List<WarehouseForecastingItem> list, Nomenclature nomenclature, Size size, Size height, IEnumerable<FutureIssue> futureIssues) {
+		private void AddForecastingItem(List<WarehouseForecastingItem> list, Nomenclature nomenclature, Size size, Size height, IEnumerable<FutureIssue> futureIssues) {
+			if(RestrictNomenclatures != null && !RestrictNomenclatures.Contains(nomenclature))
+				return;
 			var item = list.FirstOrDefault(x => x.Nomenclature == nomenclature && x.Size == size && x.Height == height);
 			if(item == null) {
 				item = new WarehouseForecastingItem(columnsModel) {
@@ -87,11 +92,12 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				list.Add(item);
 			}
 			item.AddFutureIssue(futureIssues);
-			return item;
 		}
 		
-		private WarehouseForecastingItem AddForecastingItem(List<WarehouseForecastingItem> list, ProtectionTools protectionTools, Size size, Size height, IEnumerable<FutureIssue> futureIssues, ClothesSex sex) {
-			
+		private void AddForecastingItem(List<WarehouseForecastingItem> list, ProtectionTools protectionTools, Size size, Size height,
+			IEnumerable<FutureIssue> futureIssues, ClothesSex sex) {
+			if(RestrictNomenclatures != null)
+				return;
 			var item = new WarehouseForecastingItem(columnsModel) {
 				ProtectionTool = protectionTools,
 				Size = size,
@@ -104,8 +110,6 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			};
 			list.Add(item);
 			item.AddFutureIssue(futureIssues);
-			
-			return item;
 		}
 	}
 }
