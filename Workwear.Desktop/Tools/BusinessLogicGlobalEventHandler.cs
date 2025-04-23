@@ -3,9 +3,11 @@ using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Tools
@@ -24,6 +26,9 @@ namespace Workwear.Tools
 
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeIssueOperation)
 				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteReturnServiceClaim)
+				.IfEntity<Return>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
 		}
 
@@ -66,6 +71,34 @@ namespace Workwear.Tools
 
 					uow.Commit();
 				}
+			}
+		}
+
+		private static void HandleDeleteReturnServiceClaim(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents) {
+			using(var scope = LifetimeScope.BeginLifetimeScope()) {
+				var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления возврата с обслуживания одежды")) {
+					var deletedReturnClaims = changeEvents
+						.Select(x => x.Entity as Return)
+						.Where(x => x != null && x.Items.Any(item => item.ReturnFrom == ReturnFrom.Claim))
+						.ToList();
+					if(!deletedReturnClaims.Any())
+						return;
+
+					foreach(var returnDoc in deletedReturnClaims) {
+						foreach(var item in returnDoc.Items.Where(i => i.ReturnFrom == ReturnFrom.Claim)) {
+							var serviceClaim = uow.GetById<ServiceClaim>(item.ServiceClaim.Id);
+							if(serviceClaim == null)
+								continue;
+
+							serviceClaim.IsClosed = false;
+							serviceClaim.ChangeState(ClaimState.WaitService);
+							uow.Save(serviceClaim);
+						}
+					}
+					uow.Commit();
+				}
+
 			}
 		}
 	}
