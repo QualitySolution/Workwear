@@ -245,7 +245,7 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
 				.List();
 			foreach(var claim  in claims) {
-				Entity.AddItem(claim, returningOperation[claim.Id]);
+				Entity.AddItem(claim, 1);
 			}
 			CalculateTotal();
 		}
