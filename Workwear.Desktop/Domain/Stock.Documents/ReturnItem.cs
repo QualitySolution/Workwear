@@ -164,11 +164,11 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual ReturnFrom ReturnFrom {
 			get {
-				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null)
+				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null && ServiceClaim == null)
 					return ReturnFrom.Employee;
-				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null)
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null && ServiceClaim == null)
 					return ReturnFrom.DutyNorm;
-				if(ServiceClaim != null)
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation == null && ServiceClaim != null)
 					return ReturnFrom.Claim;
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
@@ -181,7 +181,9 @@ namespace Workwear.Domain.Stock.Documents {
 					return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
 				if(IssuedDutyNormOnOperation != null)
 					return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
-
+				if(ServiceClaim != null) {
+					return $"Заявка на обслуживание №{ServiceClaim.Id}";
+				}
 				return String.Empty;
 			}
 		}
@@ -199,7 +201,10 @@ namespace Workwear.Domain.Stock.Documents {
 					return IssuedEmployeeOnOperation.WearPercent;
 				if(IssuedDutyNormOnOperation != null)
 					return IssuedDutyNormOnOperation.WearPercent;
-
+				if(ServiceClaim!=null) {
+					return 0;
+					//TODO реализовать при возврате с подменки
+				}
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
 					"Должна быть заполнена хотя бы одна операция.");
@@ -209,6 +214,9 @@ namespace Workwear.Domain.Stock.Documents {
 					IssuedEmployeeOnOperation.WearPercent = value;
 				if(IssuedDutyNormOnOperation!=null)
 					IssuedDutyNormOnOperation.WearPercent = value;
+				if(ServiceClaim != null) {
+					//TODO реализовать при возврате с подменки
+				}
 			}
 		}
 		
@@ -280,6 +288,7 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public ReturnItem(Return Return, ServiceClaim claim, int amount) {
 			document = Return;
+			serviceClaim = claim;
 			this.nomenclature = claim.Barcode.Nomenclature;
 			this.wearSize = claim.Barcode.Size;
 			this.height = claim.Barcode.Height;
@@ -299,6 +308,9 @@ namespace Workwear.Domain.Stock.Documents {
 					break;
 				case ReturnFrom.DutyNorm:
 					ReturnFromDutyNormOperation.Update(uow,this);
+					break;
+				case ReturnFrom.Claim:
+					ServiceClaim.Update(uow,this);
 					break;
 				default:
 					throw new NotImplementedException();

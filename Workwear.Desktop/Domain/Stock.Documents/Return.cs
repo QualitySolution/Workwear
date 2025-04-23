@@ -86,6 +86,12 @@ namespace Workwear.Domain.Stock.Documents
 								$" \"{item.ItemName}\" указано количество больше выданного по дежурной норме.",
 								new[] { nameof(Items) });
 						break;
+					case ReturnFrom.Claim:
+						if(item.Amount > 1)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше принятого в обслуживание (более 1 шт.).",
+								new[] { nameof(Items) });
+						break;
 				}
 			}
 		}

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
@@ -91,6 +93,18 @@ namespace Workwear.Domain.ClothingService {
 		
 		#region Вычисляемые
 		public virtual string Title => $"Заявка на обслуживание №{Id}";
+
+		#endregion
+
+		#region Методы
+
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
+			Barcode.Nomenclature = item.Nomenclature;
+			Barcode.Size = item.WearSize;
+			Barcode.Height = item.Height;
+			ChangeState(ClaimState.Returned);
+			IsClosed = true;
+		}
 
 		#endregion
 	}
