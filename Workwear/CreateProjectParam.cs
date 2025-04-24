@@ -123,6 +123,8 @@ namespace workwear
 			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
 			QSMain.ProjectPermission.Add ("can_delete", new UserPermission ("can_delete", "Удаление объектов",
 				"Пользователь может удалять документы и элементы справочников"));
+			QSMain.ProjectPermission.Add ("can_accounting_settings", new UserPermission ("can_accounting_settings", "Изменение настроек учета",
+				"Пользователь может изменять настройки учета"));
 			QSMain.User.LoadUserInfo();
 
 			#if DEBUG

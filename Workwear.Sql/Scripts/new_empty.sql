@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `description` TEXT NULL DEFAULT NULL,
   `admin` TINYINT(1) NOT NULL DEFAULT FALSE,
   `can_delete` TINYINT(1) NOT NULL DEFAULT TRUE,
+  `can_accounting_settings` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -2491,7 +2492,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.1');
 
 COMMIT;
 

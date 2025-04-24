@@ -22,7 +22,7 @@ namespace Workwear.Tools.Permissions {
 		}
 
 		public bool ValidatePresetPermission(string permissionName) {
-			throw new NotImplementedException();
+			return QSMain.User.Permissions[permissionName];
 		}
 	}
 }
