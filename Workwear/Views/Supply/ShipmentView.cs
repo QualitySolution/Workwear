@@ -50,25 +50,28 @@ namespace Workwear.Views.Supply {
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditRequested ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
+				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Заказано")
 					.AddNumericRenderer(e => e.Ordered)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditOrdered ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Стоимость")
 					.AddNumericRenderer(e => e.Cost)
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
+                .AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
+                    .AddTextRenderer(e=>e.DiffСause)
+                    .Editable()
+				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Получено")
 					.AddReadOnlyTextRenderer(e => e.Received.ToString() + ' ' + e.Units?.Name)
 				.AddColumn("Комментарий")
 					.AddTextRenderer(e=>e.Comment)
 					.Editable()
-				.AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
-					.AddTextRenderer(e=>e.DiffСause)
-					.Editable()
+
 				.Finish();
 			
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;

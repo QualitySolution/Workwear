@@ -3,6 +3,8 @@
 namespace Workwear.Domain.Supply {
 	public enum ShipmentStatus {
 		[Display(Name="Черновик")]
+		Draft,
+		[Display(Name="Новая")]
 		New,
 		[Display(Name = "Передано в закупку")]
 		Present,

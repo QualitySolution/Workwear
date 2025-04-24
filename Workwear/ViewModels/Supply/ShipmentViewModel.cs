@@ -91,7 +91,9 @@ namespace Workwear.ViewModels.Supply {
 
 		public virtual bool CanAddItem => true;
 		public virtual bool CanRemoveItem => SelectedItem != null;
-		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New;
+		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
+		public virtual bool CarEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
+		public virtual bool CarEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();

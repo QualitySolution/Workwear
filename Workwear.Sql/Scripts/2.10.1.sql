@@ -4,7 +4,7 @@ alter table shipment_items
 	add ordered int unsigned not null after quantity;
 
 alter table shipment
-	modify status enum ('New', 'Present', 'Accepted', 'Ordered', 'Received') default 'New' not null,
+	modify status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
 	add full_ordered boolean default false not null after status;
 
 UPDATE shipment SET full_ordered =

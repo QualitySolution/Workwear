@@ -112,6 +112,7 @@ namespace Workwear.Views.Supply
 			this.ytable3.ColumnSpacing = ((uint)(6));
 			// Container child ytable3.Gtk.Table+TableChild
 			this.datePeriod = new global::QS.Widgets.GtkUI.DateRangePicker();
+			this.datePeriod.HeightRequest = 0;
 			this.datePeriod.Events = ((global::Gdk.EventMask)(256));
 			this.datePeriod.Name = "datePeriod";
 			this.datePeriod.StartDate = new global::System.DateTime(0);
