@@ -1,11 +1,13 @@
 ﻿-- Реализация оступления из поставки и поставки из прогноза
 alter table shipment_items
 	add diff_cause varchar(120) null after height_id,
-	add ordered int unsigned not null after quantity;
+	add ordered int unsigned not null after quantity,
+	add received int unsigned not null after ordered;
 
 alter table shipment
 	modify status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
-	add full_ordered boolean default false not null after status;
+	add full_ordered boolean default false not null after status,
+	add full_received boolean default false not null after full_ordered;
 
 UPDATE shipment SET full_ordered =
 	(SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -48,6 +47,14 @@ namespace Workwear.Domain.Supply{
 		public virtual int Ordered {
 			get => ordered;
 			set {ordered = value; }
+		}
+		
+		private int received;
+		[Display (Name = "Количество поставлено")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Received {
+			get => received;
+            set {received = value; }
 		}
 
 		private decimal cost;
@@ -115,20 +122,6 @@ namespace Workwear.Domain.Supply{
 		public virtual MeasurementUnits Units {
 			get => nomenclature?.Type.Units; 
 		}
-		
-		private int received;
-		[Display (Name = "Количество поставлено")]
-		[PropertyChangedAlso(nameof(TotalRequested))]
-		public virtual int Received {
-			get => Shipment.Incomes
-				.SelectMany(doc => doc.Items)
-				.Where(i => 
-					DomainHelper.EqualDomainObjects(i.Nomenclature, Nomenclature) &&
-					(i.WearSize == null && WearSize == null || DomainHelper.EqualDomainObjects(i.WearSize, WearSize))  &&
-					(i.Height == null && Height == null || DomainHelper.EqualDomainObjects(i.Height, Height))
-				)
-				.Sum(i => i.Amount);
-		}	
 
 		#endregion
 ////10.1

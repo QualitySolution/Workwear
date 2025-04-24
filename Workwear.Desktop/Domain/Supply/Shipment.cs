@@ -76,6 +76,13 @@ namespace Workwear.Domain.Supply {
 			set { fullOrdered = value; }
 		}
 		
+		private bool fullReceived;
+		[Display(Name = "Поставлены все заказанные позиции")]
+		public virtual bool FullReceived {
+			get => fullReceived;
+			set { fullReceived = value; }
+		}
+		
 		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
 		[Display(Name = "Строки документа")]
 		public virtual IObservableList<ShipmentItem> Items {

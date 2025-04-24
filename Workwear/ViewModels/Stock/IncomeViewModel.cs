@@ -22,6 +22,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Supply;
+using Workwear.Models.Supply;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -40,6 +41,7 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
 			BaseParameters baseParameters,
+			ShipmentCalculateModel shipmentCalculateModel,
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
@@ -48,6 +50,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.shipmentCalculateModel = shipmentCalculateModel ?? throw new ArgumentNullException(nameof(shipmentCalculateModel));
 			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0)
@@ -86,6 +89,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private readonly ShipmentCalculateModel shipmentCalculateModel;
 		
 		private string total;
 		public string Total {
@@ -261,6 +265,10 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateOperations(UoW);
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			
+			if(Entity.Shipment != null)
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id);
+			
 			UoWGeneric.Save ();
 
 			logger.Info ("Документ сохранён.");

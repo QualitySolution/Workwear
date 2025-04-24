@@ -77,6 +77,7 @@ using Workwear.Models.Import.Norms;
 using Workwear.Models.Operations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
+using Workwear.Models.Supply;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
@@ -332,6 +333,7 @@ namespace workwear
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<ShipmentCalculateModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 
 			#region Repository
