@@ -1,4 +1,4 @@
-﻿using QS.Views.Dialog;
+using QS.Views.Dialog;
 using Workwear.Tools;
 using Workwear.ViewModels.Tools;
 
@@ -8,7 +8,11 @@ namespace Workwear.Views.Tools {
 		public DataBaseSettingsView(DataBaseSettingsViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			dateEditLock.Binding.AddBinding(ViewModel, v => v.EditLockDate, w => w.DateOrNull).InitializeFromSource();
+			labelEditLockDate.Binding.AddBinding(ViewModel, v => v.EditLockDateVisible, w => w.Visible).InitializeFromSource();
+			dateEditLock.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.EditLockDate, w => w.DateOrNull)
+				.AddBinding(v => v.EditLockDateVisible, w => w.Visible)
+				.InitializeFromSource();
 			ylabelCollectiveIssueWithPersonal.Visible = ycheckCollectiveIssueWithPersonal.Visible = viewModel.CollectiveIssueWithPersonalVisible;
 			ycheckAutoWriteoff.Binding.AddBinding(ViewModel, v => v.DefaultAutoWriteoff, w => w.Active).InitializeFromSource();
 			checkCheckBalances.Binding.AddBinding(ViewModel, v => v.CheckBalances, w => w.Active).InitializeFromSource();

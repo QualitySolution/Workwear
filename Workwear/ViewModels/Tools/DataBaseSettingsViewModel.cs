@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
@@ -14,7 +14,7 @@ namespace Workwear.ViewModels.Tools
 
 		#region Ограниения версии
 		public bool CollectiveIssueWithPersonalVisible = true;
-
+		public bool EditLockDateVisible { get; }
 		#endregion
 		
 		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters, FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
@@ -22,6 +22,7 @@ namespace Workwear.ViewModels.Tools
 			Title = "Настройки учёта";
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			EditLockDate = baseParameters.EditLockDate;
+			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;

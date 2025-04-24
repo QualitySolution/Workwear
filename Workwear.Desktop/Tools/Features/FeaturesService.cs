@@ -214,15 +214,16 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
+				case WorkwearFeature.DutyNorms:
+				case WorkwearFeature.EditLockDate:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ReportIssued:
 				case WorkwearFeature.ReportOrder:
 				case WorkwearFeature.ReportStock:
+				case WorkwearFeature.ReportWearCard:
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
-				case WorkwearFeature.DutyNorms:
-				case WorkwearFeature.ReportWearCard:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -250,16 +251,18 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Журнал ведомостей")]
 		StatementJournal,
 		#endregion
-		[Display(Name = "Дежурные нормы")]
-		DutyNorms,
-		[Display(Name = "Отпуска")]
-		Vacation,
-		[Display(Name = "Загрузка из Excel")]
-		LoadExcel,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
 		[Display(Name = "Пользовательские размеры")]
 		CustomSizes,
+		[Display(Name = "Дежурные нормы")]
+		DutyNorms,
+		[Display(Name = "Дата запрета редактирования")]
+		EditLockDate,
+		[Display(Name = "Загрузка из Excel")]
+		LoadExcel,
+		[Display(Name = "Отпуска")]
+		Vacation,
 		#region Отчеты
 		[Display(Name = "Отчет Складская ведомость")]
 		ReportStock,
