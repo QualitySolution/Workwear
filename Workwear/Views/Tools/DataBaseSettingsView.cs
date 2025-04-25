@@ -8,20 +8,64 @@ namespace Workwear.Views.Tools {
 		public DataBaseSettingsView(DataBaseSettingsViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
-			dateEditLock.Binding.AddBinding(ViewModel, v => v.EditLockDate, w => w.DateOrNull).InitializeFromSource();
+			labelEditLockDate.Binding.AddBinding(ViewModel, v => v.EditLockDateVisible, w => w.Visible).InitializeFromSource();
+			dateEditLock.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.EditLockDate, w => w.DateOrNull)
+				.AddBinding(v => v.CanEdit, w => w.IsEditable)
+				.AddBinding(v => v.EditLockDateVisible, w => w.Visible)
+				.InitializeFromSource();
 			ylabelCollectiveIssueWithPersonal.Visible = ycheckCollectiveIssueWithPersonal.Visible = viewModel.CollectiveIssueWithPersonalVisible;
-			ycheckAutoWriteoff.Binding.AddBinding(ViewModel, v => v.DefaultAutoWriteoff, w => w.Active).InitializeFromSource();
-			checkCheckBalances.Binding.AddBinding(ViewModel, v => v.CheckBalances, w => w.Active).InitializeFromSource();
-			spbutAheadOfShedule.Binding.AddBinding(ViewModel, v => v.ColDayAheadOfShedule, w => w.ValueAsInt).InitializeFromSource();
-			ycheckCollectiveIssueWithPersonal.Binding.AddBinding(ViewModel, v => v.CollectiveIssueWithPersonal, w => w.Active).InitializeFromSource();
-			ycheckCollapseDuplicateIssuanceSheet.Binding.AddBinding( ViewModel, v => v.CollapseDuplicateIssuanceSheet, w => w.Active).InitializeFromSource();
-			ComboShirtExpluatacion.ItemsEnum = typeof(AnswerOptions);
-			ComboShirtExpluatacion.Binding.AddBinding(ViewModel , v=> v.ShiftExpluatacion, w=>w.SelectedItem).InitializeFromSource();
-			ComboExtendPeriod.ItemsEnum = typeof(AnswerOptions);
-			ComboExtendPeriod.Binding.AddBinding(ViewModel, v => v.ExtendPeriod, w => w.SelectedItem).InitializeFromSource();
-			yentryCurrency.Binding.AddBinding(ViewModel, v => v.UsedCurrency, w => w.Text).InitializeFromSource();
-			ycheckbuttonIssue.Binding.AddBinding(ViewModel, v=>v.IsDocNumberInIssueSign,w=>w.Active).InitializeFromSource();
-			ycheckbuttonReturn.Binding.AddBinding(ViewModel, v=>v.IsDocNumberInReturnSign, w=>w.Active).InitializeFromSource();
+			ycheckAutoWriteoff.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.DefaultAutoWriteoff, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+			checkCheckBalances.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.CheckBalances, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    spbutAheadOfShedule.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ColDayAheadOfShedule, w => w.ValueAsInt)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ycheckCollectiveIssueWithPersonal.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.CollectiveIssueWithPersonal, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ycheckCollapseDuplicateIssuanceSheet.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.CollapseDuplicateIssuanceSheet, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ComboShirtExpluatacion.ItemsEnum = typeof(AnswerOptions);
+		    ComboShirtExpluatacion.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ShiftExpluatacion, w => w.SelectedItem)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ComboExtendPeriod.ItemsEnum = typeof(AnswerOptions);
+		    ComboExtendPeriod.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ExtendPeriod, w => w.SelectedItem)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    yentryCurrency.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.UsedCurrency, w => w.Text)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ycheckbuttonIssue.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.IsDocNumberInIssueSign, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		   
+		    ycheckbuttonReturn.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.IsDocNumberInReturnSign, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
 			CommonButtonSubscription();
 		}
 	}
