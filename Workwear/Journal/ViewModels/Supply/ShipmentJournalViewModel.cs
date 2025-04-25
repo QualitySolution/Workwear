@@ -82,11 +82,11 @@ namespace workwear.Journal.ViewModels.Supply {
 				.OrderBy(x => x.StartPeriod).Desc
 				.TransformUsing(Transformers.AliasToBean<ShipmentJournalNode>());
 		}
-		public readonly string ColorsLegendText = 
+		public static string ColorsLegendText = 
 			"<span color='black'>●</span> — пока всё по плану\n" +
 			"<span color='green'>●</span> —  в текущем статусе всё выполнео\n" +
 			"<span color='yellow'>●</span> — заказано частично\n" +
-			"<span color='orange'>●</span> — поставлено частично</span> — \n" +
+			"<span color='orange'>●</span> — поставлено частично\n" +
 			"<span color='blue'>●</span> — заявка уже 3 дня как передана в закупку\n"+
 			"<span color='red'>●</span> — в срок поставки не было поступлений\n";
 	}

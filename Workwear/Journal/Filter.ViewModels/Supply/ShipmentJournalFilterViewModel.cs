@@ -32,9 +32,6 @@ namespace Workwear.Journal.Filter.ViewModels.Supply {
 			get => notFullOrdered;
 			set => SetField(ref notFullOrdered, value);
 		}
-
-		public string ColorsLegendText => journalViewModel.ColorsLegendText;
-
 		#endregion
 	}
 }

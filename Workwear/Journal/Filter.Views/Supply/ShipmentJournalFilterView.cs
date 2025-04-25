@@ -2,6 +2,7 @@
 using QS.Views;
 using Workwear.Domain.Supply;
 using Workwear.Journal.Filter.ViewModels.Supply;
+using workwear.Journal.ViewModels.Supply;
 
 namespace Workwear.Journal.Filter.Views.Supply {
 	public partial class ShipmentJournalFilterView : ViewBase<ShipmentJournalFilterViewModel> {
@@ -13,7 +14,7 @@ namespace Workwear.Journal.Filter.Views.Supply {
 				.AddBinding(ViewModel, v => v.Status, w => w.SelectedItemOrNull).InitializeFromSource();
 			ycheckbuttonNotFullOrdered.Binding
 				.AddBinding(ViewModel, vm => vm.NotFullOrdered, w => w.Active).InitializeFromSource();
-			buttonColorsLegend.Clicked += (o, e) => MessageDialogHelper.RunInfoDialog(ViewModel.ColorsLegendText, "Цветовая легенда,");
+			buttonColorsLegend.Clicked += (o, e) => MessageDialogHelper.RunInfoDialog(ShipmentJournalViewModel.ColorsLegendText, "Цветовая легенда,");
 		}
 	}
 }
