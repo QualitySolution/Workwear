@@ -92,7 +92,7 @@ namespace Workwear.Tools
 								continue;
 
 							serviceClaim.IsClosed = false;
-							serviceClaim.ChangeState(ClaimState.WaitService);
+							serviceClaim.ChangeState(ClaimState.AwaitService);
 							uow.Save(serviceClaim);
 						}
 					}

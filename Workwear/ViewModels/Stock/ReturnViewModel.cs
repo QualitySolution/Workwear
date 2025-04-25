@@ -341,7 +341,33 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateOperations(UoW);
 			if (Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			
+			if (Entity.Id != 0)
+			{
+				var oldReturnClaims = UoW.Session.QueryOver<ReturnItem>()
+					.Where(x => x.Document.Id == Entity.Id)
+					.List();
 
+				var currentReturnClaims = Entity.Items.Select(x => x.Id);
+
+				var removedReturnClaims = oldReturnClaims
+					.Where(x => !currentReturnClaims.Contains(x.Id) && x.ReturnFrom==ReturnFrom.Claim)
+					.ToList();
+
+				if (removedReturnClaims.Any())
+				{
+					logger.Info("Обнаружены удалённые строки возврата со стирки, обновляем статус...");
+
+					foreach (var removedReturnClaim in removedReturnClaims)
+					{
+						removedReturnClaim.ServiceClaim.IsClosed = false;
+						removedReturnClaim.ServiceClaim.ChangeState(ClaimState.AwaitService); 
+						 
+					}
+					UoW.Commit();
+				}
+			}
+			
 			if(!base.Save()) {
             	logger.Info("Не Ок.");
             	return false;
