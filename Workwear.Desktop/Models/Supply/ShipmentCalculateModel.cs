@@ -16,11 +16,11 @@ namespace Workwear.Models.Supply {
 			this.shipmentRepository = shipmentRepository ?? throw new ArgumentNullException(nameof(shipmentRepository));
 		}
 		
-		public void UpdateShipment(int shipment_id) {
-			var doc = UoW.GetById<Shipment>(shipment_id);
+		public void UpdateShipment(int shipment_id, IUnitOfWork uow = null) {
+			var doc = (uow ?? UoW).GetById<Shipment>(shipment_id);
 			if(doc == null)
 				return;
-			var operations = shipmentRepository.GetIncomeWarehouseOperationsForShipment(UoW, shipment_id);
+			var operations = shipmentRepository.GetIncomeWarehouseOperationsForShipment((uow ?? UoW), shipment_id);
 			var opDictionary = operations.GroupBy(o => (o.Nomenclature.Id, o.WearSize?.Id ?? -1, o.Height?.Id ?? -1))
 				.ToDictionary(g => g.Key, r => r.Sum(o => o.Amount));
 			
@@ -28,13 +28,15 @@ namespace Workwear.Models.Supply {
 				int r;
 				opDictionary.TryGetValue((item.Nomenclature.Id, item.WearSize?.Id ?? -1, item.Height?.Id ?? -1), out r);
 				item.Received = r;
-				UoW.Save(item);
+				(uow ?? UoW).Save(item);
 			}
 			
 			doc.FullReceived = doc.Items.All(i => i.Received >= i.Ordered);
 			doc.HasReceive = operations.Any();
-			UoW.Save(doc);
-			UoW.Commit();
+			(uow ?? UoW).Save(doc);
+			
+			if(uow == null)
+				UoW.Commit();
 		}
 	}
 }

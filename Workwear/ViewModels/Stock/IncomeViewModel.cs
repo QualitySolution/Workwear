@@ -267,7 +267,7 @@ namespace Workwear.ViewModels.Stock {
 				Entity.CreationDate = DateTime.Now;
 			
 			if(Entity.Shipment != null)
-				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id);
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoWGeneric);
 			
 			UoWGeneric.Save ();
 
