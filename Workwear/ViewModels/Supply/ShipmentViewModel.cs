@@ -131,9 +131,6 @@ namespace Workwear.ViewModels.Supply {
 			        $"Количество единиц: {Entity.Items.Sum(x => x.Requested)} " +
 			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
 		}
-		
-		private void PreloadingDoc() {
-		}
 
 		#endregion
 

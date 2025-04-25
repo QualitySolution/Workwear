@@ -32,6 +32,7 @@ namespace Workwear.Models.Supply {
 			}
 			
 			doc.FullReceived = doc.Items.All(i => i.Received >= i.Ordered);
+			doc.HasReceive = operations.Any();
 			UoW.Save(doc);
 			UoW.Commit();
 		}

@@ -7,7 +7,9 @@ alter table shipment_items
 alter table shipment
 	modify status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
 	add full_ordered boolean default false not null after status,
-	add full_received boolean default false not null after full_ordered;
+	add full_received boolean default false not null after full_ordered,
+	add has_receive boolean default false not null after full_received,
+	add submitted datetime null after status;
 
 UPDATE shipment SET full_ordered =
 	(SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0
@@ -18,3 +20,4 @@ alter table stock_income
 alter table stock_income
 	add constraint fk_stock_income_shipment
 		foreign key (shipment_id) references shipment (id);
+

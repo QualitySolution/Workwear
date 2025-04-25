@@ -2,15 +2,18 @@
 using QS.DomainModel.UoW;
 using QS.Project.Journal;
 using Workwear.Domain.Supply;
+using workwear.Journal.ViewModels.Supply;
 
 namespace Workwear.Journal.Filter.ViewModels.Supply {
 	public class ShipmentJournalFilterViewModel : JournalFilterViewModelBase<ShipmentJournalFilterViewModel> {
+		private readonly ShipmentJournalViewModel journalViewModel;
 		public ShipmentJournalFilterViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			JournalViewModelBase journal,
 			Action<ShipmentJournalFilterViewModel> setFilterParameters = null
 		) : base(journal, unitOfWorkFactory) {
-
+			
+			journalViewModel = (ShipmentJournalViewModel)journal;
 			CanNotify = false;
 			setFilterParameters?.Invoke(this);
 			CanNotify = true;
@@ -29,7 +32,9 @@ namespace Workwear.Journal.Filter.ViewModels.Supply {
 			get => notFullOrdered;
 			set => SetField(ref notFullOrdered, value);
 		}
-		
+
+		public string ColorsLegendText => journalViewModel.ColorsLegendText;
+
 		#endregion
 	}
 }

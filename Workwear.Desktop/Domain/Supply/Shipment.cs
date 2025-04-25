@@ -31,70 +31,87 @@ namespace Workwear.Domain.Supply {
 		[Display(Name="Начало периода")]
 		public virtual DateTime StartPeriod {
 			get => startPeriod;
-			set { startPeriod = value; }
+			set { SetField(ref startPeriod, value); }
 		}
 		
 		private DateTime endPeriod = DateTime.Today.AddDays(1);
 		[Display(Name="Окончание периода")]
 		public virtual DateTime EndPeriod {
 			get => endPeriod;
-			set { endPeriod = value; }
+			set { SetField(ref endPeriod, value); }
 		}
 		
 		private UserBase createdbyUser;
 		[Display(Name = "Документ создал")]
 		public virtual UserBase CreatedbyUser {
 			get => createdbyUser; 
-			set { createdbyUser = value; }
+			set { SetField(ref createdbyUser, value); }
 		}
 		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get => comment;
-			set { comment = value; }
+			set { SetField(ref comment, value); }
 		}
 		
 		private DateTime creationDate = DateTime.Now;
 		[Display(Name = "Дата создания")]
 		public virtual DateTime CreationDate {
 			get => creationDate;
-			set { creationDate = value; }
+			set { SetField(ref creationDate, value); }
 		}
 
 		private ShipmentStatus status;
 		[Display(Name = "Статус поставки")]
 		public virtual ShipmentStatus Status {
 			get => status;
-			set { status=value; }
+			set {
+				if(SetField(ref status, value) && value == ShipmentStatus.Present && submitted == null)
+					Submitted = DateTime.Now;
+			}
+		}	
+		
+		private DateTime? submitted;
+		[Display(Name = "Передано в закупку")]
+		public virtual DateTime? Submitted {
+			get => submitted;
+			set { SetField(ref submitted, value); }
 		}
 		
 		private bool fullOrdered;
 		[Display(Name = "Заказаны все запрошенные позиции")]
 		public virtual bool FullOrdered {
 			get => fullOrdered;
-			set { fullOrdered = value; }
+			set { SetField(ref fullOrdered, value); }
 		}
 		
 		private bool fullReceived;
 		[Display(Name = "Поставлены все заказанные позиции")]
 		public virtual bool FullReceived {
 			get => fullReceived;
-			set { fullReceived = value; }
+			set { SetField(ref fullReceived, value); }
+		}
+		
+		private bool hasReceive;
+		[Display(Name = "Поставлены все заказанные позиции")]
+		public virtual bool HasReceive {
+			get => hasReceive;
+			set { SetField(ref hasReceive, value); }
 		}
 		
 		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
 		[Display(Name = "Строки документа")]
 		public virtual IObservableList<ShipmentItem> Items {
 			get => items;
-			set { items = value; }
+			set { SetField(ref items, value); }
 		}
 		
 		private IObservableList<Income> incomes = new ObservableList<Income>();
 		[Display(Name = "Связанные документы поступления")]
 		public virtual IObservableList<Income> Incomes {
 			get => incomes;
-			set { incomes = value; }
+			set { SetField(ref incomes, value); }
 		}
 		#endregion
 

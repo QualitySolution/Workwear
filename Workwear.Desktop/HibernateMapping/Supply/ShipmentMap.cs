@@ -13,9 +13,11 @@ namespace Workwear.HibernateMapping.Supply {
 
 			Map(x => x.StartPeriod).Column("start_period");
 			Map(x => x.EndPeriod).Column("end_period");
-			Map(x=>x.Status).Column("status");
+			Map(x => x.Submitted).Column("submitted");
+			Map(x => x.Status).Column("status");
 			Map(x => x.FullOrdered).Column("full_ordered");
 			Map(x => x.FullReceived).Column("full_received");
+			Map(x => x.HasReceive).Column("has_receive");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");
 

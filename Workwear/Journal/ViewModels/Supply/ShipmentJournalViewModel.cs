@@ -72,12 +72,23 @@ namespace workwear.Journal.ViewModels.Supply {
 					.Select(x => x.EndPeriod).WithAlias(() => resultAlias.EndPeriod)
 					.Select(x => shipmentAlias.Status).WithAlias(() => resultAlias.Status)
 					.Select(x => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(x => x.FullOrdered).WithAlias(() => resultAlias.FullOrdered)
+					.Select(x => x.FullReceived).WithAlias(() => resultAlias.FullReceived)
+					.Select(x => x.HasReceive).WithAlias(() => resultAlias.HasReceive)
+					.Select(x => x.Submitted).WithAlias(() => resultAlias.Submitted)
 					.Select(x => x.CreationDate).WithAlias(() => resultAlias.CreationDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 				)
 				.OrderBy(x => x.StartPeriod).Desc
 				.TransformUsing(Transformers.AliasToBean<ShipmentJournalNode>());
 		}
+		public readonly string ColorsLegendText = 
+			"<span color='black'>●</span> — пока всё по плану\n" +
+			"<span color='green'>●</span> —  в текущем статусе всё выполнео\n" +
+			"<span color='yellow'>●</span> — заказано частично\n" +
+			"<span color='orange'>●</span> — поставлено частично</span> — \n" +
+			"<span color='blue'>●</span> — заявка уже 3 дня как передана в закупку\n"+
+			"<span color='red'>●</span> — в срок поставки не было поступлений\n";
 	}
 
 	public class ShipmentJournalNode {
@@ -86,17 +97,35 @@ namespace workwear.Journal.ViewModels.Supply {
 		public DateTime EndPeriod { get; set; }
 		public ShipmentStatus Status { get; set; }
 		public string StatusText => Status.GetEnumTitle();
+		public DateTime? Submitted { get; set; }
 		[SearchHighlight] public string Author { get; set; }
 		public DateTime CreationDate { get; set; }
 		[SearchHighlight] public String Comment { get; set; }
+		public bool FullReceived { get; set; }
+		public bool FullOrdered { get; set; }
+		public bool HasReceive { get; set; }
 		public string RowColor {
-			get {
-				if(Status == ShipmentStatus.Received)
-					return "gray";
-				if(EndPeriod < DateTime.Today)
+			get { //Не забываем править ColorsLegendText
+				if(EndPeriod < DateTime.Now && !HasReceive)
 					return "red";
-				if(StartPeriod <= DateTime.Today && EndPeriod >= DateTime.Today)
+				if(Status == ShipmentStatus.Ordered) {
+					if(FullOrdered)
+						return "green";
+					return "yellow";
+				}
+				if(Status == ShipmentStatus.Received) {
+					if(FullOrdered && FullReceived)
+						return "green";
+					if(FullReceived)
+						return "yellow";
 					return "orange";
+				}
+				if(Submitted != null) //Отсчёт 3 рабочих дней
+					for((DateTime t, int n) d = ((DateTime)Submitted, 0); d.t <= DateTime.Now;
+							d.t = d.t.AddDays(1), d.n += (d.t.DayOfWeek != DayOfWeek.Sunday && d.t.DayOfWeek != DayOfWeek.Saturday) ? 1 : 0) 
+						if(d.n > 3)
+							return "blue";
+				
 				return "black";
 			}
 		}
