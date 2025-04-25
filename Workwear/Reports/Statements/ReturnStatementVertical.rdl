@@ -1822,7 +1822,7 @@
     <Height>17.3pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox10">
         <Height>12pt</Height>
         <Width>264.15pt</Width>
@@ -1846,7 +1846,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     employees.last_name,
@@ -1855,16 +1855,17 @@
     nomenclature.name as nomenclature_name,
     nomenclature.number as nomenclature_number,
     measurement_units.name as units,
-    this_issuse.returned as amount_return,
+    COALESCE(this_issuse.returned, this_duty_issued.returned) as amount_return,
     sizeAlias.name as size,
     heightAlias.name as growth,
     stock_return.comment,
     stock_return_items.comment_return
 FROM stock_return_items
          LEFT JOIN stock_return ON stock_return.id = stock_return_items.stock_return_id
-         LEFT JOIN employees ON employees.id = stock_return.employee_id
+         LEFT JOIN employees ON employees.id = stock_return_items.employee_id
          LEFT JOIN nomenclature on nomenclature.id = stock_return_items.nomenclature_id
          LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_return_items.employee_issue_operation_id
+         LEFT JOIN operation_issued_by_duty_norm as this_duty_issued ON this_duty_issued.id = stock_return_items.duty_norm_issue_operation_id
          LEFT JOIN item_types ON nomenclature.type_id = item_types.id
          LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
          LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = stock_return_items.size_id
@@ -1876,7 +1877,7 @@ WHERE stock_return_items.stock_return_id = @id</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="last_name">
           <DataField>last_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1932,11 +1933,12 @@ WHERE stock_return_items.stock_return_id = @id</CommandText>
     stock_return.date AS doc_date,
     CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
     subdivisions.code as subdivision_code,
-    CONCAT(employees.last_name, ' ', employees.first_name, ' ', employees.patronymic_name) AS fio,
+    GROUP_CONCAT(CONCAT(employees.last_name, " ", employees.first_name, " ", employees.patronymic_name) SEPARATOR ", ") AS fio,
     users.name as responsible_person_fio,
     (select name from organizations  limit 1) as organizations_name
 FROM stock_return
-         LEFT JOIN employees ON employees.id = stock_return.employee_id
+         JOIN stock_return_items ON stock_return_items.stock_return_id = stock_return.id
+         LEFT JOIN employees ON employees.id = stock_return_items.employee_id
          LEFT JOIN subdivisions as ob1 ON ob1.id = employees.subdivision_id
          LEFT JOIN subdivisions as ob2 ON ob2.id = ob1.parent_subdivision_id
          LEFT JOIN subdivisions as ob3 ON ob3.id = ob2.parent_subdivision_id
@@ -1949,7 +1951,8 @@ FROM stock_return
          LEFT JOIN departments ON departments.id = employees.department_id
          LEFT JOIN users ON users.id = stock_return.user_id
 
-WHERE stock_return.id = @id</CommandText>
+WHERE stock_return.id = @id
+GROUP BY stock_return.id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>

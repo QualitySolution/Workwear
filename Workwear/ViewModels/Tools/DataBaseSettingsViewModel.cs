@@ -1,6 +1,7 @@
 ﻿using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Tools;
@@ -11,17 +12,27 @@ namespace Workwear.ViewModels.Tools
 	public class DataBaseSettingsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly BaseParameters baseParameters;
+		private readonly ICurrentPermissionService permissionService;
 
 		#region Ограниения версии
-		public bool CollectiveIssueWithPersonalVisible = true;
-
+		public bool CollectiveIssueWithPersonalVisible { get; }
+		public bool EditLockDateVisible { get; }
+		public bool CanEdit { get; }
 		#endregion
 		
-		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters, FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
+		public DataBaseSettingsViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			INavigationManager navigation,
+			BaseParameters baseParameters,
+			ICurrentPermissionService permissionService,
+			FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Настройки учёта";
+			CanEdit = permissionService.ValidatePresetPermission("can_accounting_settings");
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			EditLockDate = baseParameters.EditLockDate;
+			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;

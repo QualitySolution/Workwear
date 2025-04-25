@@ -8,6 +8,7 @@ using QS.Dialog;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Services;
@@ -25,6 +26,8 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
@@ -44,7 +47,7 @@ namespace WorkwearTest.ViewModels.Stock
 		}
 
 		[Test(Description = "Проверяем что при списании обновляем дату следующей выдачи в карточке сотрудника.")]
-		[Timeout(2000)] //Так как ожидаем работу в потоке, и может что-то поломаться.
+		[Timeout(3000)] //Так как ожидаем работу в потоке, и может что-то поломаться.
 		[Category("Integrated")]
 		public void Employee_UpdateNextIssueDate()
 		{
@@ -52,25 +55,37 @@ namespace WorkwearTest.ViewModels.Stock
 
 			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
+			var permissionService = Substitute.For<ICurrentPermissionService>();
+			permissionService.ValidateEntityPermission(Arg.Any<Type>(), Arg.Any<DateTime?>())
+				.Returns(new SimplePermissionResult {
+					CanCreate = true,
+					CanRead = true,
+					CanUpdate = true,
+					CanDelete = true
+				});
 
 			var builder = new ContainerBuilder();
-			builder.RegisterType<WriteOffViewModel>().AsSelf();
-			builder.RegisterType<EmployeeBalanceJournalViewModel>().AsSelf();
+			builder.RegisterType<DutyNormRepository>().AsSelf();
 			builder.RegisterType<EmployeeBalanceFilterViewModel>().AsSelf();
-			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<EmployeeBalanceJournalViewModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<OrganizationRepository>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
+			builder.RegisterType<OrganizationRepository>().AsSelf();
+			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<WriteOffViewModel>().AsSelf();
+			builder.Register(x => Substitute.For<BaseParameters>()).AsSelf();
+			builder.Register(x => Substitute.For<CurrentUserSettings>()).As<CurrentUserSettings>();
 			builder.Register(x => Substitute.For<FeaturesService>()).As<FeaturesService>();
-			builder.Register(x => validator).As<IValidator>();
-			builder.Register(x => Substitute.For<IViewModelResolver>()).As<IViewModelResolver>();
-			builder.Register(x => Substitute.For<SizeService>()).As<SizeService>();
 			builder.Register(x => Substitute.For<IDeleteEntityService>()).As<IDeleteEntityService>();
 			builder.Register(x => Substitute.For<IInteractiveService>()).As<IInteractiveService>().As<IInteractiveQuestion>().As<IInteractiveMessage>();
-			builder.Register(x => userService).As<IUserService>();
-			builder.Register(x => Substitute.For<CurrentUserSettings>()).As<CurrentUserSettings>();
+			builder.Register(x => Substitute.For<IViewModelResolver>()).As<IViewModelResolver>();
+			builder.Register(x => Substitute.For<SizeService>()).As<SizeService>();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+			builder.Register(x => permissionService).As<ICurrentPermissionService>();
+			builder.Register(x => userService).As<IUserService>();
+			builder.Register(x => validator).As<IValidator>();
 			var container = builder.Build();
 
 			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {

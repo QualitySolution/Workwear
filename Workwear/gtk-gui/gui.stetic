@@ -8829,6 +8829,25 @@
                       </packing>
                     </child>
                     <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="labelEditLockDate">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, начиная с которой и ранее редактирование документов и других учетных данных будет запрещено. Используется для закрытия отчетного периода с целью предотвращения случайных или несанкционированных изменений в уже утвержденных данных.</property>
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Дата запрета редактирования:</property>
+                      </widget>
+                      <packing>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAutoWriteoff">
                         <property name="MemberName" />
                         <property name="Tooltip" translatable="yes">Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке "История выдач" в карточке сотрудника для каждой выдачи.</property>
@@ -9139,25 +9158,6 @@
                       <packing>
                         <property name="TopAttach">9</property>
                         <property name="BottomAttach">10</property>
-                        <property name="AutoSize">True</property>
-                        <property name="XOptions">Fill</property>
-                        <property name="YOptions">Fill</property>
-                        <property name="XExpand">False</property>
-                        <property name="XFill">True</property>
-                        <property name="XShrink">False</property>
-                        <property name="YExpand">False</property>
-                        <property name="YFill">True</property>
-                        <property name="YShrink">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabel8">
-                        <property name="MemberName" />
-                        <property name="Tooltip" translatable="yes">Устанавливает дату, начиная с которой и ранее редактирование документов и других учетных данных будет запрещено. Используется для закрытия отчетного периода с целью предотвращения случайных или несанкционированных изменений в уже утвержденных данных.</property>
-                        <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Дата запрета редактирования:</property>
-                      </widget>
-                      <packing>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
