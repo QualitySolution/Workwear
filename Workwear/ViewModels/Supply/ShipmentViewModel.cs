@@ -19,16 +19,21 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Features;
+using Workwear.Tools.User;
+using Workwear.ViewModels.Communications;
 
 
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
 		public ShipmentViewModel(
+			BaseParameters baseParameters,
+			CurrentUserSettings currentUserSettings,
+			FeaturesService featuresService,
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			IInteractiveService interactive,
-			BaseParameters baseParameters,
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
@@ -36,7 +41,9 @@ namespace Workwear.ViewModels.Supply {
 			
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+            			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 ////10.1
@@ -53,8 +60,10 @@ namespace Workwear.ViewModels.Supply {
 		#region Свойства ViewModel
 
 		private readonly IInteractiveService interactive;
+		private readonly CurrentUserSettings currentUserSettings;
 		private readonly BaseParameters baseParameters;
 		private readonly SizeService sizeService = new SizeService();
+		private readonly FeaturesService featuresService;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		
 		private string total;
@@ -94,6 +103,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
 		public virtual bool CarEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
 		public virtual bool CarEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
+		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
@@ -132,6 +142,19 @@ namespace Workwear.ViewModels.Supply {
 			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
 		}
 
+		public void SendMessegeForBuyer() {
+			var dialoog = NavigationManager.OpenViewModel<SendEmailViewModel>(this);
+			dialoog.ViewModel.EmailAddres = currentUserSettings.Settings.BuyerEmail;
+			dialoog.ViewModel.Topic = "Новая планируемая поставка Сппецодежды.";
+			dialoog.ViewModel.Messege = "Добрый день!\nВ программе QS создана новая заявка на закупку. Просим принять в работу.";
+			dialoog.ViewModel.Title = "Оповестить закупку";
+			
+			dialoog.ViewModel.ShowSaveAddres = true;
+			dialoog.ViewModel.SaveAdressFunc = adress => {
+				currentUserSettings.Settings.BuyerEmail = adress;
+				currentUserSettings.SaveSettings();
+			};
+		}
 		#endregion
 
 		#region Валидация и сохранение
@@ -166,6 +189,5 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		#endregion
-		
 	}
 }

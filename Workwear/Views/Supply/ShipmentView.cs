@@ -31,6 +31,8 @@ namespace Workwear.Views.Supply {
 			yenumcomboboxStatus.Binding
 				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
 				.InitializeFromSource();
+			ybuttonSendEmail.Binding
+				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -87,6 +89,9 @@ namespace Workwear.Views.Supply {
 			ViewModel.AddItem();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
+
+		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
+			ViewModel.SendMessegeForBuyer();
 	}
 }
 
