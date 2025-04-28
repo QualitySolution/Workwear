@@ -31,6 +31,7 @@ namespace Workwear.Views.Supply {
 			yenumcomboboxStatus.Binding
 				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
 				.InitializeFromSource();
+			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
 
 		private void ConfigureItems() {
