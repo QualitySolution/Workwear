@@ -21,8 +21,9 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Features;
 using Workwear.Tools.User;
-
+using Workwear.ViewModels.Communications;
 
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
@@ -35,7 +36,6 @@ namespace Workwear.ViewModels.Supply {
 			INavigationManager navigation,
 			IInteractiveService interactive,
 			IUserService userService,
-			FeaturesService featuresService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -66,7 +66,6 @@ namespace Workwear.ViewModels.Supply {
 		private readonly SizeService sizeService = new SizeService();
 		private readonly FeaturesService featuresService;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-		public FeaturesService FeaturesService { get; }
 		
 		private string total;
 		public string Total {
@@ -197,11 +196,11 @@ namespace Workwear.ViewModels.Supply {
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = String.Format("Планируемая поставка №{0}",  Entity.Id.ToString()),
+				Title = Entity.Title,
 				Identifier = "Documents.ShipmentSheet",
 				Parameters = new Dictionary<string, object> {
 					{ "shipment_id",  Entity.Id },
-					{"printPromo", FeaturesService.Available(WorkwearFeature.PrintPromo)},
+					{ "printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);

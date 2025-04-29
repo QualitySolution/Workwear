@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -31071,7 +31071,7 @@
                 <property name="MemberName" />
                 <property name="WithTime">False</property>
                 <property name="Date">0</property>
-                <property name="IsEditable">False</property>
+                <property name="IsEditable">True</property>
                 <property name="AutoSeparation">False</property>
               </widget>
               <packing>
@@ -31135,7 +31135,7 @@
                 <property name="Items" translatable="yes" />
                 <property name="AddIfNotExist">False</property>
                 <property name="DefaultFirst">False</property>
-                <property name="ShowSpecialStateAll">False</property>
+                <property name="ShowSpecialStateAll">True</property>
                 <property name="ShowSpecialStateNot">False</property>
               </widget>
               <packing>
@@ -33348,7 +33348,7 @@
                 <signal name="Clicked" handler="OnYbuttonSendEmailClicked" />
               </widget>
               <packing>
-                <property name="Position">2</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
