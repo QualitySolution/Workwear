@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Supply;
@@ -33,6 +33,7 @@ namespace Workwear.Views.Supply {
 				.InitializeFromSource();
 			ybuttonSendEmail.Binding
 				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
+			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
 
 		private void ConfigureItems() {

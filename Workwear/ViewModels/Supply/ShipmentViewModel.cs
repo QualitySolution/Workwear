@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
@@ -8,6 +8,8 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Utilities;
 using QS.Validation;
@@ -19,9 +21,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Tools.Features;
 using Workwear.Tools.User;
-using Workwear.ViewModels.Communications;
 
 
 namespace Workwear.ViewModels.Supply {
@@ -35,6 +35,7 @@ namespace Workwear.ViewModels.Supply {
 			INavigationManager navigation,
 			IInteractiveService interactive,
 			IUserService userService,
+			FeaturesService featuresService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -65,6 +66,7 @@ namespace Workwear.ViewModels.Supply {
 		private readonly SizeService sizeService = new SizeService();
 		private readonly FeaturesService featuresService;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		public FeaturesService FeaturesService { get; }
 		
 		private string total;
 		public string Total {
@@ -157,7 +159,7 @@ namespace Workwear.ViewModels.Supply {
 		}
 		#endregion
 
-		#region Валидация и сохранение
+		#region Валидация, сохранение и печать
 
 		public override bool Save() {
 			logger.Info ("Запись документа...");
@@ -186,6 +188,23 @@ namespace Workwear.ViewModels.Supply {
 			UoWGeneric.Save ();
 			logger.Info ("Документ сохранён.");
 			return true;
+		}
+		public void Print() 
+		{
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if (!Save())
+				return;
+			
+			var reportInfo = new ReportInfo {
+				Title = String.Format("Планируемая поставка №{0}",  Entity.Id.ToString()),
+				Identifier = "Documents.ShipmentSheet",
+				Parameters = new Dictionary<string, object> {
+					{ "shipment_id",  Entity.Id },
+					{"printPromo", FeaturesService.Available(WorkwearFeature.PrintPromo)},
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 
 		#endregion
