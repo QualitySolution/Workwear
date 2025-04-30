@@ -163,6 +163,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
 		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
+		public int WithDebt => InStock - Unissued - Forecast.Sum();
+		public int WithoutDebt => InStock - Forecast.Sum();
 		public string NomenclaturesText {
 			get {
 				string text = "";

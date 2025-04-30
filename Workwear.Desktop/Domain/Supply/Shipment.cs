@@ -34,7 +34,7 @@ namespace Workwear.Domain.Supply {
 			set { SetField(ref startPeriod, value); }
 		}
 		
-		private DateTime endPeriod = DateTime.Today.AddDays(1);
+		private DateTime endPeriod = DateTime.Today.AddDays(14);
 		[Display(Name="Окончание периода")]
 		public virtual DateTime EndPeriod {
 			get => endPeriod;
@@ -139,6 +139,9 @@ namespace Workwear.Domain.Supply {
 		#region Строки документа
 
 		public virtual ShipmentItem AddItem(Nomenclature nomenclature, IInteractiveMessage message) {
+			if(nomenclature == null)
+				throw new ArgumentNullException(nameof(nomenclature));
+
 			var newItem = new ShipmentItem(this) {
 				Requested = 1,
 				Nomenclature = nomenclature,
@@ -149,6 +152,9 @@ namespace Workwear.Domain.Supply {
 		}
 
 		public virtual ShipmentItem AddItem(Nomenclature nomenclature, Size size, Size height, int amount = 0, decimal price = 0m) {
+			if(nomenclature == null)
+				throw new ArgumentNullException(nameof(nomenclature));
+			
 			var item = FindItem(nomenclature,size,height);
 			if(item == null) {
 				item = new ShipmentItem(this) {

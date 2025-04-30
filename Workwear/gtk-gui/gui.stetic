@@ -31534,6 +31534,25 @@
                       </packing>
                     </child>
                     <child>
+                      <widget class="QS.Widgets.EnumMenuButton" id="enumbuttonCreateShipment">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-file Menu</property>
+                        <property name="Label" translatable="yes">Создать поставку</property>
+                        <property name="UseUnderline">True</property>
+                        <property name="UseMarkup">False</property>
+                        <property name="LabelXAlign">0</property>
+                        <signal name="EnumItemClicked" handler="OnEnumbuttonCreateShipmentEnumItemClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <widget class="Gamma.GtkWidgets.yButton" id="buttonExcel">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
@@ -31544,7 +31563,7 @@
                         <signal name="Clicked" handler="OnButtonExcelClicked" />
                       </widget>
                       <packing>
-                        <property name="Position">1</property>
+                        <property name="Position">2</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -31566,7 +31585,7 @@
                       </widget>
                       <packing>
                         <property name="PackType">End</property>
-                        <property name="Position">3</property>
+                        <property name="Position">4</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>

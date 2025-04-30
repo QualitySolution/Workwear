@@ -10,6 +10,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Services.FileDialog;
 using QS.Services;
 using QS.ViewModels.Control;
@@ -26,6 +27,7 @@ using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Supply;
 
 namespace Workwear.ViewModels.Analytics {
 	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation, IForecastColumnsModel
@@ -67,6 +69,7 @@ namespace Workwear.ViewModels.Analytics {
 				.MakeByType()
 				.Finish();
 			Granularity = Granularity.Weekly;
+			ShowCreateShipment = featuresService.Available(WorkwearFeature.Shipment);
 		}
 		
 		#region IDialogDocumentation
@@ -142,9 +145,11 @@ namespace Workwear.ViewModels.Analytics {
 		private bool sensitiveSettings = true;
 		public bool SensitiveSettings {
 			get => sensitiveSettings;
-			set { 
-				if(SetField(ref sensitiveSettings, value))
+			set {
+				if(SetField(ref sensitiveSettings, value)) {
 					SensitiveExport = SensitiveSettings;
+					OnPropertyChanged(nameof(CanCreateShipment));
+				}
 			}
 		}
 
@@ -163,6 +168,9 @@ namespace Workwear.ViewModels.Analytics {
 				WarehouseEntry.IsEditable = value;
 			}
 		}
+	
+		public bool CanCreateShipment => SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature ;
+		public bool ShowCreateShipment { get; }
 
 		private Granularity granularity;
 		public Granularity Granularity {
@@ -187,9 +195,11 @@ namespace Workwear.ViewModels.Analytics {
 		[PropertyChangedAlso(nameof(ChoiceGoodsViewModel))]
 		public ForecastingNomenclatureType NomenclatureType {
 			get => nomenclatureType;
-			set { 
-				if(SetField(ref nomenclatureType, value))
+			set {
+				if(SetField(ref nomenclatureType, value)) {
 					MakeForecast();
+                    OnPropertyChanged(nameof(CanCreateShipment));
+				}
 			}
 		}
 
@@ -381,6 +391,11 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressLocal.Close();
 			SensitiveSettings = true;
 		}
+
+		public void CreateShipment(ShipmentCreateType eItemEnum) => 
+			NavigationManager.OpenViewModel<ShipmentViewModel, IEntityUoWBuilder, List<WarehouseForecastingItem>, ShipmentCreateType>
+				(null, EntityUoWBuilder.ForCreate(), Items, eItemEnum);
+
 		#endregion
 
 		#region Private
@@ -415,6 +430,8 @@ namespace Workwear.ViewModels.Analytics {
 			foreach(var item in Items) {
 				item.FillForecast();
 			}
+			
+			OnPropertyChanged(nameof(CanCreateShipment));
 		}
 
 		private void ShowItemsList() {
@@ -469,5 +486,12 @@ namespace Workwear.ViewModels.Analytics {
 		AssessedCost,
 		[Display(Name = "Цена продажи")]
 		SalePrice
+	}
+	
+	public enum ShipmentCreateType {
+		[Display(Name = "Без долга")]
+		WithoutDebt,
+		[Display(Name = "С долгом")]
+		WithDebt
 	}
 }

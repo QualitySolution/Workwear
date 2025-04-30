@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentNHibernate.Utils;
+using NHibernate;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -21,8 +24,10 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
+using Workwear.ViewModels.Analytics;
 using Workwear.ViewModels.Communications;
 
 namespace Workwear.ViewModels.Supply {
@@ -37,7 +42,9 @@ namespace Workwear.ViewModels.Supply {
 			IInteractiveService interactive,
 			IUserService userService,
 			IValidator validator = null,
-			UnitOfWorkProvider unitOfWorkProvider = null
+			UnitOfWorkProvider unitOfWorkProvider = null,
+			List<WarehouseForecastingItem> forecastingItems = null,
+			ShipmentCreateType eItemEnum = default
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -47,9 +54,10 @@ namespace Workwear.ViewModels.Supply {
             			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-////10.1
-//TODO реализовать
-//PreloadingDoc();
+
+			if(forecastingItems != null) 
+				AddFromForecasting(forecastingItems, eItemEnum);
+			
 			CalculateTotal();
 		}
 
@@ -155,6 +163,42 @@ namespace Workwear.ViewModels.Supply {
 				currentUserSettings.Settings.BuyerEmail = adress;
 				currentUserSettings.SaveSettings();
 			};
+		}
+		
+		public void AddFromForecasting(List<WarehouseForecastingItem> forecastingItems, ShipmentCreateType eItemEnum) {
+
+			var nomIds = forecastingItems
+				.Where( i => i.Nomenclature != null)
+				.Select(i => i.Nomenclature)
+				.Select(n => n.Id).ToList();
+			var sizeIds = forecastingItems
+				.Where( i => i.Size != null)
+				.Select(i => i.Size)
+				.Select(n => n.Id).ToList();
+			sizeIds.AddRange(forecastingItems
+				.Where( i => i.Height != null)
+				.Select(i => i.Height)
+				.Select(n => n.Id).ToList());
+			
+			UoW.Session.QueryOver<Nomenclature>()
+				.Where(x => x.Id.IsIn(nomIds))
+				.Fetch(SelectMode.Fetch, n => n.Type.Units)
+				.Future();
+			UoW.Session.QueryOver<Size>()
+				.Where(x => x.Id.IsIn(sizeIds))
+				.Future();
+			
+			foreach(var fitem in forecastingItems.Where( i => i.Nomenclature != null)) {
+				if(eItemEnum == ShipmentCreateType.WithDebt && fitem.WithDebt < 0 ||
+				   eItemEnum == ShipmentCreateType.WithoutDebt && fitem.WithoutDebt < 0)
+					Entity.AddItem(
+						UoW.GetInSession(fitem.Nomenclature),
+						UoW.GetInSession(fitem.Size),
+						UoW.GetInSession(fitem.Height),
+						(eItemEnum == ShipmentCreateType.WithDebt ? fitem.WithDebt : fitem.WithoutDebt) * -1,
+						fitem.Nomenclature.SaleCost ?? 0 //Возможно стоит подвязаться на переключатель типа стоимости в прогнозе
+						);
+			}
 		}
 		#endregion
 
