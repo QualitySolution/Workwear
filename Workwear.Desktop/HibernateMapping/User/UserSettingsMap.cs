@@ -15,6 +15,7 @@ namespace Workwear.HibernateMapping.User
 			Map(x => x.ShowToolbar).Column("toolbar_show");
 			Map(x => x.MaximizeOnStart).Column("maximize_on_start");
 			Map(x => x.DefaultAddedAmount).Column("default_added_amount");
+			Map(x => x.BuyerEmail).Column("buyer_email");
 			References(x => x.DefaultWarehouse).Column("default_warehouse_id").Cascade.All();
 			References(x => x.DefaultLeader).Column("default_leader_id").Cascade.All();
 			References(x => x.DefaultOrganization).Column("default_organization_id").Cascade.All();

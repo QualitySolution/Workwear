@@ -6,6 +6,8 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Supply;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Tools
@@ -24,6 +26,10 @@ namespace Workwear.Tools
 
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeIssueOperation)
 				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteIncome)
+				.IfEntity<Income>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
 		}
 
@@ -64,6 +70,20 @@ namespace Workwear.Tools
 						employee.UpdateNextIssue(protectionTools);
 					}
 
+					
+				}
+			}
+		}
+		
+		private static void HandleDeleteIncome(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
+		{
+			using(var scope = LifetimeScope.BeginLifetimeScope()) {
+				var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления документов поступления на склад")) { 
+					ShipmentCalculateModel sCalcModel = scope.Resolve<ShipmentCalculateModel>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
+					foreach(var doc in changeEvents.Select(x => (x.Entity as Income))) 
+						if(doc != null) 
+							sCalcModel.UpdateShipment(doc.Shipment.Id, uow);
 					uow.Commit();
 				}
 			}

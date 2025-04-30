@@ -8,13 +8,14 @@ using NLog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
+using QS.Widgets;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
-using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Sizes;
+using EnumItemClickedEventArgs = QSOrmProject.EnumItemClickedEventArgs;
 
 namespace Workwear.Views.Company {
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
@@ -100,7 +101,7 @@ namespace Workwear.Views.Company {
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
 			ViewModel.Performance.CheckPoint("Телефоны");
 
-			yentryEMail.ValidationMode = ValidationType.email;
+			yentryEMail.ValidationMode = ValidationType.Email;
 			yentryEMail.Binding.AddBinding(Entity, e => e.Email, w => w.Text).InitializeFromSource();
 			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();

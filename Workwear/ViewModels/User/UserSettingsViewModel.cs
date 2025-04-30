@@ -65,6 +65,7 @@ namespace Workwear.ViewModels.User
 		#region Свойства для View
 
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
+		public bool VisibleByerEmail => featuresService.Available(WorkwearFeature.Shipment);
 
 		#endregion
 	}

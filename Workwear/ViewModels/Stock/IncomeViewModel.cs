@@ -19,12 +19,16 @@ using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Supply;
+using Workwear.Models.Supply;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Supply;
 
 namespace Workwear.ViewModels.Stock {
 	public class IncomeViewModel  : PermittingEntityDialogViewModelBase<Income>, IDialogDocumentation {
@@ -37,6 +41,7 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
 			BaseParameters baseParameters,
+			ShipmentCalculateModel shipmentCalculateModel,
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
@@ -45,6 +50,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.shipmentCalculateModel = shipmentCalculateModel ?? throw new ArgumentNullException(nameof(shipmentCalculateModel));
 			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0)
@@ -56,14 +62,20 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
-			
-			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
-			
-			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
+			var entryEntityBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
+			var entryVmBuilder = new CommonEEVMBuilderFactory<IncomeViewModel>(this, this, UoW, navigation, autofacScope);
+            			
+			WarehouseEntryViewModel = entryEntityBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
+			ShipmentEntryViewModel = entryVmBuilder.ForProperty(t => t.Shipment)
+				.UseViewModelJournalAndAutocompleter<ShipmentJournalViewModel>()
+				.UseViewModelDialog<ShipmentViewModel>()
+				.Finish();
+			ShipmentEntryViewModel.IsEditable = CanEdit;
+			ShipmentEntryViewModel.Changed += (s,e) => OnPropertyChanged(nameof(ShipmentLabel));
 			
 			CalculateTotal();
 		}
@@ -77,27 +89,18 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private readonly ShipmentCalculateModel shipmentCalculateModel;
 		
 		private string total;
 		public string Total {
 			get => total;
 			set => SetField(ref total, value);
 		}
-		#endregion
 		
-		#region Проброс свойств документа
-
-		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
-		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
-
-		public virtual IObservableList<IncomeItem> Items => Entity.Items;
-		#endregion
-
-		#region Свойства ViewModel
 		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService = new SizeService();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<Shipment> ShipmentEntryViewModel;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -116,10 +119,6 @@ namespace Workwear.ViewModels.Stock {
 			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
 		}
 
-		#endregion
-
-		#region Свойства Viewmodel
-
 		private IncomeItem selectedItem;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanAddSize))]
@@ -130,6 +129,31 @@ namespace Workwear.ViewModels.Stock {
 
 		#endregion
 		
+		#region Проброс свойств документа
+
+		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
+		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
+		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
+
+		[PropertyChangedAlso(nameof(ShipmentLabel))]
+		public virtual Shipment Shipment {
+			get => Entity.Shipment;
+			set {
+				if(value == null)
+					Entity.Shipment = value;
+				if(Entity.Shipment != value &&
+				   (Entity.Items.Count == 0 ||
+				    interactive.Question(
+					    "При привязке поставки текущий документ будет очищен и заполнен заново из документа поставки. Продолжить?"))) {
+					Items.Clear();
+					Entity.FillFromShipment(value);
+					Entity.Shipment = value;
+				}
+			}
+		}
+
+		public virtual IObservableList<IncomeItem> Items => Entity.Items;
+		#endregion
 		
 		#region Свойства для View
 
@@ -141,6 +165,9 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public virtual bool ReadInFileVisible  => featuresService.Available(WorkwearFeature.Exchange1C);
 		public virtual bool CanReadFile => false;
+		public virtual bool ShowShipment => featuresService.Available(WorkwearFeature.Shipment);
+		public string ShipmentLabel => (Entity.Id == 0 && Entity.Shipment == null) ? "Заполнить \nиз поставки:" : "Поставка:";
+
 		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
 		}
@@ -200,6 +227,11 @@ namespace Workwear.ViewModels.Stock {
 			CalculateTotal();
 		}
 		
+		public void ReadInFile() {
+			//TODO Надо реализовать, заявка i-1653
+			throw new NotImplementedException();
+		}
+		
 		private void CalculateTotal() {
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
 			        $"Количество единиц: {Entity.Items.Sum(x => x.Amount)} " +
@@ -233,6 +265,10 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateOperations(UoW);
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			
+			if(Entity.Shipment != null)
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoWGeneric);
+			
 			UoWGeneric.Save ();
 
 			logger.Info ("Документ сохранён.");

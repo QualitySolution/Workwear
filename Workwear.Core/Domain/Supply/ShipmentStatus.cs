@@ -2,16 +2,17 @@
 
 namespace Workwear.Domain.Supply {
 	public enum ShipmentStatus {
+		[Display(Name="Черновик")]
+		Draft,
+		[Display(Name="Новая")]
+		New,
+		[Display(Name = "Передано в закупку")]
+		Present,
+		[Display(Name="Принято в работу")]
+		Accepted,
 		[Display(Name="Заказано")]
 		Ordered,
-		[Display(Name = "В пути")]
-		OnTheWay,
-		[Display(Name="Ожидает оплаты")]
-		AwaitPayment,
-		[Display(Name="Отменено")]
-		Cancelled,
-		[Display(Name = "Получено")]
+		[Display(Name = "Оприходовано")]
 		Received
-	
 	}
 }
