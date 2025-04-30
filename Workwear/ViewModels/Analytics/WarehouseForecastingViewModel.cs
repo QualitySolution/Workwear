@@ -88,13 +88,17 @@ namespace Workwear.ViewModels.Analytics {
 			get {
 				switch(NomenclatureType) {
 					case ForecastingNomenclatureType.Nomenclature:
-						if(choiceNomenclatureViewModel == null)
+						if(choiceNomenclatureViewModel == null) {
 							choiceNomenclatureViewModel =
 								new ChoiceListViewModel<Nomenclature>(nomenclatureRepository.GetActiveNomenclatures());
+							choiceNomenclatureViewModel.SelectionChanged += (sender, args) => MakeForecast();
+						}
 						return choiceNomenclatureViewModel;
 					case ForecastingNomenclatureType.ProtectionTools:
-						if(choiceProtectionToolsViewModel == null)
+						if(choiceProtectionToolsViewModel == null) {
 							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(UoW.GetAll<ProtectionTools>().ToList());
+							choiceProtectionToolsViewModel.SelectionChanged += (sender, args) => MakeForecast();
+						}
 						return choiceProtectionToolsViewModel;
 					default:
 						throw new NotImplementedException();
@@ -220,10 +224,13 @@ namespace Workwear.ViewModels.Analytics {
 				}
 			}
 		}
+		private bool NomenclatureAllSelected => NomenclatureType == ForecastingNomenclatureType.Nomenclature 
+			? choiceNomenclatureViewModel.AllSelected
+			: choiceProtectionToolsViewModel.AllSelected;
 		
 		IList<EmployeeCard> employees;
 		DateTime lastForecastUntil;
-		List<FutureIssue> futureIssues = new List<FutureIssue>();
+		private List<FutureIssue> futureIssues = new List<FutureIssue>();
 		#endregion
 		#region Действия
 
@@ -231,7 +238,7 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
-			ProgressTotal.Start(4, text:"Получение данных");
+			ProgressTotal.Start(5, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -262,9 +269,21 @@ namespace Workwear.ViewModels.Analytics {
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(2, text: "Прогнозирование выдач");
+				ProgressTotal.Start(3, text: "Прогнозирование выдач");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
+			HashSet<ProtectionTools> hashPt = new HashSet<ProtectionTools>();
+			if(!NomenclatureAllSelected) {
+				var protectionTools = NomenclatureType == ForecastingNomenclatureType.ProtectionTools
+					? choiceProtectionToolsViewModel.SelectedEntities
+					: UoW.GetAll<ProtectionTools>().Where(p =>
+						choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureUnisex)
+						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
+						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
+				hashPt = new HashSet<ProtectionTools>(protectionTools);
+				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
+			}
+
 			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
 			lastForecastUntil = EndDate;
@@ -273,8 +292,11 @@ namespace Workwear.ViewModels.Analytics {
 				? issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray()
 				: choiceNomenclatureViewModel.SelectedEntities.ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
+			ProgressTotal.Add(text: "Фильтрация выдач");
+			var filteredIssues = NomenclatureAllSelected ? futureIssues : futureIssues.Where(i => hashPt.Contains(i.ProtectionTools)).ToList();
+			
 			ProgressTotal.Add(text: "Формируем прогноз");
-			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);
+			var result = forecastingModel.MakeForecastingItems(ProgressLocal, filteredIssues);
 			ProgressLocal.Add(text: "Сортировка");
 			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
