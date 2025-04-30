@@ -160,6 +160,18 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		#endregion
 
 		#region Расчетные для отображения
+		public decimal GetPrice(ForecastingPriceType priceType) {
+			switch(priceType) {
+				case ForecastingPriceType.None:
+					return 0;
+				case ForecastingPriceType.SalePrice:
+					return Nomenclature?.SaleCost ?? 0;
+				case ForecastingPriceType.AssessedCost:
+					return ProtectionTool?.AssessedCost ?? 0;
+				default:
+					throw new NotImplementedException();
+			}
+		}
 		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
 		public int ClosingBalance => InStock - Unissued - Forecast.Sum();

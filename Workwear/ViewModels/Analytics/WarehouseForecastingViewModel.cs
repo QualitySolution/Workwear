@@ -337,41 +337,46 @@ namespace Workwear.ViewModels.Analytics {
 			{
 				var worksheet = workbook.Worksheets.Add(sheetName);
 				//Создаем заголовки
-				worksheet.Cell("A1").Value = "Номенклатура нормы";
-				worksheet.Cell("B1").Value = "Номенклатура";
-				worksheet.Cell("C1").Value = "Размер";
-				worksheet.Cell("D1").Value = "Рост";
-				worksheet.Cell("E1").Value = "Пол";
-				worksheet.Cell("F1").Value = "В наличии";
-				worksheet.Cell("G1").Value = "Просрочено";
-				int col = 8;
+				int col = 1;
+				if(NomenclatureType == ForecastingNomenclatureType.Nomenclature)
+					worksheet.Column(col).Hide();
+				worksheet.Column(col).Width = 50;
+				worksheet.Cell(1, col++).Value = "Номенклатура нормы";
+				worksheet.Column(col).Width = 50;
+				worksheet.Cell(1, col++).Value = "Номенклатура";
+				worksheet.Cell(1, col++).Value = "Размер";
+				worksheet.Cell(1, col++).Value = "Рост";
+				worksheet.Cell(1, col++).Value = "Пол";
+				if(PriceType == ForecastingPriceType.None)
+					worksheet.Column(col).Hide();
+				worksheet.Cell(1, col++).Value = "Цена";
+				worksheet.Cell(1, col++).Value = "В наличии";
+				worksheet.Cell(1, col++).Value = "Просрочено";
 				foreach(var column in ForecastColumns) {
-					worksheet.Cell(1, col).Value = column.Title;
-					col++;
+					worksheet.Cell(1, col++).Value = column.Title;
 				}
-				worksheet.Cell(1, col).Value = "Остаток без \nпросроченной";
-				col++;
-				worksheet.Cell(1, col).Value = "Остаток c \nпросроченной";
+				worksheet.Cell(1, col++).Value = "Остаток без \nпросроченной";
+				worksheet.Cell(1, col++).Value = "Остаток c \nпросроченной";
 				ProgressLocal.Add();
 				
 				//Заполняем данными
 				int row = 2;
 				foreach(var item in Items) {
-					worksheet.Cell(row, 1).Value = item.ProtectionTool.Name;
-					worksheet.Cell(row, 2).Value = item.Nomenclature?.Name;
-					worksheet.Cell(row, 3).Value = item.Size?.Name;
-					worksheet.Cell(row, 4).Value = item.Height?.Name;
-					worksheet.Cell(row, 5).Value = item.Sex.GetEnumShortTitle();
-					worksheet.Cell(row, 6).Value = item.InStock;
-					worksheet.Cell(row, 7).Value = item.Unissued;
-					col = 8;
+					col = 1;
+					worksheet.Cell(row, col++).Value = item.ProtectionTool?.Name;
+					worksheet.Cell(row, col++).Value = 
+						NomenclatureType == ForecastingNomenclatureType.ProtectionTools ? item.Nomenclature?.Name : item.Name;
+					worksheet.Cell(row, col++).Value = item.Size?.Name;
+					worksheet.Cell(row, col++).Value = item.Height?.Name;
+					worksheet.Cell(row, col++).Value = item.Sex.GetEnumShortTitle();
+					worksheet.Cell(row, col++).Value = item.GetPrice(PriceType);
+					worksheet.Cell(row, col++).Value = item.InStock;
+					worksheet.Cell(row, col++).Value = item.Unissued;
 					for(int i = 0; i < ForecastColumns.Length; i++) {
-						worksheet.Cell(row, col).Value = item.Forecast[i];
-						col++;
+						worksheet.Cell(row, col++).Value = item.Forecast[i];
 					}
-					worksheet.Cell(row, col).Value = item.InStock - item.Forecast.Sum();
-					col++;
-					worksheet.Cell(row, col).Value = item.InStock - item.Unissued - item.Forecast.Sum();
+					worksheet.Cell(row, col++).Value = item.InStock - item.Forecast.Sum();
+					worksheet.Cell(row, col++).Value = item.InStock - item.Unissued - item.Forecast.Sum();
 					row++;
 					ProgressLocal.Add();
 				}
@@ -458,16 +463,5 @@ namespace Workwear.ViewModels.Analytics {
 		Nomenclature,
 		[Display(Name = "Номенклатура нормы")]
 		ProtectionTools
-	}
-
-	public enum ForecastingPriceType {
-		[Display(Name = "Только количество")]
-		None,
-		[Display(Name = "Цена закупки")]
-		PurchasePrice,
-		[Display(Name = "Оценочная стоимость")]
-		AssessedCost,
-		[Display(Name = "Цена продажи")]
-		SalePrice
 	}
 }
