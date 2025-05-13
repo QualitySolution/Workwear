@@ -155,6 +155,7 @@ namespace Workwear.Domain.Operations
 			WearSize = item.WearSize;
 			Height = item.Height;
 			Amount = item.Amount;
+			WearPercent = item.WearPercent;
 		}
 		public virtual void Update(IUnitOfWork uow, WriteoffItem item) {
 			//Внимание здесь сравниваются даты без времени.
