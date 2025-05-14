@@ -29,7 +29,8 @@ namespace workwear.Journal.ViewModels.Company
             IInteractiveService interactiveService, 
             INavigationManager navigation,
             ILifetimeScope autofacScope,
-            EmployeeCard employeeCard = null) : base(unitOfWorkFactory, interactiveService, navigation)
+            EmployeeCard employeeCard = null
+            ) : base(unitOfWorkFactory, interactiveService, navigation)
         {
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);

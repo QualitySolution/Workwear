@@ -27,6 +27,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -179,13 +180,17 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					EmployeeCard,
-					OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.DateSensitive = false;
-			selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-			selectJournal.ViewModel.Filter.SubdivisionSensitive = true;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = true;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.CanChooseAmount = false;
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+						filter => {
+							filter.DateSensitive = false;
+							filter.CheckShowWriteoffVisible = false;
+							filter.SubdivisionSensitive = true;
+							filter.EmployeeSensitive = true;
+							filter.Date = Entity.Date;
+							filter.CanChooseAmount = false;
+						});
+					});
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionary(
 				e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(
 					k => k.Id,

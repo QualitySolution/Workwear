@@ -78,22 +78,7 @@ namespace Workwear.Domain.Stock.Documents {
 			get => commentReturn;
 			set { SetField(ref commentReturn, value, () => СommentReturn); }
 		}
-
-		private EmployeeIssueOperation returnFromEmployeeOperation;
-		[Display(Name = "Операция возврата от сотрудника")]
-		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
-			get => returnFromEmployeeOperation;
-			set => SetField(ref returnFromEmployeeOperation, value);
-		}
-
-		private WarehouseOperation warehouseOperation = new WarehouseOperation();
-		[Display(Name = "Операция на складе")]
-		[IgnoreHistoryTrace]
-		public virtual WarehouseOperation WarehouseOperation {
-			get => warehouseOperation;
-			set => SetField(ref warehouseOperation, value);
-		}
+		
 		private Size wearSize;
 		[Display(Name = "Размер")]
 		public virtual Size WearSize {
@@ -117,14 +102,29 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
+		
+		private WarehouseOperation warehouseOperation = new WarehouseOperation();
+		[Display(Name = "Операция возврата на склад")]
+		[IgnoreHistoryTrace]
+		public virtual WarehouseOperation WarehouseOperation {
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
+		}
+		
 		private EmployeeCard employeeCard;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard EmployeeCard {
 			get => employeeCard;
 			set => SetField(ref employeeCard, value);
 		}
-
-		#region Возврат с дежурной нормы
+		
+		private EmployeeIssueOperation returnFromEmployeeOperation;
+		[Display(Name = "Операция возврата от сотрудника")]
+		[IgnoreHistoryTrace]
+		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
+			get => returnFromEmployeeOperation;
+			set => SetField(ref returnFromEmployeeOperation, value);
+		}
 
 		private DutyNorm dutyNorm;
 		[Display(Name = "Дежурная норма")]
@@ -140,12 +140,29 @@ namespace Workwear.Domain.Stock.Documents {
 			get => returnFromDutyNormOperation;
 			set => SetField(ref returnFromDutyNormOperation, value);
 		}
+		
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get { switch(ReturnFrom) {
+					case ReturnFrom.Employee : return ReturnFromEmployeeOperation.WearPercent;
+					case ReturnFrom.DutyNorm : return ReturnFromDutyNormOperation.WearPercent;
+					default : return 0;
+				}
+			}
+			set { switch(ReturnFrom) {
+					case ReturnFrom.Employee: if(ReturnFromEmployeeOperation.WearPercent != value) {
+							ReturnFromEmployeeOperation.WearPercent = value;
+							OnPropertyChanged(); } break;
+					case ReturnFrom.DutyNorm: if(ReturnFromDutyNormOperation.WearPercent != value) {
+							ReturnFromDutyNormOperation.WearPercent = value;
+							OnPropertyChanged(); } break;
+				}
+			}
+		}
 
 		#endregion
 		
-
-		#endregion
-		#region Расчетные
+		#region Не сохраняемые в базу свойства
 		public virtual string Title =>
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
@@ -164,12 +181,11 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 		public virtual string ReturnFromText{
 			get{
-				if(IssuedEmployeeOnOperation != null)
-					return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
-				if(IssuedDutyNormOnOperation != null)
-					return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
-
-				return String.Empty;
+				switch(ReturnFrom) {
+					case ReturnFrom.Employee : return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
+					case ReturnFrom.DutyNorm : return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
+					default : return String.Empty;
+				}
 			}
 		}
 		
@@ -179,29 +195,7 @@ namespace Workwear.Domain.Stock.Documents {
 			get => maxAmount;
 			set => SetField(ref maxAmount, value);
 		}
-		[Display(Name = "Процент износа")]
-		public virtual decimal WearPercent {
-			get {
-				if(IssuedEmployeeOnOperation != null)
-					return IssuedEmployeeOnOperation.WearPercent;
-				if(IssuedDutyNormOnOperation != null)
-					return IssuedDutyNormOnOperation.WearPercent;
-
-				throw new InvalidOperationException(
-					"Строка документа списания находится в поломанном состоянии. " +
-					"Должна быть заполнена хотя бы одна операция.");
-			}
-			set {
-				if(IssuedEmployeeOnOperation != null)
-					IssuedEmployeeOnOperation.WearPercent = value;
-				if(IssuedDutyNormOnOperation!=null)
-					IssuedDutyNormOnOperation.WearPercent = value;
-			}
-		}
 		
-		#endregion
-		
-		#region Не сохраняемые в базу свойства
 		private EmployeeIssueOperation issuedEmployeeOnOperation;
 		/// <summary>
 		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
@@ -212,12 +206,15 @@ namespace Workwear.Domain.Stock.Documents {
 			get => issuedEmployeeOnOperation ?? ReturnFromEmployeeOperation?.IssuedOperation;
 			set => SetField(ref issuedEmployeeOnOperation, value);
 		}
-
+		
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
 		private DutyNormIssueOperation issuedDutyNormOnOperation;
-
 		[Display(Name = "Операция выдачи по дежурной норме")]
 		public virtual DutyNormIssueOperation IssuedDutyNormOnOperation {
-			get=>issuedDutyNormOnOperation?? ReturnFromDutyNormOperation?.IssuedOperation;
+			get => issuedDutyNormOnOperation ?? ReturnFromDutyNormOperation?.IssuedOperation;
 			set => SetField(ref issuedDutyNormOnOperation, value);
 		}
 
