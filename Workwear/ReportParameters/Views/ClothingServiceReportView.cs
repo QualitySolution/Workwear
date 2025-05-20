@@ -37,7 +37,12 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonshowclosed.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible)
 				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active).InitializeFromSource();
-			buttonRun.Clicked += OnButtonRunClicked;
+			ylabelshowEmployee.Binding
+            	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible).InitializeFromSource();
+            ycheckbuttonshowEmployees.Binding
+            	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible)
+            	.AddBinding(ViewModel, vm => vm.ShowEmployees, w => w.Active).InitializeFromSource();
+            buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding
 				.AddBinding(ViewModel, vm=>vm.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();
 		}
