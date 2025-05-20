@@ -22,7 +22,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(ViewModel, vm => vm.VisibleShowPhone, w => w.Visible)
                 .AddBinding(ViewModel, vm => vm.ShowPhone, w => w.Active).InitializeFromSource();
 			ylabelshowComments.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleShowPhone, w => w.Visible).InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.VisibleShowComment, w => w.Visible).InitializeFromSource();
 			ycheckbuttonshowComments.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowComment, w => w.Visible)
                 .AddBinding(ViewModel, vm => vm.ShowComments, w => w.Active).InitializeFromSource();
@@ -42,6 +42,11 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonshowEmployees.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible)
             	.AddBinding(ViewModel, vm => vm.ShowEmployees, w => w.Active).InitializeFromSource();
+            ylabelshowZero.Binding
+                .AddBinding(ViewModel, vm => vm.VisibleShowZero, v => v.Visible).InitializeFromSource();
+            ycheckbuttonshowZero.Binding
+                .AddBinding(ViewModel, vm => vm.VisibleShowZero, v => v.Visible)
+                .AddBinding(ViewModel, vm => vm.ShowZero, w => w.Active).InitializeFromSource();
             buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding
 				.AddBinding(ViewModel, vm=>vm.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();

@@ -27,6 +27,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleShowPhone))]
 		[PropertyChangedAlso(nameof(VisibleShowStatus))]
 		[PropertyChangedAlso(nameof(VisibleShowComment))]
+		[PropertyChangedAlso(nameof(VisibleShowZero))]
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual ClothingServiceReportType ReportType {
 			get => reportType;
@@ -43,6 +44,8 @@ namespace Workwear.ReportParameters.ViewModels {
 						? "Заявки на обслуживание" : "") +
 			       (ReportType == ClothingServiceReportType.ClaimMetric
 						? "Отчёт по нахождению в обслуживании" : "") +
+			        (ReportType == ClothingServiceReportType.ClaimCount
+                   		? $"Количество обращений за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
 			       (ShowClosed ? $" ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       (ReportType == ClothingServiceReportType.ClaimForStatus ? $" в статусе \"{Status.GetEnumTitle()}\"" : "")+
 			       $" от {DateTime.Today.ToShortDateString()}";
@@ -53,8 +56,8 @@ namespace Workwear.ReportParameters.ViewModels {
 				case ClothingServiceReportType.ClaimList:
 					return new Dictionary<string, object> {
 						{ "show_closed", showClosed },
-						{ "start_date", StartDate},
-						{ "end_date", EndDate},
+						{ "start_date", StartDate },
+						{ "end_date", EndDate },
 					};
 				case ClothingServiceReportType.ClaimForStatus :
 					return new Dictionary<string, object> {
@@ -67,9 +70,17 @@ namespace Workwear.ReportParameters.ViewModels {
 					return new Dictionary<string, object> {
 						{ "report_name", Title },
 						{ "show_closed", showClosed },
-						{ "start_date", StartDate},
-						{ "finish_date", EndDate},
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
 						{ "show_emoloyee", showEmployees },
+					};
+				case ClothingServiceReportType.ClaimCount:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "show_phone", ShowPhone },
+						{ "show_zero", ShowZero },
 					};
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
@@ -100,10 +111,17 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => showClosed;
 			set => SetField(ref showClosed, value);
 		}
+		
 		private bool showEmployees = true;
 		public virtual bool ShowEmployees {
 			get => showEmployees;
 			set => SetField(ref showEmployees, value);
+		}
+		
+		private bool showZero = false;
+		public virtual bool ShowZero {
+			get => showZero;
+			set => SetField(ref showZero, value);
 		}
 		
 		private DateTime startDate = DateTime.Now.AddMonths(-1);
@@ -123,12 +141,13 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
-		public bool VisiblePeriodOfBegitn => VisibleShowClosed && ShowClosed;
+		public bool VisiblePeriodOfBegitn => reportType == ClothingServiceReportType.ClaimCount || (VisibleShowClosed && ShowClosed);
 		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimList || reportType == ClothingServiceReportType.ClaimMetric;
 		public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric;
-		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowComment => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount;
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingServiceReport")]
@@ -139,7 +158,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		ClaimForStatus,
         [ReportIdentifier("ClothingServiceMetricReport")]
         [Display(Name = "Нахождение в обслуживании")]
-        ClaimMetric
+        ClaimMetric,
+		[ReportIdentifier("ClothingServiceCountClaimReport")]
+		[Display(Name = "Количество обращений")]
+		ClaimCount
 	}
 	
 }
