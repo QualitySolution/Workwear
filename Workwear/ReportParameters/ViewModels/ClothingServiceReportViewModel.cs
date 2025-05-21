@@ -19,13 +19,16 @@ namespace Workwear.ReportParameters.ViewModels {
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
-		private ClothingServiceReportType reportType;
+		private ClothingServiceReportType reportType = ClothingServiceReportType.ClaimList;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		[PropertyChangedAlso(nameof(VisiblePeriodOfBegitn))]
 		[PropertyChangedAlso(nameof(VisibleShowClosed))]
+		[PropertyChangedAlso(nameof(VisibleShowEmployees))]
 		[PropertyChangedAlso(nameof(VisibleShowPhone))]
 		[PropertyChangedAlso(nameof(VisibleShowStatus))]
 		[PropertyChangedAlso(nameof(VisibleShowComment))]
+		[PropertyChangedAlso(nameof(VisibleShowZero))]
+		[PropertyChangedAlso(nameof(Title))]
 		public virtual ClothingServiceReportType ReportType {
 			get => reportType;
 			set {
@@ -37,18 +40,24 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 		}
 		public override string Title {
-			get => "Заявки на обслуживание" +
+			get => (ReportType == ClothingServiceReportType.ClaimList || ReportType == ClothingServiceReportType.ClaimForStatus 
+						? "Заявки на обслуживание" : "") +
+			       (ReportType == ClothingServiceReportType.ClaimMetric
+						? "Отчёт по нахождению в обслуживании" : "") +
+			        (ReportType == ClothingServiceReportType.ClaimCount
+                   		? $"Количество обращений за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
+			       (ShowClosed ? $" ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       (ReportType == ClothingServiceReportType.ClaimForStatus ? $" в статусе \"{Status.GetEnumTitle()}\"" : "")+
 			       $" от {DateTime.Today.ToShortDateString()}";
 		}
-
+		
 		private Dictionary<string, object> SetParameters() {
 			switch(ReportType) {
 				case ClothingServiceReportType.ClaimList:
 					return new Dictionary<string, object> {
 						{ "show_closed", showClosed },
-						{ "start_date", StartDate ?? DateTime.MinValue },
-						{ "end_date", EndDate ?? DateTime.MaxValue },
+						{ "start_date", StartDate },
+						{ "end_date", EndDate },
 					};
 				case ClothingServiceReportType.ClaimForStatus :
 					return new Dictionary<string, object> {
@@ -56,6 +65,22 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "show_comment", ShowComments },
 						{ "show_phone", ShowPhone },
 						{ "status", Status },
+					};
+				case ClothingServiceReportType.ClaimMetric:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "show_closed", showClosed },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "show_emoloyee", showEmployees },
+					};
+				case ClothingServiceReportType.ClaimCount:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "show_phone", ShowPhone },
+						{ "show_zero", ShowZero },
 					};
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
@@ -81,31 +106,48 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		private bool showClosed = false;
 		[PropertyChangedAlso(nameof(VisiblePeriodOfBegitn))]
+		[PropertyChangedAlso(nameof(Title))]
 		public virtual bool ShowClosed {
 			get => showClosed;
 			set => SetField(ref showClosed, value);
 		}
 		
-		private DateTime? startDate = DateTime.Now.AddMonths(-1);
+		private bool showEmployees = true;
+		public virtual bool ShowEmployees {
+			get => showEmployees;
+			set => SetField(ref showEmployees, value);
+		}
+		
+		private bool showZero = false;
+		public virtual bool ShowZero {
+			get => showZero;
+			set => SetField(ref showZero, value);
+		}
+		
+		private DateTime startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
-		public virtual DateTime? StartDate {
+		[PropertyChangedAlso(nameof(Title))]
+		public virtual DateTime StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 		
-		private DateTime? endDate =  DateTime.Now;
+		private DateTime endDate =  DateTime.Now;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
-		public virtual DateTime? EndDate {
+		[PropertyChangedAlso(nameof(Title))]
+		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
 		}
 
 		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
-		public bool VisiblePeriodOfBegitn => VisibleShowClosed && ShowClosed;
-		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimList;
-		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisiblePeriodOfBegitn => reportType == ClothingServiceReportType.ClaimCount || (VisibleShowClosed && ShowClosed);
+		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimList || reportType == ClothingServiceReportType.ClaimMetric;
+		public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric;
+		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowComment => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount;
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingServiceReport")]
@@ -113,7 +155,13 @@ namespace Workwear.ReportParameters.ViewModels {
 		ClaimList,
 		[ReportIdentifier("ClothingServiceStatusReport")]
 		[Display(Name = "Заявки по статусу")]
-		ClaimForStatus
+		ClaimForStatus,
+        [ReportIdentifier("ClothingServiceMetricReport")]
+        [Display(Name = "Нахождение в обслуживании")]
+        ClaimMetric,
+		[ReportIdentifier("ClothingServiceCountClaimReport")]
+		[Display(Name = "Количество обращений")]
+		ClaimCount
 	}
 	
 }
