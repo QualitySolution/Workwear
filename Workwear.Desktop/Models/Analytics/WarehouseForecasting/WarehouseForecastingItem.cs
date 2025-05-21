@@ -5,26 +5,26 @@ using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
 
-namespace Workwear.ViewModels.Analytics {
+namespace Workwear.Models.Analytics.WarehouseForecasting {
 	public class WarehouseForecastingItem : PropertyChangedBase {
-		private readonly WarehouseForecastingViewModel model;
+		private readonly IForecastColumnsModel columnsModel;
 		private List<FutureIssue> futureIssues;
 		
 		public WarehouseForecastingItem(
-			WarehouseForecastingViewModel model,
+			IForecastColumnsModel model,
 			(ProtectionTools ProtectionTools, Size Size, Size Height) key,
 			List<FutureIssue> issues,
 			StockBalance[] stocks,
 			ClothesSex sex) {
-			this.model = model ?? throw new ArgumentNullException(nameof(model));
+			this.columnsModel = model ?? throw new ArgumentNullException(nameof(model));
 			ProtectionTool = key.ProtectionTools;
 			Size = key.Size;
 			Height = key.Height;
 			Sex = sex;
+			Name = key.ProtectionTools.Name;
 			futureIssues = issues;
 			Stocks = stocks
 				.Where(x => x.Position.Nomenclature.Sex == Sex || x.Position.Nomenclature.Sex == ClothesSex.Universal)
@@ -43,12 +43,35 @@ namespace Workwear.ViewModels.Analytics {
 					?? ProtectionTool.Nomenclatures.FirstOrDefault();
 			FillForecast();
 		}
+
+		public WarehouseForecastingItem(IForecastColumnsModel model) {
+			this.columnsModel = model ?? throw new ArgumentNullException(nameof(model));
+			futureIssues = new List<FutureIssue>();
+		}
+		
+		public void AddFutureIssue(IEnumerable<FutureIssue> issues) {
+			futureIssues.AddRange(issues);
+		}
 		
 		#region Группировка
+		public Nomenclature Nomenclature { get; set; }
+		
 		private ProtectionTools protectionTool;
 		public ProtectionTools ProtectionTool {
 			get => protectionTool;
 			set => SetField(ref protectionTool, value);
+		}
+		
+		private string name;
+		public string Name {
+			get => name;
+			set => SetField(ref name, value);
+		}
+		
+		private string[] suitableNomenclature = {};
+		public string[] SuitableNomenclature {
+			get => suitableNomenclature;
+			set => SetField(ref suitableNomenclature, value);
 		}
 
 		private Size size;
@@ -98,31 +121,30 @@ namespace Workwear.ViewModels.Analytics {
 			set => SetField(ref forecastColours, value);
 		}
 
-		public Nomenclature Nomenclature { get; }
-		
+		public bool SupplyNomenclatureNotSet;
 		#region Рассчеты
 
 		public void FillForecast() {
 			Unissued = 0;
-			Forecast = new int[model.ForecastColumns.Length];
-			ForecastBalance = new int[model.ForecastColumns.Length];
-			ForecastColours = new string[model.ForecastColumns.Length];
+			Forecast = new int[columnsModel.ForecastColumns.Length];
+			ForecastBalance = new int[columnsModel.ForecastColumns.Length];
+			ForecastColours = new string[columnsModel.ForecastColumns.Length];
 			foreach(var issue in futureIssues) {
-				if(issue.DelayIssueDate < model.ForecastColumns[0].StartDate) {
+				if(issue.DelayIssueDate < columnsModel.ForecastColumns[0].StartDate) {
 					Unissued += issue.Amount;
 					continue;
 				}
 
-				for(int i = 0; i < model.ForecastColumns.Length; i++) {
+				for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 					var issueDate = issue.DelayIssueDate ?? issue.OperationDate;
-					if(issueDate >= model.ForecastColumns[i].StartDate && issueDate <= model.ForecastColumns[i].EndDate) {
+					if(issueDate >= columnsModel.ForecastColumns[i].StartDate && issueDate <= columnsModel.ForecastColumns[i].EndDate) {
 						Forecast[i] += issue.Amount;
 						break;
 					}
 				}
 			}
 			//Раскраска
-			for(int i = 0; i < model.ForecastColumns.Length; i++) {
+			for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 				var onStock = InStock - Forecast.Take(i + 1).Sum();
 				ForecastBalance[i] = onStock;
 				if(onStock < 0) {
@@ -138,9 +160,32 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 
 		#region Расчетные для отображения
+		public decimal GetPrice(ForecastingPriceType priceType) {
+			switch(priceType) {
+				case ForecastingPriceType.None:
+					return 0;
+				case ForecastingPriceType.SalePrice:
+					return Nomenclature?.SaleCost ?? 0;
+				case ForecastingPriceType.AssessedCost:
+					return ProtectionTool?.AssessedCost ?? 0;
+				default:
+					throw new NotImplementedException();
+			}
+		}
+		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
 		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
-		public string NomenclaturesText => ProtectionTool.Nomenclatures.Any() ? "Выдаваемые номенклатуры:" + String.Concat(ProtectionTool.Nomenclatures.Select(x => $"\n* {x.Name}")) : null;
+		public string NomenclaturesText {
+			get {
+				string text = "";
+				if(SupplyNomenclatureNotSet)
+					text += "Номенклатура для закупки не установлена! В прогнозе используется номенклатура нормы.\n";
+				if (SuitableNomenclature.Any())
+					text += "Подходящие номенклатуры:" + String.Concat(SuitableNomenclature.Select(x => $"\n* {x}"));
+				return String.IsNullOrEmpty(text) ? null : text.Trim();
+			}
+		}
+
 		public string StockText => Stocks.Any() ? "В наличии:" + String.Concat(Stocks.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
 		#endregion
 	}

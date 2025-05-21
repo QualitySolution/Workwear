@@ -24,6 +24,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -208,13 +209,17 @@ namespace Workwear.ViewModels.Stock
                 NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
                     this,
                     Employee,
-                    OpenPageOptions.AsSlave);
-            selectJournal.ViewModel.Filter.DateSensitive = false;
-            selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-            selectJournal.ViewModel.Filter.SubdivisionSensitive =  Employee == null;
-            selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
-            selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
+                    OpenPageOptions.AsSlave,
+                    addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+	                    filter => {
+		                    filter.DateSensitive = false;
+		                    filter.CheckShowWriteoffVisible = false;
+		                    filter.SubdivisionSensitive = Employee == null;
+		                    filter.EmployeeSensitive = Employee == null;
+		                    filter.Date = Entity.Date;
+		                    filter.CanChooseAmount = true;
+	                    });
+                    });
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)

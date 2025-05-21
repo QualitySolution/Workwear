@@ -19,6 +19,7 @@ using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
 using Workwear.Tools;
@@ -135,10 +136,14 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					Employee,
-					OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.DateSensitive = true;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+						filter => {
+							filter.DateSensitive = true;
+							filter.Date = Entity.Date;
+							filter.EmployeeSensitive = Employee == null;
+						});
+					});
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadItems;
 		}

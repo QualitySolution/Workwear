@@ -70,6 +70,7 @@ using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
+using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
@@ -123,6 +124,8 @@ namespace workwear
 			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
 			QSMain.ProjectPermission.Add ("can_delete", new UserPermission ("can_delete", "Удаление объектов",
 				"Пользователь может удалять документы и элементы справочников"));
+			QSMain.ProjectPermission.Add ("can_accounting_settings", new UserPermission ("can_accounting_settings", "Изменение настроек учета",
+				"Пользователь может изменять настройки учета"));
 			QSMain.User.LoadUserInfo();
 
 			#if DEBUG
@@ -330,8 +333,12 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			#region Прогноз
+			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<NomenclatureForecastingModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectionToolsForecastingModel>().AsSelf().InstancePerLifetimeScope();
+			#endregion
 			#endregion
 
 			#region Repository

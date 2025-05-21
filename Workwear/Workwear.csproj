@@ -171,7 +171,6 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\Permissions\PermissionsService.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Analytics\WarehouseForecastingItem.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
@@ -873,6 +872,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Reports\ClothingServiceMetricReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingServiceCountClaimReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -880,6 +885,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingServiceStatusReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
