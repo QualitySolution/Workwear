@@ -31,6 +31,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(vm => vm.EndDate, w => w.EndDateOrNull)
 				.AddBinding(vm => vm.VisiblePeriodOfBegitn, w => w.Visible).InitializeFromSource();
 			ylabelPeriod.Binding
+				.AddBinding(ViewModel, vm => vm.ShowClosedLabel, w => w.Text)
 				.AddBinding(ViewModel, vm => vm.VisiblePeriodOfBegitn, w => w.Visible).InitializeFromSource();
 			ylabelshowclosed.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible).InitializeFromSource();
