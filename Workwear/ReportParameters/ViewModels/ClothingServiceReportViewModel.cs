@@ -41,16 +41,17 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 		}
 		public override string Title {
-			get => (ReportType == ClothingServiceReportType.ClaimList || ReportType == ClothingServiceReportType.ClaimForStatus 
+			get => (ReportType == ClothingServiceReportType.ClaimList
 						? "Заявки на обслуживание" : "") +
+			       (ReportType == ClothingServiceReportType.ClaimForStatus 
+						? $"Заявки в статусе {Status.GetEnumTitle()}" : "") +
 			       (ReportType == ClothingServiceReportType.ClaimMetric
 						? "Отчёт по нахождению в обслуживании" : "") +
 			        (ReportType == ClothingServiceReportType.ClaimCount
                    		? $"Количество обращений за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
 			        (ReportType == ClothingServiceReportType.PostamatUse
                    		? $"Использование постаматов за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
-			       (ShowClosed ? $" ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
-			       (ReportType == ClothingServiceReportType.ClaimForStatus ? $" в статусе \"{Status.GetEnumTitle()}\"" : "")+
+			       (VisiblePeriodOfBegitn ? $" ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       $" от {DateTime.Today.ToShortDateString()}";
 		}
 		
@@ -67,6 +68,8 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "report_name", Title },
 						{ "show_comment", ShowComments },
 						{ "show_phone", ShowPhone },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
 						{ "status", Status },
 					};
 				case ClothingServiceReportType.ClaimMetric:
@@ -96,6 +99,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 		
 		private ClaimState status = ClaimState.InWashing;
+		[PropertyChangedAlso(nameof(Title))]
 		public virtual ClaimState Status {
 			get => status;
 			set => SetField(ref status, value);
@@ -114,7 +118,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		public virtual string ShowClosedLabel =>
-			reportType == ClothingServiceReportType.PostamatUse ? "Период:" :
+			(reportType == ClothingServiceReportType.PostamatUse || reportType == ClothingServiceReportType.ClaimForStatus) ?
+				"Период:" :
 				"Период поступления заявок:";
 		
 		private bool showClosed = false;
@@ -154,7 +159,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
-		public bool VisiblePeriodOfBegitn => reportType == ClothingServiceReportType.ClaimCount || (VisibleShowClosed && ShowClosed) || reportType == ClothingServiceReportType.PostamatUse;
+		public bool VisiblePeriodOfBegitn => reportType == ClothingServiceReportType.ClaimCount || (VisibleShowClosed && ShowClosed) || reportType == ClothingServiceReportType.PostamatUse || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimList || reportType == ClothingServiceReportType.ClaimMetric;
 		public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric;
 		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount || reportType == ClothingServiceReportType.ClaimForStatus;
