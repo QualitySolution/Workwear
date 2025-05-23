@@ -4,14 +4,6 @@
   <Author></Author>
   <PageHeight>8.5in</PageHeight>
   <PageWidth>20in</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=atlas.srv.qsolution.ru;user=root;database=specposhiv_kos;port=3306;password=Good#Admins;</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -533,4 +525,13 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
       <Prompt />
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
