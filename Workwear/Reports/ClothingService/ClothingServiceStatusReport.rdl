@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>25in</PageWidth>
+  <PageWidth>33in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -21,33 +21,39 @@
     DATEDIFF(NOW(), start.operation_time) AS day_from_start,
     DATE_FORMAT(finish.operation_time, '%d.%m.%Y') AS finish_date,
     DATEDIFF(NOW(), finish.operation_time) AS day_into_disp_terminal,
-    postomat_documents.terminal_location AS disp_location,    
+    postomat_documents.terminal_location AS disp_location,
     postomat_document_items.cell_number AS disp_cell,
     employees.personnel_number AS tab_num,
-    CONCAT_WS(' ', employees.last_name, employees.first_name,employees.patronymic_name) AS 'FIO',
+
+    IF(@show_emoloyee, CONCAT_WS(' ', employees.last_name, employees.first_name,employees.patronymic_name), '') AS 'FIO',
+    IF(@show_emoloyee, posts.name, '') AS post,
+    IF(@show_emoloyee, subdivisions.name, '') AS subdivision,
+    IF(@show_emoloyee, departments.name, '') AS department,
     IF(@show_phone, employees.phone_number, '') AS phone,
     IF(@show_comment, IFNULL(start.comment, ''), '') AS start_comment,
     IF(@show_comment, IFNULL(finish.comment, ''), '') AS finish_comment
 FROM clothing_service_claim
-     LEFT JOIN (select s.claim_id AS clid, MIN(s.id) AS st_id
-                FROM clothing_service_states AS s
-                GROUP BY s.claim_id
-                ) AS t1 ON t1.clid = clothing_service_claim.id
-     LEFT JOIN (select s.claim_id AS clid, MAX(s.id) AS fh_id
-                FROM clothing_service_states AS s
-                GROUP BY s.claim_id
-                ) AS t2 ON t2.clid = clothing_service_claim.id
-     LEFT JOIN clothing_service_states AS start ON start.id = t1.st_id
-     LEFT JOIN clothing_service_states AS finish ON finish.id = t2.fh_id
-     LEFT JOIN employees ON employees.id = clothing_service_claim.employee_id
-     LEFT JOIN barcodes ON clothing_service_claim.barcode_id = barcodes.id
-     LEFT JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
-     LEFT JOIN postomat_document_items ON clothing_service_claim.id = postomat_document_items.claim_id
-     LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
-WHERE 
-    finish.state = @status
-    AND finish.operation_time BETWEEN @start_date AND @finish_date
-    
+         LEFT JOIN (select s.claim_id AS clid, MIN(s.id) AS st_id
+                    FROM clothing_service_states AS s
+                    GROUP BY s.claim_id
+) AS t1 ON t1.clid = clothing_service_claim.id
+         LEFT JOIN (select s.claim_id AS clid, MAX(s.id) AS fh_id
+                    FROM clothing_service_states AS s
+                    GROUP BY s.claim_id
+) AS t2 ON t2.clid = clothing_service_claim.id
+         LEFT JOIN clothing_service_states AS start ON start.id = t1.st_id
+         LEFT JOIN clothing_service_states AS finish ON finish.id = t2.fh_id
+         LEFT JOIN employees ON employees.id = clothing_service_claim.employee_id
+         LEFT JOIN posts ON employees.post_id = posts.id
+         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
+         LEFT JOIN departments ON employees.department_id = departments.id
+         LEFT JOIN barcodes ON clothing_service_claim.barcode_id = barcodes.id
+         LEFT JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
+         LEFT JOIN postomat_document_items ON clothing_service_claim.id = postomat_document_items.claim_id
+         LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
+WHERE (@status is null OR @status = '' OR finish.state = @status)
+  AND (@show_closed OR clothing_service_claim.is_closed)
+  AND finish.operation_time BETWEEN @start_date AND @finish_date
 ORDER BY start_date</CommandText>
         <QueryParameters>
           <QueryParameter Name="status">
@@ -64,6 +70,12 @@ ORDER BY start_date</CommandText>
           </QueryParameter>
           <QueryParameter Name="finish_date">
             <Value>=Parameters!finish_date</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_emoloyee">
+            <Value>=Parameters!show_emoloyee</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_closed">
+            <Value>=Parameters!show_closed</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -94,7 +106,7 @@ ORDER BY start_date</CommandText>
         </Field>
         <Field Name="day_into_disp_terminal">
           <DataField>day_into_disp_terminal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="disp_location">
           <DataField>disp_location</DataField>
@@ -110,6 +122,18 @@ ORDER BY start_date</CommandText>
         </Field>
         <Field Name="FIO">
           <DataField>FIO</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="post">
+          <DataField>post</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="department">
+          <DataField>department</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="phone">
@@ -170,11 +194,9 @@ ORDER BY start_date</CommandText>
           <TableColumn>
             <Width>67.7pt</Width>
           </TableColumn>
-          <TableColumn >
-            <Width>72.5pt</Width>
-            <Visibility>
-              <Hidden>={?status} != 'Returned'</Hidden>
-            </Visibility>
+          <TableColumn>
+            <Width>95.5pt</Width>
+            <Visibility></Visibility>
           </TableColumn>
           <TableColumn>
             <Width>49.1pt</Width>
@@ -205,9 +227,33 @@ ORDER BY start_date</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>89.5pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_emoloyee}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>194.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_emoloyee}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>194.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_emoloyee}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>194.8pt</Width>
+            <Visibility >
+              <Hidden>=!{?show_emoloyee}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>194.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_emoloyee}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>109.2pt</Width>
@@ -216,13 +262,13 @@ ORDER BY start_date</CommandText>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>259.2pt</Width>
+            <Width>269.6pt</Width>
             <Visibility>
               <Hidden>=!{?show_comment}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>261.8pt</Width>
+            <Width>295.0pt</Width>
             <Visibility>
               <Hidden>=!{?show_comment}</Hidden>
             </Visibility>
@@ -281,10 +327,10 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>Дата возврата</Value>
+                      <Value>Переход в текущий статус </Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -411,6 +457,54 @@ ORDER BY start_date</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>Должность</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox20">
+                      <Value>Подразделение</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox18">
+                      <Value>Отдел</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox13">
                       <Value>Телефон</Value>
                       <Style>
@@ -428,7 +522,7 @@ ORDER BY start_date</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>Коментарий при приймке</Value>
+                      <Value>Коментарий при приёмке</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -458,6 +552,7 @@ ORDER BY start_date</CommandText>
                   </ReportItems>
                 </TableCell>
               </TableCells>
+              <Visibility></Visibility>
             </TableRow>
           </TableRows>
           <RepeatOnNewPage>true</RepeatOnNewPage>
@@ -514,7 +609,7 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox17">
                       <Value>=Fields!finish_date.Value</Value>
@@ -641,6 +736,55 @@ ORDER BY start_date</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>=Fields!post.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox24">
+                      <Value>=Fields!subdivision.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BackgroundColor>White</BackgroundColor>
+                        <BackgroundGradientType>LeftRight</BackgroundGradientType>
+                        <BackgroundGradientEndColor>Azure</BackgroundGradientEndColor>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value>=Fields!department.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="phone">
                       <Value>=Fields!phone.Value</Value>
                       <CanGrow>true</CanGrow>
@@ -691,7 +835,7 @@ ORDER BY start_date</CommandText>
         <Top>0.0pt</Top>
       </Table>
     </ReportItems>
-    <Height>61.9pt</Height>
+    <Height>50.7pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -731,8 +875,8 @@ ORDER BY start_date</CommandText>
           <Value>InWashing</Value>
         </Values>
       </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
@@ -785,6 +929,25 @@ ORDER BY start_date</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_emoloyee">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_closed">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

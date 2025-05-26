@@ -14,7 +14,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
 			comboStatus.ItemsEnum = typeof(ClaimState);
 			comboStatus.Binding
-				.AddBinding(ViewModel, vm => vm.Status, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.Status, w => w.SelectedItemOrNull)
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
 			ylabelshowPhone.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowPhone, w => w.Visible).InitializeFromSource();

@@ -78,7 +78,7 @@ namespace Workwear.ReportParameters.Views
 			// Container child ytable1.Gtk.Table+TableChild
 			this.comboStatus = new global::Gamma.Widgets.yEnumComboBox();
 			this.comboStatus.Name = "comboStatus";
-			this.comboStatus.ShowSpecialStateAll = false;
+			this.comboStatus.ShowSpecialStateAll = true;
 			this.comboStatus.ShowSpecialStateNot = false;
 			this.comboStatus.UseShortTitle = false;
 			this.comboStatus.DefaultFirst = true;
@@ -114,8 +114,8 @@ namespace Workwear.ReportParameters.Views
 			this.ycheckbuttonshowclosed.UseUnderline = true;
 			this.ytable1.Add(this.ycheckbuttonshowclosed);
 			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ycheckbuttonshowclosed]));
-			w4.TopAttach = ((uint)(2));
-			w4.BottomAttach = ((uint)(3));
+			w4.TopAttach = ((uint)(3));
+			w4.BottomAttach = ((uint)(4));
 			w4.LeftAttach = ((uint)(1));
 			w4.RightAttach = ((uint)(2));
 			w4.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -188,8 +188,8 @@ namespace Workwear.ReportParameters.Views
 			this.ydateperiodpicker.EndDate = new global::System.DateTime(0);
 			this.ytable1.Add(this.ydateperiodpicker);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateperiodpicker]));
-			w9.TopAttach = ((uint)(3));
-			w9.BottomAttach = ((uint)(4));
+			w9.TopAttach = ((uint)(2));
+			w9.BottomAttach = ((uint)(3));
 			w9.LeftAttach = ((uint)(1));
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -221,8 +221,8 @@ namespace Workwear.ReportParameters.Views
 			this.ylabelPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Период поступления заявок:");
 			this.ytable1.Add(this.ylabelPeriod);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelPeriod]));
-			w12.TopAttach = ((uint)(3));
-			w12.BottomAttach = ((uint)(4));
+			w12.TopAttach = ((uint)(2));
+			w12.BottomAttach = ((uint)(3));
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
@@ -232,8 +232,8 @@ namespace Workwear.ReportParameters.Views
 			this.ylabelshowclosed.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать закрытые:");
 			this.ytable1.Add(this.ylabelshowclosed);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelshowclosed]));
-			w13.TopAttach = ((uint)(2));
-			w13.BottomAttach = ((uint)(3));
+			w13.TopAttach = ((uint)(3));
+			w13.BottomAttach = ((uint)(4));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
