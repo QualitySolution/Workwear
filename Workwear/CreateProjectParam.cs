@@ -339,7 +339,6 @@ namespace workwear
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NomenclatureForecastingModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectionToolsForecastingModel>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<ShipmentCalculateModel>().AsSelf().InstancePerLifetimeScope();
 			#endregion
 			#endregion
