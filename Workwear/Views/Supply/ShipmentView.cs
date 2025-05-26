@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Supply;
@@ -13,24 +13,27 @@ namespace Workwear.Views.Supply {
 			CommonButtonSubscription();
 		}
 		private void ConfigureDlg() {
-			ylabelNumber.Binding.AddBinding(ViewModel, v=>v.DocID, w=>w.LabelProp)
+			ylabelNumber.Binding.AddBinding(ViewModel, v => v.DocID, w => w.LabelProp)
 				.InitializeFromSource();
 			datePeriod.Binding.AddSource(ViewModel)
-				.AddBinding(v=>v.StartPeriod, w=>w.StartDateOrNull)
-				.AddBinding(v=>v.EndPeriod,w=>w.EndDateOrNull)
+				.AddBinding(v => v.StartPeriod, w => w.StartDateOrNull)
+				.AddBinding(v => v.EndPeriod,w => w.EndDateOrNull)
 				.InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v=>v.DocCreatedbyUser!=null? v.DocCreatedbyUser.Name: null, w=>w.LabelProp)
+			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v => v.DocCreatedbyUser!=null? v.DocCreatedbyUser.Name: null, w => w.LabelProp)
 				.InitializeFromSource();
-			ytextComment.Binding.AddBinding(ViewModel, v=>v.DocComment,w=>w.Buffer.Text)
+			ytextComment.Binding.AddBinding(ViewModel, v => v.DocComment,w => w.Buffer.Text)
 				.InitializeFromSource();
-			ylabelAmount.Binding.AddBinding(ViewModel, v=>v.Total, w=>w.LabelProp)
+			ylabelAmount.Binding.AddBinding(ViewModel, v => v.Total, w => w.LabelProp)
 				.InitializeFromSource();
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			yenumcomboboxStatus.ItemsEnum=typeof(ShipmentStatus);
 			yenumcomboboxStatus.Binding
-				.AddBinding(Entity,v=>v.Status,w=>w.SelectedItem)
+				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
 				.InitializeFromSource();
+			ybuttonSendEmail.Binding
+				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
+			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
 
 		private void ConfigureItems() {
@@ -48,15 +51,30 @@ namespace Workwear.Views.Supply {
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
-				.AddColumn("Количество")
-					.AddNumericRenderer(e => e.Amount)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(8)
+				.AddColumn("Запрошено")
+					.AddNumericRenderer(e => e.Requested)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditRequested ).WidthChars(8)
+					.AddReadOnlyTextRenderer(e => e.Units?.Name)
+				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
+				.AddColumn("Заказано")
+					.AddNumericRenderer(e => e.Ordered)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditOrdered ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Стоимость")
 					.AddNumericRenderer(e => e.Cost)
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
-					.AddNumericRenderer(x => x.Total).Digits(2)
+					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
+                .AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
+                    .AddTextRenderer(e => e.DiffСause)
+                    .Editable()
+				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
+				.AddColumn("Получено")
+					.AddReadOnlyTextRenderer(e => e.Received.ToString() + ' ' + e.Units?.Name)
+				.AddColumn("Комментарий")
+					.AddTextRenderer(e => e.Comment)
+					.Editable()
+
 				.Finish();
 			
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
@@ -64,15 +82,17 @@ namespace Workwear.Views.Supply {
 
 
 		}
+		
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ShipmentItem>();
 		}
-		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		}
-		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
+		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
-		}
+
+		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
+			ViewModel.SendMessegeForBuyer();
 	}
 }
 

@@ -178,6 +178,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
@@ -509,6 +510,11 @@
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentView.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\DutyNormBalanceFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormBalanceFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Supply\ShipmentJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Supply.ShipmentJournalFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
+    <Compile Include="Views\Communications\SendEmailView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -747,6 +753,8 @@
     <Folder Include="Journal\Filter.Views\Postomats\" />
     <Folder Include="Views\Analytics\" />
     <Folder Include="Views\Supply\" />
+    <Folder Include="Journal\Filter.Views\Supply\" />
+    <Folder Include="Journal\Filter.ViewModels\Supply\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
@@ -887,6 +895,9 @@
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\Documents\ShipmentSheet.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Reports\ClothingService\ClothingServicePostamatReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
