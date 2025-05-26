@@ -23,6 +23,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		[PropertyChangedAlso(nameof(VisiblePeriodOfBegitn))]
 		[PropertyChangedAlso(nameof(VisibleShowClosed))]
+		[PropertyChangedAlso(nameof(VisibleGroupSubdivision))]
 		[PropertyChangedAlso(nameof(VisibleShowEmployees))]
 		[PropertyChangedAlso(nameof(VisibleShowPhone))]
 		[PropertyChangedAlso(nameof(VisibleShowStatus))]
@@ -48,10 +49,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			       (ReportType == ClothingServiceReportType.ClaimMetric
 						? "Отчёт по нахождению в обслуживании" : "") +
 			        (ReportType == ClothingServiceReportType.ClaimCount
-                   		? $"Количество обращений за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
+                   		? $"Количество обращений" : "") +
 			        (ReportType == ClothingServiceReportType.PostamatUse
-                   		? $"Использование постаматов за {StartDate.ToShortDateString()}-{EndDate.ToShortDateString()}" : "") +
-			       (VisiblePeriodOfBegitn ? $" ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
+                   		? $"Использование постаматов" : "") +
+			       (VisiblePeriodOfBegitn ? $" за ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       $" от {DateTime.Today.ToShortDateString()}";
 		}
 		
@@ -87,6 +88,7 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "finish_date", EndDate },
 						{ "show_phone", ShowPhone },
 						{ "show_zero", ShowZero },
+						{ "subdivision_group", GroupSubdivision },
 					};
 				case ClothingServiceReportType.PostamatUse:
 					return new Dictionary<string, object> {
@@ -103,6 +105,14 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual ClaimState Status {
 			get => status;
 			set => SetField(ref status, value);
+		}
+
+		private bool groupSubdivision = false;		
+		[PropertyChangedAlso(nameof(VisibleShowPhone))]
+		[PropertyChangedAlso(nameof(VisibleShowZero))]
+		public virtual bool GroupSubdivision {
+			get => groupSubdivision;
+			set => SetField(ref groupSubdivision, value);
 		}
 		
 		private bool showComments = false;
@@ -161,11 +171,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
 		public bool VisiblePeriodOfBegitn => reportType == ClothingServiceReportType.ClaimCount || (VisibleShowClosed && ShowClosed) || reportType == ClothingServiceReportType.PostamatUse || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimList || reportType == ClothingServiceReportType.ClaimMetric;
-		public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric;
-		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount || reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleGroupSubdivision => reportType == ClothingServiceReportType.ClaimCount;
+        public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric;
+		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowComment => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
-		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount;
+		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision;
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingService.ClothingServiceReport")]
