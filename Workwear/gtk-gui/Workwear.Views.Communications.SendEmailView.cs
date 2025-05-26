@@ -39,6 +39,7 @@ namespace Workwear.Views.Communications
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.HeightRequest = 150;
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
@@ -52,7 +53,6 @@ namespace Workwear.Views.Communications
 			w2.BottomAttach = ((uint)(3));
 			w2.LeftAttach = ((uint)(1));
 			w2.RightAttach = ((uint)(3));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ybuttonSaveAdress = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonSaveAdress.CanFocus = true;
@@ -81,8 +81,8 @@ namespace Workwear.Views.Communications
 			w6.TopAttach = ((uint)(3));
 			w6.BottomAttach = ((uint)(4));
 			w6.LeftAttach = ((uint)(1));
-			w6.RightAttach = ((uint)(2));
-			w6.XOptions = ((global::Gtk.AttachOptions)(0));
+			w6.RightAttach = ((uint)(3));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yentryEAdress = new global::QS.Widgets.ValidatedEntry();
@@ -113,7 +113,7 @@ namespace Workwear.Views.Communications
 			this.ylabelAdress = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAdress.Name = "ylabelAdress";
 			this.ylabelAdress.Xalign = 1F;
-			this.ylabelAdress.LabelProp = global::Mono.Unix.Catalog.GetString("Адресс:");
+			this.ylabelAdress.LabelProp = global::Mono.Unix.Catalog.GetString("Электронный адрес:");
 			this.ytable1.Add(this.ylabelAdress);
 			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelAdress]));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
