@@ -3,7 +3,6 @@ using QS.Views;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class StockAllWearView : ViewBase<StockAllWearViewModel> {
 		public StockAllWearView(StockAllWearViewModel viewModel) : base(viewModel) {
 			this.Build();

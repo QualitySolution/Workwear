@@ -3,7 +3,7 @@
 ALTER TABLE users
 	ADD COLUMN can_accounting_settings TINYINT(1) NOT NULL DEFAULT 1 AFTER can_delete;
 
--- Реализация оступления из поставки и поставки из прогноза
+-- Реализация поступления из поставки и поставки из прогноза
 alter table shipment_items
 	add diff_cause varchar(120) null after height_id,
 	add ordered int unsigned not null after quantity,
@@ -14,7 +14,7 @@ alter table shipment
 	add full_ordered boolean default false not null after status,
 	add full_received boolean default false not null after full_ordered,
 	add has_receive boolean default false not null after full_received,
-	add submitted datetime null after status;
+	add submitted datetime null after has_receive;
 
 UPDATE shipment SET full_ordered =
 						(SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0
@@ -27,4 +27,4 @@ alter table stock_income
 		foreign key (shipment_id) references shipment (id);
 
 alter table user_settings
-	add buyer_email varchar(320) null after default_added_amount;
+	add buyer_email varchar(320) null after maximize_on_start;

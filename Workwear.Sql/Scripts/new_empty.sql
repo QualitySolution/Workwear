@@ -571,6 +571,7 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 	  number        varchar(15)  null,
 	  date          date         not null,
 	  warehouse_id  int unsigned not null,
+	  shipment_id   int unsigned null,
 	  user_id       int unsigned null,
 	  comment       text         null,
 	  creation_date datetime     null,
@@ -583,7 +584,9 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 			  on update cascade on delete set null,
 	  constraint fk_stock_income_warehouse
 		  foreign key (warehouse_id) references warehouse (id)
-			  on update cascade
+			  on update cascade,
+	  constraint fk_stock_income_shipment
+		  foreign key (shipment_id) references shipment (id)
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -1415,6 +1418,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1,
+  `buyer_email` varchar(320) null,
   `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All',
   `default_warehouse_id` INT UNSIGNED NULL,
   `default_organization_id` INT UNSIGNED NULL,
@@ -2370,7 +2374,11 @@ create table shipment
 	id int unsigned auto_increment primary key,
 	start_period date not null,
 	end_period date not null,
-	status enum('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') not null default 'Ordered',
+	status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
+	full_ordered boolean default false not null,
+	full_received boolean default false not null,
+	has_receive boolean default false not null,
+	submitted datetime null,
 	user_id int unsigned null,
 	comment text null,
 	creation_date datetime null
@@ -2388,9 +2396,12 @@ create table shipment_items
 	shipment_id int unsigned not null,
 	nomenclature_id int unsigned not null,
 	quantity int unsigned not null,
+	ordered int unsigned not null,
+	received int unsigned not null,
 	cost decimal(10, 2) unsigned default 0.00 not null,
 	size_id int unsigned null,
 	height_id int unsigned null,
+	diff_cause varchar(120) null,
 	comment varchar(120) null,
 	constraint fk_shipment_items_doc
 		foreign key (shipment_id) references shipment (id)
