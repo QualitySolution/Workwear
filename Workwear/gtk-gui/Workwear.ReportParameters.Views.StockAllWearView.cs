@@ -57,7 +57,7 @@ namespace Workwear.ReportParameters.Views
 			this.ydateReport.WithTime = false;
 			this.ydateReport.Date = new global::System.DateTime(0);
 			this.ydateReport.IsEditable = true;
-			this.ydateReport.AutoSeparation = false;
+			this.ydateReport.AutoSeparation = true;
 			this.table1.Add(this.ydateReport);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
 			w2.TopAttach = ((uint)(1));
