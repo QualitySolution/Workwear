@@ -280,7 +280,7 @@ namespace Workwear.Models.Operations {
 		
 		#region Заполение данных в сотрудников
 		/// <summary>
-		/// Заполняет графы и обновлят дату последней выдачи .
+		/// Заполняет графы и обновляет дату последней выдачи.
 		/// </summary>
 		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 2</param>
 		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {

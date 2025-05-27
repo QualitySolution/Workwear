@@ -171,7 +171,6 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\Permissions\PermissionsService.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Analytics\WarehouseForecastingItem.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
@@ -179,6 +178,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
@@ -513,6 +513,8 @@
     <Compile Include="Journal\Filter.Views\Supply\ShipmentJournalFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Supply.ShipmentJournalFilterView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
+    <Compile Include="Views\Communications\SendEmailView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -758,6 +760,15 @@
     <None Include="Reports\AmountIssuedWearFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\ClothingService\ClothingServiceCountClaimReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingService\ClothingServiceMetricReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingService\ClothingServiceStatusReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\Documents\InspectionSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -878,9 +889,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Reports\ClothingServiceReport.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Reports\DutyNorms\DutyNormPage1.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -888,6 +896,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\Documents\ShipmentSheet.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Reports\ClothingService\ClothingServicePostamatReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Reports\ClothingService\ClothingServiceReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">

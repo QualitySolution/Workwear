@@ -151,6 +151,7 @@ namespace WorkwearTest.ViewModels.Stock
 				vmWriteoff.AddFromEmployee();
 
 				var selectJournal = (EmployeeBalanceJournalViewModel)navigation.CurrentPage.ViewModel;
+				selectJournal.Refresh();
 				Console.WriteLine("Ждем поток журнала");
 				while(selectJournal.DataLoader.LoadInProgress) {
 					Console.Write('⧖');

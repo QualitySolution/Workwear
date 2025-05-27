@@ -81,7 +81,7 @@ namespace Workwear.Models.Operations {
 
 		#region Работа с базой
 		/// <summary>
-		/// Обновляет информацию о остатках. 
+		/// Обновляет информацию об остатках. 
 		/// </summary>
 		public void Refresh() {
 			if(Nomenclatures.Any())

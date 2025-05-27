@@ -20,7 +20,9 @@ namespace workwear.Journal.Filter.ViewModels.Company
             ILifetimeScope autofacScope,
             CurrentUserSettings currentUserSettings,
             EmployeeCard employee = null,
-            IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+            IUnitOfWorkFactory unitOfWorkFactory = null,
+            Action<EmployeeBalanceFilterViewModel> setFilterParameters = null)
+	        : base(journalViewModel, unitOfWorkFactory)
         {
 	        this.currentUserSettings = currentUserSettings;
 	        CanNotify = false;
@@ -31,6 +33,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
             Date = DateTime.Today;
             addAmount = currentUserSettings.Settings.DefaultAddedAmount;
             Employee = employee;
+            setFilterParameters?.Invoke(this);
             CanNotify = true;
         }
         private EmployeeCard employee;

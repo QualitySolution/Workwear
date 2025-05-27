@@ -10,26 +10,30 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Project.Domain;
 using QS.Project.Services.FileDialog;
 using QS.Services;
-using QS.Utilities.Text;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
+using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.Supply;
 
 namespace Workwear.ViewModels.Analytics {
-	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation
+	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation, IForecastColumnsModel
 	{
+		private readonly ILifetimeScope autofacScope;
+		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly FutureIssueModel futureIssueModel;
 		private readonly StockBalanceModel stockBalance;
@@ -41,6 +45,7 @@ namespace Workwear.ViewModels.Analytics {
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
+			NomenclatureRepository nomenclatureRepository,
 			FeaturesService featuresService,
 			EmployeeIssueModel issueModel,
 			FutureIssueModel futureIssueModel,
@@ -49,6 +54,8 @@ namespace Workwear.ViewModels.Analytics {
 			IFileDialogService fileDialogService,
 			UnitOfWorkProvider unitOfWorkProvider) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
@@ -62,6 +69,7 @@ namespace Workwear.ViewModels.Analytics {
 				.MakeByType()
 				.Finish();
 			Granularity = Granularity.Weekly;
+			ShowCreateShipment = featuresService.Available(WorkwearFeature.Shipment);
 		}
 		
 		#region IDialogDocumentation
@@ -75,6 +83,32 @@ namespace Workwear.ViewModels.Analytics {
 		
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntry;
 
+		#region Выбор номенклатур
+
+		private ChoiceListViewModel<ProtectionTools> choiceProtectionToolsViewModel;
+		private ChoiceListViewModel<Nomenclature> choiceNomenclatureViewModel;
+		public IChoiceListViewModel ChoiceGoodsViewModel {
+			get {
+				switch(NomenclatureType) {
+					case ForecastingNomenclatureType.Nomenclature:
+						if(choiceNomenclatureViewModel == null) {
+							choiceNomenclatureViewModel =
+								new ChoiceListViewModel<Nomenclature>(nomenclatureRepository.GetActiveNomenclatures());
+							choiceNomenclatureViewModel.SelectionChanged += (sender, args) => MakeForecast();
+						}
+						return choiceNomenclatureViewModel;
+					case ForecastingNomenclatureType.ProtectionTools:
+						if(choiceProtectionToolsViewModel == null) {
+							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(UoW.GetAll<ProtectionTools>().ToList());
+							choiceProtectionToolsViewModel.SelectionChanged += (sender, args) => MakeForecast();
+						}
+						return choiceProtectionToolsViewModel;
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+		#endregion
 		private Warehouse warehouse;
 		public Warehouse Warehouse {
 			get => warehouse;
@@ -111,9 +145,11 @@ namespace Workwear.ViewModels.Analytics {
 		private bool sensitiveSettings = true;
 		public bool SensitiveSettings {
 			get => sensitiveSettings;
-			set { 
-				if(SetField(ref sensitiveSettings, value))
+			set {
+				if(SetField(ref sensitiveSettings, value)) {
 					SensitiveExport = SensitiveSettings;
+					OnPropertyChanged(nameof(CanCreateShipment));
+				}
 			}
 		}
 
@@ -132,6 +168,9 @@ namespace Workwear.ViewModels.Analytics {
 				WarehouseEntry.IsEditable = value;
 			}
 		}
+	
+		public bool CanCreateShipment => SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature ;
+		public bool ShowCreateShipment { get; }
 
 		private Granularity granularity;
 		public Granularity Granularity {
@@ -151,6 +190,24 @@ namespace Workwear.ViewModels.Analytics {
 					ShowItemsList();
 			}
 		}
+		
+		private ForecastingNomenclatureType nomenclatureType = ForecastingNomenclatureType.Nomenclature;
+		[PropertyChangedAlso(nameof(ChoiceGoodsViewModel))]
+		public ForecastingNomenclatureType NomenclatureType {
+			get => nomenclatureType;
+			set {
+				if(SetField(ref nomenclatureType, value)) {
+					MakeForecast();
+                    OnPropertyChanged(nameof(CanCreateShipment));
+				}
+			}
+		}
+
+		private ForecastingPriceType priceType = ForecastingPriceType.AssessedCost;
+		public ForecastingPriceType PriceType {
+			get => priceType;
+			set => SetField(ref priceType, value);
+		}
 
 		private ForecastColumn[] forecastColumns;
 		public ForecastColumn[] ForecastColumns {
@@ -161,9 +218,29 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 
 		#region Внутренние переменные
+
+		private IForecastingModel forecastingModel {
+			get {
+				switch(NomenclatureType) {
+					case ForecastingNomenclatureType.ProtectionTools:
+						return autofacScope.Resolve<ProtectionToolsForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
+					case ForecastingNomenclatureType.Nomenclature:
+						var model = autofacScope.Resolve<NomenclatureForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
+						model.RestrictNomenclatures =
+							choiceNomenclatureViewModel.AllSelected ? null : choiceNomenclatureViewModel.SelectedEntities;
+						return model;
+					default:
+						throw new NotImplementedException();
+				}
+			}
+		}
+		private bool NomenclatureAllSelected => NomenclatureType == ForecastingNomenclatureType.Nomenclature 
+			? choiceNomenclatureViewModel.AllSelected
+			: choiceProtectionToolsViewModel.AllSelected;
+		
 		IList<EmployeeCard> employees;
 		DateTime lastForecastUntil;
-		List<FutureIssue> futureIssues = new List<FutureIssue>();
+		private List<FutureIssue> futureIssues = new List<FutureIssue>();
 		#endregion
 		#region Действия
 
@@ -171,7 +248,7 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
-			ProgressTotal.Start(4, text:"Получение данных");
+			ProgressTotal.Start(5, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -202,43 +279,36 @@ namespace Workwear.ViewModels.Analytics {
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(2, text: "Прогнозирование выдач");
+				ProgressTotal.Start(3, text: "Прогнозирование выдач");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
+			HashSet<ProtectionTools> hashPt = new HashSet<ProtectionTools>();
+			if(!NomenclatureAllSelected) {
+				var protectionTools = NomenclatureType == ForecastingNomenclatureType.ProtectionTools
+					? choiceProtectionToolsViewModel.SelectedEntities
+					: UoW.GetAll<ProtectionTools>().Where(p =>
+						choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureUnisex)
+						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
+						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
+				hashPt = new HashSet<ProtectionTools>(protectionTools);
+				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
+			}
+
 			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
 			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");
-			var nomenclatures = issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray();
+			var nomenclatures = NomenclatureType == ForecastingNomenclatureType.ProtectionTools 
+				? issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray()
+				: choiceNomenclatureViewModel.SelectedEntities.ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
-			ProgressTotal.Add(text: "Формируем прогноз");
-			var groups = futureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
+			ProgressTotal.Add(text: "Фильтрация выдач");
+			var filteredIssues = NomenclatureAllSelected ? futureIssues : futureIssues.Where(i => hashPt.Contains(i.ProtectionTools)).ToList();
 			
-			ProgressLocal.Start(groups.Count() + 1, text: "Суммирование");
-			var result = new List<WarehouseForecastingItem>();
-			foreach(var group in groups) {
-				ProgressLocal.Add(text: group.Key.ProtectionTools.Name.EllipsizeMiddle(100));
-				var stocks = stockBalance.ForNomenclature(group.Key.ProtectionTools.Nomenclatures.ToArray()).ToArray();
-				SupplyType supplyType; 
-				if(group.Key.ProtectionTools.SupplyType == SupplyType.Unisex && group.Key.ProtectionTools.SupplyNomenclatureUnisex != null)
-					supplyType = SupplyType.Unisex;
-				else if(group.Key.ProtectionTools.SupplyType == SupplyType.TwoSex && (group.Key.ProtectionTools.SupplyNomenclatureMale != null || group.Key.ProtectionTools.SupplyNomenclatureFemale != null))
-					supplyType = SupplyType.TwoSex;
-				else
-					supplyType = (stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal) == ClothesSex.Universal ? SupplyType.Unisex : SupplyType.TwoSex;
-				if (supplyType == SupplyType.Unisex)
-					result.Add(new WarehouseForecastingItem(this, group.Key, group.ToList(), stocks, ClothesSex.Universal));
-				else {
-					var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();
-					if (mensIssues.Any())
-						result.Add(new WarehouseForecastingItem(this, group.Key, mensIssues, stocks, ClothesSex.Men));
-					var womenIssues = group.Where(x => x.Employee.Sex == Sex.F).ToList();
-					if(womenIssues.Any())
-						result.Add(new WarehouseForecastingItem(this, group.Key, womenIssues, stocks, ClothesSex.Women));
-				}
-			}
+			ProgressTotal.Add(text: "Формируем прогноз");
+			var result = forecastingModel.MakeForecastingItems(ProgressLocal, filteredIssues);
 			ProgressLocal.Add(text: "Сортировка");
-			InternalItems = result.OrderBy(x => x.ProtectionTool.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
+			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
 			ProgressLocal.Close();
 			ProgressTotal.Close();
@@ -277,41 +347,46 @@ namespace Workwear.ViewModels.Analytics {
 			{
 				var worksheet = workbook.Worksheets.Add(sheetName);
 				//Создаем заголовки
-				worksheet.Cell("A1").Value = "Номенклатура нормы";
-				worksheet.Cell("B1").Value = "Номенклатура";
-				worksheet.Cell("C1").Value = "Размер";
-				worksheet.Cell("D1").Value = "Рост";
-				worksheet.Cell("E1").Value = "Пол";
-				worksheet.Cell("F1").Value = "В наличии";
-				worksheet.Cell("G1").Value = "Просрочено";
-				int col = 8;
+				int col = 1;
+				if(NomenclatureType == ForecastingNomenclatureType.Nomenclature)
+					worksheet.Column(col).Hide();
+				worksheet.Column(col).Width = 50;
+				worksheet.Cell(1, col++).Value = "Номенклатура нормы";
+				worksheet.Column(col).Width = 50;
+				worksheet.Cell(1, col++).Value = "Номенклатура";
+				worksheet.Cell(1, col++).Value = "Размер";
+				worksheet.Cell(1, col++).Value = "Рост";
+				worksheet.Cell(1, col++).Value = "Пол";
+				if(PriceType == ForecastingPriceType.None)
+					worksheet.Column(col).Hide();
+				worksheet.Cell(1, col++).Value = "Цена";
+				worksheet.Cell(1, col++).Value = "В наличии";
+				worksheet.Cell(1, col++).Value = "Просрочено";
 				foreach(var column in ForecastColumns) {
-					worksheet.Cell(1, col).Value = column.Title;
-					col++;
+					worksheet.Cell(1, col++).Value = column.Title;
 				}
-				worksheet.Cell(1, col).Value = "Остаток без \nпросроченной";
-				col++;
-				worksheet.Cell(1, col).Value = "Остаток c \nпросроченной";
+				worksheet.Cell(1, col++).Value = "Остаток без \nпросроченной";
+				worksheet.Cell(1, col++).Value = "Остаток c \nпросроченной";
 				ProgressLocal.Add();
 				
 				//Заполняем данными
 				int row = 2;
 				foreach(var item in Items) {
-					worksheet.Cell(row, 1).Value = item.ProtectionTool.Name;
-					worksheet.Cell(row, 2).Value = item.Nomenclature?.Name;
-					worksheet.Cell(row, 3).Value = item.Size?.Name;
-					worksheet.Cell(row, 4).Value = item.Height?.Name;
-					worksheet.Cell(row, 5).Value = item.Sex.GetEnumShortTitle();
-					worksheet.Cell(row, 6).Value = item.InStock;
-					worksheet.Cell(row, 7).Value = item.Unissued;
-					col = 8;
+					col = 1;
+					worksheet.Cell(row, col++).Value = item.ProtectionTool?.Name;
+					worksheet.Cell(row, col++).Value = 
+						NomenclatureType == ForecastingNomenclatureType.ProtectionTools ? item.Nomenclature?.Name : item.Name;
+					worksheet.Cell(row, col++).Value = item.Size?.Name;
+					worksheet.Cell(row, col++).Value = item.Height?.Name;
+					worksheet.Cell(row, col++).Value = item.Sex.GetEnumShortTitle();
+					worksheet.Cell(row, col++).Value = item.GetPrice(PriceType);
+					worksheet.Cell(row, col++).Value = item.InStock;
+					worksheet.Cell(row, col++).Value = item.Unissued;
 					for(int i = 0; i < ForecastColumns.Length; i++) {
-						worksheet.Cell(row, col).Value = item.Forecast[i];
-						col++;
+						worksheet.Cell(row, col++).Value = item.Forecast[i];
 					}
-					worksheet.Cell(row, col).Value = item.InStock - item.Forecast.Sum();
-					col++;
-					worksheet.Cell(row, col).Value = item.InStock - item.Unissued - item.Forecast.Sum();
+					worksheet.Cell(row, col++).Value = item.InStock - item.Forecast.Sum();
+					worksheet.Cell(row, col++).Value = item.InStock - item.Unissued - item.Forecast.Sum();
 					row++;
 					ProgressLocal.Add();
 				}
@@ -321,6 +396,11 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressLocal.Close();
 			SensitiveSettings = true;
 		}
+
+		public void CreateShipment(ShipmentCreateType eItemEnum) => 
+			NavigationManager.OpenViewModel<ShipmentViewModel, IEntityUoWBuilder, List<WarehouseForecastingItem>, ShipmentCreateType>
+				(null, EntityUoWBuilder.ForCreate(), Items, eItemEnum);
+
 		#endregion
 
 		#region Private
@@ -355,6 +435,8 @@ namespace Workwear.ViewModels.Analytics {
 			foreach(var item in Items) {
 				item.FillForecast();
 			}
+			
+			OnPropertyChanged(nameof(CanCreateShipment));
 		}
 
 		private void ShowItemsList() {
@@ -375,12 +457,6 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 	}
 
-	public class ForecastColumn {
-		public string Title { get; set; }
-		public DateTime StartDate { get; set; }
-		public DateTime EndDate { get; set; }
-	}
-
 	public enum Granularity {
 		[Display(Name = "За весь период")]
 		Totally,
@@ -397,5 +473,19 @@ namespace Workwear.ViewModels.Analytics {
 		JustShortfall,
 		[Display(Name = "Только излишки")]
 		JustSurplus
+	}
+	
+	public enum ForecastingNomenclatureType {
+		[Display(Name = "Складская номенклатура")]
+		Nomenclature,
+		[Display(Name = "Номенклатура нормы")]
+		ProtectionTools
+	}	
+	
+	public enum ShipmentCreateType {
+		[Display(Name = "Без долга")]
+		WithoutDebt,
+		[Display(Name = "С долгом")]
+		WithDebt
 	}
 }

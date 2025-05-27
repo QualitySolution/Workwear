@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Supply;
@@ -31,6 +31,8 @@ namespace Workwear.Views.Supply {
 			yenumcomboboxStatus.Binding
 				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
 				.InitializeFromSource();
+			ybuttonSendEmail.Binding
+				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
 			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
 
@@ -88,6 +90,9 @@ namespace Workwear.Views.Supply {
 			ViewModel.AddItem();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
+
+		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
+			ViewModel.SendMessegeForBuyer();
 	}
 }
 
