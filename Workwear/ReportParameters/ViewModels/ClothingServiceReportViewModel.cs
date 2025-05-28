@@ -8,16 +8,30 @@ using Gamma.Utilities;
 using QS.Report;
 using Workwear.Domain.ClothingService;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class ClothingServiceReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
 
-		public ClothingServiceReportViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) {
+		private readonly FeaturesService featuresService;
+		public ClothingServiceReportViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			FeaturesService featuresService
+			) : base(rdlViewerViewModel) 
+		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			
+			if(!featuresService.Available(WorkwearFeature.Postomats)) {
+				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
+				HiddenReportType = new object[] { ClothingServiceReportType.PostamatUse };
+            }
 		}
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
+		
+		public virtual object[] HiddenReportType { get; }
 		
 		private ClothingServiceReportType reportType = ClothingServiceReportType.ClaimForStatus;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
@@ -94,6 +108,8 @@ namespace Workwear.ReportParameters.ViewModels {
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
 		}
+		
+		public virtual object[] HiddenStates { get; }
 		
 		private ClaimState? status;
 		[PropertyChangedAlso(nameof(Title))]

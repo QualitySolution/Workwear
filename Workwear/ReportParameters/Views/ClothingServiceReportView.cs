@@ -8,11 +8,13 @@ namespace Workwear.ReportParameters.Views {
 		public ClothingServiceReportView(ClothingServiceReportViewModel viewModel) : base (viewModel){
 			this.Build();
 			comboReportType.ItemsEnum = typeof(ClothingServiceReportType);
+			comboStatus.HiddenItems = ViewModel.HiddenReportType;
 			comboReportType.Binding
 				.AddBinding(ViewModel, vm => vm.ReportType, w => w.SelectedItem).InitializeFromSource();
 			ylabelStatus.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
 			comboStatus.ItemsEnum = typeof(ClaimState);
+			comboStatus.HiddenItems = ViewModel.HiddenStates;
 			comboStatus.Binding
 				.AddBinding(ViewModel, vm => vm.Status, w => w.SelectedItemOrNull)
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
