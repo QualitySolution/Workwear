@@ -169,10 +169,11 @@ namespace workwear.Journal.ViewModels.Stock
 			returnQuery
 				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(()=>returnAlias.Items, ()=>returnItemAlias,JoinType.LeftOuterJoin)
-				.JoinAlias(()=>returnItemAlias.EmployeeCard, ()=>employeeAlias,JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.Items, () => returnItemAlias,JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.EmployeeCard, () => employeeAlias,JoinType.LeftOuterJoin)
 				.JoinAlias(() => returnItemAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)
 			.SelectList(list => list
+						.SelectGroup(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
 			   			.Select(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => returnAlias.Date).WithAlias(() => resultAlias.Date)
