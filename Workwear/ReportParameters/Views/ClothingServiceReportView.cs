@@ -14,7 +14,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
 			comboStatus.ItemsEnum = typeof(ClaimState);
 			comboStatus.Binding
-				.AddBinding(ViewModel, vm => vm.Status, w => w.SelectedItem)
+				.AddBinding(ViewModel, vm => vm.Status, w => w.SelectedItemOrNull)
 				.AddBinding(ViewModel, vm => vm.VisibleShowStatus, w => w.Visible).InitializeFromSource();
 			ylabelshowPhone.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowPhone, w => w.Visible).InitializeFromSource();
@@ -26,19 +26,24 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonshowComments.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleShowComment, w => w.Visible)
                 .AddBinding(ViewModel, vm => vm.ShowComments, w => w.Active).InitializeFromSource();
-			ydateperiodpicker.Binding.AddSource(ViewModel)
+			ylabelPeriod.Binding
+            	.AddBinding(ViewModel, vm => vm.ShowClosedLabel, w => w.Text)
+            	.AddBinding(ViewModel, vm => vm.VisiblePeriodOfBegitn, w => w.Visible).InitializeFromSource();
+            ydateperiodpicker.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.StartDate, w => w.StartDateOrNull)
 				.AddBinding(vm => vm.EndDate, w => w.EndDateOrNull)
 				.AddBinding(vm => vm.VisiblePeriodOfBegitn, w => w.Visible).InitializeFromSource();
-			ylabelPeriod.Binding
-				.AddBinding(ViewModel, vm => vm.ShowClosedLabel, w => w.Text)
-				.AddBinding(ViewModel, vm => vm.VisiblePeriodOfBegitn, w => w.Visible).InitializeFromSource();
+			ylabelGroupSubdivision.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleGroupSubdivision, v => v.Visible).InitializeFromSource();
+			ycheckbuttonGroupSubdivision.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleGroupSubdivision, v => v.Visible)
+				.AddBinding(ViewModel, vm => vm.GroupSubdivision, w => w.Active).InitializeFromSource();
 			ylabelshowclosed.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible).InitializeFromSource();
-			ycheckbuttonshowclosed.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible)
-				.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active).InitializeFromSource();
-			ylabelshowEmployee.Binding
+            	.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible).InitializeFromSource();
+            ycheckbuttonshowclosed.Binding
+            	.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible)
+            	.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active).InitializeFromSource();
+            ylabelshowEmployee.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible).InitializeFromSource();
             ycheckbuttonshowEmployees.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible)

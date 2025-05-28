@@ -13,34 +13,44 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
+        <CommandText>
+SELECT * ,
+    IF(@subdivision_group, 
+       SUM(personal_count_tabel.personal_count),
+       personal_count_tabel.personal_count
+        ) AS count_claim
+FROM ( SELECT
     CONCAT_WS(' ', employees.last_name, employees.first_name,employees.patronymic_name) AS FIO,
     employees.personnel_number AS tab,
     employees.phone_number AS phone,
+    subdivisions.id AS subdivision_id,
     subdivisions.name AS subdivision,
     departments.name AS department,
+    barcodes.id AS bar_id,
     barcodes.title AS barcode,
     nomenclature.name AS nomenclature_name,
-    SUM(clothing_service_claim.id IS NOT NULL) AS count_claim
+    SUM(clothing_service_claim.id IS NOT NULL) AS personal_count
 FROM operation_issued_by_employee
-    LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
-    LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
-    LEFT JOIN departments ON employees.department_id = departments.id
-    LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
-    LEFT JOIN operation_barcodes ON operation_issued_by_employee.id = operation_barcodes.employee_issue_operation_id
-    LEFT JOIN barcodes ON operation_barcodes.barcode_id = barcodes.id
-    LEFT JOIN clothing_service_claim ON barcodes.id = clothing_service_claim.barcode_id
-    LEFT JOIN (select s.claim_id AS clid, MIN(s.id) AS st_id FROM clothing_service_states AS s GROUP BY s.claim_id
-            ) AS t1 ON t1.clid = clothing_service_claim.id
-        LEFT JOIN clothing_service_states AS start_state ON start_state.id = t1.st_id
+         LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
+         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
+         LEFT JOIN departments ON employees.department_id = departments.id
+         LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+         LEFT JOIN operation_barcodes ON operation_issued_by_employee.id = operation_barcodes.employee_issue_operation_id
+         LEFT JOIN barcodes ON operation_barcodes.barcode_id = barcodes.id
+         LEFT JOIN clothing_service_claim ON barcodes.id = clothing_service_claim.barcode_id
+         LEFT JOIN (select s.claim_id AS clid, MIN(s.id) AS st_id FROM clothing_service_states AS s GROUP BY s.claim_id
+) AS t1 ON t1.clid = clothing_service_claim.id
+         LEFT JOIN clothing_service_states AS start_state ON start_state.id = t1.st_id
 WHERE
     operation_issued_by_employee.auto_writeoff_date &gt; @start_date
-    AND nomenclature.use_barcode
-    AND barcodes.id IS NOT NULL
-    AND (clothing_service_claim.id IS  NULL OR start_state.operation_time BETWEEN @start_date AND @finish_date) #
-GROUP BY operation_barcodes.barcode_id
-HAVING @show_zero OR count_claim &gt; 0
-ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
+  AND nomenclature.use_barcode
+  AND barcodes.id IS NOT NULL
+  AND (clothing_service_claim.id IS  NULL OR start_state.operation_time BETWEEN @start_date AND @finish_date) #
+GROUP BY bar_id#, employees.subdivision_id #IF(@subdivision_group, employees.subdivision_id, null)
+HAVING @show_zero OR personal_count &gt; 0
+ORDER BY personal_count DESC , subdivision, department, FIO) as personal_count_tabel
+GROUP BY IF(@subdivision_group, personal_count_tabel.subdivision_id, personal_count_tabel.bar_id)
+</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>=Parameters!start_date</Value>
@@ -50,6 +60,9 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
           </QueryParameter>
           <QueryParameter Name="show_zero">
             <Value>=Parameters!show_zero</Value>
+          </QueryParameter>
+          <QueryParameter Name="subdivision_group">
+            <Value>=Parameters!subdivision_group</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -103,20 +116,26 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
             <Width>203.6pt</Width>
+            <Visibility >
+              <Hidden>={?subdivision_group}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>65.9pt</Width>
+            <Visibility >
+              <Hidden>={?subdivision_group}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>102.0pt</Width>
-            <Visibility >
-              <Hidden>=!{?show_phone}</Hidden>
+            <Visibility>
+              <Hidden>=!{?show_phone} or {?subdivision_group}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
@@ -124,12 +143,21 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>263.5pt</Width>
+            <Visibility >
+              <Hidden>={?subdivision_group}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>97.7pt</Width>
+            <Visibility >
+              <Hidden>={?subdivision_group}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>265.4pt</Width>
+            <Visibility >
+              <Hidden>={?subdivision_group}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>69.4pt</Width>
@@ -137,7 +165,7 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>18.9pt</Height>
               <TableCells>
                 <TableCell>
@@ -148,16 +176,16 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >14pt</FontSize>
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <FontSize>14pt</FontSize>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -171,10 +199,10 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -445,7 +473,7 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
         </Details>
       </Table>
     </ReportItems>
-    <Height>44.5pt</Height>
+    <Height>59.8pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -468,6 +496,15 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters >
     <ReportParameter Name="report_name">
       <DataType>String</DataType>
@@ -522,16 +559,19 @@ ORDER BY count_claim DESC , subdivision, department, FIO</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_group">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString></ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
