@@ -124,8 +124,7 @@ namespace Workwear.Domain.Supply{
 		}
 
 		#endregion
-////10.1
-public ShipmentItem(){ }
+		public ShipmentItem(){ }
 
 		public ShipmentItem(Shipment shipment) {
 			this.shipment = shipment;

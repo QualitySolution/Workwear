@@ -103,6 +103,12 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			set => SetField(ref unissued, value);
 		}
 		
+		private int totalOrdered;
+		public int TotalOrdered {
+			get => totalOrdered;
+			set => SetField(ref totalOrdered, value);
+		}
+		
 		private int[] forecast;
 		public int[] Forecast {
 			get => forecast;
@@ -174,9 +180,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
-		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
-		public int WithDebt => InStock - Unissued - Forecast.Sum();
-		public int WithoutDebt => InStock - Forecast.Sum();
+		public int WithDebt => InStock + TotalOrdered - Unissued - Forecast.Sum();
+		public int WithoutDebt => InStock + TotalOrdered - Forecast.Sum();
 		public string NomenclaturesText {
 			get {
 				string text = "";

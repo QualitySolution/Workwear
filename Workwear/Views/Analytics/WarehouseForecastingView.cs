@@ -91,6 +91,12 @@ namespace Workwear.Views.Analytics {
 					.AddSetter((c,n) => c.Foreground = n.ForecastColours[col])
 					.XAlign(0.5f);
 			}
+
+			if(ViewModel.ShipmentColumnVisible) {
+				conf.AddColumn("Заказано").HeaderAlignment(0.5f)
+					.AddReadOnlyTextRenderer(x => x.TotalOrdered > 0 ? $"{x.TotalOrdered}" : "")
+					.XAlign(0.5f);
+			}
 			conf.AddColumn("Остаток без \nпросроченной")
 				.AddReadOnlyTextRenderer(x => x.WithoutDebt.ToString())
 				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")

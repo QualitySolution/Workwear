@@ -24,6 +24,7 @@ using Workwear.Models.Analytics;
 using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Supply;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -34,29 +35,35 @@ namespace Workwear.ViewModels.Analytics {
 	{
 		private readonly ILifetimeScope autofacScope;
 		private readonly NomenclatureRepository nomenclatureRepository;
+		private readonly ShipmentRepository shipmentRepository;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly FeaturesService featuresService;
 		private readonly FutureIssueModel futureIssueModel;
 		private readonly StockBalanceModel stockBalance;
 		private readonly SizeService sizeService;
 		private readonly IFileDialogService fileDialogService;
 
 		public WarehouseForecastingViewModel(
-			IUnitOfWorkFactory unitOfWorkFactory,
-			INavigationManager navigation,
-			ILifetimeScope autofacScope,
-			StockRepository stockRepository,
-			NomenclatureRepository nomenclatureRepository,
-			FeaturesService featuresService,
 			EmployeeIssueModel issueModel,
+			FeaturesService featuresService,
 			FutureIssueModel futureIssueModel,
-			StockBalanceModel stockBalance,
-			SizeService sizeService,
 			IFileDialogService fileDialogService,
-			UnitOfWorkProvider unitOfWorkProvider) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
+			ILifetimeScope autofacScope,
+			INavigationManager navigation,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			NomenclatureRepository nomenclatureRepository,
+			ShipmentRepository shipmentRepository,
+			SizeService sizeService,
+			StockBalanceModel stockBalance,
+			StockRepository stockRepository,
+			UnitOfWorkProvider unitOfWorkProvider
+			) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
+			this.shipmentRepository = shipmentRepository ?? throw new ArgumentNullException(nameof(shipmentRepository));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
@@ -171,6 +178,7 @@ namespace Workwear.ViewModels.Analytics {
 	
 		public bool CanCreateShipment => SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature ;
 		public bool ShowCreateShipment { get; }
+		public bool ShipmentColumnVisible => featuresService.Available(WorkwearFeature.Shipment) && SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature;
 
 		private Granularity granularity;
 		public Granularity Granularity {
@@ -307,6 +315,16 @@ namespace Workwear.ViewModels.Analytics {
 			
 			ProgressTotal.Add(text: "Формируем прогноз");
 			var result = forecastingModel.MakeForecastingItems(ProgressLocal, filteredIssues);
+			
+			ProgressTotal.Add(text: "Заполнение заказанного");
+			if(featuresService.Available(WorkwearFeature.Shipment)) {
+				var ordered = shipmentRepository.GetOrderedAmount();
+				foreach(var item in result) {
+					item.TotalOrdered = ordered.FirstOrDefault(x => x.NomenclatureId == item.Nomenclature?.Id
+					                                                 && x.WearSize == item.Size && x.Height == item.Height)?.Amount ?? 0;
+				}
+			}
+
 			ProgressLocal.Add(text: "Сортировка");
 			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
@@ -445,10 +463,10 @@ namespace Workwear.ViewModels.Analytics {
 					Items = InternalItems;
 					break;
 				case WarehouseForecastingShowMode.JustShortfall:
-					Items = InternalItems.Where(x => x.ClosingBalance < 0).ToList();
+					Items = InternalItems.Where(x => x.WithDebt < 0).ToList();
 					break;
 				case WarehouseForecastingShowMode.JustSurplus:
-					Items = InternalItems.Where(x => x.ClosingBalance > 0).ToList();
+					Items = InternalItems.Where(x => x.WithDebt > 0).ToList();
 					break;
 				default:
 					throw new NotImplementedException();
