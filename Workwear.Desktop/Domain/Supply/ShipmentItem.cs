@@ -103,25 +103,22 @@ namespace Workwear.Domain.Supply{
 		public virtual StockPosition StockPosition => 
 			new StockPosition(Nomenclature, 0m,WearSize, Height, null);
 		
+		/// <summary>
+		/// Заказано, но еще не получено.
+		/// </summary>
+		public virtual int OrderedNotReceived => Ordered - Received;
+		
 		[Display (Name = "Наименование")]
-		public virtual string ItemName {
-			get => nomenclature?.Name; 
-		}
-		
+		public virtual string ItemName => nomenclature?.Name;
+
 		[Display(Name = "Тип Роста")]
-		public virtual SizeType HeightType {
-			get => nomenclature?.Type.HeightType;
-		}
-		
+		public virtual SizeType HeightType => nomenclature?.Type.HeightType;
+
 		[Display(Name = "Тип размера одежды")]
-		public virtual SizeType WearSizeType {
-			get => nomenclature?.Type.SizeType;
-		}
-		
+		public virtual SizeType WearSizeType => nomenclature?.Type.SizeType;
+
 		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units {
-			get => nomenclature?.Type.Units; 
-		}
+		public virtual MeasurementUnits Units => nomenclature?.Type.Units;
 
 		#endregion
 		public ShipmentItem(){ }

@@ -178,7 +178,7 @@ namespace Workwear.ViewModels.Analytics {
 	
 		public bool CanCreateShipment => SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature ;
 		public bool ShowCreateShipment { get; }
-		public bool ShipmentColumnVisible => featuresService.Available(WorkwearFeature.Shipment) && SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature;
+		public bool ShipmentColumnVisible => featuresService.Available(WorkwearFeature.Shipment) && NomenclatureType == ForecastingNomenclatureType.Nomenclature;
 
 		private Granularity granularity;
 		public Granularity Granularity {
@@ -318,10 +318,11 @@ namespace Workwear.ViewModels.Analytics {
 			
 			ProgressTotal.Add(text: "Заполнение заказанного");
 			if(featuresService.Available(WorkwearFeature.Shipment)) {
-				var ordered = shipmentRepository.GetOrderedAmount();
+				var ordered = shipmentRepository.GetOrderedItems();
 				foreach(var item in result) {
-					item.TotalOrdered = ordered.FirstOrDefault(x => x.NomenclatureId == item.Nomenclature?.Id
-					                                                 && x.WearSize == item.Size && x.Height == item.Height)?.Amount ?? 0;
+					item.ShipmentItems.AddRange(ordered.Where(x => x.Nomenclature.IsSame(item.Nomenclature)
+					                                                        && DomainHelper.IsSame(x.WearSize, item.Size) 
+					                                                        && DomainHelper.IsSame(x.Height, item.Height)));
 				}
 			}
 
@@ -383,6 +384,11 @@ namespace Workwear.ViewModels.Analytics {
 				foreach(var column in ForecastColumns) {
 					worksheet.Cell(1, col++).Value = column.Title;
 				}
+				if(ShipmentColumnVisible) {
+					worksheet.Cell(1, col++).Value = "Заказано";
+					worksheet.Cell(1, col++).Value = "Дата поступления";
+					worksheet.Cell(1, col++).Value = "Причина расхождений";
+				}
 				worksheet.Cell(1, col++).Value = "Остаток без \nпросроченной";
 				worksheet.Cell(1, col++).Value = "Остаток c \nпросроченной";
 				ProgressLocal.Add();
@@ -402,6 +408,11 @@ namespace Workwear.ViewModels.Analytics {
 					worksheet.Cell(row, col++).Value = item.Unissued;
 					for(int i = 0; i < ForecastColumns.Length; i++) {
 						worksheet.Cell(row, col++).Value = item.Forecast[i];
+					}
+					if(ShipmentColumnVisible) {
+						worksheet.Cell(row, col++).Value = item.TotalOrdered;
+						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.Shipment.PeriodTitle));
+						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.DiffСause));
 					}
 					worksheet.Cell(row, col++).Value = item.InStock - item.Forecast.Sum();
 					worksheet.Cell(row, col++).Value = item.InStock - item.Unissued - item.Forecast.Sum();

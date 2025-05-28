@@ -5,6 +5,7 @@ using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Supply;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
 
@@ -103,11 +104,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			set => SetField(ref unissued, value);
 		}
 		
-		private int totalOrdered;
-		public int TotalOrdered {
-			get => totalOrdered;
-			set => SetField(ref totalOrdered, value);
-		}
+		private readonly List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
+		public List<ShipmentItem> ShipmentItems => shipmentItems;
 		
 		private int[] forecast;
 		public int[] Forecast {
@@ -180,6 +178,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
+		public int TotalOrdered => ShipmentItems.Sum(x => x.OrderedNotReceived);
 		public int WithDebt => InStock + TotalOrdered - Unissued - Forecast.Sum();
 		public int WithoutDebt => InStock + TotalOrdered - Forecast.Sum();
 		public string NomenclaturesText {

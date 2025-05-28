@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using NHibernate;
 using NHibernate.SqlCommand;
-using NHibernate.Transform;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 
@@ -20,31 +17,19 @@ namespace Workwear.Repository.Supply {
 		}
 		
 		/// <summary>
-		/// Возвращает общее количество заказанного, но еще не полученного товара по всем планируемым поставкам
-		/// с дополнительной информацией о размере, росте и количестве заказанного
+		/// Возвращает все строки заказанного, но еще не полученного товара по всем планируемым поставкам
 		/// </summary>
-		public virtual IList<OrderedInfo> GetOrderedAmount() {
+		public virtual IList<ShipmentItem> GetOrderedItems() {
 		    ShipmentItem shipmentItemAlias = null;
-		    Nomenclature nomenclatureAlias = null;
 		    Shipment shipmentAlias = null;
-		    OrderedInfo orderedInfoAlias = null;
-			//var sumProjection = Projections.Sum();
 
 		    var query = UoW.Session.QueryOver(() => shipmentItemAlias)
-			    .JoinAlias(() => shipmentItemAlias.Nomenclature, () => nomenclatureAlias)
 			    .JoinAlias(() => shipmentItemAlias.Shipment, () => shipmentAlias)
 			    .Where(() => shipmentAlias.Status != ShipmentStatus.Draft) //Возможно нужно учитывать какие-то еще статусы. Пока не ясно какие.
 			    .Where(() => shipmentItemAlias.Received < shipmentItemAlias.Ordered)
-			    .SelectList(list => list
-				    .SelectGroup(() => shipmentItemAlias.Nomenclature.Id).WithAlias(() => orderedInfoAlias.NomenclatureId)
-				    .SelectGroup(() => shipmentItemAlias.WearSize).WithAlias(() => orderedInfoAlias.WearSize)
-				    .SelectGroup(() => shipmentItemAlias.Height).WithAlias(() => orderedInfoAlias.Height)
-				    .SelectSum(() => shipmentItemAlias.Ordered - shipmentItemAlias.Received).WithAlias(() => orderedInfoAlias.Amount)
-			    );
+			    ;
 		
-		    return query.TransformUsing(Transformers.AliasToBean<OrderedInfo>())
-			    .List<OrderedInfo>()
-			    .ToList();
+		    return query.List();
 		}
 		
 		/// <summary>
