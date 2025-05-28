@@ -24,10 +24,10 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			var postomats = new List<PostomatInfo>();
 			postomat = new PostomatInfo() { Id = 0, Name = "Любой" };//заодно проставим умолчания
 			postomats.Add(postomat);
-			if(featuresService.Available(WorkwearFeature.Postomats)) {
+			if(featuresService.Available(WorkwearFeature.Postomats)) 
 				postomats.AddRange(postomatService.GetPostomatList(PostomatListType.Aso));
+			else 
 				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
-			}
 			Postomats = postomats;
 		}
 		
