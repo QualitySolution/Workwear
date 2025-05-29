@@ -19,7 +19,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
@@ -34,7 +34,7 @@
     item_types.name  as type,
     sizeAlias.name AS size,
     heightAlias.name AS growth,
-    ownersAlias.name AS owner,
+    owners.name AS owner,
     measurement_units.name as unit,
     (nomenclature.sale_cost *  IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
                                                          operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
@@ -56,10 +56,12 @@ FROM
         LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
         LEFT JOIN
-    owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
+    owners ON owners.id = operation_warehouse.owner_id
 WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-    AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id or
-@allWarehouses)
+  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id 
+        or operation_warehouse.warehouse_expense_id = @warehouse_id
+        or @allWarehouses)
+  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
@@ -78,9 +80,18 @@ ORDER BY nomenclature.name,
           <QueryParameter Name="allWarehouses">
             <Value>={?allWarehouses}</Value>
           </QueryParameter>
+          <QueryParameter Name="allOwners">
+            <Value>=Parameters!allOwners</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutOwner">
+            <Value>=Parameters!withoutOwner</Value>
+          </QueryParameter>
+          <QueryParameter Name="ownerId">
+            <Value>=Parameters!ownerId</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -142,8 +153,8 @@ ORDER BY nomenclature.name,
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -158,7 +169,7 @@ ORDER BY nomenclature.name,
           <TableColumn>
             <Width>153.9pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>48.3pt</Width>
             <Visibility>
               <Hidden>=!{?showSex}</Hidden>
@@ -172,17 +183,17 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn>
             <Width>129.6pt</Width>
-            <Visibility >
+            <Visibility>
               <Hidden>=!{?ownerVisible}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>64.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>1in</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>1in</Width>
             <Visibility>
               <Hidden>=!{?showSumm}</Hidden>
@@ -191,7 +202,7 @@ ORDER BY nomenclature.name,
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow >
+            <TableRow>
               <Height>14.3pt</Height>
               <TableCells>
                 <TableCell>
@@ -202,14 +213,14 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -223,14 +234,14 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -243,14 +254,14 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -263,14 +274,14 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -283,19 +294,19 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox1">
                       <Value></Value>
@@ -303,14 +314,14 @@ ORDER BY nomenclature.name,
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -330,8 +341,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -346,8 +357,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -362,8 +373,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -384,7 +395,7 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox29">
                       <Value>Пол</Value>
@@ -394,8 +405,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -410,8 +421,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -426,8 +437,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -442,13 +453,13 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
                       <Value>Количество</Value>
@@ -458,8 +469,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -474,13 +485,13 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
                       <Value>Сумма</Value>
@@ -530,8 +541,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -565,7 +576,7 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox30">
                       <Value>=Fields!sex.Value</Value>
@@ -574,8 +585,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -622,7 +633,7 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13">
                       <Value>=Fields!quantity.Value</Value>
@@ -631,8 +642,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -651,7 +662,7 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox11">
                       <Value>=Fields!summa.Value</Value>
@@ -660,8 +671,8 @@ ORDER BY nomenclature.name,
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -672,7 +683,7 @@ ORDER BY nomenclature.name,
         </Details>
         <Left>2.4pt</Left>
         <Top>0.0pt</Top>
-        <Footer >
+        <Footer>
           <TableRows>
             <TableRow>
               <Height>.2in</Height>
@@ -875,15 +886,15 @@ ORDER BY nomenclature.name,
       </Table>
     </ReportItems>
     <Height>62.7pt</Height>
-    <Columns >1</Columns>
+    <Columns>1</Columns>
   </Body>
   <PageFooter>
     <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageFooter>
-  <DataElementName >Report</DataElementName>
-  <DataElementStyle >AttributeNormal</DataElementStyle>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
   <ReportParameters >
     <ReportParameter Name="warehouse_id">
       <DataType>Integer</DataType>
@@ -932,7 +943,28 @@ ORDER BY nomenclature.name,
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allOwners">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutOwner">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ownerId">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
