@@ -236,6 +236,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
 						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
 						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+						.Select(() => expenseAlias.IssueDate).WithAlias(() => resultAlias.IssueDate)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => expenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -636,6 +637,8 @@ namespace workwear.Journal.ViewModels.Stock
 		public string EmployeeFio { get; set; }
 		public string Employee => EmployeeFio ?? PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 
+		public DateTime? IssueDate { get; set; }
+		public string Color => IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }

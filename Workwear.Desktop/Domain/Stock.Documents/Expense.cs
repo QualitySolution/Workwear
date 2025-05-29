@@ -27,8 +27,15 @@ namespace Workwear.Domain.Stock.Documents
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
+		
+		private DateTime? issueDate;
+		[Display(Name = "Дата выдачи")]
+		public virtual DateTime? IssueDate {
+			get { return issueDate; }
+			set { SetField(ref issueDate, value); }
+		}
+		
 		EmployeeCard employee;
-
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
 			get { return employee; }
@@ -36,7 +43,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
-
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ExpenseItem> Items {
 			get { return items; }
@@ -44,7 +50,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private Warehouse warehouse;
-
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
 		public virtual Warehouse Warehouse {

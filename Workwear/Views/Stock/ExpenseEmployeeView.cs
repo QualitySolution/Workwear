@@ -43,6 +43,10 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
 
+			ydateIssueDate.Binding
+				.AddBinding(Entity, e => e.IssueDate, w => w.DateOrNull)
+				.AddBinding(ViewModel, vm => vm.CanEdit, w => w.Sensitive)
+				.InitializeFromSource();
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 			entityWarehouseExpense.Binding
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
