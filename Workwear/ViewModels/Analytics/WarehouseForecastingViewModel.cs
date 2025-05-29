@@ -178,7 +178,11 @@ namespace Workwear.ViewModels.Analytics {
 	
 		public bool CanCreateShipment => SensitiveSettings && NomenclatureType == ForecastingNomenclatureType.Nomenclature ;
 		public bool ShowCreateShipment { get; }
+
+		#region Visible
 		public bool ShipmentColumnVisible => featuresService.Available(WorkwearFeature.Shipment) && NomenclatureType == ForecastingNomenclatureType.Nomenclature;
+		public bool SuitableInStockVisible => NomenclatureType == ForecastingNomenclatureType.Nomenclature;
+		#endregion
 
 		private Granularity granularity;
 		public Granularity Granularity {
