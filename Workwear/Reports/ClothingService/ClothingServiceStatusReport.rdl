@@ -52,7 +52,7 @@ FROM clothing_service_claim
          LEFT JOIN postomat_document_items ON clothing_service_claim.id = postomat_document_items.claim_id
          LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
 WHERE (@status is null OR @status = '' OR finish.state = @status)
-  AND (@show_closed OR clothing_service_claim.is_closed)
+  AND (@show_closed OR NOT clothing_service_claim.is_closed)
   AND finish.operation_time BETWEEN @start_date AND @finish_date
 ORDER BY start_date</CommandText>
         <QueryParameters>
