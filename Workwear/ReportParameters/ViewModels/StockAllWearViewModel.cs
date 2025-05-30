@@ -24,6 +24,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			base.Title = "Складская ведомость";
 			//warehouse 
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
+			
+			if(featuresService.Available(WorkwearFeature.Owners)) {
+				Owners = UoW.GetAll<Owner>().ToList();
+				ShowOwners = UoW.GetAll<Owner>().Any();
+			}
 		}
 		
 		#region IDialogDocumentation
@@ -33,19 +38,22 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
+		public IList<Owner> Owners { get; } = new List<Owner>();
+		public bool ShowOwners { get; }
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
 		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);
-		
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 			{"report_date", ReportDate },
 			{"warehouse_id", (SelectWarehouse as Warehouse)?.Id ?? -1},
 			{"allWarehouses",SelectWarehouse.Equals(SpecialComboState.All)},
-			{"ownerVisible", featuresService.Available(WorkwearFeature.Owners)},
+			{"ownerVisible", ShowOwners},
+			{"allOwners", SelectOwner.Equals(SpecialComboState.All)},
+			{"withoutOwner", SelectOwner.Equals(SpecialComboState.Not)},
+			{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 			{"showSumm", ShowSumm},
 			{"showSex", ShowSex},
 			{"warehouse_name", (SelectWarehouse as Warehouse)?.Name ?? " "},
-			
 		};
 		
 		public override string Identifier { 
@@ -57,6 +65,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public object SelectWarehouse {
 			get => selectWarehouse;
 			set => SetField(ref selectWarehouse, value);
+		}
+		
+		private object selectOwner = SpecialComboState.All;
+		public object SelectOwner {
+			get => selectOwner;
+			set => SetField(ref selectOwner, value);
 		}
 		
 		private Warehouse warehouse;
