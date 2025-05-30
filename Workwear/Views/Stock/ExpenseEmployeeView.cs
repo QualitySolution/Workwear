@@ -45,8 +45,10 @@ namespace Workwear.Views.Stock
 
 			ydateIssueDate.Binding
 				.AddBinding(Entity, e => e.IssueDate, w => w.DateOrNull)
-				.AddBinding(ViewModel, vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel, vm => vm.CanEditIssueDate, w => w.Sensitive)
 				.InitializeFromSource();
+			ybuttonSetIssue.Binding
+				.AddBinding(ViewModel, vm => vm.CanEditIssueDate, w => w.Sensitive).InitializeFromSource();
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 			entityWarehouseExpense.Binding
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
@@ -70,5 +72,6 @@ namespace Workwear.Views.Stock
 		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e) => ViewModel.CreateIssuanceSheet();
 		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e) => ViewModel.OpenIssuanceSheet();
 		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e) => ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
+		protected void OnYbuttonSetIssueClicked(object sender, EventArgs e) => ViewModel.SetIssue();
 	}
 }

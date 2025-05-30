@@ -2813,6 +2813,9 @@
                 <property name="Fill">False</property>
               </packing>
             </child>
+            <child>
+              <placeholder />
+            </child>
           </widget>
           <packing>
             <property name="Position">0</property>
@@ -3233,15 +3236,41 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateIssueDate">
+                  <widget class="Gamma.GtkWidgets.yHBox" id="yhbox1">
                     <property name="MemberName" />
-                    <property name="Events">ButtonPressMask</property>
-                    <property name="WithTime">False</property>
-                    <property name="HideCalendarButton">False</property>
-                    <property name="Date">0</property>
-                    <property name="IsEditable">True</property>
-                    <property name="AutoSeparation">True</property>
-                    <property name="HideButtonClearDate">False</property>
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateIssueDate">
+                        <property name="MemberName" />
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
+                        <property name="HideButtonClearDate">False</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSetIssue">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextOnly</property>
+                        <property name="Label" translatable="yes">Выдать</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnYbuttonSetIssueClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="TopAttach">2</property>

@@ -58,7 +58,11 @@ namespace Workwear.Views.Stock
 
 		private global::QS.Widgets.GtkUI.DatePicker ydateDoc;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
 		private global::QS.Widgets.GtkUI.DatePicker ydateIssueDate;
+
+		private global::Gamma.GtkWidgets.yButton ybuttonSetIssue;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCreatedBy;
 
@@ -371,6 +375,10 @@ namespace Workwear.Views.Stock
 			w29.RightAttach = ((uint)(2));
 			w29.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ydateIssueDate = new global::QS.Widgets.GtkUI.DatePicker();
 			this.ydateIssueDate.Events = ((global::Gdk.EventMask)(256));
 			this.ydateIssueDate.Name = "ydateIssueDate";
@@ -380,39 +388,53 @@ namespace Workwear.Views.Stock
 			this.ydateIssueDate.IsEditable = true;
 			this.ydateIssueDate.AutoSeparation = true;
 			this.ydateIssueDate.HideButtonClearDate = false;
-			this.table3.Add(this.ydateIssueDate);
-			global::Gtk.Table.TableChild w30 = ((global::Gtk.Table.TableChild)(this.table3[this.ydateIssueDate]));
-			w30.TopAttach = ((uint)(2));
-			w30.BottomAttach = ((uint)(3));
-			w30.LeftAttach = ((uint)(1));
-			w30.RightAttach = ((uint)(2));
-			w30.XOptions = ((global::Gtk.AttachOptions)(4));
-			w30.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.yhbox1.Add(this.ydateIssueDate);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ydateIssueDate]));
+			w30.Position = 0;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ybuttonSetIssue = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonSetIssue.CanFocus = true;
+			this.ybuttonSetIssue.Name = "ybuttonSetIssue";
+			this.ybuttonSetIssue.UseUnderline = true;
+			this.ybuttonSetIssue.Label = global::Mono.Unix.Catalog.GetString("Выдать");
+			this.yhbox1.Add(this.ybuttonSetIssue);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonSetIssue]));
+			w31.Position = 1;
+			w31.Expand = false;
+			w31.Fill = false;
+			this.table3.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table3[this.yhbox1]));
+			w32.TopAttach = ((uint)(2));
+			w32.BottomAttach = ((uint)(3));
+			w32.LeftAttach = ((uint)(1));
+			w32.RightAttach = ((uint)(2));
+			w32.XOptions = ((global::Gtk.AttachOptions)(4));
+			w32.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.ylabelCreatedBy = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelCreatedBy.Name = "ylabelCreatedBy";
 			this.ylabelCreatedBy.LabelProp = global::Mono.Unix.Catalog.GetString("ylabel1");
 			this.table3.Add(this.ylabelCreatedBy);
-			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table3[this.ylabelCreatedBy]));
-			w31.LeftAttach = ((uint)(1));
-			w31.RightAttach = ((uint)(2));
-			w31.XOptions = ((global::Gtk.AttachOptions)(4));
-			w31.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w33 = ((global::Gtk.Table.TableChild)(this.table3[this.ylabelCreatedBy]));
+			w33.LeftAttach = ((uint)(1));
+			w33.RightAttach = ((uint)(2));
+			w33.XOptions = ((global::Gtk.AttachOptions)(4));
+			w33.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.hbox1.Add(this.table3);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.table3]));
-			w32.Position = 1;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.table3]));
+			w34.Position = 1;
 			this.dialog1_VBox.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox1]));
-			w33.Position = 1;
-			w33.Expand = false;
-			w33.Fill = false;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox1]));
+			w35.Position = 1;
+			w35.Expand = false;
+			w35.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expensedocitememployeeview1 = new global::Workwear.Views.Stock.ExpenseDocItemEmployeeView();
 			this.expensedocitememployeeview1.Events = ((global::Gdk.EventMask)(256));
 			this.expensedocitememployeeview1.Name = "expensedocitememployeeview1";
 			this.dialog1_VBox.Add(this.expensedocitememployeeview1);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expensedocitememployeeview1]));
-			w34.Position = 2;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expensedocitememployeeview1]));
+			w36.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -422,6 +444,7 @@ namespace Workwear.Views.Stock
 			this.buttonIssuanceSheetCreate.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetCreateClicked);
 			this.buttonIssuanceSheetOpen.Clicked += new global::System.EventHandler(this.OnButtonIssuanceSheetOpenClicked);
 			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
+			this.ybuttonSetIssue.Clicked += new global::System.EventHandler(this.OnYbuttonSetIssueClicked);
 		}
 	}
 }

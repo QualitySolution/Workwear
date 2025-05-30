@@ -163,10 +163,11 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Свойства для View
-		public bool CanCreateIssuanceSheet => CanEdit && Entity.Employee != null;
+		public bool CanCreateIssuanceSheet => CanEdit && Entity.Employee != null && Entity.IssueDate != null;
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool CanEditIssueDate => CanEdit && Entity.IssuanceSheet == null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -383,13 +384,19 @@ namespace Workwear.ViewModels.Stock {
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
 					performance.End();
 					break;
+				case nameof(Entity.IssueDate):
+					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
+					break;
 				case nameof(Entity.IssuanceSheet):
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
 					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					OnPropertyChanged(nameof(CanEditIssueDate));
 					break;
 			}
 		}
+		
+		public void SetIssue() => Entity.IssueDate = DateTime.Now;
 
 		#region ISelectItem
 		public void SelectItem(int id)
@@ -397,5 +404,6 @@ namespace Workwear.ViewModels.Stock {
 			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
+
 	}
 }
