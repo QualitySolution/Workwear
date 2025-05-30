@@ -638,7 +638,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Employee => EmployeeFio ?? PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
 
 		public DateTime? IssueDate { get; set; }
-		public string Color => IssueDate == null ? "purple" : "black";
+		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }

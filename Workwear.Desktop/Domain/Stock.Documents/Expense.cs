@@ -179,7 +179,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void CleanupItems()
 		{
-			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
+			foreach(var item in Items.Where(x => x.Amount <= 0 || x.Nomenclature == null).ToList()) {
 				RemoveItem(item);
 			}
 		}
@@ -187,9 +187,11 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Методы
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
-		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null) {
+			if(IssueDate != null)
+				Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
+			else
+				Items.ToList().ForEach(x => x.UpdateWarehouseOperations(uow));
 		}
 
 		public virtual void UpdateEmployeeWearItems()

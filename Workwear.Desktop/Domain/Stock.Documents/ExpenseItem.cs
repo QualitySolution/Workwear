@@ -188,10 +188,14 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Функции
 
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
-		{
+		public virtual void UpdateWarehouseOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
+		}
+		
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null) 
+		{
+			UpdateWarehouseOperations(uow);
 			
 			if (EmployeeIssueOperation == null) {
 				EmployeeIssueOperation = new EmployeeIssueOperation (baseParameters);

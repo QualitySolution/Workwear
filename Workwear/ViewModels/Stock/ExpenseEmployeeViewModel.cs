@@ -271,13 +271,25 @@ namespace Workwear.ViewModels.Stock {
 				Entity.DocNumber = null;
 			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
 				Entity.DocNumber = Entity.DocNumberText;	
+
+			if(Entity.IssueDate == null) {
+				var performance_smal = new ProgressPerformanceHelper(modalProgressCreator, 2, "Сохранение черновой выдачи...", logger, true);
+				Entity.CleanupItems();
+				Entity.UpdateOperations(UoW, baseParameters, interactive);
+				
+				UoW.Save(Entity);
+				UoW.Commit();
+				performance_smal.End();
+				logger.Info($"Документ сохранен за {performance_smal.TotalTime.TotalSeconds} сек.");
+				return true;
+			}
 			
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
 				logger.Warn("Необходимо обновить штрихкоды.");
 				return false;
 			}
-
+			
 			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
 			//Придерживайтесь следующего порядка:
 			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.

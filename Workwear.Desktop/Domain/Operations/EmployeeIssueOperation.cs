@@ -272,11 +272,13 @@ namespace Workwear.Domain.Operations
 			BaseParameters baseParameters, 
 			IInteractiveQuestion askUser, 
 			ExpenseItem item, 
-			string signCardUid = null)
-		{
+			string signCardUid = null) {
+			if(item.ExpenseDoc.IssueDate == null)
+				throw new NullReferenceException(nameof(item.ExpenseDoc.IssueDate));
+			
 			//Внимание здесь сравниваются даты без времени.
-			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
-				OperationTime = item.ExpenseDoc.Date;
+			if (item.ExpenseDoc.IssueDate != OperationTime.Date)
+				OperationTime = (DateTime)item.ExpenseDoc.IssueDate;
 
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
