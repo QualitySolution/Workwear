@@ -141,6 +141,7 @@
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Supply\ShipmentJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Visits\VisitJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
+    <Compile Include="ViewModels\Visits\VisitViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.OrganizationView.cs" />
@@ -515,6 +517,8 @@
     <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
     <Compile Include="Views\Communications\SendEmailView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
+    <Compile Include="Views\Visits\VisitView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -755,6 +759,7 @@
     <Folder Include="Views\Supply\" />
     <Folder Include="Journal\Filter.Views\Supply\" />
     <Folder Include="Journal\Filter.ViewModels\Supply\" />
+    <Folder Include="Views\Visits\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">

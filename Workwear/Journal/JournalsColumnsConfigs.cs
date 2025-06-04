@@ -16,6 +16,7 @@ using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
+using workwear.Journal.ViewModels.Visits;
 using Workwear.Tools.Features;
 
 namespace workwear.Journal
@@ -541,6 +542,18 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
+			#endregion
+			
+			#region Visits
+
+			TreeViewColumnsConfigFactory.Register<VisitJournalViewModel>(
+				(jvm) => FluentColumnsConfig<VisitJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Запланировано").AddTextRenderer(node=>node.VisitDate.ToShortDateString())
+					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreateDate.ToShortDateString())
+					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.Finish()
+			);
 			#endregion
 		}
 	}
