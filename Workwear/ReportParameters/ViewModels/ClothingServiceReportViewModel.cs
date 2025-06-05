@@ -81,6 +81,7 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "start_date", StartDate },
 						{ "finish_date", EndDate },
 						{ "status", Status },
+						{ "all_status", Status == null},
 					};
 				case ClothingServiceReportType.ClaimMetric:
 					return new Dictionary<string, object> {
