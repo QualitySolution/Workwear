@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>33in</PageWidth>
+  <PageWidth>35in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -17,6 +17,20 @@
     clothing_service_claim.id,
     barcodes.title AS barcode,
     nomenclature.name AS nomenclature,
+    CASE finish.state
+        WHEN 'WaitService' THEN 'Принята'
+        WHEN 'InReceiptTerminal' THEN 'Принят терминалом'
+        WHEN 'InTransit' THEN 'В пути'
+        WHEN 'DeliveryToLaundry' THEN 'Доставка в прачечную'
+        WHEN 'InRepair' THEN 'В ремонте'
+        WHEN 'InWashing' THEN 'В стирке'
+        WHEN 'InDryCleaning' THEN 'В химчистке'
+        WHEN 'AwaitIssue' THEN 'Ожидает выдачи'
+        WHEN 'DeliveryToDispenseTerminal' THEN 'Доставка в постамат выдачи'
+        WHEN 'InDispenseTerminal' THEN 'В постамате выдачи'
+        WHEN 'Returned' THEN 'Возвращена'
+        ELSE finish.state END
+            AS state_name,
     DATE_FORMAT(start.operation_time, '%d.%m.%Y') AS start_date,
     DATEDIFF(NOW(), start.operation_time) AS day_from_start,
     DATE_FORMAT(finish.operation_time, '%d.%m.%Y') AS finish_date,
@@ -51,7 +65,7 @@ FROM clothing_service_claim
          LEFT JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
          LEFT JOIN postomat_document_items ON clothing_service_claim.id = postomat_document_items.claim_id
          LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
-WHERE (@status is null OR @status = '' OR finish.state = @status)
+WHERE (@all_status OR @status = '' OR finish.state = @status)
   AND (@show_closed OR NOT clothing_service_claim.is_closed)
   AND finish.operation_time BETWEEN @start_date AND @finish_date
 ORDER BY start_date</CommandText>
@@ -76,6 +90,9 @@ ORDER BY start_date</CommandText>
           </QueryParameter>
           <QueryParameter Name="show_closed">
             <Value>=Parameters!show_closed</Value>
+          </QueryParameter>
+          <QueryParameter Name="all_status">
+            <Value>=Parameters!all_status</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -148,6 +165,10 @@ ORDER BY start_date</CommandText>
           <DataField>finish_comment</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="state_name">
+          <DataField>state_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -193,6 +214,12 @@ ORDER BY start_date</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>67.7pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>86.2pt</Width>
+            <Visibility>
+              <Hidden>=!{?all_status}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>95.5pt</Width>
@@ -245,7 +272,7 @@ ORDER BY start_date</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>194.8pt</Width>
-            <Visibility >
+            <Visibility>
               <Hidden>=!{?show_emoloyee}</Hidden>
             </Visibility>
           </TableColumn>
@@ -316,6 +343,22 @@ ORDER BY start_date</CommandText>
                     <Textbox Name="Textbox5">
                       <Value>Дата сдачи</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>Текущий статус</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -606,6 +649,23 @@ ORDER BY start_date</CommandText>
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox25">
+                      <Value>=Fields!state_name.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -938,6 +998,18 @@ ORDER BY start_date</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_closed">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="all_status">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
