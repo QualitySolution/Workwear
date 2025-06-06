@@ -33,37 +33,34 @@ namespace Workwear.Domain.Supply{
 			set { nomenclature = value; }
 		}
 		
-		[Display (Name = "Наименование")]
-		public virtual string ItemName {
-			get => nomenclature?.Name; 
+		private int requested;
+		[Display (Name = "Количество запрошено")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Requested {
+			get => requested;
+			set {requested = value; }
+		}	
+		
+		private int ordered;
+		[Display (Name = "Количество заказано")]
+		[PropertyChangedAlso(nameof(TotalOrdered))]
+		public virtual int Ordered {
+			get => ordered;
+			set {ordered = value; }
 		}
 		
-		[Display(Name = "Тип Роста")]
-		public virtual SizeType HeightType {
-			get => nomenclature?.Type.HeightType;
-		}
-		
-		[Display(Name = "Тип размера одежды")]
-		public virtual SizeType WearSizeType {
-			get => nomenclature?.Type.SizeType;
-		}
-		
-		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units {
-			get => nomenclature?.Type.Units; 
-		}
-		
-		private int amount;
-		[Display (Name = "Количество")]
-		[PropertyChangedAlso("Total")]
-		public virtual int Amount {
-			get => amount;
-			set {amount = value; }
+		private int received;
+		[Display (Name = "Количество поставлено")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Received {
+			get => received;
+            set {received = value; }
 		}
 
 		private decimal cost;
 		[Display (Name = "Цена")]
-		[PropertyChangedAlso("Total")]
+		[PropertyChangedAlso(nameof(TotalOrdered))]
+		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual decimal Cost {
 			get => cost;
 			set { cost = value; }
@@ -86,22 +83,44 @@ namespace Workwear.Domain.Supply{
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
-			get =>comment;
+			get => comment;
 			set { comment = value; }
+		}
+		
+		private string diffСause;
+		[Display(Name = "Причина расхождений")]
+		public virtual string DiffСause {
+			get => diffСause;
+			set { diffСause = value; }
 		}
 		#endregion
 		
-		#region Расчетные
+		#region Расчетные свойства
 
-		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
-		public virtual decimal Total => Cost * Amount;
+		public virtual string Title => $"Закупка {Nomenclature?.Name} в количестве {Requested} {Nomenclature?.Type?.Units?.Name}";
+		public virtual decimal TotalRequested => Cost * Requested;
+		public virtual decimal TotalOrdered => Cost * Ordered;
 		public virtual StockPosition StockPosition => 
-			new StockPosition(Nomenclature, 0m,WearSize, Height, Owner);
+			new StockPosition(Nomenclature, 0m,WearSize, Height, null);
+		
+		/// <summary>
+		/// Заказано, но еще не получено.
+		/// </summary>
+		public virtual int OrderedNotReceived => Ordered - Received;
+		
+		[Display (Name = "Наименование")]
+		public virtual string ItemName => nomenclature?.Name;
 
-		public virtual Owner Owner { get; set; }
+		[Display(Name = "Тип Роста")]
+		public virtual SizeType HeightType => nomenclature?.Type.HeightType;
+
+		[Display(Name = "Тип размера одежды")]
+		public virtual SizeType WearSizeType => nomenclature?.Type.SizeType;
+
+		[Display(Name = "Единица измерения")]
+		public virtual MeasurementUnits Units => nomenclature?.Type.Units;
 
 		#endregion
-
 		public ShipmentItem(){ }
 
 		public ShipmentItem(Shipment shipment) {

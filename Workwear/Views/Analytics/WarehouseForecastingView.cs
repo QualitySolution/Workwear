@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using Gamma.Utilities;
 using QS.Dialog.GtkUI;
 using QS.Views;
@@ -53,14 +52,19 @@ namespace Workwear.Views.Analytics {
 				.AddBinding(v => v.PriceType, w => w.SelectedItem)
 				.AddBinding(v => v.SensitiveSettings, w => w.Sensitive)
 				.InitializeFromSource();
-
+			
+			enumbuttonCreateShipment.ItemsEnum = typeof(ShipmentCreateType);
+			enumbuttonCreateShipment.Binding
+				.AddBinding(ViewModel, vm => vm.CanCreateShipment, w => w.Sensitive)
+				.AddBinding(ViewModel, vm => vm.ShowCreateShipment, w => w.Visible)
+				.InitializeFromSource();
+			
 			choiceNomenclature.Binding.AddBinding(ViewModel, v => v.ChoiceGoodsViewModel, w => w.ViewModel).InitializeFromSource();
 		}
 
 		private void ViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(ViewModel.ForecastColumns)) {
+			if(e.PropertyName == nameof(ViewModel.ForecastColumns)) 
 				RecreateColumns();
-			}
 		}
 
 		void RecreateColumns() {
@@ -74,6 +78,10 @@ namespace Workwear.Views.Analytics {
 				.AddColumn("На\nскладе").HeaderAlignment(0.5f)
 					.ToolTipText(x => x.StockText)
 					.AddReadOnlyTextRenderer(x => x.InStock > 0 ? $"{x.InStock}" : "").XAlign(0.5f)
+				.AddColumn("Подходящие").Visible(ViewModel.SuitableInStockVisible).HeaderAlignment(0.5f)
+					.ToolTipText(x => x.StocksSuitableText)
+					.AddReadOnlyTextRenderer(x => x.InStockSuitable > 0 ? (x.InStockSuitable > x.InStock ? $"<b>{x.InStockSuitable}</b>" : $"{x.InStockSuitable}") : "", useMarkup: true)
+					.XAlign(0.5f)
 				.AddColumn("Просро-\nченное").HeaderAlignment(0.5f)
 					.AddReadOnlyTextRenderer(x => x.Unissued > 0 ? $"-{x.Unissued}" : "")
 					.AddSetter((c,n) => c.Foreground = n.InStock - n.Unissued < 0 ? "red" : "green")
@@ -87,26 +95,31 @@ namespace Workwear.Views.Analytics {
 					.AddSetter((c,n) => c.Foreground = n.ForecastColours[col])
 					.XAlign(0.5f);
 			}
+
+			if(ViewModel.ShipmentColumnVisible) {
+				conf.AddColumn("Заказано").HeaderAlignment(0.5f)
+					.AddReadOnlyTextRenderer(x => x.TotalOrdered > 0 ? $"{x.TotalOrdered}" : "")
+					.XAlign(0.5f);
+			}
 			conf.AddColumn("Остаток без \nпросроченной")
-				.AddReadOnlyTextRenderer(x => $"{x.InStock - x.Forecast.Sum()}")
-				.AddSetter((c,n) => c.Foreground = n.InStock - n.Forecast.Sum() < 0 ? "red" : "green")
+				.AddReadOnlyTextRenderer(x => x.WithoutDebt.ToString())
+				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")
 				.XAlign(0.5f);
 			
 			conf.AddColumn("Остаток c \nпросроченной")
-				.AddReadOnlyTextRenderer(x => $"{x.InStock - x.Unissued - x.Forecast.Sum()}")
-				.AddSetter((c,n) => c.Foreground = n.InStock - n.Unissued - n.Forecast.Sum() < 0 ? "red" : "green")
+				.AddReadOnlyTextRenderer(x => x.WithDebt.ToString())
+				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")
 				.XAlign(0.5f);
 
 			conf.AddColumn("").Finish();
 		}
 
-		protected void OnButtonFillClicked(object sender, EventArgs e) {
+		protected void OnButtonFillClicked(object sender, EventArgs e) =>
 			ViewModel.Fill();
-		}
-
-		protected void OnButtonExcelClicked(object sender, EventArgs e) {
+		protected void OnButtonExcelClicked(object sender, EventArgs e) =>
 			ViewModel.ExportToExcel();
-		}
+		protected void OnEnumbuttonCreateShipmentEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) =>
+			ViewModel.CreateShipment((ShipmentCreateType)e.ItemEnum);
 
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
 			MessageDialogHelper.RunInfoDialog(

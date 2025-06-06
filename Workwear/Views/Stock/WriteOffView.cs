@@ -99,7 +99,9 @@ namespace Workwear.Views.Stock
 						.SetDisplayFunc(x=>x.Name)
 						.FillItems(ViewModel.CausesWriteOffs, "Нет")
 						.Editing(ViewModel.CanEdit)
-					.AddColumn("Комментарий").AddTextRenderer(e=>e.Comment)
+					.AddColumn("Комментарий")
+						.AddTextRenderer(e=>e.Comment)
+						.Editable(ViewModel.CanEdit)
 					.Finish ();
 			
 			ytreeItems.Binding

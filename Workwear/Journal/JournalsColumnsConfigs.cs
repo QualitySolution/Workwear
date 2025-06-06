@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
+using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Supply;
 using Workwear.Journal.ViewModels.Analytics;
@@ -533,25 +534,14 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ShipmentJournalViewModel>(
 				(jvm) => FluentColumnsConfig<ShipmentJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
-					.AddColumn("Период").AddTextRenderer(node=>$"{node.StartPeriod.ToShortDateString()} - {node.EndPeriod.ToShortDateString()}")
+					.AddColumn("Период").AddTextRenderer(node=> DateHelper.GetDateRangeText(node.StartPeriod, node.EndPeriod))
 					.AddColumn("Создал").AddTextRenderer(node=>node.Author).SearchHighlight()
 					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreationDate.ToShortDateString())
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
 					.AddColumn("Статус").AddTextRenderer(node=>node.StatusText)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColorShipment(x))
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
-			string ForegroundColorShipment(ShipmentJournalNode n)
-			{
-				if(n.Status==ShipmentStatus.Cancelled||n.Status==ShipmentStatus.Received)
-					return "gray";
-				if(n.EndPeriod < DateTime.Today)
-					return "red";
-				if(n.StartPeriod<=DateTime.Today&&n.EndPeriod>=DateTime.Today)
-					return "orange";
-				return "black";
-			}
-
 			#endregion
 		}
 	}

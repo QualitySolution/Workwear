@@ -7,8 +7,6 @@ namespace Workwear.Models.Operations
 	public class OperationToDocumentReference
 	{
 		public int OperationId;
-		//Пока добавлено на всякий случай
-		public OperationType OperationType;
 		public int? ExpenseId;
 		public int? ExpenseItemId;
 		public int? ExpenseDutyNormId;
@@ -76,11 +74,5 @@ namespace Workwear.Models.Operations
 		public string DocumentNumber =>
 			ExpenseDocNumber ?? ExpenseDutyNormDocNumber ?? CollectiveExpenseDocNumber ?? IncomeDocNumber ?? ReturnDocNumber ?? TransferDocNumber ?? WriteoffDocNumber ?? CompletionDocNumber ?? InspectionDocNumber;
 		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{(String.IsNullOrWhiteSpace(DocumentNumber) ? DocumentId.ToString() : DocumentNumber)}";
-	}
-
-	public enum OperationType
-	{
-		EmployeeIssue,
-		Warehouse
 	}
 }
