@@ -78,6 +78,7 @@ using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
 using Workwear.ViewModels.Analytics;
+using Workwear.ViewModels.Visits;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -991,6 +992,6 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionVisitsActivated(object sender, EventArgs e) {
-		NavigationManager.OpenViewModel<VisitJournalViewModel>(null);
+		NavigationManager.OpenViewModel<VisitListViewModel>(null);
 	}
 }

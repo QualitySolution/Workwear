@@ -208,6 +208,7 @@
     <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
+    <Compile Include="ViewModels\Visits\VisitListViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
     <Compile Include="Views\Company\OrganizationView.cs" />
@@ -519,6 +520,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
     <Compile Include="Views\Visits\VisitView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
+    <Compile Include="Views\Visits\VisitListView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Visits.VisitListView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

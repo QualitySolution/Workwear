@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Visits {
 		#region Проброс свойств
 		
 		public virtual DateTime CreateDate { get => Entity.CreateDate; set => Entity.CreateDate = value;}
-		public virtual DateTime VisitDate { get => Entity.VisitDate; set => Entity.VisitDate = value;}
+		public virtual DateTime VisitDate { get => Entity.VisitTime; set => Entity.VisitTime = value;}
 		public virtual EmployeeCard Employee { get => Entity.Employee; set => Entity.Employee = value;}
 		public virtual bool Cancelled { get => Entity.Cancelled; set => Entity.Cancelled = value;}
 		public virtual bool Done { get => Entity.Done; set => Entity.Done = value;}

@@ -38,20 +38,22 @@ namespace workwear.Journal.ViewModels.Visits {
 				Projections.Property(() => employeeAlias.FirstName),
 				Projections.Property(() => employeeAlias.Patronymic));
 			
-			return query
+			var result = query
 				.JoinAlias(x => x.Employee, () => employeeAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
 					.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
-					.Select(x => x.VisitDate).WithAlias(() => resultAlias.VisitDate)
+					.Select(x => x.VisitTime).WithAlias(() => resultAlias.VisitDate)
 					.Select(x => x.EmployeeCreate).WithAlias(() => resultAlias.EmployeeCreate)
 					.Select(x => x.Cancelled).WithAlias(() => resultAlias.Cancelled)
 					.Select(x => x.Done).WithAlias(() => resultAlias.Done)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(concatProjectionEmployee).WithAlias(() => resultAlias.FIO)
 				)
-				.OrderBy(x => x.VisitDate).Asc
+				.OrderBy(x => x.VisitTime).Asc
 				.TransformUsing(Transformers.AliasToBean<VisitJournalNode>());
+
+			return result;
 		}
 
 		public string DocumentationUrl { get; }
@@ -64,7 +66,7 @@ namespace workwear.Journal.ViewModels.Visits {
 		public DateTime CreateDate { get; set; }
 		public DateTime VisitDate { get; set; }
 		public string FIO { get; set; }
-		//EmployeeCard Employee
+////EmployeeCard Employee
 		public bool EmployeeCreate { get; set; }
 		public bool Done { get; set; }
 		public bool Cancelled { get; set; }

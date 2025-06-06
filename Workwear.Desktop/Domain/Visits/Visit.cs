@@ -24,10 +24,10 @@ namespace Workwear.Domain.Visits {
 			set => SetField(ref createDate, value);
 		}
 
-		private DateTime visitDate;
-		public virtual DateTime VisitDate {
-			get => visitDate;
-			set => SetField(ref visitDate, value);
+		private DateTime visitTime;
+		public virtual DateTime VisitTime {
+			get => visitTime;
+			set => SetField(ref visitTime, value);
 		}
 
 		private EmployeeCard employee;

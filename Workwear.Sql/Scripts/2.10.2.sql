@@ -7,7 +7,7 @@ create table visits
 (
 	id              int unsigned auto_increment,
 	create_date     datetime              not null,
-	visit_date      date                  null,
+	visit_date      datetime              null,
 	employee_id     int unsigned          null,
 	employee_create boolean               null,
 	done            boolean default FALSE null,

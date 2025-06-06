@@ -14,7 +14,7 @@ namespace Workwear.HibernateMapping.Visits {
 				Id(x => x.Id).Column("id").GeneratedBy.Native();
 			
 			Map(x => x.CreateDate).Column("create_date");
-			Map(x => x.VisitDate).Column("visit_date");
+			Map(x => x.VisitTime).Column("visit_date");
 			Map(x => x.EmployeeCreate).Column("employee_create");
 			Map(x => x.Cancelled).Column("cancelled");
 			Map(x => x.Done).Column("done");
@@ -34,6 +34,7 @@ namespace Workwear.HibernateMapping.Visits {
 				.Table("visits_documents")
 				.ParentKeyColumn("visit_id")
 				.ChildKeyColumn("return_id");
+		*/
 		}
 	}
 }
