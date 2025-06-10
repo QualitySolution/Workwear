@@ -29,6 +29,9 @@ namespace Workwear.ViewModels.Visits {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 
 			IntervalMinutes = baseParameters.VisitInterval;
+			StartWorkDay = baseParameters.VisitIntervalHourStart;
+			FinishWorkDay = baseParameters.VisitIntervalHourEnd;
+			WorkDaysOfWeak = baseParameters.VisitIntervalWorkDays;
 			NotWorkDays = UoW.GetAll<WorkDay>()
 				.Where(d => !d.IsWorkday)
 				.Select(d => d.Date).ToArray();
