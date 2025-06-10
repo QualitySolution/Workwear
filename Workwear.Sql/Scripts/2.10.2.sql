@@ -44,7 +44,7 @@ create table visits_documents
 		foreign key (return_id) references stock_return (id)
 			on update cascade on delete set null,
 	constraint visits_documents_stock_write_off_organization_id_fk
-		foreign key (writeof_id) references stock_write_off (organization_id)
+		foreign key (writeof_id) references stock_write_off (id)
 			on update cascade on delete set null,
 	constraint visits_documents_visits_id_fk
 		foreign key (visit_id) references visits (id)

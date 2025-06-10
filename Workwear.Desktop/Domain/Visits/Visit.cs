@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 
@@ -60,9 +61,9 @@ namespace Workwear.Domain.Visits {
 			set => SetField(ref comment, value);
 		}
 
-		public virtual List<Expense> ExpenseDocuments { get; set; } = new List<Expense>();
-		public virtual List<Writeoff> WriteoffDocuments { get; set; } = new List<Writeoff>();
-		public virtual List<Return> ReturnDocuments { get; set; } = new List<Return>();
+		public virtual IObservableList<Expense> ExpenseDocuments { get; set; }
+		public virtual IObservableList<Writeoff> WriteoffDocuments { get; set; } 
+		public virtual IObservableList<Return> ReturnDocuments { get; set; }
 
 		#endregion
 

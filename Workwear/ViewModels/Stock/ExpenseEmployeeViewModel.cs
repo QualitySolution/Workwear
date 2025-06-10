@@ -27,6 +27,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -74,7 +75,8 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
-			EmployeeCard employee = null
+			EmployeeCard employee = null,
+			Visit visit = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -113,6 +115,13 @@ namespace Workwear.ViewModels.Stock {
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			}
 			performance.CheckPoint("Заполняем склад");
+
+			if(visit != null) {
+				var v = UoW.GetById<Visit>(visit.Id);
+				v.ExpenseDocuments.Add(Entity);
+				UoW.Save(v);
+			} else 
+				Entity.IssueDate = Entity.Date;
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -399,8 +408,7 @@ namespace Workwear.ViewModels.Stock {
 		public void SetIssue() => Entity.IssueDate = DateTime.Now;
 
 		#region ISelectItem
-		public void SelectItem(int id)
-		{
+		public void SelectItem(int id) {
 			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion

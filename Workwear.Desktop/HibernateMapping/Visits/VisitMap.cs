@@ -21,20 +21,19 @@ namespace Workwear.HibernateMapping.Visits {
 			Map(x => x.Comment).Column("comment");
 			
 			References (x => x.Employee).Column ("employee_id");
-			
+
 			HasManyToMany(x => x.ExpenseDocuments)
 				.Table("visits_documents")
 				.ParentKeyColumn("visit_id")
-				.ChildKeyColumn("expence_id");			
+				.ChildKeyColumn("expence_id");		
 			HasManyToMany(x => x.WriteoffDocuments)
 				.Table("visits_documents")
 				.ParentKeyColumn("visit_id")
-				.ChildKeyColumn("writeof_id");			
+				.ChildKeyColumn("writeof_id");	
 			HasManyToMany(x => x.ReturnDocuments)
 				.Table("visits_documents")
 				.ParentKeyColumn("visit_id")
 				.ChildKeyColumn("return_id");
-		*/
 		}
 	}
 }
