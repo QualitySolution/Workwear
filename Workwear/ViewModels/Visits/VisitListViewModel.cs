@@ -25,6 +25,11 @@ namespace Workwear.ViewModels.Visits {
 			) : base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider)
 		{
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+
+			NotWorkDays = UoW.GetAll<WorkDay>()
+				.Where(d => !d.IsWorkday)
+				.Select(d => d.Date).ToArray();
+			
 			loadData();
 		}
 		//TODO докумментация
@@ -39,6 +44,8 @@ namespace Workwear.ViewModels.Visits {
 		public int StartWorkDay { get; set; } = 8;
 		public int FinishWorkDay { get; set; } = 17;
 		public int[] WorkDaysOfWeak { get; set; } = {1, 2, 3, 4, 5};
+		
+		public DateTime[] NotWorkDays { get; }
 
 		private void loadData() {
 			Items.Clear();
@@ -63,7 +70,7 @@ namespace Workwear.ViewModels.Visits {
 					d = d.Date.AddHours(StartWorkDay); 
 					continue; 
 				}
-				if(!WorkDaysOfWeak.Contains((int)d.DayOfWeek) || d.Hour >= FinishWorkDay) {
+				if(!WorkDaysOfWeak.Contains((int)d.DayOfWeek) || d.Hour >= FinishWorkDay || NotWorkDays.Contains(d.Date)) {
 					d = d.AddDays(1).Date.AddHours(StartWorkDay); 
 					continue; 
 				}

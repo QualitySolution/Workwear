@@ -51,3 +51,16 @@ create table visits_documents
 			on update cascade on delete cascade
 );
 
+-- Учёт дней недели
+create table work_days
+(
+	id          int unsigned auto_increment,
+	date 		date 	not null,
+	is_work_day boolean default true null,
+	сomment 	text	null
+	constraint work_days_pk
+		primary key (id)
+);
+
+
+
