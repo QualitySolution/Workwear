@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.ViewModels.Visits;
@@ -67,13 +66,14 @@ namespace Workwear.Views.Visits {
 			uint i = 3;
 			foreach(var item in ViewModel.Items.Values) {
 				Label label;
+				Entry entry;
 				
 				if(item.FirstOfDay) {
 					ItemListTable.Attach(new HSeparator(), 0, 15, i, i+1);
 					i++;
 				}
 
-				label = new Label {LabelProp = item.VisitTime.ToString()}; //Время
+				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
                 ItemListTable.Attach(label, 4, 5, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
                 label = new Label {LabelProp = item.FIO}; //Сотрудник
@@ -99,8 +99,11 @@ namespace Workwear.Views.Visits {
 						ItemListTable.Attach(new VSeparator(), 11, 12, i, i + 1, AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 				}
 
-                label = new Label {LabelProp = item.Comment}; //Коментарий
-                ItemListTable.Attach(label, 14, 15, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				if(item.Visit != null) { //Пока не даём создавать из программы новые
+					entry = new Entry() { Text = item.Comment }; //Коментарий
+					entry.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, entry.Text);
+					ItemListTable.Attach(entry, 14, 15, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+				}
 
 				ItemListTable.Attach(new HSeparator(), 0, 15, i+1, i+2);
 				

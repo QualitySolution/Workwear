@@ -106,6 +106,14 @@ namespace Workwear.Tools
 			get => Dynamic.EditLockDate(typeof(DateTime?));
 			set => Dynamic[nameof(EditLockDate)] = value;
 		}
+		
+		/// <summary>
+		/// Интервал записей на посещение склада (минут)
+		/// </summary>
+		public virtual int VisitInterval {
+			get => Dynamic.VisitInterval(typeof(int)) ?? 15;
+			set => Dynamic[nameof(VisitInterval)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {

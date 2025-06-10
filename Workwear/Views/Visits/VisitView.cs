@@ -7,7 +7,6 @@ namespace Workwear.Views.Visits {
 		public VisitView(VisitViewModel viewModel) : base(viewModel) {
 			this.Build();
 			ConfigureDlg();
-			ConfigureDocumentsList();
 			CommonButtonSubscription();
 		}
 
@@ -30,10 +29,6 @@ namespace Workwear.Views.Visits {
 				.AddBinding(ViewModel, vm => vm.Done, w => w.Visible).InitializeFromSource();
 			ylabelCanceled.Binding
 				.AddBinding(ViewModel, vm => vm.Cancelled, w => w.Visible).InitializeFromSource();
-		}
-
-		private void ConfigureDocumentsList() {
-////			
 		}
 	}
 }

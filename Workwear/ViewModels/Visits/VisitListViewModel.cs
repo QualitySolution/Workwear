@@ -11,6 +11,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Visits;
+using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Visits {
@@ -19,6 +20,7 @@ namespace Workwear.ViewModels.Visits {
 		public VisitListViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			BaseParameters baseParameters,
 			IValidator validator = null,
             UnitOfWorkProvider unitOfWorkProvider = null,
 			string UoWTitle = null
@@ -26,6 +28,7 @@ namespace Workwear.ViewModels.Visits {
 		{
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 
+			IntervalMinutes = baseParameters.VisitInterval;
 			NotWorkDays = UoW.GetAll<WorkDay>()
 				.Where(d => !d.IsWorkday)
 				.Select(d => d.Date).ToArray();
@@ -110,6 +113,14 @@ namespace Workwear.ViewModels.Visits {
 				PrevDay();
 			else 
 				OnPropertyChanged(nameof(PeriodString));
+		}
+
+		public void AddComment(VisitListWidgetItem item, string entryText) {
+			if(item?.Visit != null && item.Visit.Comment != entryText) {
+				item.Visit.Comment = entryText;
+				UoW.Save(item.Visit);
+				UoW.Commit();
+			}
 		}
 	}
 	
