@@ -17,9 +17,6 @@ create table visits
 		primary key (id),
 	constraint visits_employees_id_fk
 		foreign key (employee_id) references employees (id)
-			on update cascade on delete set null,
-	constraint visits_stock_expense_id_fk
-		foreign key (expense_id) references stock_expense (id)
 			on update cascade on delete set null
 );
 

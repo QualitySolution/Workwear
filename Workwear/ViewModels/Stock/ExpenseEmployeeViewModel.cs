@@ -120,7 +120,7 @@ namespace Workwear.ViewModels.Stock {
 				var v = UoW.GetById<Visit>(visit.Id);
 				v.ExpenseDocuments.Add(Entity);
 				UoW.Save(v);
-			} else 
+			} else if (Entity.Id == 0)
 				Entity.IssueDate = Entity.Date;
 
 			if(Entity.Warehouse == null)

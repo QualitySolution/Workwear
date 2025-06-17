@@ -35149,11 +35149,10 @@
               <widget class="Gtk.Button" id="buttonPrev">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="UseStock">True</property>
-                <property name="Type">StockItem</property>
-                <property name="StockId">gtk-go-back</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Предыдущий день</property>
+                <property name="UseUnderline">True</property>
                 <property name="Yalign">1</property>
-                <property name="label">gtk-go-back</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -35189,10 +35188,9 @@
               <widget class="Gtk.Button" id="buttonNext">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="UseStock">True</property>
-                <property name="Type">StockItem</property>
-                <property name="StockId">gtk-go-forward</property>
-                <property name="label">gtk-go-forward</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Следующий день</property>
+                <property name="UseUnderline">True</property>
               </widget>
               <packing>
                 <property name="Position">4</property>

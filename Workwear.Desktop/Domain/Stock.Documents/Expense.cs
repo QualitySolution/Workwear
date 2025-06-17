@@ -65,7 +65,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => IssueDate != null ? "Персональная" : "Предполагаемая" + $" выдача №{DocNumberText} от {Date:d}";
+		public virtual string Title => (IssueDate != null ? "Персональная" : "Предполагаемая") + $" выдача №{DocNumberText} от {Date:d}";
 
 		public Expense ()
 		{

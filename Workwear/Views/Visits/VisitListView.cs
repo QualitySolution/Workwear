@@ -67,6 +67,9 @@ namespace Workwear.Views.Visits {
 			foreach(var item in ViewModel.Items.Values) {
 				Label label;
 				Entry entry;
+				TextView textView;
+				Button button;
+				uint j = (uint) item.Documents.Count; //смещение многострочных элементов
 				
 				if(item.FirstOfDay) {
 					ItemListTable.Attach(new HSeparator(), 0, 15, i, i+1);
@@ -74,50 +77,50 @@ namespace Workwear.Views.Visits {
 				}
 
 				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
-                ItemListTable.Attach(label, 4, 5, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+                ItemListTable.Attach(label, 4, 5, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
                 label = new Label {LabelProp = item.FIO}; //Сотрудник
-                ItemListTable.Attach(label, 6, 7, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+                ItemListTable.Attach(label, 6, 7, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
 
                 if(item.CreateTime != null) {
 	                label = new Label { LabelProp = ((DateTime)item.CreateTime).ToShortDateString() }; //Дата создания
-	                ItemListTable.Attach(label, 8, 9, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+	                ItemListTable.Attach(label, 8, 9, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+                }
+                
+                if(item.Documents.Count != 0) { //Документы
+	                uint n = 0;
+	                foreach(var doc in item.Documents) {
+		                button = new Button(); //открыть
+		                button.Label = doc.label;
+		                button.Clicked += (sender, args) =>  ViewModel.OpenDocument(doc.doc, doc.id);
+		                ItemListTable.Attach(button, 10, 11, i+n, i+n+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+		                n++;
+	                }
                 }
 
-                label = new Label() {LabelProp = item.Documents}; //Документы
-                ItemListTable.Attach(label, 10, 11, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-
                 if(item.Employee != null) {
-	                var addButton = new Button(); //Добавить
-	                addButton.Clicked += (sender, args) =>  ViewModel.AddExpance(item.Employee, item.Visit);
+	                button = new Button(); //добавить
+	                button.Clicked += (sender, args) =>  ViewModel.AddExpance(item.Employee, item.Visit);
 	                Image w3 = new Image();
 	                w3.Pixbuf = Stetic.IconLoader.LoadIcon(this, "gtk-add", IconSize.Menu);
-	                addButton.Image = w3;
-	                ItemListTable.Attach(addButton, 12, 13, i, i + 1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+	                button.Image = w3;
+	                ItemListTable.Attach(button, 12, 13, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
                 
-	                if(!string.IsNullOrEmpty(item.Documents))
-						ItemListTable.Attach(new VSeparator(), 11, 12, i, i + 1, AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
+	                if(!string.IsNullOrEmpty(item.DocumentsString))
+						ItemListTable.Attach(new VSeparator(), 11, 12, i, i+j+1, AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 				}
 
 				if(item.Visit != null) { //Пока не даём создавать из программы новые
-					entry = new Entry() { Text = item.Comment }; //Коментарий
-					entry.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, entry.Text);
-					ItemListTable.Attach(entry, 14, 15, i, i + 1, AttachOptions.Fill, AttachOptions.Shrink, 0, 0);
+					textView = new TextView(); //Коментарий
+					textView.Buffer.Text = item.Comment;
+					textView.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, textView.Buffer.Text);
+					ItemListTable.Attach(textView, 14, 15, i, i+j+1, AttachOptions.Fill, AttachOptions.Fill, 0, 0);
 				}
 
-				ItemListTable.Attach(new HSeparator(), 0, 15, i+1, i+2);
+				ItemListTable.Attach(new HSeparator(), 0, 15, i+j+1, i+j+2);
 				
-				i += 3;
+				i += j+2;
 			}
-	
-			//Прокрутка
-			if(rows > 5) {
-				scrolledwindow1.VscrollbarPolicy = PolicyType.Always;
-				HeightRequest = 600;
-			}
-			else
-				scrolledwindow1.VscrollbarPolicy = PolicyType.Never;
-			
 			ItemListTable.ShowAll();
 		}
 

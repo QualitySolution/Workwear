@@ -49,10 +49,9 @@ namespace Workwear.Views.Visits
 			this.buttonPrev = new global::Gtk.Button();
 			this.buttonPrev.CanFocus = true;
 			this.buttonPrev.Name = "buttonPrev";
-			this.buttonPrev.UseStock = true;
 			this.buttonPrev.UseUnderline = true;
 			this.buttonPrev.Yalign = 1F;
-			this.buttonPrev.Label = "gtk-go-back";
+			this.buttonPrev.Label = global::Mono.Unix.Catalog.GetString("Предыдущий день");
 			this.hbox4.Add(this.buttonPrev);
 			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonPrev]));
 			w2.Position = 1;
@@ -79,9 +78,8 @@ namespace Workwear.Views.Visits
 			this.buttonNext = new global::Gtk.Button();
 			this.buttonNext.CanFocus = true;
 			this.buttonNext.Name = "buttonNext";
-			this.buttonNext.UseStock = true;
 			this.buttonNext.UseUnderline = true;
-			this.buttonNext.Label = "gtk-go-forward";
+			this.buttonNext.Label = global::Mono.Unix.Catalog.GetString("Следующий день");
 			this.hbox4.Add(this.buttonNext);
 			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonNext]));
 			w5.Position = 4;
