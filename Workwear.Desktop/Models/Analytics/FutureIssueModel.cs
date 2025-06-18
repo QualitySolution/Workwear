@@ -60,7 +60,7 @@ namespace Workwear.Models.Analytics {
 				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
 					//создаём следующую виртуальную выдачу
 					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
-					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
+					int need = item.CalculateRequiredIssue(baseParameters, issueDate, ignoreNormConditionPeriod: true);
 					if(need == 0)
 						break;
 					//Операция приведшая к возникновению потребности 
