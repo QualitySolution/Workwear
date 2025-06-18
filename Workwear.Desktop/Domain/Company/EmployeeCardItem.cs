@@ -226,7 +226,7 @@ namespace Workwear.Domain.Company
 		/// <summary>
 		/// Получить необходимое к выдаче количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate, bool ignoreNormConditionPeriod = false) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
 			
@@ -236,7 +236,7 @@ namespace Workwear.Domain.Company
 				return 0;
 			if(employeeCard.OnVacation(onDate))
 				return 0;
-			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
+			if (!ignoreNormConditionPeriod && ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
 				if (onDate < nextPeriod.Begin)
 					return 0;
