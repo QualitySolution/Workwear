@@ -108,7 +108,7 @@ namespace Workwear.Views.Analytics {
 			
 			conf.AddColumn("Остаток c \nпросроченной")
 				.AddReadOnlyTextRenderer(x => x.WithDebt.ToString())
-				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")
+				.AddSetter((c,n) => c.Foreground = n.WithDebt < 0 ? "red" : "green")
 				.XAlign(0.5f);
 
 			conf.AddColumn("").Finish();

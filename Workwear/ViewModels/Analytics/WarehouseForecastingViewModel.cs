@@ -300,8 +300,8 @@ namespace Workwear.ViewModels.Analytics {
 					? choiceProtectionToolsViewModel.SelectedEntities
 					: UoW.GetAll<ProtectionTools>().Where(p =>
 						choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureUnisex)
-						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
-						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
+						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
+						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
 				hashPt = new HashSet<ProtectionTools>(protectionTools);
 				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
 			}
