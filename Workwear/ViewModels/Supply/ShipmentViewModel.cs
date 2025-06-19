@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Utils;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -41,6 +41,7 @@ namespace Workwear.ViewModels.Supply {
 			INavigationManager navigation,
 			IInteractiveService interactive,
 			IUserService userService,
+			IEntityChangeWatcher watcher,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -59,6 +60,11 @@ namespace Workwear.ViewModels.Supply {
 				AddFromForecasting(forecastingItems, eItemEnum);
 			
 			CalculateTotal();
+			watcher.BatchSubscribe(OnExternalShipmentChange)
+				.ExcludeUow(UoW)
+				.IfEntity<ShipmentItem>()
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndWhere(x => x.Shipment.Id == Entity.Id);
 		}
 
 		#region IDialogDocumentation
@@ -202,6 +208,14 @@ namespace Workwear.ViewModels.Supply {
 		}
 		#endregion
 
+		private void OnExternalShipmentChange(EntityChangeEvent[] changeEvents) {
+			foreach(var change in changeEvents) {
+				var myItem = Entity.Items.FirstOrDefault(i => i.Id == change.Entity.GetId());
+				if(myItem != null)
+					UoW.Session.Refresh(myItem);
+			}
+		}
+		
 		#region Валидация, сохранение и печать
 
 		public override bool Save() {
