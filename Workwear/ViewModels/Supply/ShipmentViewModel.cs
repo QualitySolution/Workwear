@@ -151,16 +151,16 @@ namespace Workwear.ViewModels.Supply {
 			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
 		}
 
-		public void SendMessegeForBuyer() {
-			var dialoog = NavigationManager.OpenViewModel<SendEmailViewModel>(this);
-			dialoog.ViewModel.EmailAddres = currentUserSettings.Settings.BuyerEmail;
-			dialoog.ViewModel.Topic = "Новая планируемая поставка Сппецодежды.";
-			dialoog.ViewModel.Messege = "Добрый день!\nВ программе QS создана новая заявка на закупку. Просим принять в работу.";
-			dialoog.ViewModel.Title = "Оповестить закупку";
+		public void SendMessageForBuyer() {
+			var dialog = NavigationManager.OpenViewModel<SendEmailViewModel>(this);
+			dialog.ViewModel.EmailAddress = currentUserSettings.Settings.BuyerEmail;
+			dialog.ViewModel.Topic = "Новая планируемая поставка Спецодежды.";
+			dialog.ViewModel.Message = "Добрый день!\nВ программе QS создана новая заявка на закупку. Просим принять в работу.";
+			dialog.ViewModel.Title = "Оповестить закупку";
 			
-			dialoog.ViewModel.ShowSaveAddres = true;
-			dialoog.ViewModel.SaveAdressFunc = adress => {
-				currentUserSettings.Settings.BuyerEmail = adress;
+			dialog.ViewModel.ShowSaveAddress = true;
+			dialog.ViewModel.SaveAddressFunc = address => {
+				currentUserSettings.Settings.BuyerEmail = address;
 				currentUserSettings.SaveSettings();
 			};
 		}

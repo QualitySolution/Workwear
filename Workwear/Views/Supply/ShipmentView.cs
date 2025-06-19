@@ -92,7 +92,7 @@ namespace Workwear.Views.Supply {
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
 
 		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
-			ViewModel.SendMessegeForBuyer();
+			ViewModel.SendMessageForBuyer();
 	}
 }
 
