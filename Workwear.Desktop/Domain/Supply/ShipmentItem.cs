@@ -12,7 +12,7 @@ namespace Workwear.Domain.Supply{
 		Genitive = "строки предполагаемой поставки"
 	)]
 	[HistoryTrace]
-	public class ShipmentItem: IDomainObject 
+	public class ShipmentItem: PropertyChangedBase, IDomainObject 
 	{
 		#region Свойства
 		public virtual int Id { get; set; }
@@ -23,14 +23,14 @@ namespace Workwear.Domain.Supply{
 		[IgnoreHistoryTrace]
 		public virtual Shipment Shipment {
 			get => shipment;
-			set {shipment = value;}
+			set => SetField(ref shipment, value);
 		}
 		
 		Nomenclature nomenclature;
 		[Display (Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
-			set { nomenclature = value; }
+			set => SetField(ref nomenclature, value);
 		}
 		
 		private int requested;
@@ -38,7 +38,7 @@ namespace Workwear.Domain.Supply{
 		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual int Requested {
 			get => requested;
-			set {requested = value; }
+			set => SetField(ref requested, value);
 		}	
 		
 		private int ordered;
@@ -46,7 +46,7 @@ namespace Workwear.Domain.Supply{
 		[PropertyChangedAlso(nameof(TotalOrdered))]
 		public virtual int Ordered {
 			get => ordered;
-			set {ordered = value; }
+			set => SetField(ref ordered, value);
 		}
 		
 		private int received;
@@ -54,7 +54,7 @@ namespace Workwear.Domain.Supply{
 		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual int Received {
 			get => received;
-            set {received = value; }
+            set => SetField(ref received, value);
 		}
 
 		private decimal cost;
@@ -63,35 +63,35 @@ namespace Workwear.Domain.Supply{
 		[PropertyChangedAlso(nameof(TotalRequested))]
 		public virtual decimal Cost {
 			get => cost;
-			set { cost = value; }
+			set => SetField(ref cost, value);
 		}
 		
 		private Size wearSize;
 		[Display(Name = "Размер")]
 		public virtual Size WearSize {
 			get => wearSize;
-			set => wearSize = value;
+			set => SetField(ref wearSize, value);
 		}
 		
 		private Size height;
 		[Display(Name = "Рост одежды")]
 		public virtual Size Height {
 			get => height;
-			set => height = value;
+			set => SetField(ref height, value);
 		}
 		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get => comment;
-			set { comment = value; }
+			set => SetField(ref comment, value);
 		}
 		
 		private string diffСause;
 		[Display(Name = "Причина расхождений")]
 		public virtual string DiffСause {
 			get => diffСause;
-			set { diffСause = value; }
+			set => SetField(ref diffСause, value);
 		}
 		#endregion
 		

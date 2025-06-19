@@ -87,11 +87,12 @@ namespace Workwear.ViewModels.Supply {
 			set => SetField(ref total, value);
 		}
 		
-		private ShipmentItem selectedItem;
+		private ShipmentItem[] selectedItems;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
-		public virtual ShipmentItem SelectedItem {
-			get=>selectedItem;
-			set=>SetField(ref selectedItem, value);
+		[PropertyChangedAlso(nameof(CanToOrder))]
+		public virtual ShipmentItem[] SelectedItems {
+			get=>selectedItems;
+			set=>SetField(ref selectedItems, value);
 		}
 
 		#endregion
@@ -114,7 +115,9 @@ namespace Workwear.ViewModels.Supply {
 		#region Свойства View
 
 		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => SelectedItem != null;
+		public virtual bool CanRemoveItem => SelectedItems != null && SelectedItems.Length > 0;
+		public virtual bool CanToOrder => SelectedItems != null && SelectedItems.Length > 0 && 
+		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
 		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
 		public virtual bool CarEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
 		public virtual bool CarEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
@@ -130,8 +133,7 @@ namespace Workwear.ViewModels.Supply {
 
 		#endregion
 
-		#region Методы
-
+		#region Действия view
 		public void AddItem() {
 			var selectJournal = NavigationManager
 				.OpenViewModel<NomenclatureJournalViewModel>( this,OpenPageOptions.AsSlave);
@@ -146,10 +148,17 @@ namespace Workwear.ViewModels.Supply {
 			CalculateTotal();
 		}
 		
-		public void DeleteItem(ShipmentItem item) {
-			Entity.RemoveItem(item); 
+		public void DeleteItems(ShipmentItem[] items) {
+			foreach(var item in items)
+				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(CanRemoveItem));
 			CalculateTotal();
+		}
+		
+		public void ToOrderItems() {
+			foreach(var item in SelectedItems)
+				item.Ordered = item.Requested;
+			OnPropertyChanged(nameof(CanToOrder));
 		}
 		private void CalculateTotal() {
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +

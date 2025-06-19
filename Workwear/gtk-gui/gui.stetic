@@ -34253,6 +34253,25 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.GtkWidgets.yButton" id="buttonToOrder">
+                    <property name="MemberName" />
+                    <property name="Sensitive">False</property>
+                    <property name="Tooltip" translatable="yes">Копирует количество запрошенного из выбранных строк в количество заказанное. Вы можете выделять несколько строк или все через Ctrl-A</property>
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">stock:gtk-go-forward Menu</property>
+                    <property name="Label" translatable="yes">Скопировать в заказанное</property>
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnButtonToOrderClicked" />
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabelAmount">
                     <property name="MemberName" />
                     <property name="LabelProp" translatable="yes">Количество:</property>
@@ -34260,7 +34279,7 @@
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
-                    <property name="Position">2</property>
+                    <property name="Position">3</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
