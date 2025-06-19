@@ -47,8 +47,6 @@ namespace Workwear.Models.Analytics {
 				}
 
 				progress?.Add(text: "Планирование выдач для " + item.EmployeeCard.ShortName);
-				if(item.Id == 52668)
-					Console.WriteLine("Debug");
 
 				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 				//список созданных объектов операций
