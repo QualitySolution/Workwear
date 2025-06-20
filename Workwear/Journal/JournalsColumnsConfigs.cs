@@ -57,8 +57,17 @@ namespace workwear.Journal
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
-
+			
+			TreeViewColumnsConfigFactory.Register<ServicesJournalViewModel>(
+				() => FluentColumnsConfig<ServiceJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
+					.AddColumn("Стоимость").AddTextRenderer(node=>node.Cost)
+					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment)
+					.Finish()
+				);
 			#endregion
+			
 			#region Communications
 			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
 				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()

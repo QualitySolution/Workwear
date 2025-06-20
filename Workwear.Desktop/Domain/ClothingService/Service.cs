@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
@@ -31,6 +33,18 @@ namespace Workwear.Domain.ClothingService {
 			get => comment;
 			set => SetField(ref comment, value);
 		}
+		#endregion
+		
+		#region Номенклатуры
+
+		private IObservableList<Nomenclature> nomenclatures = new ObservableList<Nomenclature>();
+
+		[Display(Name = "Номенклатуры")]
+		public virtual IObservableList<Nomenclature> Nomenclatures {
+			get { return nomenclatures; }
+			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
+		}
+		
 		#endregion
 	}
 }

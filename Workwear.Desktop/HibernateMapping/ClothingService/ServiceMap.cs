@@ -1,5 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 using Workwear.Domain.ClothingService;
+using Workwear.Domain.Stock;
 
 namespace Workwear.HibernateMapping.ClothingService {
 	public class ServiceMap : ClassMap<Service> {
@@ -10,6 +11,11 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Map(x => x.Name).Column("name");
 			Map(x => x.Cost).Column("cost");
 			Map(x => x.Comment).Column("comment");
+			
+			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
+				.Table("clothing_service_services_nomenclature")
+				.ParentKeyColumn("service_id")
+				.ChildKeyColumn("nomenclature_id");
 
 		}
 	}

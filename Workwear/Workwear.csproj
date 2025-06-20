@@ -124,6 +124,7 @@
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Analytics\ProtectionToolsCategoryJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\ClothingService\ClaimsJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\ClothingService\ServicesJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\SpecCoinsBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\SpecCoinsOperationsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Company\EmployeeBalanceJournalViewModel.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentWithdrawViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
+    <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
@@ -515,6 +517,8 @@
     <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
     <Compile Include="Views\Communications\SendEmailView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
+    <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureServicesView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureServicesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
