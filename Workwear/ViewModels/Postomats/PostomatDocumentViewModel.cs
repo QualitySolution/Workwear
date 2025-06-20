@@ -58,7 +58,9 @@ namespace Workwear.ViewModels.Postomats {
 						item.Location = new CellLocation(cell.CellTitle, cell.Location);
 				}
 			}
-			
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, 
+				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWorkFactory), unitOfWorkFactory} })));
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
