@@ -232,5 +232,59 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result3[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 10)));
 			Assert.That(result3[0].Amount, Is.EqualTo(2));
 		}
+		
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что если начало прогнозируемого периода по условиям нормы не попадает в период выдачи. Мы правильно показываем долги.")]
+		public void CalculateIssues_NormConditionPeriod_Calculated()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				Nomenclatures = new ObservableList<Nomenclature>() {
+					new Nomenclature()
+				}
+			};
+
+			var norm = new Norm {
+				DateFrom = new DateTime(2024, 12, 1)
+			};
+			
+			var normCondition = new NormCondition {
+				Name = "Зима",
+				IssuanceStart = new DateTime(2000, 9, 1),
+				IssuanceEnd = new DateTime(2000, 5, 1),
+			};
+			
+			var normItem = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 4,
+				NormCondition = normCondition
+			};
+			
+			var employeeItems = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					Created = new DateTime(2024, 12, 1),
+					ActiveNormItem = normItem,
+					ProtectionTools = protectionTools,
+					NextIssue = new DateTime(2024, 12, 1),
+					Graph = new IssueGraph()
+				}
+			};
+
+			// Начало прогнозирования в июне, зимнюю одежду должны выдавать с сентября.
+			var result = model.CalculateIssues(new DateTime(2025, 6, 18), new DateTime(2025, 12, 31), true, employeeItems);
+
+			// Мы убеждаемся что не потеряли долг, так как у нас стоит перенос долга на дату начала периода.
+			// Но это не попадает в период выдачи по норме, долг пропадал. Это не правильно.
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2025, 6, 18)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2024, 12, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(2));
+		}
 	}
 }

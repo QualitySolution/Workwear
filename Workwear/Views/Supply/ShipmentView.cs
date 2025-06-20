@@ -27,6 +27,7 @@ namespace Workwear.Views.Supply {
 				.InitializeFromSource();
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			buttonToOrder.Binding.AddBinding(ViewModel, vm => vm.CanToOrder, w => w.Sensitive).InitializeFromSource();
 			yenumcomboboxStatus.ItemsEnum=typeof(ShipmentStatus);
 			yenumcomboboxStatus.Binding
 				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
@@ -78,21 +79,24 @@ namespace Workwear.Views.Supply {
 				.Finish();
 			
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
+			ytreeItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeItems.ItemsDataSource = ViewModel.Items;
-
-
 		}
 		
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
-			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ShipmentItem>();
+			ViewModel.SelectedItems = ytreeItems.GetSelectedObjects<ShipmentItem>();
 		}
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
-			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
+			ViewModel.DeleteItems(ytreeItems.GetSelectedObjects<ShipmentItem>());
 
 		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
-			ViewModel.SendMessegeForBuyer();
+			ViewModel.SendMessageForBuyer();
+
+		protected void OnButtonToOrderClicked(object sender, EventArgs e) {
+			ViewModel.ToOrderItems();
+		}
 	}
 }
 
