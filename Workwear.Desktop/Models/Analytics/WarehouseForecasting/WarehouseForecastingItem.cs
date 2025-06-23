@@ -104,6 +104,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			get => unissued;
 			set => SetField(ref unissued, value);
 		}
+
+		public List<FutureIssue> UnissuedIssues = new List<FutureIssue>();
 		
 		private readonly List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
 		public List<ShipmentItem> ShipmentItems => shipmentItems;
@@ -125,6 +127,12 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			get => forecastColours;
 			set => SetField(ref forecastColours, value);
 		}
+		
+		private List<FutureIssue>[] forecastIssues;
+		public List<FutureIssue>[] ForecastIssues {
+			get => forecastIssues;
+			set => SetField(ref forecastIssues, value);
+		}
 
 		public bool SupplyNomenclatureNotSet;
 
@@ -143,11 +151,17 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		#region Рассчеты
 		public void FillForecast() {
 			Unissued = 0;
+			UnissuedIssues.Clear();
 			Forecast = new int[columnsModel.ForecastColumns.Length];
 			ForecastBalance = new int[columnsModel.ForecastColumns.Length];
 			ForecastColours = new string[columnsModel.ForecastColumns.Length];
+			ForecastIssues = new List<FutureIssue>[columnsModel.ForecastColumns.Length];
+			for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
+				ForecastIssues[i] = new List<FutureIssue>();
+			}
 			foreach(var issue in futureIssues) {
 				if(issue.DelayIssueDate < columnsModel.ForecastColumns[0].StartDate) {
+					UnissuedIssues.Add(issue);
 					Unissued += issue.Amount;
 					continue;
 				}
@@ -155,6 +169,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 					var issueDate = issue.DelayIssueDate ?? issue.OperationDate;
 					if(issueDate >= columnsModel.ForecastColumns[i].StartDate && issueDate <= columnsModel.ForecastColumns[i].EndDate) {
+						ForecastIssues[i].Add(issue);
 						Forecast[i] += issue.Amount;
 						break;
 					}

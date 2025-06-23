@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Gamma.Utilities;
 using QS.Dialog.GtkUI;
 using QS.Views;
+using Workwear.Models.Analytics;
 using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.ViewModels.Analytics;
 
@@ -83,6 +86,7 @@ namespace Workwear.Views.Analytics {
 					.AddReadOnlyTextRenderer(x => x.InStockSuitable > 0 ? (x.InStockSuitable > x.InStock ? $"<b>{x.InStockSuitable}</b>" : $"{x.InStockSuitable}") : "", useMarkup: true)
 					.XAlign(0.5f)
 				.AddColumn("Просро-\nченное").HeaderAlignment(0.5f)
+					.ToolTipText(x => MakeIssuesListText("Просроченные выдачи:", x.UnissuedIssues))
 					.AddReadOnlyTextRenderer(x => x.Unissued > 0 ? $"-{x.Unissued}" : "")
 					.AddSetter((c,n) => c.Foreground = n.InStock - n.Unissued < 0 ? "red" : "green")
 					.XAlign(0.5f);
@@ -90,7 +94,8 @@ namespace Workwear.Views.Analytics {
 			for(int i = 0; i < ViewModel.ForecastColumns.Length; i++) {
 				int col = i;
 				conf.AddColumn(ViewModel.ForecastColumns[i].Title).HeaderAlignment(0.5f)
-					.ToolTipText(x => $"Прогнозируемый остаток: {x.ForecastBalance[col]}")
+					.ToolTipText(x => $"Прогнозируемый остаток: {x.ForecastBalance[col]}" 
+					                  + MakeIssuesListText("\nПланируемые выдачи:", x.ForecastIssues[col]))
 					.AddReadOnlyTextRenderer(x => x.Forecast[col] > 0 ? $"-{x.Forecast[col]}" : "")
 					.AddSetter((c,n) => c.Foreground = n.ForecastColours[col])
 					.XAlign(0.5f);
@@ -112,6 +117,14 @@ namespace Workwear.Views.Analytics {
 				.XAlign(0.5f);
 
 			conf.AddColumn("").Finish();
+		}
+		
+		private string MakeIssuesListText(string headerText, IList<FutureIssue> issues) {
+			if(issues == null || issues.Count == 0)
+				return "";
+			return headerText + string.Join("", issues
+				.OrderBy(x => x.Employee.ShortName)
+				.Select(x => $"\n{x.Employee.ShortName} — {x.Amount} шт. ({(x.DelayIssueDate ?? x.OperationDate):dd.MM.yyyy})"));
 		}
 
 		protected void OnButtonFillClicked(object sender, EventArgs e) =>
