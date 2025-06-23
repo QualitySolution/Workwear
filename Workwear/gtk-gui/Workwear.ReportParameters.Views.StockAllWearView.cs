@@ -16,6 +16,10 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
+		private global::Gamma.GtkWidgets.yLabel ylabelOwners;
+
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxOwners;
+
 		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouse;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowSumm;
@@ -35,7 +39,7 @@ namespace Workwear.ReportParameters.Views
 			this.dialog1_VBox.Name = "dialog1_VBox";
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -87,6 +91,33 @@ namespace Workwear.ReportParameters.Views
 			w4.XOptions = ((global::Gtk.AttachOptions)(4));
 			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.ylabelOwners = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelOwners.Name = "ylabelOwners";
+			this.ylabelOwners.Xalign = 1F;
+			this.ylabelOwners.LabelProp = global::Mono.Unix.Catalog.GetString("Собственники:");
+			this.table1.Add(this.ylabelOwners);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelOwners]));
+			w5.TopAttach = ((uint)(3));
+			w5.BottomAttach = ((uint)(4));
+			w5.XOptions = ((global::Gtk.AttachOptions)(4));
+			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yspeccomboboxOwners = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxOwners.Name = "yspeccomboboxOwners";
+			this.yspeccomboboxOwners.AddIfNotExist = false;
+			this.yspeccomboboxOwners.DefaultFirst = false;
+			this.yspeccomboboxOwners.ShowSpecialStateAll = true;
+			this.yspeccomboboxOwners.ShowSpecialStateNot = true;
+			this.yspeccomboboxOwners.NameForSpecialStateNot = "Без собственника";
+			this.table1.Add(this.yspeccomboboxOwners);
+			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxOwners]));
+			w6.TopAttach = ((uint)(3));
+			w6.BottomAttach = ((uint)(4));
+			w6.LeftAttach = ((uint)(1));
+			w6.RightAttach = ((uint)(2));
+			w6.XOptions = ((global::Gtk.AttachOptions)(4));
+			w6.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.yspeccomboboxWarehouse = new global::Gamma.Widgets.ySpecComboBox();
 			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
 			this.yspeccomboboxWarehouse.AddIfNotExist = false;
@@ -94,17 +125,17 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouse.ShowSpecialStateAll = true;
 			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
 			this.table1.Add(this.yspeccomboboxWarehouse);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxWarehouse]));
-			w5.TopAttach = ((uint)(2));
-			w5.BottomAttach = ((uint)(3));
-			w5.LeftAttach = ((uint)(1));
-			w5.RightAttach = ((uint)(2));
-			w5.XOptions = ((global::Gtk.AttachOptions)(4));
-			w5.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxWarehouse]));
+			w7.TopAttach = ((uint)(2));
+			w7.BottomAttach = ((uint)(3));
+			w7.LeftAttach = ((uint)(1));
+			w7.RightAttach = ((uint)(2));
+			w7.XOptions = ((global::Gtk.AttachOptions)(4));
+			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w6.Position = 0;
-			w6.Expand = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w8.Position = 0;
+			w8.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.ycheckbuttonShowSumm = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckbuttonShowSumm.CanFocus = true;
@@ -113,10 +144,10 @@ namespace Workwear.ReportParameters.Views
 			this.ycheckbuttonShowSumm.DrawIndicator = true;
 			this.ycheckbuttonShowSumm.UseUnderline = true;
 			this.dialog1_VBox.Add(this.ycheckbuttonShowSumm);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSumm]));
-			w7.Position = 1;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSumm]));
+			w9.Position = 1;
+			w9.Expand = false;
+			w9.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.ycheckbuttonShowSex = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckbuttonShowSex.CanFocus = true;
@@ -125,10 +156,10 @@ namespace Workwear.ReportParameters.Views
 			this.ycheckbuttonShowSex.DrawIndicator = true;
 			this.ycheckbuttonShowSex.UseUnderline = true;
 			this.dialog1_VBox.Add(this.ycheckbuttonShowSex);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSex]));
-			w8.Position = 2;
-			w8.Expand = false;
-			w8.Fill = false;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowSex]));
+			w10.Position = 2;
+			w10.Expand = false;
+			w10.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
@@ -136,11 +167,11 @@ namespace Workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w9.PackType = ((global::Gtk.PackType)(1));
-			w9.Position = 3;
-			w9.Expand = false;
-			w9.Fill = false;
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w11.PackType = ((global::Gtk.PackType)(1));
+			w11.Position = 3;
+			w11.Expand = false;
+			w11.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

@@ -56,6 +56,8 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yButton ybuttonDel;
 
+		private global::Gamma.GtkWidgets.yButton buttonToOrder;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelAmount;
 
 		protected virtual void Build()
@@ -342,24 +344,41 @@ namespace Workwear.Views.Supply
 			w29.Expand = false;
 			w29.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
+			this.buttonToOrder = new global::Gamma.GtkWidgets.yButton();
+			this.buttonToOrder.TooltipMarkup = "Копирует количество запрошенного из выбранных строк в количество заказанное. Вы м" +
+				"ожете выделять несколько строк или все через Ctrl-A";
+			this.buttonToOrder.Sensitive = false;
+			this.buttonToOrder.CanFocus = true;
+			this.buttonToOrder.Name = "buttonToOrder";
+			this.buttonToOrder.UseUnderline = true;
+			this.buttonToOrder.Label = global::Mono.Unix.Catalog.GetString("Скопировать в заказанное");
+			global::Gtk.Image w30 = new global::Gtk.Image();
+			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-go-forward", global::Gtk.IconSize.Menu);
+			this.buttonToOrder.Image = w30;
+			this.yhbox5.Add(this.buttonToOrder);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonToOrder]));
+			w31.Position = 2;
+			w31.Expand = false;
+			w31.Fill = false;
+			// Container child yhbox5.Gtk.Box+BoxChild
 			this.ylabelAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAmount.Name = "ylabelAmount";
 			this.ylabelAmount.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.ylabelAmount.Justify = ((global::Gtk.Justification)(1));
 			this.yhbox5.Add(this.ylabelAmount);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
-			w30.PackType = ((global::Gtk.PackType)(1));
-			w30.Position = 2;
-			w30.Expand = false;
-			w30.Fill = false;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
+			w32.PackType = ((global::Gtk.PackType)(1));
+			w32.Position = 3;
+			w32.Expand = false;
+			w32.Fill = false;
 			this.yvbox3.Add(this.yhbox5);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
-			w31.Position = 2;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
+			w33.Position = 2;
+			w33.Expand = false;
+			w33.Fill = false;
 			this.yvbox1.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
-			w32.Position = 2;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			w34.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
@@ -369,6 +388,7 @@ namespace Workwear.Views.Supply
 			this.ybuttonSendEmail.Clicked += new global::System.EventHandler(this.OnYbuttonSendEmailClicked);
 			this.ybuttonAdd.Clicked += new global::System.EventHandler(this.OnYbuttonAddClicked);
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
+			this.buttonToOrder.Clicked += new global::System.EventHandler(this.OnButtonToOrderClicked);
 		}
 	}
 }

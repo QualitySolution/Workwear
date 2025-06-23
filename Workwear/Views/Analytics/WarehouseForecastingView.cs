@@ -78,6 +78,10 @@ namespace Workwear.Views.Analytics {
 				.AddColumn("На\nскладе").HeaderAlignment(0.5f)
 					.ToolTipText(x => x.StockText)
 					.AddReadOnlyTextRenderer(x => x.InStock > 0 ? $"{x.InStock}" : "").XAlign(0.5f)
+				.AddColumn("Подходящие").Visible(ViewModel.SuitableInStockVisible).HeaderAlignment(0.5f)
+					.ToolTipText(x => x.StocksSuitableText)
+					.AddReadOnlyTextRenderer(x => x.InStockSuitable > 0 ? (x.InStockSuitable > x.InStock ? $"<b>{x.InStockSuitable}</b>" : $"{x.InStockSuitable}") : "", useMarkup: true)
+					.XAlign(0.5f)
 				.AddColumn("Просро-\nченное").HeaderAlignment(0.5f)
 					.AddReadOnlyTextRenderer(x => x.Unissued > 0 ? $"-{x.Unissued}" : "")
 					.AddSetter((c,n) => c.Foreground = n.InStock - n.Unissued < 0 ? "red" : "green")
@@ -91,6 +95,12 @@ namespace Workwear.Views.Analytics {
 					.AddSetter((c,n) => c.Foreground = n.ForecastColours[col])
 					.XAlign(0.5f);
 			}
+
+			if(ViewModel.ShipmentColumnVisible) {
+				conf.AddColumn("Заказано").HeaderAlignment(0.5f)
+					.AddReadOnlyTextRenderer(x => x.TotalOrdered > 0 ? $"{x.TotalOrdered}" : "")
+					.XAlign(0.5f);
+			}
 			conf.AddColumn("Остаток без \nпросроченной")
 				.AddReadOnlyTextRenderer(x => x.WithoutDebt.ToString())
 				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")
@@ -98,7 +108,7 @@ namespace Workwear.Views.Analytics {
 			
 			conf.AddColumn("Остаток c \nпросроченной")
 				.AddReadOnlyTextRenderer(x => x.WithDebt.ToString())
-				.AddSetter((c,n) => c.Foreground = n.WithoutDebt < 0 ? "red" : "green")
+				.AddSetter((c,n) => c.Foreground = n.WithDebt < 0 ? "red" : "green")
 				.XAlign(0.5f);
 
 			conf.AddColumn("").Finish();

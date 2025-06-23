@@ -904,13 +904,10 @@
     <None Include="Reports\ClothingService\ClothingServicePostamatReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Reports\ClothingService\ClothingServiceReport.rdl">
+    <None Include="Reports\ListBySizeFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\SpravkaEmployeeSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">

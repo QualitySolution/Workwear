@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
+using QS.Utilities;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -116,6 +117,7 @@ namespace Workwear.Domain.Supply {
 		#endregion
 
 		public virtual string Title => $"Планируемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
+		public virtual string PeriodTitle => DateHelper.GetDateRangeText(StartPeriod, EndPeriod);
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if (StartPeriod < new DateTime(2025, 1, 1))
