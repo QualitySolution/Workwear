@@ -133,7 +133,7 @@ SELECT
                  nomenclature.sale_cost AS SaleCost
           FROM nomenclature
                    JOIN operation_warehouse AS operation
-                             on (operation.operation_time < ADDDATE(@report_date, INTERVAL 1 DAY)
+                             on (operation.operation_time < @report_date
                                  AND operation.nomenclature_id = nomenclature.id
                                  AND (@all_warehouse
                                      OR operation.warehouse_receipt_id = @warehouse_id
