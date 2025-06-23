@@ -34752,7 +34752,7 @@
             <child>
               <widget class="Gtk.Label" id="GtkLabel4">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Номенклатуры нормы</property>
+                <property name="LabelProp" translatable="yes">Номенклатура</property>
                 <property name="UseUnderline">True</property>
               </widget>
               <packing>

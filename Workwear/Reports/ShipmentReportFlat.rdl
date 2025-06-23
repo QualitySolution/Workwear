@@ -41,14 +41,15 @@
     JOIN measurement_units ON item_types.units_id = measurement_units.id
     LEFT JOIN sizes wear_size ON shipment_items.size_id = wear_size.id
     LEFT JOIN sizes height_size ON shipment_items.height_id = height_size.id
-    WHERE shipment_items.shipment_id = @shipment_id
+    WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
+      AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
     ORDER BY nomenclature.name;</CommandText>
         <QueryParameters>
-          <QueryParameter Name="shipment_id">
-            <Value>={?shipment_id}</Value>
+          <QueryParameter Name="shipment_ids">
+            <Value>={?shipment_ids}</Value>
           </QueryParameter>
-          <QueryParameter Name="nomenclature_id">
-            <Value>={?nomenclature_id}</Value>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -103,25 +104,42 @@
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="Name">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT
+    CASE
+        WHEN COUNT(*) = 1 THEN
+            DATE_FORMAT(MIN(creation_date),'%d.%m.%Y')
+        ELSE
+            CONCAT(DATE_FORMAT(MIN(creation_date),'%d.%m.%Y'), ' - ', DATE_FORMAT(MAX(creation_date),'%d.%m.%Y'))
+        END AS shipment_period
+FROM (
+SELECT creation_date, shipment.id
+    FROM shipment
+    JOIN shipment_items ON shipment.id = shipment_items.shipment_id
+    WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
+      AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
+    GROUP BY shipment.id, shipment.creation_date) q1;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="shipment_ids">
+            <Value>={?shipment_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="shipment_period">
+          <DataField>shipment_period</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <PageHeader>
-    <Height>.5in</Height>
-    <ReportItems>
-      <Textbox Name="Textbox1">
-        <Top>.1in</Top>
-        <Left>.1in</Left>
-        <Width>6in</Width>
-        <Height>.25in</Height>
-        <Value>Планируемые поставки</Value>
-        <Style>
-          <FontSize>15pt</FontSize>
-          <FontWeight>Bold</FontWeight>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-        </Style>
-      </Textbox>
-    </ReportItems>
+    <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
@@ -557,9 +575,25 @@
             </TableRow>
           </TableRows>
         </Details>
+        <Left>0.0pt</Left>
+        <Top>31.3pt</Top>
       </Table>
+      <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Top>8.6pt</Top>
+        <Left>289.2pt</Left>
+        <Width>6in</Width>
+        <Height>.25in</Height>
+        <Value>= "Планируемые поставки " + Iif(Len(First({shipment_period}, 'Name')) &gt; 10, "за период: " + First({shipment_period}, 'Name'), "на " + First({shipment_period}, 'Name'))</Value>
+        <Style>
+          <FontSize>15pt</FontSize>
+          <FontWeight>Bold</FontWeight>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
     </ReportItems>
-    <Height>36pt</Height>
+    <Height>64.6pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -583,7 +617,7 @@
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <ReportParameters>
-    <ReportParameter Name="shipment_id">
+    <ReportParameter Name="shipment_ids">
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
@@ -595,12 +629,12 @@
       <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="nomenclature_id">
+    <ReportParameter Name="nomenclature_ids">
       <DataType>Integer</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
