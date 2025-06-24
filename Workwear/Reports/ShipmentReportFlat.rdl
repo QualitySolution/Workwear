@@ -4,14 +4,6 @@
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.5in</PageHeight>
   <PageWidth>14.5in</PageWidth>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=plutus.srv.qsolution.ru; port=3306;database=workwear_test_vod36_100425_29011;</ConnectString>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -646,4 +638,13 @@ SELECT start_period, end_period
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
