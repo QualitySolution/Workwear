@@ -20,7 +20,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			UoW = uowFactory.CreateWithoutRoot();
 
 			var nomenclatureList = UoW.GetAll<Nomenclature>().ToList();
-			ChoiceNormViewModel = new ChoiceListViewModel<Nomenclature>(nomenclatureList);
+			ChoiceNormViewModel = new ChoiceListViewModel<Nomenclature>(nomenclatureList,TitleFunc: x => x.Number + " " + x.Name);
 			ChoiceNormViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			var shipmentList = UoW.GetAll<Shipment>().ToList();
