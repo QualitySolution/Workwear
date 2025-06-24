@@ -109,7 +109,7 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     CASE
-        WHEN COUNT(*) = 1 THEN
+        WHEN (MIN(creation_date) = MAX(creation_date)) THEN
             DATE_FORMAT(MIN(creation_date),'%d.%m.%Y')
         ELSE
             CONCAT(DATE_FORMAT(MIN(creation_date),'%d.%m.%Y'), ' - ', DATE_FORMAT(MAX(creation_date),'%d.%m.%Y'))
