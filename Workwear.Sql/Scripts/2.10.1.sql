@@ -11,6 +11,8 @@ alter table shipment_items
 
 alter table shipment
 	modify status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
+	modify start_period date null,
+	modify end_period date null,
 	add full_ordered boolean default false not null after status,
 	add full_received boolean default false not null after full_ordered,
 	add has_receive boolean default false not null after full_received,

@@ -35,8 +35,7 @@ namespace Workwear.Models.Supply {
 			doc.HasReceive = operations.Any();
 			(uow ?? UoW).Save(doc);
 			
-			if(uow == null)
-				UoW.Commit();
+			(uow ?? UoW).Commit();
 		}
 	}
 }

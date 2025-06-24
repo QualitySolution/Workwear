@@ -105,8 +105,8 @@ namespace Workwear.ViewModels.Supply {
 			}
 		}
 		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
-		public virtual DateTime EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
+		public virtual DateTime? StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
+		public virtual DateTime? EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
