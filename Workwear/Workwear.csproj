@@ -910,6 +910,9 @@
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\ShipmentReportFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

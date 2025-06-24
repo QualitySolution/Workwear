@@ -579,7 +579,7 @@ SELECT creation_date, shipment.id
         <Top>31.3pt</Top>
       </Table>
       <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-        <Top>8.6pt</Top>
+        <Top>7.8pt</Top>
         <Left>289.2pt</Left>
         <Width>6in</Width>
         <Height>.25in</Height>
@@ -591,6 +591,7 @@ SELECT creation_date, shipment.id
           <BorderColor />
           <BorderWidth />
         </Style>
+        <CanGrow >true</CanGrow>
       </Textbox>
     </ReportItems>
     <Height>64.6pt</Height>
