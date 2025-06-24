@@ -5242,7 +5242,7 @@
       </action>
       <action id="ActionShipmentReport">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Предполагаемые поставки</property>
+        <property name="Label" translatable="yes">Планируемые поставки</property>
         <property name="ShortLabel" translatable="yes">Предполагаемые поставки</property>
         <signal name="Activated" handler="OnActionShipmentReportActivated" />
       </action>

@@ -583,7 +583,7 @@ public partial class MainWindow
 		this.ActionShipment = new global::Gtk.Action("ActionShipment", global::Mono.Unix.Catalog.GetString("Планируемые поставки"), null, null);
 		this.ActionShipment.ShortLabel = global::Mono.Unix.Catalog.GetString("Планируемые поставки");
 		w1.Add(this.ActionShipment, null);
-		this.ActionShipmentReport = new global::Gtk.Action("ActionShipmentReport", global::Mono.Unix.Catalog.GetString("Предполагаемые поставки"), null, null);
+		this.ActionShipmentReport = new global::Gtk.Action("ActionShipmentReport", global::Mono.Unix.Catalog.GetString("Планируемые поставки"), null, null);
 		this.ActionShipmentReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Предполагаемые поставки");
 		w1.Add(this.ActionShipmentReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
