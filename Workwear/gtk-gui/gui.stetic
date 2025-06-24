@@ -34731,69 +34731,6 @@
             <property name="YFill">True</property>
             <property name="YShrink">False</property>
           </packing>
-  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.ShipmentReportView" design-size="414 330">
-    <property name="MemberName" />
-    <property name="Visible">False</property>
-    <child>
-      <widget class="Gamma.GtkWidgets.yVBox" id="yvbox1">
-        <property name="MemberName" />
-        <property name="Spacing">6</property>
-        <child>
-          <widget class="Gtk.Expander" id="expander1">
-            <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="Expanded">True</property>
-            <child>
-              <widget class="QS.Views.Control.ChoiceListView" id="choiceprotectiontoolsview1">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-              </widget>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="GtkLabel4">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Номенклатура</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="type">label_item</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">0</property>
-            <property name="AutoSize">True</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Expander" id="expander2">
-            <property name="MemberName" />
-            <property name="CanFocus">True</property>
-            <property name="Expanded">True</property>
-            <child>
-              <widget class="QS.Views.Control.ChoiceListView" id="choiceshipmentview">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-              </widget>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="GtkLabel5">
-                <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Документы поставки</property>
-                <property name="UseUnderline">True</property>
-              </widget>
-              <packing>
-                <property name="type">label_item</property>
-              </packing>
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
-            <property name="AutoSize">True</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder />
         </child>
       </widget>
     </child>
