@@ -5240,6 +5240,12 @@
         <property name="ShortLabel" translatable="yes">Планируемые поставки</property>
         <signal name="Activated" handler="OnActionShipmentActivated" />
       </action>
+      <action id="ActionShipmentReport">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Предполагаемые поставки</property>
+        <property name="ShortLabel" translatable="yes">Предполагаемые поставки</property>
+        <signal name="Activated" handler="OnActionShipmentReportActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5358,6 +5364,7 @@
                 <node type="Menuitem" action="ActionClothingServiceReport" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionRequestSheet" />
+                <node type="Menuitem" action="ActionShipmentReport" />
                 <node type="Menuitem" action="ActionAverageAnnualNeed" />
                 <node type="Menu" action="Action">
                   <node type="Menuitem" action="ActionNotIssuedSheetDetail" />

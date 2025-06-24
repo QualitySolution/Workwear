@@ -4,8 +4,7 @@ using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control;
-using QS.ViewModels.Extension;
-using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 
 namespace Workwear.ReportParameters.ViewModels {
@@ -16,11 +15,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			IUnitOfWorkFactory uowFactory) : 
 			base(rdlViewerViewModel) {
 
-			Title = $"Отчет по планируемым поставкам";
+			Title = "Отчет по планируемым поставкам";
+			Identifier = "ShipmentReportFlat";
 			UoW = uowFactory.CreateWithoutRoot();
 
-			var nomenclatureList = UoW.GetAll<Norm>().ToList();
-			ChoiceNormViewModel = new ChoiceListViewModel<Norm>(nomenclatureList);
+			var nomenclatureList = UoW.GetAll<Nomenclature>().ToList();
+			ChoiceNormViewModel = new ChoiceListViewModel<Nomenclature>(nomenclatureList);
 			ChoiceNormViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			var shipmentList = UoW.GetAll<Shipment>().ToList();
@@ -32,13 +32,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"shipment_ids", ChoiceShipmentViewModel.SelectedIdsMod},
 			{"nomenclature_ids", ChoiceNormViewModel.SelectedIdsMod},
 		};
-
-		#region Параметры
-		#endregion
 		
-
 		#region ViewModels
-		public ChoiceListViewModel<Norm> ChoiceNormViewModel;
+		public ChoiceListViewModel<Nomenclature> ChoiceNormViewModel;
 		public ChoiceListViewModel<Shipment> ChoiceShipmentViewModel;
 		#endregion
 
