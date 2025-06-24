@@ -43,7 +43,7 @@
     LEFT JOIN sizes height_size ON shipment_items.height_id = height_size.id
     WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
       AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
-    ORDER BY nomenclature.name;</CommandText>
+    ORDER BY `doc_num`, `nom_name`, `size_name`, `height_name`;</CommandText>
         <QueryParameters>
           <QueryParameter Name="shipment_ids">
             <Value>={?shipment_ids}</Value>
