@@ -3,7 +3,7 @@
   <Description></Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.5in</PageHeight>
-  <PageWidth>14in</PageWidth>
+  <PageWidth>14.5in</PageWidth>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
@@ -22,7 +22,13 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT 
-    shipment.id as doc_num,
+    CONCAT(shipment.id, ' ',
+    CASE 
+        WHEN start_period = end_period THEN
+            CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ')')
+        ELSE
+            CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ' - ', DATE_FORMAT(end_period,'%d.%m.%Y'), ')')
+    END) AS doc,
     nomenclature.number as num,
     nomenclature.name as nom_name,
     wear_size.name as size_name,
@@ -43,7 +49,7 @@
     LEFT JOIN sizes height_size ON shipment_items.height_id = height_size.id
     WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
       AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
-    ORDER BY `doc_num`, `nom_name`, `size_name`, `height_name`;</CommandText>
+    ORDER BY `doc`, `nom_name`, `size_name`, `height_name`;</CommandText>
         <QueryParameters>
           <QueryParameter Name="shipment_ids">
             <Value>={?shipment_ids}</Value>
@@ -54,9 +60,9 @@
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="doc_num">
-          <DataField>doc_num</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
+        <Field Name="doc">
+          <DataField>doc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="num">
           <DataField>num</DataField>
@@ -155,13 +161,13 @@ SELECT start_period, end_period
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>87.1pt</Width>
+            <Width>131.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>90.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>149.7pt</Width>
+            <Width>160.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>59.0pt</Width>
@@ -182,10 +188,10 @@ SELECT start_period, end_period
             <Width>61.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>128.2pt</Width>
+            <Width>121.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>57.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>80.0pt</Width>
@@ -199,7 +205,7 @@ SELECT start_period, end_period
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>Номер поставки</Value>
+                      <Value>Поставка (период)</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -400,15 +406,17 @@ SELECT start_period, end_period
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="doc_num">
-                      <Value>=Fields!doc_num.Value</Value>
-                      <CanGrow>false</CanGrow>
+                    <Textbox Name="doc">
+                      <Value>=Fields!doc.Value</Value>
+                      <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <TextAlign>Right</TextAlign>
+                        <TextAlign>Left</TextAlign>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -576,14 +584,14 @@ SELECT start_period, end_period
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>31.3pt</Top>
+        <Top>30.5pt</Top>
       </Table>
       <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Top>7.8pt</Top>
         <Left>289.2pt</Left>
         <Width>6in</Width>
         <Height>.25in</Height>
-        <Value>= "Планируемые поставки " + Iif(Len(First({shipment_period}, 'Name')) &gt; 10, "за период: " + First({shipment_period}, 'Name'), "на " + First({shipment_period}, 'Name'))</Value>
+        <Value>= "Планируемые поставки " + Iif(Len(First({shipment_period}, 'Name')) &gt; 10, "за период: " + First({shipment_period}, 'Name'), "на " + First({shipment_period}, 'Name')) + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
