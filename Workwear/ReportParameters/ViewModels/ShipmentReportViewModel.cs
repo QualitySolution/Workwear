@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Gamma.Utilities;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control;
@@ -26,7 +28,9 @@ namespace Workwear.ReportParameters.ViewModels {
 
 			var shipmentList = UoW.GetAll<Shipment>().ToList();
 			ChoiceShipmentViewModel = new ChoiceListViewModel<Shipment>(shipmentList, 
-				TitleFunc: x=> "№" + x.Id + " (" + x.StartPeriod.ToString("dd/MM/yyyy") + " - " + x.EndPeriod.ToString("dd/MM/yyyy") + ")");
+				TitleFunc: x=> "№" + x.Id + ((x.StartPeriod != null && x.EndPeriod!=null) ? 
+					" (" + x.StartPeriod?.ToString("dd/MM/yyyy") + " - " + x.EndPeriod?.ToString("dd/MM/yyyy") + ") " : " ")
+				+ x.Status.GetEnumTitle());
 			ChoiceShipmentViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 		}
