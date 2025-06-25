@@ -18,6 +18,8 @@
     CASE 
         WHEN start_period = end_period THEN
             CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ')')
+        WHEN start_period IS NULL OR end_period IS NULL THEN
+            ''
         ELSE
             CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ' - ', DATE_FORMAT(end_period,'%d.%m.%Y'), ')')
     END) AS doc,
@@ -118,6 +120,7 @@ SELECT start_period, end_period
     JOIN shipment_items ON shipment.id = shipment_items.shipment_id
     WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
       AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
+      AND  (shipment.start_period IS NOT NULL AND shipment.end_period IS NOT NULL)
     GROUP BY shipment.id, shipment.start_period, shipment.end_period) q1;</CommandText>
         <QueryParameters>
           <QueryParameter Name="shipment_ids">
