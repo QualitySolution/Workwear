@@ -105,13 +105,12 @@ namespace Workwear.Domain.Postomats {
 			if(status != DocumentStatus.Deleted) {
 				using(var uow = (validationContext.Items[nameof(IUnitOfWorkFactory)] as IUnitOfWorkFactory)?.CreateWithoutRoot()) {
 					PostomatDocument postomatDocumentAlias = null;
-					ServiceClaim serviceClaimAlias = null;
 
 					var fullCells = uow.Query<PostomatDocumentItem>()
-						.Left.JoinAlias(x => x.ServiceClaim, () => serviceClaimAlias)
 						.Left.JoinAlias(x => x.Document, () => postomatDocumentAlias)
-						.Where(() => !serviceClaimAlias.IsClosed)
 						.Where(() => postomatDocumentAlias.TerminalId == Postomat.Id)
+						.Where(() => postomatDocumentAlias.Id != this.Id)
+						.Where(x => x.DispenseTime == null)
 						.List()
 						.Select(i => i.Location);
 					foreach(var item in Items)
