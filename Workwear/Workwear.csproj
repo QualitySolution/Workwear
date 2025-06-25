@@ -149,6 +149,7 @@
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ShipmentReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WarehouseTransferReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WearCardsReportViewModel.cs" />
@@ -515,6 +516,8 @@
     <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
     <Compile Include="Views\Communications\SendEmailView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
+    <Compile Include="ReportParameters\Views\ShipmentReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ShipmentReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -905,6 +908,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ShipmentReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
