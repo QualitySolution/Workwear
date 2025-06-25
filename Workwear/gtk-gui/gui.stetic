@@ -34036,8 +34036,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel10">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Период&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
-                <property name="UseMarkup">True</property>
+                <property name="LabelProp" translatable="yes">Период:</property>
               </widget>
               <packing>
                 <property name="TopAttach">2</property>

@@ -85,7 +85,7 @@ namespace workwear.Journal.ViewModels.Supply {
 		public static string ColorsLegendText = 
 			"<span color='black'>●</span> — пока всё по плану\n" +
 			"<span color='green'>●</span> —  в текущем статусе всё выполнео\n" +
-			"<span color='yellow'>●</span> — заказано частично\n" +
+			"<span color='purple'>●</span> — заказано частично\n" +
 			"<span color='orange'>●</span> — поставлено частично\n" +
 			"<span color='blue'>●</span> — заявка уже 3 дня как передана в закупку\n"+
 			"<span color='red'>●</span> — в срок поставки не было поступлений\n";
@@ -111,13 +111,13 @@ namespace workwear.Journal.ViewModels.Supply {
 				if(Status == ShipmentStatus.Ordered) {
 					if(FullOrdered)
 						return "green";
-					return "yellow";
+					return "purple";
 				}
 				if(Status == ShipmentStatus.Received) {
 					if(FullOrdered && FullReceived)
 						return "green";
 					if(FullReceived)
-						return "yellow";
+						return "purple";
 					return "orange";
 				}
 				if(Submitted != null) //Отсчёт 3 рабочих дней
