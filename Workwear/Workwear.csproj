@@ -518,6 +518,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
     <Compile Include="ReportParameters\Views\ShipmentReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ShipmentReportView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmployeeDutyNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
