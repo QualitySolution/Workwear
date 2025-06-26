@@ -135,6 +135,24 @@ namespace Workwear.Domain.Regulations {
 			OnPropertyChanged(nameof(Items));
 		}
 		#endregion
+		
+		/// <summary>
+		/// Заполняет текущую дежурную норму данными из дежурной нормы, переданной в параметре. 
+		/// </summary>
+		public virtual void CopyFromDutyNorm(DutyNorm dutyNorm) {
+			ResponsibleLeader = dutyNorm.ResponsibleLeader;
+			ResponsibleEmployee = dutyNorm.ResponsibleEmployee;
+			Subdivision= dutyNorm.Subdivision;
+			Name = dutyNorm.Name;
+			DateFrom = dutyNorm.DateFrom;
+			DateTo = dutyNorm.DateTo;
+			Comment = dutyNorm.Comment;
+
+			foreach(var item in dutyNorm.Items) {
+				Items.Add(item.Copy(this));
+			}
+			
+		}
 
 	}
 }

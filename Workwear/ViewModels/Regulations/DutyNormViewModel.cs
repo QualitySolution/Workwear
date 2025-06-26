@@ -193,6 +193,14 @@ namespace Workwear.ViewModels.Regulations {
 			);
 		}
 		#endregion
+		/// <summary>
+		/// Копирует существующую в базе дежурную норму по id
+		/// </summary>
+		public void CopyDutyNormFrom(int dutyNormId) {
+			var dutyNorm = UoW.GetById<DutyNorm>(dutyNormId);
+			Entity.CopyFromDutyNorm(dutyNorm);
+			Entity.UpdateItems(UoW);
+		}
 	}
 	
 	public enum DutyNormSheetPrint
