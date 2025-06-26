@@ -72,6 +72,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 				this.Child.ShowAll();
 			}
 			this.Show();
+			this.ybuttonGiveWearByDutyNorm.Clicked += new global::System.EventHandler(this.OnButtonGiveWearByDutyNormClicked);
+			this.ybuttonOpenDutyNorm.Clicked += new global::System.EventHandler(this.OnButtonOpenDutyNormClicked);
 		}
 	}
 }

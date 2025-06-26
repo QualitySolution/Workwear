@@ -5,5 +5,11 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		public EmployeeDutyNormsView() {
 			this.Build();
 		}
+
+		protected void OnButtonGiveWearByDutyNormClicked(object sender, EventArgs e) {
+		}
+
+		protected void OnButtonOpenDutyNormClicked(object sender, EventArgs e) {
+		}
 	}
 }
