@@ -8,6 +8,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		private global::Gtk.ScrolledWindow scrolledwindow1;
 
+		private global::Gamma.GtkWidgets.yTreeView ytreeview;
+
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonGiveWearByDutyNorm;
@@ -29,9 +31,14 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
 			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child scrolledwindow1.Gtk.Container+ContainerChild
+			this.ytreeview = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeview.CanFocus = true;
+			this.ytreeview.Name = "ytreeview";
+			this.scrolledwindow1.Add(this.ytreeview);
 			this.yvbox1.Add(this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow1]));
-			w1.Position = 0;
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.scrolledwindow1]));
+			w2.Position = 0;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
@@ -42,14 +49,14 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.ybuttonGiveWearByDutyNorm.Name = "ybuttonGiveWearByDutyNorm";
 			this.ybuttonGiveWearByDutyNorm.UseUnderline = true;
 			this.ybuttonGiveWearByDutyNorm.Label = global::Mono.Unix.Catalog.GetString("Выдать");
-			global::Gtk.Image w2 = new global::Gtk.Image();
-			w2.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.ybuttonGiveWearByDutyNorm.Image = w2;
+			global::Gtk.Image w3 = new global::Gtk.Image();
+			w3.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.ybuttonGiveWearByDutyNorm.Image = w3;
 			this.yhbox1.Add(this.ybuttonGiveWearByDutyNorm);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonGiveWearByDutyNorm]));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonGiveWearByDutyNorm]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ybuttonOpenDutyNorm = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonOpenDutyNorm.CanFocus = true;
@@ -57,15 +64,15 @@ namespace Workwear.Views.Company.EmployeeChildren
 			this.ybuttonOpenDutyNorm.UseUnderline = true;
 			this.ybuttonOpenDutyNorm.Label = global::Mono.Unix.Catalog.GetString("Открыть дежурную норму");
 			this.yhbox1.Add(this.ybuttonOpenDutyNorm);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonOpenDutyNorm]));
-			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ybuttonOpenDutyNorm]));
 			w5.Position = 1;
 			w5.Expand = false;
 			w5.Fill = false;
+			this.yvbox1.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w6.Position = 1;
+			w6.Expand = false;
+			w6.Fill = false;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{

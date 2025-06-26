@@ -34836,12 +34836,10 @@
             <property name="CanFocus">True</property>
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gtk.Viewport" id="GtkViewport">
+              <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeview">
                 <property name="MemberName" />
-                <property name="ShadowType">None</property>
-                <child>
-                  <placeholder />
-                </child>
+                <property name="CanFocus">True</property>
+                <property name="ShowScrollbars">True</property>
               </widget>
             </child>
           </widget>
