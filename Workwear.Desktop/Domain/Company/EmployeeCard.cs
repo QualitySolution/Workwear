@@ -224,6 +224,14 @@ namespace Workwear.Domain.Company
 			get => workwearItems;
 			set => SetField(ref workwearItems, value);
 		}
+
+		private IObservableList<DutyNormItem> dutyNormItems = new ObservableList<DutyNormItem>();
+
+		[Display(Name = "Привязанные дежурные нормы")]
+		public virtual IObservableList<DutyNormItem> DutyNormItems {
+			get => dutyNormItems;
+			set => SetField(ref dutyNormItems, value);
+		}
 		#endregion
 		#region Vacation
 		private IObservableList<EmployeeVacation> vacations = new ObservableList<EmployeeVacation>();

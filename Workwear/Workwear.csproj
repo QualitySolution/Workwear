@@ -181,6 +181,7 @@
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeDutyNormsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />

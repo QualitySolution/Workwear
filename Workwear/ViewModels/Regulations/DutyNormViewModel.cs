@@ -201,6 +201,10 @@ namespace Workwear.ViewModels.Regulations {
 			Entity.CopyFromDutyNorm(dutyNorm);
 			Entity.UpdateItems(UoW);
 		}
+
+		public void SelectItem(int id) {
+			SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
+		}
 	}
 	
 	public enum DutyNormSheetPrint
