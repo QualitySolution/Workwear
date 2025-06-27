@@ -10,6 +10,7 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Name).Column("name");
 			Map(x => x.Cost).Column("cost");
+			Map(x => x.Code).Column("code");
 			Map(x => x.Comment).Column("comment");
 			
 			HasManyToMany<Nomenclature>(x => x.Nomenclatures)

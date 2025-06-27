@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Gamma.ColumnConfig;
 using QS.Views;
 using Workwear.Domain.ClothingService;
@@ -13,7 +14,7 @@ namespace Workwear.Views.Stock.NomenclatureChildren {
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Service>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
 				.AddColumn("Название").AddTextRenderer(p => p.Name).WrapWidth(900)
-				.AddColumn("Cтоимость").AddReadOnlyTextRenderer(n => n?.Cost.ToString("C"))
+				.AddColumn("Cтоимость").AddReadOnlyTextRenderer(n => n.Cost?.ToString("C") ?? String.Empty)
 				.AddColumn("Комментарий").AddTextRenderer(p => p.Comment)
 				.Finish();
 			ytreeItems.ItemsDataSource = ViewModel.ObservableServices;

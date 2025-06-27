@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using System;
+using NHibernate;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
@@ -6,20 +7,22 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
+using QS.Utilities;
 using Workwear.Domain.ClothingService;
+using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
-	public class ServicesJournalViewModel : EntityJournalViewModelBase<Service, ServicesJournalViewModel, ServiceJournalNode>
+	public class ServicesJournalViewModel : EntityJournalViewModelBase<Service, ServiceViewModel, ServiceJournalNode>
 	{
 		public ServicesJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
-			IDeleteEntityService deleteEntityService,
+			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null)
-			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
-
+			UseSlider = true;
 		}
 
 		protected override IQueryOver<Service> ItemsQuery(IUnitOfWork uow)
@@ -46,7 +49,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string Cost { get; set; }
+		public decimal Cost { get; set; }
+		public string CostText => Cost > 0 ? CurrencyWorks.GetShortCurrencyString (Cost) : String.Empty;
 		public string Comment { get; set; }
 	}
 }

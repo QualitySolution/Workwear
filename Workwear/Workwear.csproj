@@ -177,6 +177,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
+    <Compile Include="ViewModels\ClothingService\ServiceViewModel.cs" />
     <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
@@ -519,6 +520,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
     <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureServicesView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureServicesView.cs" />
+    <Compile Include="Views\ClothingService\ServiceView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

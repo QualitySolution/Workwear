@@ -998,4 +998,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionShipmentActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
 	}
+	
+	protected void OnActionClothingServicesActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ServicesJournalViewModel>(null);
+	}
 }

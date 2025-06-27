@@ -7,7 +7,6 @@ using QS.Cloud.Postomat.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities;
 using QS.Utilities.Numeric;
-using Workwear.Domain.Supply;
 using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
@@ -60,10 +59,10 @@ namespace workwear.Journal
 			
 			TreeViewColumnsConfigFactory.Register<ServicesJournalViewModel>(
 				() => FluentColumnsConfig<ServiceJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
-					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
-					.AddColumn("Стоимость").AddTextRenderer(node=>node.Cost)
-					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment)
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Стоимость").AddTextRenderer(node => node.CostText)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
 					.Finish()
 				);
 			#endregion
