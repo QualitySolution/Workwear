@@ -45,8 +45,10 @@ namespace Workwear.Views.ClothingService {
 			
 		}
 
-		protected void OnButtonAcceptClicked(object sender, EventArgs e) {
+		protected void OnButtonAcceptClicked(object sender, EventArgs e) =>
 			ViewModel.Accept();
+
+		protected void OnYbuttonPrintLabelClicked(object sender, EventArgs e) {
 		}
 	}
 }
