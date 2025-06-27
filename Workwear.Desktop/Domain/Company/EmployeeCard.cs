@@ -496,6 +496,34 @@ namespace Workwear.Domain.Company
 		}
 
 		#endregion
+
+		#region Функции для работы с дежурными нормами
+
+		public virtual void FillDutyNormReceivedInfo(DutyNormRepository dutyNormRepository) {
+			if(Id == 0) {
+				foreach(var item in DutyNormItems) {
+					item.Graph = new IssueGraph();
+				}
+				return;
+			}
+			FillDutyNormReceivedInfo(dutyNormRepository.AllDutyNormsForResponsibleEmployee(this));
+		}
+
+		public virtual void FillDutyNormReceivedInfo(IList<DutyNormIssueOperation> dutyNormsOperations) {
+			var protectionGroups = 
+					dutyNormsOperations
+					.Where(x => x.ProtectionTools != null)
+					.GroupBy(x => x.ProtectionTools.Id)
+					.ToDictionary(g => g.Key, g => g);
+			foreach (var item in DutyNormItems) {
+				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
+					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
+				else 
+					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
+			}
+		}
+
+		#endregion
 		#region Функции работы с отпусками
 		public virtual void AddVacation(EmployeeVacation vacation) {
 			vacation.Employee = this;
