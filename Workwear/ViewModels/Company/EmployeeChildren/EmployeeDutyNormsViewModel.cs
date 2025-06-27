@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -41,7 +42,16 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 
 		private EmployeeCard Entity => employeeViewModel.Entity;
 		#region Показ
+		public bool IsConfigured {get; private set; }
 
+		public void OnShow() {
+			if (IsConfigured) return;
+			IsConfigured = true;
+			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+			Entity.FillDutyNormReceivedInfo(dutyNormRepository);
+			OnPropertyChanged(nameof(ObservableDutyNormItems));
+			Entity.PropertyChanged += EntityOnPropertyChanged;
+		}
 		#endregion
 		#endregion
 
@@ -71,6 +81,17 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				EntityUoWBuilder.ForCreate(), Entity);
 			page.ViewModel.SelectItem(row.Id);
 		}
+		#endregion
+
+		#region Обработка изменений
+
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(Entity.Subdivision) && Entity.Subdivision?.Warehouse != stockBalanceModel.Warehouse) {
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				stockBalanceModel.Refresh();
+			}
+		}
+
 		#endregion
 		
 	}
