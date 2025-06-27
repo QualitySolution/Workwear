@@ -2653,7 +2653,13 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView" id="employeedutynormsview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+              </packing>
             </child>
             <child>
               <widget class="Gtk.Label" id="label8">

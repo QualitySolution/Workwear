@@ -150,6 +150,8 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label label22;
 
+		private global::Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView employeedutynormsview1;
+
 		private global::Gtk.Label label8;
 
 		private global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView employeecostcentrview1;
@@ -1009,14 +1011,18 @@ namespace Workwear.Views.Company
 			this.label22.LabelProp = global::Mono.Unix.Catalog.GetString("Спецодежда по нормам");
 			this.notebook1.SetTabLabel(this.employeewearitemsview1, this.label22);
 			this.label22.ShowAll();
+			// Container child notebook1.Gtk.Notebook+NotebookChild
+			this.employeedutynormsview1 = new global::Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView();
+			this.employeedutynormsview1.Events = ((global::Gdk.EventMask)(256));
+			this.employeedutynormsview1.Name = "employeedutynormsview1";
+			this.notebook1.Add(this.employeedutynormsview1);
+			global::Gtk.Notebook.NotebookChild w77 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeedutynormsview1]));
+			w77.Position = 4;
 			// Notebook tab
-			global::Gtk.Label w77 = new global::Gtk.Label();
-			w77.Visible = true;
-			this.notebook1.Add(w77);
 			this.label8 = new global::Gtk.Label();
 			this.label8.Name = "label8";
 			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Дежурное");
-			this.notebook1.SetTabLabel(w77, this.label8);
+			this.notebook1.SetTabLabel(this.employeedutynormsview1, this.label8);
 			this.label8.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.employeecostcentrview1 = new global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView();
