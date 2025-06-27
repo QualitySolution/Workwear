@@ -2653,12 +2653,24 @@
               </packing>
             </child>
             <child>
+              <placeholder />
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label8">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Дежурное</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView" id="employeecostcentrview1">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">4</property>
+                <property name="Position">5</property>
               </packing>
             </child>
             <child>
@@ -2676,7 +2688,7 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">5</property>
+                <property name="Position">6</property>
               </packing>
             </child>
             <child>
@@ -2704,7 +2716,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">6</property>
+                <property name="Position">7</property>
               </packing>
             </child>
             <child>
@@ -2732,7 +2744,7 @@
                 </child>
               </widget>
               <packing>
-                <property name="Position">7</property>
+                <property name="Position">8</property>
               </packing>
             </child>
             <child>
@@ -2750,7 +2762,7 @@
                 <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
-                <property name="Position">8</property>
+                <property name="Position">9</property>
               </packing>
             </child>
             <child>
