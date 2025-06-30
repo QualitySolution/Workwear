@@ -69,104 +69,100 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>186.9pt</Height>
+    <Height>171.3pt</Height>
     <Columns >1</Columns>
     <ReportItems >
-      <List Name="List1">
-        <Height>170pt</Height>
-        <Width>135.00pt</Width>
-        <Left>5.00pt</Left>
-        <Top>in</Top>
+      <CustomReportItem Name="CustomReportItem2">
+        <Type>BarCode EAN-13</Type>
+        <Height>73.72pt</Height>
+        <Width>106.10pt</Width>
+        <CustomProperties>
+          <CustomProperty>
+            <Name>NumberSystem</Name>
+            <Value>={?number_system}</Value>
+          </CustomProperty>
+          <CustomProperty>
+            <Name>ManufacturerCode</Name>
+            <Value>={?manufacturer_code}</Value>
+          </CustomProperty>
+          <CustomProperty>
+            <Name>ProductCode</Name>
+            <Value>={?product_code}</Value>
+          </CustomProperty>
+        </CustomProperties>
+        <Left>21.7pt</Left>
+        <Top>10.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
         </Style>
-        <ReportItems>
-          <CustomReportItem Name="CustomReportItem1">
-            <Type>BarCode EAN-13</Type>
-            <Height>73.72pt</Height>
-            <Width>106.10pt</Width>
-            <CustomProperties>
-              <CustomProperty>
-                <Name>NumberSystem</Name>
-                <Value>={?number_system}</Value>
-              </CustomProperty>
-              <CustomProperty>
-                <Name>ManufacturerCode</Name>
-                <Value>={?manufacturer_code}</Value>
-              </CustomProperty>
-              <CustomProperty>
-                <Name>ProductCode</Name>
-                <Value>={?product_code}</Value>
-              </CustomProperty>
-            </CustomProperties>
-            <Left>21.60pt</Left>
-            <Top>14.10pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-            </Style>
-          </CustomReportItem>
-          <Textbox Name="Textbox3">
-            <Height>10.51pt</Height>
-            <Width>135pt</Width>
-            <Value>={nomenclature_name}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>1.50pt</Left>
-            <Top>112.00pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox4">
-            <Height>12.00pt</Height>
-            <Width>135pt</Width>
-            <Value>={tab_num}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.0pt</Left>
-            <Top>127.9pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox5">
-            <Height>12pt</Height>
-            <Width>135pt</Width>
-            <Value>={employee_name}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.0pt</Left>
-            <Top>144.9pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-            </Style>
-          </Textbox>
-        </ReportItems>
-      </List>
-      <Textbox Name="Textbox2">
+        <ZIndex>0</ZIndex>
+      </CustomReportItem>
+      <Textbox Name="Textbox1">
         <Height>17.25pt</Height>
-        <Width>135pt</Width>
-        <Value>=КОРПУС + " "</Value>
+        <Width>135.00pt</Width>
+        <Value>=КОРПУС + " " + {?preferred_terminal}</Value>
         <ZIndex>1</ZIndex>
-        <Left>1.54pt</Left>
-        <Top>91.70pt</Top>
+        <Left>9.5pt</Left>
+        <Top>88.0pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
           <FontSize>14pt</FontSize>
           <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
         </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
+      <Textbox Name="Textbox2">
+        <Height>13.51pt</Height>
+        <Width>138.00pt</Width>
+        <Value>=First({nomenclature_name}, "Data")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>5.20pt</Left>
+        <Top>104.50pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
+      <Textbox Name="Textbox6">
+        <Height>12.00pt</Height>
+        <Width>135.00pt</Width>
+        <Value>=First({tab_num}, "Data")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2.4pt</Left>
+        <Top>121.2pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+        <CanGrow>true</CanGrow>
+      </Textbox>
+      <Textbox Name="Textbox7">
+        <Height>12.00pt</Height>
+        <Width>135.00pt</Width>
+        <Value>=First({employee_name}, "Data")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>2.4pt</Left>
+        <Top>136.2pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+        <CanGrow>true</CanGrow>
       </Textbox>
     </ReportItems>
   </Body>
@@ -221,7 +217,19 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="preferred_terminal">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>test</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
   <DataSources >
