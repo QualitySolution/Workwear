@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author>Тимирева Екатерина</Author>
+  <PageHeight>60mm</PageHeight>
+  <PageWidth>57mm</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>1mm</TopMargin>
+  <LeftMargin>1mm</LeftMargin>
+  <RightMargin>1mm</RightMargin>
+  <BottomMargin>1mm</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT csl.id AS 'claim_id', 
+       barcodes.id AS 'barcode_id',
+       csl.preferred_terminal_id,
+       CONCAT_WS(' ', nomenclature.name, NULLIF(CONCAT('(', CONCAT_WS('/', wear_size.name, height_size.name) ,')'), '()')) AS nomenclature_name,
+       employees.personnel_number AS 'tab_num',
+       CONCAT_WS(' ', employees.last_name,employees.first_name, employees.patronymic_name) AS 'employee_name'
+    FROM clothing_service_claim AS csl 
+        JOIN barcodes ON csl.barcode_id = barcodes.id
+        LEFT JOIN employees ON csl.employee_id = employees.id
+        JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
+        LEFT JOIN sizes AS wear_size ON barcodes.size_id = wear_size.id
+        LEFT JOIN sizes AS height_size ON barcodes.height_id = height_size.id
+WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="barcode_id">
+            <Value>=Parameters!barcode_id</Value>
+          </QueryParameter>
+          <QueryParameter Name="service_claim_id">
+            <Value>=Parameters!service_claim_id</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="claim_id">
+          <DataField>claim_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="barcode_id">
+          <DataField>barcode_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="preferred_terminal_id">
+          <DataField>preferred_terminal_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="nomenclature_name">
+          <DataField>nomenclature_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="tab_num">
+          <DataField>tab_num</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="employee_name">
+          <DataField>employee_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <Height>186.9pt</Height>
+    <Columns >1</Columns>
+    <ReportItems >
+      <List Name="List1">
+        <Height>170pt</Height>
+        <Width>135.00pt</Width>
+        <Left>5.00pt</Left>
+        <Top>in</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <ReportItems>
+          <CustomReportItem Name="CustomReportItem1">
+            <Type>BarCode EAN-13</Type>
+            <Height>73.72pt</Height>
+            <Width>106.10pt</Width>
+            <CustomProperties>
+              <CustomProperty>
+                <Name>NumberSystem</Name>
+                <Value>00</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ManufacturerCode</Name>
+                <Value>12345</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ProductCode</Name>
+                <Value>12345</Value>
+              </CustomProperty>
+            </CustomProperties>
+            <Left>21.6pt</Left>
+            <Top>14.1pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+          </CustomReportItem>
+          <Textbox Name="Textbox3">
+            <Height>10.51pt</Height>
+            <Width>135pt</Width>
+            <Value>={nomenclature_name}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>1.50pt</Left>
+            <Top>112.00pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <Height>12.00pt</Height>
+            <Width>135pt</Width>
+            <Value>={tab_num}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>127.9pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox5">
+            <Height>12pt</Height>
+            <Width>135pt</Width>
+            <Value>={employee_name}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>144.9pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+        </ReportItems>
+      </List>
+      <Textbox Name="Textbox2">
+        <Height>17.25pt</Height>
+        <Width>135pt</Width>
+        <Value>=КОРПУС + " "</Value>
+        <ZIndex>1</ZIndex>
+        <Left>1.54pt</Left>
+        <Top>91.70pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <FontSize>14pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+    </ReportItems>
+  </Body>
+  <PageFooter>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName >Report</DataElementName>
+  <DataElementStyle >AttributeNormal</DataElementStyle>
+  <ReportParameters >
+    <ReportParameter Name="barcode_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="service_claim_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+</Report>
