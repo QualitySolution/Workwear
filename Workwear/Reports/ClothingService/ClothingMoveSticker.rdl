@@ -90,19 +90,19 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
             <CustomProperties>
               <CustomProperty>
                 <Name>NumberSystem</Name>
-                <Value>00</Value>
+                <Value>={?number_system}</Value>
               </CustomProperty>
               <CustomProperty>
                 <Name>ManufacturerCode</Name>
-                <Value>12345</Value>
+                <Value>={?manufacturer_code}</Value>
               </CustomProperty>
               <CustomProperty>
                 <Name>ProductCode</Name>
-                <Value>12345</Value>
+                <Value>={?product_code}</Value>
               </CustomProperty>
             </CustomProperties>
-            <Left>21.6pt</Left>
-            <Top>14.1pt</Top>
+            <Left>21.60pt</Left>
+            <Top>14.10pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -201,6 +201,27 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="manufacturer_code">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="number_system">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="product_code">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources >
