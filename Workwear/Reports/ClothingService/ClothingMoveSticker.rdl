@@ -203,21 +203,21 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="manufacturer_code">
-      <DataType>Integer</DataType>
+      <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="number_system">
-      <DataType>Integer</DataType>
+      <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="product_code">
-      <DataType>Integer</DataType>
+      <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
