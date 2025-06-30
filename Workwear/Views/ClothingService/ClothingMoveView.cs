@@ -20,6 +20,10 @@ namespace Workwear.Views.ClothingService {
 			buttonAccept.Binding
 				.AddBinding(ViewModel, v => v.SensitiveAccept, w => w.Sensitive)
 				.InitializeFromSource();
+			
+			ybuttonPrintLabel.Binding
+				.AddBinding(ViewModel, v=>v.SensitivePrint, w=>w.Sensitive)
+				.InitializeFromSource();
 
 			comboState.ItemsEnum = typeof(ClaimState);
 			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
@@ -49,6 +53,8 @@ namespace Workwear.Views.ClothingService {
 			ViewModel.Accept();
 
 		protected void OnYbuttonPrintLabelClicked(object sender, EventArgs e) {
+			
+			ViewModel.PrintLabel(ViewModel.Claim);
 		}
 	}
 }

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
@@ -59,6 +62,7 @@ namespace Workwear.ViewModels.ClothingService {
 		ServiceClaim claim;
 		[PropertyChangedAlso(nameof(SensitiveAccept))]
 		[PropertyChangedAlso(nameof(Operations))]
+		[PropertyChangedAlso(nameof(SensitivePrint))]
 		public virtual ServiceClaim Claim {
 			get => claim;
 			set => SetField(ref claim, value);
@@ -81,6 +85,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 		
 		public virtual bool SensitiveAccept => Claim != null;
+		public virtual bool SensitivePrint => (Claim?.Barcode != null);
 		public virtual bool MoveDefiniteClaim { get; } = false; //Движение единственного объекта
 		public virtual bool SensitiveBarcode => !MoveDefiniteClaim;
 	
@@ -113,7 +118,21 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel.LabelInfo = null;
 			BarcodeInfoViewModel.Employee = null;
 		}
-
+		public void PrintLabel(ServiceClaim claim) {
+			var reportInfo = new ReportInfo {
+				Title = "Этикетка",
+				Identifier = "ClothingService.ClothingMoveSticker",
+				Parameters = new Dictionary<string, object> {
+					{"barcode_id", claim.Barcode.Id},
+					{"service_claim_id", claim.Id},
+					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
+					{"number_system", claim.Barcode.Title.Substring(0,2)},
+					{"product_code", claim.Barcode.Title.Substring(7,5)}
+				}
+			};
+			
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}
 		#endregion
 
 		#region IWindowDialogSettings implementation
