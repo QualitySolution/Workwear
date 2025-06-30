@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -13,6 +16,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using ClaimState = Workwear.Domain.ClothingService.ClaimState;
 
 namespace Workwear.ViewModels.ClothingService {
@@ -20,6 +24,7 @@ namespace Workwear.ViewModels.ClothingService {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
+		public readonly FeaturesService FeaturesService;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -29,12 +34,16 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUserService userService,
 			BarcodeRepository barcodeRepository,
+			PostomatManagerService postomatService,
+			FeaturesService featuresService,
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
+			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
+			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Перемещение спецодежды";
 			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			var uow = UoW;
@@ -44,6 +53,8 @@ namespace Workwear.ViewModels.ClothingService {
 				MoveDefiniteClaim = true;
 			} else
 				BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 		}
 		
 		
@@ -92,12 +103,7 @@ namespace Workwear.ViewModels.ClothingService {
 	
 		#endregion
 		
-		public string GetTerminalLabel(uint? id) {
-			if(id == null)
-				return "";
-
-			return postomatsLabels.ContainsKey(id.Value) ? postomatsLabels[id.Value] : "";
-		}
+		public string GetTerminalLabel(uint id) => postomatsLabels.ContainsKey(id) ? postomatsLabels[id] : string.Empty;
 		
 		#region Действия View
 
@@ -136,7 +142,9 @@ namespace Workwear.ViewModels.ClothingService {
 					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
 					{"number_system", claim.Barcode.Title.Substring(0,2)},
 					{"product_code", claim.Barcode.Title.Substring(7,5)},
-					{"preferred_terminal", GetTerminalLabel(claim.PreferredTerminalId)}
+					{"preferred_terminal",  claim.PreferredTerminalId.HasValue
+						? GetTerminalLabel(claim.PreferredTerminalId.Value)
+						: string.Empty}
 				}
 			};
 			
