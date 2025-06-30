@@ -13,7 +13,7 @@ namespace Workwear.Tools.Barcodes
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
 		public BarcodeService(BaseParameters baseParameters) {
-			BaseCode = baseParameters.BarcodePrefix ?? 2000;
+			BaseCode = baseParameters.BarcodePrefix ?? 2001;
 		}
 
 		/// <summary>

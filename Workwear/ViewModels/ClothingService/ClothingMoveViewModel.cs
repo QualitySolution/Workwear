@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -16,6 +18,8 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
+		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes;
+		
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -26,11 +30,14 @@ namespace Workwear.ViewModels.ClothingService {
 			IUserService userService,
 			BarcodeRepository barcodeRepository,
 			ServiceClaim serviceClaim = null
-		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
+		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{
+			ActionBarcodes = SetActionBarcodes();
+			
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
+			barcodeInfoViewModel.ActionBarcodes = ActionBarcodes;
 			Title = "Перемещение спецодежды";
 			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			var uow = UoW;
@@ -45,10 +52,17 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
+				if(BarcodeInfoViewModel.ActivAction != null) {
+					BarcodeInfoViewModel.ActivAction(Claim);
+					BarcodeInfoViewModel.ActivAction = null;
+					return;
+				}
+				
 				if(BarcodeInfoViewModel.Barcode == null) {
 					Claim = null;
 					return;
 				}
+				
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
@@ -86,7 +100,40 @@ namespace Workwear.ViewModels.ClothingService {
 	
 		#endregion
 		
-		#region Действия View
+		#region Действия
+
+		public void SetState(ClaimState state) {
+			if(Claim != null) {
+				State = state;
+			}
+		}
+
+		public void CreateNew() {
+			if(BarcodeInfoViewModel.Barcode != null && Claim == null) {
+				Claim = new ServiceClaim {
+					Barcode = BarcodeInfoViewModel.Barcode,
+					Employee = BarcodeInfoViewModel?.Employee,
+					IsClosed = false
+				};
+				UoW.Save(Claim);
+				
+				var status = new StateOperation {
+					Claim = Claim,
+					TerminalId = Claim.PreferredTerminalId,
+					OperationTime = DateTime.Now,
+					State = ClaimState.WaitService,
+					User = userService.GetCurrentUser()
+				};
+				UoW.Save(status);
+				claim.States.Add(status);
+				UoW.Save(claim);
+				UoW.Commit();
+				
+				BarcodeInfoViewModel.LabelInfo = String.Empty;
+				BarcodeInfoViewModel.BarcodeText = String.Empty;
+			}
+		}
+
 
 		public void Accept() {
 			var status = new StateOperation {
@@ -112,6 +159,42 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel.Barcode = null;
 			BarcodeInfoViewModel.LabelInfo = null;
 			BarcodeInfoViewModel.Employee = null;
+		}
+		
+		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {
+			return new Dictionary<string, (string, Action<object>)>() {
+				["2000000000008"] = ("Изменить статус", (s) => Accept()),
+				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000022"] = ($"Статус \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000039"] = ($"Статус \"{ClaimState.InRepair.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000046"] = ($"Статус \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000053"] = ($"Статус \"{ClaimState.InWashing.GetEnumTitle()}\"", (s) => SetState(ClaimState.InWashing)),
+				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => SetState(ClaimState.AwaitIssue)),
+				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => SetState(ClaimState.Returned)),
+				["2000000000084"] = ("Принять в стирку", (s) => CreateNew()),
+				/*
+                ["2000000000091"] = ("", null),
+				["2000000000107"] = ("", null),
+				["2000000000114"] = ("", null),
+				["2000000000121"] = ("", null),
+				["2000000000138"] = ("", null),
+				["2000000000145"] = ("", null),
+				["2000000000152"] = ("", null),
+				["2000000000169"] = ("", null),
+				["2000000000176"] = ("", null),
+				["2000000000183"] = ("", null),
+				["2000000000190"] = ("", null),
+				["2000000000206"] = ("", null),
+				["2000000000213"] = ("", null),
+				["2000000000220"] = ("", null),
+				["2000000000237"] = ("", null),
+				["2000000000244"] = ("", null),
+				["2000000000251"] = ("", null),
+				["2000000000268"] = ("", null),
+				["2000000000275"] = ("", null),
+				["2000000000282"] = ("", null),
+				*/
+			};
 		}
 
 		#endregion
