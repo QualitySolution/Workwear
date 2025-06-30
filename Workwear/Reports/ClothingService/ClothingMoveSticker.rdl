@@ -69,101 +69,128 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>171.3pt</Height>
-    <Columns >1</Columns>
-    <ReportItems >
-      <CustomReportItem Name="CustomReportItem2">
-        <Type>BarCode EAN-13</Type>
-        <Height>73.72pt</Height>
-        <Width>106.10pt</Width>
-        <CustomProperties>
-          <CustomProperty>
-            <Name>NumberSystem</Name>
-            <Value>={?number_system}</Value>
-          </CustomProperty>
-          <CustomProperty>
-            <Name>ManufacturerCode</Name>
-            <Value>={?manufacturer_code}</Value>
-          </CustomProperty>
-          <CustomProperty>
-            <Name>ProductCode</Name>
-            <Value>={?product_code}</Value>
-          </CustomProperty>
-        </CustomProperties>
-        <Left>21.7pt</Left>
-        <Top>10.1pt</Top>
+    <Height>186.9pt</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <List Name="List1">
+        <Height>80.55pt</Height>
+        <Width>134.75pt</Width>
+        <Left>7.80pt</Left>
+        <Top>3.90pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
         </Style>
-        <ZIndex>0</ZIndex>
-      </CustomReportItem>
-      <Textbox Name="Textbox1">
-        <Height>17.25pt</Height>
-        <Width>135.00pt</Width>
-        <Value>=КОРПУС + " " + {?preferred_terminal}</Value>
-        <ZIndex>1</ZIndex>
-        <Left>9.5pt</Left>
-        <Top>88.0pt</Top>
+        <ReportItems>
+          <CustomReportItem Name="CustomReportItem1">
+            <Type>BarCode EAN-13</Type>
+            <Height>75.11pt</Height>
+            <Width>100.08pt</Width>
+            <CustomProperties>
+              <CustomProperty>
+                <Name>NumberSystem</Name>
+                <Value>={?number_system}</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ManufacturerCode</Name>
+                <Value>={?manufacturer_code}</Value>
+              </CustomProperty>
+              <CustomProperty>
+                <Name>ProductCode</Name>
+                <Value>={?product_code}</Value>
+              </CustomProperty>
+            </CustomProperties>
+            <Left>14.8pt</Left>
+            <Top>3.9pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+            <ZIndex>0</ZIndex>
+          </CustomReportItem>
+        </ReportItems>
+        <DataInstanceElementOutput>NoOutput</DataInstanceElementOutput>
+      </List>
+      <List Name="List2">
+        <Height>80.55pt</Height>
+        <Width>115.91pt</Width>
+        <Left>18.08pt</Left>
+        <Top>80.54pt</Top>
+        <ReportItems>
+          <Textbox Name="Textbox3">
+            <Height>20.29pt</Height>
+            <Width>115.45pt</Width>
+            <Value>="КОРПУС" + " " + {?preferred_terminal}</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>4.90pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontSize>14pt</FontSize>
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+            <CanGrow>false</CanGrow>
+          </Textbox>
+          <Textbox Name="Textbox1">
+            <Height>14.26pt</Height>
+            <Width>114.71pt</Width>
+            <Value>=First({nomenclature_name}, "Data")</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.0pt</Left>
+            <Top>27.5pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+            <CanGrow>false</CanGrow>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <Height>10.51pt</Height>
+            <Width>115.48pt</Width>
+            <Value>=First({tab_num}, "Data")</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.00pt</Left>
+            <Top>43.20pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+            <CanGrow>false</CanGrow>
+          </Textbox>
+          <Textbox Name="Textbox5">
+            <Height>11.25pt</Height>
+            <Width>114.73pt</Width>
+            <Value>=First({employee_name}, "Data")</Value>
+            <ZIndex>1</ZIndex>
+            <Left>0.80pt</Left>
+            <Top>58.60pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <TextAlign>Center</TextAlign>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+            <CanGrow>false</CanGrow>
+          </Textbox>
+        </ReportItems>
         <Style>
           <BorderStyle />
           <BorderColor />
           <BorderWidth />
-          <FontSize>14pt</FontSize>
-          <TextAlign>Center</TextAlign>
-          <VerticalAlign>Middle</VerticalAlign>
         </Style>
-        <CanGrow>true</CanGrow>
-      </Textbox>
-      <Textbox Name="Textbox2">
-        <Height>13.51pt</Height>
-        <Width>138.00pt</Width>
-        <Value>=First({nomenclature_name}, "Data")</Value>
-        <ZIndex>1</ZIndex>
-        <Left>5.20pt</Left>
-        <Top>104.50pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <TextAlign>Center</TextAlign>
-          <VerticalAlign>Middle</VerticalAlign>
-        </Style>
-        <CanGrow>true</CanGrow>
-      </Textbox>
-      <Textbox Name="Textbox6">
-        <Height>12.00pt</Height>
-        <Width>135.00pt</Width>
-        <Value>=First({tab_num}, "Data")</Value>
-        <ZIndex>1</ZIndex>
-        <Left>2.4pt</Left>
-        <Top>121.2pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <TextAlign>Center</TextAlign>
-          <VerticalAlign>Middle</VerticalAlign>
-        </Style>
-        <CanGrow>true</CanGrow>
-      </Textbox>
-      <Textbox Name="Textbox7">
-        <Height>12.00pt</Height>
-        <Width>135.00pt</Width>
-        <Value>=First({employee_name}, "Data")</Value>
-        <ZIndex>1</ZIndex>
-        <Left>2.4pt</Left>
-        <Top>136.2pt</Top>
-        <Style>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <TextAlign>Center</TextAlign>
-          <VerticalAlign>Middle</VerticalAlign>
-        </Style>
-        <CanGrow>true</CanGrow>
-      </Textbox>
+      </List>
     </ReportItems>
   </Body>
   <PageFooter>
