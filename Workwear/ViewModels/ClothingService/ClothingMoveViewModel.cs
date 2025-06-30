@@ -19,6 +19,7 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
+		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -91,6 +92,13 @@ namespace Workwear.ViewModels.ClothingService {
 	
 		#endregion
 		
+		public string GetTerminalLabel(uint? id) {
+			if(id == null)
+				return "";
+
+			return postomatsLabels.ContainsKey(id.Value) ? postomatsLabels[id.Value] : "";
+		}
+		
 		#region Действия View
 
 		public void Accept() {
@@ -127,7 +135,8 @@ namespace Workwear.ViewModels.ClothingService {
 					{"service_claim_id", claim.Id},
 					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
 					{"number_system", claim.Barcode.Title.Substring(0,2)},
-					{"product_code", claim.Barcode.Title.Substring(7,5)}
+					{"product_code", claim.Barcode.Title.Substring(7,5)},
+					{"preferred_terminal", GetTerminalLabel(claim.PreferredTerminalId)}
 				}
 			};
 			
