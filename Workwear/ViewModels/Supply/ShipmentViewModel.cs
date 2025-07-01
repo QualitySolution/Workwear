@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
@@ -65,6 +66,19 @@ namespace Workwear.ViewModels.Supply {
 				.IfEntity<ShipmentItem>()
 				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(x => x.Shipment.Id == Entity.Id);
+			
+			Entity.PropertyChanged += EntityOnPropertyChanged;
+		}
+
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(Entity.Status)) {
+				OnPropertyChanged(nameof(CanAddItem));
+				OnPropertyChanged(nameof(CanRemoveItem));
+				OnPropertyChanged(nameof(CanToOrder));
+				OnPropertyChanged(nameof(CanEditDiffCause));
+				OnPropertyChanged(nameof(CanEditRequested));
+				OnPropertyChanged(nameof(CanEditOrdered));
+			}
 		}
 
 		#region IDialogDocumentation
@@ -114,8 +128,8 @@ namespace Workwear.ViewModels.Supply {
 
 		#region Свойства View
 
-		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => SelectedItems != null && SelectedItems.Length > 0;
+		public virtual bool CanAddItem => CanEditRequested;
+		public virtual bool CanRemoveItem => CanEditRequested && SelectedItems != null && SelectedItems.Length > 0;
 		public virtual bool CanToOrder => SelectedItems != null && SelectedItems.Length > 0 && 
 		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
 		public virtual bool CanEditDiffCause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
