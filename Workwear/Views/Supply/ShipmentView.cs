@@ -72,6 +72,8 @@ namespace Workwear.Views.Supply {
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Получено")
 					.AddReadOnlyTextRenderer(e => e.Received.ToString() + ' ' + e.Units?.Name)
+				.AddColumn("Не доставлено")
+					.AddReadOnlyTextRenderer(e => $"{e.OrderedNotReceived} {e.Units?.Name}")
 				.AddColumn("Комментарий")
 					.AddTextRenderer(e => e.Comment)
 					.Editable()
