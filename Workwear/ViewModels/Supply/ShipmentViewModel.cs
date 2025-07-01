@@ -104,7 +104,7 @@ namespace Workwear.ViewModels.Supply {
 				return Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
 			}
 		}
-		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
+		public virtual UserBase CreatedByUser => Entity.CreatedbyUser;
 		public virtual DateTime? StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
 		public virtual DateTime? EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
@@ -118,9 +118,9 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CanRemoveItem => SelectedItems != null && SelectedItems.Length > 0;
 		public virtual bool CanToOrder => SelectedItems != null && SelectedItems.Length > 0 && 
 		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
-		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
-		public virtual bool CarEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
-		public virtual bool CarEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
+		public virtual bool CanEditDiffCause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
+		public virtual bool CanEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
+		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {

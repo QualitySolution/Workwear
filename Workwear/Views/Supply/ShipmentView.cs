@@ -19,7 +19,7 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.StartPeriod, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndPeriod,w => w.EndDateOrNull)
 				.InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v => v.DocCreatedbyUser!=null? v.DocCreatedbyUser.Name: null, w => w.LabelProp)
+			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v => v.CreatedByUser!=null? v.CreatedByUser.Name: null, w => w.LabelProp)
 				.InitializeFromSource();
 			ytextComment.Binding.AddBinding(ViewModel, v => v.DocComment,w => w.Buffer.Text)
 				.InitializeFromSource();
@@ -54,19 +54,19 @@ namespace Workwear.Views.Supply {
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditRequested ).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditRequested ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Заказано")
 					.AddNumericRenderer(e => e.Ordered)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditOrdered ).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditOrdered ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Стоимость")
 					.AddNumericRenderer(e => e.Cost)
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
-                .AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
+                .AddColumn("Причина расхождения").Visible(ViewModel.CanEditDiffCause)
                     .AddTextRenderer(e => e.DiffCause)
                     .Editable()
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
