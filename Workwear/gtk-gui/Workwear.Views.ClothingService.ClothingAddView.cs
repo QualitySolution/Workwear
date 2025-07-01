@@ -14,6 +14,24 @@ namespace Workwear.Views.ClothingService
 
 		private global::Workwear.Views.ClothingService.BarcodeInfoView barcodeinfoview1;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yButton buttonAdd;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonAutoAdd;
+
+		private global::Gtk.Frame frame2;
+
+		private global::Gtk.Alignment GtkAlignment4;
+
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+
+		private global::Gamma.GtkWidgets.yTreeView treeClaims;
+
+		private global::Gtk.Label GtkLabel5;
+
+		private global::Gamma.GtkWidgets.yButton buttonAccept;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -59,6 +77,81 @@ namespace Workwear.Views.ClothingService
 			w4.Position = 1;
 			w4.Expand = false;
 			w4.Fill = false;
+			// Container child yvbox2.Gtk.Box+BoxChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonAdd = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAdd.CanFocus = true;
+			this.buttonAdd.Name = "buttonAdd";
+			this.buttonAdd.UseUnderline = true;
+			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			global::Gtk.Image w5 = new global::Gtk.Image();
+			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAdd.Image = w5;
+			this.yhbox1.Add(this.buttonAdd);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAdd]));
+			w6.Position = 0;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonAutoAdd = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonAutoAdd.CanFocus = true;
+			this.ycheckbuttonAutoAdd.Name = "ycheckbuttonAutoAdd";
+			this.ycheckbuttonAutoAdd.Label = global::Mono.Unix.Catalog.GetString("автодобавление");
+			this.ycheckbuttonAutoAdd.Active = true;
+			this.ycheckbuttonAutoAdd.DrawIndicator = true;
+			this.ycheckbuttonAutoAdd.UseUnderline = true;
+			this.yhbox1.Add(this.ycheckbuttonAutoAdd);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonAutoAdd]));
+			w7.Position = 1;
+			w7.Expand = false;
+			w7.Fill = false;
+			this.yvbox2.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yhbox1]));
+			w8.Position = 2;
+			w8.Expand = false;
+			w8.Fill = false;
+			// Container child yvbox2.Gtk.Box+BoxChild
+			this.frame2 = new global::Gtk.Frame();
+			this.frame2.Name = "frame2";
+			this.frame2.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child frame2.Gtk.Container+ContainerChild
+			this.GtkAlignment4 = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
+			this.GtkAlignment4.Name = "GtkAlignment4";
+			this.GtkAlignment4.LeftPadding = ((uint)(12));
+			// Container child GtkAlignment4.Gtk.Container+ContainerChild
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			this.treeClaims = new global::Gamma.GtkWidgets.yTreeView();
+			this.treeClaims.CanFocus = true;
+			this.treeClaims.Name = "treeClaims";
+			this.GtkScrolledWindow.Add(this.treeClaims);
+			this.GtkAlignment4.Add(this.GtkScrolledWindow);
+			this.frame2.Add(this.GtkAlignment4);
+			this.GtkLabel5 = new global::Gtk.Label();
+			this.GtkLabel5.Name = "GtkLabel5";
+			this.GtkLabel5.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Список добавляемых:</b>");
+			this.GtkLabel5.UseMarkup = true;
+			this.frame2.LabelWidget = this.GtkLabel5;
+			this.yvbox2.Add(this.frame2);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.frame2]));
+			w12.Position = 3;
+			// Container child yvbox2.Gtk.Box+BoxChild
+			this.buttonAccept = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAccept.CanFocus = true;
+			this.buttonAccept.Name = "buttonAccept";
+			this.buttonAccept.UseUnderline = true;
+			this.buttonAccept.Label = global::Mono.Unix.Catalog.GetString("Применить");
+			global::Gtk.Image w13 = new global::Gtk.Image();
+			w13.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-save", global::Gtk.IconSize.Menu);
+			this.buttonAccept.Image = w13;
+			this.yvbox2.Add(this.buttonAccept);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.buttonAccept]));
+			w14.Position = 4;
+			w14.Expand = false;
+			w14.Fill = false;
 			this.Add(this.yvbox2);
 			if ((this.Child != null))
 			{

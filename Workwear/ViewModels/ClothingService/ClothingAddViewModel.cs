@@ -5,22 +5,23 @@ using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
-using Workwear.Domain.Postomats;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Postomats;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ClothingAddViewModel : UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
-		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes;
-		private PostomatDocumentViewModel DocumentVM;
+		private readonly Dictionary<string, (string title, Action<object> action)> actionBarcodes;
+		private PostomatDocumentViewModel documentVM;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingAddViewModel(
@@ -36,47 +37,66 @@ namespace Workwear.ViewModels.ClothingService {
 		{
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
-			this.DocumentVM = documentVm;
+			this.documentVM = documentVm;
 			
 			Title = "Добавить в документ";
-//BarcodeInfoViewModel.
 			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 		}
 
 		
 		#region Cвойства 
-		ServiceClaim claim;
-		public virtual ServiceClaim Claim {
-			get => claim;
-			set => SetField(ref claim, value);
+		private ServiceClaim activeClaim;
+		[PropertyChangedAlso(nameof(CanAdd))]
+		public virtual ServiceClaim ActiveClaim {
+			get => activeClaim;
+			set => SetField(ref activeClaim, value);
 		}
 
-		private PostomatDocument document => DocumentVM?.Entity;
-		
+		private IObservableList<AddServiceClaimNode> items = new ObservableList<AddServiceClaimNode>();
+		public virtual IObservableList<AddServiceClaimNode> Items {
+			get { return items; }
+			set { SetField(ref items, value); }
+		}
+
+		public virtual IEnumerable<ServiceClaim> Claims =>
+			Items.Where(x => x.Add).Select(x => x.Claim);
+		public virtual IEnumerable<ServiceClaim> InDocClaims => documentVM.Entity.Items.Select(x => x.ServiceClaim).ToList();
+		public virtual bool AutoAdd { get; set; } = true;
+		public virtual bool CanAdd => ActiveClaim != null 
+		                              && !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
+		                              && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
 		#endregion
 		
 		#region Методы 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
 				if(BarcodeInfoViewModel.Barcode == null) {
-					Claim = null;
+					ActiveClaim = null;
 					BarcodeInfoViewModel.LabelInfo = "Не найдено";
 					return;
 				}
 
-				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
-				if(Claim == null)
+				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
+				if(ActiveClaim == null)
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
-				else if(document != null && document.Items.Select(i => i.ServiceClaim).Any(c => DomainHelper.EqualDomainObjects(c, Claim)))
+				else if(!Claims.Contains(ActiveClaim) && documentVM != null && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже добавлена.";
-				else if(document != null) {
-					var b = DocumentVM.AvailableCells().FirstOrDefault();
-					var c = userService.GetCurrentUser();
-					document.AddItem(Claim, b, c);
-					document.AddItem(Claim, DocumentVM.AvailableCells().FirstOrDefault(),null);
+				else if(AutoAdd) {
+					Items.Add(new AddServiceClaimNode(ActiveClaim));
 				}
 			}
 		}
+
+		public void Accept() {
+			documentVM.AddItems(Claims);
+			Close(false, CloseSource.Save);
+			Dispose();
+		}
+
+		public void AddClaim() {
+			Items.Add(new AddServiceClaimNode(ActiveClaim));
+		} 
+		
 		#endregion 
 		
 		
@@ -86,6 +106,20 @@ namespace Workwear.ViewModels.ClothingService {
 		public bool Resizable { get; } = true;
 		public bool Deletable { get; } = true;
 		public WindowGravity WindowPosition { get; } = WindowGravity.Center;
+		
 		#endregion
+	}
+
+	public class AddServiceClaimNode {
+		public AddServiceClaimNode(ServiceClaim claim) {
+			Claim = claim;
+		}
+		
+		public ServiceClaim Claim { get; }
+		public bool Add { get; set; } = true;
+		public string BarcodeText => Claim.Barcode.Title;
+		public string EmployeeText => Claim.Employee.ShortName;
+		public string NomenclatureText => Claim.Barcode.Nomenclature.Name;
+		public string SizeText => SizeService.SizeTitle(Claim.Barcode.Size, Claim.Barcode.Height);
 	}
 }

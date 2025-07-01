@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,6 +7,7 @@ using Autofac;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
+using NPOI.SS.Formula.Functions;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
@@ -118,11 +120,20 @@ namespace Workwear.ViewModels.Postomats {
 		#endregion
 
 		#region Команды View
+
 		public void AddFromScan() {
-			UnitOfWorkProvider.UoW.Session.QueryOver<Service>();
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>
+			var wiget = NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>
 				(this, this, addingRegistrations: c => c.RegisterInstance(UnitOfWorkProvider));
 		}
+		
+		public void AddItems(IEnumerable<ServiceClaim> claims) {
+			var items = UoW.Query<ServiceClaim>()
+				.Where(i => i.Id.IsIn(claims.Select(c => c.Id).ToArray()))
+				.List();
+			foreach(var i in items) 
+				Entity.AddItem(i, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
+		}
+
 		public void ReturnFromService() {
 			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave,
 				model => model.ExcludeInDocs = true,
@@ -158,13 +169,19 @@ namespace Workwear.ViewModels.Postomats {
 		}
 
 		public void RemoveItem(PostomatDocumentItem item) {
-			if(item.Id == 0)
+			if(item.Id == 0) {
 				item.ServiceClaim.States.RemoveAll(s => s.Id == 0);
-			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Продолжить?"))
+				Entity.Items.Remove(item);
+			}
+			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Так же документ будет сохранён. Продолжить?")) {
 				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim);
+				Entity.Items.Remove(item);
+				UoW.Save(Entity);
+				UoW.Commit();
+			}
 			else 
 				return;
-			Entity.Items.Remove(item);
+			
 		}
 		#endregion
 
