@@ -107,6 +107,12 @@ namespace Workwear.ViewModels.ClothingService {
 				State = state;
 			}
 		}
+		public void ChngeState(ClaimState state) {
+			if(Claim != null) {
+				State = state;
+				Accept(false);
+			}
+		}
 
 		public void CreateNew() {
 			if(BarcodeInfoViewModel.Barcode != null && Claim == null) {
@@ -134,7 +140,7 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-		public void Accept() {
+		public void Accept(bool clear = true) {
 			var status = new StateOperation {
 				OperationTime = DateTime.Now,
 				State = State,
@@ -153,11 +159,13 @@ namespace Workwear.ViewModels.ClothingService {
 
 			UoW.Save(Claim);
 			UoW.Commit();
-			
-			BarcodeInfoViewModel.BarcodeText = String.Empty;
-			BarcodeInfoViewModel.Barcode = null;
-			BarcodeInfoViewModel.LabelInfo = null;
-			BarcodeInfoViewModel.Employee = null;
+
+			if(clear) {
+				BarcodeInfoViewModel.BarcodeText = String.Empty;
+				BarcodeInfoViewModel.Barcode = null;
+				BarcodeInfoViewModel.LabelInfo = null;
+				BarcodeInfoViewModel.Employee = null;
+			}
 		}
 		
 		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {
@@ -171,28 +179,26 @@ namespace Workwear.ViewModels.ClothingService {
 				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => SetState(ClaimState.AwaitIssue)),
 				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => SetState(ClaimState.Returned)),
 				["2000000000084"] = ("Принять на обслуживание", (s) => CreateNew()),
-				/*
-                ["2000000000091"] = ("", null),
-				["2000000000107"] = ("", null),
-				["2000000000114"] = ("", null),
-				["2000000000121"] = ("", null),
-				["2000000000138"] = ("", null),
-				["2000000000145"] = ("", null),
-				["2000000000152"] = ("", null),
-				["2000000000169"] = ("", null),
-				["2000000000176"] = ("", null),
-				["2000000000183"] = ("", null),
-				["2000000000190"] = ("", null),
-				["2000000000206"] = ("", null),
-				["2000000000213"] = ("", null),
-				["2000000000220"] = ("", null),
-				["2000000000237"] = ("", null),
-				["2000000000244"] = ("", null),
-				["2000000000251"] = ("", null),
-				["2000000000268"] = ("", null),
-				["2000000000275"] = ("", null),
-				["2000000000282"] = ("", null),
-				*/
+				//["2000000000091"] = ("", null),
+				//["2000000000107"] = ("", null),
+				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InTransit)),
+				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.DeliveryToLaundry)),
+				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InRepair)),
+				["2000000000145"] = ($"Сменить статус на \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InDryCleaning)),
+				["2000000000152"] = ($"Сменить статус на \"{ClaimState.InWashing.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InWashing)),
+				["2000000000169"] = ($"Сменить статус на \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.AwaitIssue)),
+				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.Returned)),
+				//["2000000000183"] = ("", null),
+				//["2000000000190"] = ("", null),
+				//["2000000000206"] = ("", null),
+				//["2000000000213"] = ("", null),
+				//["2000000000220"] = ("", null),
+				//["2000000000237"] = ("", null),
+				//["2000000000244"] = ("", null),
+				//["2000000000251"] = ("", null),
+				//["2000000000268"] = ("", null),
+				//["2000000000275"] = ("", null),
+				//["2000000000282"] = ("", null),
 			};
 		}
 
