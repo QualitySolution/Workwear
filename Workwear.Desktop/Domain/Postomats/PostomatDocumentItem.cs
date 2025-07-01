@@ -71,6 +71,13 @@ namespace Workwear.Domain.Postomats {
 			get => locationCell;
 			set => SetField(ref locationCell, value);
 		}
+				
+		private DateTime? dispenseTime;
+		[Display(Name = "Дата выдачи")]
+		public virtual DateTime? DispenseTime {
+			get => dispenseTime;
+			set => SetField(ref dispenseTime, value);
+		}
 		#endregion
 		
 		#region Расчетные

@@ -204,8 +204,7 @@ namespace Workwear.Views.Supply
 			this.ylabel10 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel10.Name = "ylabel10";
 			this.ylabel10.Xalign = 1F;
-			this.ylabel10.LabelProp = global::Mono.Unix.Catalog.GetString("Период<span foreground=\"red\">*</span>:");
-			this.ylabel10.UseMarkup = true;
+			this.ylabel10.LabelProp = global::Mono.Unix.Catalog.GetString("Период:");
 			this.ytable3.Add(this.ylabel10);
 			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable3[this.ylabel10]));
 			w15.TopAttach = ((uint)(2));
