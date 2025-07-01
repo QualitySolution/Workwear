@@ -87,11 +87,11 @@ namespace Workwear.Domain.Supply{
 			set => SetField(ref comment, value);
 		}
 		
-		private string diffСause;
+		private string diffCause;
 		[Display(Name = "Причина расхождений")]
-		public virtual string DiffСause {
-			get => diffСause;
-			set => SetField(ref diffСause, value);
+		public virtual string DiffCause {
+			get => diffCause;
+			set => SetField(ref diffCause, value);
 		}
 		#endregion
 		

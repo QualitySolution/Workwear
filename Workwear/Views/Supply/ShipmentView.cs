@@ -67,7 +67,7 @@ namespace Workwear.Views.Supply {
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
                 .AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
-                    .AddTextRenderer(e => e.DiffСause)
+                    .AddTextRenderer(e => e.DiffCause)
                     .Editable()
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Получено")

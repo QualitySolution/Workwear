@@ -416,7 +416,7 @@ namespace Workwear.ViewModels.Analytics {
 					if(ShipmentColumnVisible) {
 						worksheet.Cell(row, col++).Value = item.TotalOrdered;
 						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.Shipment.PeriodTitle));
-						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.DiffСause));
+						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.DiffCause));
 					}
 					worksheet.Cell(row, col++).Value = item.InStock - item.Forecast.Sum();
 					worksheet.Cell(row, col++).Value = item.InStock - item.Unissued - item.Forecast.Sum();
