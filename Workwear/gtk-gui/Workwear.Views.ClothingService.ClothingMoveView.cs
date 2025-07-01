@@ -38,6 +38,8 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
+		private global::Gamma.GtkWidgets.yTable ytableServices;
+
 		private global::Gamma.GtkWidgets.yButton buttonAccept;
 
 		protected virtual void Build()
@@ -162,7 +164,6 @@ namespace Workwear.Views.ClothingService
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable1[this.GtkScrolledWindow1]));
 			w13.TopAttach = ((uint)(2));
 			w13.BottomAttach = ((uint)(3));
-			w13.RightAttach = ((uint)(2));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.ylabel4 = new global::Gamma.GtkWidgets.yLabel();
@@ -184,23 +185,37 @@ namespace Workwear.Views.ClothingService
 			w15.BottomAttach = ((uint)(2));
 			w15.RightAttach = ((uint)(2));
 			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.ytableServices = new global::Gamma.GtkWidgets.yTable();
+			this.ytableServices.Name = "ytableServices";
+			this.ytableServices.NRows = ((uint)(3));
+			this.ytableServices.NColumns = ((uint)(3));
+			this.ytableServices.RowSpacing = ((uint)(6));
+			this.ytableServices.ColumnSpacing = ((uint)(6));
+			this.ytable1.Add(this.ytableServices);
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ytableServices]));
+			w16.TopAttach = ((uint)(2));
+			w16.BottomAttach = ((uint)(3));
+			w16.LeftAttach = ((uint)(1));
+			w16.RightAttach = ((uint)(2));
+			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ytable1]));
-			w16.Position = 3;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ytable1]));
+			w17.Position = 3;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.buttonAccept = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAccept.CanFocus = true;
 			this.buttonAccept.Name = "buttonAccept";
 			this.buttonAccept.UseUnderline = true;
 			this.buttonAccept.Label = global::Mono.Unix.Catalog.GetString("Изменить статус");
-			global::Gtk.Image w17 = new global::Gtk.Image();
-			w17.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-save", global::Gtk.IconSize.Menu);
-			this.buttonAccept.Image = w17;
+			global::Gtk.Image w18 = new global::Gtk.Image();
+			w18.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-save", global::Gtk.IconSize.Menu);
+			this.buttonAccept.Image = w18;
 			this.vbox1.Add(this.buttonAccept);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonAccept]));
-			w18.Position = 4;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonAccept]));
+			w19.Position = 4;
+			w19.Expand = false;
+			w19.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

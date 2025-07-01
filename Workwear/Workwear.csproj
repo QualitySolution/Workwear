@@ -174,6 +174,7 @@
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
+    <Compile Include="ViewModels\ClothingService\ClothingAddViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
@@ -522,6 +523,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureServicesView.cs" />
     <Compile Include="Views\ClothingService\ServiceView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceView.cs" />
+    <Compile Include="Views\ClothingService\ClothingAddView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingAddView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -902,6 +905,7 @@
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="icon\buttons\qr-code.png" />
     <Content Include="Reports\Documents\ShipmentSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
