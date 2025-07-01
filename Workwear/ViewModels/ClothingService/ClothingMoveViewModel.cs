@@ -52,7 +52,7 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
-				if(BarcodeInfoViewModel.ActivAction != null) {
+				if(BarcodeInfoViewModel.Barcode != null && BarcodeInfoViewModel.ActivAction != null) {
 					BarcodeInfoViewModel.ActivAction(Claim);
 					BarcodeInfoViewModel.ActivAction = null;
 					return;
@@ -134,7 +134,6 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-
 		public void Accept() {
 			var status = new StateOperation {
 				OperationTime = DateTime.Now,
@@ -164,14 +163,14 @@ namespace Workwear.ViewModels.ClothingService {
 		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {
 			return new Dictionary<string, (string, Action<object>)>() {
 				["2000000000008"] = ("Изменить статус", (s) => Accept()),
-				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
-				["2000000000022"] = ($"Статус \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => SetState(ClaimState.InTransit)),
+				["2000000000022"] = ($"Статус \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => SetState(ClaimState.DeliveryToLaundry)),
 				["2000000000039"] = ($"Статус \"{ClaimState.InRepair.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
-				["2000000000046"] = ($"Статус \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
+				["2000000000046"] = ($"Статус \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => SetState(ClaimState.InDryCleaning)),
 				["2000000000053"] = ($"Статус \"{ClaimState.InWashing.GetEnumTitle()}\"", (s) => SetState(ClaimState.InWashing)),
 				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => SetState(ClaimState.AwaitIssue)),
 				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => SetState(ClaimState.Returned)),
-				["2000000000084"] = ("Принять в стирку", (s) => CreateNew()),
+				["2000000000084"] = ("Принять на обслуживание", (s) => CreateNew()),
 				/*
                 ["2000000000091"] = ("", null),
 				["2000000000107"] = ("", null),
