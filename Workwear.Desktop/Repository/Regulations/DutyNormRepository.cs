@@ -43,10 +43,7 @@ namespace Workwear.Repository.Regulations {
 				.JoinEntityAlias(() => dutyNormAlias, (() => dutyNormIssueOperationAlias.DutyNorm.Id == dutyNormAlias.Id))
 				.JoinEntityAlias(() => employeeCardAlias, () => dutyNormAlias.ResponsibleEmployee.Id == employeeCardAlias.Id)
 				.Where((() => employeeCardAlias.Id == employee.Id));
-			
-			var a = query.OrderBy(x => x.OperationTime).Desc.List();
-
-			return a;
+			return query.OrderBy(x => x.OperationTime).Desc.List();
 		}
 	}
 }
