@@ -39,6 +39,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 				.AddColumn("Наименование").Resizable()
 					.AddTextRenderer(i  => i.ProtectionTools != null ? i.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("По норме")
+					.AddNumericRenderer(i => i.Amount)
 					.AddTextRenderer(i => i.AmountUnitText(i.Amount))
 				.AddColumn("Срок службы").Resizable()
 					.AddNumericRenderer(i=>i.PeriodCount)
