@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -177,6 +177,7 @@ namespace Workwear.ViewModels.Company
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
 			NormsViewModel = AutofacScope.Resolve<EmployeeNormsViewModel>(parameter);
 			WearItemsViewModel = AutofacScope.Resolve<EmployeeWearItemsViewModel>(parameter);
+			DutyNormsViewModel = AutofacScope.Resolve<EmployeeDutyNormsViewModel>(parameter);
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);

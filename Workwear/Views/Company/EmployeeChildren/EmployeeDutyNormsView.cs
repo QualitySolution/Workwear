@@ -1,4 +1,6 @@
 ﻿using System;
+using FluentNHibernate.Data;
+using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -27,13 +29,13 @@ namespace Workwear.Views.Company.EmployeeChildren {
 			}
 		}
 
-		void ytreeWorkwear_Selection_Changed(object sender, EventArgs e)
+		void ytreeView_Selection_Changed(object sender, EventArgs e)
 		{
-			ViewModel.SelectedDutyNormItem = ytreeview.GetSelectedObject<DutyNormItem>();
+			ViewModel.SelectedItem = ytreeview.GetSelectedObject<DutyNormItem>();
 		}
 		private void ConfigureTable() 
 		{
-			ytreeview.ColumnsConfig = ColumnsConfigFactory.Create<DutyNormItem>()
+			ytreeview.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
 				.AddColumn("Наименование").Resizable()
 					.AddTextRenderer(i  => i.ProtectionTools != null ? i.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("По норме")
@@ -48,19 +50,27 @@ namespace Workwear.Views.Company.EmployeeChildren {
 					.AddSetter((w, i) => w.Foreground = i.AmountColor)
 					.AddTextRenderer(i => i.AmountUnitText(i.Issued(DateTime.Now)))
 				.AddColumn("След. получение").Resizable()
-					.AddTextRenderer(i => $"{i.NextIssue:d}")
+					.AddTextRenderer(i => i.NextIssueText)
 					.AddSetter((w, i) => w.Foreground = i.NextIssueColor)
-				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
-				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
+				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph)
+				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
 				.Finish ();
+			ytreeview.Selection.Changed += ytreeView_Selection_Changed;
 		}
 		
 		#region Кнопки
 
 		protected void OnButtonGiveWearByDutyNormClicked(object sender, EventArgs e) {
+			ybuttonGiveWearByDutyNorm.Sensitive = false;
+			ViewModel.GiveWearByDutyNorm();
+			ybuttonGiveWearByDutyNorm.Sensitive = true;
 		}
 
 		protected void OnButtonOpenDutyNormClicked(object sender, EventArgs e) {
+			ybuttonOpenDutyNorm.Sensitive = false;
+			ViewModel.OpenDutyNorm(ytreeview.GetSelectedObject<DutyNormItem>());
+			ybuttonOpenDutyNorm.Sensitive = true;
+
 		}
 		#endregion
 	}

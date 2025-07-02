@@ -283,6 +283,8 @@ namespace Workwear.Domain.Regulations {
 					return String.Empty;
 			}
 		}
+
+		public virtual string NextIssueText => NextIssue != null ? $"{NextIssue:d}" : String.Empty;
 		#endregion
 
 		/// <summary>
