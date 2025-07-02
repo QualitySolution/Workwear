@@ -123,7 +123,7 @@ namespace Workwear.ViewModels.Postomats {
 
 		public void AddFromScan() {
 			var wiget = NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>
-				(this, this, addingRegistrations: c => c.RegisterInstance(UnitOfWorkProvider));
+				(this, this);
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {

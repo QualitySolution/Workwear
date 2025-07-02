@@ -38,7 +38,7 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			this.documentVM = documentVm;
-			
+			_ = UoW; //Дёргаем, чтобы заполнился провайдер
 			Title = "Добавить в документ";
 			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 		}
@@ -90,7 +90,6 @@ namespace Workwear.ViewModels.ClothingService {
 		public void Accept() {
 			documentVM.AddItems(Claims);
 			Close(false, CloseSource.Save);
-			Dispose();
 		}
 
 		public void AddClaim() {
