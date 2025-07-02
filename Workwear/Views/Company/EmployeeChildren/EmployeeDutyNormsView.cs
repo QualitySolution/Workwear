@@ -1,8 +1,5 @@
 ﻿using System;
-using FluentNHibernate.Data;
 using Gamma.ColumnConfig;
-using Gamma.GtkWidgets;
-using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -31,7 +28,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 
 		void ytreeView_Selection_Changed(object sender, EventArgs e)
 		{
-			ViewModel.SelectedItem = ytreeview.GetSelectedObject<DutyNormItem>();
+			ybuttonOpenDutyNorm.Sensitive = ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0;
 		}
 		private void ConfigureTable() 
 		{

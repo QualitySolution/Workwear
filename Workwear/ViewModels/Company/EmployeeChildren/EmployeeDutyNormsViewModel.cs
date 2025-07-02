@@ -74,16 +74,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 
 		public void GiveWearByDutyNorm() 
 		{
-			if(!employeeViewModel.Save())
-				return;
-			navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForCreate());
 		}
 
-		public void OpenDutyNorm(DutyNormItem row) {
-			var page = navigation.OpenViewModel<DutyNormViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel,
-				EntityUoWBuilder.ForCreate(), Entity);
-			page.ViewModel.SelectItem(row.Id);
-		}
+		public void OpenDutyNorm(DutyNormItem dutyNormItem) => navigation.OpenViewModel<DutyNormViewModel, IEntityUoWBuilder>(employeeViewModel,
+				EntityUoWBuilder.ForOpen(dutyNormItem.DutyNorm.Id));
+		
 		#endregion
 
 		#region Обработка изменений
