@@ -57,26 +57,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		}
 		#endregion
 		#endregion
-
-		#region Свойства
-
-		
-		private DutyNormItem selectedItem;
-		public virtual DutyNormItem SelectedItem {
-			get => selectedItem;
-			set => SetField(ref selectedItem, value);
-		}
-
-
-		#endregion
 		
 		#region Действия View
 
-		public void GiveWearByDutyNorm() 
-		{
-			navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForCreate());
-		}
-
+		public void GiveWearByDutyNorm(DutyNormItem dutyNormItem) => navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>
+			(employeeViewModel, EntityUoWBuilder.ForCreate(), dutyNormItem.DutyNorm);
+		
 		public void OpenDutyNorm(DutyNormItem dutyNormItem) => navigation.OpenViewModel<DutyNormViewModel, IEntityUoWBuilder>(employeeViewModel,
 				EntityUoWBuilder.ForOpen(dutyNormItem.DutyNorm.Id));
 		

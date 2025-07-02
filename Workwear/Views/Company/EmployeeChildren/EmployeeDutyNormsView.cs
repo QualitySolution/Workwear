@@ -60,7 +60,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 
 		protected void OnButtonGiveWearByDutyNormClicked(object sender, EventArgs e) {
 			ybuttonGiveWearByDutyNorm.Sensitive = false;
-			ViewModel.GiveWearByDutyNorm();
+			ViewModel.GiveWearByDutyNorm(ytreeview.GetSelectedObject<DutyNormItem>());
 			ybuttonGiveWearByDutyNorm.Sensitive = true;
 		}
 
