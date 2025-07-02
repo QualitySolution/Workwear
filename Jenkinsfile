@@ -75,7 +75,7 @@ node {
          }
       }
       stage('Publish'){
-         sh 'scp WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
+         sh 'scp WinInstall/workwear-*.exe root@odysseus.srv.qsolution.ru:/var/www/files/Workwear/'
       }
    }
 }
