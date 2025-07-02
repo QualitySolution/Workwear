@@ -39,7 +39,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				.Where(() => employeeCardAlias.Id == Entity.Id);
 			foreach(var item in query.List())
 				ObservableDutyNormItems.Add(item);
-			Entity.UpdateWorkwearItems();
+			foreach(var item in ObservableDutyNormItems) {
+				item.Update(UoW);
+			}
 		}
 
 		#region Хелперы
