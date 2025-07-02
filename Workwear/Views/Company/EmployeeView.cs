@@ -59,7 +59,7 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(9).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
-			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
+			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
