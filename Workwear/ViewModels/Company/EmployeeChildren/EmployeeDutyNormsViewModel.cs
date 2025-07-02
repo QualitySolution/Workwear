@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using NHibernate;
 using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -18,24 +20,26 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 	public class EmployeeDutyNormsViewModel: ViewModelBase {
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
-		private readonly IProgressBarDisplayable progress;
-		private readonly StockBalanceModel stockBalanceModel;
-		private readonly DutyNormRepository dutyNormRepository;
+		private IUnitOfWork UoW => employeeViewModel.UoW;
+		public IObservableList<DutyNormItem> ObservableDutyNormItems = new ObservableList<DutyNormItem>();
 
 		public EmployeeDutyNormsViewModel(
 			EmployeeViewModel employeeViewModel,
-			INavigationManager navigation,
-			IProgressBarDisplayable progress,
-			EmployeeIssueModel issueModel,
-			StockBalanceModel stockBalanceModel,
-			DutyNormRepository dutyNormRepository
+			INavigationManager navigation
 			) 
 		{
+			DutyNorm dutyNormAlias = null;
+			DutyNormItem dutyNormItemAlias = null;
+			EmployeeCard employeeCardAlias = null;
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
-			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+			var query = UoW.Session.QueryOver<DutyNormItem>(() => dutyNormItemAlias)
+				.JoinEntityAlias(() => dutyNormAlias, (() => dutyNormItemAlias.DutyNorm.Id == dutyNormAlias.Id))
+				.JoinEntityAlias(() => employeeCardAlias, (() => dutyNormAlias.ResponsibleEmployee.Id == employeeCardAlias.Id))
+				.Where(() => employeeCardAlias.Id == Entity.Id);
+			foreach(var item in query.List())
+				ObservableDutyNormItems.Add(item);
+			Entity.UpdateWorkwearItems();
 		}
 
 		#region Хелперы
@@ -47,21 +51,18 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public void OnShow() {
 			if (IsConfigured) return;
 			IsConfigured = true;
-			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-			Entity.FillDutyNormReceivedInfo(dutyNormRepository);
 			OnPropertyChanged(nameof(ObservableDutyNormItems));
-			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 		#endregion
 		#endregion
 
 		#region Свойства
 
-		public IObservableList<DutyNormItem> ObservableDutyNormItems => Entity.DutyNormItems;
-		private DutyNormItem selectedDutyNormItem;
-		public virtual DutyNormItem SelectedDutyNormItem {
-			get => selectedDutyNormItem;
-			set => SetField(ref selectedDutyNormItem, value);
+		
+		private DutyNormItem selectedItem;
+		public virtual DutyNormItem SelectedItem {
+			get => selectedItem;
+			set => SetField(ref selectedItem, value);
 		}
 
 
@@ -84,14 +85,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		#endregion
 
 		#region Обработка изменений
-
-		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(e.PropertyName == nameof(Entity.Subdivision) && Entity.Subdivision?.Warehouse != stockBalanceModel.Warehouse) {
-				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-				stockBalanceModel.Refresh();
-			}
-		}
-
+		
 		#endregion
 		
 	}
