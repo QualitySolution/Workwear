@@ -1,17 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Gamma.Utilities;
+using System.Linq;
+using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using ClaimState = Workwear.Domain.ClothingService.ClaimState;
 
 namespace Workwear.ViewModels.ClothingService {
@@ -19,7 +25,8 @@ namespace Workwear.ViewModels.ClothingService {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
 		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes;
-		
+		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
+		public readonly FeaturesService FeaturesService;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -29,6 +36,8 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUserService userService,
 			BarcodeRepository barcodeRepository,
+			PostomatManagerService postomatService,
+			FeaturesService featuresService,
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{
@@ -38,6 +47,8 @@ namespace Workwear.ViewModels.ClothingService {
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			barcodeInfoViewModel.ActionBarcodes = ActionBarcodes;
+			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
+			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Перемещение спецодежды";
 			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			var uow = UoW;
@@ -47,6 +58,8 @@ namespace Workwear.ViewModels.ClothingService {
 				MoveDefiniteClaim = true;
 			} else
 				BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 		}
 		
 		
@@ -73,6 +86,7 @@ namespace Workwear.ViewModels.ClothingService {
 		ServiceClaim claim;
 		[PropertyChangedAlso(nameof(SensitiveAccept))]
 		[PropertyChangedAlso(nameof(Operations))]
+		[PropertyChangedAlso(nameof(SensitivePrint))]
 		public virtual ServiceClaim Claim {
 			get => claim;
 			set => SetField(ref claim, value);
@@ -95,10 +109,13 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 		
 		public virtual bool SensitiveAccept => Claim != null;
+		public virtual bool SensitivePrint => (Claim?.Barcode != null);
 		public virtual bool MoveDefiniteClaim { get; } = false; //Движение единственного объекта
 		public virtual bool SensitiveBarcode => !MoveDefiniteClaim;
 	
 		#endregion
+		
+		public string GetTerminalLabel(uint id) => postomatsLabels.ContainsKey(id) ? postomatsLabels[id] : string.Empty;
 		
 		#region Действия
 
@@ -166,6 +183,24 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = null;
 				BarcodeInfoViewModel.Employee = null;
 			}
+		}
+		public void PrintLabel(ServiceClaim claim) {
+			var reportInfo = new ReportInfo {
+				Title = "Этикетка",
+				Identifier = "ClothingService.ClothingMoveSticker",
+				Parameters = new Dictionary<string, object> {
+					{"barcode_id", claim.Barcode.Id},
+					{"service_claim_id", claim.Id},
+					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
+					{"number_system", claim.Barcode.Title.Substring(0,2)},
+					{"product_code", claim.Barcode.Title.Substring(7,5)},
+					{"preferred_terminal",  claim.PreferredTerminalId.HasValue
+						? GetTerminalLabel(claim.PreferredTerminalId.Value)
+						: string.Empty}
+				}
+			};
+			
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
 		
 		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {

@@ -905,6 +905,9 @@
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\ClothingService\ClothingMoveSticker.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="icon\buttons\qr-code.png" />
     <Content Include="Reports\Documents\ShipmentSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
