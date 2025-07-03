@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Gamma.Utilities;
 using System.Linq;
+using Gamma.Utilities;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
@@ -13,6 +13,7 @@ using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
+using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
@@ -24,9 +25,10 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
-		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes;
+		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes = new Dictionary<string, (string title, Action<object> action)>();
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 		public readonly FeaturesService FeaturesService;
+		
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -41,7 +43,10 @@ namespace Workwear.ViewModels.ClothingService {
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{
-			ActionBarcodes = SetActionBarcodes();
+			ActionBarcodes = ActionBarcodes.Concat(GetActionBarcodes())
+				.ToDictionary(x => x.Key, x => x.Value);
+			ActionBarcodes = ActionBarcodes.Concat(GetActionServicesBarcodes())
+				.ToDictionary(x => x.Key, x => x.Value);
 			
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
@@ -50,19 +55,23 @@ namespace Workwear.ViewModels.ClothingService {
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Перемещение спецодежды";
-			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
-			var uow = UoW;
+			
+			_ = UoW; //дёргаем UoW, чтобы передать его через провайдер внутреннему виджету.
 			if(serviceClaim != null) {
 				claim = serviceClaim;
 				BarcodeInfoViewModel.BarcodeText = serviceClaim.Barcode.Title;
 				MoveDefiniteClaim = true;
-			} else
+			}
+			else {
 				BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
+			}
+			
+			Services.ContentChanged += ServicesOnContentChanged;
+			
 			if(featuresService.Available(WorkwearFeature.Postomats))
 				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 		}
-		
-		
+
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
 				if(BarcodeInfoViewModel.Barcode != null && BarcodeInfoViewModel.ActivAction != null) {
@@ -79,6 +88,18 @@ namespace Workwear.ViewModels.ClothingService {
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
+				OnPropertyChanged(nameof(CanAddClaim));
+			}
+		}
+		
+		private void ServicesOnContentChanged(object sender, EventArgs e) {
+			if(sender is SelectableEntity<Service> item) {
+				if(item.Select && !Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(item.Entity, provided)))
+					Claim.ProvidedServices.Add(item.Entity);
+				else if(!item.Select && Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(item.Entity, provided)))
+					Claim.ProvidedServices.Remove(item.Entity);
+                UoW.Save(claim);
+				UoW.Commit();
 			}
 		}
 
@@ -87,13 +108,20 @@ namespace Workwear.ViewModels.ClothingService {
 		[PropertyChangedAlso(nameof(SensitiveAccept))]
 		[PropertyChangedAlso(nameof(Operations))]
 		[PropertyChangedAlso(nameof(SensitivePrint))]
+		[PropertyChangedAlso(nameof(CanAddClaim))]
 		public virtual ServiceClaim Claim {
 			get => claim;
-			set => SetField(ref claim, value);
+			set {
+				if(SetField(ref claim, value)) {
+					services.Clear();
+					foreach(var service in claim.Barcode.Nomenclature.UseServices) //Делаем список для заполнеия услуг во вьюшке
+						services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
+							{Select = Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
+					OnPropertyChanged(nameof(Services));
+				}
+			}
 		}
-		#endregion
-		
-		#region Свойства View
+
 		private ClaimState state = ClaimState.InTransit;
 		public virtual ClaimState State {
 			get => state;
@@ -106,8 +134,15 @@ namespace Workwear.ViewModels.ClothingService {
 			set => SetField(ref comment, value);
 		}
 
-		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
+		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
+		public virtual IObservableList<SelectableEntity<Service>> Services {
+			get => services;
+			set => SetField(ref services, value);
+		}
 		
+		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
+
+		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
 		public virtual bool MoveDefiniteClaim { get; } = false; //Движение единственного объекта
@@ -127,10 +162,17 @@ namespace Workwear.ViewModels.ClothingService {
 		public void ChngeState(ClaimState state) {
 			if(Claim != null) {
 				State = state;
-				Accept(false);
+				Accept();
 			}
 		}
-
+		public void SetService(Service service) {
+			if(Claim != null) {
+				var ser = Services.FirstOrDefault(s => s.Entity.Id == service.Id);
+				if(ser != default)
+					ser.Select = true;
+			}
+		}
+		
 		public void CreateNew() {
 			if(BarcodeInfoViewModel.Barcode != null && Claim == null) {
 				Claim = new ServiceClaim {
@@ -157,7 +199,7 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-		public void Accept(bool clear = true) {
+		public void Accept() {
 			var status = new StateOperation {
 				OperationTime = DateTime.Now,
 				State = State,
@@ -176,13 +218,6 @@ namespace Workwear.ViewModels.ClothingService {
 
 			UoW.Save(Claim);
 			UoW.Commit();
-
-			if(clear) {
-				BarcodeInfoViewModel.BarcodeText = String.Empty;
-				BarcodeInfoViewModel.Barcode = null;
-				BarcodeInfoViewModel.LabelInfo = null;
-				BarcodeInfoViewModel.Employee = null;
-			}
 		}
 		public void PrintLabel(ServiceClaim claim) {
 			var reportInfo = new ReportInfo {
@@ -203,7 +238,7 @@ namespace Workwear.ViewModels.ClothingService {
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
 		
-		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {
+		private Dictionary<string, (string, Action<object>)> GetActionBarcodes() {
 			return new Dictionary<string, (string, Action<object>)>() {
 				["2000000000008"] = ("Изменить статус", (s) => Accept()),
 				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => SetState(ClaimState.InTransit)),
@@ -214,7 +249,7 @@ namespace Workwear.ViewModels.ClothingService {
 				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => SetState(ClaimState.AwaitIssue)),
 				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => SetState(ClaimState.Returned)),
 				["2000000000084"] = ("Принять на обслуживание", (s) => CreateNew()),
-				//["2000000000091"] = ("", null),
+				["2000000000091"] = ("Печать этикетки", (s) => PrintLabel(s as ServiceClaim)),
 				//["2000000000107"] = ("", null),
 				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InTransit)),
 				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.DeliveryToLaundry)),
@@ -225,8 +260,8 @@ namespace Workwear.ViewModels.ClothingService {
 				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.Returned)),
 				//["2000000000183"] = ("", null),
 				//["2000000000190"] = ("", null),
-				//["2000000000206"] = ("", null),
-				//["2000000000213"] = ("", null),
+				//["2000000000206"] = ("", null), занят ClothingAddViewModel
+				//["2000000000213"] = ("", null), занят ClothingAddViewModel
 				//["2000000000220"] = ("", null),
 				//["2000000000237"] = ("", null),
 				//["2000000000244"] = ("", null),
@@ -235,6 +270,18 @@ namespace Workwear.ViewModels.ClothingService {
 				//["2000000000275"] = ("", null),
 				//["2000000000282"] = ("", null),
 			};
+		}
+		private Dictionary<string, (string, Action<object>)> GetActionServicesBarcodes() {
+			var services = UoW.GetAll<Service>()
+				.Where(s => s.Code != null)
+				.ToList();
+
+			Dictionary<string, (string, Action<object>)> dictionary = new Dictionary<string, (string, Action<object>)>();
+			foreach(var s in services) {
+				if(!dictionary.ContainsKey(s.Code))
+					dictionary.Add(s.Code,(" ", o => SetService(s)));
+			}
+			return dictionary;
 		}
 
 		#endregion
