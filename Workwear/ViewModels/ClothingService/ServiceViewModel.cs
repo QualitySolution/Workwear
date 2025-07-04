@@ -10,8 +10,8 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Stock;
-using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools.Barcodes;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ServiceViewModel : EntityDialogViewModelBase<Service> {
@@ -36,6 +36,14 @@ namespace Workwear.ViewModels.ClothingService {
 				foreach(var n in list)
 					Entity.AddNomenclature(n);
 			};
+		}
+
+		public override bool Save() {
+
+			if(Entity.Code == null)
+				BarcodeService.SetClothingServiceCode(UoW, Entity);
+			
+			return base.Save();
 		}
 
 		public void RemoveNomenclature(Nomenclature nomenclature) => Entity.RemoveNomenclature(nomenclature);

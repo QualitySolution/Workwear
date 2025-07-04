@@ -2438,9 +2438,10 @@ create table clothing_service_services
 	cost 	decimal default 0 not null,
 	code    varchar(13)       null,
 	comment text       		  null,
-		constraint clothing_service_services_pk
+	constraint clothing_service_services_pk
 		primary key (id)
-);
+)
+	auto_increment = 101;
 
 create table clothing_service_services_nomenclature
 (

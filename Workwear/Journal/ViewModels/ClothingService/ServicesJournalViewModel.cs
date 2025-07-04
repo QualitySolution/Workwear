@@ -7,8 +7,10 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
+using QS.Report.ViewModels;
 using QS.Utilities;
 using Workwear.Domain.ClothingService;
+using Workwear.ReportParameters.ViewModels;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
@@ -23,6 +25,12 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
 			UseSlider = true;
+			
+			NodeActionsList.Add(new JournalAction("Печать кодов",
+				x => true,
+				x => true,
+				x => navigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ClothingServicesCodeViewModel))
+			));
 		}
 
 		protected override IQueryOver<Service> ItemsQuery(IUnitOfWork uow)

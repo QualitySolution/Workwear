@@ -8,7 +8,8 @@ create table clothing_service_services
 	comment text       		  null,
 	constraint clothing_service_services_pk
 		primary key (id)
-);
+)
+	auto_increment = 101;
 
 create table clothing_service_services_nomenclature
 (

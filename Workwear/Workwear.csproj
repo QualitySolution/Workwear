@@ -149,6 +149,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WarehouseTransferReportViewModel.cs" />
@@ -525,6 +526,8 @@
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceView.cs" />
     <Compile Include="Views\ClothingService\ClothingAddView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingAddView.cs" />
+    <Compile Include="ReportParameters\Views\ClothingServicesCodeView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServicesCodeView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -909,6 +912,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="icon\buttons\qr-code.png" />
+    <Content Include="Reports\ClothingService\ClothingServiceCodes.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\Documents\ShipmentSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
