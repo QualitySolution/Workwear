@@ -69,7 +69,7 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>186.9pt</Height>
+    <Height>386.0pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <List Name="List1">
@@ -88,15 +88,15 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
             <Height>75.11pt</Height>
             <Width>100.08pt</Width>
             <CustomProperties>
-              <CustomProperty>
+              <CustomProperty >
                 <Name>NumberSystem</Name>
                 <Value>={?number_system}</Value>
               </CustomProperty>
-              <CustomProperty>
+              <CustomProperty >
                 <Name>ManufacturerCode</Name>
                 <Value>={?manufacturer_code}</Value>
               </CustomProperty>
-              <CustomProperty>
+              <CustomProperty >
                 <Name>ProductCode</Name>
                 <Value>={?product_code}</Value>
               </CustomProperty>
@@ -113,84 +113,163 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
         </ReportItems>
         <DataInstanceElementOutput>NoOutput</DataInstanceElementOutput>
       </List>
-      <List Name="List2">
-        <Height>80.55pt</Height>
-        <Width>115.91pt</Width>
-        <Left>18.08pt</Left>
-        <Top>80.54pt</Top>
-        <ReportItems>
-          <Textbox Name="Textbox3">
-            <Height>20.29pt</Height>
-            <Width>115.45pt</Width>
-            <Value>="КОРПУС" + " " + {?preferred_terminal}</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.00pt</Left>
-            <Top>4.90pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <FontSize>14pt</FontSize>
-              <TextAlign>Center</TextAlign>
-              <VerticalAlign>Middle</VerticalAlign>
-            </Style>
-            <CanGrow>false</CanGrow>
-          </Textbox>
-          <Textbox Name="Textbox1">
-            <Height>14.26pt</Height>
-            <Width>114.71pt</Width>
-            <Value>=First({nomenclature_name}, "Data")</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.0pt</Left>
-            <Top>27.5pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-              <VerticalAlign>Middle</VerticalAlign>
-            </Style>
-            <CanGrow>false</CanGrow>
-          </Textbox>
-          <Textbox Name="Textbox4">
-            <Height>10.51pt</Height>
-            <Width>115.48pt</Width>
-            <Value>=First({tab_num}, "Data")</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.00pt</Left>
-            <Top>43.20pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-              <VerticalAlign>Middle</VerticalAlign>
-            </Style>
-            <CanGrow>false</CanGrow>
-          </Textbox>
-          <Textbox Name="Textbox5">
-            <Height>11.25pt</Height>
-            <Width>114.73pt</Width>
-            <Value>=First({employee_name}, "Data")</Value>
-            <ZIndex>1</ZIndex>
-            <Left>0.80pt</Left>
-            <Top>58.60pt</Top>
-            <Style>
-              <BorderStyle />
-              <BorderColor />
-              <BorderWidth />
-              <TextAlign>Center</TextAlign>
-              <VerticalAlign>Middle</VerticalAlign>
-            </Style>
-            <CanGrow>false</CanGrow>
-          </Textbox>
-        </ReportItems>
+      <Table Name="Table1" >
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
         <Style>
-          <BorderStyle />
+          <BorderStyle>
+            <Default>None</Default>
+            <Left>None</Left>
+            <Right>None</Right>
+            <Top>None</Top>
+            <Bottom>None</Bottom>
+          </BorderStyle>
           <BorderColor />
           <BorderWidth />
         </Style>
-      </List>
+        <TableColumns>
+          <TableColumn>
+            <Width>139.1pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox2">
+                      <Value>="КОРПУС" + " " + {?preferred_terminal}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>11pt</FontSize>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Visibility>
+                <Hidden>=!{?show_terminal}</Hidden>
+              </Visibility>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox9">
+                      <Value>=First({nomenclature_name}, "Data")</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>11.2pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox8">
+                      <Value>={tab_num}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                      <CanShrink>false</CanShrink>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>={employee_name}
+</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                      <CanShrink>true</CanShrink>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Left>7.5pt</Left>
+        <Top>89.5pt</Top>
+      </Table>
+      <Rectangle Name="Rectangle1" >
+        <Height>149.79pt</Height>
+        <Width>144.93pt</Width>
+        <Left>5.25pt</Left>
+        <Top>6.89pt</Top>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+            <Left>Solid</Left>
+            <Right>Solid</Right>
+            <Top>Solid</Top>
+            <Bottom>Solid</Bottom>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Rectangle>
     </ReportItems>
   </Body>
   <PageFooter>
@@ -198,8 +277,17 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
     <PrintOnFirstPage>false</PrintOnFirstPage>
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageFooter>
-  <DataElementName >Report</DataElementName>
-  <DataElementStyle >AttributeNormal</DataElementStyle>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
   <ReportParameters >
     <ReportParameter Name="barcode_id">
       <DataType>Integer</DataType>
@@ -258,14 +346,12 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="show_terminal">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
   </ReportParameters>
-  <DataSources >
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString></ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>

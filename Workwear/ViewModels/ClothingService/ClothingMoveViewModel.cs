@@ -142,6 +142,7 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 
+		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
 		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
@@ -229,6 +230,7 @@ namespace Workwear.ViewModels.ClothingService {
 					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
 					{"number_system", claim.Barcode.Title.Substring(0,2)},
 					{"product_code", claim.Barcode.Title.Substring(7,5)},
+					{"show_terminal", ShowTerminal},
 					{"preferred_terminal",  claim.PreferredTerminalId.HasValue
 						? GetTerminalLabel(claim.PreferredTerminalId.Value)
 						: string.Empty}
