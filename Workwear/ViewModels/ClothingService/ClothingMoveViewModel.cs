@@ -112,9 +112,10 @@ namespace Workwear.ViewModels.ClothingService {
 				Close(false, CloseSource.Self);
 				return;
 			}
-			SendPush(status);
+			
 			UoW.Save(Claim);
 			UoW.Commit();
+			SendPush(status);
 			
 			BarcodeInfoViewModel.BarcodeText = String.Empty;
 			BarcodeInfoViewModel.Barcode = null;
@@ -124,8 +125,10 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public void SendPush(StateOperation status) {
 			List<string> responseMessages = new List<string>();
-			if(status.Claim.Employee.PhoneNumber != null) {
-				IEnumerable<OutgoingMessage> messages = new[] { MakeNotificationMessage(status.Claim.Employee) };
+			var claimState = status.Claim.States.Last().State;
+			if((!string.IsNullOrWhiteSpace(status.Claim.Employee.PhoneNumber))
+			   && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair)) {
+				IEnumerable<OutgoingMessage> messages = new[] { MakeNotificationMessage(status) };
 				string result = String.Empty;
 				if(messages.Any()) {
 					result = notificationManager.SendMessages(messages);
@@ -144,14 +147,19 @@ namespace Workwear.ViewModels.ClothingService {
 		public WindowGravity WindowPosition { get; } = WindowGravity.Center;
 		#endregion
 		
-		private OutgoingMessage MakeNotificationMessage(EmployeeCard employee)
+		private OutgoingMessage MakeNotificationMessage(StateOperation status)
 		{
+			string text = String.Empty;
+			var claimState = status.Claim.States.Last().State;
+			if(claimState == ClaimState.InDryCleaning)
+				text = "Ваша спецодежда перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
+			if(claimState == ClaimState.InRepair)
+				text = "Ваша спецодежда перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
 			OutgoingMessage message = new OutgoingMessage {
-				Phone = employee.PhoneNumber,
-				Title = "MessageTitle",
-				Text = "MessageText"
+				Phone = status.Claim.Employee.PhoneNumber,
+				Title = "Изменение статуса обслуживания одежды",
+				Text = text
 			};
-
 			return message;
 		}
 	}
