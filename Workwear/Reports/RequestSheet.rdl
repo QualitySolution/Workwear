@@ -995,14 +995,14 @@ WHERE (-1 IN (@subdivisions) OR employees.subdivision_id IN (@subdivisions))
 GROUP BY
     employee_cards_item.protection_tools_id,
     IF(@show_sex, employees.sex, NULL),
-    size,
-    growth
+    IF(@show_size, size, NULL),
+    IF(@show_size, growth, NULL)
 HAVING amount_sum &gt; 0
 ORDER BY
     type_name,
     IF(@show_sex, employees.sex, NULL),
-    size,
-    growth</CommandText>
+    IF(@show_size, size, NULL),
+    IF(@show_size, growth, NULL)</CommandText>
         <QueryParameters>
           <QueryParameter Name="begin_year">
             <Value>={?begin_year}</Value>
@@ -1039,6 +1039,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@employee_groups_ids">
             <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_size">
+            <Value>={?show_size}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
