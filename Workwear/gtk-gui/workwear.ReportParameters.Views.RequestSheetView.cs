@@ -46,13 +46,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Expander expander1;
 
-		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+		private global::QS.Views.Control.ChoiceListView choiceprotectiontoolsview1;
 
 		private global::Gtk.Label GtkLabel11;
 
 		private global::Gtk.Expander expander2;
 
-		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview1;
+		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
 		private global::Gtk.Label GtkLabel13;
 
@@ -303,10 +303,9 @@ namespace workwear.ReportParameters.Views
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
-			this.expander1.Name = "expander1";
 			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
-			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
 			this.expander1.Add(this.choiceprotectiontoolsview1);
@@ -323,7 +322,7 @@ namespace workwear.ReportParameters.Views
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
 			// Container child expander2.Gtk.Container+ContainerChild
-			this.choiceemployeegroupview1 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
+			this.choiceemployeegroupview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
 			this.expander2.Add(this.choiceemployeegroupview1);

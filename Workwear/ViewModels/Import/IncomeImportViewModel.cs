@@ -11,12 +11,14 @@ using QS.Project.Journal;
 using QS.Services;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Import;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using workwear.Tools.Import;
 using Workwear.Tools.Sizes;
@@ -24,7 +26,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Import 
 {
-	public class IncomeImportViewModel : UowDialogViewModelBase {
+	public class IncomeImportViewModel : UowDialogViewModelBase, IDialogDocumentation {
 		private readonly IUserService userService;
 		public IncomeImportViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -54,6 +56,11 @@ namespace Workwear.ViewModels.Import
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("import.html#import-stock-incomes");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		#region Events
 		

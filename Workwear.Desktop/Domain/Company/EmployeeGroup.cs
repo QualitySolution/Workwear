@@ -11,7 +11,8 @@ namespace Workwear.Domain.Company {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "группы сотрудников",
 		Nominative = "группа сотрудников",
-		Genitive = "группы сотрудников"
+		Genitive = "группы сотрудников",
+		GenitivePlural = "групп сотрудников"
 	)]
 	[HistoryTrace]
 	public class EmployeeGroup: PropertyChangedBase, IDomainObject , IValidatableObject{
@@ -64,6 +65,15 @@ namespace Workwear.Domain.Company {
 			};
 			Items.Add(item);
 			return item;
+		}
+
+		public virtual void RemoveEmployees(EmployeeGroupItem[] employees) {
+			foreach(var employee in employees) {
+				RemoveEmployee(employee);
+			}
+		}
+		public virtual void RemoveEmployee(EmployeeGroupItem employee) {
+			Items.RemoveAll(i => i.Employee.Id == employee.Employee.Id);
 		}
 		
 		#region IValidatableObject

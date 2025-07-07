@@ -339,7 +339,6 @@ namespace Workwear.Test.Integration.Operations
 				//Возвращаем 2 штуки
 				var returndoc = new Return() {
 					Date = new DateTime(2021, 9, 11),
-					EmployeeCard = employee,
 					Warehouse = warehouse,
 				};
 				

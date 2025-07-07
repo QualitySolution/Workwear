@@ -23,21 +23,20 @@
                  CONCAT(LEFT(em.first_name, 1), '.'),
                  CONCAT(LEFT(em.patronymic_name, 1), '.')
        ),
-       IF(items.warehouse_operation_id is not null,
-          w.name,
-          ''
-       )
+       COALESCE(w.name, dn.name)
     ) as subject_name,
     items.cause,
-    CONCAT(CONVERT(opissue.wear_percent * 100, INTEGER), ' %') as wear_percent
+    CONCAT(CONVERT(COALESCE(opissue.wear_percent, opdutn.wear_percent, opwarh.wear_percent) * 100, INTEGER), ' %') as wear_percent
 FROM stock_write_off_detail as items
          LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
          LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
-         LEFT JOIN protection_tools as pt ON pt.id = opissue.protection_tools_id
+         LEFT JOIN operation_issued_by_duty_norm as opdutn on opdutn.id = items.duty_norm_issue_operation_id
+         LEFT JOIN protection_tools as pt ON (pt.id = opissue.protection_tools_id OR pt.id = opdutn.protection_tools_id)
          LEFT JOIN operation_warehouse as opwarh on opwarh.id = items.warehouse_operation_id
          LEFT JOIN employees as em on em.id = opissue.employee_id
          LEFT JOIN warehouse as w on w.id = opwarh.warehouse_expense_id
-         LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id)
+         LEFT JOIN duty_norms as dn on opdutn.duty_norm_id = dn.id
+         LEFT JOIN nomenclature as n ON (n.id = opissue.nomenclature_id OR n.id = opwarh.nomenclature_id OR n.id = opdutn.nomenclature_id)
          LEFT JOIN item_types as it on(IF(n.type_id IS NULL, pt.item_types_id=it.id,n.type_id=it.id))
          LEFT JOIN measurement_units as mu on it.units_id = mu.id
          LEFT JOIN sizes as size on size.id = opwarh.size_id

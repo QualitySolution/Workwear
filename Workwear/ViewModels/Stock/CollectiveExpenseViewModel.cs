@@ -12,6 +12,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -20,6 +21,7 @@ using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -35,7 +37,7 @@ using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class CollectiveExpenseViewModel : EntityDialogViewModelBase<CollectiveExpense>, ISelectItem
+	public class CollectiveExpenseViewModel : PermittingEntityDialogViewModelBase<CollectiveExpense>, ISelectItem, IDialogDocumentation
 	{
 		private ILifetimeScope autofacScope;
 		private readonly CurrentUserSettings currentUserSettings;
@@ -57,7 +59,8 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator,
 			IUserService userService,
 			CurrentUserSettings currentUserSettings,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			EmployeeIssueModel issueModel,
 			StockRepository stockRepository,
 			CommonMessages commonMessages,
@@ -66,7 +69,7 @@ namespace Workwear.ViewModels.Stock
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator progressCreator,
 			IEntityChangeWatcher changeWatcher
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
+			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
@@ -77,6 +80,7 @@ namespace Workwear.ViewModels.Stock
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
+			SetDocumentDateProperty(e => e.Date);
 
 			var performance = new ProgressPerformanceHelper(globalProgress, 12, "Предзагрузка данных документа", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
@@ -97,7 +101,9 @@ namespace Workwear.ViewModels.Stock
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
+			WarehouseEntryViewModel.IsEditable = CanEdit;
 			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
+			TransferAgentEntryViewModel.IsEditable = CanEdit;
 			
 			performance.StartGroup("CollectiveExpenseItemsViewModel");
 			var parameterModel = new TypedParameter(typeof(CollectiveExpenseViewModel), this);
@@ -122,13 +128,18 @@ namespace Workwear.ViewModels.Stock
 			performance.End();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#collective-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region EntityViewModels
 		public EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public EntityEntryViewModel<EmployeeCard> TransferAgentEntryViewModel;
 		#endregion
 		
 		#region Свойства View
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -190,6 +201,12 @@ namespace Workwear.ViewModels.Stock
 		}
 		#endregion
 
+		#region Ведомости
+		public bool CanCreateIssuanceSheet => CanEdit;
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		
 		public void OpenIssuanceSheet()
 		{
 			if(UoW.HasChanges) {
@@ -204,8 +221,11 @@ namespace Workwear.ViewModels.Stock
 			var defaultLeader = UoW.GetInSession(currentUserSettings.Settings.DefaultLeader);
 			var defaultResponsiblePerson = UoW.GetInSession(currentUserSettings.Settings.DefaultResponsiblePerson);
 			Entity.CreateIssuanceSheet(defaultOrganization, defaultLeader, defaultResponsiblePerson);
+			
+			OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+			OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+			OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 		}
-
 		public void PrintIssuanceSheet(IssuedSheetPrint doc)
 		{
 			if(UoW.HasChanges) {
@@ -229,10 +249,10 @@ namespace Workwear.ViewModels.Stock
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
+		#endregion
 
 		#region ISelectItem
-		public void SelectItem(int id)
-		{
+		public void SelectItem(int id) {
 			CollectiveExpenseItemsViewModel.SelectedItem = Entity.Items.First(x => x.Id == id);
 		}
 		#endregion

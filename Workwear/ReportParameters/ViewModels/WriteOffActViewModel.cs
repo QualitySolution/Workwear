@@ -1,14 +1,21 @@
 ﻿using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using System.Collections.Generic;
 using System;
+using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class WriteOffActViewModel: ReportParametersViewModelBase {
+	public class WriteOffActViewModel: ReportParametersViewModelBase, IDialogDocumentation {
 		public WriteOffActViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) 
 		{
 			Title = "Справка по списаниям";
 			Identifier = "WriteOffAct";
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#written-off");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object>() {
 			{ "start_date", StartDate },
@@ -46,7 +53,7 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
-		private bool showAutoWriteOff=true;
+		private bool showAutoWriteOff=false;
 		public virtual bool ShowAutoWriteOff {
 			get=> showAutoWriteOff;
 			set {

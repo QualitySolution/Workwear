@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -135,11 +135,13 @@ namespace Workwear.Domain.Operations
 		}
 
 		private EmployeeIssueOperation issuedOperation;
-		[Display(Name = "Операция выдачи")]
+		[Display(Name = "Списать операцию выдачи")]
 		public virtual EmployeeIssueOperation IssuedOperation {
 			get => issuedOperation;
 			set => SetField(ref issuedOperation, value);
 		}
+
+		IGraphIssueOperation IGraphIssueOperation.IssuedOperation => issuedOperation;
 
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Сопутствующая складская операция")]
@@ -347,7 +349,7 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			Employee = item.Document.EmployeeCard;
+			Employee = item.EmployeeCard;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
 			Height = item.Height;

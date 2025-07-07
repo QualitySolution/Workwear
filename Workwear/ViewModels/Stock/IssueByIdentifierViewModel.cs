@@ -16,6 +16,7 @@ using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Stock;
@@ -29,7 +30,7 @@ using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class IssueByIdentifierViewModel : WindowDialogViewModelBase
+	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
@@ -105,7 +106,10 @@ namespace Workwear.ViewModels.Stock
 
 			ReadConfig();
 		}
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#identity-cards");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		#region Считыватель
 		#region События
 

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Gamma.Utilities;
+﻿using Gamma.Utilities;
 using QS.Navigation;
 using QS.Views.Dialog;
 using Workwear.Domain.Communications;

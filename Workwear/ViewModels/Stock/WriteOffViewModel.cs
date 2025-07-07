@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NLog;
@@ -7,6 +8,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Report;
@@ -15,61 +17,81 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock
 {
-    public class WriteOffViewModel : EntityDialogViewModelBase<Writeoff>
+    public class WriteOffViewModel : PermittingEntityDialogViewModelBase<Writeoff>, IDialogDocumentation
     {
-	    private readonly EmployeeIssueModel issueModel;
+	    private readonly EmployeeIssueModel employeeIssueModel;
+	    private readonly StockBalanceModel stockBalanceModel;
 	    private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public SizeService SizeService { get; }
         public EmployeeCard Employee { get;}
+        public DutyNorm DutyNorm { get;}
         public Warehouse CurWarehouse { get; set; }
         public FeaturesService FeaturesService { get; }
         private OrganizationRepository organizationRepository;
         private IInteractiveService interactive;
         public IList<Owner> Owners { get; }
         public IList<CausesWriteOff> CausesWriteOffs { get; }
+        private DutyNormRepository dutyNormRepository;
 
         public WriteOffViewModel(
             IEntityUoWBuilder uowBuilder, 
             IUnitOfWorkFactory unitOfWorkFactory,
-            UnitOfWorkProvider unitOfWorkProvider,
             INavigationManager navigation,
             IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
             ILifetimeScope autofacScope,
             IUserService userService,
+            BaseParameters baseParameters,
+            UnitOfWorkProvider unitOfWorkProvider,
             SizeService sizeService,
             FeaturesService featuresService,
             EmployeeIssueModel issueModel,
+            StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
+            DutyNormRepository dutyNormRepository,
             EmployeeCard employee = null,
-            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
-	        this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+            DutyNorm dutyNorm = null,
+            IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
+	        this.employeeIssueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+	        this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 	        FeaturesService = featuresService;
             SizeService = sizeService;
             NavigationManager = navigation;
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-            Entity.Items.ContentChanged += CalculateTotal;
-            CalculateTotal(null, null);
+            this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+            SetDocumentDateProperty(e => e.Date);
+            
+            Entity.Items.ContentChanged += (sender, args) =>  CalculateTotal();
+            CalculateTotal();
+            
             if (Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
             }
             Employee = UoW.GetInSession(employee);
+            DutyNorm = UoW.GetInSession(dutyNorm);
             Owners = UoW.GetAll<Owner>().ToList();
             CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
@@ -80,14 +102,20 @@ namespace Workwear.ViewModels.Stock
 	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 	            .UseViewModelDialog<LeadersViewModel>()
 	            .Finish();
+            ResponsibleDirectorPersonEntryViewModel.IsEditable = CanEdit;
+	            
             ResponsibleChairmanPersonEntryViewModel = entryBuilder.ForProperty(x => x.Chairman)
 	            .UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 	            .UseViewModelDialog<LeadersViewModel>()
 	            .Finish();
+            ResponsibleChairmanPersonEntryViewModel.IsEditable = CanEdit;
+	            
             ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
 	            .UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 	            .UseViewModelDialog<OrganizationViewModel>()
 	            .Finish();
+            ResponsibleOrganizationEntryViewModel.IsEditable = CanEdit;
+	            
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 
@@ -96,14 +124,26 @@ namespace Workwear.ViewModels.Stock
 	            logger.Info($"Создание Нового документа Списания");
             } else 
 	            AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+            
+            Validations.Clear();
+            Validations.Add(
+	            new ValidationRequest(Entity, 
+		            new ValidationContext(Entity, 
+			            new Dictionary<object, object> { {nameof(BaseParameters), baseParameters} } 
+		            )));
         }
+        
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#writeoff");
+        public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+        #endregion
         
         #region ViewProperty
         
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
-        public bool SensitiveDocNumber => !AutoDocNumber;
+        public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
         private bool autoDocNumber = true;
         [PropertyChangedAlso(nameof(DocNumberText))]
@@ -128,12 +168,12 @@ namespace Workwear.ViewModels.Stock
         }
         private bool delSensitive;
         public bool DelSensitive {
-            get => delSensitive;
+            get => CanEdit && delSensitive;
             set => SetField(ref delSensitive, value);
         }
         #endregion
 
-        private void CalculateTotal(object sender, EventArgs eventArgs) {
+        private void CalculateTotal() {
             Total = $"Позиций в документе: {Entity.Items.Count}  " +
                     $"Количество единиц: {Entity.Items.Sum(x => x.Amount)}";
         }
@@ -161,7 +201,7 @@ namespace Workwear.ViewModels.Stock
 	        foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
 		        Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, 
 					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
-	        CalculateTotal(null, null);
+	        CalculateTotal();
         }
 
         public void AddFromEmployee() {
@@ -169,13 +209,17 @@ namespace Workwear.ViewModels.Stock
                 NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
                     this,
                     Employee,
-                    OpenPageOptions.AsSlave);
-            selectJournal.ViewModel.Filter.DateSensitive = false;
-            selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-            selectJournal.ViewModel.Filter.SubdivisionSensitive =  Employee == null;
-            selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
-            selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
+                    OpenPageOptions.AsSlave,
+                    addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+	                    filter => {
+		                    filter.DateSensitive = false;
+		                    filter.CheckShowWriteoffVisible = false;
+		                    filter.SubdivisionSensitive = Employee == null;
+		                    filter.EmployeeSensitive = Employee == null;
+		                    filter.Date = Entity.Date;
+		                    filter.CanChooseAmount = true;
+	                    });
+                    });
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
@@ -187,12 +231,76 @@ namespace Workwear.ViewModels.Stock
             foreach (var operation in operations)
 	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
             
-            CalculateTotal(null, null);
+            CalculateTotal();
+        }
+
+        public void AddFromDutyNorm() 
+        {
+	        var selectJournal = NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
+		        this,
+		        DutyNorm,
+		        OpenPageOptions.AsSlave);
+	        selectJournal.ViewModel.Filter.DateSensitive = false;
+	        selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
+	        selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
+	        selectJournal.ViewModel.Filter.Date = Entity.Date;
+	        selectJournal.ViewModel.OnSelectResult += SelectFromDutyNorm_Selected;
+        }
+
+        private void SelectFromDutyNorm_Selected(object sender, JournalSelectedEventArgs e) 
+        {
+	        var operations=UoW.GetById<DutyNormIssueOperation>(e.GetSelectedObjects<DutyNormBalanceJournalNode>().Select(x => x.Id));
+	        var balance = e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
+	        foreach(var operation in operations)
+		        Entity.AddItem(operation, balance[operation.Id]);
+	        CalculateTotal();
         }
         
+        public void FillMaxAmount(DateTime? date = null) {
+	        var itemsWh = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Warehouse).ToList();
+	        if(itemsWh.Any()) {
+		        // для всех списаний со склада
+		        var nomenclatures = itemsWh.Select(i => i.Nomenclature);
+		        stockBalanceModel.OnDate = date;
+		        stockBalanceModel.ExcludeOperations = itemsWh.Select(i => i.WarehouseOperation);
+		        stockBalanceModel.AddNomenclatures(nomenclatures);
+		        foreach(var item in itemsWh)
+			        item.MaxAmount = stockBalanceModel.GetAmount(item.StockPosition);
+	        }
+	        
+	        var itemsEmp = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Employee).ToList();
+	        if(itemsEmp.Any()) {
+		        // для всех списаний с сотрудника
+		        var operations = itemsEmp
+			        .Select(i => i.EmployeeWriteoffOperation)
+			        .Select(o => o.IssuedOperation)
+			        .ToArray();
+		        var writtenOff = employeeIssueModel.CalculateWrittenOff(operations, UoW, date);
+
+		        foreach(var item in itemsEmp) {
+			        var operation = item.EmployeeWriteoffOperation.IssuedOperation;
+					item.MaxAmount = operation.Issued -
+						(writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+		        }
+	        }
+	        var itemsDutyNorm = Entity.Items.Where(i=>i.WriteoffFrom==WriteoffFrom.DutyNorm).ToList();
+	        if(itemsDutyNorm.Any()) {
+		        // для всех списаний с дежурной нормы
+		        var operations = itemsDutyNorm
+			        .Select(i=>i.DutyNormWriteOffOperation)
+			        .Select(o=>o.IssuedOperation)
+			        .ToArray();
+		        var writtenOff=dutyNormRepository.CalculateWrittenOff(operations, UoW, date);
+		        foreach(var item in itemsDutyNorm) {
+			        var operation = item.DutyNormWriteOffOperation.IssuedOperation;
+			        item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+		        }
+	        }
+	        
+        }
         public void DeleteItem(WriteoffItem item) {
             Entity.RemoveItem(item);
-            CalculateTotal(null, null);
+            CalculateTotal();
         }
         #endregion
 
@@ -216,6 +324,7 @@ namespace Workwear.ViewModels.Stock
         public override bool Save() {
             logger.Info ("Запись документа...");
             
+            FillMaxAmount(Entity.Date);
             Entity.UpdateOperations(UoW);
             if (Entity.Id == 0)
                 Entity.CreationDate = DateTime.Now;
@@ -234,7 +343,7 @@ namespace Workwear.ViewModels.Stock
 	            .ToArray();
             if(employeeOperations.Any()) {
                 logger.Info("Обновляем записи о выданной одежде в карточке сотрудника...");
-                issueModel.UpdateNextIssue(employeeOperations, changeLog: (operation, s) => logger.Debug(s));
+                employeeIssueModel.UpdateNextIssue(employeeOperations, changeLog: (operation, s) => logger.Debug(s));
                 UoW.Commit();
             }
             logger.Info ("Ok");

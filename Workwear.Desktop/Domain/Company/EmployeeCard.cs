@@ -27,7 +27,8 @@ namespace Workwear.Domain.Company
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников",
-		Genitive = "карточки сотрудника"
+		Genitive = "карточки сотрудника",
+		GenitivePlural = "карточек сотрудников"
 	)]
 	[HistoryTrace]
 	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
@@ -461,7 +462,7 @@ namespace Workwear.Domain.Company
 			if(Id == 0) {
 				// Нет смысла лезть в базу, так как сотрудник еще не сохранен.
 				foreach(var item in WorkwearItems) {
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph();
 				}
 				return;
 			}
@@ -480,9 +481,9 @@ namespace Workwear.Domain.Company
 			
 			foreach (var item in WorkwearItems) {
 				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
-					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
 				else 
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
 			}
 		}
 
@@ -512,7 +513,7 @@ namespace Workwear.Domain.Company
 			var operations = employeeIssueRepository.AllOperationsForEmployee(this, q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools), uow);
 			var toRecalculate = operations.Where(x => x.IsTouchDates(begin, end)).ToList();
 			foreach (var typeGroup in toRecalculate.GroupBy(o => o.ProtectionTools)) {
-				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList());
+				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList<IGraphIssueOperation>());
 				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);

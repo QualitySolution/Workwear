@@ -10,8 +10,8 @@ namespace Workwear.ReportParameters.Views {
 			
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
-			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
-			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			
 			ycheckbuttonExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();

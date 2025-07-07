@@ -220,9 +220,9 @@ namespace Workwear.Repository.Operations
 				.Where(x => x.Id.IsIn(operationsIds))
 				.SelectList(list => list
 					.Select(i => i.Id).WithAlias(() => docAlias.OperationId)
-					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenceItemId)
-					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenceId)
-					.Select(() => expenseAlias.DocNumber).WithAlias(() => docAlias.ExpenceDocNumber)
+					.Select(() => expenseItemAlias.Id).WithAlias(() => docAlias.ExpenseItemId)
+					.Select(() => expenseItemAlias.ExpenseDoc.Id).WithAlias(() => docAlias.ExpenseId)
+					.Select(() => expenseAlias.DocNumber).WithAlias(() => docAlias.ExpenseDocNumber)
 					.Select(() => collectiveExpenseItemAlias.Id).WithAlias(() => docAlias.CollectiveExpenseItemId)
 					.Select(() => collectiveExpenseItemAlias.Document.Id).WithAlias(() => docAlias.CollectiveExpenseId)
 					.Select(() => collectiveExpenseAlias.DocNumber).WithAlias(() => docAlias.CollectiveExpenseDocNumber)
@@ -238,9 +238,6 @@ namespace Workwear.Repository.Operations
 				)
 				.TransformUsing(Transformers.AliasToBean<OperationToDocumentReference>())
 				.List<OperationToDocumentReference>();
-
-			foreach(var item in result)
-				item.OperationType = OperationType.EmployeeIssue;
 
 			return result;
 		}

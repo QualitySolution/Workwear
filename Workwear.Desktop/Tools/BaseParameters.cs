@@ -25,6 +25,9 @@ namespace Workwear.Tools
 			set => Dynamic[nameof(DefaultAutoWriteoff)] = value;
 		}
 		
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней)
+		/// </summary>
 		public virtual int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
@@ -97,6 +100,14 @@ namespace Workwear.Tools
 		public virtual bool IsDocNumberInReturnSign {
 			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
 			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
+		}
+		
+		/// <summary>
+		/// Дата запрета редактирования документов.
+		/// </summary>
+		public virtual DateTime? EditLockDate {
+			get => Dynamic.EditLockDate(typeof(DateTime?));
+			set => Dynamic[nameof(EditLockDate)] = value;
 		}
 		#endregion
 	}

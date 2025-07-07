@@ -71,7 +71,19 @@
 |✅
 |✅
 
+|<<regulations.adoc#duty-norms,Дежурные нормы>>
+|❌
+|✅
+|✅
+|✅
+
 |<<stock.adoc#sizes,Редактирование размеров>>
+|❌
+|✅
+|✅
+|✅
+
+|<<settings.adoc#accounting-settings,Дата запрета редактирования>>
 |❌
 |✅
 |✅

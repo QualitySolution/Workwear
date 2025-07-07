@@ -8,6 +8,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Tools;
 
 namespace Workwear.Domain.Stock.Documents
 {
@@ -98,11 +99,28 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { nameof(Items)});
 			
+			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			foreach(var item in Items) {
-				if(item.Amount > item.MaxAmount)
-					yield return new ValidationResult(
-						$" \"{item.Nomenclature.Name}\" указано колличество больше выданного.",
-						new[] { nameof(Items) });
+				switch(item.WriteoffFrom) {
+					case WriteoffFrom.Warehouse:
+						if(baseParameters.CheckBalances && item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится на складе.",
+								new[] { nameof(Items) });
+						break;
+					case WriteoffFrom.Employee:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится за сотрудником.",
+								new[] { nameof(Items) });
+						break;
+					case WriteoffFrom.DutyNorm:
+						if(item.Amount>item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.Nomenclature.Name}\" указано колличество больше чем числится по дежурной норме.",
+								new[] { nameof(Items) });
+						break;
+				}
 			}
 		}
 
@@ -120,6 +138,20 @@ namespace Workwear.Domain.Stock.Documents
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
 			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation))) {
+				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+				return null;
+			}
+			var item = new WriteoffItem(this, operation, count);
+			Items.Add(item);
+			return item;
+		}
+
+		public virtual WriteoffItem AddItem(DutyNormIssueOperation operation, int count) 
+		{
+			if(operation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.DutyNormWriteOffOperation?.IssuedOperation, operation))) {
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}

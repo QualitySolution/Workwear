@@ -10,12 +10,14 @@ using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Tools
 {
-	public class ReplaceEntityViewModel : UowDialogViewModelBase
+	public class ReplaceEntityViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		
@@ -46,6 +48,11 @@ namespace Workwear.ViewModels.Tools
 			SourceList.ContentChanged += (s, a) => OnPropertyChanged(nameof(SensitiveReplaceButton));
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("manipulation.html#replace-links");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
+		
 		#region View Properties
 		public IProgressBarDisplayable Progress {
 			get => replaceEntity.Progress;

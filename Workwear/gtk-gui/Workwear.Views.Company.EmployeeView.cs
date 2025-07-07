@@ -120,7 +120,7 @@ namespace Workwear.Views.Company
 
 		private global::Gamma.GtkWidgets.yLabel labelUser;
 
-		private global::Gamma.Widgets.yValidatedEntry yentryEMail;
+		private global::QS.Widgets.ValidatedEntry yentryEMail;
 
 		private global::Gamma.GtkWidgets.yEntry yentryPersonnelNumber;
 
@@ -866,11 +866,11 @@ namespace Workwear.Views.Company
 			w61.XOptions = ((global::Gtk.AttachOptions)(4));
 			w61.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.yentryEMail = new global::Gamma.Widgets.yValidatedEntry();
+			this.yentryEMail = new global::QS.Widgets.ValidatedEntry();
 			this.yentryEMail.CanFocus = true;
 			this.yentryEMail.Name = "yentryEMail";
 			this.yentryEMail.IsEditable = true;
-			this.yentryEMail.InvisibleChar = '•';
+			this.yentryEMail.InvisibleChar = '●';
 			this.table1.Add(this.yentryEMail);
 			global::Gtk.Table.TableChild w62 = ((global::Gtk.Table.TableChild)(this.table1[this.yentryEMail]));
 			w62.TopAttach = ((uint)(7));

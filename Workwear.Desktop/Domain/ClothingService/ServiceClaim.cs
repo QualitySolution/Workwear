@@ -10,9 +10,10 @@ using Workwear.Domain.Stock;
 namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "заявки на обслуживание",
-		Nominative = "заявка на обслуживание",
-		Genitive = "заявки на обслуживание")]
+		NominativePlural = "заявки на обслуживание спецодежды",
+		Nominative = "заявка на обслуживание спецодежды",
+		Genitive = "заявки на обслуживание спецодежды",
+		GenitivePlural = "заявок на обслуживание спецодежды")]
 	public class ServiceClaim : PropertyChangedBase, IDomainObject {
 		#region Cвойства
 		public virtual int Id { get; set; }

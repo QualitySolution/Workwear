@@ -16,7 +16,8 @@
         <CommandText>select items.terminal_location,
        doc.create_time                                                                         as date,
        barcodes.title                                                                          as barcode,
-       CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as FIO,
+       employees.personnel_number                                                              as tab,
+       CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name)    as FIO,
        nomenclature.name                                                                       as nomenclature
 from postomat_documents_withdraw as doc
          left join postomat_document_withdraw_items as items on items.document_withdraw_id = doc.id
@@ -50,6 +51,10 @@ where doc.id = @id;</CommandText>
         <Field Name="date">
           <DataField>date</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="tab">
+          <DataField>tab</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -169,16 +174,19 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>93.0pt</Width>
+            <Width>54.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>93.0pt</Width>
           </TableColumn>
-          <TableColumn>
-            <Width>192.6pt</Width>
+          <TableColumn >
+            <Width>66.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>190.7pt</Width>
+            <Width>178.3pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>180.7pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -218,6 +226,25 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox9">
+                      <Value>Табельный</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                        <FontSize >10pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -280,6 +307,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
                         <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -297,6 +325,25 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
                         <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox10">
+                      <Value>={tab}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -315,6 +362,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
                         <TextAlign>General</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -333,6 +381,7 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
                         <TextAlign>General</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>

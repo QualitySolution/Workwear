@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock.Documents {
@@ -75,22 +78,7 @@ namespace Workwear.Domain.Stock.Documents {
 			get => commentReturn;
 			set { SetField(ref commentReturn, value, () => СommentReturn); }
 		}
-
-		private EmployeeIssueOperation returnFromEmployeeOperation;
-		[Display(Name = "Операция возврата от сотрудника")]
-		[IgnoreHistoryTrace]
-		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
-			get => returnFromEmployeeOperation;
-			set => SetField(ref returnFromEmployeeOperation, value);
-		}
-
-		private WarehouseOperation warehouseOperation = new WarehouseOperation();
-		[Display(Name = "Операция на складе")]
-		[IgnoreHistoryTrace]
-		public virtual WarehouseOperation WarehouseOperation {
-			get => warehouseOperation;
-			set => SetField(ref warehouseOperation, value);
-		}
+		
 		private Size wearSize;
 		[Display(Name = "Размер")]
 		public virtual Size WearSize {
@@ -114,29 +102,100 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			}
 		}
+		
+		private WarehouseOperation warehouseOperation = new WarehouseOperation();
+		[Display(Name = "Операция возврата на склад")]
+		[IgnoreHistoryTrace]
+		public virtual WarehouseOperation WarehouseOperation {
+			get => warehouseOperation;
+			set => SetField(ref warehouseOperation, value);
+		}
+		
+		private EmployeeCard employeeCard;
+		[Display (Name = "Сотрудник")]
+		public virtual EmployeeCard EmployeeCard {
+			get => employeeCard;
+			set => SetField(ref employeeCard, value);
+		}
+		
+		private EmployeeIssueOperation returnFromEmployeeOperation;
+		[Display(Name = "Операция возврата от сотрудника")]
+		[IgnoreHistoryTrace]
+		public virtual EmployeeIssueOperation ReturnFromEmployeeOperation {
+			get => returnFromEmployeeOperation;
+			set => SetField(ref returnFromEmployeeOperation, value);
+		}
+
+		private DutyNorm dutyNorm;
+		[Display(Name = "Дежурная норма")]
+		public virtual DutyNorm DutyNorm {
+			get => dutyNorm;
+			set => SetField (ref dutyNorm, value);
+		}
+		
+		private DutyNormIssueOperation returnFromDutyNormOperation;
+		[IgnoreHistoryTrace]
+		[Display(Name = "Операция возврата с дежурной нормы")]
+		public virtual DutyNormIssueOperation ReturnFromDutyNormOperation {
+			get => returnFromDutyNormOperation;
+			set => SetField(ref returnFromDutyNormOperation, value);
+		}
+		
+		[Display(Name = "Процент износа")]
+		public virtual decimal WearPercent {
+			get { switch(ReturnFrom) {
+					case ReturnFrom.Employee : return ReturnFromEmployeeOperation.WearPercent;
+					case ReturnFrom.DutyNorm : return ReturnFromDutyNormOperation.WearPercent;
+					default : return 0;
+				}
+			}
+			set { switch(ReturnFrom) {
+					case ReturnFrom.Employee: if(ReturnFromEmployeeOperation.WearPercent != value) {
+							ReturnFromEmployeeOperation.WearPercent = value;
+							OnPropertyChanged(); } break;
+					case ReturnFrom.DutyNorm: if(ReturnFromDutyNormOperation.WearPercent != value) {
+							ReturnFromDutyNormOperation.WearPercent = value;
+							OnPropertyChanged(); } break;
+				}
+			}
+		}
 
 		#endregion
-		#region Расчетные
+		
+		#region Не сохраняемые в базу свойства
 		public virtual string Title =>
 			$"Возврат на склад {Nomenclature?.Name} в количестве {Amount} {Nomenclature?.Type?.Units?.Name}";
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
-		#endregion
+
+		public virtual ReturnFrom ReturnFrom {
+			get {
+				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null)
+					return ReturnFrom.Employee;
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null)
+					return ReturnFrom.DutyNorm;
+				throw new InvalidOperationException(
+					"Строка документа списания находится в поломанном состоянии. " +
+					"Должна быть заполнена хотя бы одна операция.");
+			}
+		}
+		public virtual string ReturnFromText{
+			get{
+				switch(ReturnFrom) {
+					case ReturnFrom.Employee : return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
+					case ReturnFrom.DutyNorm : return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
+					default : return String.Empty;
+				}
+			}
+		}
 		
-		#region Не сохраняемые в базу свойства
-		//FIXME не учитывает прошлые операции (уже списанное)
-		private int maxAmount = -1;
+		//Нужно предварительно заполнять
+		private int maxAmount;
 		public virtual int MaxAmount {
-			get => maxAmount == -1 ? IssuedEmployeeOnOperation.Issued : maxAmount;
-			set => maxAmount = value;
+			get => maxAmount;
+			set => SetField(ref maxAmount, value);
 		}
-
-		[Display(Name = "Процент износа")]
-		public virtual decimal WearPercent {
-			get => WarehouseOperation.WearPercent;
-			set => WarehouseOperation.WearPercent = value;
-		}
-
+		
 		private EmployeeIssueOperation issuedEmployeeOnOperation;
 		/// <summary>
 		/// Это ссылка на операцию выдачи по которой был выдан сотруднику поступивший от него СИЗ
@@ -147,25 +206,85 @@ namespace Workwear.Domain.Stock.Documents {
 			get => issuedEmployeeOnOperation ?? ReturnFromEmployeeOperation?.IssuedOperation;
 			set => SetField(ref issuedEmployeeOnOperation, value);
 		}
+		
+		/// <summary>
+		/// Это ссылка на операцию выдачи по которой был выдан СИЗ
+		/// В этом классе используется только для рантайма, в базу не сохраняется, сохраняется внутри операции.
+		/// </summary>
+		private DutyNormIssueOperation issuedDutyNormOnOperation;
+		[Display(Name = "Операция выдачи по дежурной норме")]
+		public virtual DutyNormIssueOperation IssuedDutyNormOnOperation {
+			get => issuedDutyNormOnOperation ?? ReturnFromDutyNormOperation?.IssuedOperation;
+			set => SetField(ref issuedDutyNormOnOperation, value);
+		}
+
+		#endregion
+
+		#region Конструкторы
+		
+		protected ReturnItem () { }
+		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount) {
+			document = Return;
+			returnFromEmployeeOperation = new EmployeeIssueOperation{
+				Employee = issueOperation.Employee,
+				ProtectionTools = issueOperation.ProtectionTools,
+				Returned = amount,
+				IssuedOperation = issueOperation,
+				OperationTime = document.Date,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+			};
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			employeeCard = issueOperation.Employee;
+			this.amount = amount;
+		}
+		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount) {
+			document = Return;
+			dutyNorm = issueOperation.DutyNorm;
+			returnFromDutyNormOperation = new DutyNormIssueOperation {
+				DutyNorm = issueOperation.DutyNorm,
+				ProtectionTools = issueOperation.ProtectionTools,
+				Returned = amount,
+				IssuedOperation = issueOperation,
+				OperationTime = document.Date,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.CalculatePercentWear(document.Date)
+			};
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			this.amount = amount;
+		}
 
 		#endregion
 		
-		protected ReturnItem () { }
-		public ReturnItem(Return Return) {
-			document = Return;
-		}
 		
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
-
-			if(ReturnFromEmployeeOperation == null)
-				ReturnFromEmployeeOperation = new EmployeeIssueOperation();
-
-			ReturnFromEmployeeOperation.Update(uow, this);
-			uow.Save(ReturnFromEmployeeOperation);
+			switch(ReturnFrom) {
+				case ReturnFrom.Employee:
+					ReturnFromEmployeeOperation.Update(uow,this);
+					break;
+				case ReturnFrom.DutyNorm:
+					ReturnFromDutyNormOperation.Update(uow,this);
+					break;
+				default:
+					throw new NotImplementedException();
+			}
 		}
 		#endregion
+	}
+
+	public enum ReturnFrom {
+		Employee,
+		DutyNorm
 	}
 }

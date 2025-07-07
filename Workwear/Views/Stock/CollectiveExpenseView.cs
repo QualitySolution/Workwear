@@ -1,7 +1,7 @@
 ﻿using System;
-using Gamma.Binding.Converters;
 using NLog;
 using QS.Views.Dialog;
+using QS.Widgets;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
@@ -24,39 +24,36 @@ namespace Workwear.Views.Stock
 			expensedocitememployeeview1.ViewModel = ViewModel.CollectiveExpenseItemsViewModel;
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
-				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
-				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
-			ydateDoc.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
-			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive).InitializeFromSource();
+			checkAuto.Binding
+				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+			ylabelCreatedBy.Binding
+				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
+			ydateDoc.Binding
+				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+			ytextComment.Binding
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 			entityWarehouseExpense.ViewModel = ViewModel.WarehouseEntryViewModel;
 			entityTransferAgent.ViewModel = ViewModel.TransferAgentEntryViewModel;
-			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
 			
-			IssuanceSheetSensetive();
+			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
+			enumPrint.Binding
+				.AddBinding(ViewModel, v => v.IssuanceSheetPrintVisible, w => w.Visible).InitializeFromSource();
+			buttonIssuanceSheetOpen.Binding
+				.AddBinding(ViewModel, v => v.IssuanceSheetOpenVisible, w => w.Visible).InitializeFromSource();
+			buttonIssuanceSheetCreate.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssuanceSheetCreateVisible, w => w.Visible)
+				.AddBinding(v => v.CanCreateIssuanceSheet, w => w.Sensitive).InitializeFromSource();
 		}
 
-		private void IssuanceSheetSensetive()
-		{
-			buttonIssuanceSheetCreate.Visible = Entity.IssuanceSheet == null;
-			buttonIssuanceSheetOpen.Visible = enumPrint.Visible = Entity.IssuanceSheet != null;
-		}
-
-		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonIssuanceSheetCreateClicked(object sender, EventArgs e) =>
 			ViewModel.CreateIssuanceSheet();
-			IssuanceSheetSensetive();
-		}
-
-		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonIssuanceSheetOpenClicked(object sender, EventArgs e) =>
 			ViewModel.OpenIssuanceSheet();
-		}
-
-		protected void OnEnumPrintEnumItemClicked(object sender, QSOrmProject.EnumItemClickedEventArgs e)
-		{
+		protected void OnEnumPrintEnumItemClicked(object sender, EnumItemClickedEventArgs e) =>
 			ViewModel.PrintIssuanceSheet((IssuedSheetPrint)e.ItemEnum);
-		}
 	}
 }

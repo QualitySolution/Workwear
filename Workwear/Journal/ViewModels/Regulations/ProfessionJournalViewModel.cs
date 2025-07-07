@@ -3,16 +3,22 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
 {
-	public class ProfessionJournalViewModel : EntityJournalViewModelBase<Profession, ProfessionViewModel, ProfessionJournalNode>
+	public class ProfessionJournalViewModel : EntityJournalViewModelBase<Profession, ProfessionViewModel, ProfessionJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#proffessions");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Profession));
+		#endregion
 		public ProfessionJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;

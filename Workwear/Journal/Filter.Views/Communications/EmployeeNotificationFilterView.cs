@@ -46,9 +46,13 @@ namespace workwear.Journal.Filter.Views.Communications
 				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
 				.AddBinding(vm => vm.SelectedWarehouse, w => w.SelectedItem)
 				.InitializeFromSource();
-			choiceProtectionToolsView.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
-			choiceProtectionToolsView.Binding
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			choiceprotectiontoolsview1.Binding
 				.AddBinding(ViewModel, vm => vm.PeriodSensitive, w => w.Sensitive)
+				.InitializeFromSource();
+			yenumcomboboxSex.ItemsEnum = typeof(SexType);
+			yenumcomboboxSex.Binding.AddSource(viewModel)
+				.AddBinding(v=>v.SexType,w=>w.SelectedItem)
 				.InitializeFromSource();
 		}
 	}

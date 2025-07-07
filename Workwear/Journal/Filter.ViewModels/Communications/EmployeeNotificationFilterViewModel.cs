@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
 
 namespace workwear.Journal.Filter.ViewModels.Communications {
 	public class EmployeeNotificationFilterViewModel : JournalFilterViewModelBase<EmployeeNotificationFilterViewModel>
@@ -44,6 +45,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 		public AskIssueType IsueType {
 			get => isueType;
 			set => SetField(ref isueType, value);
+		}
+
+		private SexType sexType;
+		public SexType SexType {
+			get => sexType;
+			set => SetField(ref sexType, value);
 		}
 
 		private DateTime startDateIssue;
@@ -112,12 +119,12 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 			set => SetField(ref endDateBirth, value);
 		}
 
-		public List<int> SelectedProtectionToolsIds { get; set; }
+		public int[] SelectedProtectionToolsIds => ChoiceProtectionToolsViewModel.SelectedIds;
 		#endregion
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		#endregion
 
 		public EmployeeNotificationFilterViewModel(JournalViewModelBase journal, INavigationManager navigation, ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journal, unitOfWorkFactory)
@@ -133,30 +140,10 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 			Warehouses.AddRange(UoW.GetAll<Warehouse>());
 			SelectedWarehouse = Warehouses[0];
 			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
-			ChoiceProtectionToolsViewModel.Items.PropertyOfElementChanged += ItemsOnPropertyOfElementChanged;
-			SelectedProtectionToolsIds = new List<int>(ChoiceProtectionToolsViewModel.SelectedIds);
-		}
-
-		private void ItemsOnPropertyOfElementChanged(object sender, PropertyChangedEventArgs e) 
-		{
-			SelectedProtectionTools protectionTools = sender as SelectedProtectionTools;
-			if (SelectedProtectionToolsIds.Contains(protectionTools.Id)) 
-			{
-				if (!protectionTools.Select) 
-				{
-					SelectedProtectionToolsIds.Remove(protectionTools.Id);
-					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
-				}
-			}
-			else 
-			{
-				if (protectionTools.Select) 
-				{
-					SelectedProtectionToolsIds.Add(protectionTools.Id);
-					OnPropertyChanged(nameof(SelectedProtectionToolsIds));
-				}
-			}
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
+			ChoiceProtectionToolsViewModel.Items.PropertyOfElementChanged += (s,e)
+				=> OnPropertyChanged(nameof(SelectedProtectionToolsIds));
 		}
 	}
 	
@@ -168,5 +155,15 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 		Personal,
 		[Display(Name = "Коллективная")]
 		Сollective
+	}
+
+	public enum SexType 
+	{
+		[Display(Name="Все")]
+		All,
+		[Display(Name="Мужской")]
+		M,
+		[Display(Name="Женский")]
+		F
 	}
 }
