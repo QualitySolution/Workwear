@@ -16,7 +16,8 @@ namespace Workwear.Domain.Statements
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "ведомости на выдачу",
 		Nominative = "ведомость на выдачу",
-		Genitive = "ведомости на выдачу"
+		Genitive = "ведомости на выдачу",
+		GenitivePlural = "ведомостей на выдачу"
 		)]
 	[HistoryTrace]
 	public class IssuanceSheet : PropertyChangedBase, IDomainObject, IValidatableObject
@@ -69,13 +70,19 @@ namespace Workwear.Domain.Statements
 			set => SetField(ref collectiveExpense, value);
 		}
 
+		private ExpenseDutyNorm expenseDutyNorm;
+		[Display(Name = "Документ выдачи по дежурной норме")]
+		public virtual ExpenseDutyNorm ExpenseDutyNorm {
+			get => expenseDutyNorm;
+			set => SetField(ref expenseDutyNorm, value);
+		}
+
 		private EmployeeCard transferAgent;
 		[Display(Name = "Ответственный за передачу СИЗ")]
 		public virtual EmployeeCard TransferAgent {
 			get => transferAgent;
 			set => SetField(ref transferAgent, value);
 		}
-		
 		#region Подписи
 
 		private Leader responsiblePerson;
@@ -161,6 +168,16 @@ namespace Workwear.Domain.Statements
 				StartOfUse = employeeItem.NextIssue ?? Date,
 			};
 			Items.Add(item);
+			return item;
+		}
+
+		public virtual IssuanceSheetItem AddItem(ExpenseDutyNormItem expenseDutyNormItem) {
+			var item = new IssuanceSheetItem {
+				IssuanceSheet = this,
+				ExpenseDutyNormItem = expenseDutyNormItem
+			};
+			Items.Add(item);
+			item.UpdateFromExpenseDuty();
 			return item;
 		}
 		#endregion

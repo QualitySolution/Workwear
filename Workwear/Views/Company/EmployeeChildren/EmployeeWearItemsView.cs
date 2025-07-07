@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Linq;
 using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
-using QS.Utilities;
 using QSWidgetLib;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -59,19 +59,16 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("По норме").AddTextRenderer(item => item.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(item => item.NormLifeText)
 				.AddColumn("Послед. получения")
-					.AddPixbufRenderer(item => item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => x.item.IssueOperation.ManualOperation) ? handIcon : null)
+					.AddPixbufRenderer(item => item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => ((EmployeeIssueOperation)x.item.IssueOperation).ManualOperation) ? handIcon : null)
 					.AddTextRenderer(item => MakeLastIssuedText(item), useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(item => item.AmountText)
 					.AddSetter((w, item) => w.Foreground = item.AmountColor)
 				.AddColumn("След. получение")
 					.ToolTipText(item => item.NextIssueAnnotation)
-					.AddTextRenderer(item => $"{item.NextIssue:d}")
+					.AddTextRenderer(item => item.NextIssueText)
 					.AddSetter((w, item) => w.Foreground = item.NextIssueColor(ViewModel.BaseParameters))
 					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.NextIssueAnnotation) ? null : infoIcon)
-				.AddColumn("Просрочка").AddTextRenderer(
-					item => item.NextIssue.HasValue && item.NextIssue.Value < DateTime.Today
-					? NumberToTextRus.FormatCase((int)(DateTime.Today - item.NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
-					: String.Empty)
+				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
 				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
 				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
 				.AddColumn("Подходящая номенклатура").AddTextRenderer(item => item.MatchedNomenclatureShortText)

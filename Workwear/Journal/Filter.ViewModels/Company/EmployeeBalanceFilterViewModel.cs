@@ -17,15 +17,24 @@ namespace workwear.Journal.Filter.ViewModels.Company
         public EmployeeBalanceFilterViewModel(
             JournalViewModelBase journalViewModel,
             INavigationManager navigation, 
-            ILifetimeScope autofacScope, CurrentUserSettings currentUserSettings, IUnitOfWorkFactory unitOfWorkFactory = null) : base(journalViewModel, unitOfWorkFactory)
+            ILifetimeScope autofacScope,
+            CurrentUserSettings currentUserSettings,
+            EmployeeCard employee = null,
+            IUnitOfWorkFactory unitOfWorkFactory = null,
+            Action<EmployeeBalanceFilterViewModel> setFilterParameters = null)
+	        : base(journalViewModel, unitOfWorkFactory)
         {
 	        this.currentUserSettings = currentUserSettings;
+	        CanNotify = false;
 	        var builder = new CommonEEVMBuilderFactory<EmployeeBalanceFilterViewModel>(
                 journalViewModel, this, UoW, navigation, autofacScope);
             EmployeeEntry = builder.ForProperty(x => x.Employee).MakeByType().Finish();
             SubdivisionEntry = builder.ForProperty(x => x.Subdivision).MakeByType().Finish();
             Date = DateTime.Today;
             addAmount = currentUserSettings.Settings.DefaultAddedAmount;
+            Employee = employee;
+            setFilterParameters?.Invoke(this);
+            CanNotify = true;
         }
         private EmployeeCard employee;
         public EmployeeCard Employee {

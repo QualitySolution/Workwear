@@ -13,50 +13,50 @@
     <DataSet Name="Card">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-    IFNULL(wear_cards.card_number, wear_cards.id) AS id,
-    wear_cards.personnel_number,
-    wear_cards.last_name,
-    wear_cards.first_name,
-    wear_cards.patronymic_name,
-    wear_cards.hire_date,
-    wear_cards.change_of_position_date,
-    wear_cards.sex,
+        <CommandText>SELECT
+    IFNULL(employees.card_number, employees.id) AS id,
+    employees.personnel_number,
+    employees.last_name,
+    employees.first_name,
+    employees.patronymic_name,
+    employees.hire_date,
+    employees.change_of_position_date,
+    employees.sex,
     posts.name AS post,
     CONCAT_WS('',
-            CONCAT(leaders.surname, ' '),
-            IF(leaders.name = '',
-                NULL,
-                CONCAT(LEFT(leaders.name, 1), '.')),
-            IF(leaders.patronymic = '',
-                NULL,
-                CONCAT(LEFT(leaders.patronymic, 1), '.'))) AS leader,
-    objects.name AS subdivision,
-    (SELECT 
-            GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
-                            regulations.name,
-                            CONCAT('от ',
-                                    DATE_FORMAT(regulations.doc_date, '%d.%m.%Y')),
-                            CONCAT('№ ', regulations.number))
-                    SEPARATOR ', ')
-        FROM
-            wear_cards_norms
-                LEFT JOIN
-            norms ON norms.id = wear_cards_norms.norm_id
-                LEFT JOIN
-            regulations ON regulations.id = norms.regulations_id
-        WHERE
-            wear_cards_norms.wear_card_id = wear_cards.id) AS regulations
+              CONCAT(leaders.surname, ' '),
+              IF(leaders.name = '',
+                 NULL,
+                 CONCAT(LEFT(leaders.name, 1), '.')),
+              IF(leaders.patronymic = '',
+                 NULL,
+                 CONCAT(LEFT(leaders.patronymic, 1), '.'))) AS leader,
+    subdivisions.name AS subdivision,
+    (SELECT
+         GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
+                                         regulations.name,
+                                         CONCAT('от ',
+                                                DATE_FORMAT(regulations.doc_date, '%d.%m.%Y')),
+                                         CONCAT('№ ', regulations.number))
+                      SEPARATOR ', ')
+     FROM
+         employees_norms
+             LEFT JOIN
+         norms ON norms.id = employees_norms.norm_id
+             LEFT JOIN
+         regulations ON regulations.id = norms.regulations_id
+     WHERE
+             employees_norms.employee_id = employees.id) AS regulations
 FROM
-    wear_cards
+    employees
         LEFT JOIN
-    posts ON wear_cards.post_id = posts.id
+    posts ON employees.post_id = posts.id
         LEFT JOIN
-    leaders ON leaders.id = wear_cards.leader_id
+    leaders ON leaders.id = employees.leader_id
         LEFT JOIN
-    objects ON objects.id = wear_cards.object_id
+    subdivisions ON subdivisions.id = employees.subdivision_id
 WHERE
-    wear_cards.id = @id;</CommandText>
+        employees.id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>=Parameters!id</Value>
@@ -126,13 +126,13 @@ WHERE
         WHEN norms_item.period_type = 'Wearout' THEN CONCAT_WS(' ', norms_item.amount, 'до износа')
         WHEN norms_item.period_type = 'Year'
             THEN IF (norms_item.period_count = 1, norms_item.amount,
-                CONCAT_WS(' ',norms_item.amount, 'на', norms_item.period_count,
-                    CASE
-                        WHEN norms_item.period_count BETWEEN 11 AND 19 THEN 'лет'
-                        WHEN norms_item.period_count % 10 = 1 THEN 'год'
-                        WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN 'года'
-                        ELSE 'лет'
-                        END))
+                     CONCAT_WS(' ',norms_item.amount, 'на', norms_item.period_count,
+                               CASE
+                                   WHEN norms_item.period_count BETWEEN 11 AND 19 THEN 'лет'
+                                   WHEN norms_item.period_count % 10 = 1 THEN 'год'
+                                   WHEN norms_item.period_count % 10 BETWEEN 2 and 4 THEN 'года'
+                                   ELSE 'лет'
+                                   END))
         WHEN norms_item.period_type = 'Month' THEN
             CASE
                 WHEN norms_item.period_count &gt; 12 THEN
@@ -141,19 +141,19 @@ WHERE
                     TRIM(TRAILING '.' FROM (TRIM(TRAILING '0' FROM  CAST(norms_item.amount * 12 / norms_item.period_count AS DECIMAL(5,3)))))
                 END
         WHEN norms_item.period_type = 'Duty' THEN CONCAT_WS(' ', norms_item.amount, 'дежурный')
-                
-        END AS count_by_year
+        END AS count_by_year,
+    protection_tools.dispenser
 FROM
-    wear_cards_item
+    employee_cards_item
         LEFT JOIN
-    protection_tools ON protection_tools.id = wear_cards_item.protection_tools_id
+    protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
         LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
         LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
         LEFT JOIN
-    norms_item ON wear_cards_item.norm_item_id = norms_item.id
+    norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norms ON norms.id = norms_item.norm_id
 WHERE
-        wear_cards_item.wear_card_id =  @id;</CommandText>
+        employee_cards_item.employee_id =  @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -177,17 +177,21 @@ WHERE
           <DataField>count_by_year</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="dispenser">
+          <DataField>dispenser</DataField>
+          <TypeName>System.Boolean</TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Sizes">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     size_types.name AS sizeName,
     sizes.name AS sizeValue
 FROM size_types
-    LEFT JOIN wear_cards_sizes ON wear_cards_sizes.employee_id = @id AND wear_cards_sizes.size_type_id = size_types.id
-    LEFT JOIN sizes ON wear_cards_sizes.size_id = sizes.id
+         LEFT JOIN employees_sizes ON employees_sizes.employee_id = @id AND employees_sizes.size_type_id = size_types.id
+         LEFT JOIN sizes ON employees_sizes.size_id = sizes.id
 WHERE size_types.use_in_employee = true
 ORDER BY size_types.position
 LIMIT 20</CommandText>
@@ -197,7 +201,7 @@ LIMIT 20</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="sizeName">
           <DataField>sizeName</DataField>
           <TypeName>System.String</TypeName>
@@ -713,7 +717,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>=Fields!unit.Value</Value>
+                      <Value>=IIF({dispenser},'Дозатор',Fields!unit.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -729,7 +733,7 @@ LIMIT 20</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox51">
-                      <Value>=Fields!count_by_year.Value</Value>
+                      <Value>=IIF({dispenser},'',Fields!count_by_year.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -977,9 +981,41 @@ LIMIT 20</CommandText>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
+    <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems >
+      <Textbox Name="Textbox29">
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <ZIndex>1</ZIndex>
+        <Left>10pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox30" >
+        <Height>12pt</Height>
+        <Width>269.42pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>291.5pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -1004,6 +1040,13 @@ LIMIT 20</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

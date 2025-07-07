@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
@@ -24,6 +26,7 @@ using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
 using Workwear.Domain.Regulations;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock
@@ -34,10 +37,11 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveQuestion interactive;
+		private readonly ICurrentPermissionService permissionService;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
 		private readonly BarcodeService barcodeService;
-
+		
 		public SizeService SizeService { get; }
 		public BaseParameters BaseParameters { get; }
 		public IList<Owner> Owners { get; }
@@ -47,6 +51,7 @@ namespace Workwear.ViewModels.Stock
 			FeaturesService featuresService, 
 			INavigationManager navigation,
 			IInteractiveQuestion interactive,
+			ICurrentPermissionService permissionService,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
 			BaseParameters baseParameters,
@@ -57,6 +62,7 @@ namespace Workwear.ViewModels.Stock
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
@@ -64,6 +70,7 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 		}
 
 		#region Хелперы
@@ -82,22 +89,17 @@ namespace Workwear.ViewModels.Stock
 			set => SetField(ref sum, value);
 		}
 
-		public virtual Warehouse Warehouse {
-			get { return Entity.Warehouse; }
-			set { Entity.Warehouse = value; }
-		}
-
 		private ExpenseItem selectedItem;
-		
-
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
 		}
 
 		#endregion
+
 		#region Sensetive
-		public bool SensitiveCreateBarcodes => Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
+		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
+		public bool SensitiveCreateBarcodes => CanEdit && Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
 			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
@@ -105,25 +107,36 @@ namespace Workwear.ViewModels.Stock
 		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
+		public bool CanAddItems => CanEdit && Entity.Warehouse != null && Entity.Employee != null;
 		#endregion
 		#region Действия View
 		public void AddItem()
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclature;
 		}
 
 		public void ShowAllSize(ExpenseItem item)
 		{
-			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.ProtectionTools = item.ProtectionTools;
+			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+							filter.ProtectionTools = item.ProtectionTools;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = item;
 			selectJournal.ViewModel.OnSelectResult += AddNomenclatureProtectionTools;
@@ -282,6 +295,12 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region События
+		
+		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(Entity.Warehouse) || e.PropertyName == nameof(Entity.Employee))
+				OnPropertyChanged(nameof(CanAddItems));
+		}
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();

@@ -32,6 +32,12 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			get => showOnlyWithoutNorms;
 			set => SetField(ref showOnlyWithoutNorms, value);
 		}
+
+		private bool excludeInVacation = false;
+		public virtual bool ExcludeInVacation {
+			get => excludeInVacation;
+			set => SetField(ref excludeInVacation, value);
+		}
 		
 		private Subdivision subdivision;
 		public virtual Subdivision Subdivision {

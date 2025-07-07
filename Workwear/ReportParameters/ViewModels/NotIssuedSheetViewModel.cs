@@ -10,16 +10,19 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		IUnitOfWork UoW;
 
@@ -36,7 +39,6 @@ namespace workwear.ReportParameters.ViewModels
 			Title = "Справка по невыданному (Детально)";
 			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
-			
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
 				.Finish();
@@ -45,9 +47,13 @@ namespace workwear.ReportParameters.ViewModels
 				.Finish();
 			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, SubdivisionEntry);
 			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
@@ -63,6 +69,11 @@ namespace workwear.ReportParameters.ViewModels
 			warehouse = warehousesList.First();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#unissued");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
+		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", Subdivision?.Id ?? -1 },
@@ -80,6 +91,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
 		#region Параметры
@@ -197,8 +209,8 @@ namespace workwear.ReportParameters.ViewModels
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public EntityEntryViewModel<Department> DepartmentEntry;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
 

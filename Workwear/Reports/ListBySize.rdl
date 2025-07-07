@@ -11,14 +11,14 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>SELECT
     CONCAT_WS(' ',
-            wear_cards.last_name,
-            wear_cards.first_name,
-            wear_cards.patronymic_name) AS employee,
-    if(@group_by_subdivision, wear_cards.object_id, NULL)as subdivision_id,
+              employees.last_name,
+              employees.first_name,
+              employees.patronymic_name) AS employee,
+    if(@group_by_subdivision, employees.subdivision_id, NULL)as subdivision_id,
     if(@group_by_subdivision, subdivision.name, NULL) as subdivision_name,
     IF(top1.id IS NULL, '-', size1.name) AS size_name_1,
     IF(top2.id IS NULL, '-', size2.name) AS size_name_2,
@@ -29,20 +29,20 @@
     personnel_number,
     sex
 FROM
-    wear_cards
-LEFT JOIN objects AS subdivision ON wear_cards.object_id = subdivision.id
-LEFT JOIN wear_cards_sizes AS top1 ON wear_cards.id = top1.employee_id AND top1.size_type_id = @type_id_0
-LEFT JOIN sizes AS size1 ON top1.size_id = size1.id
-LEFT JOIN wear_cards_sizes AS top2 ON wear_cards.id = top2.employee_id AND top2.size_type_id = @type_id_1
-LEFT JOIN sizes AS size2 ON top2.size_id = size2.id
-LEFT JOIN wear_cards_sizes AS top3 ON wear_cards.id = top3.employee_id AND top3.size_type_id = @type_id_2
-LEFT JOIN sizes AS size3 ON top3.size_id = size3.id
-LEFT JOIN wear_cards_sizes AS top4 ON wear_cards.id = top4.employee_id AND top4.size_type_id = @type_id_3
-LEFT JOIN sizes AS size4 ON top4.size_id = size4.id
-LEFT JOIN wear_cards_sizes AS top5 ON wear_cards.id = top5.employee_id AND top5.size_type_id = @type_id_4
-LEFT JOIN sizes AS size5 ON top5.size_id = size5.id
-LEFT JOIN wear_cards_sizes AS top6 ON wear_cards.id = top6.employee_id AND top6.size_type_id = @type_id_5
-LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
+    employees
+        LEFT JOIN subdivisions AS subdivision ON employees.subdivision_id = subdivision.id
+        LEFT JOIN employees_sizes AS top1 ON employees.id = top1.employee_id AND top1.size_type_id = @type_id_0
+        LEFT JOIN sizes AS size1 ON top1.size_id = size1.id
+        LEFT JOIN employees_sizes AS top2 ON employees.id = top2.employee_id AND top2.size_type_id = @type_id_1
+        LEFT JOIN sizes AS size2 ON top2.size_id = size2.id
+        LEFT JOIN employees_sizes AS top3 ON employees.id = top3.employee_id AND top3.size_type_id = @type_id_2
+        LEFT JOIN sizes AS size3 ON top3.size_id = size3.id
+        LEFT JOIN employees_sizes AS top4 ON employees.id = top4.employee_id AND top4.size_type_id = @type_id_3
+        LEFT JOIN sizes AS size4 ON top4.size_id = size4.id
+        LEFT JOIN employees_sizes AS top5 ON employees.id = top5.employee_id AND top5.size_type_id = @type_id_4
+        LEFT JOIN sizes AS size5 ON top5.size_id = size5.id
+        LEFT JOIN employees_sizes AS top6 ON employees.id = top6.employee_id AND top6.size_type_id = @type_id_5
+        LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
 WHERE
     dismiss_date IS NULL
 ORDER BY last_name , first_name , patronymic_name</CommandText>
@@ -88,7 +88,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="employee">
           <DataField>employee</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -148,6 +148,9 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
+          <BorderStyle  />
+          <BorderColor  />
+          <BorderWidth  />
         </Style>
       </Textbox>
     </ReportItems>
@@ -699,6 +702,23 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
+      <Textbox Name="Textbox10" >
+        <Height>12.00pt</Height>
+        <Width>271.78pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>287.10pt</Left>
+        <Top>1.00pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
     </ReportItems>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
@@ -810,6 +830,13 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

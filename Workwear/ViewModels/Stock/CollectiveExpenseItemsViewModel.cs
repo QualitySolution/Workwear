@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Utilities.Debug;
 using QS.ViewModels;
@@ -13,6 +15,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
@@ -34,6 +37,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
+		private readonly ICurrentPermissionService permissionService;
 		private readonly ModalProgressCreator modalProgress;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly EmployeeIssueModel issueModel;
@@ -50,6 +54,7 @@ namespace Workwear.ViewModels.Stock
 			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
 			IInteractiveMessage interactive,
+			ICurrentPermissionService permissionService,
 			BaseParameters baseParameters,
 			ModalProgressCreator modalProgress,
 			PerformanceHelper performance //Только для использования в конструкторе. Шаги запуска.
@@ -57,6 +62,7 @@ namespace Workwear.ViewModels.Stock
 		{
 			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -138,9 +144,10 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Sensetive
-		public bool SensitiveAddButton => Entity.Warehouse != null;
-		public bool SensitiveButtonChange => SelectedItem != null;
-		public bool SensitiveButtonDel => SelectedItem != null;
+		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(CollectiveExpense), Entity.Date).CanUpdate;
+		public bool SensitiveAddButton => CanEdit && Entity.Warehouse != null;
+		public bool SensitiveButtonChange => CanEdit && SelectedItem != null;
+		public bool SensitiveButtonDel => CanEdit && SelectedItem != null;
 		public bool SensitiveRefreshMenuItem => SelectedItem != null;
 		public bool SensitiveRefreshAllMenuItem => Entity.Items.Any();
 		#endregion
@@ -288,11 +295,16 @@ namespace Workwear.ViewModels.Stock
 		
 		private void ChangeItemPositions(List<CollectiveExpenseItem> items)
 		{
-			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave);
-
-			selectJournal.ViewModel.Filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
-			selectJournal.ViewModel.Filter.WarehouseEntry.IsEditable = false;
-			selectJournal.ViewModel.Filter.ProtectionTools = items.First().ProtectionTools;
+			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
+							filter.ProtectionTools = items.First().ProtectionTools;
+						});
+				});
+			
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectJournal.Tag = items;
 			selectJournal.ViewModel.OnSelectResult +=SetNomenclatureForRows;

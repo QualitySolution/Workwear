@@ -22,6 +22,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
@@ -29,6 +30,7 @@ using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Communications;
@@ -37,7 +39,7 @@ using Workwear.ViewModels.IdentityCards;
 
 namespace Workwear.ViewModels.Company
 {
-	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
+	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject, IDialogDocumentation
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -51,6 +53,7 @@ namespace Workwear.ViewModels.Company
 		private readonly LkUserManagerService lkUserManagerService;
 		private readonly CommonMessages messages;
 		private readonly SpecCoinManagerService specCoinManagerService;
+		private readonly BaseParameters baseParameters;
 		
 		public SizeService SizeService { get; }
 
@@ -73,6 +76,7 @@ namespace Workwear.ViewModels.Company
 			LkUserManagerService lkUserManagerService,
 			SizeService sizeService,
 			CommonMessages messages,
+			BaseParameters baseParameters,
 			SpecCoinManagerService specCoinManagerService) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -85,6 +89,7 @@ namespace Workwear.ViewModels.Company
 			this.lkUserManagerService = lkUserManagerService ?? throw new ArgumentNullException(nameof(lkUserManagerService));
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
@@ -223,6 +228,8 @@ namespace Workwear.ViewModels.Company
 			get => visibleSpecCoinsViews;
 			set => SetField(ref visibleSpecCoinsViews, value);
 		}
+
+		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		#endregion
 
 		#region Sensetive
@@ -307,7 +314,6 @@ namespace Workwear.ViewModels.Company
 
 						if(Entity.UsedNorms.Any(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)))
 						   && interactive.Question("Заменить нормы от старой должности нормами от новой должности?")) {
-							Entity.UsedNorms.RemoveAll(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)));
 							Entity.NormFromPost(UoW, NormRepository, value);
 						}
 
@@ -336,6 +342,9 @@ namespace Workwear.ViewModels.Company
 		}
 		
 		public string CreatedByUser => Entity.CreatedbyUser?.Name;
+
+		public bool IsDocNumberInIssueSign => baseParameters.IsDocNumberInIssueSign;
+		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
 
 		#region CardUid
 		public virtual string CardUid {
@@ -640,7 +649,10 @@ namespace Workwear.ViewModels.Company
 				Title = String.Format("Карточка {0} - {1}", Entity.ShortName, doc.GetEnumTitle()),
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id }
+					{ "id",  Entity.Id },
+					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
+					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
+					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 				}
 			};
 
@@ -686,6 +698,11 @@ namespace Workwear.ViewModels.Company
 				WearItemsViewModel.SizeChanged();
 			}
 		}
+		#endregion
+
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employee-card");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 	}
 	public class DepartmentJournalViewModelSelector : IEntitySelector {

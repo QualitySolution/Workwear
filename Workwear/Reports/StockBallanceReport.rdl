@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>8.5in</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageWidth>11.8in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -15,15 +15,20 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
-    (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-     SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0))) as quantity,
+    IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
+                       SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                              operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
+       (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+        SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
     sizeAlias.name AS size,
     heightAlias.name AS growth,
-    ownersAlias.name AS owner,
-    measurement_units.name as unit
+    owners.name AS owner,
+    measurement_units.name as unit,
+    IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
 FROM
     operation_warehouse
         JOIN
@@ -37,10 +42,12 @@ FROM
         LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
         LEFT JOIN
-    owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
+    owners ON owners.id = operation_warehouse.owner_id
 WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-    AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id)
-
+  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id
+        or operation_warehouse.warehouse_expense_id = @warehouse_id
+        or @allWarehouses)
+  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
@@ -52,6 +59,18 @@ ORDER BY nomenclature.name,
           </QueryParameter>
           <QueryParameter Name="report_date">
             <Value>={?report_date}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allWarehouses">
+            <Value>={?allWarehouses}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allOwners">
+            <Value>=Parameters!allOwners</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutOwner">
+            <Value>=Parameters!withoutOwner</Value>
+          </QueryParameter>
+          <QueryParameter Name="ownerId">
+            <Value>=Parameters!ownerId</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -84,12 +103,16 @@ ORDER BY nomenclature.name,
           <DataField>growth</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="owner">
+          <DataField>owner</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="unit">
           <DataField>unit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="owner">
-          <DataField>owner</DataField>
+        <Field Name="sex">
+          <DataField>sex</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -103,14 +126,14 @@ ORDER BY nomenclature.name,
         <Left>141.6pt</Left>
         <Width>6in</Width>
         <Height>.25in</Height>
-        <Value>= "Складская ведомость на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
+        <Value>= "Складская ведомость по "  + Iif({?allWarehouses}, "всем складам", "'"+{?warehouse_name}+"'") + " на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
           <TextAlign>Center</TextAlign>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -135,6 +158,12 @@ ORDER BY nomenclature.name,
           </TableColumn>
           <TableColumn>
             <Width>345.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>46.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?showSex}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>49.6pt</Width>
@@ -182,6 +211,22 @@ ORDER BY nomenclature.name,
                     <Textbox Name="Textbox19" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>Наименование</Value>
                       <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>Пол</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -286,7 +331,7 @@ ORDER BY nomenclature.name,
                   <Height>16.8pt</Height>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>7</ColSpan>
+                      <ColSpan>8</ColSpan>
                       <ReportItems>
                         <Textbox Name="Textbox13">
                           <Value>=Fields.type.Value</Value>
@@ -294,8 +339,8 @@ ORDER BY nomenclature.name,
                             <PaddingLeft>2pt</PaddingLeft>
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left>Solid</Left>
-                              <Right>Solid</Right>
+                              <Left>None</Left>
+                              <Right>None</Right>
                               <Top>None</Top>
                               <Bottom>None</Bottom>
                             </BorderStyle>
@@ -338,6 +383,22 @@ ORDER BY nomenclature.name,
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox12">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>None</Right>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox23">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
@@ -468,6 +529,22 @@ ORDER BY nomenclature.name,
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>=Fields!sex.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox8" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>=Fields!size.Value</Value>
                       <CanGrow>true</CanGrow>
@@ -574,6 +651,22 @@ ORDER BY nomenclature.name,
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox11">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Right>None</Right>
+                          <Left>None</Left>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox22">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -719,6 +812,48 @@ ORDER BY nomenclature.name,
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="showSex">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allWarehouses">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_name">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allOwners">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutOwner">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ownerId">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>

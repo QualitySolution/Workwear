@@ -6,21 +6,26 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using workwear.Journal.Filter.ViewModels.Statements;
+using Workwear.Tools;
 using Workwear.ViewModels.Statements;
 
 namespace workwear.Journal.ViewModels.Statements
 {
-	public class IssuanceSheetJournalViewModel : EntityJournalViewModelBase<IssuanceSheet, IssuanceSheetViewModel, IssuanceSheetJournalNode>
+	public class IssuanceSheetJournalViewModel : EntityJournalViewModelBase<IssuanceSheet, IssuanceSheetViewModel, IssuanceSheetJournalNode>, IDialogDocumentation
 	{
 		public IssuanceSheetFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#issuance-sheet");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(IssuanceSheet));
+		#endregion
 		public IssuanceSheetJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService,
@@ -79,12 +84,14 @@ namespace workwear.Journal.ViewModels.Statements
 					.Select(() => subdivisionAlias.Code).WithAlias(() => resultAlias.SubdivisionCode)
 					.Select(x => x.Expense.Id).WithAlias(() => resultAlias.DocExpenseId)
 					.Select(x => x.CollectiveExpense.Id).WithAlias(() => resultAlias.DocCollectiveExpenseId)
+					.Select(x=>x.ExpenseDutyNorm.Id).WithAlias(()=>resultAlias.DocExpenseDutyNormId)
 					.SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Employees)
 				)
 				.OrderBy(() => issuanceSheetAlias.Date).Desc
 				.ThenBy(() => issuanceSheetAlias.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<IssuanceSheetJournalNode>());
 		}
+
 	}
 
 	public class IssuanceSheetJournalNode
@@ -100,6 +107,7 @@ namespace workwear.Journal.ViewModels.Statements
 		public int? DocExpenseId { get; set; }
 		public int? DocMassExpenseId { get; set; }
 		public int? DocCollectiveExpenseId { get; set; }
+		public int? DocExpenseDutyNormId { get; set; }
 		public string Document { 
 			get{
 				if(DocExpenseId != null)
@@ -108,6 +116,8 @@ namespace workwear.Journal.ViewModels.Statements
 					return $"Массовая выдача №{DocMassExpenseId}";
 				if(DocCollectiveExpenseId != null)
 					return $"Коллективная выдача №{DocCollectiveExpenseId}";
+				if(DocExpenseDutyNormId != null)
+					return $"Выдача по деж. норме №{DocExpenseDutyNormId}";
 				return null;
 			} }
 

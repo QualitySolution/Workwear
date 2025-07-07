@@ -15,16 +15,18 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
-	public class InspectionViewModel : EntityDialogViewModelBase<Inspection> {
+	public class InspectionViewModel : EntityDialogViewModelBase<Inspection>, IDialogDocumentation {
 		public InspectionViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -42,8 +44,7 @@ namespace Workwear.ViewModels.Stock {
 				
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-			if (employee != null)
-				Employee = UoW.GetById<EmployeeCard>(employee.Id);
+			Employee = UoW.GetInSession(employee);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
 			};
@@ -67,6 +68,11 @@ namespace Workwear.ViewModels.Stock {
 			} else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#inspection");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		private IInteractiveService interactive;
 		private BaseParameters baseParameters;
@@ -130,10 +136,14 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					Employee,
-					OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.DateSensitive = true;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+						filter => {
+							filter.DateSensitive = true;
+							filter.Date = Entity.Date;
+							filter.EmployeeSensitive = Employee == null;
+						});
+					});
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadItems;
 		}

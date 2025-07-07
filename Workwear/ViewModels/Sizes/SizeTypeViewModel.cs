@@ -8,13 +8,15 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Sizes
 {
-	public class SizeTypeViewModel : EntityDialogViewModelBase<SizeType>
+	public class SizeTypeViewModel : EntityDialogViewModelBase<SizeType>, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService;
@@ -40,6 +42,11 @@ namespace Workwear.ViewModels.Sizes
 				if (Entity.Id <= SizeService.MaxStandardSizeTypeId) IsStandardType = true;
 			}
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#size-types");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		public bool IsNew { get; }
 		public bool IsStandardType { get; }

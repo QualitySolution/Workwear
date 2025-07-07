@@ -12,7 +12,8 @@ namespace Workwear.Domain.Regulations
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "номенклатуры нормы",
 		Nominative = "номенклатура нормы",
-		Genitive = "номенклатуры нормы"
+		Genitive = "номенклатуры нормы",
+		GenitivePlural = "номенклатур нормы"
 		)]
 	[HistoryTrace]
 	public class ProtectionTools : PropertyChangedBase, IDomainObject
@@ -38,6 +39,20 @@ namespace Workwear.Domain.Regulations
 		public virtual ItemsType Type {
 			get { return type; }
 			set { SetField(ref type, value, () => Type); }
+		}
+
+		private bool dermalPpe = false;
+		[Display(Name = "Смывающие СИЗ")]
+		public virtual bool DermalPpe {
+			get { return dermalPpe; }
+			set { SetField(ref dermalPpe, value, () => DermalPpe); }
+		}
+
+		private bool dispenser = false;
+		[Display(Name = "Выдача дозатором")]
+		public virtual bool Dispenser {
+			get { return dispenser; }
+			set { SetField(ref dispenser, value, () => Dispenser); }
 		}
 
 		private string comment;

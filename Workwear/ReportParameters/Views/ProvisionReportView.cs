@@ -10,15 +10,21 @@ namespace Workwear.ReportParameters.Views {
 			
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
-			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
-			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			
 			ycheckbuttonExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
+			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v=>v.VisibleShowSex, w=>w.Visible).InitializeFromSource();
+			ylabelShowSex.Binding.AddBinding(ViewModel, v=>v.VisibleShowSex, w=>w.Visible).InitializeFromSource();
 			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.ShowSize, w => w.Active).InitializeFromSource();
+			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.VisibleShowSize, w => w.Visible).InitializeFromSource();
+			ylabelShowSize.Binding.AddBinding(ViewModel, v => v.VisibleShowSize, w => w.Visible).InitializeFromSource();
 			ycheckbuttonGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupBySubdivision, w => w.Active).InitializeFromSource();
 			ycheckbuttonGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.GroupByNormAmount, w => w.Active).InitializeFromSource();
+			ycheckbuttonGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.VisibleGroupByNormAmount, w => w.Visible).InitializeFromSource();
+			ylabelGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.VisibleGroupByNormAmount, w => w.Visible).InitializeFromSource();
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
 			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
 			ylabelShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();

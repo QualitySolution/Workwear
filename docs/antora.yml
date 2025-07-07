@@ -1,6 +1,6 @@
 name: workwear
 title: 'QS: Спецодежда'
-version: 2.8
+version: '2.10'
 #prerelease: Бета
 start_page: introduction.adoc
 nav:

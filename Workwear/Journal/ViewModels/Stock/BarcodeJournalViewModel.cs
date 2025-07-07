@@ -1,29 +1,34 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Data;
-using Mono.Unix.Native;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
-	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
+	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
+		#endregion
 		public BarcodeJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
@@ -53,14 +58,16 @@ namespace workwear.Journal.ViewModels.Stock
 			Size heightAlias = null;
 			
 			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
-				.Where(GetSearchCriterion(
+				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
 					() => employeeAlias.LastName,
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				))
+				).WithLikeMode(MatchMode.Exact).By(
+					() => employeeAlias.PersonnelNumber
+				).Finish())
 				.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)

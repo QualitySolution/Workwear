@@ -69,7 +69,7 @@ namespace Workwear.Domain.Company
 		[IgnoreHistoryTrace]
 		[Display (Name = "Объяснение расчёта следующей выдачи")]
 		public virtual string NextIssueAnnotation {
-			get => nextIssueAnnotation;
+			get => ProtectionTools?.Dispenser ?? false ? String.Empty : nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
 		}
 		#endregion
@@ -90,7 +90,8 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
-		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) => LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
+		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
+			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -117,7 +118,7 @@ namespace Workwear.Domain.Company
 		}
 		public virtual string Title =>
 			$"Потребность сотрудника {EmployeeCard.ShortName} в {ProtectionTools.Name} - " +
-			$"{ProtectionTools.GetAmountAndUnitsText(ActiveNormItem.Amount)} на {ActiveNormItem.LifeText}";
+			$"{ActiveNormItem.AmountText} на {ActiveNormItem.LifeText}";
 
 		public virtual StockStateInfo InStockState {
 			get {
@@ -154,8 +155,8 @@ namespace Workwear.Domain.Company
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
 				if(interval.StartDate <= onDate 
 				   && showed.Count == 1 
-				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormItem?.Amount
-				   && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
+				   && showed.First().Value.amount == ((EmployeeIssueOperation)showed.First().Value.item.IssueOperation).NormItem?.Amount
+				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
 					break;
 				
 				foreach(var item in interval.ActiveIssues) {
@@ -173,6 +174,8 @@ namespace Workwear.Domain.Company
 		#region Расчетное для View
 		public virtual string MatchedNomenclatureShortText {
 			get {
+				if(ProtectionTools?.Dispenser ?? false)
+					return String.Empty; 
 				if(InStockState == StockStateInfo.UnknownNomenclature)
 					return "нет подходящей";
 
@@ -189,12 +192,25 @@ namespace Workwear.Domain.Company
 				return text;
 			}
 		}
-		public virtual string AmountByNormText => 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(ActiveNormItem?.Amount ?? 0) ?? ActiveNormItem?.Amount.ToString();
-		public virtual string InStockText => 
-			ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ?? 
-			BestChoiceInStock.Sum(x => x.Amount).ToString();
-		public virtual string AmountText => ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
+		public virtual string AmountByNormText => ActiveNormItem?.AmountText;
+		public virtual string InStockText {
+			get {
+				if(ProtectionTools?.Dispenser ?? false)
+					return String.Empty;
+				if(InStockState == StockStateInfo.NotLoaded)
+					return "Нет данных";
+				return ProtectionTools?.Type?.Units?.MakeAmountShortStr(BestChoiceInStock.Sum(x => x.Amount)) ??
+					  BestChoiceInStock.Sum(x => x.Amount).ToString();
+			}
+		}
+
+		public virtual string AmountText => ProtectionTools?.Dispenser ?? false ? String.Empty : ProtectionTools?.Type?.Units?.MakeAmountShortStr(Issued(DateTime.Today)) ?? Issued(DateTime.Today).ToString();
+
+		public virtual string DelayText => ProtectionTools?.Dispenser ?? false ? String.Empty : 
+			(NextIssue.HasValue && NextIssue.Value < DateTime.Today)
+				? NumberToTextRus.FormatCase((int)(DateTime.Today - NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
+				: String.Empty;
+		public virtual string NextIssueText => ProtectionTools?.Dispenser ?? false ? String.Empty : $"{NextIssue:d}";
 		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 		#endregion
@@ -211,7 +227,7 @@ namespace Workwear.Domain.Company
 		/// <summary>
 		/// Получить необходимое к выдаче количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate, bool ignoreNormConditionPeriod = false) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
 			
@@ -221,7 +237,7 @@ namespace Workwear.Domain.Company
 				return 0;
 			if(employeeCard.OnVacation(onDate))
 				return 0;
-			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
+			if (!ignoreNormConditionPeriod && ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
 				if (onDate < nextPeriod.Begin)
 					return 0;
@@ -282,9 +298,9 @@ namespace Workwear.Domain.Company
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
 					//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
-					var expiredByNorm = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null);
+					var expiredByNorm = lastInterval.ActiveItems.Where(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm != null);
 					if(expiredByNorm.Any())
-						wantIssue = expiredByNorm.Max(x => x.IssueOperation.ExpiryByNorm.Value);
+						wantIssue = expiredByNorm.Max(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm.Value);
 					else
 						wantIssue = null;
 				}

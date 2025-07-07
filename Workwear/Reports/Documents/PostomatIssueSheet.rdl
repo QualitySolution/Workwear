@@ -20,10 +20,10 @@
        nomenclature.name as nomenclature, 
        CONCAT_WS(' ', employee.last_name, employee.first_name, employee.patronymic_name) as FIO
 FROM postomat_documents as postomat
-LEFT JOIN postomat_document_items as cells on cells.document_id = postomat.id
-LEFT JOIN barcodes on barcodes.id = cells.barcode_id
-LEFT JOIN nomenclature on nomenclature.id = barcodes.nomenclature_id
-LEFT JOIN wear_cards as employee on employee.id = cells.employee_id
+         LEFT JOIN postomat_document_items as cells on cells.document_id = postomat.id
+         LEFT JOIN barcodes on barcodes.id = cells.barcode_id
+         LEFT JOIN nomenclature on nomenclature.id = barcodes.nomenclature_id
+         LEFT JOIN employees as employee on employee.id = cells.employee_id
 WHERE postomat.id = @id;
 </CommandText>
         <QueryParameters>

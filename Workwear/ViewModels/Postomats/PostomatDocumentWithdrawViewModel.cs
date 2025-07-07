@@ -5,13 +5,11 @@ using System.Linq;
 using Autofac;
 using MySqlConnector;
 using NHibernate;
-using NHibernate.Criterion;
 using NLog;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Report;
@@ -19,12 +17,14 @@ using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using QSProjectsLib;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Postomats {
-	public class PostomatDocumentWithdrawViewModel : EntityDialogViewModelBase<PostomatDocumentWithdraw> 
+	public class PostomatDocumentWithdrawViewModel : EntityDialogViewModelBase<PostomatDocumentWithdraw>, IDialogDocumentation
 	{
 		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
@@ -53,6 +53,11 @@ namespace Workwear.ViewModels.Postomats {
 				item.Postomat = postomats.FirstOrDefault(p => p.Id == item.TerminalId);
 			}
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-pickup-document");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region View Properties
 
@@ -89,14 +94,14 @@ namespace Workwear.ViewModels.Postomats {
 			{
 				string sql = @"
 			             select terminal_id,
-			             CONCAT_WS(' ', wear_cards.last_name, wear_cards.first_name, wear_cards.patronymic_name) as fio,
+			             CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as fio,
 			             nomenclature.name,
 			             claim_id
 			             from clothing_service_claim
 			             	left join clothing_service_states on clothing_service_claim.id = clothing_service_states.claim_id
 			             	left join barcodes on barcodes.id = clothing_service_claim.barcode_id
 			             	left join nomenclature on nomenclature.id = barcodes.nomenclature_id
-			             	left join wear_cards on wear_cards.id = clothing_service_claim.employee_id
+			             	left join employees on employees.id = clothing_service_claim.employee_id
 			             where state = 'InReceiptTerminal' and
 			              NOT EXISTS (select * 
 			              			  from clothing_service_states as cs 
@@ -141,7 +146,7 @@ namespace Workwear.ViewModels.Postomats {
 				if (serviceClaim == null) continue;
 
 				PostomatInfo postomat = postomats.FirstOrDefault(x => x.Id == terminalId);
-				Entity.AddItem(serviceClaim, postomat, userService.GetCurrentUser());
+				Entity.AddItem(serviceClaim, postomat);
 			}
 		}
 		#endregion

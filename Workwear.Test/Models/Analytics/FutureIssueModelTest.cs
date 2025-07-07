@@ -37,7 +37,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 4
 			};
 			
-			var operations = new List<EmployeeIssueOperation>() {
+			var operations = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation {
 					OperationTime = new DateTime(2022, 10, 5),
 					Issued = 1,
@@ -88,7 +88,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 3
 			};
 			
-			var operations = new List<EmployeeIssueOperation>();
+			var operations = new List<IGraphIssueOperation>();
 			
 			var employeeItems = new List<EmployeeCardItem> {
 				new EmployeeCardItem {
@@ -163,7 +163,7 @@ namespace Workwear.Test.Models.Analytics {
 				PeriodCount = 4
 			};
 			
-			var operations1 = new List<EmployeeIssueOperation>() {
+			var operations1 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Уже списано
 					OperationTime = new DateTime(2020, 5, 1),
 					Issued = 2,
@@ -171,7 +171,7 @@ namespace Workwear.Test.Models.Analytics {
 					ExpiryByNorm = new DateTime(2024, 5, 1)
 				}
 			};
-			var operations2 = new List<EmployeeIssueOperation>() {
+			var operations2 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Частичная
 					OperationTime = new DateTime(2022, 5, 1),
 					Issued = 1,
@@ -179,7 +179,7 @@ namespace Workwear.Test.Models.Analytics {
 					ExpiryByNorm = new DateTime(2026, 5, 1)
 				}
 			};
-			var operations3 = new List<EmployeeIssueOperation>() {
+			var operations3 = new List<IGraphIssueOperation>() {
 				new EmployeeIssueOperation { //Возникнет если не учитываем переносы по отпуску
 					OperationTime = new DateTime(2020, 11, 10),
 					Issued = 2,
@@ -231,6 +231,60 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result3.Count, Is.EqualTo(1));
 			Assert.That(result3[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 10)));
 			Assert.That(result3[0].Amount, Is.EqualTo(2));
+		}
+		
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что если начало прогнозируемого периода по условиям нормы не попадает в период выдачи. Мы правильно показываем долги.")]
+		public void CalculateIssues_NormConditionPeriod_Calculated()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				Nomenclatures = new ObservableList<Nomenclature>() {
+					new Nomenclature()
+				}
+			};
+
+			var norm = new Norm {
+				DateFrom = new DateTime(2024, 12, 1)
+			};
+			
+			var normCondition = new NormCondition {
+				Name = "Зима",
+				IssuanceStart = new DateTime(2000, 9, 1),
+				IssuanceEnd = new DateTime(2000, 5, 1),
+			};
+			
+			var normItem = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 4,
+				NormCondition = normCondition
+			};
+			
+			var employeeItems = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					Created = new DateTime(2024, 12, 1),
+					ActiveNormItem = normItem,
+					ProtectionTools = protectionTools,
+					NextIssue = new DateTime(2024, 12, 1),
+					Graph = new IssueGraph()
+				}
+			};
+
+			// Начало прогнозирования в июне, зимнюю одежду должны выдавать с сентября.
+			var result = model.CalculateIssues(new DateTime(2025, 6, 18), new DateTime(2025, 12, 31), true, employeeItems);
+
+			// Мы убеждаемся что не потеряли долг, так как у нас стоит перенос долга на дату начала периода.
+			// Но это не попадает в период выдачи по норме, долг пропадал. Это не правильно.
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2025, 6, 18)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2024, 12, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(2));
 		}
 	}
 }

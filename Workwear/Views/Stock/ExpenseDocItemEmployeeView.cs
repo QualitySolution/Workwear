@@ -38,22 +38,16 @@ namespace Workwear.Views.Stock
 			ytreeItems.Binding.AddBinding(viewModel, v => v.SelectedItem, w => w.SelectedRow);
 
 			labelSum.Binding
-				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp)
-				.InitializeFromSource();
-
-			buttonAdd.Sensitive = ViewModel.Warehouse != null;
-
+				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
+			buttonAdd.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive).InitializeFromSource();
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
 				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
-				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
-				.InitializeFromSource();
+				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label).InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
-				.InitializeFromSource();
-
-			ViewModel.expenseEmployeeViewModel.Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
+				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive).InitializeFromSource();
 
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
@@ -74,19 +68,19 @@ namespace Workwear.Views.Stock
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
-					.Editing()
+					.Editing(ViewModel.CanEdit)	
 				.AddColumn("Износ").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
-				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
+				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit)
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
@@ -145,30 +139,21 @@ namespace Workwear.Views.Stock
 				subItemChangeProtectionTools.Append(menuItemChangePtFull);
 					
 			itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
+			itemChangeProtectionTools.Sensitive = ViewModel.CanEdit;
 			menu.Add(itemChangeProtectionTools);
 			
 			menu.ShowAll();
 			menu.Popup();
 		}
 
-		void ItemOpenProtection_Activated(object sender, EventArgs e)
-		{
+		void ItemOpenProtection_Activated(object sender, EventArgs e) =>
 			viewModel.OpenProtectionTools((sender as MenuItemId<ExpenseItem>).ID);
-		}
-
-		void Item_Activated(object sender, EventArgs e)
-		{
+		void Item_Activated(object sender, EventArgs e) =>
 			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
-		}
+		
 		#endregion
 		
 		#region События
-		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.Warehouse))
-				buttonAdd.Sensitive = ViewModel.Warehouse != null;
-		}
-
 		void PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.SelectedItem) && ViewModel.SelectedItem != null) {
@@ -180,25 +165,17 @@ namespace Workwear.Views.Stock
 		#endregion
 
 		#region Кнопки
-		protected void OnButtonDelClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonDelClicked(object sender, EventArgs e) =>
 			viewModel.Delete(ytreeItems.GetSelectedObject<ExpenseItem>());
-		}
 
-		void YtreeItems_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-		}
+		void YtreeItems_Selection_Changed(object sender, EventArgs e) =>
+			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
 
-		protected void OnButtonAddClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		}
 
-		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e) =>
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
-		}
 
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
 		{

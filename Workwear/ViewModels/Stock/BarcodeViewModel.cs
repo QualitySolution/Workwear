@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -7,11 +6,13 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Stock 
 {
-	public class BarcodeViewModel : EntityDialogViewModelBase<Barcode> {
+	public class BarcodeViewModel : EntityDialogViewModelBase<Barcode>, IDialogDocumentation {
 		
 		public BarcodeViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -33,6 +34,11 @@ namespace Workwear.ViewModels.Stock
 
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		#region ViewProperty
 

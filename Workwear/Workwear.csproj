@@ -14,7 +14,7 @@
     <ReleaseVersion>2.0</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <TargetOS>Linux</TargetOS>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -119,6 +119,7 @@
     <Compile Include="Journal\Filter.ViewModels\ClothingService\ClaimsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\DutyNormBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Analytics\ProtectionToolsCategoryJournalViewModel.cs" />
@@ -131,25 +132,27 @@
     <Compile Include="Journal\ViewModels\Postomats\FullnessJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsWithdrawJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Postomats\PostomatDocumentsJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\DutyNormBalanceJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\DutyNormsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseWriteOffJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Supply\ShipmentJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiceEmployeeGroupViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiceProtectionToolsViewModel.cs" />
-    <Compile Include="ReportParameters\ViewModels\ChoiseSubdivisionViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\ShipmentReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WarehouseTransferReportViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\WearCardsReportViewModel.cs" />
     <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\ViewModels\WriteOffActViewModel.cs" />
     <Compile Include="ReportsDlg\WearStatement.cs" />
@@ -160,10 +163,6 @@
     <Compile Include="Tools\Import\Xml1CDocumentParser.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
-    <Compile Include="Dialogs\Stock\IncomeDocDlg.cs" />
-    <Compile Include="Dialogs\Stock\IncomeDocItemsView.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDocDlg.cs" />
-    <Compile Include="gtk-gui\workwear.IncomeDocItemsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WriteOffView.cs" />
     <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
     <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
@@ -171,8 +170,8 @@
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
+    <Compile Include="Tools\Permissions\PermissionsService.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Analytics\WarehouseForecastingItem.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
@@ -180,6 +179,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
@@ -192,15 +192,20 @@
     <Compile Include="ViewModels\Import\IncomeImportViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentWithdrawViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
+    <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
+    <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeViewModel.cs" />
     <Compile Include="ViewModels\Stock\BarcodeViewModel.cs" />
     <Compile Include="ViewModels\Stock\CauseWriteOffViewModel.cs" />
     <Compile Include="ViewModels\Stock\EmployeeIssueGraphViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseDutyNormViewModel.cs" />
+    <Compile Include="ViewModels\Stock\IncomeViewModel.cs" />
     <Compile Include="ViewModels\Stock\InspectionViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureProtectionToolsViewModel.cs" />
     <Compile Include="ViewModels\Stock\OwnerViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
@@ -460,10 +465,6 @@
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ClothingMoveView.cs" />
     <Compile Include="Views\ClothingService\ServiceClaimView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.ClothingService.ServiceClaimView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceProtectionToolsView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceProtectionToolsView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceSubdivisionView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceSubdivisionView.cs" />
     <Compile Include="ReportParameters\Views\ProvisionReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ProvisionReportView.cs" />
     <Compile Include="Journal\Filter.Views\ClothingService\ClaimsJournalFilterView.cs" />
@@ -472,8 +473,6 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.BarcodeCompletenessReportView.cs" />
     <Compile Include="Views\Export\FutureIssueExportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Export.FutureIssueExportView.cs" />
-    <Compile Include="ReportParameters\Views\ChoiceEmployeeGroupView.cs" />
-    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ChoiceEmployeeGroupView.cs" />
     <Compile Include="Journal\Filter.ViewModels\Postomats\PostomatDocumentsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Postomats\PostomatDocumentsJournalFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Postomats.PostomatDocumentsJournalFilterView.cs" />
@@ -483,6 +482,14 @@
     <Compile Include="gtk-gui\Workwear.Views.Postomats.PostomatDocumentWithdrawView.cs" />
     <Compile Include="Views\Analytics\ProtectionToolsCategoryView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Analytics.ProtectionToolsCategoryView.cs" />
+    <Compile Include="Views\Regulations\DutyNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.DutyNormView.cs" />
+    <Compile Include="Views\Stock\ExpenseDutyNormView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDutyNormView.cs" />
+    <Compile Include="Views\Stock\IncomeView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.IncomeView.cs" />
+    <Compile Include="Views\Stock\ReturnView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.ReturnView.cs" />
     <Compile Include="ReportParameters\Views\ClothingServiceReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ClothingServiceReportView.cs" />
     <Compile Include="ReportParameters\Views\StockAllWearView.cs" />
@@ -493,8 +500,24 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.CauseWriteOffView.cs" />
     <Compile Include="ReportParameters\Views\WriteOffActView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WriteOffActView.cs" />
-    <Compile Include="ReportParameters\Views\WarehouseTransferReportView.cs"/>
+    <Compile Include="ReportParameters\Views\WarehouseTransferReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WarehouseTransferReportView.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\ProtectionToolsFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.ProtectionToolsFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\ProtectionToolsFilterViewModel.cs" />
+    <Compile Include="ReportParameters\Views\WearCardsReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WearCardsReportView.cs" />
+    <Compile Include="Views\Supply\ShipmentView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentView.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\DutyNormBalanceFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormBalanceFilterView.cs" />
+    <Compile Include="Journal\Filter.Views\Supply\ShipmentJournalFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Supply.ShipmentJournalFilterView.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Supply\ShipmentJournalFilterViewModel.cs" />
+    <Compile Include="Views\Communications\SendEmailView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
+    <Compile Include="ReportParameters\Views\ShipmentReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ShipmentReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -683,7 +706,6 @@
     <Folder Include="ReportsDlg\" />
     <Folder Include="Dialogs\" />
     <Folder Include="Representations\" />
-    <Folder Include="Dialogs\Stock\" />
     <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Representations\Organization\" />
     <Folder Include="Views\" />
@@ -692,7 +714,6 @@
     <Folder Include="ViewModels\Statements\" />
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
-    <Folder Include="Journal\ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
     <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
@@ -734,9 +755,21 @@
     <Folder Include="Views\Export\" />
     <Folder Include="Journal\Filter.Views\Postomats\" />
     <Folder Include="Views\Analytics\" />
+    <Folder Include="Views\Supply\" />
+    <Folder Include="Journal\Filter.Views\Supply\" />
+    <Folder Include="Journal\Filter.ViewModels\Supply\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingService\ClothingServiceCountClaimReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingService\ClothingServiceMetricReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ClothingService\ClothingServiceStatusReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Documents\InspectionSheet.rdl">
@@ -788,10 +821,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Employee\PersonalCardPage1.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Employee\PersonalCardPage2.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Statements\IssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -800,7 +833,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountEmployeeGetWear.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\AmountIssuedWear.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -828,7 +861,8 @@
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
-    <PackageReference Include="ClosedXML" Version="0.104.0-rc1" />
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="FluentNHibernate" Version="3.1.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
     <PackageReference Include="Iesi.Collections" Version="4.0.5" />
@@ -858,10 +892,25 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Reports\ClothingServiceReport.rdl">
+    <None Include="Reports\DutyNorms\DutyNormPage1.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Reports\Documents\ShipmentSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\SpravkaEmployeeSizes.rdl">
+    <None Include="Reports\ClothingService\ClothingServicePostamatReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\ListBySizeFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Reports\ProvisionReportNeedIssue.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ShipmentReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
@@ -871,6 +920,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\WarehouseTransferReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\WearCardsReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\WriteOffAct.rdl">
@@ -903,10 +955,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew1.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\Employee\PersonalCardPageNew2.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\NotIssuedSheetFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

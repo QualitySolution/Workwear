@@ -1,4 +1,5 @@
 ﻿using System;
+using workwear.Representations.Organization;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace Workwear.Views.Company.EmployeeChildren
@@ -40,7 +41,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		protected void OnButtonReturnWearClicked(object sender, EventArgs e) {
 			buttonReturnWear.Sensitive = false;
-			ViewModel.ReturnWear();
+			ViewModel.ReturnWear(treeviewListedItems.GetSelectedObject<EmployeeBalanceVMNode>());
 			buttonReturnWear.Sensitive = ViewModel.SensetiveButtonReturn;
 		}
 

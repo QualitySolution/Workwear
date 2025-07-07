@@ -27,7 +27,8 @@ namespace Workwear.Domain.Company
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников",
-		Genitive = "карточки сотрудника"
+		Genitive = "карточки сотрудника",
+		GenitivePlural = "карточек сотрудников"
 	)]
 	[HistoryTrace]
 	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
@@ -420,7 +421,7 @@ namespace Workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 			needRemove.ToList ().ForEach (i => WorkwearItems.Remove (i));
-			//Обновляем информацию о прошлых выдачах, перед обновление даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
+			//Обновляем информацию о прошлых выдачах, перед обновлением даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
 			if(processed.Any())
 				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
 			//Обновляем срок следующей выдачи
@@ -434,7 +435,7 @@ namespace Workwear.Domain.Company
 		/// Обновляет дату следующей выдачи у потребностей по указанному списку номенклатур нормы.
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
-		/// <param name="protectionTools">список номенклатур нормы потребности в которых надо обновлять.</param>
+		/// <param name="protectionTools">Список номенклатур нормы потребности в которых надо обновлять.</param>
 		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
@@ -461,7 +462,7 @@ namespace Workwear.Domain.Company
 			if(Id == 0) {
 				// Нет смысла лезть в базу, так как сотрудник еще не сохранен.
 				foreach(var item in WorkwearItems) {
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph();
 				}
 				return;
 			}
@@ -469,7 +470,7 @@ namespace Workwear.Domain.Company
 		}
 
 		/// <summary>
-		/// Метод заполняет информацию о получениях с строках потребности в виде графа Graph. И обновляет LastIssue.
+		/// Метод заполняет информацию о получениях для строк потребности в виде графа Graph. И обновляет LastIssue.
 		/// </summary>
 		public virtual void FillWearReceivedInfo(IList<EmployeeIssueOperation> operations) {
 			var protectionGroups = 
@@ -480,9 +481,9 @@ namespace Workwear.Domain.Company
 			
 			foreach (var item in WorkwearItems) {
 				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
-					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList());
+					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
 				else 
-					item.Graph = new IssueGraph(new List<EmployeeIssueOperation>());
+					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
 			}
 		}
 
@@ -512,7 +513,7 @@ namespace Workwear.Domain.Company
 			var operations = employeeIssueRepository.AllOperationsForEmployee(this, q => q.Fetch(SelectMode.Fetch, o => o.ProtectionTools), uow);
 			var toRecalculate = operations.Where(x => x.IsTouchDates(begin, end)).ToList();
 			foreach (var typeGroup in toRecalculate.GroupBy(o => o.ProtectionTools)) {
-				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList());
+				var graph = new IssueGraph(operations.Where(x => typeGroup.Key.IsSame(x.ProtectionTools)).ToList<IGraphIssueOperation>());
 				foreach (var operation in typeGroup.OrderBy(o => o.OperationTime.Date).ThenBy(o => o.StartOfUse)) {
 					operation.RecalculateDatesOfIssueOperation(graph, baseParameters, askUser);
 					uow.Save(operation);

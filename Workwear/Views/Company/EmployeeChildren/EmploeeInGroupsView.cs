@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company.EmployeeChildren;
 

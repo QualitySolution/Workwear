@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
+using QS.ViewModels.Extension;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ProvisionReportViewModel : ReportParametersViewModelBase {
+	public class ProvisionReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
 		
 		private readonly FeaturesService featuresService;
 		
@@ -21,16 +27,26 @@ namespace Workwear.ReportParameters.ViewModels {
 			UoW = uowFactory.CreateWithoutRoot();
 			
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#provision");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			//Двойная проверка страхует от несинхронных изменений названий полей в разных классах.
@@ -52,6 +68,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 			{"show_employees", ShowEmployees },
 			{"show_stock", ShowStock },
+			{"show_dismissed", ShowDismissed},
 		};
 
 		#region Параметры
@@ -64,14 +81,17 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
 		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
+		public bool VisibleShowSex => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
+		public bool VisibleShowSize => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
+		public bool VisibleGroupByNormAmount => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected 
 		                                                && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 
-		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 		
 		#region Свойства
@@ -117,6 +137,9 @@ namespace Workwear.ReportParameters.ViewModels {
 				SetField(ref reportType, value); 
 				OnPropertyChanged(nameof(VisibleShowStock));
 				OnPropertyChanged(nameof(VisibleShowEmployee));
+				OnPropertyChanged(nameof(VisibleShowSex));
+				OnPropertyChanged(nameof(VisibleShowSize));
+				OnPropertyChanged(nameof(VisibleGroupByNormAmount));
 			}
 		}
 
@@ -130,6 +153,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => showEmployees;
 			set => SetField(ref showEmployees, value);
 		}
+
+		private bool showDismissed;
+		public virtual bool ShowDismissed {
+			get=>showDismissed;
+			set=>SetField(ref showDismissed, value);
+		}
 		#endregion
 		
 		public enum ProvisionReportType {
@@ -138,7 +167,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			Common,
 			[ReportIdentifier("ProvisionReportFlat")]
 			[Display(Name = "Только данные")]
-			Flat
+			Flat,
+			[ReportIdentifier("ProvisionReportNeedIssue")]
+			[Display(Name = "Детально по выдачам")]
+			NeedIssue,
 		}
 	}
 }

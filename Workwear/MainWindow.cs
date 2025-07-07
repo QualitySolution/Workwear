@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -24,6 +23,7 @@ using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Project.Versioning;
+using QS.Project.Versioning.ViewModels;
 using QS.Project.Views;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
@@ -32,6 +32,7 @@ using QS.Tdi.Gtk;
 using QS.Tdi;
 using QS.Updater.App;
 using QS.Updater;
+using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
 using QSOrmProject;
@@ -69,7 +70,9 @@ using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
+using workwear.Journal.ViewModels.Supply;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
@@ -96,6 +99,9 @@ public partial class MainWindow : Gtk.Window {
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig (progress);
@@ -121,38 +127,66 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-
+		
+		progress.CheckPoint("Настройка каналов обновления");
+		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
+			var appInfo = releaseScope.Resolve<IApplicationInfo>();
+			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
+				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
+				var channel = configuration[$"AppUpdater:Channel"];
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+					channel = UpdateChannel.Current.ToString();
+					configuration[$"AppUpdater:Channel"] = channel;
+				}
+				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+			}
+			else {
+				ActionUpdateChannel.Visible = false;
+			}
+		}
+		
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
-			if (updateInfo?.Status == UpdateStatus.Error) 
-			{
+			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
+				quitService.Quit();
+				return;
+			}
+			
+			if (updateInfo?.Status == UpdateStatus.ConnectionError) {
+				logger.Warn(updateInfo.Value.Message);
+			}
+
+			if(updateInfo?.Status == UpdateStatus.BaseError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
 				quitService.Quit();
 				return;
 			}
 			
-			if (updateInfo?.Status == UpdateStatus.ExternalError)
-			{
+			if (updateInfo?.Status == UpdateStatus.ExternalError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) 
-				{
+				if (!EnterNewSN()) {
 					quitService.Quit();
 					return;
 				}
 			}
 		}
 
+		progress.CheckPoint("Настройка удаления");
+		//Настройка удаления
+		Configure.ConfigureDeletion();
+		
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
 		if(connectionBuilder.UserID == "root") {
-			string Message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
+			string message = "Вы зашли в программу под администратором базы данных. У вас есть только возможность создавать других пользователей.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			Users WinUser = new Users();
@@ -170,13 +204,13 @@ public partial class MainWindow : Gtk.Window {
 		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
 		
 		if(databaseInfo.IsDemo) {
-			string Message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
+			string message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
 				"установить собственный сервер или купить подписку на QS:Облако.";
 			MessageDialog md = new MessageDialog(this, DialogFlags.DestroyWithParent,
 												  MessageType.Info,
 												  ButtonsType.Ok,
-												  Message);
+												  message);
 			md.Run();
 			md.Destroy();
 			dialogAuthenticationAction.Sensitive = false;
@@ -211,7 +245,7 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Проверка и исправления базы");
 		#region Проверки и исправления базы
-		//Если склады отсутствуют создаём новый, так как для версий ниже предприятия пользователь его создать не сможет.
+		//Если склады отсутствуют, создаём новый склад, так как для версий ниже предприятия пользователь его создать не сможет.
 		if(!UoW.GetAll<Warehouse>().Any())
 			CreateDefaultWarehouse();
 		using(var localScope = MainClass.AppDIContainer.BeginLifetimeScope()) {
@@ -260,29 +294,6 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-
-		//Настраиваем каналы обновлений
-		progress.CheckPoint("Настройка каналов обновления");
-		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
-			var appInfo = releaseScope.Resolve<IApplicationInfo>();
-			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
-				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-			}
-			else {
-				ActionUpdateChannel.Visible = false;
-			}
-		}
-		
-		progress.CheckPoint("Настройка удаления");
-		//Настройка удаления
-		Configure.ConfigureDeletion();
 		
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
@@ -301,6 +312,7 @@ public partial class MainWindow : Gtk.Window {
 				MainTelemetry.DoNotTrack = configuration["Application:DoNotTrack"] == "true";
 				MainTelemetry.StartUpdateByTimer(600);
 				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
+				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
 		#else
 			MainTelemetry.DoNotTrack = true;
@@ -310,6 +322,9 @@ public partial class MainWindow : Gtk.Window {
 		
 		progress.CheckPoint("Запуск QS: Облако");
 		QSSaaS.Session.StartSessionRefresh ();
+		toolbarMain.Sensitive = true;
+		menubar1.Sensitive = true;
+		entitySearchEmployee.Sensitive = true;
 		progress.End();
 		logger.Info($"Запуск за {progress.TotalTime.TotalSeconds} сек.");
 	}
@@ -369,6 +384,9 @@ public partial class MainWindow : Gtk.Window {
 
 	#region Workwear featrures
 	private void DisableFeatures() {
+		Action11.Visible = FeaturesService.Available(WorkwearFeature.ReportStock);
+		ActionAmountEmployeeGetWear.Visible = FeaturesService.Available(WorkwearFeature.ReportEmployeesReceived);
+		ActionAmountIssuedWear.Visible = FeaturesService.Available(WorkwearFeature.ReportIssued);
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBarcodes.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
 		ActionBatchProcessing.Visible = FeaturesService.Available(WorkwearFeature.BatchProcessing);
@@ -379,12 +397,14 @@ public partial class MainWindow : Gtk.Window {
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionCostCenter.Visible = FeaturesService.Available(WorkwearFeature.CostCenter);
+		ActionDutyNorm.Visible = FeaturesService.Available(WorkwearFeature.DutyNorms);
 		ActionEmployeeGroup.Visible = FeaturesService.Available(WorkwearFeature.EmployeeGroups);
 		ActionExport.Visible = FeaturesService.Available(WorkwearFeature.ExportExcel);
 		ActionFullnessPostomats.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionHistoryLog.Visible = FeaturesService.Available(WorkwearFeature.HistoryLog);
 		ActionImport.Visible = FeaturesService.Available(WorkwearFeature.LoadExcel);
 		ActionIncomeLoad.Visible = FeaturesService.Available(WorkwearFeature.Exchange1C);
+		ActionIssuanceSheets.Visible = FeaturesService.Available(WorkwearFeature.StatementJournal);
 		ActionMenuClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionMenuNotification.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
@@ -392,31 +412,28 @@ public partial class MainWindow : Gtk.Window {
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
+		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
+		ActionRequestSheet.Visible = FeaturesService.Available(WorkwearFeature.ReportOrder);
+		ActionShipment.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
 		ActionSpecCoinsBalance.Visible = FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
+		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
-
+		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
+		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
+		
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
 						 || FeaturesService.Available(WorkwearFeature.Postomats)
 						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionShipmentReport.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
 	}
 	#endregion
 
-	#region Helpers
-	void OpenUrl(string url) {
-		//Здесь пробуем исправить ошибку 35026 на нашем багтрекере.
-		//Предположил что проблема в этом https://github.com/dotnet/runtime/issues/28005
-		//Но проверить действительно ли это так негде.
-		ProcessStartInfo psi = new ProcessStartInfo {
-			FileName = url,
-			UseShellExecute = true
-		};
-		Process.Start(psi);
-	}
-
+	#region Helper
 	void SetChannel(UpdateChannel channel) {
 		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
 			var configuration = releaseScope.Resolve<IChangeableConfiguration>();
@@ -433,7 +450,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
 		a.RetVal = true;
-		quitService.Quit();
+		if(quitService != null)
+			quitService.Quit();
+		else 
+			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
 	public override void Destroy() {
@@ -510,7 +530,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			OpenUrl("user-guide.pdf");
+			OpenHelper.OpenUrl("user-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -521,7 +541,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionHistoryActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("RunChangeLogDlg");
-		QSMain.RunChangeLogDlg(this);
+		NavigationManager.OpenViewModel<ChangeLogViewModel>(null);
 	}
 
 	protected void OnActionUpdateActivated(object sender, EventArgs e) {
@@ -557,10 +577,15 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockBalanceActivated(object sender, EventArgs e) {
-		var page = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null);
-		page.ViewModel.ShowSummary = true;
-		page.ViewModel.Filter.ShowNegativeBalance = true;
-		page.ViewModel.Filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+		NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(null,
+			configureViewModel: vm => vm.ShowSummary = true,
+			addingRegistrations: builder => {
+				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+					filter => {
+						filter.ShowNegativeBalance = true;
+						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+					});
+			});
 	}
 
 	protected void OnActionStockDocsActivated(object sender, EventArgs e) {
@@ -713,7 +738,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
-		OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
+		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
 	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
@@ -829,7 +854,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			OpenUrl("admin-guide.pdf");
+			OpenHelper.OpenUrl("admin-guide.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -843,7 +868,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionStockMovementsActivated(object sender, EventArgs e) {
-		NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(null);
+		NavigationManager.OpenViewModel<StockMovementsJournalViewModel>(null);
 	}
 
 	protected void OnActionConversatoinsActivated(object sender, EventArgs e) {
@@ -914,6 +939,10 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<ClaimsJournalViewModel>(null);
 	}
 
+	protected void OnActionDutyNormActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(null);
+	}
+
 	protected void OnActionProvisionActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ProvisionReportViewModel));
 	}
@@ -961,5 +990,17 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionWarehouseTransferReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WarehouseTransferReportViewModel));
+	}
+
+	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
+	}
+
+	protected void OnActionShipmentActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
+	}
+
+	protected void OnActionShipmentReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ShipmentReportViewModel));
 	}
 }

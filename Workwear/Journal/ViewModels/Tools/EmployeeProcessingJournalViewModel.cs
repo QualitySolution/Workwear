@@ -13,12 +13,13 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Extension;
 using QS.ViewModels.Resolve;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -34,7 +35,7 @@ using Workwear.ViewModels.Company;
 namespace workwear.Journal.ViewModels.Tools
 {
 	[DontUseAsDefaultViewModel]
-	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>
+	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>, IDialogDocumentation
 	{
 		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeProcessing");
 		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
@@ -51,7 +52,10 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly ModalProgressCreator progressCreator;
 
 		public EmployeeFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("manipulation.html#employee-processing");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public EmployeeProcessingJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, 
 			NormRepository normRepository,
@@ -201,6 +205,7 @@ namespace workwear.Journal.ViewModels.Tools
 			);
 			updateStatusAction.ChildActionsList.Add(removeAllNorms);
 			#endregion
+			
 			#region Пересчитать
 			var recalculateAction = new JournalAction("Пересчитать",
 					(selected) => selected.Any(),
@@ -269,7 +274,7 @@ namespace workwear.Journal.ViewModels.Tools
 				(selected) => true,
 				(selected) => Active2LastNormItem(selected.Cast<EmployeeProcessingJournalNode>().ToArray(), true)
 			);
-			recalculateAction.ChildActionsList.Add(replaceActiveNormItemFromNomenclaturesAction);
+			replaceAction.ChildActionsList.Add(replaceActiveNormItemFromNomenclaturesAction);
 				
 			replaceAction.ChildActionsList.Add(replacePostAction);
 			#endregion
@@ -583,6 +588,7 @@ namespace workwear.Journal.ViewModels.Tools
 		
 		void Active2LastNormItem(EmployeeProcessingJournalNode[] nodes, bool fromNomenclature = false) {
 			loggerProcessing.Info($"Переустановка строк нормы в 2 последих опирациях на актуальные у {nodes.Length} сотрудников");
+			loggerProcessing.Info(fromNomenclature ? "По номенклатурам" : "По номенклатурам нормы");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			progressCreator.Start(3, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;

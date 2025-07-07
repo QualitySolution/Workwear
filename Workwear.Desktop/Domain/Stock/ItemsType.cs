@@ -10,7 +10,8 @@ namespace Workwear.Domain.Stock
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номенклатуры",
 		Nominative = "тип номенклатуры",
-		Genitive = "типа номенклатуры"
+		Genitive = "типа номенклатуры",
+		GenitivePlural = "типов номенклатуры"
 		)]
 	[HistoryTrace]
 	public class ItemsType : PropertyChangedBase, IDomainObject

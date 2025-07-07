@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
@@ -57,10 +57,14 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			switch (docType)
 			{
-				case StockDocumentType.IncomeDoc:
+				case StockDocumentType.Income:
 					return typeof(Income);
+				case StockDocumentType.Return:
+					return typeof(Return);
 				case StockDocumentType.ExpenseEmployeeDoc:
 					return typeof(Expense);
+				case StockDocumentType.ExpenseDutyNormDoc:
+					return typeof(ExpenseDutyNorm);
 				case StockDocumentType.CollectiveExpense:
 					return typeof(CollectiveExpense);
 				case StockDocumentType.WriteoffDoc:
@@ -79,11 +83,15 @@ namespace Workwear.Domain.Stock.Documents
 	public enum StockDocumentType
 	{
 		[Display(Name = "Поступление на склад")]
-		IncomeDoc,
+		Income,
 		[Display(Name = "Выдача сотруднику")]
 		ExpenseEmployeeDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
+		[Display(Name = "Выдача по дежурной норме")]
+		ExpenseDutyNormDoc,
+		[Display(Name = "Возврат")]
+		Return,
 		[Display(Name = "Перемещение")]
 		TransferDoc,
 		[Display(Name = "Списание")]

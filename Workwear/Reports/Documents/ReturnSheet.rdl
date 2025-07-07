@@ -1227,9 +1227,29 @@
     </ReportItems>
   </Body>
   <PageFooter>
-    <Height>0.0pt</Height>
-    <PrintOnFirstPage>false</PrintOnFirstPage>
-    <PrintOnLastPage>false</PrintOnLastPage>
+    <Height>18.1pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems>
+      <Textbox Name="Textbox18">
+        <Height>14.90pt</Height>
+        <Width>424.57pt</Width>
+        <Value>Распечатано из «QS: Спецодежда»        workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>377.70pt</Left>
+        <Top>0.70pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Right</TextAlign>
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
+    </ReportItems>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
@@ -1237,49 +1257,52 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-nomenclature.name as nomenclature_name,
-nomenclature.number as nomenclature_number,
-old_issuse.StartOfUse as date_start,
-old_issuse.ExpiryByNorm as date_expiry,
-norms_item.period_count AS period_num,
-IF(norms_item.period_count BETWEEN 11 AND 19,
-   CASE norms_item.period_type
- 		WHEN 'Month' THEN 'месяцев'
-   		WHEN 'Year' THEN 'лет'
-   		WHEN 'Shift' THEN 'смен'
-   END, IF(norms_item.period_count % 10 = 1,
-   			CASE norms_item.period_type
-  				WHEN 'Month' THEN 'месяц'
-  				WHEN 'Year' THEN 'год'
-           		WHEN 'Shift' THEN 'смена'
-		END, IF(norms_item.period_count % 10 BETWEEN 2 and 4,
-   				CASE norms_item.period_type
-  					WHEN 'Month' THEN 'месяца'
-  					WHEN 'Year' THEN 'года'
-                	WHEN 'Shift' THEN 'смены'
-				END, CASE norms_item.period_type
-  						WHEN 'Month' THEN 'месяцев'
-  						WHEN 'Year' THEN 'лет'
-                		WHEN 'Shift' THEN 'смен'
-           			 END))) as period_type,
-CASE norms_item.period_type
-	WHEN 'Month' THEN 'время'
-  	WHEN 'Year' THEN 'время'
-    WHEN 'Shift' THEN 'время'
-    WHEN 'Wearout' THEN 'До износа'
-    WHEN 'Duty' THEN 'Дежурный'
-    ELSE ' '
-END as period_specificity,
-old_issuse.issued as amount_issuse,
-this_issuse.returned as amount_return,
-this_issuse.wear_percent * 100 as wear_percent
-FROM stock_income_detail
-LEFT JOIN nomenclature on nomenclature.id = stock_income_detail.nomenclature_id
-LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_income_detail.employee_issue_operation_id
-LEFT JOIN operation_issued_by_employee as old_issuse on old_issuse.id = this_issuse.issued_operation_id
-LEFT JOIN norms_item on norms_item.id = old_issuse.norm_item_id
-WHERE stock_income_detail.stock_income_id = @id</CommandText>
+        <CommandText>SELECT
+    nomenclature.name as nomenclature_name,
+    nomenclature.number as nomenclature_number,
+    COALESCE(old_issuse.StartOfUse, old_duty_issued.start_of_use) as date_start,
+    COALESCE(old_issuse.ExpiryByNorm, old_duty_issued.expiry_by_norm) as date_expiry,
+    COALESCE(norms_item.period_count, duty_norm_items.period_count) AS period_num,
+    IF(COALESCE(norms_item.period_count, duty_norm_items.period_count) BETWEEN 11 AND 19,
+       CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
+           WHEN 'Month' THEN 'месяцев'
+           WHEN 'Year' THEN 'лет'
+           WHEN 'Shift' THEN 'смен'
+           END, IF(COALESCE(norms_item.period_count, duty_norm_items.period_count) % 10 = 1,
+                   CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
+                       WHEN 'Month' THEN 'месяц'
+                       WHEN 'Year' THEN 'год'
+                       WHEN 'Shift' THEN 'смена'
+                       END, IF(COALESCE(norms_item.period_count, duty_norm_items.period_count) % 10 BETWEEN 2 and 4,
+                               CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
+                                   WHEN 'Month' THEN 'месяца'
+                                   WHEN 'Year' THEN 'года'
+                                   WHEN 'Shift' THEN 'смены'
+                                   END, CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
+                                            WHEN 'Month' THEN 'месяцев'
+                                            WHEN 'Year' THEN 'лет'
+                                            WHEN 'Shift' THEN 'смен'
+                                   END))) as period_type,
+    CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
+        WHEN 'Month' THEN 'время'
+        WHEN 'Year' THEN 'время'
+        WHEN 'Shift' THEN 'время'
+        WHEN 'Wearout' THEN 'До износа'
+        WHEN 'Duty' THEN 'Дежурный'
+        ELSE ' '
+        END as period_specificity,
+    COALESCE(old_issuse.issued, old_duty_issued.issued) as amount_issuse,
+    COALESCE(this_issuse.returned, this_duty_issued.returned) as amount_return,
+    COALESCE(this_issuse.wear_percent, this_duty_issued.wear_percent)  * 100 as wear_percent
+FROM stock_return_items
+         LEFT JOIN nomenclature on nomenclature.id = stock_return_items.nomenclature_id
+         LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_return_items.employee_issue_operation_id
+         LEFT JOIN operation_issued_by_duty_norm as this_duty_issued ON this_duty_issued.id = stock_return_items.duty_norm_issue_operation_id
+         LEFT JOIN operation_issued_by_employee as old_issuse on old_issuse.id = this_issuse.issued_operation_id
+         LEFT JOIN operation_issued_by_duty_norm as old_duty_issued ON old_duty_issued.id = this_duty_issued.issued_operation_id
+         LEFT JOIN norms_item on norms_item.id = old_issuse.norm_item_id
+         LEFT JOIN duty_norm_items ON old_duty_issued.duty_norm_item_id = duty_norm_items.id
+WHERE stock_return_items.stock_return_id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -1330,36 +1353,38 @@ WHERE stock_income_detail.stock_income_id = @id</CommandText>
       </Fields>
     </DataSet>
     <DataSet Name="DocInfo">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT 
-IFNULL(stock_income.doc_number, stock_income.id)
-        as doc_number,
-stock_income.date AS doc_date,
-CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
-CONCAT(wear_cards.last_name, " ", wear_cards.first_name, " ", wear_cards.patronymic_name) AS fio
+        <CommandText>SELECT
+    IFNULL(stock_return.doc_number, stock_return.id)
+                                                                                                                       as doc_number,
+    stock_return.date AS doc_date,
+    CONCAT_WS(' - ', ob8.name, ob7.name, ob6.name, ob5.name, ob4.name, ob3.name, ob2.name, ob1.name, departments.name) AS subdivision,
+    GROUP_CONCAT(CONCAT(employees.last_name, " ", employees.first_name, " ", employees.patronymic_name) SEPARATOR ", ") AS fio
 
-FROM stock_income
-LEFT JOIN wear_cards ON wear_cards.id = stock_income.wear_card_id
-LEFT JOIN objects as ob1 ON ob1.id = wear_cards.object_id
-LEFT JOIN objects as ob2 ON ob2.id = ob1.parent_object_id 
-LEFT JOIN objects as ob3 ON ob3.id = ob2.parent_object_id
-LEFT JOIN objects as ob4 ON ob4.id = ob3.parent_object_id
-LEFT JOIN objects as ob5 ON ob5.id = ob4.parent_object_id
-LEFT JOIN objects as ob6 ON ob6.id = ob5.parent_object_id
-LEFT JOIN objects as ob7 ON ob7.id = ob6.parent_object_id
-LEFT JOIN objects as ob8 ON ob8.id = ob7.parent_object_id
-LEFT JOIN objects ON objects.id = wear_cards.object_id
-LEFT JOIN departments ON departments.id = wear_cards.department_id
+FROM stock_return
+         JOIN stock_return_items ON stock_return_items.stock_return_id = stock_return.id
+         LEFT JOIN employees ON employees.id = stock_return_items.employee_id
+         LEFT JOIN subdivisions as ob1 ON ob1.id = employees.subdivision_id
+         LEFT JOIN subdivisions as ob2 ON ob2.id = ob1.parent_subdivision_id
+         LEFT JOIN subdivisions as ob3 ON ob3.id = ob2.parent_subdivision_id
+         LEFT JOIN subdivisions as ob4 ON ob4.id = ob3.parent_subdivision_id
+         LEFT JOIN subdivisions as ob5 ON ob5.id = ob4.parent_subdivision_id
+         LEFT JOIN subdivisions as ob6 ON ob6.id = ob5.parent_subdivision_id
+         LEFT JOIN subdivisions as ob7 ON ob7.id = ob6.parent_subdivision_id
+         LEFT JOIN subdivisions as ob8 ON ob8.id = ob7.parent_subdivision_id
+         LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
+         LEFT JOIN departments ON departments.id = employees.department_id
 
-WHERE stock_income.id = @id</CommandText>
+WHERE stock_return.id = @id
+GROUP BY stock_return.id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="doc_date">
           <DataField>doc_date</DataField>
           <TypeName>System.DateTime</TypeName>
@@ -1387,6 +1412,13 @@ WHERE stock_income.id = @id</CommandText>
           <Value>142</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

@@ -25,6 +25,9 @@ namespace Workwear.Tools
 			set => Dynamic[nameof(DefaultAutoWriteoff)] = value;
 		}
 		
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней)
+		/// </summary>
 		public virtual int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
@@ -83,6 +86,29 @@ namespace Workwear.Tools
 			get => Dynamic.UsedCurrency(typeof(string)) ?? "\u20bd";
 			set => Dynamic[nameof(UsedCurrency)] = value;
 		}
+
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа выдачи.
+		/// </summary>
+		public virtual bool IsDocNumberInIssueSign {
+			get => Dynamic.IsDocNumberInIssueSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInIssueSign)] = value;
+		}
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника вместо подписи, печатать номер документа возврата\списания.
+		/// </summary>
+		public virtual bool IsDocNumberInReturnSign {
+			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
+			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
+		}
+		
+		/// <summary>
+		/// Дата запрета редактирования документов.
+		/// </summary>
+		public virtual DateTime? EditLockDate {
+			get => Dynamic.EditLockDate(typeof(DateTime?));
+			set => Dynamic[nameof(EditLockDate)] = value;
+		}
 		#endregion
 	}
 	public enum AnswerOptions {
@@ -93,4 +119,5 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
+	
 }

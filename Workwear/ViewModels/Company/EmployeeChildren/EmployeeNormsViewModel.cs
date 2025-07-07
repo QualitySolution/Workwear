@@ -62,7 +62,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(Entity.Id == 0) {
 				if(interactive.Question("Перед добавлением нормы необходимо сохранить сотрудника. Сохраняем?")) {
-					if(!employeeViewModel.Save()) //Здесь если не сохраним нового сотрудника при установки нормы скорей всего упадем.
+					if(!employeeViewModel.Save()) //Здесь если не сохраним нового сотрудника при установке нормы скорей всего упадем.
 						return;
 				}
 				else 

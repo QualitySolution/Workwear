@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
@@ -15,10 +16,12 @@ using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
@@ -27,7 +30,7 @@ using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class WarehouseTransferViewModel : EntityDialogViewModelBase<Transfer>
+	public class WarehouseTransferViewModel : PermittingEntityDialogViewModelBase<Transfer>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
@@ -49,10 +52,15 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters baseParameters,
 			OrganizationRepository organizationRepository,
 			StockBalanceModel stockBalanceModel,
-			IInteractiveQuestion interactive,
-			FeaturesService featuresService) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator, unitOfWorkProvider) {
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
+			FeaturesService featuresService
+			) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator, unitOfWorkProvider)
+		{
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			SetDocumentDateProperty(e => e.Date);
+			
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Organization =
@@ -67,8 +75,11 @@ namespace Workwear.ViewModels.Stock
 			};
 			
 			OrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization).MakeByType().Finish();
+			OrganizationEntryViewModel.IsEditable = CanEdit;
 			WarehouseFromEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseFrom).MakeByType().Finish();
+			WarehouseFromEntryViewModel.IsEditable = CanEdit;
 			WarehouseToEntryViewModel = entryBuilder.ForProperty(x => x.WarehouseTo).MakeByType().Finish();
+			WarehouseToEntryViewModel.IsEditable = CanEdit;
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Owners = UoW.GetAll<Owner>().ToList();
@@ -92,6 +103,11 @@ namespace Workwear.ViewModels.Stock
 			}
 		}
 
+		#region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#transfer");
+        public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+        #endregion
+        
 		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(Entity.WarehouseFrom) && Entity.WarehouseFrom != stockBalanceModel.Warehouse) {
 				if(Entity.Items.Any()) {
@@ -113,8 +129,8 @@ namespace Workwear.ViewModels.Stock
 				stockBalanceModel.OnDate = Entity.Date;
 		}
 		#region Sensetive
-		public bool CanAddItem => Entity.WarehouseFrom != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanAddItem => CanEdit && Entity.WarehouseFrom != null;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		#endregion
 
 		#region Свойства
@@ -137,11 +153,16 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		public void AddItems() {
-			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
+			var selectPage = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+						filter => {
+							filter.WarehouseEntry.IsEditable = false;
+							filter.Warehouse = Entity.WarehouseFrom;
+							filter.CanChooseAmount = true;
+						});
+				});
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.Filter.CanChooseAmount = true;
-			selectPage.ViewModel.Filter.Warehouse = Entity.WarehouseFrom;
-			selectPage.ViewModel.Filter.WarehouseEntry.IsEditable = false;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 

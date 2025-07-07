@@ -9,6 +9,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Services;
@@ -44,15 +45,17 @@ namespace WorkwearTest.ViewModels.Stock
 
 		#region Helpers
 		ContainerBuilder MakeContainer(IUserService userService, CurrentUserSettings currentUserSettings) {
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
-			var interactive = Substitute.For<IInteractiveService>();
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
 			var deleteService = Substitute.For<IDeleteEntityService>();
+			var featuresService = Substitute.For<FeaturesService>();
+			var interactive = Substitute.For<IInteractiveService>();
+			var navigation = Substitute.For<INavigationManager>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
+			var sizeService = Substitute.For<SizeService>();
+			var validator = new ValidatorForTests();
+			var commonMessages = Substitute.For<CommonMessages>(interactive);
+			var permissions = Substitute.For<ICurrentPermissionService>();
+			permissions.ValidateEntityPermission(Arg.Any<Type>()).Returns(new SimplePermissionResult(true, true, true, true));
 
 			var builder = new ContainerBuilder();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
@@ -63,6 +66,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveQuestion>().As<IInteractiveService>();
 			builder.Register(x => navigation).As<INavigationManager>();
+			builder.Register(x => permissions).As<ICurrentPermissionService>();
 			builder.Register(x => progress).As<IProgressBarDisplayable>();
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => userService).As<IUserService>();

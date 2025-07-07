@@ -134,8 +134,13 @@ namespace Workwear.Domain.Regulations
 			}
 		}
 
+		public virtual string AmountText => ProtectionTools.Dispenser ?
+			"Дозатор" :
+			ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount);
 		public virtual string LifeText{
-			get{
+			get {
+				if(ProtectionTools.Dispenser)
+					return String.Empty;
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
 						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
@@ -186,7 +191,7 @@ namespace Workwear.Domain.Regulations
 
 		public virtual string Title{
 			get{ return String.Format ("{0} в количестве {1} на {2}", 
-				ProtectionTools?.Name, ProtectionTools?.Type?.Units?.MakeAmountShortStr (Amount), LifeText);
+				ProtectionTools?.Name, AmountText, LifeText);
 			}
 		}
 
