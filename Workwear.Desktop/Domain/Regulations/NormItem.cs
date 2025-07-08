@@ -83,6 +83,13 @@ namespace Workwear.Domain.Regulations
 			get => String.IsNullOrWhiteSpace(comment) ? null : comment; //Чтобы в базе хранить null, а не пустую строку. 
 			set => SetField(ref comment, value); 
 		}
+
+		private bool isHidden;
+		[Display(Name = "Отключена номенклатура норма")]
+		public virtual bool IsHidden {
+			get => isHidden;
+			set => SetField(ref isHidden, value);
+		}
 		private DateTime lastUpdate;
 		[Display(Name="Последнее обновление")]
 		public virtual DateTime LastUpdate {
