@@ -111,7 +111,7 @@ namespace workwear.Journal.ViewModels.Communications {
 	public class SpecCoinsOperationsJournalNode{
 		public CoinsOperation Operation { get; set; }
 		public string NomenclatureName { get; set; }
-		public string CreateTime => Operation.CreateTime.ToDateTime().ToLongTimeString();
+		public string CreateTime => Operation.CreateTime.ToDateTime().ToString("g");
 		public int Coin => Operation.Coin;
 		public string OperationDescription => Operation.Description;
 		public string Rating => new string(star, (int)(Operation.Rating?.Rating ?? 0));

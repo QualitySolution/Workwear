@@ -10,7 +10,8 @@ namespace Workwear.Domain.Company
 	[Appellative (Gender = GrammaticalGender.Neuter,
 		NominativePlural = "должностные лица",
 		Nominative = "должностное лицо",
-		Genitive ="должностного лица"
+		Genitive ="должностного лица",
+		GenitivePlural = "должностных лиц"
 		)]
 	[HistoryTrace]
 	public class Leader : PropertyChangedBase, IDomainObject, IValidatableObject

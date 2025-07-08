@@ -6,15 +6,22 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations {
-	public class DutyNormsJournalViewModel : EntityJournalViewModelBase<DutyNorm, DutyNormViewModel, DutyNormsJournalNode>{
+	public class DutyNormsJournalViewModel : EntityJournalViewModelBase<DutyNorm, DutyNormViewModel, DutyNormsJournalNode>, IDialogDocumentation{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#duty-norms");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(DutyNorm));
+		#endregion
 		public DutyNormsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
@@ -24,6 +31,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = true;
+			CreatePopupActions();
 		}
 
 		protected override IQueryOver<DutyNorm> ItemsQuery(IUnitOfWork uow) {
@@ -51,6 +59,20 @@ namespace workwear.Journal.ViewModels.Regulations {
 					.TransformUsing(Transformers.AliasToBean<DutyNormsJournalNode>());
 			}
 		}
+		#region Popupmenu action implementation
+
+		protected override void CreatePopupActions() {
+			PopupActionsList.Add(new JournalAction("Создать копию дежурной нормы", (arg)=>arg.Length == 1, (arg)=>true, CopyDutyNorm));
+		}
+		private void CopyDutyNorm(object[] nodes)
+		{
+			if(nodes.Length != 1)
+				return;
+			int dutyNormId = (nodes[0] as DutyNormsJournalNode).Id;
+			var page = NavigationManager.OpenViewModel<DutyNormViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			page.ViewModel.CopyDutyNormFrom(dutyNormId);
+		}
+		#endregion
 	}
 	
 	public class DutyNormsJournalNode

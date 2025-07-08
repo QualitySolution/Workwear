@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using QS.Project.Domain;
@@ -94,6 +95,14 @@ namespace Workwear.Domain.Users
 			get => defaultClaimListType;
 			set => SetField(ref defaultClaimListType, value);
 		}
+				
+		private string buyerEmail = String.Empty;
+		[Display(Name = "Email адрес отдела закупки по умолчанию")]
+		public virtual string BuyerEmail {
+			get => buyerEmail;
+			set => SetField(ref buyerEmail, value);
+		}
+		
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Настройки {User.Name}";

@@ -16,17 +16,17 @@
         <CommandText>SELECT
     IFNULL(nomenclature.number, nomenclature_id) as nomenclature_number,
     IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
-                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) - 
+                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
                        SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
                               operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
-    (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-     SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
+       (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+        SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
     nomenclature.name as nomenclature,
     wear_percent as life_percent,
     item_types.name  as type,
     sizeAlias.name AS size,
     heightAlias.name AS growth,
-    ownersAlias.name AS owner,
+    owners.name AS owner,
     measurement_units.name as unit,
     IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
 FROM
@@ -42,10 +42,12 @@ FROM
         LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
         LEFT JOIN
-    owners AS ownersAlias ON ownersAlias.id = operation_warehouse.owner_id
+    owners ON owners.id = operation_warehouse.owner_id
 WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id or operation_warehouse.warehouse_expense_id = @warehouse_id
-      or @allWarehouses)
+  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id
+        or operation_warehouse.warehouse_expense_id = @warehouse_id
+        or @allWarehouses)
+  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
@@ -60,6 +62,15 @@ ORDER BY nomenclature.name,
           </QueryParameter>
           <QueryParameter Name="allWarehouses">
             <Value>={?allWarehouses}</Value>
+          </QueryParameter>
+          <QueryParameter Name="allOwners">
+            <Value>=Parameters!allOwners</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutOwner">
+            <Value>=Parameters!withoutOwner</Value>
+          </QueryParameter>
+          <QueryParameter Name="ownerId">
+            <Value>=Parameters!ownerId</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -120,9 +131,9 @@ ORDER BY nomenclature.name,
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
           <TextAlign>Center</TextAlign>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -148,9 +159,9 @@ ORDER BY nomenclature.name,
           <TableColumn>
             <Width>345.9pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>46.6pt</Width>
-            <Visibility >
+            <Visibility>
               <Hidden>=!{?showSex}</Hidden>
             </Visibility>
           </TableColumn>
@@ -385,7 +396,7 @@ ORDER BY nomenclature.name,
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox23">
                           <Value></Value>
@@ -516,7 +527,7 @@ ORDER BY nomenclature.name,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
                       <Value>=Fields!sex.Value</Value>
@@ -822,6 +833,27 @@ ORDER BY nomenclature.name,
     <ReportParameter Name="warehouse_name">
       <DataType>String</DataType>
       <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="allOwners">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutOwner">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ownerId">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>

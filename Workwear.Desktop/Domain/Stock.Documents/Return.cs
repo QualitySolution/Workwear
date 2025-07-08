@@ -30,14 +30,7 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
-
-		private EmployeeCard employeeCard;
-		[Display (Name = "Сотрудник")]
-		public virtual EmployeeCard EmployeeCard {
-			get => employeeCard;
-			set { SetField (ref employeeCard, value, () => EmployeeCard); }
-		}
-
+		
 		private IObservableList<ReturnItem> items = new ObservableList<ReturnItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ReturnItem> Items {
@@ -57,10 +50,6 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
-			if(EmployeeCard == null)
-				yield return new ValidationResult ("Сотрудник должен быть указан", 
-					new[] { this.GetPropertyName (o => o.EmployeeCard)});
-
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
 					new[] { this.GetPropertyName (o => o.Items)});
@@ -68,31 +57,41 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
-		
-			if(EmployeeCard != null)
-				foreach (var item in items) {
-					if(item.IssuedEmployeeOnOperation == null || !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, EmployeeCard))
-						yield return new ValidationResult(
-							$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником", 
-							new[] { nameof(Items) });
-				}
+			foreach(var item in items) {
+				if(item.EmployeeCard == null) continue;
+				if(item.IssuedEmployeeOnOperation == null ||
+				   !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, item.EmployeeCard))
+					yield return new ValidationResult(
+						$"{item.Nomenclature.Name}: номенклатура добавлена не из числящегося за данным сотрудником",
+						new[] { nameof(Items) });
+			}
 
 			foreach(var item in items) {
 				if(item.Nomenclature == null)
 					yield return new ValidationResult(
 						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
 						new[] { nameof(Items) });
-				if(item.Amount > item.MaxAmount)
-					yield return new ValidationResult(
-						$" \"{item.ItemName}\" указано колличество больше выданного.",
-						new[] { nameof(Items) });
+				switch(item.ReturnFrom) {
+					case ReturnFrom.Employee:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше выданного сотруднику.",
+								new[] { nameof(Items) });
+						break;
+					case ReturnFrom.DutyNorm:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше выданного по дежурной норме.",
+								new[] { nameof(Items) });
+						break;
+				}
 			}
 		}
 
 		#endregion
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int maxCount = -1) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -100,16 +99,21 @@ namespace Workwear.Domain.Stock.Documents
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}
-			var newItem = new ReturnItem(this) {
-				//FIXME не учитываются другие операции (потенциальные списания)
-				Amount = maxCount != -1 ? maxCount : issuedOperation.Issued,
-				Nomenclature = issuedOperation.Nomenclature,
-				WearSize = issuedOperation.WearSize,
-				Height = issuedOperation.Height,
-				IssuedEmployeeOnOperation = issuedOperation,
-				Cost = issuedOperation.CalculateDepreciationCost(Date),
-				WearPercent = issuedOperation.CalculatePercentWear(Date),
-			};
+
+			var newItem = new ReturnItem(this, issuedOperation, count);
+
+			Items.Add(newItem);
+			return newItem;
+		}
+		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count) {
+			if(issuedOperation.Issued == 0)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
+				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+				return null;
+			}
+			var newItem = new ReturnItem(this, issuedOperation, count);
 
 			Items.Add(newItem);
 			return newItem;
@@ -124,10 +128,17 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
-			EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-			EmployeeCard.UpdateNextIssue(Items
-				.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
-				.Where(x => x != null).Distinct().ToArray());
+			foreach(var item in items) {
+				if(item.EmployeeCard!=null && item.DutyNorm==null) {
+					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
+							DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
+						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
+						.Where(x => x != null).Distinct().ToArray());
+				}
+				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании деж. нормы
+			}
+			
 		}
 	}
 }

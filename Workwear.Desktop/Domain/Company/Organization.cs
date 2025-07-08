@@ -9,7 +9,8 @@ namespace Workwear.Domain.Company
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "организации",
 		Nominative = "организация",
-		Genitive = "организации"
+		Genitive = "организации",
+		GenitivePlural = "организаций"
 		)]
 	[HistoryTrace]
 	public class Organization : PropertyChangedBase, IDomainObject

@@ -10,20 +10,22 @@ using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.ClothingService;
 
 namespace workwear.Journal.ViewModels.ClothingService {
-	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode> {
+	public class ClaimsJournalViewModel : EntityJournalViewModelBase<ServiceClaim, ServiceClaimViewModel, ClaimsJournalNode>, IDialogDocumentation {
 		private IInteractiveService interactive;
 		public readonly FeaturesService FeaturesService;
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
@@ -33,6 +35,11 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		#endregion
 		
 		public ClaimsJournalFilterViewModel Filter { get; set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employees");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(ServiceClaim));
+		#endregion
 		public ClaimsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
@@ -60,6 +67,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 			ClaimsJournalNode resultAlias = null;
 			ServiceClaim serviceClaimAlias = null;
 			StateOperation stateOperationAlias = null;
+			PostomatDocument postomatDocumentAlias = null;
 			Barcode barcodeAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			EmployeeCard employeeAlias = null;
@@ -77,6 +85,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				.Take(1);
 
 			var subqueryInDocument = QueryOver.Of<PostomatDocumentItem>()
+				.Left.JoinAlias(x => x.Document, () => postomatDocumentAlias)
+				.Where(() => postomatDocumentAlias.Status != DocumentStatus.Deleted)
 				.Where(item => item.ServiceClaim.Id == serviceClaimAlias.Id)
 				.Select(item => item.Id);
 

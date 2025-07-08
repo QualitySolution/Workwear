@@ -1,7 +1,7 @@
 :title-separator: {sp}|
 = QS: Спецодежда | Руководство системного администратора
-Quality Solution 2024
-версия 2.8
+Quality Solution 2025
+версия 2.10
 :organization: Quality Solution
 :doctype: book
 :sectnums:
@@ -10,24 +10,24 @@ Quality Solution 2024
 :icons: font
 :toc-title: Содержание
 :toclevels: 3
-:imagesdir: ../images
+:imagesdir: images
 
 :leveloffset: 1
 
-include::requirements.adoc[]
+include::pages/requirements.adoc[]
 
-include::install.adoc[]
+include::pages/install.adoc[]
 
-include::cloud.adoc[]
+include::pages/cloud.adoc[]
 
-include::users.adoc[]
+include::pages/users.adoc[]
 
-include::update.adoc[]
+include::pages/update.adoc[]
 
-include::technical.adoc[]
+include::pages/technical.adoc[]
 
-include::transfer_base.adoc[]
+include::pages/transfer_base.adoc[]
 
-include::problems.adoc[]
+include::pages/problems.adoc[]
 
 :leveloffset: 0

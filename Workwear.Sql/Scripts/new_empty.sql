@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` VARCHAR(60) NULL DEFAULT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `admin` TINYINT(1) NOT NULL DEFAULT FALSE,
+  `can_delete` TINYINT(1) NOT NULL DEFAULT TRUE,
+  `can_accounting_settings` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -54,7 +56,7 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
+	`state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
 	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
@@ -569,6 +571,7 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 	  number        varchar(15)  null,
 	  date          date         not null,
 	  warehouse_id  int unsigned not null,
+	  shipment_id   int unsigned null,
 	  user_id       int unsigned null,
 	  comment       text         null,
 	  creation_date datetime     null,
@@ -581,7 +584,9 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 			  on update cascade on delete set null,
 	  constraint fk_stock_income_warehouse
 		  foreign key (warehouse_id) references warehouse (id)
-			  on update cascade
+			  on update cascade,
+	  constraint fk_stock_income_shipment
+		  foreign key (shipment_id) references shipment (id)
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -637,17 +642,12 @@ create table stock_return
 	doc_number    varchar(16)  null,
 	date          date         not null,
 	warehouse_id  int unsigned not null,
-	employee_id   int unsigned not null,
 	user_id       int unsigned null,
 	comment       text         null,
 	creation_date datetime     null,
 	INDEX `index_stock_income_date` (`date` ASC),
 	INDEX `stock_return_doc_number_index` (`doc_number` ASC),
-	INDEX `stock_return_employee_id_index` (`employee_id` ASC),
 	INDEX `stock_income_warehouse_id_index` (`warehouse_id` ASC),
-	constraint stock_return_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
 	constraint stock_return_users_id_fk
 		foreign key (user_id) references users (id)
 			on update cascade on delete set null,
@@ -669,8 +669,11 @@ create table stock_return_items
 	stock_return_id             int unsigned not null,
 	nomenclature_id             int unsigned not null,
 	quantity                    int unsigned not null,
-	employee_issue_operation_id int unsigned not null,
+	employee_id					int unsigned null,
+	employee_issue_operation_id int unsigned null,
 	warehouse_operation_id      int unsigned not null,
+	duty_norm_id				int unsigned null,
+	duty_norm_issue_operation_id int unsigned null,
 	size_id                     int unsigned null,
 	height_id                   int unsigned null,
 	comment_return              varchar(120) null,
@@ -679,6 +682,10 @@ create table stock_return_items
 	INDEX `index_stock_return_items_height` (`height_id` ASC),
 	INDEX `index_stock_return_items_nomenclature` (`nomenclature_id` ASC),
 	INDEX `index_stock_return_items_warehouse_operation` (`warehouse_operation_id` ASC),
+	INDEX `stock_return_items_employee_id_index` (`employee_id` ASC),
+	INDEX `stock_return_items_duty_norm_id_index` (`duty_norm_id` ASC),
+	INDEX `stock_return_items_duty_norm_issue_operation_id_index` (`duty_norm_issue_operation_id` ASC),
+	INDEX `stock_return_items_employee_issue_operation_id_index` (`employee_issue_operation_id` ASC),
 	constraint fk_stock_return_items_doc
 		foreign key (stock_return_id) references stock_return (id)
 			on update cascade on delete cascade,
@@ -694,7 +701,19 @@ create table stock_return_items
 		foreign key (warehouse_operation_id) references operation_warehouse (id),
 	constraint fk_stock_return_items_size
 		foreign key (size_id) references sizes (id)
+			on update cascade,
+	constraint stock_return_items_employee_id_fk
+		foreign key (employee_id) references employees(id)
+			on update cascade 
+			on delete restrict,
+	constraint stock_return_items_duty_norm_id_fk
+		foreign key (duty_norm_id) references duty_norms (id)
 			on update cascade
+			on delete restrict,
+	constraint stock_return_items_duty_norm_issue_operation_id_fk
+		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
+			on update cascade
+			on delete restrict
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -1191,6 +1210,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,	
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `cause_write_off_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1203,6 +1223,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   INDEX `fk_stock_write_off_detail_3_idx` (`warehouse_id` ASC),
   INDEX `fk_stock_write_off_detail_5_idx` (`size_id` ASC),
   INDEX `fk_stock_write_off_detail_6_idx` (`height_id` ASC),
+  INDEX `fk_stock_write_off_detail_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_stock_write_off_detail_1`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
@@ -1242,7 +1263,12 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
 	foreign key (cause_write_off_id) 
 	references causes_write_off (id)
 	on update cascade
-	on delete set null)
+	on delete set null,
+CONSTRAINT fk_stock_write_off_detail_duty_norm_issue_operation
+    FOREIGN KEY (`duty_norm_issue_operation_id`)
+    REFERENCES `operation_issued_by_duty_norm` (id)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1392,6 +1418,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1,
+  `buyer_email` varchar(320) null,
   `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All',
   `default_warehouse_id` INT UNSIGNED NULL,
   `default_organization_id` INT UNSIGNED NULL,
@@ -2347,7 +2374,11 @@ create table shipment
 	id int unsigned auto_increment primary key,
 	start_period date not null,
 	end_period date not null,
-	status enum('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') not null default 'Ordered',
+	status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
+	full_ordered boolean default false not null,
+	full_received boolean default false not null,
+	has_receive boolean default false not null,
+	submitted datetime null,
 	user_id int unsigned null,
 	comment text null,
 	creation_date datetime null
@@ -2365,9 +2396,12 @@ create table shipment_items
 	shipment_id int unsigned not null,
 	nomenclature_id int unsigned not null,
 	quantity int unsigned not null,
+	ordered int unsigned not null,
+	received int unsigned not null,
 	cost decimal(10, 2) unsigned default 0.00 not null,
 	size_id int unsigned null,
 	height_id int unsigned null,
+	diff_cause varchar(120) null,
 	comment varchar(120) null,
 	constraint fk_shipment_items_doc
 		foreign key (shipment_id) references shipment (id)
@@ -2398,7 +2432,7 @@ create index index_shipment_items_size
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------
 ALTER TABLE issuance_sheet
-	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;;
+	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;
 ALTER TABLE issuance_sheet
 	ADD CONSTRAINT fk_stock_expense_duty_norm_id
 		FOREIGN KEY (stock_expense_duty_norm_id) REFERENCES stock_expense_duty_norm (id)
@@ -2469,8 +2503,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9.2');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.1');
 
 COMMIT;
 

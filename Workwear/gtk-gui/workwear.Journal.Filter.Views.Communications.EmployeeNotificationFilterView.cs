@@ -44,7 +44,7 @@ namespace workwear.Journal.Filter.Views.Communications
 
 		private global::Gamma.GtkWidgets.yLabel ylabel5;
 
-		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceProtectionToolsView;
+		private global::QS.Views.Control.ChoiceListView choiceprotectiontoolsview1;
 
 		protected virtual void Build()
 		{
@@ -101,7 +101,6 @@ namespace workwear.Journal.Filter.Views.Communications
 			w3.BottomAttach = ((uint)(3));
 			w3.LeftAttach = ((uint)(3));
 			w3.RightAttach = ((uint)(4));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
 			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.datePeriodIssue = new global::Gamma.Widgets.yDatePeriodPicker();
@@ -297,14 +296,12 @@ namespace workwear.Journal.Filter.Views.Communications
 			w19.Expand = false;
 			w19.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.choiceProtectionToolsView = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
-			this.choiceProtectionToolsView.Events = ((global::Gdk.EventMask)(256));
-			this.choiceProtectionToolsView.Name = "choiceProtectionToolsView";
-			this.yhbox1.Add(this.choiceProtectionToolsView);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.choiceProtectionToolsView]));
+			this.choiceprotectiontoolsview1 = new global::QS.Views.Control.ChoiceListView();
+			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
+			this.yhbox1.Add(this.choiceprotectiontoolsview1);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.choiceprotectiontoolsview1]));
 			w20.Position = 1;
-			w20.Expand = false;
-			w20.Fill = false;
 			this.Add(this.yhbox1);
 			if ((this.Child != null))
 			{

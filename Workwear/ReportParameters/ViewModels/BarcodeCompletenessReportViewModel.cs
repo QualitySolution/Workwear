@@ -2,30 +2,50 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
+using QS.ViewModels.Extension;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
+using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase {
+	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
 		
 		public BarcodeCompletenessReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
-			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+
+			Nomenclature nomenclatureAlias = null;
+
+			var protectionToolsList =  UoW.Session.QueryOver<ProtectionTools>()
+				.Left.JoinAlias(x => x.Nomenclatures, () => nomenclatureAlias)
+				.Where(() => nomenclatureAlias.UseBarcode)
+				.List();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			ChoiceProtectionToolsViewModel.UnSelectAll();
 			
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#barcode-completeness");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip("Отчёт по покрытию маркировкой");
+		#endregion
+		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			//Двойная проверка страхует от несинхронных изменений незваний полей в разных классах.
+			//Двойная проверка страхует от несинхронных изменений названий полей в разных классах.
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName 
 			   || nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
@@ -46,7 +66,7 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Параметры
 		IUnitOfWork UoW;
-		public override string Title => $"Отчёт по маркированной спецодежде от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
+		public override string Title => $"Отчёт по покрытию маркировкой от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
 			set => throw new InvalidOperationException();
@@ -59,9 +79,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected 
 		                                                && !ChoiceSubdivisionViewModel.AllUnSelected;
-
-		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		#endregion
 		
 		#region Свойства

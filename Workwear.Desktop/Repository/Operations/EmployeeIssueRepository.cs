@@ -239,9 +239,6 @@ namespace Workwear.Repository.Operations
 				.TransformUsing(Transformers.AliasToBean<OperationToDocumentReference>())
 				.List<OperationToDocumentReference>();
 
-			foreach(var item in result)
-				item.OperationType = OperationType.EmployeeIssue;
-
 			return result;
 		}
 

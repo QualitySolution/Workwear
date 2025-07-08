@@ -9,17 +9,19 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase
+	public class AmountIssuedWearViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
 		public readonly FeaturesService FeaturesService;
-		public ChoiceSubdivisionViewModel ChoiceSubdivisionViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
 		
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
@@ -29,9 +31,14 @@ namespace workwear.ReportParameters.ViewModels {
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
 
-			ChoiceSubdivisionViewModel = new ChoiceSubdivisionViewModel(UoW);
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
@@ -43,6 +50,11 @@ namespace workwear.ReportParameters.ViewModels {
 				VisibleCostCenter = UoW.GetAll<CostCenter>().Any();
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#amount-issued");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
+		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"dateStart", StartDate },
 					{"dateEnd", EndDate},

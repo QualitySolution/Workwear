@@ -27,7 +27,8 @@ namespace Workwear.Domain.Company
 		NominativePlural = "карточки сотрудников",
 		Nominative = "карточка сотрудника",
 		PrepositionalPlural = "карточках сотрудников",
-		Genitive = "карточки сотрудника"
+		Genitive = "карточки сотрудника",
+		GenitivePlural = "карточек сотрудников"
 	)]
 	[HistoryTrace]
 	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject

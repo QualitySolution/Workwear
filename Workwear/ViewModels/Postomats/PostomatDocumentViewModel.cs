@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,13 +18,16 @@ using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
 using workwear.Journal.ViewModels.ClothingService;
+using Workwear.ViewModels.ClothingService;
+using Workwear.Tools;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
 
 namespace Workwear.ViewModels.Postomats {
-	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument> {
+	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument>, IDialogDocumentation {
 		private readonly PostomatManagerService postomatService;
 		private readonly IUserService userService;
 		private readonly IInteractiveService interactive;
@@ -55,10 +58,17 @@ namespace Workwear.ViewModels.Postomats {
 						item.Location = new CellLocation(cell.CellTitle, cell.Location);
 				}
 			}
-			
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, 
+				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWorkFactory), unitOfWorkFactory} })));
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-document");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Постамат
 		public IList<PostomatInfo> Postomats { get; }
 		
@@ -134,6 +144,12 @@ namespace Workwear.ViewModels.Postomats {
 		}
 
 		public void RemoveItem(PostomatDocumentItem item) {
+			if(item.Id == 0)
+				item.ServiceClaim.States.RemoveAll(s => s.Id == 0);
+			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Продолжить?"))
+				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim);
+			else 
+				return;
 			Entity.Items.Remove(item);
 		}
 		#endregion

@@ -52,13 +52,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Expander expander1;
 
-		private global::Workwear.ReportParameters.Views.ChoiceSubdivisionView choicesubdivisionview1;
+		private global::QS.Views.Control.ChoiceListView choicesubdivisionview1;
 
 		private global::Gtk.Label GtkLabel12;
 
 		private global::Gtk.Expander expander2;
 
-		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview3;
+		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
 		private global::Gtk.Label GtkLabel14;
 
@@ -352,10 +352,9 @@ namespace workwear.ReportParameters.Views
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
-			this.expander1.Name = "expander1";
 			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
-			this.choicesubdivisionview1 = new global::Workwear.ReportParameters.Views.ChoiceSubdivisionView();
+			this.choicesubdivisionview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choicesubdivisionview1.Events = ((global::Gdk.EventMask)(256));
 			this.choicesubdivisionview1.Name = "choicesubdivisionview1";
 			this.expander1.Add(this.choicesubdivisionview1);
@@ -372,10 +371,10 @@ namespace workwear.ReportParameters.Views
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
 			// Container child expander2.Gtk.Container+ContainerChild
-			this.choiceemployeegroupview3 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
-			this.choiceemployeegroupview3.Events = ((global::Gdk.EventMask)(256));
-			this.choiceemployeegroupview3.Name = "choiceemployeegroupview3";
-			this.expander2.Add(this.choiceemployeegroupview3);
+			this.choiceemployeegroupview1 = new global::QS.Views.Control.ChoiceListView();
+			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
+			this.expander2.Add(this.choiceemployeegroupview1);
 			this.GtkLabel14 = new global::Gtk.Label();
 			this.GtkLabel14.Name = "GtkLabel14";
 			this.GtkLabel14.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");

@@ -22,6 +22,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
@@ -38,7 +39,7 @@ using Workwear.ViewModels.IdentityCards;
 
 namespace Workwear.ViewModels.Company
 {
-	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
+	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject, IDialogDocumentation
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -697,6 +698,11 @@ namespace Workwear.ViewModels.Company
 				WearItemsViewModel.SizeChanged();
 			}
 		}
+		#endregion
+
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employee-card");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 	}
 	public class DepartmentJournalViewModelSelector : IEntitySelector {

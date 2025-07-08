@@ -12,6 +12,7 @@ using QS.Utilities;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Models.Sizes;
@@ -23,7 +24,7 @@ using workwear.Journal.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature> {
+	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>, IDialogDocumentation {
 		private readonly FeaturesService featuresService;
 		private readonly IInteractiveService interactive;
 		private readonly ModalProgressCreator progressCreator;
@@ -67,6 +68,10 @@ namespace Workwear.ViewModels.Stock
 			lastSizeType = Entity.Type?.SizeType;
 			lastHeightType = Entity.Type?.HeightType;
 		}
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#nomenclatures");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
 		#endregion
@@ -92,7 +97,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Actions
 		public void OpenMovements() {
-			NavigationManager.OpenViewModel<StockMovmentsJournalViewModel>(this,
+			NavigationManager.OpenViewModel<StockMovementsJournalViewModel>(this,
 					addingRegistrations: builder => builder.RegisterInstance(Entity));
 		}
 

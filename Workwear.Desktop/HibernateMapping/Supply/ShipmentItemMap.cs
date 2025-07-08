@@ -11,8 +11,11 @@ namespace Workwear.HibernateMapping.Supply {
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
-			Map(x=>x.Amount).Column ("quantity");
+			Map(x=>x.Requested).Column ("quantity");
+			Map(x=>x.Ordered).Column ("ordered");
+			Map(x=>x.Received).Column ("received");
 			Map(x => x.Cost).Column ("cost");
+			Map(x=>x.DiffCause).Column("diff_cause");
 			Map(x=>x.Comment).Column("comment");
 			
 			References(x=>x.Shipment).Column("shipment_id");

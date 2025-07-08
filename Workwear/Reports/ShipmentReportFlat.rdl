@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
-  <Description>Обслуживание одежды</Description>
+  <Description></Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.5in</PageHeight>
-  <PageWidth>15.5in</PageWidth>
+  <PageWidth>14.5in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -13,157 +13,138 @@
     <DataSet Name="Data">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT title AS 'Штрихкод',
-       TO_CHAR(start_date, 'DD.MM.YYYY') AS 'Дата',
-       name AS 'Номенклатура',
-       tab_num,
-       sub AS 'Подразделение',
-       employee_name  AS 'ФИО',
-       CASE WHEN need_for_repair = 1 THEN
-                defect
-            ELSE ''
-           END AS 'Ремонт',
-       CASE WHEN state = 'WaitService' THEN
-                'В ожидании'
-            WHEN state = 'InReceiptTerminal' THEN
-                'В терминале приёма'
-            WHEN state = 'InTransit' THEN
-                'В пути'
-            WHEN state = 'InRepair' THEN
-                'В ремонте'
-            WHEN state = 'InWashing' THEN
-                'В стирке'
-            WHEN state = 'AwaitIssue' THEN
-                'Ожидает выдачи'
-            WHEN state = 'InDispenseTerminal' THEN
-                'В терминале выдачи'
-            WHEN state = 'Returned' THEN
-                'Возвращена'
-           END AS 'Статус заявки',
-       CASE WHEN  is_closed = 1 THEN
-                'да'
-            ELSE 'нет'
-           END AS 'Закрыта'
-FROM (
-         WITH state AS (
-             SELECT claim_id, max(operation_time) as max_time FROM clothing_service_states cl1
-             GROUP BY claim_id
-         ),
-              start_date AS(
-                  SELECT claim_id, MIN(operation_time) as min_time FROM clothing_service_states  cl2
-                  GROUP BY claim_id
-              )
-         SELECT
-             barcodes.title ,
-             CONVERT(start_date.min_time, DATE) AS start_date,
-             nomenclature.name,
-             employees.personnel_number AS tab_num,
-             clothing_service_claim.need_for_repair,
-             clothing_service_claim.defect,
-             clothing_service_states.state,
-             clothing_service_claim.is_closed,
-             subdivisions.name as sub,
-             Concat_ws(' ', employees.last_name,employees.first_name, employees.patronymic_name) as employee_name
-         FROM
-             postomat_document_items
-                 JOIN clothing_service_claim
-                            ON clothing_service_claim.id = postomat_document_items.claim_id
-                 LEFT JOIN clothing_service_states
-                           ON clothing_service_states.claim_id = clothing_service_claim.id
-                 JOIN state
-                           ON state.max_time = clothing_service_states.operation_time
-                               AND state.claim_id = clothing_service_claim.id
-                 JOIN nomenclature
-                           ON nomenclature.id = postomat_document_items.nomenclature_id
-                 JOIN barcodes
-                           ON barcodes.id = postomat_document_items.barcode_id
-                 JOIN employees
-                      ON employees.id = clothing_service_claim.employee_id
-                 LEFT JOIN subdivisions
-                              ON subdivisions.id = employees.subdivision_id
-                 JOIN start_date
-                      ON start_date.claim_id = clothing_service_states.claim_id
-         WHERE (clothing_service_claim.is_closed = 0 OR clothing_service_claim.is_closed = IF(@show_closed, 1, 0))
-           AND (IF(@show_closed, start_date.min_time BETWEEN @start_date AND DATE_ADD(@end_date, INTERVAL 1 DAY), start_date.min_time BETWEEN '1900-01-01' AND '2100-01-01'))
-     ) q1
-ORDER BY start_date, sub, employee_name;</CommandText>
+        <CommandText>SELECT 
+    CONCAT(shipment.id, ' ',
+    CASE 
+        WHEN start_period = end_period THEN
+            CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ')')
+        WHEN start_period IS NULL OR end_period IS NULL THEN
+            ''
+        ELSE
+            CONCAT('(', DATE_FORMAT(start_period,'%d.%m.%Y'), ' - ', DATE_FORMAT(end_period,'%d.%m.%Y'), ')')
+    END) AS doc,
+    nomenclature.number as num,
+    nomenclature.name as nom_name,
+    wear_size.name as size_name,
+    height_size.name as height_name,
+    CONCAT_WS(' ', shipment_items.quantity, measurement_units.name) as requested,
+    CONCAT_WS(' ', shipment_items.ordered, measurement_units.name) as ordered,
+    shipment_items.cost,
+    shipment_items.cost * shipment_items.quantity as total_requested,
+    shipment_items.diff_cause,
+    CONCAT_WS(' ', shipment_items.received,measurement_units.name) as received,
+    shipment_items.comment
+    FROM shipment
+    JOIN shipment_items ON shipment.id = shipment_items.shipment_id
+    JOIN nomenclature ON shipment_items.nomenclature_id = nomenclature.id
+    JOIN item_types ON nomenclature.type_id = item_types.id
+    JOIN measurement_units ON item_types.units_id = measurement_units.id
+    LEFT JOIN sizes wear_size ON shipment_items.size_id = wear_size.id
+    LEFT JOIN sizes height_size ON shipment_items.height_id = height_size.id
+    WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
+      AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
+    ORDER BY `doc`, `nom_name`, `size_name`, `height_name`;</CommandText>
         <QueryParameters>
-          <QueryParameter Name="show_closed">
-            <Value>=Parameters!show_closed</Value>
+          <QueryParameter Name="shipment_ids">
+            <Value>={?shipment_ids}</Value>
           </QueryParameter>
-          <QueryParameter Name="start_date">
-            <Value>={?start_date}</Value>
-          </QueryParameter>
-          <QueryParameter Name="end_date">
-            <Value>={?end_date}</Value>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
-        <Field Name="Штрихкод">
-          <DataField>Штрихкод</DataField>
+        <Field Name="doc">
+          <DataField>doc</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Дата">
-          <DataField>Дата</DataField>
+        <Field Name="num">
+          <DataField>num</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Номенклатура">
-          <DataField>Номенклатура</DataField>
+        <Field Name="nom_name">
+          <DataField>nom_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="tab_num">
-          <DataField>tab_num</DataField>
+        <Field Name="size_name">
+          <DataField>size_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Подразделение">
-          <DataField>Подразделение</DataField>
+        <Field Name="height_name">
+          <DataField>height_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ФИО">
-          <DataField>ФИО</DataField>
+        <Field Name="requested">
+          <DataField>requested</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Ремонт">
-          <DataField>Ремонт</DataField>
+        <Field Name="ordered">
+          <DataField>ordered</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Статус_заявки">
-          <DataField>Статус заявки</DataField>
+        <Field Name="cost">
+          <DataField>cost</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="total_requested">
+          <DataField>total_requested</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="diff_cause">
+          <DataField>diff_cause</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Закрыта">
-          <DataField>Закрыта</DataField>
+        <Field Name="received">
+          <DataField>received</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="comment">
+          <DataField>comment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Name">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT
+    CASE
+        WHEN (MIN(start_period) = MAX(end_period)) THEN
+            DATE_FORMAT(MIN(start_period),'%d.%m.%Y')
+        ELSE
+            CONCAT(DATE_FORMAT(MIN(start_period),'%d.%m.%Y'), ' - ', DATE_FORMAT(MAX(end_period),'%d.%m.%Y'))
+        END AS shipment_period
+FROM (
+SELECT start_period, end_period
+    FROM shipment
+    JOIN shipment_items ON shipment.id = shipment_items.shipment_id
+    WHERE ((-1 IN (@shipment_ids)) OR shipment.id IN (@shipment_ids))
+      AND ((-1 IN (@nomenclature_ids)) OR shipment_items.nomenclature_id IN (@nomenclature_ids))
+      AND  (shipment.start_period IS NOT NULL AND shipment.end_period IS NOT NULL)
+    GROUP BY shipment.id, shipment.start_period, shipment.end_period) q1;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="shipment_ids">
+            <Value>={?shipment_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="shipment_period">
+          <DataField>shipment_period</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
   </DataSets>
   <PageHeader>
-    <Height>.5in</Height>
-    <ReportItems>
-      <Textbox Name="Textbox1">
-        <Top>.1in</Top>
-        <Left>.1in</Left>
-        <Width>6in</Width>
-        <Height>.25in</Height>
-        <Value>Обслуживание одежды</Value>
-        <Style>
-          <FontSize>12pt</FontSize>
-          <FontWeight>Bold</FontWeight>
-          <BorderStyle />
-          <BorderColor />
-          <BorderWidth />
-          <TextAlign>Left</TextAlign>
-        </Style>
-      </Textbox>
-    </ReportItems>
+    <Height>0.0pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>67.3pt</Height>
-    <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
         <DataSetName>Data</DataSetName>
@@ -175,73 +156,59 @@ ORDER BY start_date, sub, employee_name;</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>33.0pt</Width>
+            <Width>131.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>62.6pt</Width>
+            <Width>90.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>84.2pt</Width>
+            <Width>160.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>256.3pt</Width>
+            <Width>59.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>110.4pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>99.1pt</Width>
+            <Width>52.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>190.5pt</Width>
+            <Width>67.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>87.3pt</Width>
+            <Width>61.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>104.5pt</Width>
+            <Width>62.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>51.1pt</Width>
+            <Width>61.8pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>121.2pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>57.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>80.0pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>23.5pt</Height>
+              <Height>12pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox17">
-                      <Value>№п/п</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>Дата</Value>
+                      <Value>Поставка (период)</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -249,17 +216,15 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>Штрихкод</Value>
+                      <Value>Ном. №</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -267,71 +232,31 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
-                      <Value>Номенклатура</Value>
+                      <Value>Наименование</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox19">
-                      <Value>Подразделение</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                    <Textbox Name="Textbox5">
+                      <Value>Размер</Value>
+                      <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox23">
-                      <Value>Табельный номер</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value>ФИО</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -339,17 +264,15 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>Ремонт</Value>
+                      <Value>Рост</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -357,17 +280,15 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox7">
-                      <Value>Статус заявки</Value>
+                      <Value>Запрошено</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -375,22 +296,96 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
-                      <Value>Закрыта</Value>
+                      <Value>Заказано</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
-                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
-                      <Visibility>
-                        <Hidden>={?show_closed}=false</Hidden>
-                        <ToggleItem></ToggleItem>
-                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox9">
+                      <Value>Стоимость</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox10">
+                      <Value>Сумма</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value>Причина расхождения</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox12">
+                      <Value>Получено</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox13">
+                      <Value>Комментарий</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -402,62 +397,49 @@ ORDER BY start_date, sub, employee_name;</CommandText>
         <Details>
           <TableRows>
             <TableRow>
-              <Height>14.4pt</Height>
+              <Height>12pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox18">
-                      <Value>=RowNumber()</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox10">
-                      <Value>={Дата}</Value>
+                    <Textbox Name="doc">
+                      <Value>=Fields!doc.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <TextAlign>Left</TextAlign>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox11">
-                      <Value>={Штрихкод}</Value>
+                    <Textbox Name="num">
+                      <Value>=Fields!num.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
+                        <PaddingLeft>2pt</PaddingLeft>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox12">
-                      <Value>={Номенклатура}</Value>
+                    <Textbox Name="nom_name">
+                      <Value>=Fields!nom_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
@@ -466,91 +448,129 @@ ORDER BY start_date, sub, employee_name;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox20">
-                      <Value>={Подразделение}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox24">
-                      <Value>={tab_num}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox22">
-                      <Value>={ФИО}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox14">
-                      <Value>={Ремонт}</Value>
+                    <Textbox Name="size_name">
+                      <Value>=Fields!size_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
+                        <PaddingLeft>2pt</PaddingLeft>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value>={Статус_заявки}</Value>
+                    <Textbox Name="height_name">
+                      <Value>=Fields!height_name.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
+                        <PaddingLeft>2pt</PaddingLeft>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox16">
-                      <Value>={Закрыта}</Value>
+                    <Textbox Name="requested">
+                      <Value>=Fields!requested.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
+                        <PaddingLeft>2pt</PaddingLeft>
                       </Style>
-                      <Visibility>
-                        <Hidden>={?show_closed}=false</Hidden>
-                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="ordered">
+                      <Value>=Fields!ordered.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="cost">
+                      <Value>=Fields!cost.Value</Value>
+                      <CanGrow>false</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="total_requested">
+                      <Value>=Fields!total_requested.Value</Value>
+                      <CanGrow>false</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="diff_cause">
+                      <Value>=Fields!diff_cause.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="received">
+                      <Value>=Fields!received.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="comment">
+                      <Value>=Fields!comment.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -558,22 +578,39 @@ ORDER BY start_date, sub, employee_name;</CommandText>
             </TableRow>
           </TableRows>
         </Details>
-        <Left>1.8pt</Left>
-        <Top>5.6pt</Top>
+        <Left>0.0pt</Left>
+        <Top>30.5pt</Top>
       </Table>
+      <Textbox Name="Textbox1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Top>7.8pt</Top>
+        <Left>289.2pt</Left>
+        <Width>6in</Width>
+        <Height>.25in</Height>
+        <Value>= "Планируемые поставки " + Iif(Len(First({shipment_period}, 'Name')) &gt; 10, "за период: " + First({shipment_period}, 'Name'), "на " + First({shipment_period}, 'Name')) + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
+        <Style>
+          <FontSize>15pt</FontSize>
+          <FontWeight>Bold</FontWeight>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow >true</CanGrow>
+      </Textbox>
     </ReportItems>
+    <Height>64.6pt</Height>
+    <Columns>1</Columns>
   </Body>
   <PageFooter>
     <Height>14pt</Height>
     <ReportItems>
-      <Textbox Name="Textbox9">
+      <Textbox Name="Textbox14">
         <Top>1pt</Top>
         <Left>10pt</Left>
         <Height>12pt</Height>
         <Width>3in</Width>
-        <Value>=Globals!PageNumber + " из " + Globals!TotalPages</Value>
+        <Value>=Globals!PageNumber + ' of ' + Globals!TotalPages</Value>
         <Style>
-          <FontSize>8pt</FontSize>
+          <FontSize>10pt</FontSize>
           <FontWeight>Normal</FontWeight>
         </Style>
       </Textbox>
@@ -583,51 +620,34 @@ ORDER BY start_date, sub, employee_name;</CommandText>
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
+  <ReportParameters>
+    <ReportParameter Name="shipment_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="nomenclature_ids">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataSources >
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10; database=workwear_test_kos_24_06_24;user id=SpMob;password=zl7EdFfQ3ikoEKCA;</ConnectString>
+        <ConnectString></ConnectString>
         <IntegratedSecurity>false</IntegratedSecurity>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
-    <ReportParameter Name="show_closed">
-      <DataType>Boolean</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>true</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-    <ReportParameter Name="start_date">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>2024-01-01</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-    <ReportParameter Name="end_date">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>2024-12-31</Value>
-        </Values>
-      </DefaultValue>
-      <Nullable>false</Nullable>
-      <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-  </ReportParameters>
 </Report>
