@@ -64,6 +64,7 @@ namespace Workwear.Views.Regulations
 					.Editing()
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
+				.AddColumn("Отключить").AddToggleRenderer(x=>x.IsHidden, false)
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
