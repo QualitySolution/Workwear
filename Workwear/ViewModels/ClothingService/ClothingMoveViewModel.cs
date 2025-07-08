@@ -151,10 +151,11 @@ namespace Workwear.ViewModels.ClothingService {
 		{
 			string text = String.Empty;
 			var claimState = status.Claim.States.Last().State;
+			var nomenclature = status.Claim.Barcode.Nomenclature.Name;
 			if(claimState == ClaimState.InDryCleaning)
-				text = "Ваша спецодежда перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
+				text = $"Ваша спецодежда {nomenclature} перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
 			if(claimState == ClaimState.InRepair)
-				text = "Ваша спецодежда перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
+				text = $"Ваша спецодежда {nomenclature} перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
 			OutgoingMessage message = new OutgoingMessage {
 				Phone = status.Claim.Employee.PhoneNumber,
 				Title = "Изменение статуса обслуживания одежды",
