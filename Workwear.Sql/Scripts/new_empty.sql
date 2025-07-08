@@ -2229,6 +2229,7 @@ create table duty_norm_items
 	next_issue          date                                                      null,
 	norm_paragraph      varchar(200)                                              null comment 'Пункт норм, основание выдачи',
 	comment             text                                                      null,
+	is_hidden			boolean										default false not null,
 	constraint fk_duty_norms_item_norm
 		foreign key (duty_norm_id) references duty_norms (id)
 			on update cascade,
