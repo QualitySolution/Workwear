@@ -224,14 +224,6 @@ namespace Workwear.Domain.Company
 			get => workwearItems;
 			set => SetField(ref workwearItems, value);
 		}
-
-		private IObservableList<DutyNormItem> dutyNormItems = new ObservableList<DutyNormItem>();
-
-		[Display(Name = "Привязанные дежурные нормы")]
-		public virtual IObservableList<DutyNormItem> DutyNormItems {
-			get => dutyNormItems;
-			set => SetField(ref dutyNormItems, value);
-		}
 		#endregion
 		#region Vacation
 		private IObservableList<EmployeeVacation> vacations = new ObservableList<EmployeeVacation>();
@@ -488,34 +480,6 @@ namespace Workwear.Domain.Company
 					.ToDictionary(g => g.Key, g => g);
 			
 			foreach (var item in WorkwearItems) {
-				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
-					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
-				else 
-					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
-			}
-		}
-
-		#endregion
-
-		#region Функции для работы с дежурными нормами
-
-		public virtual void FillDutyNormReceivedInfo(DutyNormRepository dutyNormRepository) {
-			if(Id == 0) {
-				foreach(var item in DutyNormItems) {
-					item.Graph = new IssueGraph();
-				}
-				return;
-			}
-			FillDutyNormReceivedInfo(dutyNormRepository.AllDutyNormsForResponsibleEmployee(this));
-		}
-
-		public virtual void FillDutyNormReceivedInfo(IList<DutyNormIssueOperation> dutyNormsOperations) {
-			var protectionGroups = 
-					dutyNormsOperations
-					.Where(x => x.ProtectionTools != null)
-					.GroupBy(x => x.ProtectionTools.Id)
-					.ToDictionary(g => g.Key, g => g);
-			foreach (var item in DutyNormItems) {
 				if(protectionGroups.ContainsKey(item.ProtectionTools.Id)) 
 					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
 				else 
