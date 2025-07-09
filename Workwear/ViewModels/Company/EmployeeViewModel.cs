@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -177,6 +177,7 @@ namespace Workwear.ViewModels.Company
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
 			NormsViewModel = AutofacScope.Resolve<EmployeeNormsViewModel>(parameter);
 			WearItemsViewModel = AutofacScope.Resolve<EmployeeWearItemsViewModel>(parameter);
+			DutyNormsViewModel = AutofacScope.Resolve<EmployeeDutyNormsViewModel>(parameter);
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
@@ -230,6 +231,7 @@ namespace Workwear.ViewModels.Company
 		}
 
 		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
+		public bool VisibleDutyNorms => Entity.DutyNormItems != null;
 		#endregion
 
 		#region Sensetive
@@ -488,16 +490,17 @@ namespace Workwear.ViewModels.Company
 																	// 0 - Информация
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
-		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
-		public EmployeeCostCentersViewModel CostCenterViewModel;	//4
-		public EmployeeInGroupsViewModel InGroupsViewModel;			//5
-		public EmployeeListedItemsViewModel ListedItemsViewModel;	//6
-		public EmployeeMovementsViewModel MovementsViewModel;       //7
-		public EmployeeVacationsViewModel VacationsViewModel;       //8
+		public EmployeeWearItemsViewModel WearItemsViewModel;		//3
+		public EmployeeDutyNormsViewModel DutyNormsViewModel;		//4
+		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
+		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
+		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
+		public EmployeeMovementsViewModel MovementsViewModel;       //8
+		public EmployeeVacationsViewModel VacationsViewModel;       //9
 
 
 		private int lastTab;
-		private int currentTab;
+		private int currentTab = 3;
 		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;
@@ -521,15 +524,17 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
-				case 4: CostCenterViewModel.OnShow();
+				case 4: DutyNormsViewModel.OnShow();
 					break;
-				case 5: InGroupsViewModel.OnShow();
+				case 5: CostCenterViewModel.OnShow();
 					break;
-				case 6: ListedItemsViewModel.OnShow();
+				case 6: InGroupsViewModel.OnShow();
 					break;
-				case 7: MovementsViewModel.OnShow();
+				case 7: ListedItemsViewModel.OnShow();
 					break;
-				case 8:
+				case 8: MovementsViewModel.OnShow();
+					break;
+				case 9:
 					if(UoW.IsNew) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {
