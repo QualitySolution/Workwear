@@ -127,7 +127,8 @@ namespace Workwear.ViewModels.ClothingService {
 			List<string> responseMessages = new List<string>();
 			var claimState = status.Claim.States.Last().State;
 			if((!string.IsNullOrWhiteSpace(status.Claim.Employee.PhoneNumber))
-			   && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair)) {
+			   && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair
+			   || claimState == ClaimState.InWashing)) {
 				IEnumerable<OutgoingMessage> messages = new[] { MakeNotificationMessage(status) };
 				string result = String.Empty;
 				if(messages.Any()) {
@@ -156,6 +157,8 @@ namespace Workwear.ViewModels.ClothingService {
 				text = $"Ваша спецодежда {nomenclature} перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
 			if(claimState == ClaimState.InRepair)
 				text = $"Ваша спецодежда {nomenclature} перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
+			if(claimState == ClaimState.InWashing)
+				text = $"Ваша спецодежда {nomenclature} принята на обслуживание, срок составит 5 рабочих дней.";
 			OutgoingMessage message = new OutgoingMessage {
 				Phone = status.Claim.Employee.PhoneNumber,
 				Title = "Изменение статуса обслуживания одежды",
