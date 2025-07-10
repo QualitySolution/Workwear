@@ -231,7 +231,6 @@ namespace Workwear.ViewModels.Company
 		}
 
 		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
-		public bool VisibleDutyNorms => Entity.DutyNormItems != null;
 		#endregion
 
 		#region Sensetive
@@ -523,8 +522,6 @@ namespace Workwear.ViewModels.Company
 							CurrentTab = lastTab;
 					else
 						WearItemsViewModel.OnShow();;
-					break;
-				case 4: DutyNormsViewModel.OnShow();
 					break;
 				case 5: CostCenterViewModel.OnShow();
 					break;
