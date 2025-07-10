@@ -29,21 +29,21 @@ namespace Workwear.Repository.Regulations {
 		}
 
 		/// <summary>
-		/// Получаем все дежурные нормам для выбранного ответственного сотрудника (отсортированы в порядке убывания).
+		/// Получаем все строки дежурных норм для выбранного ответственного сотрудника. Также реализована предзагрузка операций.
 		/// </summary>
 		/// <returns></returns>
 		/// 
-		public virtual IList<DutyNormIssueOperation> AllDutyNormsForResponsibleEmployee(
-			EmployeeCard employee, 
+		public virtual List<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(
+			EmployeeCard employee,
 			IUnitOfWork uow = null) {
-			DutyNormIssueOperation dutyNormIssueOperationAlias = null;
 			DutyNorm dutyNormAlias = null;
+			DutyNormItem dutyNormItemAlias = null;
 			EmployeeCard employeeCardAlias = null;
-			var query = (uow ?? UoW).Session.QueryOver<DutyNormIssueOperation>(()=>dutyNormIssueOperationAlias)
-				.JoinEntityAlias(() => dutyNormAlias, (() => dutyNormIssueOperationAlias.DutyNorm.Id == dutyNormAlias.Id))
-				.JoinEntityAlias(() => employeeCardAlias, () => dutyNormAlias.ResponsibleEmployee.Id == employeeCardAlias.Id)
-				.Where((() => employeeCardAlias.Id == employee.Id));
-			return query.OrderBy(x => x.OperationTime).Desc.List();
+			var query = (uow ?? UoW).Session.QueryOver<DutyNormItem>(() => dutyNormItemAlias)
+				.JoinEntityAlias(() => dutyNormAlias, (() => dutyNormItemAlias.DutyNorm.Id == dutyNormAlias.Id))
+				.JoinEntityAlias(() => employeeCardAlias, (() => dutyNormAlias.ResponsibleEmployee.Id == employeeCardAlias.Id))
+				.Where(() => employeeCardAlias.Id == employee.Id);
+			return query.List().ToList();
 		}
 	}
 }

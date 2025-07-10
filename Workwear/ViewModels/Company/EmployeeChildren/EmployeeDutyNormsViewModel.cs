@@ -1,18 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
-using NHibernate;
-using NPOI.SS.Formula.Functions;
-using QS.Dialog;
-using QS.DomainModel.Entity;
+using System.Collections.Generic;
 using QS.DomainModel.UoW;
-using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Models.Operations;
 using Workwear.Repository.Regulations;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock;
 
@@ -20,43 +15,38 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 	public class EmployeeDutyNormsViewModel: ViewModelBase {
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
+		private DutyNormRepository dutyNormRepository;
 		private IUnitOfWork UoW => employeeViewModel.UoW;
-		public IObservableList<DutyNormItem> ObservableDutyNormItems = new ObservableList<DutyNormItem>();
-
+		private readonly FeaturesService featuresService;
+		
 		public EmployeeDutyNormsViewModel(
 			EmployeeViewModel employeeViewModel,
-			INavigationManager navigation
+			INavigationManager navigation,
+			FeaturesService featuresService,
+			DutyNormRepository dutyNormRepository
 			) 
 		{
-			DutyNorm dutyNormAlias = null;
-			DutyNormItem dutyNormItemAlias = null;
-			EmployeeCard employeeCardAlias = null;
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
-			var query = UoW.Session.QueryOver<DutyNormItem>(() => dutyNormItemAlias)
-				.JoinEntityAlias(() => dutyNormAlias, (() => dutyNormItemAlias.DutyNorm.Id == dutyNormAlias.Id))
-				.JoinEntityAlias(() => employeeCardAlias, (() => dutyNormAlias.ResponsibleEmployee.Id == employeeCardAlias.Id))
-				.Where(() => employeeCardAlias.Id == Entity.Id);
-			foreach(var item in query.List())
-				ObservableDutyNormItems.Add(item);
-			foreach(var item in ObservableDutyNormItems) {
-				item.Update(UoW);
-			}
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+			if(featuresService.Available(WorkwearFeature.DutyNorms))
+				AllDutyNormsItemsForResponsibleEmployee.AddRange(dutyNormRepository.GetAllDutyNormsItemsForResponsibleEmployee(Entity));
 		}
 
 		#region Хелперы
-
 		private EmployeeCard Entity => employeeViewModel.Entity;
-		#region Показ
-		public bool IsConfigured {get; private set; }
+		#endregion
 
-		public void OnShow() {
-			if (IsConfigured) return;
-			IsConfigured = true;
-			OnPropertyChanged(nameof(ObservableDutyNormItems));
+		private List<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new List<DutyNormItem>();
+
+		public List<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
+			get => allDutyNormsItemsForResponsibleEmployee;
+			set {
+				SetField(ref allDutyNormsItemsForResponsibleEmployee, value);
+				OnPropertyChanged();
+			}
 		}
-		#endregion
-		#endregion
 		
 		#region Действия View
 
@@ -65,10 +55,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		
 		public void OpenDutyNorm(DutyNormItem dutyNormItem) => navigation.OpenViewModel<DutyNormViewModel, IEntityUoWBuilder>(employeeViewModel,
 				EntityUoWBuilder.ForOpen(dutyNormItem.DutyNorm.Id));
-		
-		#endregion
-
-		#region Обработка изменений
 		
 		#endregion
 		
