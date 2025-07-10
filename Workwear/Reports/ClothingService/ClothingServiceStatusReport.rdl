@@ -818,7 +818,7 @@ ORDER BY start_date</CommandText>
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
-                        <BackgroundColor>White</BackgroundColor>
+                        <BackgroundColor></BackgroundColor>
                         <BackgroundGradientType>LeftRight</BackgroundGradientType>
                         <BackgroundGradientEndColor>Azure</BackgroundGradientEndColor>
                         <BorderColor />

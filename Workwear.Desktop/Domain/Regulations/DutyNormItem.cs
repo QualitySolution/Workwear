@@ -284,5 +284,28 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// Возвращает копию текущего объекта с привязкой к дежурной норме
+		/// </summary>
+		/// <returns>Копия текущего объекта DutyNormItem.</returns>
+		/// <param name="DutyNorm">Дежурная норма, которой будет привязан возвращаемый объект DutyNormItem</param>
+		public virtual DutyNormItem Copy(DutyNorm dutyNorm) 
+		{
+			DutyNormItem newDutyNormItem = new DutyNormItem();
+			
+			newDutyNormItem.dutyNorm = dutyNorm;
+			newDutyNormItem.protectionTools = protectionTools;
+			newDutyNormItem.amount = amount;
+			newDutyNormItem.normPeriod = normPeriod;
+			newDutyNormItem.periodCount = periodCount;
+			newDutyNormItem.normParagraph = normParagraph;
+			newDutyNormItem.comment = comment;
+			newDutyNormItem.Graph = new IssueGraph();
+			var issued = newDutyNormItem.Issued(DateTime.Now);
+			newDutyNormItem.AmountUnitText(issued);
+			
+			return newDutyNormItem;
+		}
 	}
 }

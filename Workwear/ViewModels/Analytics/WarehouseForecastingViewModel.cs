@@ -300,8 +300,8 @@ namespace Workwear.ViewModels.Analytics {
 					? choiceProtectionToolsViewModel.SelectedEntities
 					: UoW.GetAll<ProtectionTools>().Where(p =>
 						choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureUnisex)
-						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
-						&& choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
+						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
+						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
 				hashPt = new HashSet<ProtectionTools>(protectionTools);
 				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
 			}
@@ -416,7 +416,7 @@ namespace Workwear.ViewModels.Analytics {
 					if(ShipmentColumnVisible) {
 						worksheet.Cell(row, col++).Value = item.TotalOrdered;
 						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.Shipment.PeriodTitle));
-						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.DiffСause));
+						worksheet.Cell(row, col++).Value = String.Join(";", item.ShipmentItems.Select(s => s.DiffCause));
 					}
 					worksheet.Cell(row, col++).Value = item.InStock - item.Forecast.Sum();
 					worksheet.Cell(row, col++).Value = item.InStock - item.Unissued - item.Forecast.Sum();

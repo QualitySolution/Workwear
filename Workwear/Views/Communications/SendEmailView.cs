@@ -11,15 +11,15 @@ namespace Workwear.Views.Communications {
 			
 			yentryEAdress.ValidationMode = ValidationType.Email;
 			yentryEAdress.Binding
-				.AddBinding(ViewModel, vm => vm.EmailAddres, w => w.Text).InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.EmailAddress, w => w.Text).InitializeFromSource();
 			yentryTopic.Binding
             	.AddBinding(ViewModel, vm => vm.Topic, w => w.Text).InitializeFromSource();
             ytextMessage.Binding
-				.AddBinding(ViewModel, vm => vm.Messege, w => w.Buffer.Text).InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.Message, w => w.Buffer.Text).InitializeFromSource();
 			
-			ybuttonSaveAdress.Clicked += (o,e) => ViewModel.SaveAdress();
+			ybuttonSaveAdress.Clicked += (o,e) => ViewModel.SaveAddress();
 			ybuttonSaveAdress.Binding
-				.AddBinding(ViewModel, vm => vm.ShowSaveAddres, w => w.Visible).InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.ShowSaveAddress, w => w.Visible).InitializeFromSource();
 			ybuttonSend.Clicked += (o, s) => ViewModel.Send();
 		}
 	}
