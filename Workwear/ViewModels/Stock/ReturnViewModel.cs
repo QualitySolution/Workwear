@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactiveService,
-      DutyNormRepository dutyNormRepository,
+			DutyNormRepository dutyNormRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,

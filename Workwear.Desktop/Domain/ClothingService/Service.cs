@@ -9,7 +9,9 @@ namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "услуги",
-		Nominative = "услуга")]
+		Nominative = "услуга",
+		Genitive = "услуги",
+		GenitivePlural = "услуг")]
 	public class Service : PropertyChangedBase, IDomainObject{
 		#region Свойства
 		public virtual int Id { get; set; }
