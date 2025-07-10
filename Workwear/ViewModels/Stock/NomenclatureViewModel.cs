@@ -62,7 +62,8 @@ namespace Workwear.ViewModels.Stock
 
 			var parentParameter = new TypedParameter(typeof(NomenclatureViewModel), this);
 			ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(parentParameter);
-			
+			ServicesViewModel = autofacScope.Resolve<NomenclatureServicesViewModel>(parentParameter);
+				
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			lastSizeType = Entity.Type?.SizeType;
@@ -78,6 +79,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
+		public NomenclatureServicesViewModel ServicesViewModel;
 		#endregion
 		#region Visible
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
@@ -86,6 +88,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool VisibleServices => featuresService.Available(WorkwearFeature.ClothingService);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;

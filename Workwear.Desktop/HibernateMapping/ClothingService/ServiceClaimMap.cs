@@ -14,7 +14,12 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Map(x => x.Comment).Column("comment");
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Barcode).Column("barcode_id");
+			
 			HasMany(x => x.States).Cascade.AllDeleteOrphan().Inverse().KeyColumn("claim_id");
+			HasManyToMany(x => x.ProvidedServices)
+				.Table("clothing_service_services_claim")
+				.ParentKeyColumn("claim_id")
+				.ChildKeyColumn("service_id");
 		}
 	}
 }
