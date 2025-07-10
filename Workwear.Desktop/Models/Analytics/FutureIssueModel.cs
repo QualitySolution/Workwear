@@ -125,6 +125,7 @@ namespace Workwear.Models.Analytics {
 		public Department Department => Employee.Department;
 		public Post Post => Employee.Post;	
 		public ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
+		public ItemsType ItemsType => ProtectionTools.Type;
 		public NormItem NormItem => EmployeeCardItem.ActiveNormItem;
 		public Norm Norm => NormItem.Norm;
 
