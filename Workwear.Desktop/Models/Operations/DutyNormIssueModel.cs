@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using NHibernate;
 using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
@@ -23,20 +22,23 @@ namespace Workwear.Models.Operations {
 		/// Получаем все строки дежурных норм для выбранного ответственного сотрудника. Здесь операции для дальнейшего получения числящегося.
 		/// <returns></returns>
 		/// 
-		public List<DutyNormItem> PreloadDutyNormIssueOperations(int employeeId) {
+		public IList<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(EmployeeCard employeeCard) {
 			DutyNorm dutyNormAlias = null;
 			EmployeeCard responsibleEmployeeAlias = null;
 			DutyNormIssueOperation dutyNormIssueOperationAlias = null;
-			var query = UoW.Session.QueryOver<DutyNormItem>()
-				.JoinAlias(x => x.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)
+			
+			var items = UoW.Session.QueryOver<DutyNormItem>()
+				.JoinAlias(x => x.DutyNorm, () => dutyNormAlias)
 				.JoinAlias(() => dutyNormAlias.ResponsibleEmployee, () => responsibleEmployeeAlias)
-				.JoinAlias(() => dutyNormIssueOperationAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)
-				.Fetch(SelectMode.Fetch, x => x.DutyNorm)
-				.Fetch(SelectMode.Fetch, () => dutyNormAlias.ResponsibleEmployee)
-				.Fetch(SelectMode.Fetch,()=>dutyNormIssueOperationAlias)
-				.Where(() => responsibleEmployeeAlias.Id == employeeId)
-				.Future();
-			return query.ToList();
+				.JoinEntityAlias(()=>dutyNormIssueOperationAlias, ()=> dutyNormIssueOperationAlias.DutyNormItem.Id == dutyNormAlias.Id, JoinType.LeftOuterJoin)
+				.Where(() => responsibleEmployeeAlias.Id == employeeCard.Id)
+				.List<DutyNormItem>();
+
+			foreach(var item in items) {
+				item.Update(UoW);
+			}
+			
+			return items;
 		}
 	}
 }
