@@ -140,7 +140,7 @@ namespace Workwear.Domain.Regulations {
 
 		public virtual IssueGraph Graph { get; set; }
 		
-		public virtual int Issued(DateTime onDate) => Graph?.AmountAtEndOfDay(onDate) ?? 0;
+		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
 		/// <summary>
 		/// Необходимое к выдачи количество.
