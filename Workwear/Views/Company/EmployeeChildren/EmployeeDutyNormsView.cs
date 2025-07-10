@@ -4,7 +4,6 @@ using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace Workwear.Views.Company.EmployeeChildren {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeDutyNormsView : Gtk.Bin {
 		public EmployeeDutyNormsView() {
 			this.Build();
@@ -15,14 +14,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 			get => viewModel;
 			set {
 				viewModel = value;
-				viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				ConfigureTable();
-			}
-		}
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.ObservableDutyNormItems)) {
-				ytreeview.ItemsDataSource = ViewModel.ObservableDutyNormItems;
 			}
 		}
 
@@ -44,7 +36,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 					.AddEnumRenderer(i=>i.NormPeriod)
 					.AddSetter((c,n) => c.Text = n.PeriodText )
 				.AddColumn("Числится").Resizable()
-					.AddTextRenderer(i => i.Issued(DateTime.Now).ToString())
+					.AddTextRenderer(i => i.Issued(DateTime.Now)!=0 ? i.Issued(DateTime.Now).ToString() : String.Empty)
 					.AddSetter((w, i) => w.Foreground = i.AmountColor)
 					.AddTextRenderer(i => i.AmountUnitText(i.Issued(DateTime.Now)))
 				.AddColumn("След. получение").Resizable()
@@ -53,6 +45,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph)
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
 				.Finish ();
+			ytreeview.Binding.AddBinding(ViewModel, v => v.AllDutyNormsItemsForResponsibleEmployee, w => w.ItemsDataSource).InitializeFromSource();
 			ytreeview.Selection.Changed += ytreeView_Selection_Changed;
 		}
 		
