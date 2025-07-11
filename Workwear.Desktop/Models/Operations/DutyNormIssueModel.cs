@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NHibernate;
-using NHibernate.SqlCommand;
-using QS.DomainModel.UoW;
+﻿using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Models.Operations {
 	public class DutyNormIssueModel {
@@ -24,24 +21,29 @@ namespace Workwear.Models.Operations {
 		/// Получаем все строки дежурных норм для выбранного ответственного сотрудника. Здесь операции для дальнейшего получения числящегося.
 		/// <returns></returns>
 		/// 
-		public ObservableList<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(EmployeeCard employeeCard) {
+		public IObservableList<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(EmployeeCard employeeCard) {
+			ProtectionTools protectionToolsAlias = null;
 			DutyNorm dutyNormAlias = null;
 			EmployeeCard responsibleEmployeeAlias = null;
-			DutyNormIssueOperation dutyNormIssueOperationAlias = null;
-			ObservableList<DutyNormItem> allItems = new ObservableList<DutyNormItem>();
-			
+			ItemsType itemsTypeAlias = null;
 			var items = UoW.Session.QueryOver<DutyNormItem>()
+				.JoinAlias(x => x.ProtectionTools, () => protectionToolsAlias)
+				.JoinAlias(() => protectionToolsAlias.Type, () => itemsTypeAlias)
 				.JoinAlias(x => x.DutyNorm, () => dutyNormAlias)
 				.JoinAlias(() => dutyNormAlias.ResponsibleEmployee, () => responsibleEmployeeAlias)
-				.JoinEntityAlias(()=>dutyNormIssueOperationAlias, ()=> dutyNormIssueOperationAlias.DutyNormItem.Id == dutyNormAlias.Id, JoinType.LeftOuterJoin)
 				.Where(() => responsibleEmployeeAlias.Id == employeeCard.Id)
-				.List<DutyNormItem>();
-
-			foreach(var item in items) {
-				item.Update(UoW);
-				allItems.Add(item);
-			}
-			return allItems;
+				.List();
+			
+			var operations = UoW.Session.QueryOver<DutyNormIssueOperation>()
+				.JoinAlias(x => x.DutyNorm, () => dutyNormAlias)
+				.JoinAlias(() => dutyNormAlias.ResponsibleEmployee, () => responsibleEmployeeAlias)
+				.Where(() => responsibleEmployeeAlias.Id == employeeCard.Id)
+				.List();
+			
+			foreach(var item in items)
+				item.Update(UoW, operations);
+			
+			return new ObservableList<DutyNormItem>(items);
 		}
 	}
 }

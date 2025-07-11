@@ -18,6 +18,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		private IUnitOfWork UoW => employeeViewModel.UoW;
 		private readonly DutyNormIssueModel dutyNormIssueModel;
 		private readonly FeaturesService featuresService;
+		private bool isConfigured = false;
 		
 		public EmployeeDutyNormsViewModel(
 			EmployeeViewModel employeeViewModel,
@@ -30,14 +31,19 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
-			if(featuresService.Available(WorkwearFeature.DutyNorms)) 
-				allDutyNormsItemsForResponsibleEmployee = dutyNormIssueModel.GetAllDutyNormsItemsForResponsibleEmployee(Entity);
+		}
+		
+		public void OnShow() {
+			if(!isConfigured) {
+				AllDutyNormsItemsForResponsibleEmployee = dutyNormIssueModel.GetAllDutyNormsItemsForResponsibleEmployee(Entity);
+				isConfigured = true;
+			}
 		}
 		
 	    #region Свойства
 
-		private ObservableList<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new ObservableList<DutyNormItem>();
-		public ObservableList<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
+		private IObservableList<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new ObservableList<DutyNormItem>();
+		public IObservableList<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
 			get => allDutyNormsItemsForResponsibleEmployee;
 			set => SetField(ref allDutyNormsItemsForResponsibleEmployee, value);
 		}

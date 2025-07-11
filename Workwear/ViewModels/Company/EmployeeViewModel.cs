@@ -523,6 +523,8 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
+				case 4: DutyNormsViewModel.OnShow();
+					break;
 				case 5: CostCenterViewModel.OnShow();
 					break;
 				case 6: InGroupsViewModel.OnShow();

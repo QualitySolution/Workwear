@@ -155,14 +155,21 @@ namespace Workwear.Domain.Regulations {
 		/// <summary>
 		/// Обновляет данные о выданом .
 		/// </summary>
+		/// <operations>Использовать только эти выдачи</operations>
 		/// <returns>Наличие изменений</returns>
-		public virtual void Update(IUnitOfWork uow) {
+		public virtual void Update(IUnitOfWork uow, IList<DutyNormIssueOperation> operations = null) {
 			if(Id == 0)
 				Graph = new IssueGraph();
 			else {
-				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
-					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
+				if(operations == null)
+					Graph = new IssueGraph(uow.Session.QueryOver<DutyNormIssueOperation>()
+						.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools)
+						.List<IGraphIssueOperation>());
+				else
+					Graph = new IssueGraph(operations
+						.Where(o => DomainHelper.EqualDomainObjects(o.DutyNorm, DutyNorm) &&
+						            DomainHelper.EqualDomainObjects(o.ProtectionTools, ProtectionTools)) 
+						as IList<IGraphIssueOperation> ?? new List<IGraphIssueOperation>());
 			}
 			NextIssue = CalculateNextIssue();
 			OnPropertyChanged(nameof(Issued));

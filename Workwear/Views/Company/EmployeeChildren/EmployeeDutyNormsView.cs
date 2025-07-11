@@ -34,8 +34,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		{
 			ytreeview.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.AllDutyNormsItemsForResponsibleEmployee, w => w.ItemsDataSource)
-				.InitializeFromSource()
-				;
+				.InitializeFromSource();
 			ytreeview.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
 				.AddColumn("Наименование").Resizable()
 					.AddTextRenderer(i  => i.ProtectionTools != null ? i.ProtectionTools.Name : null).WrapWidth(700)
