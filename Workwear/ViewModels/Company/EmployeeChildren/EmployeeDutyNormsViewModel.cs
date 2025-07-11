@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Repository.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock;
@@ -15,39 +15,38 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 	public class EmployeeDutyNormsViewModel: ViewModelBase {
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
-		private DutyNormRepository dutyNormRepository;
 		private IUnitOfWork UoW => employeeViewModel.UoW;
+		private readonly DutyNormIssueModel dutyNormIssueModel;
 		private readonly FeaturesService featuresService;
 		
 		public EmployeeDutyNormsViewModel(
 			EmployeeViewModel employeeViewModel,
 			INavigationManager navigation,
 			FeaturesService featuresService,
-			DutyNormRepository dutyNormRepository
+			DutyNormIssueModel dutyNormIssueModel
 			) 
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
-			if(featuresService.Available(WorkwearFeature.DutyNorms))
-				AllDutyNormsItemsForResponsibleEmployee.AddRange(dutyNormRepository.GetAllDutyNormsItemsForResponsibleEmployee(Entity));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			if(featuresService.Available(WorkwearFeature.DutyNorms)) 
+				allDutyNormsItemsForResponsibleEmployee = dutyNormIssueModel.GetAllDutyNormsItemsForResponsibleEmployee(Entity);
+		}
+		
+	    #region Свойства
+
+		private ObservableList<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new ObservableList<DutyNormItem>();
+		public ObservableList<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
+			get => allDutyNormsItemsForResponsibleEmployee;
+			set => SetField(ref allDutyNormsItemsForResponsibleEmployee, value);
 		}
 
+		#endregion
+		
 		#region Хелперы
 		private EmployeeCard Entity => employeeViewModel.Entity;
 		#endregion
-
-		private List<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new List<DutyNormItem>();
-
-		public List<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
-			get => allDutyNormsItemsForResponsibleEmployee;
-			set {
-				SetField(ref allDutyNormsItemsForResponsibleEmployee, value);
-				OnPropertyChanged();
-			}
-		}
-		
 		#region Действия View
 
 		public void GiveWearByDutyNorm(DutyNormItem dutyNormItem) => navigation.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder, DutyNorm>

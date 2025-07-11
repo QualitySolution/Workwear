@@ -7,23 +7,35 @@ namespace Workwear.Views.Company.EmployeeChildren {
 	public partial class EmployeeDutyNormsView : Gtk.Bin {
 		public EmployeeDutyNormsView() {
 			this.Build();
+			ybuttonGiveWearByDutyNorm.Sensitive = ybuttonOpenDutyNorm.Sensitive = false;
 		}
+	
 		private EmployeeDutyNormsViewModel viewModel;
 
 		public EmployeeDutyNormsViewModel ViewModel {
 			get => viewModel;
 			set {
 				viewModel = value;
+//viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				ConfigureTable();
 			}
 		}
-
-		void ytreeView_Selection_Changed(object sender, EventArgs e)
+		/*void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.AllDutyNormsItemsForResponsibleEmployee)) {
+				ytreeview.ItemsDataSource = ViewModel.AllDutyNormsItemsForResponsibleEmployee;
+			}
+		}*/
+		/*void ytreeView_Selection_Changed(object sender, EventArgs e)
 		{
 			ybuttonOpenDutyNorm.Sensitive = ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0;
-		}
+		}*/
 		private void ConfigureTable() 
 		{
+			ytreeview.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.AllDutyNormsItemsForResponsibleEmployee, w => w.ItemsDataSource)
+				.InitializeFromSource()
+				;
 			ytreeview.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
 				.AddColumn("Наименование").Resizable()
 					.AddTextRenderer(i  => i.ProtectionTools != null ? i.ProtectionTools.Name : null).WrapWidth(700)
@@ -45,8 +57,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph)
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
 				.Finish ();
-			ytreeview.Binding.AddBinding(ViewModel, v => v.AllDutyNormsItemsForResponsibleEmployee, w => w.ItemsDataSource).InitializeFromSource();
-			ytreeview.Selection.Changed += ytreeView_Selection_Changed;
+			//ytreeview.Selection.Changed += ytreeView_Selection_Changed;
 		}
 		
 		#region Кнопки

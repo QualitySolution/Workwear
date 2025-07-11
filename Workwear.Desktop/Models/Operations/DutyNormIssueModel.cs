@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NHibernate;
 using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -22,10 +24,11 @@ namespace Workwear.Models.Operations {
 		/// Получаем все строки дежурных норм для выбранного ответственного сотрудника. Здесь операции для дальнейшего получения числящегося.
 		/// <returns></returns>
 		/// 
-		public IList<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(EmployeeCard employeeCard) {
+		public ObservableList<DutyNormItem> GetAllDutyNormsItemsForResponsibleEmployee(EmployeeCard employeeCard) {
 			DutyNorm dutyNormAlias = null;
 			EmployeeCard responsibleEmployeeAlias = null;
 			DutyNormIssueOperation dutyNormIssueOperationAlias = null;
+			ObservableList<DutyNormItem> allItems = new ObservableList<DutyNormItem>();
 			
 			var items = UoW.Session.QueryOver<DutyNormItem>()
 				.JoinAlias(x => x.DutyNorm, () => dutyNormAlias)
@@ -36,9 +39,9 @@ namespace Workwear.Models.Operations {
 
 			foreach(var item in items) {
 				item.Update(UoW);
+				allItems.Add(item);
 			}
-			
-			return items;
+			return allItems;
 		}
 	}
 }
