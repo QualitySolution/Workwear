@@ -60,7 +60,15 @@ namespace Workwear.Repository.Company
 				.TransformUsing(Transformers.DistinctRootEntity)
 				.List();
 		}
-
+		public IList<EmployeeCardItem> GetItemsHidden(IUnitOfWork uow, EmployeeCard employee) {
+			NormItem normItemAlias = null;
+			var query = uow.Session.QueryOver<EmployeeCardItem>()
+				.JoinAlias(e=> e.ActiveNormItem, () => normItemAlias)
+				.Where(x=> x.EmployeeCard == employee)
+				.Where(() => normItemAlias.IsHidden == true)
+				.List();
+			return query;
+		}
 		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
 		{
 			EmployeeCardItem employeeItemAlias = null;

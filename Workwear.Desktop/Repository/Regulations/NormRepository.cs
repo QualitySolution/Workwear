@@ -21,14 +21,7 @@ namespace Workwear.Repository.Regulations
 				.List();
 		}
 
-		public IList<NormItem> GetNormItemsWithHidden(IUnitOfWork uow) {
-			Norm normAlias = null;
-			var query = uow.Session.QueryOver<NormItem>()
-				.JoinAlias(n => n.Norm, () => normAlias)
-				.Where(n => n.IsHidden == true)
-				.List();
-			return query;
-		}
+		
 	}
 }
 

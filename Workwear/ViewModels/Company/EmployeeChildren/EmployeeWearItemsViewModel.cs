@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using NHibernate;
@@ -16,6 +17,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
+using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
@@ -33,6 +35,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly EmployeeRepository employeeRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
@@ -44,6 +47,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
+			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
@@ -55,6 +59,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
@@ -91,6 +96,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			performance.End();
+			if(HiddenWorkwearItems.Any()) {
+				
+			}
 			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
@@ -109,6 +117,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			set => SetField(ref selectedWorkwearItem, value);
 		}
 
+		public virtual IList<EmployeeCardItem> HiddenWorkwearItems => employeeRepository.GetItemsHidden(UoW, Entity);
+		
+		
 		#endregion
 
 		#region Sensetive And Visibility
