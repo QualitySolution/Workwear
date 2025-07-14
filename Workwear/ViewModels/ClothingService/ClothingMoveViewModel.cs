@@ -155,7 +155,7 @@ namespace Workwear.ViewModels.ClothingService {
 			} else
 				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
 		}
-		public void ChngeState(ClaimState state) {
+		public void ChangeState(ClaimState state) {
 			if(Claim != null) {
 				State = state;
 				Accept();
@@ -275,13 +275,13 @@ namespace Workwear.ViewModels.ClothingService {
 				["2000000000084"] = ("Принять на обслуживание", () => CreateNew()),
 				["2000000000091"] = ("Печать этикетки", () => PrintLabel()),
 				//["2000000000107"] = ("", null),
-				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", () => ChngeState(ClaimState.InTransit)),
-				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", () => ChngeState(ClaimState.DeliveryToLaundry)),
-				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", () => ChngeState(ClaimState.InRepair)),
-				["2000000000145"] = ($"Сменить статус на \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", () => ChngeState(ClaimState.InDryCleaning)),
-				["2000000000152"] = ($"Сменить статус на \"{ClaimState.InWashing.GetEnumTitle()}\"", () => ChngeState(ClaimState.InWashing)),
-				["2000000000169"] = ($"Сменить статус на \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", () => ChngeState(ClaimState.AwaitIssue)),
-				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", () => ChngeState(ClaimState.Returned)),
+				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", () => ChangeState(ClaimState.InTransit)),
+				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", () => ChangeState(ClaimState.DeliveryToLaundry)),
+				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", () => ChangeState(ClaimState.InRepair)),
+				["2000000000145"] = ($"Сменить статус на \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", () => ChangeState(ClaimState.InDryCleaning)),
+				["2000000000152"] = ($"Сменить статус на \"{ClaimState.InWashing.GetEnumTitle()}\"", () => ChangeState(ClaimState.InWashing)),
+				["2000000000169"] = ($"Сменить статус на \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", () => ChangeState(ClaimState.AwaitIssue)),
+				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", () => ChangeState(ClaimState.Returned)),
 				//["2000000000183"] = ("", null),
 				//["2000000000190"] = ("", null),
 				//["2000000000206"] = ("", null), используется ClothingAddViewModel
