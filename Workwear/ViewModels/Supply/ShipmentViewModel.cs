@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using FluentNHibernate.Utils;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -41,6 +42,7 @@ namespace Workwear.ViewModels.Supply {
 			INavigationManager navigation,
 			IInteractiveService interactive,
 			IUserService userService,
+			IEntityChangeWatcher watcher,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -59,6 +61,24 @@ namespace Workwear.ViewModels.Supply {
 				AddFromForecasting(forecastingItems, eItemEnum);
 			
 			CalculateTotal();
+			watcher.BatchSubscribe(OnExternalShipmentChange)
+				.ExcludeUow(UoW)
+				.IfEntity<ShipmentItem>()
+				.AndChangeType(TypeOfChangeEvent.Update)
+				.AndWhere(x => x.Shipment.Id == Entity.Id);
+			
+			Entity.PropertyChanged += EntityOnPropertyChanged;
+		}
+
+		private void EntityOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(Entity.Status)) {
+				OnPropertyChanged(nameof(CanAddItem));
+				OnPropertyChanged(nameof(CanRemoveItem));
+				OnPropertyChanged(nameof(CanToOrder));
+				OnPropertyChanged(nameof(CanEditDiffCause));
+				OnPropertyChanged(nameof(CanEditRequested));
+				OnPropertyChanged(nameof(CanEditOrdered));
+			}
 		}
 
 		#region IDialogDocumentation
@@ -81,11 +101,12 @@ namespace Workwear.ViewModels.Supply {
 			set => SetField(ref total, value);
 		}
 		
-		private ShipmentItem selectedItem;
+		private ShipmentItem[] selectedItems;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
-		public virtual ShipmentItem SelectedItem {
-			get=>selectedItem;
-			set=>SetField(ref selectedItem, value);
+		[PropertyChangedAlso(nameof(CanToOrder))]
+		public virtual ShipmentItem[] SelectedItems {
+			get=>selectedItems;
+			set=>SetField(ref selectedItems, value);
 		}
 
 		#endregion
@@ -97,9 +118,9 @@ namespace Workwear.ViewModels.Supply {
 				return Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
 			}
 		}
-		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual DateTime StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
-		public virtual DateTime EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
+		public virtual UserBase CreatedByUser => Entity.CreatedbyUser;
+		public virtual DateTime? StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
+		public virtual DateTime? EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
@@ -107,11 +128,13 @@ namespace Workwear.ViewModels.Supply {
 
 		#region Свойства View
 
-		public virtual bool CanAddItem => true;
-		public virtual bool CanRemoveItem => SelectedItem != null;
-		public virtual bool CarEditDiffСause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
-		public virtual bool CarEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
-		public virtual bool CarEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
+		public virtual bool CanAddItem => CanEditRequested;
+		public virtual bool CanRemoveItem => CanEditRequested && SelectedItems != null && SelectedItems.Length > 0;
+		public virtual bool CanToOrder => SelectedItems != null && SelectedItems.Length > 0 && 
+		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
+		public virtual bool CanEditDiffCause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
+		public virtual bool CanEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
+		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
@@ -124,8 +147,7 @@ namespace Workwear.ViewModels.Supply {
 
 		#endregion
 
-		#region Методы
-
+		#region Действия view
 		public void AddItem() {
 			var selectJournal = NavigationManager
 				.OpenViewModel<NomenclatureJournalViewModel>( this,OpenPageOptions.AsSlave);
@@ -140,10 +162,17 @@ namespace Workwear.ViewModels.Supply {
 			CalculateTotal();
 		}
 		
-		public void DeleteItem(ShipmentItem item) {
-			Entity.RemoveItem(item); 
+		public void DeleteItems(ShipmentItem[] items) {
+			foreach(var item in items)
+				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(CanRemoveItem));
 			CalculateTotal();
+		}
+		
+		public void ToOrderItems() {
+			foreach(var item in SelectedItems)
+				item.Ordered = item.Requested;
+			OnPropertyChanged(nameof(CanToOrder));
 		}
 		private void CalculateTotal() {
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
@@ -151,16 +180,16 @@ namespace Workwear.ViewModels.Supply {
 			        $"Сумма: {Entity.Items.Sum(x => x.Requested * x.Cost)}{baseParameters.UsedCurrency}";
 		}
 
-		public void SendMessegeForBuyer() {
-			var dialoog = NavigationManager.OpenViewModel<SendEmailViewModel>(this);
-			dialoog.ViewModel.EmailAddres = currentUserSettings.Settings.BuyerEmail;
-			dialoog.ViewModel.Topic = "Новая планируемая поставка Сппецодежды.";
-			dialoog.ViewModel.Messege = "Добрый день!\nВ программе QS создана новая заявка на закупку. Просим принять в работу.";
-			dialoog.ViewModel.Title = "Оповестить закупку";
+		public void SendMessageForBuyer() {
+			var dialog = NavigationManager.OpenViewModel<SendEmailViewModel>(this);
+			dialog.ViewModel.EmailAddress = currentUserSettings.Settings.BuyerEmail;
+			dialog.ViewModel.Topic = "Новая планируемая поставка Спецодежды.";
+			dialog.ViewModel.Message = "Добрый день!\nВ программе QS создана новая заявка на закупку. Просим принять в работу.";
+			dialog.ViewModel.Title = "Оповестить закупку";
 			
-			dialoog.ViewModel.ShowSaveAddres = true;
-			dialoog.ViewModel.SaveAdressFunc = adress => {
-				currentUserSettings.Settings.BuyerEmail = adress;
+			dialog.ViewModel.ShowSaveAddress = true;
+			dialog.ViewModel.SaveAddressFunc = address => {
+				currentUserSettings.Settings.BuyerEmail = address;
 				currentUserSettings.SaveSettings();
 			};
 		}
@@ -202,6 +231,14 @@ namespace Workwear.ViewModels.Supply {
 		}
 		#endregion
 
+		private void OnExternalShipmentChange(EntityChangeEvent[] changeEvents) {
+			foreach(var change in changeEvents) {
+				var myItem = Entity.Items.FirstOrDefault(i => i.Id == change.Entity.GetId());
+				if(myItem != null)
+					UoW.Session.Refresh(myItem);
+			}
+		}
+		
 		#region Валидация, сохранение и печать
 
 		public override bool Save() {

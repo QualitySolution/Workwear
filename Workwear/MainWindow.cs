@@ -422,6 +422,7 @@ public partial class MainWindow : Gtk.Window {
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
 						 || FeaturesService.Available(WorkwearFeature.Postomats)
 						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionShipmentReport.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
 	}
 	#endregion
 
@@ -989,6 +990,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionShipmentActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
+	}
+
+	protected void OnActionShipmentReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ShipmentReportViewModel));
 	}
 
 	protected void OnActionVisitsActivated(object sender, EventArgs e) {

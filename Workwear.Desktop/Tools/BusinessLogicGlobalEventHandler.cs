@@ -69,8 +69,7 @@ namespace Workwear.Tools
 						employee.FillWearReceivedInfo(employeeIssueRepository);
 						employee.UpdateNextIssue(protectionTools);
 					}
-
-					
+					uow.Commit();
 				}
 			}
 		}

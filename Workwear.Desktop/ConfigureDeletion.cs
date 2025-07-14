@@ -381,6 +381,7 @@ namespace Workwear
 			#endregion
 			#region Поставка
 			DeleteConfig.AddHibernateDeleteInfo<Shipment>()
+				.AddClearDependence<Income>(x => x.Shipment)
 				.AddDeleteDependence<ShipmentItem>(x => x.Shipment);
 			DeleteConfig.AddHibernateDeleteInfo<ShipmentItem>();
 			#endregion

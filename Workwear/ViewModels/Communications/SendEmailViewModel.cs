@@ -8,7 +8,7 @@ using QS.ViewModels.Dialog;
 
 namespace Workwear.ViewModels.Communications {
 	
-	public delegate void SetAdress (string adress);
+	public delegate void SetAddress (string address);
 	public class SendEmailViewModel : WindowDialogViewModelBase {
 		
 		private readonly EmailManagerService emailManagerService;
@@ -30,10 +30,10 @@ namespace Workwear.ViewModels.Communications {
 			set => SetField(ref title, value);
 		}
 		
-		private string emailAddres;
-		public virtual string EmailAddres {
-			get => emailAddres;
-			set => SetField(ref emailAddres, value);
+		private string emailAddress;
+		public virtual string EmailAddress {
+			get => emailAddress;
+			set => SetField(ref emailAddress, value);
 		}
 		
 		private string topic;
@@ -41,29 +41,29 @@ namespace Workwear.ViewModels.Communications {
 			get => topic;
 			set => SetField(ref topic, value);
 		}
-		private string messege;
-		public virtual string Messege {
-			get => messege;
-			set => SetField(ref messege, value);
+		private string message;
+		public virtual string Message {
+			get => message;
+			set => SetField(ref message, value);
 		}
-		private bool showSaveAddres;
-		public virtual bool ShowSaveAddres {
-			get => showSaveAddres;
-			set => SetField(ref showSaveAddres, value);
+		private bool showSaveAddress;
+		public virtual bool ShowSaveAddress {
+			get => showSaveAddress;
+			set => SetField(ref showSaveAddress, value);
 		}
 		
-		public SetAdress SaveAdressFunc;
+		public SetAddress SaveAddressFunc;
 
-		public void SaveAdress() =>
-			SaveAdressFunc(EmailAddres);
+		public void SaveAddress() =>
+			SaveAddressFunc(EmailAddress);
 
 		public void Send() {
 			string result = String.Empty;
 
-			if(!EmailHelper.Validate(EmailAddres, false))
+			if(!EmailHelper.Validate(EmailAddress, false))
 				result += "Некорректный формат email адреса. ";
 			if(Topic.Length > 254) 
-				result += "Тема не должна привышать 254 символа.";
+				result += "Тема не должна превышать 254 символа.";
 			if(result != String.Empty) {
 				interactive.ShowMessage(ImportanceLevel.Error,result);
 				return;
@@ -73,17 +73,17 @@ namespace Workwear.ViewModels.Communications {
 				result = emailManagerService.SendMessages(
 					new[] {
 						new EmailMessage() {
-							Address = EmailAddres,
+							Address = EmailAddress,
 							Subject = Topic,
-							Text = Messege
+							Text = Message
 						}
 					});
 			}
 			catch (OperationCanceledException) {
-				result = $"Операция отправки email уведолмений прервана.";
+				result = $"Операция отправки email уведомлений прервана.";
 			}
 
-			interactive.ShowMessage(ImportanceLevel.Info,result,"Отпрвка");
+			interactive.ShowMessage(ImportanceLevel.Info,result,"Отправка");
 			Close(false,CloseSource.Self);
 		}
 	}

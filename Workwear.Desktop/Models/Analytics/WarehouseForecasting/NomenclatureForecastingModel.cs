@@ -32,7 +32,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 					Nomenclature = nomenclatureGroup.Key.Nomenclature,
 					Size = nomenclatureGroup.Key.WearSize,
 					Height = nomenclatureGroup.Key.Height,
-					Stocks = nomenclatureGroup.ToArray(),
+					StocksExact = nomenclatureGroup.ToArray(),
 					InStock = nomenclatureGroup.Sum(x => x.Amount),
 					Name = nomenclatureGroup.Key.Nomenclature.Name,
 					Sex = nomenclatureGroup.Key.Nomenclature.Sex
@@ -44,7 +44,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				switch (group.Key.ProtectionTools.SupplyType)
 				{
 					case SupplyType.Unisex when group.Key.ProtectionTools.SupplyNomenclatureUnisex != null:
-						AddForecastingItem(result, group.Key.ProtectionTools.SupplyNomenclatureUnisex, group.Key.Size, group.Key.Height, group);
+						AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureUnisex, group.Key.Size, group.Key.Height, group);
 						break;
 					case SupplyType.Unisex:
 						AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, group, ClothesSex.Universal);
@@ -53,14 +53,14 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 						var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();
 						if(mensIssues.Any()) {
 							if(group.Key.ProtectionTools.SupplyNomenclatureMale != null)
-								AddForecastingItem(result, group.Key.ProtectionTools.SupplyNomenclatureMale, group.Key.Size, group.Key.Height, mensIssues);
+								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureMale, group.Key.Size, group.Key.Height, mensIssues);
 							else 
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, mensIssues, ClothesSex.Men);
 						}
 						var womenIssues = group.Where(x => x.Employee.Sex == Sex.F).ToList();
 						if(womenIssues.Any()) {
 							if(group.Key.ProtectionTools.SupplyNomenclatureFemale != null)
-								AddForecastingItem(result, group.Key.ProtectionTools.SupplyNomenclatureFemale, group.Key.Size, group.Key.Height, womenIssues);
+								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureFemale, group.Key.Size, group.Key.Height, womenIssues);
 							else 
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, womenIssues, ClothesSex.Women);
 						}
@@ -75,7 +75,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			return result;
 		}
 
-		private void AddForecastingItem(List<WarehouseForecastingItem> list, Nomenclature nomenclature, Size size, Size height, IEnumerable<FutureIssue> futureIssues) {
+		private void AddForecastingItem(List<WarehouseForecastingItem> list, ProtectionTools protectionTools, Nomenclature nomenclature, Size size, Size height, IEnumerable<FutureIssue> futureIssues) {
 			if(RestrictNomenclatures != null && !RestrictNomenclatures.Contains(nomenclature))
 				return;
 			var item = list.FirstOrDefault(x => x.Nomenclature == nomenclature && x.Size == size && x.Height == height);
@@ -84,7 +84,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 					Nomenclature = nomenclature,
 					Size = size,
 					Height = height,
-					Stocks = Array.Empty<StockBalance>(),
+					StocksExact = Array.Empty<StockBalance>(),
 					InStock = 0,
 					Name = nomenclature.Name,
 					Sex = nomenclature.Sex
@@ -92,6 +92,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				list.Add(item);
 			}
 			item.AddFutureIssue(futureIssues);
+			item.AddSuitableStock(stockBalance, protectionTools);
 		}
 		
 		private void AddForecastingItem(List<WarehouseForecastingItem> list, ProtectionTools protectionTools, Size size, Size height,
@@ -102,7 +103,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				ProtectionTool = protectionTools,
 				Size = size,
 				Height = height,
-				Stocks = Array.Empty<StockBalance>(),
+				StocksExact = Array.Empty<StockBalance>(),
 				InStock = 0,
 				Name = protectionTools.Name,
 				Sex = sex,
@@ -110,6 +111,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			};
 			list.Add(item);
 			item.AddFutureIssue(futureIssues);
+			item.AddSuitableStock(stockBalance, protectionTools);
 		}
 	}
 }

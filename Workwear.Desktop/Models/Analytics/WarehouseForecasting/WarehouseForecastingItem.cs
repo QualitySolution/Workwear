@@ -5,6 +5,7 @@ using QS.DomainModel.Entity;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Supply;
 using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
 
@@ -26,12 +27,12 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			Sex = sex;
 			Name = key.ProtectionTools.Name;
 			futureIssues = issues;
-			Stocks = stocks
+			StocksExact = stocks
 				.Where(x => x.Position.Nomenclature.Sex == Sex || x.Position.Nomenclature.Sex == ClothesSex.Universal)
 				.Where(x => SizeService.IsSuitable(Size, x.Position.WearSize))
 				.Where(x => SizeService.IsSuitable(Height, x.Position.Height))
 				.ToArray();
-			InStock = Stocks.Sum(x => x.Amount);
+			InStock = StocksExact.Sum(x => x.Amount);
 			if(Sex == ClothesSex.Universal && ProtectionTool.SupplyNomenclatureUnisex != null)
 				Nomenclature = ProtectionTool.SupplyNomenclatureUnisex;
 			else if(Sex == ClothesSex.Men && ProtectionTool.SupplyNomenclatureMale != null)
@@ -39,7 +40,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			else if(Sex == ClothesSex.Women && ProtectionTool.SupplyNomenclatureFemale != null)
 				Nomenclature = ProtectionTool.SupplyNomenclatureFemale;
 			else
-				Nomenclature = Stocks.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
+				Nomenclature = StocksExact.OrderByDescending(x => x.Amount).Select(x => x.Position.Nomenclature).FirstOrDefault()
 					?? ProtectionTool.Nomenclatures.FirstOrDefault();
 			FillForecast();
 		}
@@ -89,7 +90,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		public ClothesSex Sex { get; set; }
 		#endregion
 
-		public StockBalance[] Stocks { get; set; }
+		public StockBalance[] StocksExact { get; set; }
+		public HashSet<StockBalance> StocksSuitable { get; set; } = new HashSet<StockBalance>();
 		
 		private int inStock;
 		public int InStock {
@@ -102,6 +104,11 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			get => unissued;
 			set => SetField(ref unissued, value);
 		}
+
+		public List<FutureIssue> UnissuedIssues = new List<FutureIssue>();
+		
+		private readonly List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
+		public List<ShipmentItem> ShipmentItems => shipmentItems;
 		
 		private int[] forecast;
 		public int[] Forecast {
@@ -120,17 +127,41 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			get => forecastColours;
 			set => SetField(ref forecastColours, value);
 		}
+		
+		private List<FutureIssue>[] forecastIssues;
+		public List<FutureIssue>[] ForecastIssues {
+			get => forecastIssues;
+			set => SetField(ref forecastIssues, value);
+		}
 
 		public bool SupplyNomenclatureNotSet;
-		#region Рассчеты
 
+		#region Добавление данных
+		public void AddSuitableStock(StockBalanceModel stockBalance, ProtectionTools protectionToolToAdd) {
+			var nomenclatures = protectionToolToAdd.Nomenclatures
+				.Where(n => n.Sex == Sex || n.Sex == ClothesSex.Universal)
+				.ToArray();
+			var stock = stockBalance.ForNomenclature(nomenclatures)
+				.Where(x => SizeService.IsSuitable(Size, x.Position.WearSize))
+				.Where(x => SizeService.IsSuitable(Height, x.Position.Height));
+			StocksSuitable.UnionWith(stock);
+		}
+		#endregion
+		
+		#region Рассчеты
 		public void FillForecast() {
 			Unissued = 0;
+			UnissuedIssues.Clear();
 			Forecast = new int[columnsModel.ForecastColumns.Length];
 			ForecastBalance = new int[columnsModel.ForecastColumns.Length];
 			ForecastColours = new string[columnsModel.ForecastColumns.Length];
+			ForecastIssues = new List<FutureIssue>[columnsModel.ForecastColumns.Length];
+			for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
+				ForecastIssues[i] = new List<FutureIssue>();
+			}
 			foreach(var issue in futureIssues) {
 				if(issue.DelayIssueDate < columnsModel.ForecastColumns[0].StartDate) {
+					UnissuedIssues.Add(issue);
 					Unissued += issue.Amount;
 					continue;
 				}
@@ -138,6 +169,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				for(int i = 0; i < columnsModel.ForecastColumns.Length; i++) {
 					var issueDate = issue.DelayIssueDate ?? issue.OperationDate;
 					if(issueDate >= columnsModel.ForecastColumns[i].StartDate && issueDate <= columnsModel.ForecastColumns[i].EndDate) {
+						ForecastIssues[i].Add(issue);
 						Forecast[i] += issue.Amount;
 						break;
 					}
@@ -174,9 +206,10 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 		public string NameColor => Nomenclature == null ? "blue" : "black";
 		public string SizeText => SizeService.SizeTitle(size, height);
-		public int ClosingBalance => InStock - Unissued - Forecast.Sum();
-		public int WithDebt => InStock - Unissued - Forecast.Sum();
-		public int WithoutDebt => InStock - Forecast.Sum();
+		public int InStockSuitable => StocksSuitable.Sum(x => x.Amount);
+		public int TotalOrdered => ShipmentItems.Sum(x => x.OrderedNotReceived);
+		public int WithDebt => InStock + TotalOrdered - Unissued - Forecast.Sum();
+		public int WithoutDebt => InStock + TotalOrdered - Forecast.Sum();
 		public string NomenclaturesText {
 			get {
 				string text = "";
@@ -188,7 +221,8 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			}
 		}
 
-		public string StockText => Stocks.Any() ? "В наличии:" + String.Concat(Stocks.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
+		public string StockText => StocksExact.Any() ? "В наличии:" + String.Concat(StocksExact.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
+		public string StocksSuitableText => StocksSuitable.Any() ? "В наличии:" + String.Concat(StocksSuitable.Select(x => $"\n{x.Position.Nomenclature.GetAmountAndUnitsText(x.Amount)} — {x.Position.Title}")) : null;
 		#endregion
 	}
 }

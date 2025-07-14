@@ -19,7 +19,7 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.StartPeriod, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndPeriod,w => w.EndDateOrNull)
 				.InitializeFromSource();
-			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v => v.DocCreatedbyUser!=null? v.DocCreatedbyUser.Name: null, w => w.LabelProp)
+			ylabelCreatedBy.Binding.AddFuncBinding(ViewModel, v => v.CreatedByUser!=null? v.CreatedByUser.Name: null, w => w.LabelProp)
 				.InitializeFromSource();
 			ytextComment.Binding.AddBinding(ViewModel, v => v.DocComment,w => w.Buffer.Text)
 				.InitializeFromSource();
@@ -27,6 +27,7 @@ namespace Workwear.Views.Supply {
 				.InitializeFromSource();
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
+			buttonToOrder.Binding.AddBinding(ViewModel, vm => vm.CanToOrder, w => w.Sensitive).InitializeFromSource();
 			yenumcomboboxStatus.ItemsEnum=typeof(ShipmentStatus);
 			yenumcomboboxStatus.Binding
 				.AddBinding(Entity,v => v.Status,w => w.SelectedItem)
@@ -53,24 +54,26 @@ namespace Workwear.Views.Supply {
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditRequested ).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditRequested ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Заказано")
 					.AddNumericRenderer(e => e.Ordered)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CarEditOrdered ).WidthChars(8)
+					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditOrdered ).WidthChars(8)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn("Стоимость")
 					.AddNumericRenderer(e => e.Cost)
 					.Editing(new Adjustment(0, 0, 100000000, 100, 1000, 0)).Digits(2).WidthChars(12)
 				.AddColumn("Сумма")
 					.AddNumericRenderer(x => x.TotalRequested).Digits(2)
-                .AddColumn("Причина расхождения").Visible(ViewModel.CarEditDiffСause)
-                    .AddTextRenderer(e => e.DiffСause)
+                .AddColumn("Причина расхождения").Visible(ViewModel.CanEditDiffCause)
+                    .AddTextRenderer(e => e.DiffCause)
                     .Editable()
 				.AddColumn("|").AddReadOnlyTextRenderer(e => "|") //  Сепаратор
 				.AddColumn("Получено")
 					.AddReadOnlyTextRenderer(e => e.Received.ToString() + ' ' + e.Units?.Name)
+				.AddColumn("Не доставлено")
+					.AddReadOnlyTextRenderer(e => $"{e.OrderedNotReceived} {e.Units?.Name}")
 				.AddColumn("Комментарий")
 					.AddTextRenderer(e => e.Comment)
 					.Editable()
@@ -78,21 +81,24 @@ namespace Workwear.Views.Supply {
 				.Finish();
 			
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
+			ytreeItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeItems.ItemsDataSource = ViewModel.Items;
-
-
 		}
 		
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
-			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<ShipmentItem>();
+			ViewModel.SelectedItems = ytreeItems.GetSelectedObjects<ShipmentItem>();
 		}
 		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
-			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ShipmentItem>());
+			ViewModel.DeleteItems(ytreeItems.GetSelectedObjects<ShipmentItem>());
 
 		protected void OnYbuttonSendEmailClicked(object sender, EventArgs e) =>
-			ViewModel.SendMessegeForBuyer();
+			ViewModel.SendMessageForBuyer();
+
+		protected void OnButtonToOrderClicked(object sender, EventArgs e) {
+			ViewModel.ToOrderItems();
+		}
 	}
 }
 

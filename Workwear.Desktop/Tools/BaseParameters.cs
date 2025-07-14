@@ -26,6 +26,9 @@ namespace Workwear.Tools
 			set => Dynamic[nameof(DefaultAutoWriteoff)] = value;
 		}
 		
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней)
+		/// </summary>
 		public virtual int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;

@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
+using QS.Utilities;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -27,16 +28,16 @@ namespace Workwear.Domain.Supply {
 
 		public virtual int Id { get; set; }
 		
-		private DateTime startPeriod = DateTime.Today;
+		private DateTime? startPeriod;
 		[Display(Name="Начало периода")]
-		public virtual DateTime StartPeriod {
+		public virtual DateTime? StartPeriod {
 			get => startPeriod;
 			set { SetField(ref startPeriod, value); }
 		}
 		
-		private DateTime endPeriod = DateTime.Today.AddDays(14);
+		private DateTime? endPeriod;
 		[Display(Name="Окончание периода")]
-		public virtual DateTime EndPeriod {
+		public virtual DateTime? EndPeriod {
 			get => endPeriod;
 			set { SetField(ref endPeriod, value); }
 		}
@@ -116,13 +117,17 @@ namespace Workwear.Domain.Supply {
 		#endregion
 
 		public virtual string Title => $"Планируемая поставка № {Id.ToString()} в период с {StartPeriod:d} по {EndPeriod:d}";
+		public virtual string PeriodTitle => DateHelper.GetDateRangeText(StartPeriod, EndPeriod);
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if (Status != ShipmentStatus.Draft && (StartPeriod == null || EndPeriod == null))
+				yield return new ValidationResult ("Без периода можно сохранить только черновик.", 
+					new[] { this.GetPropertyName (o => o.StartPeriod)});
 			if (StartPeriod < new DateTime(2025, 1, 1))
-				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го)", 
+				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го).", 
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
 			if(StartPeriod > EndPeriod)
-				yield return new ValidationResult("Дата начала периода должна быть меньше его окончания",
+				yield return new ValidationResult("Дата начала периода должна быть меньше его окончания.",
 					new[] { this.GetPropertyName(o => o.StartPeriod) });
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Поставка должна содержать хотя бы одну строку.", 

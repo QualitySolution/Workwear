@@ -74,7 +74,7 @@ namespace workwear.ReportParameters.ViewModels
 			[ReportIdentifier("ListBySize")]
 			[Display(Name = "Форматировано")]
 			Common,
-			[ReportIdentifier("SpravkaEmployeeSizes")]
+			[ReportIdentifier("ListBySizeFlat")]
 			[Display(Name = "Только данные")]
 			Flat
 		}
