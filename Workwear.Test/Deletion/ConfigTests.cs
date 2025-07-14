@@ -37,6 +37,7 @@ namespace Workwear.Test.Deletion
 			AddIgnoredCollection<ProtectionTools>(x => x.Nomenclatures, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Size>(x => x.SizesWhereIsThisSizeAsSuitable, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 			AddIgnoredCollection<Size>(x => x.SuitableSizes, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
+			AddIgnoredCollection<ServiceClaim>(x => x.ProvidedServices, "Коллекция многие к многим, связи удаляются на уровне БД. Не много смысла их показывать пользователю.");
 		}
 
 		public new static IEnumerable AllDeleteItems => DeleteConfigTestBase.AllDeleteItems;

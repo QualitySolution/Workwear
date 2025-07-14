@@ -29,13 +29,11 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
 				.AddDeleteDependence<StateOperation>(x => x.Claim)
 				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
-			//TODO Нужно ли очищать связь при удалении заявки с выбранными сервисами? По идее, в базе прописан каскад
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
 		
 			DeleteConfig.AddHibernateDeleteInfo<Service>()
-				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices)
-				.AddRemoveFromDependence<ServiceClaim>(x => x.ProvidedServices);
+				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices);
 			
 			#endregion
 			#region Связь
