@@ -2,7 +2,6 @@
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class ClothingServicesCodeView : ViewBase<ClothingServicesCodeViewModel> {
 		public ClothingServicesCodeView(ClothingServicesCodeViewModel viewModel) : base(viewModel) {
 			this.Build();

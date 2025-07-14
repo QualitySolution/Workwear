@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +6,6 @@ using Autofac;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
-using NPOI.SS.Formula.Functions;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
 using QS.Dialog;
@@ -117,15 +115,14 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanEdit => Entity.Status == DocumentStatus.New;
 		public bool CanAddItem => Entity.Postomat != null;
 		public bool CanChangePostomat => Entity.Items.Count == 0;
-		public object CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
+		public bool CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 
 		#endregion
 
 		#region Команды View
 
 		public void AddFromScan() {
-			var wiget = NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>
-				(this, this);
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>(this, this);
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {

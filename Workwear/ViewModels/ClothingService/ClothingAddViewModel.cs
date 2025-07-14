@@ -72,12 +72,6 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Методы 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
-				if(BarcodeInfoViewModel.Barcode != null && BarcodeInfoViewModel.ActivAction != null) {
-					BarcodeInfoViewModel.ActivAction(activeClaim);
-					BarcodeInfoViewModel.ActivAction = null;
-					return;
-				}
-				
 				if(BarcodeInfoViewModel.Barcode == null) {
 					ActiveClaim = null;
 					BarcodeInfoViewModel.LabelInfo = "Не найдено";
@@ -104,11 +98,11 @@ namespace Workwear.ViewModels.ClothingService {
 			Items.Add(new AddServiceClaimNode(ActiveClaim));
 		}
 
-		private Dictionary<string, (string, Action<object>)> SetActionBarcodes() {
+		private Dictionary<string, (string, Action)> SetActionBarcodes() {
 			//Полный список в ClothingMoveViewModel
-			return new Dictionary<string, (string, Action<object>)>() {
-				["2000000000206"] = ("Применить", (s) => Accept()),
-				["2000000000213"] = ("Добавить", (s) => AddClaim()),
+			return new Dictionary<string, (string, Action)>() {
+				["2000000000206"] = ("Применить", () => Accept()),
+				["2000000000213"] = ("Добавить", () => AddClaim()),
 			};
 		}
 

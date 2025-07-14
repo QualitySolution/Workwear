@@ -25,7 +25,7 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
-		private readonly Dictionary<string, (string title, Action<object> action)> ActionBarcodes = new Dictionary<string, (string title, Action<object> action)>();
+		private readonly Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string title, Action action)>();
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 		public readonly FeaturesService FeaturesService;
 		
@@ -74,12 +74,6 @@ namespace Workwear.ViewModels.ClothingService {
 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
-				if(BarcodeInfoViewModel.Barcode != null && BarcodeInfoViewModel.ActivAction != null) {
-					BarcodeInfoViewModel.ActivAction(Claim);
-					BarcodeInfoViewModel.ActivAction = null;
-					return;
-				}
-				
 				if(BarcodeInfoViewModel.Barcode == null) {
 					Claim = null;
 					return;
@@ -158,46 +152,66 @@ namespace Workwear.ViewModels.ClothingService {
 		public void SetState(ClaimState state) {
 			if(Claim != null) {
 				State = state;
-			}
+			} else
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
 		}
 		public void ChngeState(ClaimState state) {
 			if(Claim != null) {
 				State = state;
 				Accept();
-			}
+			} else
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
+			
 		}
+
 		public void SetService(Service service) {
-			if(Claim != null) {
-				var ser = Services.FirstOrDefault(s => s.Entity.Id == service.Id);
-				if(ser != default)
-					ser.Select = true;
+			if(Claim == null) {
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
+				return;
 			}
+			if(service == null) {
+				BarcodeInfoViewModel.LabelInfo = "Услуга не найдена.";
+				return;
+			}
+			var ser = Services.FirstOrDefault(s => s.Entity.Id == service.Id);
+			if(ser != default)
+				ser.Select = true;
+			else
+				BarcodeInfoViewModel.LabelInfo = $"Услуги \"{service.Name}\" нет в этой номенклатуре.";
 		}
-		
+
 		public void CreateNew() {
-			if(BarcodeInfoViewModel.Barcode != null && Claim == null) {
-				Claim = new ServiceClaim {
-					Barcode = BarcodeInfoViewModel.Barcode,
-					Employee = BarcodeInfoViewModel?.Employee,
-					IsClosed = false
-				};
-				UoW.Save(Claim);
-				
-				var status = new StateOperation {
-					Claim = Claim,
-					TerminalId = Claim.PreferredTerminalId,
-					OperationTime = DateTime.Now,
-					State = ClaimState.WaitService,
-					User = userService.GetCurrentUser()
-				};
-				UoW.Save(status);
-				claim.States.Add(status);
-				UoW.Save(claim);
-				UoW.Commit();
-				
-				BarcodeInfoViewModel.LabelInfo = String.Empty;
-				BarcodeInfoViewModel.BarcodeText = String.Empty;
+			if(BarcodeInfoViewModel.Barcode == null) {
+				BarcodeInfoViewModel.LabelInfo = "Штрихкод не найден.";
+				return;
 			}
+			if(Claim != null) {
+				BarcodeInfoViewModel.LabelInfo = "Уже принято на обслуживание.";
+				return;
+			}
+
+			Claim = new ServiceClaim {
+				Barcode = BarcodeInfoViewModel.Barcode,
+				Employee = BarcodeInfoViewModel?.Employee,
+				IsClosed = false
+			};
+			UoW.Save(Claim);
+
+			var status = new StateOperation {
+				Claim = Claim,
+				TerminalId = Claim.PreferredTerminalId,
+				OperationTime = DateTime.Now,
+				State = ClaimState.WaitService,
+				User = userService.GetCurrentUser()
+			};
+			UoW.Save(status);
+			claim.States.Add(status);
+			UoW.Save(claim);
+			UoW.Commit();
+
+			BarcodeInfoViewModel.LabelInfo = String.Empty;
+			BarcodeInfoViewModel.BarcodeText = String.Empty;
+
 		}
 
 		public void Accept() {
@@ -219,8 +233,16 @@ namespace Workwear.ViewModels.ClothingService {
 
 			UoW.Save(Claim);
 			UoW.Commit();
+			Comment = String.Empty;
 		}
-		public void PrintLabel(ServiceClaim claim) {
+		public void PrintLabel() {
+			if(claim == null)
+				claim = this.Claim;
+			if(claim == null){
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание";
+				return;
+			}
+			
 			var reportInfo = new ReportInfo {
 				Title = "Этикетка",
 				Identifier = "ClothingService.ClothingMoveSticker",
@@ -240,30 +262,30 @@ namespace Workwear.ViewModels.ClothingService {
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
 		
-		private Dictionary<string, (string, Action<object>)> GetActionBarcodes() {
-			return new Dictionary<string, (string, Action<object>)>() {
-				["2000000000008"] = ("Изменить статус", (s) => Accept()),
-				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => SetState(ClaimState.InTransit)),
-				["2000000000022"] = ($"Статус \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => SetState(ClaimState.DeliveryToLaundry)),
-				["2000000000039"] = ($"Статус \"{ClaimState.InRepair.GetEnumTitle()}\"", (s) => SetState(ClaimState.InRepair)),
-				["2000000000046"] = ($"Статус \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => SetState(ClaimState.InDryCleaning)),
-				["2000000000053"] = ($"Статус \"{ClaimState.InWashing.GetEnumTitle()}\"", (s) => SetState(ClaimState.InWashing)),
-				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => SetState(ClaimState.AwaitIssue)),
-				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => SetState(ClaimState.Returned)),
-				["2000000000084"] = ("Принять на обслуживание", (s) => CreateNew()),
-				["2000000000091"] = ("Печать этикетки", (s) => PrintLabel(s as ServiceClaim)),
+		private Dictionary<string, (string, Action)> GetActionBarcodes() {
+			return new Dictionary<string, (string, Action)>() {
+				["2000000000008"] = ("Изменить статус", () => Accept()),
+				["2000000000015"] = ($"Статус \"{ClaimState.InTransit.GetEnumTitle()}\"", () => SetState(ClaimState.InTransit)),
+				["2000000000022"] = ($"Статус \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", () => SetState(ClaimState.DeliveryToLaundry)),
+				["2000000000039"] = ($"Статус \"{ClaimState.InRepair.GetEnumTitle()}\"", () => SetState(ClaimState.InRepair)),
+				["2000000000046"] = ($"Статус \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", () => SetState(ClaimState.InDryCleaning)),
+				["2000000000053"] = ($"Статус \"{ClaimState.InWashing.GetEnumTitle()}\"", () => SetState(ClaimState.InWashing)),
+				["2000000000060"] = ($"Статус \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", () => SetState(ClaimState.AwaitIssue)),
+				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", () => SetState(ClaimState.Returned)),
+				["2000000000084"] = ("Принять на обслуживание", () => CreateNew()),
+				["2000000000091"] = ("Печать этикетки", () => PrintLabel()),
 				//["2000000000107"] = ("", null),
-				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InTransit)),
-				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.DeliveryToLaundry)),
-				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InRepair)),
-				["2000000000145"] = ($"Сменить статус на \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InDryCleaning)),
-				["2000000000152"] = ($"Сменить статус на \"{ClaimState.InWashing.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.InWashing)),
-				["2000000000169"] = ($"Сменить статус на \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.AwaitIssue)),
-				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", (s) => ChngeState(ClaimState.Returned)),
+				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", () => ChngeState(ClaimState.InTransit)),
+				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", () => ChngeState(ClaimState.DeliveryToLaundry)),
+				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", () => ChngeState(ClaimState.InRepair)),
+				["2000000000145"] = ($"Сменить статус на \"{ClaimState.InDryCleaning.GetEnumTitle()}\"", () => ChngeState(ClaimState.InDryCleaning)),
+				["2000000000152"] = ($"Сменить статус на \"{ClaimState.InWashing.GetEnumTitle()}\"", () => ChngeState(ClaimState.InWashing)),
+				["2000000000169"] = ($"Сменить статус на \"{ClaimState.AwaitIssue.GetEnumTitle()}\"", () => ChngeState(ClaimState.AwaitIssue)),
+				["2000000000176"] = ($"Сменить статус на \"{ClaimState.Returned.GetEnumTitle()}\"", () => ChngeState(ClaimState.Returned)),
 				//["2000000000183"] = ("", null),
 				//["2000000000190"] = ("", null),
-				//["2000000000206"] = ("", null), занят ClothingAddViewModel
-				//["2000000000213"] = ("", null), занят ClothingAddViewModel
+				//["2000000000206"] = ("", null), используется ClothingAddViewModel
+				//["2000000000213"] = ("", null), используется ClothingAddViewModel
 				//["2000000000220"] = ("", null),
 				//["2000000000237"] = ("", null),
 				//["2000000000244"] = ("", null),
@@ -273,15 +295,15 @@ namespace Workwear.ViewModels.ClothingService {
 				//["2000000000282"] = ("", null),
 			};
 		}
-		private Dictionary<string, (string, Action<object>)> GetActionServicesBarcodes() {
+		private Dictionary<string, (string, Action)> GetActionServicesBarcodes() {
 			var services = UoW.GetAll<Service>()
 				.Where(s => s.Code != null)
 				.ToList();
 
-			Dictionary<string, (string, Action<object>)> dictionary = new Dictionary<string, (string, Action<object>)>();
+			Dictionary<string, (string, Action)> dictionary = new Dictionary<string, (string, Action)>();
 			foreach(var s in services) {
 				if(!dictionary.ContainsKey(s.Code))
-					dictionary.Add(s.Code,(" ", o => SetService(s)));
+					dictionary.Add(s.Code, ($"Добавить услугу \"{s.Name}\"", () => SetService(s)));
 			}
 			return dictionary;
 		}

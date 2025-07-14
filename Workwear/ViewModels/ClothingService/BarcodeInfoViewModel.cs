@@ -13,7 +13,7 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Свойства модели
 
 		private string barcodeText;
-		public Dictionary<string, (string title, Action<object> action)> ActionBarcodes = new Dictionary<string, (string, Action<object>)>();
+		public Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string, Action)>();
 
 		public BarcodeInfoViewModel(BarcodeRepository barcodeRepository) {
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
@@ -25,10 +25,9 @@ namespace Workwear.ViewModels.ClothingService {
 				if(SetField(ref barcodeText, value.Trim())) {
 					if(barcodeText.Length == 13 && barcodeText != Barcode?.Title) {
 						if(ActionBarcodes.ContainsKey(barcodeText)) {
-							ActivAction = ActionBarcodes[barcodeText].action;
 							LabelInfo = ActionBarcodes[barcodeText].title;
+							ActionBarcodes[barcodeText].action();
 							BarcodeText = String.Empty;
-							OnPropertyChanged(nameof(Barcode));
 							return;
 						}
 						var barcode = barcodeRepository.GetBarcodeByString(barcodeText);
@@ -70,13 +69,6 @@ namespace Workwear.ViewModels.ClothingService {
 			get => employee;
 			set { SetField(ref employee, value); }
 		}
-		
-		private Action<object> activAction = null;
-		public virtual Action<object> ActivAction {
-			get => activAction;
-			set { SetField(ref activAction, value); }
-		}
-		
 		#endregion
 
 		#region Свойства View

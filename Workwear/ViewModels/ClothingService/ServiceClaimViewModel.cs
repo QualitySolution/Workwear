@@ -37,7 +37,7 @@ namespace Workwear.ViewModels.ClothingService {
 			if(this.featuresService.Available(WorkwearFeature.Postomats))
 				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 
-			foreach(var service in Entity.Barcode.Nomenclature.UseServices) //Делаем список для заполнеия услуг во вьюшке
+			foreach(var service in Entity.Barcode.Nomenclature.UseServices) //Делаем список для заполнения услуг во вьюшке
 				services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
 					{Select = Entity.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
 
@@ -67,7 +67,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public bool PostomatVisible => featuresService.Available(WorkwearFeature.Postomats);
 		#endregion
 
-		#region Свойста и проброс из модели
+		#region Свойства и проброс из модели
 
 		public virtual bool IsClosed => Entity.IsClosed;
 		public virtual IObservableList<StateOperation> States => Entity.States;

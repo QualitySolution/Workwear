@@ -51,7 +51,7 @@ namespace Workwear.Views.ClothingService {
 		protected void OnButtonAcceptClicked(object sender, EventArgs e) =>
 			ViewModel.Accept();
 		protected void OnYbuttonPrintLabelClicked(object sender, EventArgs e) =>
-			ViewModel.PrintLabel(ViewModel.Claim);
+			ViewModel.PrintLabel();
 		protected void OnButtonAddClaimClicked(object sender, EventArgs e) => 
 			ViewModel.CreateNew();
 	}
