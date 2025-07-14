@@ -3,6 +3,7 @@ using NHibernate.Mapping;
 using NUnit.Framework;
 using QS.Deletion.Configuration;
 using QS.Deletion.Testing;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
