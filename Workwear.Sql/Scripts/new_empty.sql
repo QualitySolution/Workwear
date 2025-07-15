@@ -938,6 +938,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
+  `is_hidden` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`),
   INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
@@ -2229,7 +2230,6 @@ create table duty_norm_items
 	next_issue          date                                                      null,
 	norm_paragraph      varchar(200)                                              null comment 'Пункт норм, основание выдачи',
 	comment             text                                                      null,
-	is_hidden			boolean										default false not null,
 	constraint fk_duty_norms_item_norm
 		foreign key (duty_norm_id) references duty_norms (id)
 			on update cascade,
