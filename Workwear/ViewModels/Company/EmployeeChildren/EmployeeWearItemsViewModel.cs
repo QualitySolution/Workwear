@@ -96,9 +96,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			performance.End();
-			if(HiddenWorkwearItems.Any()) {
-				
-			}
 			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
@@ -116,10 +113,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			get => selectedWorkwearItem;
 			set => SetField(ref selectedWorkwearItem, value);
 		}
-
-		public virtual IList<EmployeeCardItem> HiddenWorkwearItems => employeeRepository.GetItemsHidden(UoW, Entity);
-		
-		
 		#endregion
 
 		#region Sensetive And Visibility
