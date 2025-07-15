@@ -60,21 +60,16 @@ namespace Workwear.Repository.Company
 				.TransformUsing(Transformers.DistinctRootEntity)
 				.List();
 		}
-		public IList<EmployeeCardItem> GetItemsHidden(IUnitOfWork uow, EmployeeCard employee) {
-			NormItem normItemAlias = null;
-			var query = uow.Session.QueryOver<EmployeeCardItem>()
-				.JoinAlias(e=> e.ActiveNormItem, () => normItemAlias)
-				.Where(x=> x.EmployeeCard == employee)
-				.Where(() => normItemAlias.IsHidden == true)
-				.List();
-			return query;
-		}
-		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
+
+		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem1(IUnitOfWork uow, NormItem item) =>
+			GetEmployeesDependenceOnNormItem(uow, new[] { item });
+		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem[] items)
 		{
+			var itemsIds = items.Select(i => i.Id).ToArray();
 			EmployeeCardItem employeeItemAlias = null;
 			return uow.Session.QueryOver<EmployeeCard>()
 				.JoinQueryOver(e => e.WorkwearItems, () => employeeItemAlias)
-				.Where(() => employeeItemAlias.ActiveNormItem == item)
+				.Where(() => employeeItemAlias.ActiveNormItem.Id.IsIn(itemsIds))
 				.List();
 		}
 		#endregion
