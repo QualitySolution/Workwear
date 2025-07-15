@@ -365,7 +365,7 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		public void GetSelectedNormItems(NormItem normItem) {
-			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsHidden = true;
+			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsDisabled = true;
 		}
 		#endregion
 		#endregion

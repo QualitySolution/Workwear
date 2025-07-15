@@ -84,11 +84,11 @@ namespace Workwear.Domain.Regulations
 			set => SetField(ref comment, value); 
 		}
 
-		private bool isHidden;
-		[Display(Name = "Отключена номенклатура норма")]
-		public virtual bool IsHidden {
-			get => isHidden;
-			set => SetField(ref isHidden, value);
+		private bool isDisabled;
+		[Display(Name = "Отключена строка нормы")]
+		public virtual bool IsDisabled {
+			get => isDisabled;
+			set => SetField(ref isDisabled, value);
 		}
 		private DateTime lastUpdate;
 		[Display(Name="Последнее обновление")]

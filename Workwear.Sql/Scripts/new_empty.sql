@@ -938,7 +938,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
-  `is_hidden` BOOLEAN NOT NULL DEFAULT FALSE,
+  `is_disabled` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`),
   INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),

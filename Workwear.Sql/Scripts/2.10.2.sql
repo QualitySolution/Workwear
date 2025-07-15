@@ -1,3 +1,3 @@
-﻿-- Добавление параметра для отключения номенклатуры нормы в норме выдачи
+﻿-- Добавление параметра для отключения строки нормы
 alter table norms_item
-	add column is_hidden boolean default false not null;
+	add column is_disabled boolean default false not null;
