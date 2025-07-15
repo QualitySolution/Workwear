@@ -20,6 +20,7 @@ using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations.NormChildren;
@@ -37,6 +38,7 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
+		private readonly NormRepository normRepository;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -47,6 +49,7 @@ namespace Workwear.ViewModels.Regulations
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
+			NormRepository normRepository,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
@@ -58,6 +61,7 @@ namespace Workwear.ViewModels.Regulations
 			this.interactive = interactive;
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.employeeRepository = employeeRepository;
+			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
@@ -206,7 +210,7 @@ namespace Workwear.ViewModels.Regulations
 
 			if(toRemove.Id > 0) {
 				logger.Info("Поиск ссылок на удаляемую строку нормы...");
-				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
+				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem1(UoW, toRemove);
 				if(worksEmployees.Count > 0) {
 					List<string> operations = new List<string>();
 					foreach(var emp in worksEmployees) {
@@ -264,7 +268,7 @@ namespace Workwear.ViewModels.Regulations
 
 			if(item.Id > 0) {
 				logger.Info("Поиск ссылок на заменяемую строку нормы...");
-				IList<EmployeeCard> worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, item);
+				IList<EmployeeCard> worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem1(UoW, item);
 				var operations = employeeIssueRepository.GetOperationsForNormItem(new []{item}, q => q.Fetch(SelectMode.Fetch, x => x.Employee));
 				if(worksEmployees.Count > 0) {
 					var names = worksEmployees.Union(operations.Select(x => x.Employee)).Distinct().Select(x => x.ShortName).ToList();
@@ -359,6 +363,10 @@ namespace Workwear.ViewModels.Regulations
 		{
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
 		}
+
+		public void GetSelectedNormItems(NormItem normItem) {
+			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsHidden = true;
+		}
 		#endregion
 		#endregion
 		#region Сохранение
@@ -408,6 +416,11 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			var normItemsBeforeCommit = normRepository.GetNormItems(UoW, Entity.Id).ToArray();
+			
+			if(!DomainHelper.EqualDomainObjects(Entity.Items, normItemsBeforeCommit))
+				needUpdateEmployees = true;
+			
 			if (employees.Any() && needUpdateEmployees) 
 			{
 				logger.Info("Пересчитываем сотрудников");

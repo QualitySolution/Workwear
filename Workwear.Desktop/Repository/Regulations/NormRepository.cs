@@ -20,8 +20,15 @@ namespace Workwear.Repository.Regulations
 				.Where(p => p.Id.IsIn(postsIds))
 				.List();
 		}
-
 		
+		public IList<NormItem> GetNormItems(IUnitOfWork uow, int normId) {
+			Norm normAlias = null;
+			var query = uow.Session.QueryOver<NormItem>()
+				.JoinAlias(n => n.Norm, () => normAlias)
+				.Where(() => normAlias.Id == normId)
+				.List();
+			return query;
+		}
 	}
 }
 
