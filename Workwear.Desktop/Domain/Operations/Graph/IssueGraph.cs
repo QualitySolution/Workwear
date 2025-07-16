@@ -18,9 +18,8 @@ namespace Workwear.Domain.Operations.Graph
 
 		private readonly IList<EmployeeIssueOperation> operations;
 
-		public IssueGraph()
-		{
-
+		public IssueGraph() {
+			operations = new List<EmployeeIssueOperation>();
 		}
 
 		public IEnumerable<GraphInterval> OrderedIntervals => Intervals.OrderBy(x => x.StartDate);
