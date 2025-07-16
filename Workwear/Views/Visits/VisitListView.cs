@@ -5,7 +5,6 @@ using QS.Views.Dialog;
 using Workwear.ViewModels.Visits;
 
 namespace Workwear.Views.Visits {
-	[System.ComponentModel.ToolboxItem(true)]
 	public partial class VisitListView : DialogViewBase<VisitListViewModel> {
 		public VisitListView(VisitListViewModel viewModel) : base(viewModel) {
 			Build();

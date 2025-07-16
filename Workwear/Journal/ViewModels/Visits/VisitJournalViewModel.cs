@@ -28,7 +28,11 @@ namespace workwear.Journal.ViewModels.Visits {
 
 			var query = uow.Session.QueryOver<Visit>()
 				.Where(GetSearchCriterion<Visit>(
-					x => x.Id
+					x => x.Id,
+					x => employeeAlias.PersonnelNumber,
+					x => employeeAlias.LastName,
+					x => employeeAlias.FirstName,
+					x => employeeAlias.Patronymic
 				));
 			
 			var concatProjectionEmployee = Projections.SqlFunction(
@@ -48,6 +52,7 @@ namespace workwear.Journal.ViewModels.Visits {
 					.Select(x => x.Cancelled).WithAlias(() => resultAlias.Cancelled)
 					.Select(x => x.Done).WithAlias(() => resultAlias.Done)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => employeeAlias).WithAlias(() => resultAlias.Tabel)
 					.Select(concatProjectionEmployee).WithAlias(() => resultAlias.FIO)
 				)
 				.OrderBy(x => x.VisitTime).Asc
@@ -66,7 +71,7 @@ namespace workwear.Journal.ViewModels.Visits {
 		public DateTime CreateDate { get; set; }
 		public DateTime VisitDate { get; set; }
 		public string FIO { get; set; }
-////EmployeeCard Employee
+		public string Tabel { get; set; }
 		public bool EmployeeCreate { get; set; }
 		public bool Done { get; set; }
 		public bool Cancelled { get; set; }

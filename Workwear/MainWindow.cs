@@ -73,7 +73,6 @@ using Workwear;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.Supply;
-using workwear.Journal.ViewModels.Visits;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
@@ -91,9 +90,9 @@ public partial class MainWindow : Gtk.Window {
 	public readonly IApplicationQuitService quitService;
 	public readonly IInteractiveService interactive;
 	public readonly IGuiDispatcher dispatcher;
-
+	
 	public FeaturesService FeaturesService { get; private set; }
-
+	
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
 		ProgressBar = progresswidget1;
@@ -297,7 +296,7 @@ public partial class MainWindow : Gtk.Window {
 
 		//Дополнительные параметры в телеметрию
 		progress.CheckPoint("Запускаем телеметрию");
-#if !DEBUG
+		#if !DEBUG
 			//Инициализируем телеметрию
 			using(var telemetryScope = AutofacScope.BeginLifetimeScope()) {
 				var applicationInfo = telemetryScope.Resolve<IApplicationInfo>();
@@ -311,9 +310,9 @@ public partial class MainWindow : Gtk.Window {
 				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
-#else
+		#else
 		MainTelemetry.DoNotTrack = true;
-#endif
+		#endif
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
 

@@ -54,10 +54,10 @@ namespace Workwear.ViewModels.Visits {
 		public DateTime StartPeriod { get; set; } = DateTime.Now.Date;
 		public string PeriodString => StartPeriod.Date.ToShortDateString();
 		public DateTime FinishPeriod => StartPeriod.AddDays(1);
-		public int IntervalMinutes { get; set; } = 15;
-		public int StartWorkDay { get; set; } = 8;
-		public int FinishWorkDay { get; set; } = 17;
-		public int[] WorkDaysOfWeak { get; set; } = {1, 2, 3, 4, 5};
+		public int IntervalMinutes { get; }
+		public int StartWorkDay { get; }
+		public int FinishWorkDay { get; }
+		public int[] WorkDaysOfWeak { get; }
 		public DateTime[] NotWorkDays { get; }
 		public SortedDictionary<DateTime, VisitListWidgetItem> Items { get; set; } = new SortedDictionary<DateTime, VisitListWidgetItem>();
 
@@ -94,11 +94,11 @@ namespace Workwear.ViewModels.Visits {
 			
 			foreach(var visit in visits) {
 				while(Items.ContainsKey(visit.VisitTime))
-					visit.VisitTime.AddSeconds(1);
+					visit.VisitTime = visit.VisitTime.AddSeconds(1);
 				Items.Add(visit.VisitTime, new VisitListWidgetItem(visit));
 			}
 
-			for(DateTime d = StartPeriod; d.Date < FinishPeriod; ) {
+			for(DateTime d = StartPeriod; d.Date < FinishPeriod; d = d.AddMinutes(IntervalMinutes)) {
 				if(d.Hour < StartWorkDay) {
 					d = d.Date.AddHours(StartWorkDay); 
 					continue; 
@@ -109,8 +109,6 @@ namespace Workwear.ViewModels.Visits {
 				}
 				if (!Items.ContainsKey(d))
 					Items.Add(d, new VisitListWidgetItem(d));
-				
-				d = d.AddMinutes(IntervalMinutes); // Счётчик цикла!
 			}
 
 			//Помечаем начало дня

@@ -549,9 +549,10 @@ namespace workwear.Journal
 
 			TreeViewColumnsConfigFactory.Register<VisitJournalViewModel>(
 				(jvm) => FluentColumnsConfig<VisitJournalNode>.Create()
-					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
 					.AddColumn("Запланировано").AddTextRenderer(node=>node.VisitDate.ToShortDateString())
 					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreateDate.ToShortDateString())
+					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FIO).SearchHighlight()
+					.AddColumn("Табельный").AddReadOnlyTextRenderer(x => x.Tabel).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
 					.Finish()
 			);
