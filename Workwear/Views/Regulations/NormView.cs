@@ -122,13 +122,19 @@ namespace Workwear.Views.Regulations
 				menu.Add(menuItem);
 
 				if(!(selected?.IsDisabled ?? false)) {
-					menuItem = new MenuItem("Отключить строку нормы");
+					bool isSensitive = !Entity.Archival;
+					string label = "Отключить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
 					menuItem.Activated += (sender, e) => ViewModel.DisableNormItem(selected);
 					menu.Add(menuItem);
 				}
 
 				if(selected?.IsDisabled ?? false){
-					menuItem = new MenuItem("Включить строку нормы");
+					bool isSensitive = !Entity.Archival;
+					string label = "Включить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
 					menuItem.Activated += (sender, e) => ViewModel.EnableNormItem(selected);
 					menu.Add(menuItem);
 				}
