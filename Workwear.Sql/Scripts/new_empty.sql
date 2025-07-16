@@ -887,6 +887,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   supply_female_id int(10) unsigned null,
   `comments` TEXT NULL DEFAULT NULL,
   `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` bool not null default false,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
