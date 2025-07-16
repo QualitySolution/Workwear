@@ -120,11 +120,17 @@ namespace Workwear.Views.Regulations
 				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
 				menu.Add(menuItem);
 
-				menuItem = new MenuItem("Отключить строку нормы");
-				menuItem.Sensitive = selected != null;
-				menuItem.Activated += (sender, e) => ViewModel.GetSelectedNormItems(selected);
-				menu.Add(menuItem);
-				
+				if(!(selected?.IsDisabled ?? false)) {
+					menuItem = new MenuItem("Отключить строку нормы");
+					menuItem.Activated += (sender, e) => ViewModel.DisableNormItem(selected);
+					menu.Add(menuItem);
+				}
+
+				if(selected?.IsDisabled ?? false){
+					menuItem = new MenuItem("Включить строку нормы");
+					menuItem.Activated += (sender, e) => ViewModel.EnableNormItem(selected);
+					menu.Add(menuItem);
+				}
 				menu.Add(new SeparatorMenuItem());
 				
 				menuItem = new MenuItem("Пересчитать сроки носки в документах выдачи");
