@@ -364,8 +364,12 @@ namespace Workwear.ViewModels.Regulations
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
 		}
 
-		public void GetSelectedNormItems(NormItem normItem) {
+		public void DisableNormItem(NormItem normItem) {
 			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsDisabled = true;
+		}
+
+		public void EnableNormItem(NormItem normItem) {
+			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsDisabled = false;
 		}
 		#endregion
 		#endregion
@@ -437,6 +441,7 @@ namespace Workwear.ViewModels.Regulations
 				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 				logger.Info("Ok");
 			}
+			
 			return true;
 		}
 		#endregion
