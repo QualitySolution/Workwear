@@ -143,7 +143,7 @@ namespace Workwear.Domain.Regulations {
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
 		/// <summary>
-		/// Необходимое к выдачи количество.
+		/// Необходимое к выдаче количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)
@@ -153,7 +153,7 @@ namespace Workwear.Domain.Regulations {
 		}
 
 		/// <summary>
-		/// Обновляет данные о выданом .
+		/// Обновляет данные о выданном.
 		/// </summary>
 		/// <returns>Наличие изменений</returns>
 		public virtual void Update(IUnitOfWork uow) {
@@ -169,7 +169,7 @@ namespace Workwear.Domain.Regulations {
 		}
 
 		/// <summary>
-		/// Расчитывает дату следующей выдачи.
+		/// Рассчитывает дату следующей выдачи.
 		/// </summary>
 		public virtual DateTime? CalculateNextIssue() {
 			DateTime? wantIssue = new DateTime();
