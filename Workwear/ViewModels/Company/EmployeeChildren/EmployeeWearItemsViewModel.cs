@@ -108,7 +108,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			get => selectedWorkwearItem;
 			set => SetField(ref selectedWorkwearItem, value);
 		}
-		
 		#endregion
 
 		#region Sensetive And Visibility
