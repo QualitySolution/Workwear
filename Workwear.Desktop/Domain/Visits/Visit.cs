@@ -9,7 +9,7 @@ using Workwear.Domain.Stock.Documents;
 namespace Workwear.Domain.Visits {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "записи на посещение",
-		Nominative = "запись на посищение",
+		Nominative = "запись на посещение",
 		Genitive = "записи на посещение",
 		GenitivePlural = "записей на посещение"
 	)]

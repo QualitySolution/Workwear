@@ -277,7 +277,7 @@ namespace Workwear.Domain.Operations
 				throw new NullReferenceException(nameof(item.ExpenseDoc.IssueDate));
 			
 			//Внимание здесь сравниваются даты без времени.
-			if (item.ExpenseDoc.IssueDate != OperationTime.Date)
+			if (item.ExpenseDoc.IssueDate.Value.Date != OperationTime.Date)
 				OperationTime = (DateTime)item.ExpenseDoc.IssueDate;
 
 			Employee = item.ExpenseDoc.Employee;
