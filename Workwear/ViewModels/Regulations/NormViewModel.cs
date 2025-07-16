@@ -110,7 +110,8 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Amount,
 					x => x.NormCondition,
 					x => x.NormPeriod,
-					x => x.PeriodCount);
+					x => x.PeriodCount,
+					x => x.IsDisabled);
 
 			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
 				.IfEntity<Norm>()
@@ -420,10 +421,6 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
-			var normItemsBeforeCommit = normRepository.GetNormItems(UoW, Entity.Id).ToArray();
-			
-			if(!DomainHelper.EqualDomainObjects(Entity.Items, normItemsBeforeCommit))
-				needUpdateEmployees = true;
 			
 			if (employees.Any() && needUpdateEmployees) 
 			{
