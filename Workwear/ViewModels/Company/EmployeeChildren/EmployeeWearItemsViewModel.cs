@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using NHibernate;
@@ -17,7 +16,6 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
-using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
@@ -110,6 +108,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			get => selectedWorkwearItem;
 			set => SetField(ref selectedWorkwearItem, value);
 		}
+		
 		#endregion
 
 		#region Sensetive And Visibility
