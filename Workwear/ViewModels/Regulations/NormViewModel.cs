@@ -210,7 +210,7 @@ namespace Workwear.ViewModels.Regulations
 
 			if(toRemove.Id > 0) {
 				logger.Info("Поиск ссылок на удаляемую строку нормы...");
-				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem1(UoW, toRemove);
+				worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, toRemove);
 				if(worksEmployees.Count > 0) {
 					List<string> operations = new List<string>();
 					foreach(var emp in worksEmployees) {
@@ -268,7 +268,7 @@ namespace Workwear.ViewModels.Regulations
 
 			if(item.Id > 0) {
 				logger.Info("Поиск ссылок на заменяемую строку нормы...");
-				IList<EmployeeCard> worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem1(UoW, item);
+				IList<EmployeeCard> worksEmployees = EmployeeRepository.GetEmployeesDependenceOnNormItem(UoW, item);
 				var operations = employeeIssueRepository.GetOperationsForNormItem(new []{item}, q => q.Fetch(SelectMode.Fetch, x => x.Employee));
 				if(worksEmployees.Count > 0) {
 					var names = worksEmployees.Union(operations.Select(x => x.Employee)).Distinct().Select(x => x.ShortName).ToList();

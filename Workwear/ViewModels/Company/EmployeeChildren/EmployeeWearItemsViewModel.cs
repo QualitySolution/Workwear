@@ -35,7 +35,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
-		private readonly EmployeeRepository employeeRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
@@ -47,7 +46,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
-			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
@@ -59,7 +57,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
-			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));

@@ -61,15 +61,12 @@ namespace Workwear.Repository.Company
 				.List();
 		}
 
-		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem1(IUnitOfWork uow, NormItem item) =>
-			GetEmployeesDependenceOnNormItem(uow, new[] { item });
-		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem[] items)
+		public static IList<EmployeeCard> GetEmployeesDependenceOnNormItem(IUnitOfWork uow, NormItem item)
 		{
-			var itemsIds = items.Select(i => i.Id).ToArray();
 			EmployeeCardItem employeeItemAlias = null;
 			return uow.Session.QueryOver<EmployeeCard>()
 				.JoinQueryOver(e => e.WorkwearItems, () => employeeItemAlias)
-				.Where(() => employeeItemAlias.ActiveNormItem.Id.IsIn(itemsIds))
+				.Where(() => employeeItemAlias.ActiveNormItem == item)
 				.List();
 		}
 		#endregion
