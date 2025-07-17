@@ -74,9 +74,9 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		private string commentReturn;
 		[Display(Name = "Отметка о возврате")]
-		public virtual string СommentReturn {
+		public virtual string CommentReturn {
 			get => commentReturn;
-			set { SetField(ref commentReturn, value, () => СommentReturn); }
+			set { SetField(ref commentReturn, value, () => CommentReturn); }
 		}
 		
 		private Size wearSize;
