@@ -499,7 +499,7 @@ namespace Workwear.ViewModels.Company
 
 
 		private int lastTab;
-		private int currentTab = 3;
+		private int currentTab = 0;
 		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;

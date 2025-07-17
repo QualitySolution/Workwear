@@ -174,6 +174,14 @@ namespace Workwear.Domain.Regulations {
 			NextIssue = CalculateNextIssue();
 			OnPropertyChanged(nameof(Issued));
 		}
+		
+		/// <summary>
+		/// Обновляет данные о выданом .
+		/// </summary>
+		/// <returns>Наличие изменений</returns>
+		public virtual void UpdateNextIssue() {
+			NextIssue = CalculateNextIssue();
+		}
 
 		/// <summary>
 		/// Расчитывает дату следующей выдачи.

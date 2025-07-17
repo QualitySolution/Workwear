@@ -33,7 +33,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		private void ConfigureTable() 
 		{
 			ytreeview.Binding.AddSource(ViewModel)
-				.AddBinding(vm => vm.AllDutyNormsItemsForResponsibleEmployee, w => w.ItemsDataSource)
+				.AddBinding(vm => vm.DutyNormsItemsList, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			ytreeview.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
 				.AddColumn("Наименование").Resizable()

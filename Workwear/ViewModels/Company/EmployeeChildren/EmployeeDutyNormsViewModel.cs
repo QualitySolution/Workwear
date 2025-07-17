@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -7,6 +8,7 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Models.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock;
@@ -17,6 +19,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		private readonly INavigationManager navigation;
 		private IUnitOfWork UoW => employeeViewModel.UoW;
 		private readonly DutyNormIssueModel dutyNormIssueModel;
+		public readonly DutyNormRepository dutyNormRepository;
 		private readonly FeaturesService featuresService;
 		private bool isConfigured = false;
 		
@@ -24,28 +27,31 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			EmployeeViewModel employeeViewModel,
 			INavigationManager navigation,
 			FeaturesService featuresService,
-			DutyNormIssueModel dutyNormIssueModel
+			DutyNormIssueModel dutyNormIssueModel,
+			DutyNormRepository dutyNormRepository
 			) 
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 		}
 		
 		public void OnShow() {
 			if(!isConfigured) {
-				AllDutyNormsItemsForResponsibleEmployee = dutyNormIssueModel.GetAllDutyNormsItemsForResponsibleEmployee(Entity);
+				DutyNormsItemsList = new ObservableList<DutyNormItem>(dutyNormRepository.AllItemsFor(responsibleemployees: new [] {Entity}));
+				dutyNormIssueModel.FillDutyNormItems(DutyNormsItemsList.ToArray());
 				isConfigured = true;
 			}
 		}
 		
 	    #region Свойства
 
-		private IObservableList<DutyNormItem> allDutyNormsItemsForResponsibleEmployee = new ObservableList<DutyNormItem>();
-		public IObservableList<DutyNormItem> AllDutyNormsItemsForResponsibleEmployee {
-			get => allDutyNormsItemsForResponsibleEmployee;
-			set => SetField(ref allDutyNormsItemsForResponsibleEmployee, value);
+		private IObservableList<DutyNormItem> dutyNormsItemsList = new ObservableList<DutyNormItem>();
+		public IObservableList<DutyNormItem> DutyNormsItemsList {
+			get => dutyNormsItemsList;
+			set => SetField(ref dutyNormsItemsList, value);
 		}
 
 		#endregion
