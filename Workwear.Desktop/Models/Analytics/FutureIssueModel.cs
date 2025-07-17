@@ -38,6 +38,7 @@ namespace Workwear.Models.Analytics {
 			progress?.Start(employeeItems.Count() + 2);
 			int gc = 0;
 			var issues = new List<FutureIssue>();
+			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода
 
 			foreach(var item in employeeItems) {
 				if(gc++ > 10000) {
