@@ -54,7 +54,7 @@ create table work_days
 	id          int unsigned auto_increment,
 	date 		date 	not null,
 	is_work_day boolean default true null,
-	сomment 	text	null
+	comment 	text	null,
 	constraint work_days_pk
 		primary key (id)
 );

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
@@ -32,18 +33,19 @@ namespace Workwear.ViewModels.Visits {
 			
 			Title = "Посещения склада";
 			IntervalMinutes = baseParameters.VisitInterval;
-			StartWorkDay = baseParameters.VisitIntervalHourStart;
-			FinishWorkDay = baseParameters.VisitIntervalHourEnd;
+			VisitIntervalHourStart = baseParameters.VisitIntervalHourStart;
+			VisitIntervalHourEnd = baseParameters.VisitIntervalHourEnd;
 			WorkDaysOfWeak = baseParameters.VisitIntervalWorkDays;
-			NotWorkDays = UoW.GetAll<WorkDay>()
-				.Where(d => !d.IsWorkday)
-				.Select(d => d.Date).ToArray();
+			
+			WorkDays = UoW.GetAll<WorkDay>().ToDictionary(x => x.Date, x => x.IsWorkday);
 
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Expense>();
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Return>();
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Writeoff>();
-			
+
 			loadData();
+			if(Items.Count == 0)
+				NextDay();
 		}
 		//TODO докумментация IDialogDocumentation
 		//public string DocumentationUrl { get; }
@@ -51,17 +53,15 @@ namespace Workwear.ViewModels.Visits {
 		
 		private readonly INavigationManager navigation;
 		private readonly IEntityChangeWatcher changeWatcher;
-		public DateTime StartPeriod { get; set; } = DateTime.Now.Date;
-		public string PeriodString => StartPeriod.Date.ToShortDateString();
-		public DateTime FinishPeriod => StartPeriod.AddDays(1);
+		public DateTime Day { get; set; } = DateTime.Now.Date;
+		public string PeriodString => Day.Date.ToShortDateString();
 		public int IntervalMinutes { get; }
-		public int StartWorkDay { get; }
-		public int FinishWorkDay { get; }
+		public int VisitIntervalHourStart { get; }
+		public int VisitIntervalHourEnd { get; }
 		public int[] WorkDaysOfWeak { get; }
-		public DateTime[] NotWorkDays { get; }
+		public Dictionary<DateTime, bool> WorkDays { get; }
 		public SortedDictionary<DateTime, VisitListWidgetItem> Items { get; set; } = new SortedDictionary<DateTime, VisitListWidgetItem>();
 
-		
 		//Для синхронизации с изменениями внесёнными в базу при открытом диалоге.
 		private void VisitChangeEvent(EntityChangeEvent[] changeevents) {
 			foreach(var changeEvent in changeevents)
@@ -84,13 +84,12 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var v in Items.Where(x => x.Value.Visit != null)) 
 				UoW.Session.Evict(v.Value.Visit);
 			Items.Clear();
-	
-			Visit visitAlias = null;
-			EmployeeCard employeeAlias = null;
+			
 			var visits = UoW.GetAll<Visit>() 
-				.Where(x => x.VisitTime >= StartPeriod)
-				.Where(x => x.VisitTime < FinishPeriod)
-				.ToList<Visit>();
+				.Where(x => x.VisitTime >= Day)
+				.Where(x => x.VisitTime < Day.AddDays(1))
+				.Fetch(x => x.Employee)
+				.ToList();
 			
 			foreach(var visit in visits) {
 				while(Items.ContainsKey(visit.VisitTime))
@@ -98,25 +97,36 @@ namespace Workwear.ViewModels.Visits {
 				Items.Add(visit.VisitTime, new VisitListWidgetItem(visit));
 			}
 
-			for(DateTime d = StartPeriod; d.Date < FinishPeriod; d = d.AddMinutes(IntervalMinutes)) {
-				if(d.Hour < StartWorkDay) {
-					d = d.Date.AddHours(StartWorkDay); 
-					continue; 
-				}
-				if(!WorkDaysOfWeak.Contains((int)d.DayOfWeek) || d.Hour >= FinishWorkDay || NotWorkDays.Contains(d.Date)) {
-					d = d.AddDays(1).Date.AddHours(StartWorkDay); 
-					continue; 
-				}
-				if (!Items.ContainsKey(d))
-					Items.Add(d, new VisitListWidgetItem(d));
-			}
-
+			if(IsWorkDay(Day))
+				foreach(var time in MakeSchedule(Day).Where(x => !Items.ContainsKey(x)))
+					Items.Add(time, new VisitListWidgetItem(time));
+			
 			//Помечаем начало дня
-			Items.GroupBy(x => x.Key.Date)
-				.Select(g => g.OrderBy(y => y.Key).First()).ToList()
-				.ForEach(i => i.Value.FirstOfDay = true);
+			if(Items.Any())
+				Items.First().Value.FirstOfDay = true; 
 			
 			OnPropertyChanged(nameof(Items));
+		}
+		/// <summary>
+		/// Создаёт график. Список DataTime начла возможных записей.
+		/// Корректно считает ночные преиоды Например 21:00 - 6:00
+		/// </summary>
+		private List<DateTime> MakeSchedule(DateTime Day) {
+			DateTime start = Day.Date.AddHours(VisitIntervalHourStart);
+			DateTime end = (VisitIntervalHourStart < VisitIntervalHourEnd ? Day : Day.AddDays(1)).Date.AddHours(VisitIntervalHourEnd);
+			
+			List<DateTime> result = new List<DateTime>();
+			for(DateTime time = start; time < end; time = time.AddMinutes(IntervalMinutes)) 
+				result.Add(time);
+			return result;
+		}
+
+		private bool IsWorkDay(DateTime day) {
+			if(WorkDays.ContainsKey(day.Date) && WorkDays[day.Date])
+				return true;
+			if(WorkDaysOfWeak.Contains((int)day.DayOfWeek) && (!WorkDays.ContainsKey(day.Date) || WorkDays[day.Date]))
+				return true;
+			return false;
 		}
 		
 		public void AddExpance(EmployeeCard employee, Visit visit) {
@@ -141,7 +151,7 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		public void NextDay() {
-			StartPeriod = StartPeriod.AddDays(1);
+			Day = Day.AddDays(1);
 			loadData();
 			if(Items.Count == 0)
 				NextDay();
@@ -149,7 +159,7 @@ namespace Workwear.ViewModels.Visits {
 				OnPropertyChanged(nameof(PeriodString));
 		}
 		public void PrevDay() {
-			StartPeriod = StartPeriod.AddDays(-1);
+			Day = Day.AddDays(-1);
 			loadData();
 			if(Items.Count == 0)
 				PrevDay();
