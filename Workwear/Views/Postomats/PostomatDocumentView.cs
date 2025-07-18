@@ -53,9 +53,15 @@ namespace Workwear.Views.Postomats {
 			
 			SetEditableWindow();
 			
-			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
-			buttonAdd.Binding.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
+			buttonAddScan.Binding
+				.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive)
+				.AddBinding(ViewModel, v => v.CanUseBarcode, w => w.Visible).InitializeFromSource();
+			buttonAddScan.Clicked += (sender, args) => ViewModel.AddFromScan();
+			buttonAdd.Binding
+				.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
+			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
+
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {

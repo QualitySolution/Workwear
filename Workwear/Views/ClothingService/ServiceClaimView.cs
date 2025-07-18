@@ -1,5 +1,6 @@
 ﻿using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
+using QS.ViewModels.Control;
 using QS.Views.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.ViewModels.ClothingService;
@@ -39,10 +40,16 @@ namespace Workwear.Views.ClothingService {
 				.AddColumn("Пользователь").AddReadOnlyTextRenderer(x => x.User?.Name)
 				.AddColumn("Комментарий").AddReadOnlyTextRenderer(x => x.Comment)
 				.Finish();
-
-			treeOperations.Binding
-				.AddSource(ViewModel)
+			treeOperations.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.States, w => w.ItemsDataSource)
+				.InitializeFromSource();
+			
+			treeServices.CreateFluentColumnsConfig<SelectableEntity<Service>>()			
+				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
+				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
+				.Finish();
+			treeServices.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Services, w => w.ItemsDataSource)
 				.InitializeFromSource();
 
 			ytextComment.Binding
