@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.UoW;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
@@ -26,7 +25,7 @@ namespace Workwear.Models.Operations {
 		#endregion
 		
 		/// <summary>
-		/// Заполняет графы и обновляет дату последней выдачи.
+		/// Заполняет графы
 		/// </summary>
 		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству элементов + 2</param>
 		public void FillDutyNormItems(DutyNormItem[] items, DutyNormIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {

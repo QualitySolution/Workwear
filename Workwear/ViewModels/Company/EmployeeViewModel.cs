@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -215,6 +215,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
+		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.DelatedDutyNorms.Count > 0;
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;

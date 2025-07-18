@@ -55,17 +55,17 @@ namespace Workwear.ViewModels.Regulations {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 
 			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 
 			this.interactive = interactive;
 			currentTab = Entity.Id == 0 ? 0 : 1;
 
-			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			changeWatcher.BatchSubscribe(DutyNormChangeEvent)
 				.IfEntity<DutyNormIssueOperation>()
 				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
+			
 			dutyNormRepository.LoadFullInfo(new[] {Entity.Id});
-
-		var entryBuilder = new CommonEEVMBuilderFactory<DutyNorm>(this, Entity, UoW, navigation, autofacScope);
+			var entryBuilder = new CommonEEVMBuilderFactory<DutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
@@ -79,8 +79,7 @@ namespace Workwear.ViewModels.Regulations {
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
 			
-			//Актуализация строк при открытии			
-			Entity.UpdateItems(dutyNormIssueModel);
+			dutyNormIssueModel.FillDutyNormItems(Entity.Items.ToArray());
 		}
 		
 		#region IDialogDocumentation

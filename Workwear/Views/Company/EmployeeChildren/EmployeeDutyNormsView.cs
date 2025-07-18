@@ -16,47 +16,45 @@ namespace Workwear.Views.Company.EmployeeChildren {
 			get => viewModel;
 			set {
 				viewModel = value;
-//viewModel.PropertyChanged += ViewModel_PropertyChanged;
 				ConfigureTable();
 			}
 		}
-		/*void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.AllDutyNormsItemsForResponsibleEmployee)) {
-				ytreeview.ItemsDataSource = ViewModel.AllDutyNormsItemsForResponsibleEmployee;
-			}
-		}*/
-		/*void ytreeView_Selection_Changed(object sender, EventArgs e)
-		{
-			ybuttonOpenDutyNorm.Sensitive = ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0;
-		}*/
+
 		private void ConfigureTable() 
 		{
 			ytreeview.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DutyNormsItemsList, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			ytreeview.ColumnsConfig = FluentColumnsConfig<DutyNormItem>.Create()
+				.AddColumn("Норма №")
+					.AddTextRenderer(i => i.DutyNorm.Id.ToString())
 				.AddColumn("Наименование").Resizable()
 					.AddTextRenderer(i  => i.ProtectionTools != null ? i.ProtectionTools.Name : null).WrapWidth(700)
 				.AddColumn("По норме")
 					.AddNumericRenderer(i => i.Amount)
 					.AddTextRenderer(i => i.AmountUnitText(i.Amount))
-				.AddColumn("Срок службы").Resizable()
+				.AddColumn("Срок службы")
 					.AddNumericRenderer(i=>i.PeriodCount)
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != DutyNormPeriodType.Wearout)
 					.AddEnumRenderer(i=>i.NormPeriod)
 					.AddSetter((c,n) => c.Text = n.PeriodText )
-				.AddColumn("Числится").Resizable()
+				.AddColumn("Числится")
 					.AddTextRenderer(i => i.Issued(DateTime.Now)!=0 ? i.Issued(DateTime.Now).ToString() : String.Empty)
 					.AddSetter((w, i) => w.Foreground = i.AmountColor)
 					.AddTextRenderer(i => i.AmountUnitText(i.Issued(DateTime.Now)))
-				.AddColumn("След. получение").Resizable()
+				.AddColumn("След. получение")
 					.AddTextRenderer(i => i.NextIssueText)
 					.AddSetter((w, i) => w.Foreground = i.NextIssueColor)
-				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph)
-				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment)
+				.AddColumn("Пункт норм").Resizable()
+					.AddTextRenderer(x => x.NormParagraph)
+				.AddColumn("Комментарий")
+					.AddTextRenderer(x => x.Comment)
 				.Finish ();
-			//ytreeview.Selection.Changed += ytreeView_Selection_Changed;
+			ytreeview.Selection.Changed += ytreeView_Selection_Changed;
+		}
+		
+		void ytreeView_Selection_Changed(object sender, EventArgs e) {
+			ybuttonOpenDutyNorm.Sensitive = ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0;
 		}
 		
 		#region Кнопки

@@ -34876,7 +34876,7 @@
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>
                 <property name="Icon">stock:gtk-add Menu</property>
-                <property name="Label" translatable="yes">Выдать</property>
+                <property name="Label" translatable="yes">Выдать по выбранной норме</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonGiveWearByDutyNormClicked" />
               </widget>
@@ -34891,7 +34891,8 @@
               <widget class="Gamma.GtkWidgets.yButton" id="ybuttonOpenDutyNorm">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-find Menu</property>
                 <property name="Label" translatable="yes">Открыть дежурную норму</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonOpenDutyNormClicked" />

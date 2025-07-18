@@ -74,26 +74,27 @@ namespace Workwear.Repository.Regulations {
 		/// Получаем все строки норм по фильтрам
 		/// </summary>
 		public virtual IList<DutyNormItem> AllItemsFor(
-			DutyNorm[] dutyNorms = null,
-			EmployeeCard[] responsibleemployees = null,
-			ProtectionTools[] protectionTools = null,
+			int[] dutyNormsIds = null,
+			int[] responsibleemployeesIds = null,
+			int[] protectionToolsIds = null,
 			IUnitOfWork uow = null)
 		{
 			DutyNorm dutyNormAlias = null;
 			EmployeeCard responsibleEmployeeAlias = null;
 			
 			var query = (uow ?? RepoUoW).Session.QueryOver<DutyNormItem>();
-			if(dutyNorms != null && dutyNorms.Any())
-				query.Where(o => o.DutyNorm.IsIn(dutyNorms));
-			if(protectionTools != null && protectionTools.Any())
-				query.Where(o => o.ProtectionTools.IsIn(protectionTools));
-			if(responsibleemployees != null && responsibleemployees.Any()) { 
+			if(dutyNormsIds != null && dutyNormsIds.Any())
+				query.Where(o => o.DutyNorm.Id.IsIn(dutyNormsIds));
+			if(protectionToolsIds != null && protectionToolsIds.Any())
+				query.Where(o => o.ProtectionTools.Id.IsIn(protectionToolsIds));
+			if(responsibleemployeesIds != null && responsibleemployeesIds.Any()) { 
 				query.JoinAlias(x => x.DutyNorm, () => dutyNormAlias)
 				.JoinAlias(() => dutyNormAlias.ResponsibleEmployee, () => responsibleEmployeeAlias)
-				.Where(() => responsibleEmployeeAlias.IsIn(responsibleemployees));
+				.Where(() => responsibleEmployeeAlias.Id.IsIn(responsibleemployeesIds));
 			}
 
-			return query.List();
+			var res = query.List();
+			return res;
 		}
 	}
 }

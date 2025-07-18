@@ -217,6 +217,14 @@ namespace Workwear.Domain.Company
 			set => SetField(ref usedNorms, value);
 		}
 		#endregion
+		#region Norms
+		private IObservableList<DutyNorm> delatedDutyNorms = new ObservableList<DutyNorm>();
+		[Display (Name = "Привязанные дежурные нормы нормы")]
+		public virtual IObservableList<DutyNorm> DelatedDutyNorms {
+			get => delatedDutyNorms;
+			set => SetField(ref delatedDutyNorms, value);
+		}
+		#endregion
 		#region Items
 		private IObservableList<EmployeeCardItem> workwearItems = new ObservableList<EmployeeCardItem>();
 		[Display (Name = "Спецодежда")]
@@ -233,7 +241,6 @@ namespace Workwear.Domain.Company
 			set => SetField(ref vacations, value);
 		}
 		#endregion
-		
 		#region CostCenters
 		private IObservableList<EmployeeCostCenter> сostCenters = new ObservableList<EmployeeCostCenter>();
 		[Display(Name = "Места возникновения затрат")]
