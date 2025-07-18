@@ -20,7 +20,6 @@ using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
-using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations.NormChildren;
@@ -38,7 +37,6 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
-		private readonly NormRepository normRepository;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -49,7 +47,6 @@ namespace Workwear.ViewModels.Regulations
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
-			NormRepository normRepository,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
 			ModalProgressCreator progressCreator,
@@ -61,7 +58,6 @@ namespace Workwear.ViewModels.Regulations
 			this.interactive = interactive;
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.employeeRepository = employeeRepository;
-			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
