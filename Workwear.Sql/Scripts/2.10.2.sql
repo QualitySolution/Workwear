@@ -1,4 +1,4 @@
-﻿-- Черновик документа выдачи
+-- Черновик документа выдачи
 alter table stock_expense
 	add issue_date date null DEFAULT date after date;
 
@@ -59,5 +59,6 @@ create table work_days
 		primary key (id)
 );
 
-
-
+-- Добавление параметра для отключения строки нормы
+alter table norms_item
+	add column is_disabled boolean default false not null;

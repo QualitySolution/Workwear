@@ -17,9 +17,9 @@ namespace Workwear.Domain.Company {
 
 		public EmployeeCostCenter() {}
 
-		public EmployeeCostCenter(EmployeeCard employee, CostCenter сostCenter, decimal percent) {
+		public EmployeeCostCenter(EmployeeCard employee, CostCenter costCenter, decimal percent) {
 			this.employee = employee;
-			this.сostCenter = сostCenter;
+			this.costCenter = costCenter;
 			this.percent = percent;
 		}
 		
@@ -34,11 +34,11 @@ namespace Workwear.Domain.Company {
 			set { SetField(ref employee, value); }
 		}
 		
-		private CostCenter сostCenter;
+		private CostCenter costCenter;
 		[Display(Name = "МВЗ")]
 		public virtual CostCenter CostCenter {
-			get { return сostCenter; }
-			set { SetField(ref сostCenter, value); }
+			get { return costCenter; }
+			set { SetField(ref costCenter, value); }
 		}
 		private decimal percent;
 		[Display(Name = "Доля затрат")]

@@ -182,6 +182,7 @@
     <Compile Include="ViewModels\Communications\RatingsViewModel.cs" />
     <Compile Include="ViewModels\Communications\SendEmailViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeCostCenterViewModel.cs" />
+    <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeDutyNormsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeInGroupsViewModel.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItem.cs" />
     <Compile Include="ViewModels\Company\EmployeeGroupItemsViewModel.cs" />
@@ -521,6 +522,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Communications.SendEmailView.cs" />
     <Compile Include="ReportParameters\Views\ShipmentReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.ShipmentReportView.cs" />
+    <Compile Include="Views\Company\EmployeeChildren\EmployeeDutyNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView.cs" />
     <Compile Include="Views\Visits\VisitView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
     <Compile Include="Views\Visits\VisitListView.cs" />
