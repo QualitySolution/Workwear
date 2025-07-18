@@ -362,11 +362,11 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		public void DisableNormItem(NormItem normItem) {
-			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsDisabled = true;
+			normItem.IsDisabled = true;
 		}
 
 		public void EnableNormItem(NormItem normItem) {
-			Entity.Items.First(x => DomainHelper.EqualDomainObjects(x, normItem)).IsDisabled = false;
+			normItem.IsDisabled = false;
 		}
 		#endregion
 		#endregion
