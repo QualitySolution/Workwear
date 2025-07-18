@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -3170,8 +3170,9 @@
                 <child>
                   <widget class="Gtk.Label" id="label6">
                     <property name="MemberName" />
+                    <property name="Tooltip" translatable="yes">Дата расхода со склада. На эту дату будут уменьшаться остатки на складе. Так же она считается датой документа и в филтрах и поиске по документам.</property>
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Дата&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
+                    <property name="LabelProp" translatable="yes">Дата расхода&lt;span foreground="red"&gt;*&lt;/span&gt;:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -3191,6 +3192,7 @@
                 <child>
                   <widget class="Gtk.Label" id="labelIssueDate">
                     <property name="MemberName" />
+                    <property name="Tooltip" translatable="yes">Дата выдачи сотруднику. От этой даты выданное будет числится за сотрудником, с неё будет считаться износ, она будет учитываться при расчёте обеспеченности и потребности сотрудника.</property>
                     <property name="Xalign">1</property>
                     <property name="LabelProp" translatable="yes">Дата выдачи:</property>
                     <property name="UseMarkup">True</property>
@@ -3212,6 +3214,7 @@
                 <child>
                   <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateDoc">
                     <property name="MemberName" />
+                    <property name="Tooltip" translatable="yes">Дата расхода со склада. На эту дату будут уменьшаться остатки на складе. Так же она считается датой документа и в филтрах и поиске по документам.</property>
                     <property name="Events">ButtonPressMask</property>
                     <property name="WithTime">False</property>
                     <property name="HideCalendarButton">False</property>
@@ -3242,6 +3245,7 @@
                     <child>
                       <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateIssueDate">
                         <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Дата выдачи сотруднику. От этой даты выданное будет числится за сотрудником, с неё будет считаться износ, она будет учитываться при расчёте обеспеченности и потребности сотрудника.</property>
                         <property name="Events">ButtonPressMask</property>
                         <property name="WithTime">False</property>
                         <property name="HideCalendarButton">False</property>

@@ -1,14 +1,14 @@
 ﻿-- Черновик документа выдачи
 alter table stock_expense
-	add issue_date date DEFAULT date after date;
+	add issue_date date null DEFAULT date after date;
 
 -- Записи  на посещение
 create table visits
 (
 	id              int unsigned auto_increment,
 	create_date     datetime              not null,
-	visit_date      datetime              null,
-	employee_id     int unsigned          null,
+	visit_date      datetime              not null,
+	employee_id     int unsigned          not null,
 	employee_create boolean               null,
 	done            boolean default FALSE null,
 	cancelled       boolean default FALSE null,
@@ -53,7 +53,7 @@ create table work_days
 (
 	id          int unsigned auto_increment,
 	date 		date 	not null,
-	is_work_day boolean default true null,
+	is_work_day boolean default true not null,
 	comment 	text	null,
 	constraint work_days_pk
 		primary key (id)

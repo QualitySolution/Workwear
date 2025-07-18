@@ -78,6 +78,10 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { nameof(Date)});
 			
+			if (IssueDate != null && IssueDate < Date)
+				yield return new ValidationResult ("Дата выдачи не может быть раньше даты списания.", 
+					new[] { nameof(IssueDate)});
+			
 			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
 					new[] { this.GetPropertyName (o => o.DocNumber)});

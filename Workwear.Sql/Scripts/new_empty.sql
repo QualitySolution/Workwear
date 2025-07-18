@@ -1110,7 +1110,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
-  `issue_date` date DEFAULT `date`,
+  `issue_date` date NULL DEFAULT `date`,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
@@ -2438,8 +2438,8 @@ create table visits
 (
 	id              int unsigned auto_increment,
 	create_date     datetime              not null,
-	visit_date      datetime              null,
-	employee_id     int unsigned          null,
+	visit_date      datetime              not null,
+	employee_id     int unsigned          not null,
 	employee_create boolean               null,
 	done            boolean default FALSE null,
 	cancelled       boolean default FALSE null,
@@ -2486,7 +2486,7 @@ create table work_days
 (
 	id          int unsigned auto_increment,
 	date 		date 	not null,
-	is_work_day boolean default true null,
+	is_work_day boolean default true not null,
 	comment 	text	null,
 		constraint work_days_pk
 		primary key (id)

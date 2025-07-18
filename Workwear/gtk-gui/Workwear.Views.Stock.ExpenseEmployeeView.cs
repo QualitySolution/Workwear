@@ -335,9 +335,11 @@ namespace Workwear.Views.Stock
 			w26.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.label6 = new global::Gtk.Label();
+			this.label6.TooltipMarkup = "Дата расхода со склада. На эту дату будут уменьшаться остатки на складе. Так же о" +
+				"на считается датой документа и в филтрах и поиске по документам.";
 			this.label6.Name = "label6";
 			this.label6.Xalign = 1F;
-			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString("Дата<span foreground=\"red\">*</span>:");
+			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString("Дата расхода<span foreground=\"red\">*</span>:");
 			this.label6.UseMarkup = true;
 			this.table3.Add(this.label6);
 			global::Gtk.Table.TableChild w27 = ((global::Gtk.Table.TableChild)(this.table3[this.label6]));
@@ -347,6 +349,9 @@ namespace Workwear.Views.Stock
 			w27.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.labelIssueDate = new global::Gtk.Label();
+			this.labelIssueDate.TooltipMarkup = "Дата выдачи сотруднику. От этой даты выданное будет числится за сотрудником, с не" +
+				"ё будет считаться износ, она будет учитываться при расчёте обеспеченности и потр" +
+				"ебности сотрудника.";
 			this.labelIssueDate.Name = "labelIssueDate";
 			this.labelIssueDate.Xalign = 1F;
 			this.labelIssueDate.LabelProp = global::Mono.Unix.Catalog.GetString("Дата выдачи:");
@@ -359,6 +364,8 @@ namespace Workwear.Views.Stock
 			w28.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table3.Gtk.Table+TableChild
 			this.ydateDoc = new global::QS.Widgets.GtkUI.DatePicker();
+			this.ydateDoc.TooltipMarkup = "Дата расхода со склада. На эту дату будут уменьшаться остатки на складе. Так же о" +
+				"на считается датой документа и в филтрах и поиске по документам.";
 			this.ydateDoc.Events = ((global::Gdk.EventMask)(256));
 			this.ydateDoc.Name = "ydateDoc";
 			this.ydateDoc.WithTime = false;
@@ -380,6 +387,9 @@ namespace Workwear.Views.Stock
 			this.yhbox1.Spacing = 6;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ydateIssueDate = new global::QS.Widgets.GtkUI.DatePicker();
+			this.ydateIssueDate.TooltipMarkup = "Дата выдачи сотруднику. От этой даты выданное будет числится за сотрудником, с не" +
+				"ё будет считаться износ, она будет учитываться при расчёте обеспеченности и потр" +
+				"ебности сотрудника.";
 			this.ydateIssueDate.Events = ((global::Gdk.EventMask)(256));
 			this.ydateIssueDate.Name = "ydateIssueDate";
 			this.ydateIssueDate.WithTime = false;
