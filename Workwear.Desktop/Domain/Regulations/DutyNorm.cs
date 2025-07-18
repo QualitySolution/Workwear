@@ -10,6 +10,7 @@ using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -129,9 +130,10 @@ namespace Workwear.Domain.Regulations {
 			return null;
 		}
 
-		public virtual void UpdateItems(IUnitOfWork uow) {
-			foreach(var item in items)
-				item.Update(uow);
+		public virtual void UpdateItems(DutyNormIssueModel issueModel) {
+			issueModel.FillDutyNormItems(Items.ToArray());
+			foreach(var item in Items) 
+				item.UpdateNextIssue();
 			OnPropertyChanged(nameof(Items));
 		}
 		#endregion

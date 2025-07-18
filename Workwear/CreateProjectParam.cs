@@ -334,6 +334,7 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
