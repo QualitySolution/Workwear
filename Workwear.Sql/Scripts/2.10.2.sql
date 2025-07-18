@@ -9,9 +9,9 @@ create table visits
 	create_date     datetime              not null,
 	visit_date      datetime              not null,
 	employee_id     int unsigned          not null,
-	employee_create boolean               null,
-	done            boolean default FALSE null,
-	cancelled       boolean default FALSE null,
+	employee_create boolean default FALSE not null,
+	done            boolean default FALSE not null,
+	cancelled       boolean default FALSE not null,
 	comment         text                  null,
 	constraint visits_pk
 		primary key (id),
