@@ -235,11 +235,11 @@ namespace Workwear.Domain.Company
 		#endregion
 		
 		#region CostCenters
-		private IObservableList<EmployeeCostCenter> сostCenters = new ObservableList<EmployeeCostCenter>();
+		private IObservableList<EmployeeCostCenter> costCenters = new ObservableList<EmployeeCostCenter>();
 		[Display(Name = "Места возникновения затрат")]
 		public virtual IObservableList<EmployeeCostCenter> CostCenters {
-			get => сostCenters;
-			set => SetField(ref сostCenters, value);
+			get => costCenters;
+			set => SetField(ref costCenters, value);
 		}
 		
 		public virtual void AddCostCenter(EmployeeCostCenter employeeCostCenter) {
