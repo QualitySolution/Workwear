@@ -107,10 +107,11 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public override bool Save() {
 			foreach(var s in services) {
-				if(s.Select && !Entity.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(s.Entity, provided)))
+				var providedService = Entity.ProvidedServices.FirstOrDefault(provided => DomainHelper.EqualDomainObjects(s.Entity, provided));
+				if(s.Select && providedService == null)
 					Entity.ProvidedServices.Add(s.Entity);
-				else if(!s.Select && Entity.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(s.Entity, provided)))
-                    Entity.ProvidedServices.RemoveAll(provided => DomainHelper.EqualDomainObjects(s.Entity, provided));
+				else if(!s.Select && providedService != null)
+                    Entity.ProvidedServices.Remove(providedService);
 			}
 			return base.Save();
 		}

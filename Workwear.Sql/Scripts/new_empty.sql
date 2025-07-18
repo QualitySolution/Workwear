@@ -2465,6 +2465,8 @@ create table clothing_service_services_claim
 	claim_id   int unsigned,
 	constraint clothing_service_services_claim_pk
 		primary key (id),
+	constraint clothing_service_services_claim_service_id_claim_id_uindex
+		unique (service_id, claim_id),
 	constraint clothing_service_services_claim_clothing_service_claim_id_fk
 		foreign key (claim_id) references clothing_service_claim (id)
 			on update cascade on delete cascade,
