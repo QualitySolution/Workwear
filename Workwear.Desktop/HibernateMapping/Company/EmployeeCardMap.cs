@@ -59,9 +59,10 @@ namespace Workwear.HibernateMapping.Company
 				.ChildKeyColumn("norm_id")
 				.LazyLoad();
 
-			HasManyToMany(x => x.DelatedDutyNorms).Table("duty_norms")
+			HasManyToMany(x => x.RelatedDutyNorms).Table("duty_norms")
 				.ParentKeyColumn("responsible_employee_id")
 				.ChildKeyColumn("id")
+				.Inverse()
 				.LazyLoad();
 
 			HasMany(x => x.Vacations).Table("employees_vacations")

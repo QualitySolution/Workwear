@@ -218,11 +218,11 @@ namespace Workwear.Domain.Company
 		}
 		#endregion
 		#region Norms
-		private IObservableList<DutyNorm> delatedDutyNorms = new ObservableList<DutyNorm>();
+		private IObservableList<DutyNorm> relatedDutyNorms = new ObservableList<DutyNorm>();
 		[Display (Name = "Привязанные дежурные нормы нормы")]
-		public virtual IObservableList<DutyNorm> DelatedDutyNorms {
-			get => delatedDutyNorms;
-			set => SetField(ref delatedDutyNorms, value);
+		public virtual IObservableList<DutyNorm> RelatedDutyNorms {
+			get => relatedDutyNorms;
+			set => SetField(ref relatedDutyNorms, value);
 		}
 		#endregion
 		#region Items

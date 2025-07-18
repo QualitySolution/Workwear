@@ -42,12 +42,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			
 			//Для синхронизации с изменениями внесёнными в базу. Например, создании документов выдачи
-			foreach(var dutyNorm in Entity.DelatedDutyNorms) {
+			foreach(var dutyNorm in Entity.RelatedDutyNorms) {
 				changeWatcher.BatchSubscribe(DutyNormChangeEvent)
 					.IfEntity<DutyNormIssueOperation>()
 					.AndWhere(op => op.DutyNorm.Id == dutyNorm.Id);
 			}
-
 		}
 		
 		public void OnShow() {
@@ -59,7 +58,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 
 		private void Load() {
 			DutyNormsItemsList = new ObservableList<DutyNormItem>(dutyNormRepository.AllItemsFor(responsibleemployeesIds: new[] { Entity.Id }));
-			dutyNormRepository.LoadFullInfo(Entity.DelatedDutyNorms.Select(x => x.Id).ToArray());
+			dutyNormRepository.LoadFullInfo(Entity.RelatedDutyNorms.Select(x => x.Id).ToArray());
 			dutyNormIssueModel.FillDutyNormItems(DutyNormsItemsList.ToArray());
 		}
 
