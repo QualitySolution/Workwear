@@ -307,7 +307,7 @@ namespace Workwear.Test.Models.Analytics {
 			var normItem3 = new NormItem { Norm = norm, ProtectionTools = protectionTools3, Amount = 3, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
 			var normItem4 = new NormItem { Norm = norm, ProtectionTools = protectionTools4, Amount = 4, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
 
-			var operations = new List<EmployeeIssueOperation>();
+			var operations = new List<IGraphIssueOperation>();
 
 			var employeeItems = new List<EmployeeCardItem> {
 				// До начала периода
