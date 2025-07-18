@@ -31,7 +31,7 @@ namespace Workwear.Views.Regulations
 				.AddBinding(ViewModel, e => e.Dispenser, w => w.Active)
 				.AddBinding(ViewModel, vm => vm.SensitiveDispenser, w => w.Sensitive) 
 				.InitializeFromSource();
-			ycheckArchival.Binding.AddBinding(Entity, e=>e.Archival, w=>w.Active).InitializeFromSource();
+			ycheckArchival.Binding.AddBinding(ViewModel, e=> e.Archival, w=> w.Active).InitializeFromSource();
 			
 			entryCategories.ViewModel = ViewModel.CategoriesEntryViewModel;
 			entryCategories.Visible = ViewModel.ShowCategoryForAnalytics;
