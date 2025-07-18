@@ -77,6 +77,7 @@ using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
 using Workwear.ViewModels.Analytics;
+using Workwear.ViewModels.Visits;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -102,9 +103,9 @@ public partial class MainWindow : Gtk.Window {
 		toolbarMain.Sensitive = false;
 		menubar1.Sensitive = false;
 		entitySearchEmployee.Sensitive = false;
-		
+
 		progress.StartGroup("Настройка базы");
-		MainClass.CreateBaseConfig (progress);
+		MainClass.CreateBaseConfig(progress);
 		progress.EndGroup();
 		progress.CheckPoint("Конфигурация классов приложения");
 		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => MainClass.AutofacClassConfig(c, isDemo));
@@ -127,7 +128,7 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-		
+
 		progress.CheckPoint("Настройка каналов обновления");
 		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
 			var appInfo = releaseScope.Resolve<IApplicationInfo>();
@@ -145,7 +146,7 @@ public partial class MainWindow : Gtk.Window {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
-		
+
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
@@ -154,8 +155,8 @@ public partial class MainWindow : Gtk.Window {
 				quitService.Quit();
 				return;
 			}
-			
-			if (updateInfo?.Status == UpdateStatus.ConnectionError) {
+
+			if(updateInfo?.Status == UpdateStatus.ConnectionError) {
 				logger.Warn(updateInfo.Value.Message);
 			}
 
@@ -164,10 +165,10 @@ public partial class MainWindow : Gtk.Window {
 				quitService.Quit();
 				return;
 			}
-			
-			if (updateInfo?.Status == UpdateStatus.ExternalError) {
+
+			if(updateInfo?.Status == UpdateStatus.ExternalError) {
 				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) {
+				if(!EnterNewSN()) {
 					quitService.Quit();
 					return;
 				}
@@ -177,7 +178,7 @@ public partial class MainWindow : Gtk.Window {
 		progress.CheckPoint("Настройка удаления");
 		//Настройка удаления
 		Configure.ConfigureDeletion();
-		
+
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
@@ -202,7 +203,7 @@ public partial class MainWindow : Gtk.Window {
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
 		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
-		
+
 		if(databaseInfo.IsDemo) {
 			string message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
@@ -253,29 +254,24 @@ public partial class MainWindow : Gtk.Window {
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
-			
+
 			//Уведомление о скором истечении срока действия серийного номера
-			if (FeaturesService.ExpiryDate != null) 
-			{
-				if (FeaturesService.ExpiryDate < DateTime.Now) 
-				{
-					if (EnterNewSN())
-					{
+			if(FeaturesService.ExpiryDate != null) {
+				if(FeaturesService.ExpiryDate < DateTime.Now) {
+					if(EnterNewSN()) {
 						quitService.Quit();
 						return;
 					}
 				}
-				else
-				{
+				else {
 					int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
-					if (daysLeft < 14) 
-					{
+					if(daysLeft < 14) {
 						interactive.ShowMessage(ImportanceLevel.Warning,
 							$"Срок действия серийного номера истекает {FeaturesService.ExpiryDate.Value.ToString("d")}");
 					}
 				}
 			}
-			
+
 			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
 			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
 				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
@@ -294,10 +290,10 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-		
+
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
-		
+
 		//Дополнительные параметры в телеметрию
 		progress.CheckPoint("Запускаем телеметрию");
 		#if !DEBUG
@@ -315,13 +311,13 @@ public partial class MainWindow : Gtk.Window {
 				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
 		#else
-			MainTelemetry.DoNotTrack = true;
+		MainTelemetry.DoNotTrack = true;
 		#endif
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
-		
+
 		progress.CheckPoint("Запуск QS: Облако");
-		QSSaaS.Session.StartSessionRefresh ();
+		QSSaaS.Session.StartSessionRefresh();
 		toolbarMain.Sensitive = true;
 		menubar1.Sensitive = true;
 		entitySearchEmployee.Sensitive = true;
@@ -342,33 +338,28 @@ public partial class MainWindow : Gtk.Window {
 		}
 		logger.Debug("Характеристики базы собраны");
 	}
-	
+
 	private void CreateDefaultWarehouse() {
 		Warehouse warehouse = new Warehouse();
 		warehouse.Name = "Основной склад";
 		UoW.Session.Save(warehouse);
 	}
 
-	private bool EnterNewSN() 
-	{
-		if (!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
-		{
+	private bool EnterNewSN() {
+		if(!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) {
 			return false;
 		}
-					
+
 		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 		bool res = false;
 		bool isClosed = false;
-		page.PageClosed += (sender, closedArgs) => 
-		{
+		page.PageClosed += (sender, closedArgs) => {
 			isClosed = true;
-			if (closedArgs.CloseSource == CloseSource.Save) 
-			{
+			if(closedArgs.CloseSource == CloseSource.Save) {
 				FeaturesService.UpdateSerialNumber();
 				res = true;
 			}
-			else
-			{
+			else {
 				res = false;
 			}
 		};
@@ -419,11 +410,12 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
+		ActionVisits.Visible = FeaturesService.Available(WorkwearFeature.Visits);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
 		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
-		
+
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
@@ -452,7 +444,7 @@ public partial class MainWindow : Gtk.Window {
 		a.RetVal = true;
 		if(quitService != null)
 			quitService.Quit();
-		else 
+		else
 			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
@@ -963,8 +955,7 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
 	}
 
-	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) 
-	{
+	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ProtectionToolsCategoryJournalViewModel>(null);
 	}
 
@@ -1002,5 +993,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionShipmentReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ShipmentReportViewModel));
+	}
+
+	protected void OnActionVisitsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<VisitListViewModel>(null);
 	}
 }

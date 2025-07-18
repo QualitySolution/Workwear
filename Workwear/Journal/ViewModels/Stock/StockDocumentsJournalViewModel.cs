@@ -252,6 +252,7 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(concatProjectionEmployee).WithAlias(() => resultAlias.EmployeeFio)
+						.Select(() => expenseAlias.IssueDate).WithAlias(() => resultAlias.IssueDate)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => expenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -646,6 +647,8 @@ namespace workwear.Journal.ViewModels.Stock
 			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
 		public string Author { get; set; }
 		public string EmployeeFio { get; set; }
+		public DateTime? IssueDate { get; set; }
+		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }
