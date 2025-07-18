@@ -29,6 +29,9 @@ namespace Workwear.Repository.Regulations {
 				.ToDictionary(g => g.Key, g => g.Sum(o => o.Returned));
 		}
 		
+		/// <summary>
+		/// Заполнение связанных объектов
+		/// </summary>
 		public void LoadFullInfo(int[] dNormsId,  IUnitOfWork uow = null) {
 			
 			var itemsTypes = (uow ?? RepoUoW).Session.QueryOver<ItemsType>()
@@ -66,6 +69,10 @@ namespace Workwear.Repository.Regulations {
 			return (uow ?? RepoUoW).Session.QueryOver<DutyNormIssueOperation>()
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
 				.Where(x => x.DutyNormItem.IsIn(itemsId))
 				.List();
 		}

@@ -152,33 +152,6 @@ namespace Workwear.Domain.Regulations {
 			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
 		}
 
-		/// <summary>
-		/// Обновляет данные о выданом .
-		/// </summary>
-		/// <operations>Использовать только эти выдачи</operations>
-		/// <returns>Наличие изменений</returns>
-		public virtual void Update(IUnitOfWork uow, IList<DutyNormIssueOperation> operations = null) {
-			if(Id == 0)
-				Graph = new IssueGraph();
-			else {
-				if(operations == null)
-					Graph = new IssueGraph(uow.Session.QueryOver<DutyNormIssueOperation>()
-						.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools)
-						.List<IGraphIssueOperation>());
-				else
-					Graph = new IssueGraph(operations
-						.Where(o => DomainHelper.EqualDomainObjects(o.DutyNorm, DutyNorm) &&
-						            DomainHelper.EqualDomainObjects(o.ProtectionTools, ProtectionTools)) 
-						as IList<IGraphIssueOperation> ?? new List<IGraphIssueOperation>());
-			}
-			NextIssue = CalculateNextIssue();
-			OnPropertyChanged(nameof(Issued));
-		}
-		
-		/// <summary>
-		/// Обновляет данные о выданом .
-		/// </summary>
-		/// <returns>Наличие изменений</returns>
 		public virtual void UpdateNextIssue() {
 			NextIssue = CalculateNextIssue();
 		}
@@ -209,7 +182,7 @@ namespace Workwear.Domain.Regulations {
 		
 		#region Методы и расчётные свойства для view
 		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
-			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
+			 ""{ProtectionTools?.Name}"" на {PeriodCount} {PeriodText}";
 		public virtual double AmountPerYear
 		{
 			get{

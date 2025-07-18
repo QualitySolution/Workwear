@@ -42,9 +42,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			
 			//Для синхронизации с изменениями внесёнными в базу. Например, создании документов выдачи
-			//changeWatcher.BatchSubscribe(DutyNormChangeEvent)
-			//	.IfEntity<DutyNormIssueOperation>()
-			//	.AndWhere(op => op.DutyNorm.Id.IsIn(Entity?.DelatedDutyNorms?.Select(x => x.Id).ToArray()));
 			foreach(var dutyNorm in Entity.DelatedDutyNorms) {
 				changeWatcher.BatchSubscribe(DutyNormChangeEvent)
 					.IfEntity<DutyNormIssueOperation>()
