@@ -72,7 +72,7 @@ namespace workwear.Tools.IdentityCards
 		private IList<string> Uids;
 
 		#region Авто опрос
-		public event EventHandler<CardStateEventArgs> СardStatusRead;
+		public event EventHandler<CardStateEventArgs> CardStatusRead;
 
 		public bool IsAutoPoll { get; private set; }
 
@@ -136,7 +136,7 @@ namespace workwear.Tools.IdentityCards
 			}
 
 			var result = new CardStateEventArgs(pinStates, statusType, cardInfo, cardMemory);
-			СardStatusRead?.Invoke(this, result);
+			CardStatusRead?.Invoke(this, result);
 		}
 
 		private string step1Uid;

@@ -155,6 +155,12 @@ namespace workwear.ReportParameters.ViewModels {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+
+		private bool showSize;
+		public virtual bool ShowSize {
+			get => showSize;
+			set=>SetField(ref showSize, value);
+		}
 		
 		public bool SensetiveSubdivision => department == null;
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
@@ -177,7 +183,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation },
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
+					{"show_size", ShowSize},
 					};
 
 		public void Dispose()
