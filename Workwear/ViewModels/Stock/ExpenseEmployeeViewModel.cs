@@ -27,6 +27,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -74,7 +75,8 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
-			EmployeeCard employee = null
+			EmployeeCard employee = null,
+			Visit visit = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -113,6 +115,13 @@ namespace Workwear.ViewModels.Stock {
 				Entity.Warehouse = Entity.Employee.Subdivision?.Warehouse;
 			}
 			performance.CheckPoint("Заполняем склад");
+
+			if(visit != null) {
+				var v = UoW.GetById<Visit>(visit.Id);
+				v.ExpenseDocuments.Add(Entity);
+				UoW.Save(v);
+			} else if (Entity.Id == 0)
+				Entity.IssueDate = Entity.Date;
 
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -163,10 +172,11 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 
 		#region Свойства для View
-		public bool CanCreateIssuanceSheet => CanEdit && Entity.Employee != null;
+		public bool CanCreateIssuanceSheet => CanEdit && Entity.Employee != null && Entity.IssueDate != null;
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool CanEditIssueDate => CanEdit && Entity.IssuanceSheet == null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -271,13 +281,25 @@ namespace Workwear.ViewModels.Stock {
 				Entity.DocNumber = null;
 			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
 				Entity.DocNumber = Entity.DocNumberText;	
+
+			if(Entity.IssueDate == null) {
+				var performance_smal = new ProgressPerformanceHelper(modalProgressCreator, 2, "Сохранение черновой выдачи...", logger, true);
+				Entity.CleanupItems();
+				Entity.UpdateOperations(UoW, baseParameters, interactive);
+				
+				UoW.Save(Entity);
+				UoW.Commit();
+				performance_smal.End();
+				logger.Info($"Документ сохранен за {performance_smal.TotalTime.TotalSeconds} сек.");
+				return true;
+			}
 			
 			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.SensitiveCreateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
 				logger.Warn("Необходимо обновить штрихкоды.");
 				return false;
 			}
-
+			
 			//Так как сохранение достаточно сложное, рядом сохраняется еще два документа, при чтобы оно не ломалось из за зависимостей между объектами.
 			//Придерживайтесь следующего порядка:
 			// 1 - Из уже существующих документов удаляем строки которые удалены в основном.
@@ -371,19 +393,25 @@ namespace Workwear.ViewModels.Stock {
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
 					performance.End();
 					break;
+				case nameof(Entity.IssueDate):
+					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
+					break;
 				case nameof(Entity.IssuanceSheet):
 					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
 					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					OnPropertyChanged(nameof(CanEditIssueDate));
 					break;
 			}
 		}
+		
+		public void SetIssue() => Entity.IssueDate = DateTime.Now;
 
 		#region ISelectItem
-		public void SelectItem(int id)
-		{
+		public void SelectItem(int id) {
 			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
+
 	}
 }

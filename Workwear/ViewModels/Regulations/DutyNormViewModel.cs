@@ -24,6 +24,8 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Models.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
@@ -33,11 +35,12 @@ namespace Workwear.ViewModels.Regulations {
 		
 		private IInteractiveService interactive;
 		private readonly IEntityChangeWatcher changeWatcher;
-		
+		public readonly DutyNormIssueModel dutyNormIssueModel;
+		public readonly DutyNormRepository dutyNormRepository;
 		public readonly EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		public readonly EntityEntryViewModel<Leader> LeaderEntryViewModel;
-		
+
 		public DutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -45,18 +48,23 @@ namespace Workwear.ViewModels.Regulations {
 			ILifetimeScope autofacScope,
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
+			DutyNormIssueModel dutyNormIssueModel,
+			DutyNormRepository dutyNormRepository,
 			IValidator validator = null,
-			UnitOfWorkProvider unitOfWorkProvider = null) 
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider){
+			UnitOfWorkProvider unitOfWorkProvider = null)
+			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
+
 			this.interactive = interactive;
 			currentTab = Entity.Id == 0 ? 0 : 1;
-			
-			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
+
 			changeWatcher.BatchSubscribe(DutyNormChangeEvent)
 				.IfEntity<DutyNormIssueOperation>()
 				.AndWhere(op => op.DutyNorm.Id == Entity.Id);
 			
-			
+			dutyNormRepository.LoadFullInfo(new[] {Entity.Id});
 			var entryBuilder = new CommonEEVMBuilderFactory<DutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			SubdivisionEntryViewModel = entryBuilder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
@@ -71,8 +79,7 @@ namespace Workwear.ViewModels.Regulations {
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
 			
-			//Актуализация строк при открытии			
-			Entity.UpdateItems(UoW);
+			dutyNormIssueModel.FillDutyNormItems(Entity.Items.ToArray());
 		}
 		
 		#region IDialogDocumentation
@@ -112,7 +119,10 @@ namespace Workwear.ViewModels.Regulations {
 			foreach(var protectionNode in e.SelectedObjects) {
 				var protectionTools = UoW.GetById<ProtectionTools>(protectionNode.GetId());
 				var item = Entity.AddItem(protectionTools);
-				item.Update(UoW);
+				if(item != null) {
+					dutyNormIssueModel.FillDutyNormItems(new[] { item });
+					item.UpdateNextIssue();
+				}
 			}
 		}
 
@@ -135,7 +145,7 @@ namespace Workwear.ViewModels.Regulations {
 						UoW.Session.Evict(op);
 				}
 			}
-			Entity.UpdateItems(UoW);
+			Entity.UpdateItems(dutyNormIssueModel);
 		}
 
 		public void OpenProtectionTools(DutyNormItem dutyNormItem) {
@@ -199,7 +209,7 @@ namespace Workwear.ViewModels.Regulations {
 		public void CopyDutyNormFrom(int dutyNormId) {
 			var dutyNorm = UoW.GetById<DutyNorm>(dutyNormId);
 			Entity.CopyFromDutyNorm(dutyNorm);
-			Entity.UpdateItems(UoW);
+			Entity.UpdateItems(dutyNormIssueModel);
 		}
 	}
 	

@@ -46,6 +46,7 @@ namespace Workwear.ViewModels.Stock {
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
+		private readonly DutyNormIssueModel dutyNormIssueModel;
 		private readonly CurrentUserSettings currentUserSettings;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
@@ -70,6 +71,7 @@ namespace Workwear.ViewModels.Stock {
 			CurrentUserSettings currentUserSettings,
 			IValidator validator,
 			BaseParameters baseParameters,
+			DutyNormIssueModel dutyNormIssueModel,
 			StockBalanceModel stockBalanceModel,
 			SizeService sizeService, 
 			CommonMessages commonMessages,
@@ -80,6 +82,7 @@ namespace Workwear.ViewModels.Stock {
 			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -98,7 +101,7 @@ namespace Workwear.ViewModels.Stock {
 				FillUnderreceivedp(dutyNorm);
 			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-				Entity.DutyNorm.UpdateItems(UoW);
+				Entity.DutyNorm.UpdateItems(dutyNormIssueModel);
 			}
 			
 			WarehouseEntryViewModel = entityEntryBuilder.ForProperty(x => x.Warehouse)
@@ -194,7 +197,7 @@ namespace Workwear.ViewModels.Stock {
 			if(dutyNorm == null)
 				return;
 			
-			dutyNorm.UpdateItems(UoW);
+			dutyNorm.UpdateItems(dutyNormIssueModel);
 			StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
 			
 			foreach(var item in dutyNorm.Items) {
