@@ -23,6 +23,7 @@ using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.Supply;
 using Workwear.Tools;
@@ -42,6 +43,7 @@ namespace Workwear.ViewModels.Analytics {
 		private readonly StockBalanceModel stockBalance;
 		private readonly SizeService sizeService;
 		private readonly IFileDialogService fileDialogService;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public WarehouseForecastingViewModel(
 			EmployeeIssueModel issueModel,
@@ -56,7 +58,8 @@ namespace Workwear.ViewModels.Analytics {
 			SizeService sizeService,
 			StockBalanceModel stockBalance,
 			StockRepository stockRepository,
-			UnitOfWorkProvider unitOfWorkProvider
+			UnitOfWorkProvider unitOfWorkProvider,
+			ProtectionToolsRepository protectionToolsRepository
 			) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -68,6 +71,7 @@ namespace Workwear.ViewModels.Analytics {
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.fileDialogService = fileDialogService ?? throw new ArgumentNullException(nameof(fileDialogService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			Title = "Прогнозирование склада";
 			
 			var builder = new CommonEEVMBuilderFactory<WarehouseForecastingViewModel>(this, this, UoW, navigation, autofacScope);
@@ -106,7 +110,8 @@ namespace Workwear.ViewModels.Analytics {
 						return choiceNomenclatureViewModel;
 					case ForecastingNomenclatureType.ProtectionTools:
 						if(choiceProtectionToolsViewModel == null) {
-							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(UoW.GetAll<ProtectionTools>().ToList());
+							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>
+								(protectionToolsRepository.GetActiveProtectionTools(UoW));
 							choiceProtectionToolsViewModel.SelectionChanged += (sender, args) => MakeForecast();
 						}
 						return choiceProtectionToolsViewModel;
