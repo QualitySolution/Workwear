@@ -13,7 +13,6 @@ using QS.Services;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
-using Workwear.Domain.Company;
 using Workwear.Repository.Stock;
 using ClaimState = Workwear.Domain.ClothingService.ClaimState;
 
@@ -124,18 +123,12 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		public void SendPush(StateOperation status) {
-			List<string> responseMessages = new List<string>();
-			var claimState = status.Claim.States.Last().State;
-			if((!string.IsNullOrWhiteSpace(status.Claim.Employee.PhoneNumber))
-			   && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair
-			   || claimState == ClaimState.InWashing)) {
-				IEnumerable<OutgoingMessage> messages = new[] { MakeNotificationMessage(status) };
-				string result = String.Empty;
-				if(messages.Any()) {
-					result = notificationManager.SendMessages(messages);
-				}
-				responseMessages.Add(result);
-			}
+			var claimState = status.State;
+			var nomenclature = status.Claim.Barcode.Nomenclature.Name;
+			var phone = status.Claim.Employee.PhoneNumber;
+			if(status.Claim.Employee.LkRegistered && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair
+			   || claimState == ClaimState.InWashing))
+				notificationManager.SendMessages(new[] { MakeNotificationMessage(claimState, nomenclature, phone) });
 		}
 
 		#endregion
@@ -148,19 +141,23 @@ namespace Workwear.ViewModels.ClothingService {
 		public WindowGravity WindowPosition { get; } = WindowGravity.Center;
 		#endregion
 		
-		private OutgoingMessage MakeNotificationMessage(StateOperation status)
+		private OutgoingMessage MakeNotificationMessage(ClaimState claimState, string nomenclatureName, string phone)
 		{
 			string text = String.Empty;
-			var claimState = status.Claim.States.Last().State;
-			var nomenclature = status.Claim.Barcode.Nomenclature.Name;
-			if(claimState == ClaimState.InDryCleaning)
-				text = $"Ваша спецодежда {nomenclature} перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
-			if(claimState == ClaimState.InRepair)
-				text = $"Ваша спецодежда {nomenclature} перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
-			if(claimState == ClaimState.InWashing)
-				text = $"Ваша спецодежда {nomenclature} принята на обслуживание, срок составит 5 рабочих дней.";
+			switch (claimState)
+			{
+				case ClaimState.InDryCleaning:
+					text = $"Ваша спецодежда {nomenclatureName} перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
+					break;
+				case ClaimState.InRepair:
+					text = $"Ваша спецодежда {nomenclatureName} перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
+					break;
+				case ClaimState.InWashing:
+					text = $"Ваша спецодежда {nomenclatureName} принята на обслуживание, срок составит 5 рабочих дней.";
+					break;
+			}
 			OutgoingMessage message = new OutgoingMessage {
-				Phone = status.Claim.Employee.PhoneNumber,
+				Phone = phone,
 				Title = "Изменение статуса обслуживания одежды",
 				Text = text
 			};
