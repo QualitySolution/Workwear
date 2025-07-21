@@ -76,7 +76,7 @@ namespace Workwear.Views.Stock {
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
 				.AddColumn ("Возврат из").AddTextRenderer (e => e.ReturnFromText)
 				.AddColumn("Отметка о износе")
-					.AddTextRenderer(e => e.СommentReturn)
+					.AddTextRenderer(e => e.CommentReturn)
 					.Editable(ViewModel.CanEdit)
 				.Finish();
 			

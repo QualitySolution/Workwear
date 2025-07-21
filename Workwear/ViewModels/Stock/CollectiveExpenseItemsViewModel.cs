@@ -33,7 +33,7 @@ namespace Workwear.ViewModels.Stock
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		
-		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
+		public readonly CollectiveExpenseViewModel collectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveMessage interactive;
@@ -60,7 +60,7 @@ namespace Workwear.ViewModels.Stock
 			PerformanceHelper performance //Только для использования в конструкторе. Шаги запуска.
 			)
 		{
-			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
+			this.collectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
@@ -119,8 +119,8 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region Хелперы
-		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
-		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
+		private IUnitOfWork UoW => collectiveExpenseViewModel.UoW;
+		public CollectiveExpense Entity => collectiveExpenseViewModel.Entity;
 		#endregion
 		#region Поля
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
@@ -158,7 +158,7 @@ namespace Workwear.ViewModels.Stock
 		#region Действия View
 
 		public void AddEmployees(){
-			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
@@ -172,7 +172,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void AddSubdivisions() {
-			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
 		}
@@ -186,7 +186,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void AddDepartments() {
-			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
 		}
@@ -199,7 +199,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		public void AddEmployeeGroups() {
-			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployeeGroups;
 		}
@@ -295,12 +295,12 @@ namespace Workwear.ViewModels.Stock
 		
 		private void ChangeItemPositions(List<CollectiveExpenseItem> items)
 		{
-			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(collectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
 				addingRegistrations: builder => {
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.WarehouseEntry.IsEditable = false;
-							filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
+							filter.Warehouse = collectiveExpenseViewModel.Entity.Warehouse;
 							filter.ProtectionTools = items.First().ProtectionTools;
 						});
 				});
@@ -378,17 +378,17 @@ namespace Workwear.ViewModels.Stock
 		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));
+			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));
 		}
 
 		public void OpenNomenclature(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
 
 		public void OpenProtectionTools(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
 		#region Обработка событий

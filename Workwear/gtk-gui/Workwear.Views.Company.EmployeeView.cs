@@ -150,6 +150,10 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label label22;
 
+		private global::Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView employeedutynormsview1;
+
+		private global::Gtk.Label label8;
+
 		private global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView employeecostcentrview1;
 
 		private global::Gtk.Label label32;
@@ -1008,12 +1012,25 @@ namespace Workwear.Views.Company
 			this.notebook1.SetTabLabel(this.employeewearitemsview1, this.label22);
 			this.label22.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
+			this.employeedutynormsview1 = new global::Workwear.Views.Company.EmployeeChildren.EmployeeDutyNormsView();
+			this.employeedutynormsview1.Events = ((global::Gdk.EventMask)(256));
+			this.employeedutynormsview1.Name = "employeedutynormsview1";
+			this.notebook1.Add(this.employeedutynormsview1);
+			global::Gtk.Notebook.NotebookChild w77 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeedutynormsview1]));
+			w77.Position = 4;
+			// Notebook tab
+			this.label8 = new global::Gtk.Label();
+			this.label8.Name = "label8";
+			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Дежурное");
+			this.notebook1.SetTabLabel(this.employeedutynormsview1, this.label8);
+			this.label8.ShowAll();
+			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.employeecostcentrview1 = new global::Workwear.Views.Company.EmployeeChildren.EmployeeCostCenterView();
 			this.employeecostcentrview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeecostcentrview1.Name = "employeecostcentrview1";
 			this.notebook1.Add(this.employeecostcentrview1);
-			global::Gtk.Notebook.NotebookChild w77 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeecostcentrview1]));
-			w77.Position = 4;
+			global::Gtk.Notebook.NotebookChild w78 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeecostcentrview1]));
+			w78.Position = 5;
 			// Notebook tab
 			this.label32 = new global::Gtk.Label();
 			this.label32.Name = "label32";
@@ -1025,8 +1042,8 @@ namespace Workwear.Views.Company
 			this.emploeeingroupsview1.Events = ((global::Gdk.EventMask)(256));
 			this.emploeeingroupsview1.Name = "emploeeingroupsview1";
 			this.notebook1.Add(this.emploeeingroupsview1);
-			global::Gtk.Notebook.NotebookChild w78 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.emploeeingroupsview1]));
-			w78.Position = 5;
+			global::Gtk.Notebook.NotebookChild w79 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.emploeeingroupsview1]));
+			w79.Position = 6;
 			// Notebook tab
 			this.labelTabEmploeeingroupsview = new global::Gtk.Label();
 			this.labelTabEmploeeingroupsview.Name = "labelTabEmploeeingroupsview";
@@ -1042,11 +1059,11 @@ namespace Workwear.Views.Company
 			this.employeecardlisteditemsview.Events = ((global::Gdk.EventMask)(256));
 			this.employeecardlisteditemsview.Name = "employeecardlisteditemsview";
 			this.vbox5.Add(this.employeecardlisteditemsview);
-			global::Gtk.Box.BoxChild w79 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeecardlisteditemsview]));
-			w79.Position = 0;
+			global::Gtk.Box.BoxChild w80 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.employeecardlisteditemsview]));
+			w80.Position = 0;
 			this.notebook1.Add(this.vbox5);
-			global::Gtk.Notebook.NotebookChild w80 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox5]));
-			w80.Position = 6;
+			global::Gtk.Notebook.NotebookChild w81 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox5]));
+			w81.Position = 7;
 			// Notebook tab
 			this.label28 = new global::Gtk.Label();
 			this.label28.Name = "label28";
@@ -1062,11 +1079,11 @@ namespace Workwear.Views.Company
 			this.employeemovementsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeemovementsview1.Name = "employeemovementsview1";
 			this.vbox8.Add(this.employeemovementsview1);
-			global::Gtk.Box.BoxChild w81 = ((global::Gtk.Box.BoxChild)(this.vbox8[this.employeemovementsview1]));
-			w81.Position = 0;
+			global::Gtk.Box.BoxChild w82 = ((global::Gtk.Box.BoxChild)(this.vbox8[this.employeemovementsview1]));
+			w82.Position = 0;
 			this.notebook1.Add(this.vbox8);
-			global::Gtk.Notebook.NotebookChild w82 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox8]));
-			w82.Position = 7;
+			global::Gtk.Notebook.NotebookChild w83 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.vbox8]));
+			w83.Position = 8;
 			// Notebook tab
 			this.label29 = new global::Gtk.Label();
 			this.label29.Name = "label29";
@@ -1078,8 +1095,8 @@ namespace Workwear.Views.Company
 			this.employeevacationsview1.Events = ((global::Gdk.EventMask)(256));
 			this.employeevacationsview1.Name = "employeevacationsview1";
 			this.notebook1.Add(this.employeevacationsview1);
-			global::Gtk.Notebook.NotebookChild w83 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
-			w83.Position = 8;
+			global::Gtk.Notebook.NotebookChild w84 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
+			w84.Position = 9;
 			// Notebook tab
 			this.label30 = new global::Gtk.Label();
 			this.label30.Name = "label30";
@@ -1087,8 +1104,8 @@ namespace Workwear.Views.Company
 			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label30);
 			this.label30.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
-			global::Gtk.Box.BoxChild w84 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
-			w84.Position = 1;
+			global::Gtk.Box.BoxChild w85 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
+			w85.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

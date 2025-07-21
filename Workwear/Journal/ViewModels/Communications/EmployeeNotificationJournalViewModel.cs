@@ -186,7 +186,7 @@ namespace workwear.Journal.ViewModels.Communications
 						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 						.Where(() => typesAlias.IssueType == IssueType.Personal);
 					break;
-				case (AskIssueType.Сollective):
+				case (AskIssueType.Collective):
 					employees
 						.JoinAlias(() => itemAlias.ProtectionTools, () => toolsAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
