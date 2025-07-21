@@ -2,14 +2,14 @@
 alter table stock_expense
 	add issue_date date null DEFAULT date after date;
 
--- Записи  на посещение
+-- Записи на посещение
 create table visits
 (
 	id              int unsigned auto_increment,
 	create_date     datetime              not null,
 	visit_date      datetime              not null,
 	employee_id     int unsigned          not null,
-	employee_create boolean default FALSE not null,
+	employee_create boolean default TRUE  not null,
 	done            boolean default FALSE not null,
 	cancelled       boolean default FALSE not null,
 	comment         text                  null,
@@ -17,7 +17,7 @@ create table visits
 		primary key (id),
 	constraint visits_employees_id_fk
 		foreign key (employee_id) references employees (id)
-			on update cascade on delete set null
+			on update cascade on delete cascade
 );
 
 create index visits_create_date_index
@@ -62,3 +62,10 @@ create table work_days
 -- Добавление параметра для отключения строки нормы
 alter table norms_item
 	add column is_disabled boolean default false not null;
+
+-- В прошлом релизе по ошибке выпустили в релиз разную структуру базы для новой и обновлений.
+-- Приводим к единой структуре.
+
+alter table shipment
+	modify start_period date null,
+	modify end_period date null;

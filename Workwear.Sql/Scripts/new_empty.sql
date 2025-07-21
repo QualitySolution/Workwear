@@ -2375,8 +2375,8 @@ create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
 create table shipment
 (
 	id int unsigned auto_increment primary key,
-	start_period date not null,
-	end_period date not null,
+	start_period date null,
+	end_period date null,
 	status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
 	full_ordered boolean default false not null,
 	full_received boolean default false not null,
@@ -2441,15 +2441,15 @@ create table visits
 	create_date     datetime              not null,
 	visit_date      datetime              not null,
 	employee_id     int unsigned          not null,
-	employee_create boolean               null,
-	done            boolean default FALSE null,
-	cancelled       boolean default FALSE null,
+	employee_create boolean default TRUE  not null,
+	done            boolean default FALSE not null,
+	cancelled       boolean default FALSE not null,
 	comment         text                  null,
 	constraint visits_pk
 		primary key (id),
 	constraint visits_employees_id_fk
 		foreign key (employee_id) references employees (id)
-			on update cascade on delete set null
+			on update cascade on delete cascade
 );
 
 create index visits_create_date_index
@@ -2568,7 +2568,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.1');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.2');
 
 COMMIT;
 
