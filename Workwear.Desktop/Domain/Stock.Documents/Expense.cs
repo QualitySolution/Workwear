@@ -27,8 +27,15 @@ namespace Workwear.Domain.Stock.Documents
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 
 		#region Свойства
+		
+		private DateTime? issueDate;
+		[Display(Name = "Дата выдачи")]
+		public virtual DateTime? IssueDate {
+			get { return issueDate; }
+			set { SetField(ref issueDate, value); }
+		}
+		
 		EmployeeCard employee;
-
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
 			get { return employee; }
@@ -36,7 +43,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
-
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ExpenseItem> Items {
 			get { return items; }
@@ -44,7 +50,6 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		private Warehouse warehouse;
-
 		[Display(Name = "Склад")]
 		[Required(ErrorMessage = "Склад должен быть указан.")]
 		public virtual Warehouse Warehouse {
@@ -60,7 +65,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => $"Персональная выдача №{DocNumberText} от {Date:d}";
+		public virtual string Title => (IssueDate != null ? "Персональная" : "Предполагаемая") + $" выдача №{DocNumberText} от {Date:d}";
 
 		public Expense ()
 		{
@@ -72,6 +77,10 @@ namespace Workwear.Domain.Stock.Documents
 			if (Date < new DateTime(2008, 1, 1))
 				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
 					new[] { nameof(Date)});
+			
+			if (IssueDate != null && IssueDate < Date)
+				yield return new ValidationResult ("Дата выдачи не может быть раньше даты списания.", 
+					new[] { nameof(IssueDate)});
 			
 			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
@@ -174,7 +183,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void CleanupItems()
 		{
-			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
+			foreach(var item in Items.Where(x => x.Amount <= 0 || x.Nomenclature == null).ToList()) {
 				RemoveItem(item);
 			}
 		}
@@ -182,9 +191,11 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 
 		#region Методы
-		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null)
-		{
-			Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
+		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null) {
+			if(IssueDate != null)
+				Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
+			else
+				Items.ToList().ForEach(x => x.UpdateWarehouseOperations(uow));
 		}
 
 		public virtual void UpdateEmployeeWearItems()
