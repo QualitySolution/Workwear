@@ -51,13 +51,17 @@ namespace Workwear.Repository.Company
 				.List();
 		}
 		#region Norms
-		public IList<EmployeeCard> GetEmployeesUseNorm(Norm[] norms, IUnitOfWork uow = null)
+		public IList<EmployeeCard> GetEmployeesUseNorm(Norm[] norms, IUnitOfWork uow = null, bool useArchivalNorm = true)
 		{
 			Norm normAlias = null;
-			return (uow ?? RepoUow).Session.QueryOver<EmployeeCard>()
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeCard>()
 				.JoinAlias(x => x.UsedNorms, () => normAlias)
-				.Where(x => normAlias.Id.IsIn(norms.GetIds().ToArray()))
-				.TransformUsing(Transformers.DistinctRootEntity)
+				.Where(x => normAlias.Id.IsIn(norms.GetIds().ToArray()));
+			
+			if(!useArchivalNorm)
+				query.Where(x => normAlias.Archival == false);
+			
+			return query.TransformUsing(Transformers.DistinctRootEntity)
 				.List();
 		}
 

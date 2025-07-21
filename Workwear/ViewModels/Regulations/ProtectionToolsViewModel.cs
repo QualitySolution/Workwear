@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.Dialog.ViewModels;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -19,7 +20,9 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
@@ -30,6 +33,8 @@ namespace Workwear.ViewModels.Regulations
 	{
 		private readonly IInteractiveService interactiveService;
 		private readonly FeaturesService featuresService;
+		private readonly NormRepository normRepository;
+		private readonly EmployeeRepository employeeRepository;
 
 		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -37,10 +42,14 @@ namespace Workwear.ViewModels.Regulations
 			FeaturesService featuresService,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
+			NormRepository normRepository,
+			EmployeeRepository employeeRepository,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
@@ -149,6 +158,18 @@ namespace Workwear.ViewModels.Regulations
 				OnPropertyChanged(nameof(SensitiveDispenser));
 			}
 		}
+
+		public virtual bool Archival {
+			get => Entity.Archival;
+			set {
+				if(Entity.Archival == value)
+					return;
+				Entity.Archival = value;
+				if(!UpdateWorkwearItems())
+					Entity.Archival = !Entity.Archival; // Откат, т.к. выше поле заведомо было изменено.
+				OnPropertyChanged();
+			}
+		}
 		#endregion
 		#region Действия View
 		#region Номеклатуры
@@ -206,6 +227,31 @@ namespace Workwear.ViewModels.Regulations
 		public void OpenNomenclature(Nomenclature nomenclature) {
 			NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(nomenclature.Id));
 		}
+		#endregion
+
+		#region Обновление потребностей
+
+		public bool UpdateWorkwearItems() {
+			var norms = normRepository.GetNormsUseProtectionTools(Entity.Id, UoW).ToArray(); 
+			var employees = employeeRepository.GetEmployeesUseNorm(norms, UoW, false);
+			if(employees.Any()) {
+				string message = $"После отключения поменяются потребности у {employees.Count} сотрудников. Сохранить изменения?";
+				if(interactiveService.Question(message)) {
+					var progressPage = NavigationManager.OpenViewModel<ProgressWindowViewModel>(null);
+					var progress = progressPage.ViewModel.Progress;
+					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
+					foreach(var employee in employees) {
+						employee.UoW = UoW;
+						employee.UpdateWorkwearItems();
+						UoW.Save(employee);
+					}
+					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+				} else
+					return false;
+			}
+			return true;
+		}
+
 		#endregion
 		#endregion
 	}

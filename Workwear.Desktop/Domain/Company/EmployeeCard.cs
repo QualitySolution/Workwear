@@ -406,7 +406,9 @@ namespace Workwear.Domain.Company
 			foreach(var norm in UsedNorms) {
 				if(norm.Archival)
 					continue;
-				foreach (var normItem in norm.Items.Where(n => !n.IsDisabled)) {
+
+				foreach (var normItem in norm.Items.Where(n=> !n.IsDisabled && !n.ProtectionTools.Archival)) {
+        
 					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
