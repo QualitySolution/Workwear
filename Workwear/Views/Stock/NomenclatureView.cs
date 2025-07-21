@@ -91,6 +91,12 @@ namespace Workwear.Views.Stock {
 			var protectionToolsView = viewResolver.Resolve(ViewModel.ProtectionToolsViewModel);
 			dialog1_VBox.Add(protectionToolsView);
 			protectionToolsView.Show();
+
+			if(ViewModel.VisibleServices) {
+				var servicesToolsView = viewResolver.Resolve(ViewModel.ServicesViewModel);
+				dialog1_VBox.Add(servicesToolsView);
+				servicesToolsView.Show();
+			}
 		}
 
 		void MakeMenu()

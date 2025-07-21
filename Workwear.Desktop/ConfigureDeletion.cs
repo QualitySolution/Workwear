@@ -31,6 +31,10 @@ namespace Workwear
 				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
+		
+			DeleteConfig.AddHibernateDeleteInfo<Service>()
+				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices);
+			
 			#endregion
 			#region Связь
 			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
@@ -284,6 +288,7 @@ namespace Workwear
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureFemale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureMale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureUnisex)
+				.AddRemoveFromDependence<Service>(x => x.Nomenclatures)
 				.AddDeleteDependence<Barcode>(x => x.Nomenclature)
 				.AddDeleteDependence<CollectiveExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<DutyNormIssueOperation>(x => x.Nomenclature)
