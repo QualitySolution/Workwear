@@ -40,7 +40,14 @@ namespace Workwear.Domain.Regulations
 			get { return type; }
 			set { SetField(ref type, value, () => Type); }
 		}
-
+		
+		private bool archival;
+		[Display(Name ="Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		}
+		
 		private bool dermalPpe = false;
 		[Display(Name = "Смывающие СИЗ")]
 		public virtual bool DermalPpe {

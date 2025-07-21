@@ -1,3 +1,8 @@
+
+-- Добавление поля для архивации номенклатуры нормы
+alter table protection_tools 
+	add column archival bool not null default false;
+
 -- Черновик документа выдачи
 alter table stock_expense
 	add issue_date date null DEFAULT date after date;
