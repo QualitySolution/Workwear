@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using QS.Cloud.WearLk.Client;
+using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -16,6 +20,7 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
+		private readonly NotificationManagerService notificationManager;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
@@ -25,11 +30,13 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUserService userService,
 			BarcodeRepository barcodeRepository,
+			NotificationManagerService notificationManager,
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider)
 		{
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			Title = "Перемещение спецодежды";
 			//Создаем UoW, чтобы передать его через провайдер внутреннему виджету.
@@ -104,14 +111,24 @@ namespace Workwear.ViewModels.ClothingService {
 				Close(false, CloseSource.Self);
 				return;
 			}
-
+			
 			UoW.Save(Claim);
 			UoW.Commit();
+			SendPush(status);
 			
 			BarcodeInfoViewModel.BarcodeText = String.Empty;
 			BarcodeInfoViewModel.Barcode = null;
 			BarcodeInfoViewModel.LabelInfo = null;
 			BarcodeInfoViewModel.Employee = null;
+		}
+
+		public void SendPush(StateOperation status) {
+			var claimState = status.State;
+			var nomenclature = status.Claim.Barcode.Nomenclature.Name;
+			var phone = status.Claim.Employee.PhoneNumber;
+			if(status.Claim.Employee.LkRegistered && (claimState == ClaimState.InDryCleaning || claimState == ClaimState.InRepair
+			   || claimState == ClaimState.InWashing))
+				notificationManager.SendMessages(new[] { MakeNotificationMessage(claimState, nomenclature, phone) });
 		}
 
 		#endregion
@@ -123,5 +140,28 @@ namespace Workwear.ViewModels.ClothingService {
 		public bool Deletable { get; } = true;
 		public WindowGravity WindowPosition { get; } = WindowGravity.Center;
 		#endregion
+		
+		private OutgoingMessage MakeNotificationMessage(ClaimState claimState, string nomenclatureName, string phone)
+		{
+			string text = String.Empty;
+			switch (claimState)
+			{
+				case ClaimState.InDryCleaning:
+					text = $"Ваша спецодежда {nomenclatureName} перемещена в химчистку, срок обслуживания увеличится на три рабочих дня.";
+					break;
+				case ClaimState.InRepair:
+					text = $"Ваша спецодежда {nomenclatureName} перемещена в ремонт, срок обслуживания увеличится на два рабочих дня.";
+					break;
+				case ClaimState.InWashing:
+					text = $"Ваша спецодежда {nomenclatureName} принята на обслуживание, срок составит 5 рабочих дней.";
+					break;
+			}
+			OutgoingMessage message = new OutgoingMessage {
+				Phone = phone,
+				Title = "Изменение статуса обслуживания одежды",
+				Text = text
+			};
+			return message;
+		}
 	}
 }
