@@ -107,7 +107,8 @@ namespace Workwear.Test.Integration.Stock
 				var expense = new Expense {
 					Warehouse = warehouse,
 					Employee = employee,
-					Date = new DateTime(2018, 10, 22)
+					Date = new DateTime(2018, 10, 22),
+					IssueDate = new DateTime(2018, 10, 22)
 				};
 				var expenseItem1 = expense.AddItem(position1, 1);
 				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
@@ -216,7 +217,8 @@ namespace Workwear.Test.Integration.Stock
 				var expense = new Expense {
 					Warehouse = warehouse,
 					Employee = employee,
-					Date = new DateTime(2018, 10, 22)
+					Date = new DateTime(2018, 10, 22),
+					IssueDate = new DateTime(2018, 10, 22),
 				};
 				var expenseItem1 = expense.AddItem(position1, 1);
 				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
@@ -327,7 +329,8 @@ namespace Workwear.Test.Integration.Stock
 				var expense = new Expense {
 					Warehouse = warehouse,
 					Employee = employee,
-					Date = new DateTime(2018, 10, 22)
+					Date = new DateTime(2018, 10, 22),
+					IssueDate = new DateTime(2018, 10, 22)
 				};
 				var expenseItem1 = expense.AddItem(position1, 1);
 				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);
