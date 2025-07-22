@@ -41,13 +41,13 @@ create table visits_documents
 	return_id  int unsigned null,
 	constraint visits_documents_stock_expense_id_fk
 		foreign key (expence_id) references stock_expense (id)
-			on update cascade on delete set null,
+			on update cascade on delete cascade,
 	constraint visits_documents_stock_return_id_fk
 		foreign key (return_id) references stock_return (id)
-			on update cascade on delete set null,
+			on update cascade on delete cascade,
 	constraint visits_documents_stock_write_off_organization_id_fk
 		foreign key (writeof_id) references stock_write_off (id)
-			on update cascade on delete set null,
+			on update cascade on delete cascade,
 	constraint visits_documents_visits_id_fk
 		foreign key (visit_id) references visits (id)
 			on update cascade on delete cascade
