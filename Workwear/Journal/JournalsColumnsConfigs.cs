@@ -343,6 +343,7 @@ namespace workwear.Journal
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.AddColumn("Смывающее").AddTextRenderer(n => n.WashingText)
 					.AddColumn("Категория для аналитики").AddTextRenderer(node => node.CategoryForAnalytic)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, node) => c.Foreground = node.Archival? "gray": "black")
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(

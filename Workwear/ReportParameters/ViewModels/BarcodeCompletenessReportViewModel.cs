@@ -28,6 +28,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			var protectionToolsList =  UoW.Session.QueryOver<ProtectionTools>()
 				.Left.JoinAlias(x => x.Nomenclatures, () => nomenclatureAlias)
 				.Where(() => nomenclatureAlias.UseBarcode)
+				.Where(x=>!x.Archival)
 				.List();
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
