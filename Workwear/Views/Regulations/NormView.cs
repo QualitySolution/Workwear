@@ -64,7 +64,8 @@ namespace Workwear.Views.Regulations
 					.Editing()
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
-				.RowCells().AddSetter<CellRendererText>((c,x) => c.Foreground = x.IsDisabled ? "gray" : "black")
+				.RowCells()
+				.AddSetter<CellRendererText>((c,x) => c.Foreground = SetColor(x.IsDisabled, x.ProtectionTools.Archival))
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -150,6 +151,12 @@ namespace Workwear.Views.Regulations
 			}
 		}
 		#endregion
+
+		private string SetColor(bool isDisabled, bool isArchival) {
+			if(isDisabled)
+				return "gray";
+			return isArchival ? "#2F353B" : "black";
+		}
 	}
 }
 
