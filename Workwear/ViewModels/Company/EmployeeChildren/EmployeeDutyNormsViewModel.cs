@@ -21,7 +21,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
 		private readonly DutyNormIssueModel dutyNormIssueModel;
-		public readonly DutyNormRepository dutyNormRepository;
+		private readonly DutyNormRepository dutyNormRepository;
 		private readonly FeaturesService featuresService;
 		private bool isConfigured = false;
 		
