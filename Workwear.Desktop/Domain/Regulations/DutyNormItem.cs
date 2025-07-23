@@ -242,8 +242,7 @@ namespace Workwear.Domain.Regulations {
 					return "orange";
 				if (amount == 0)
 					return "red";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 
@@ -253,8 +252,7 @@ namespace Workwear.Domain.Regulations {
 					return "darkred";
 				if(DateTime.Today > NextIssue?.AddDays(10))
 					return "orange";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 		public virtual string AmountUnitText(int a) {

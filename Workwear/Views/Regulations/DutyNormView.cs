@@ -61,6 +61,7 @@ namespace Workwear.Views.Regulations {
 					.AddSetter((w, i) => w.Foreground = i.NextIssueColor)
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
+				.RowCells().AddSetter<CellRendererText>((c,x) => c.Foreground = x.ProtectionTools.Archival ? "gray" : null)
 				.Finish ();
 			ytreeItems.Binding
 				.AddBinding(ViewModel, v => v.SelectedItem, w => w.SelectedRow)
