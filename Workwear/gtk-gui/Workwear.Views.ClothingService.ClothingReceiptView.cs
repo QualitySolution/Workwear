@@ -42,6 +42,7 @@ namespace Workwear.Views.ClothingService
 			this.Name = "Workwear.Views.ClothingService.ClothingReceiptView";
 			// Container child Workwear.Views.ClothingService.ClothingReceiptView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();

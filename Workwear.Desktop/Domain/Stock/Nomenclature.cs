@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
@@ -110,14 +111,7 @@ namespace Workwear.Domain.Stock {
 		public virtual string GetAmountAndUnitsText(int amount) => 
 			Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		#endregion
-		#region Средства защиты
-		private IObservableList<ProtectionTools> protectionTools = new ObservableList<ProtectionTools>();
-		[Display(Name = "Номенклатура нормы")]
-		public virtual IObservableList<ProtectionTools> ProtectionTools {
-			get => protectionTools;
-			set => SetField(ref protectionTools, value);
-		}
-		#endregion
+		
 		public Nomenclature () { }
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
@@ -167,7 +161,14 @@ namespace Workwear.Domain.Stock {
 				ProtectionTools.Add(pt);
 		}
 		#endregion
+		
 		#region ProtectionTools
+		private IObservableList<ProtectionTools> protectionTools = new ObservableList<ProtectionTools>();
+		[Display(Name = "Номенклатура нормы")]
+		public virtual IObservableList<ProtectionTools> ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
 
 		public virtual void AddProtectionTools(ProtectionTools protectionTools)
 		{
@@ -183,6 +184,27 @@ namespace Workwear.Domain.Stock {
 			ProtectionTools.Remove(protectionTools);
 		}
 		#endregion
+		
+		#region Обслуживание одежды
+		private IObservableList<Service> useServices = new ObservableList<Service>();
+		[Display(Name = "Услуги обслуживания")]
+		public virtual IObservableList<Service> UseServices {
+			get => useServices;
+			set => SetField(ref useServices, value);
+		}
+
+		public virtual void AddService(Service service) {
+			if(UseServices.Any(p => DomainHelper.EqualDomainObjects(p, service))) {
+				logger.Warn("Услуга уже добавлен. Пропускаем...");
+				return;
+			}
+			UseServices.Add(service);
+		}
+
+		public virtual void RemoveService(Service service) => UseServices.Remove(service);
+
+		#endregion
+
 	}
 }
 

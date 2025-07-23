@@ -68,6 +68,7 @@ namespace Workwear.Domain.Visits {
 		#endregion
 
 		#region Расчётные
+		public virtual string Title => $"Посещение {Employee?.ShortName} ({VisitTime.ToShortDateString()})";
 		
         public virtual IEnumerable<StockDocument> Documents {
 	        get => ExpenseDocuments
