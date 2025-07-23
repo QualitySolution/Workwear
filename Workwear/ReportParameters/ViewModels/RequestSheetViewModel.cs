@@ -14,6 +14,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -22,16 +23,19 @@ namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public RequestSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
@@ -53,7 +57,7 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			var protectionToolsList = uow.GetAll<ProtectionTools>().ToList();
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(uow);
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			

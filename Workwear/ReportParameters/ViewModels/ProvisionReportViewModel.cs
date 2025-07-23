@@ -11,6 +11,7 @@ using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -18,17 +19,20 @@ namespace Workwear.ReportParameters.ViewModels {
 	public class ProvisionReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
 		
 		private readonly FeaturesService featuresService;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 		
 		public ProvisionReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
 			
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 
-			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(UoW);
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
