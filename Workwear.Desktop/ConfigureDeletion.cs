@@ -14,6 +14,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 using Workwear.Domain.Users;
+using Workwear.Domain.Visits;
 
 namespace Workwear
 {
@@ -25,12 +26,20 @@ namespace Workwear
 		{
 			logger.Info ("Настройка параметров удаления...");
 
+			#region Analytics
+			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsCategory>()
+				.AddClearDependence<ProtectionTools>(x => x.CategoryForAnalytic);
+			#endregion
 			#region Обслуживание спецодежды
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
 				.AddDeleteDependence<StateOperation>(x => x.Claim)
 				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
+		
+			DeleteConfig.AddHibernateDeleteInfo<Service>()
+				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices);
+			
 			#endregion
 			#region Связь
 			DeleteConfig.AddHibernateDeleteInfo<MessageTemplate>();
@@ -58,6 +67,7 @@ namespace Workwear
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)
 				.AddDeleteDependence<ServiceClaim>(x => x.Employee)
+				.AddDeleteDependence<Visit>(x => x.Employee)
 				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
 				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
@@ -112,6 +122,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem>();
 
+			DeleteConfig.AddHibernateDeleteInfo<WorkDay>();
 			#endregion
 			#region Операции
 			DeleteConfig.AddHibernateDeleteInfo<BarcodeOperation>();
@@ -284,6 +295,7 @@ namespace Workwear
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureFemale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureMale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureUnisex)
+				.AddRemoveFromDependence<Service>(x => x.Nomenclatures)
 				.AddDeleteDependence<Barcode>(x => x.Nomenclature)
 				.AddDeleteDependence<CollectiveExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<DutyNormIssueOperation>(x => x.Nomenclature)
@@ -306,7 +318,9 @@ namespace Workwear
 			#region Складские документы
 			DeleteConfig.AddHibernateDeleteInfo<Expense> ()
 				.AddDeleteDependence<ExpenseItem> (x => x.ExpenseDoc)
-				.AddDeleteDependence<IssuanceSheet>(x => x.Expense);
+				.AddDeleteDependence<IssuanceSheet>(x => x.Expense)
+				.AddRemoveFromDependence<Visit>(x => x.ExpenseDocuments)
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<ExpenseItem> ()
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.ExpenseItem)
@@ -338,7 +352,9 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			
 			DeleteConfig.AddHibernateDeleteInfo<Return> ()
-				.AddDeleteDependence<ReturnItem>(x => x.Document);
+				.AddDeleteDependence<ReturnItem>(x => x.Document)
+				.AddRemoveFromDependence<Visit>(x => x.ReturnDocuments)
+				;
 			
 			DeleteConfig.AddHibernateDeleteInfo<ReturnItem> ()
 				.AddDeleteCascadeDependence(x => x.ReturnFromDutyNormOperation)
@@ -346,7 +362,9 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()
-				.AddDeleteDependence<WriteoffItem>(x => x.Document);
+				.AddDeleteDependence<WriteoffItem>(x => x.Document)
+				.AddRemoveFromDependence<Visit>(x => x.WriteoffDocuments)
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<WriteoffItem> ()
 				.AddRemoveFromDependence<Writeoff>(x => x.Items)//Необходимо иначе будут исключения при удалении строк выдачи которые создают списание. 
@@ -407,9 +425,8 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<UserSettings>();
 
 			#endregion
-			#region Analytics
-			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsCategory>()
-				.AddClearDependence<ProtectionTools>(x => x.CategoryForAnalytic);
+			#region Visits
+			DeleteConfig.AddHibernateDeleteInfo<Visit>();
 			#endregion
 			
 			logger.Info ("Ок");

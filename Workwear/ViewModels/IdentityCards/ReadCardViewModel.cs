@@ -88,12 +88,12 @@ namespace Workwear.ViewModels.IdentityCards
 				}
 			}
 
-			cardReaderService.СardStatusRead += RusGuardService_СardStatusRead;
+			cardReaderService.CardStatusRead += RusGuardService_CardStatusRead;
 			cardReaderService.StartDevice(device);
 			cardReaderService.StartAutoPoll(device);
 		}
 
-		void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
+		void RusGuardService_CardStatusRead(object sender, CardStateEventArgs e)
 		{
 			guiDispatcher.RunInGuiTread(delegate {
 				UpdateState(e.CardUid);

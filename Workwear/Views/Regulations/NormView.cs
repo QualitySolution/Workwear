@@ -64,6 +64,8 @@ namespace Workwear.Views.Regulations
 					.Editing()
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
+				.RowCells()
+				.AddSetter<CellRendererText>((c,x) => c.Foreground = SetColor(x.IsDisabled, x.ProtectionTools.Archival))
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -119,7 +121,24 @@ namespace Workwear.Views.Regulations
 				menuItem.Sensitive = selected != null;
 				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
 				menu.Add(menuItem);
-				
+
+				if(!(selected?.IsDisabled ?? false)) {
+					bool isSensitive = !Entity.Archival;
+					string label = "Отключить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
+					menuItem.Activated += (sender, e) => ViewModel.DisableNormItem(selected);
+					menu.Add(menuItem);
+				}
+
+				if(selected?.IsDisabled ?? false){
+					bool isSensitive = !Entity.Archival;
+					string label = "Включить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
+					menuItem.Activated += (sender, e) => ViewModel.EnableNormItem(selected);
+					menu.Add(menuItem);
+				}
 				menu.Add(new SeparatorMenuItem());
 				
 				menuItem = new MenuItem("Пересчитать сроки носки в документах выдачи");
@@ -132,6 +151,12 @@ namespace Workwear.Views.Regulations
 			}
 		}
 		#endregion
+
+		private string SetColor(bool isDisabled, bool isArchival) {
+			if(isDisabled)
+				return "gray";
+			return isArchival ? "#2F353B" : "black";
+		}
 	}
 }
 

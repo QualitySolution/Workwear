@@ -143,7 +143,7 @@ namespace Workwear.Domain.Regulations {
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
 		/// <summary>
-		/// Необходимое к выдачи количество.
+		/// Необходимое к выдаче количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)
@@ -152,24 +152,12 @@ namespace Workwear.Domain.Regulations {
 			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
 		}
 
-		/// <summary>
-		/// Обновляет данные о выданом .
-		/// </summary>
-		/// <returns>Наличие изменений</returns>
-		public virtual void Update(IUnitOfWork uow) {
-			if(Id == 0)
-				Graph = new IssueGraph();
-			else {
-				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
-					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
-			}
+		public virtual void UpdateNextIssue() {
 			NextIssue = CalculateNextIssue();
-			OnPropertyChanged(nameof(Issued));
 		}
 
 		/// <summary>
-		/// Расчитывает дату следующей выдачи.
+		/// Рассчитывает дату следующей выдачи.
 		/// </summary>
 		public virtual DateTime? CalculateNextIssue() {
 			DateTime? wantIssue = new DateTime();
@@ -194,7 +182,7 @@ namespace Workwear.Domain.Regulations {
 		
 		#region Методы и расчётные свойства для view
 		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
-			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
+			 ""{ProtectionTools?.Name}"" на {PeriodCount} {PeriodText}";
 		public virtual double AmountPerYear
 		{
 			get{
@@ -254,8 +242,7 @@ namespace Workwear.Domain.Regulations {
 					return "orange";
 				if (amount == 0)
 					return "red";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 
@@ -265,8 +252,7 @@ namespace Workwear.Domain.Regulations {
 					return "darkred";
 				if(DateTime.Today > NextIssue?.AddDays(10))
 					return "orange";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 		public virtual string AmountUnitText(int a) {
@@ -283,6 +269,8 @@ namespace Workwear.Domain.Regulations {
 					return String.Empty;
 			}
 		}
+
+		public virtual string NextIssueText => NextIssue != null ? $"{NextIssue:d}" : String.Empty;
 		#endregion
 
 		/// <summary>

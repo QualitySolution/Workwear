@@ -28,8 +28,8 @@
             <Width>214.14pt</Width>
             <Value>={employee}</Value>
             <ZIndex>0</ZIndex>
-            <Left>0.8pt</Left>
-            <Top>62.0pt</Top>
+            <Left>0.80pt</Left>
+            <Top>62.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -105,8 +105,8 @@
                 <Value>={product_code}</Value>
               </CustomProperty>
             </CustomProperties>
-            <Left>129.5pt</Left>
-            <Top>2.4pt</Top>
+            <Left>129.50pt</Left>
+            <Top>2.40pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -170,7 +170,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     operation_issued_by_employee.operation_time,
@@ -200,7 +200,7 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="number_system">
           <DataField>number_system</DataField>
           <TypeName>System.String</TypeName>

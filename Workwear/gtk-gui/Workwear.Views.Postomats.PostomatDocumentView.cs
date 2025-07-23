@@ -60,6 +60,8 @@ namespace Workwear.Views.Postomats
 
 		private global::Gamma.GtkWidgets.yButton buttonAdd;
 
+		private global::Gamma.GtkWidgets.yButton buttonAddScan;
+
 		private global::Gtk.Button buttonDel;
 
 		private global::Gtk.Button buttonShowAllSize;
@@ -366,20 +368,33 @@ namespace Workwear.Views.Postomats
 			w30.Expand = false;
 			w30.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.buttonAddScan = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAddScan.CanFocus = true;
+			this.buttonAddScan.Name = "buttonAddScan";
+			this.buttonAddScan.UseUnderline = true;
+			global::Gtk.Image w31 = new global::Gtk.Image();
+			w31.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.qr-code.png");
+			this.buttonAddScan.Image = w31;
+			this.hbox5.Add(this.buttonAddScan);
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonAddScan]));
+			w32.Position = 1;
+			w32.Expand = false;
+			w32.Fill = false;
+			// Container child hbox5.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gtk.Button();
 			this.buttonDel.Sensitive = false;
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
-			global::Gtk.Image w31 = new global::Gtk.Image();
-			w31.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonDel.Image = w31;
+			global::Gtk.Image w33 = new global::Gtk.Image();
+			w33.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonDel.Image = w33;
 			this.hbox5.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonDel]));
-			w32.Position = 1;
-			w32.Expand = false;
-			w32.Fill = false;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonDel]));
+			w34.Position = 2;
+			w34.Expand = false;
+			w34.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
 			this.buttonShowAllSize = new global::Gtk.Button();
 			this.buttonShowAllSize.Sensitive = false;
@@ -387,14 +402,14 @@ namespace Workwear.Views.Postomats
 			this.buttonShowAllSize.Name = "buttonShowAllSize";
 			this.buttonShowAllSize.UseUnderline = true;
 			this.buttonShowAllSize.Label = global::Mono.Unix.Catalog.GetString("Выбрать варианты");
-			global::Gtk.Image w33 = new global::Gtk.Image();
-			w33.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
-			this.buttonShowAllSize.Image = w33;
+			global::Gtk.Image w35 = new global::Gtk.Image();
+			w35.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-refresh", global::Gtk.IconSize.Menu);
+			this.buttonShowAllSize.Image = w35;
 			this.hbox5.Add(this.buttonShowAllSize);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonShowAllSize]));
-			w34.Position = 2;
-			w34.Expand = false;
-			w34.Fill = false;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.buttonShowAllSize]));
+			w36.Position = 3;
+			w36.Expand = false;
+			w36.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
@@ -402,13 +417,13 @@ namespace Workwear.Views.Postomats
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.labelSum.UseMarkup = true;
 			this.hbox5.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.labelSum]));
-			w35.Position = 3;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox5[this.labelSum]));
+			w37.Position = 4;
 			this.dialog1_VBox.Add(this.hbox5);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox5]));
-			w36.Position = 4;
-			w36.Expand = false;
-			w36.Fill = false;
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hbox5]));
+			w38.Position = 4;
+			w38.Expand = false;
+			w38.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

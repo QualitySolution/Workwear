@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
@@ -32,6 +33,11 @@ namespace Workwear.HibernateMapping.Stock
 				.Table("protection_tools_nomenclature")
 				.ParentKeyColumn("nomenclature_id")
 				.ChildKeyColumn("protection_tools_id");
+			
+			HasManyToMany<Service>(x => x.UseServices)
+				.Table("clothing_service_services_nomenclature")
+				.ParentKeyColumn("nomenclature_id")
+				.ChildKeyColumn("service_id");
 		}
 	}
 }

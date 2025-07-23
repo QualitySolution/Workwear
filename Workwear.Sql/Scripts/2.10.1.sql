@@ -18,9 +18,11 @@ alter table shipment
 	add has_receive boolean default false not null after full_received,
 	add submitted datetime null after has_receive;
 
-UPDATE shipment SET full_ordered =
-						(SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0
-						 FROM shipment_items  WHERE shipment_items.shipment_id = shipment.id);
+UPDATE shipment SET full_ordered = COALESCE((
+												SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0
+												FROM shipment_items
+												WHERE shipment_items.shipment_id = shipment.id
+											), FALSE);
 
 alter table stock_income
 	add shipment_id int unsigned default null null after warehouse_id;

@@ -60,6 +60,8 @@ namespace workwear.Journal.ViewModels.Regulations
 				query.Where(x => x.DermalPpe == true);			
 			if (Filter.NotDispenser)
 				query.Where(x => x.Dispenser == false);
+			if(!Filter.ShowArchival)
+				query.Where(x => x.Archival == false);
 			if(type != null)
 				query = query.Where(p => itemsTypeAlias.Id == type.Id);
 			
@@ -73,6 +75,7 @@ namespace workwear.Journal.ViewModels.Regulations
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.DermalPpe).WithAlias(() => resultAlias.WashingPpe)
 					.Select(x => x.Dispenser).WithAlias(() => resultAlias.Dispenser)
+					.Select(x=>x.Archival).WithAlias(()=>resultAlias.Archival)
 					.Select(() => itemsTypeAlias.Name).WithAlias(() => resultAlias.TypeName)
 					.Select(() => categoryForAnalyticAlias.Name).WithAlias(() => resultAlias.CategoryForAnalytic)
 				).OrderBy(x => x.Name).Asc
@@ -121,6 +124,7 @@ namespace workwear.Journal.ViewModels.Regulations
 		public string CategoryForAnalytic { get; set; }
 		public bool WashingPpe { get; set; }
 		public bool Dispenser { get; set; }
+		public bool Archival { get; set; }
 		public string WashingText => Dispenser ? "Дозатор" : WashingPpe ? "Да" : String.Empty;
 	}
 }

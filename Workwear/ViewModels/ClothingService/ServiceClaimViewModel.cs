@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
+using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.Tools.Features;
@@ -34,6 +36,11 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel.Barcode = Entity.Barcode;
 			if(this.featuresService.Available(WorkwearFeature.Postomats))
 				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
+
+			foreach(var service in Entity.Barcode.Nomenclature.UseServices) //Делаем список для заполнения услуг во вьюшке
+				services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
+					{Select = Entity.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
+
 		}
 
 		#region Postamat
@@ -60,10 +67,16 @@ namespace Workwear.ViewModels.ClothingService {
 		public bool PostomatVisible => featuresService.Available(WorkwearFeature.Postomats);
 		#endregion
 
-		#region Пропрос свойств модели
+		#region Свойства и проброс из модели
 
 		public virtual bool IsClosed => Entity.IsClosed;
 		public virtual IObservableList<StateOperation> States => Entity.States;
+		
+		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
+		public virtual IObservableList<SelectableEntity<Service>> Services {
+			get => services;
+			set => SetField(ref services, value);
+		}
 		
 		public virtual bool NeedForRepair {
 			get { return Entity.NeedForRepair; }
@@ -86,6 +99,21 @@ namespace Workwear.ViewModels.ClothingService {
 			set {if(Entity.Comment != value)
 					Entity.Comment = value;
 			}
+		}
+
+		#endregion
+
+		#region Сохранение
+
+		public override bool Save() {
+			foreach(var s in services) {
+				var providedService = Entity.ProvidedServices.FirstOrDefault(provided => DomainHelper.EqualDomainObjects(s.Entity, provided));
+				if(s.Select && providedService == null)
+					Entity.ProvidedServices.Add(s.Entity);
+				else if(!s.Select && providedService != null)
+                    Entity.ProvidedServices.Remove(providedService);
+			}
+			return base.Save();
 		}
 
 		#endregion

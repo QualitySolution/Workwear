@@ -73,6 +73,13 @@ namespace Workwear.Domain.ClothingService {
 			get { return states; }
 			set { SetField(ref states, value, () => States); }
 		}
+				
+		private IObservableList<Service> providedServices = new ObservableList<Service>();
+		[Display(Name = "Перечень услуг")]
+		public virtual IObservableList<Service> ProvidedServices {
+			get { return providedServices; }
+			set { SetField(ref providedServices, value); }
+		}
 		#endregion
 
 		#region Статусы

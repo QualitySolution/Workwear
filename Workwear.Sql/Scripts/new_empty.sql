@@ -887,6 +887,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   supply_female_id int(10) unsigned null,
   `comments` TEXT NULL DEFAULT NULL,
   `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` bool not null default false,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
@@ -938,6 +939,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
+  `is_disabled` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`),
   INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
@@ -1110,6 +1112,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
+  `issue_date` date NULL DEFAULT `date`,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
@@ -2367,13 +2370,14 @@ create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
 create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
 	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
 
+-- -----------------------------------------------------
 -- Table `shipment`
-
+-- -----------------------------------------------------
 create table shipment
 (
 	id int unsigned auto_increment primary key,
-	start_period date not null,
-	end_period date not null,
+	start_period date null,
+	end_period date null,
 	status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
 	full_ordered boolean default false not null,
 	full_received boolean default false not null,
@@ -2388,8 +2392,9 @@ create index index_shipment_start_period
 create index index_shipment_end_period
 	on shipment (end_period);
 
+-- -----------------------------------------------------
 -- Table `shipment_items`
-
+-- -----------------------------------------------------
 create table shipment_items
 (
 	id int unsigned auto_increment primary key,
@@ -2427,6 +2432,114 @@ create index index_shipment_items_nomenclature
 
 create index index_shipment_items_size
 	on shipment_items (size_id);
+
+-- -----------------------------------------------------
+-- Записи  на посещение
+-- -----------------------------------------------------
+create table visits
+(
+	id              int unsigned auto_increment,
+	create_date     datetime              not null,
+	visit_date      datetime              not null,
+	employee_id     int unsigned          not null,
+	employee_create boolean default TRUE  not null,
+	done            boolean default FALSE not null,
+	cancelled       boolean default FALSE not null,
+	comment         text                  null,
+	constraint visits_pk
+		primary key (id),
+	constraint visits_employees_id_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade
+);
+
+create index visits_create_date_index
+	on visits (create_date);
+create index visits_visit_date_index
+	on visits (visit_date);
+
+
+create table visits_documents
+(
+	id         int unsigned auto_increment
+		primary key,
+	visit_id   int unsigned not null,
+	expence_id int unsigned null,
+	writeof_id int unsigned null,
+	return_id  int unsigned null,
+	constraint visits_documents_stock_expense_id_fk
+		foreign key (expence_id) references stock_expense (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_stock_return_id_fk
+		foreign key (return_id) references stock_return (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_stock_write_off_organization_id_fk
+		foreign key (writeof_id) references stock_write_off (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_visits_id_fk
+		foreign key (visit_id) references visits (id)
+			on update cascade on delete cascade
+);
+
+-- -----------------------------------------------------
+-- Учёт дней недели
+-- -----------------------------------------------------
+create table work_days
+(
+	id          int unsigned auto_increment,
+	date 		date 	not null,
+	is_work_day boolean default true not null,
+	comment 	text	null,
+		constraint work_days_pk
+		primary key (id)
+);
+
+-- -----------------------------------------------------
+-- Оказываемые услуги
+-- -----------------------------------------------------
+create table clothing_service_services
+(
+	id   	int unsigned auto_increment,
+	name 	varchar(60)       not null,
+	cost 	decimal default 0 not null,
+	code    varchar(13)       null,
+	comment text       		  null,
+	constraint clothing_service_services_pk
+		primary key (id)
+)
+	auto_increment = 101;
+
+create table clothing_service_services_nomenclature
+(
+	id   			int unsigned auto_increment,
+	nomenclature_id int unsigned not null,
+	service_id     	int unsigned not null,
+	constraint clothing_service_services_pk
+		primary key (id),
+	constraint fk_services_nomenclature_nomenclature_id
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint fk_services_nomenclature_service_id
+		foreign key (service_id) references clothing_service_services (id)
+			on update cascade on delete cascade
+);
+
+create table clothing_service_services_claim
+(
+	id         int unsigned auto_increment,
+	service_id int unsigned null,
+	claim_id   int unsigned,
+	constraint clothing_service_services_claim_pk
+		primary key (id),
+	constraint clothing_service_services_claim_service_id_claim_id_uindex
+		unique (service_id, claim_id),
+	constraint clothing_service_services_claim_clothing_service_claim_id_fk
+		foreign key (claim_id) references clothing_service_claim (id)
+			on update cascade on delete cascade,
+	constraint clothing_service_services_claim_clothing_service_services_id_fk
+		foreign key (service_id) references clothing_service_services (id)
+			on update cascade on delete cascade
+);
 	
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
@@ -2503,7 +2616,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.1');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.2');
 
 COMMIT;
 

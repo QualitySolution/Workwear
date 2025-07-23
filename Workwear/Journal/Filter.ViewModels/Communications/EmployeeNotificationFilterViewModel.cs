@@ -154,7 +154,7 @@ namespace workwear.Journal.Filter.ViewModels.Communications {
 		[Display(Name = "Персональная")]
 		Personal,
 		[Display(Name = "Коллективная")]
-		Сollective
+		Collective
 	}
 
 	public enum SexType 

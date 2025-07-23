@@ -4,7 +4,11 @@ namespace Workwear.Journal.Filter.Views.Regulations
 {
 	public partial class ProtectionToolsFilterView
 	{
+		private global::Gamma.GtkWidgets.yHBox yhbox3;
+
 		private global::Gamma.GtkWidgets.yCheckButton ycheckOnlyDermal;
+
+		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
 
 		protected virtual void Build()
 		{
@@ -13,13 +17,34 @@ namespace Workwear.Journal.Filter.Views.Regulations
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Journal.Filter.Views.Regulations.ProtectionToolsFilterView";
 			// Container child Workwear.Journal.Filter.Views.Regulations.ProtectionToolsFilterView.Gtk.Container+ContainerChild
+			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox3.Name = "yhbox3";
+			this.yhbox3.Spacing = 6;
+			// Container child yhbox3.Gtk.Box+BoxChild
 			this.ycheckOnlyDermal = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckOnlyDermal.CanFocus = true;
 			this.ycheckOnlyDermal.Name = "ycheckOnlyDermal";
 			this.ycheckOnlyDermal.Label = global::Mono.Unix.Catalog.GetString("Только дерматологические");
 			this.ycheckOnlyDermal.DrawIndicator = true;
 			this.ycheckOnlyDermal.UseUnderline = true;
-			this.Add(this.ycheckOnlyDermal);
+			this.yhbox3.Add(this.ycheckOnlyDermal);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.ycheckOnlyDermal]));
+			w1.Position = 0;
+			w1.Expand = false;
+			w1.Fill = false;
+			// Container child yhbox3.Gtk.Box+BoxChild
+			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
+			this.yShowArchival.CanFocus = true;
+			this.yShowArchival.Name = "yShowArchival";
+			this.yShowArchival.Label = global::Mono.Unix.Catalog.GetString("Показать архивные");
+			this.yShowArchival.DrawIndicator = true;
+			this.yShowArchival.UseUnderline = true;
+			this.yhbox3.Add(this.yShowArchival);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.yShowArchival]));
+			w2.Position = 1;
+			w2.Expand = false;
+			w2.Fill = false;
+			this.Add(this.yhbox3);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();

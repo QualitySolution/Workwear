@@ -87,7 +87,7 @@ namespace Workwear.ViewModels.Stock
 
 			if(cardReaderService != null) {
 				cardReaderService.RefreshDevices();
-				cardReaderService.СardStatusRead += RusGuardService_СardStatusRead;
+				cardReaderService.CardStatusRead += RusGuardService_CardStatusRead;
 				cardReaderService.CardFamilies.ListChanged += CardFamilies_ListChanged;
 			}
 			UpdateState();
@@ -120,7 +120,7 @@ namespace Workwear.ViewModels.Stock
 			SetCardFamiliesConfig();
 		}
 
-		private void RusGuardService_СardStatusRead(object sender, CardStateEventArgs e)
+		private void RusGuardService_CardStatusRead(object sender, CardStateEventArgs e)
 		{
 			guiDispatcher.RunInGuiTread(delegate {
 				CardUid = e.CardUid;
@@ -167,7 +167,7 @@ namespace Workwear.ViewModels.Stock
 			}
 		}
 
-		public string CardUidСompact => CardUid.Replace("-", "");
+		public string CardUidCompact => CardUid.Replace("-", "");
 
 		public bool NoCard => String.IsNullOrEmpty(CardUid);
 
@@ -326,7 +326,7 @@ namespace Workwear.ViewModels.Stock
 				if(NoCard && CanAccept && canAcceptByTime)
 					return "Приложите карту для подтверждения выдачи";
 				if(!String.IsNullOrEmpty(CardUid) && Employee != null) {
-					if(Employee.CardKey != CardUidСompact)
+					if(Employee.CardKey != CardUidCompact)
 						return "Для подтверждения приложите карту " + Employee.ShortName;
 					else
 						return "Уберите карту и проверьте список выдаваемого";
@@ -381,14 +381,14 @@ namespace Workwear.ViewModels.Stock
 			if(Employee == null) {
 				LoadEmployee();
 			}
-			else if(CanAccept && canAcceptByTime && Employee.CardKey == CardUidСompact)
+			else if(CanAccept && canAcceptByTime && Employee.CardKey == CardUidCompact)
 				AcceptIssue();
 		}
 
 		private void LoadEmployee()
 		{
 			uow = unitOfWorkFactory.CreateWithoutRoot();
-			Employee = employeeRepository.GetEmployeeByCardkey(uow, CardUidСompact);
+			Employee = employeeRepository.GetEmployeeByCardkey(uow, CardUidCompact);
 			if(Employee == null) {
 				uow.Dispose();
 				uow = null;
@@ -420,7 +420,7 @@ namespace Workwear.ViewModels.Stock
 				return;
 
 			Expense.CleanupItems();
-			Expense.UpdateOperations(uow, BaseParameters, interactive, CardUidСompact);
+			Expense.UpdateOperations(uow, BaseParameters, interactive, CardUidCompact);
 			uow.Save(Expense);
 
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
