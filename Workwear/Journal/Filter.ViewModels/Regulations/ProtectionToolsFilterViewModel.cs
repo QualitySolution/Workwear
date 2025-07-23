@@ -20,5 +20,11 @@ namespace Workwear.Journal.Filter.ViewModels.Regulations {
 			get => notDispenser;
 			set => SetField(ref notDispenser, value);
 		}
+
+		private bool showArchival;
+		public bool ShowArchival {
+			get => showArchival;
+			set => SetField(ref showArchival, value);
+		}
 	}
 }
