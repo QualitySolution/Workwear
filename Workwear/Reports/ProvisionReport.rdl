@@ -15,13 +15,14 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT *,
-       ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
+       IF(tabel.protection_tools_dispenser = 1, 100, ROUND(tabel.balance / tabel.need * 100, 0)) AS 'provision_percent'
 FROM (SELECT
           COUNT(*) AS 'count_employee',
           IF(@group_by_subdivision, employees.subdivision_id, NULL) AS 'subdivision_id',
           IF(@group_by_subdivision, subdivisions.name, NULL) AS 'subdivision_name',
           protection_tools.id AS 'protection_tools_id',
           protection_tools.name AS 'protection_tools_name',
+          protection_tools.dispenser AS 'protection_tools_dispenser',
           if(@show_sex,
              IF(employees.sex = 'M','М', IF(employees.sex = 'F','Ж','')),
              null)
@@ -148,6 +149,10 @@ FROM (SELECT
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="protection_tools_dispenser">
+          <DataField>protection_tools_dispenser</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="employee_sex">
           <DataField>employee_sex</DataField>
@@ -766,7 +771,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="balance">
-                      <Value>=Fields!balance.Value</Value>
+                      <Value>=Iif(Fields!balance.Value = 0 and Fields!protection_tools_dispenser.Value = 1, "", Fields!balance.Value)</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
