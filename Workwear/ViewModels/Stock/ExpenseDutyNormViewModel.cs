@@ -200,7 +200,7 @@ namespace Workwear.ViewModels.Stock {
 			dutyNorm.UpdateItems(dutyNormIssueModel);
 			StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
 			
-			foreach(var item in dutyNorm.Items) {
+			foreach(var item in dutyNorm.Items.Where(x=>x.ProtectionTools.Archival == false)) {
 				item.StockBalanceModel = StockBalanceModel;
 				var position = item.BestChoiceInStock.FirstOrDefault()?.Position;
 				if(position != null)
