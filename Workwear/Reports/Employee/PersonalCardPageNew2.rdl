@@ -833,6 +833,7 @@ FROM
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
     operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
+    AND (@startDate = '' OR DATE(operation_issued_by_employee.operation_time) BETWEEN @startDate AND @endDate)
 GROUP BY
     operation_issued_by_employee.id
 ORDER BY
@@ -848,7 +849,8 @@ UNION
          '','','','',''
 FROM employee_cards_item as eci
          LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
-WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</CommandText>
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
+       AND (@startDate = '' OR eci.created BETWEEN @startDate AND @endDate))</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -858,6 +860,12 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
           </QueryParameter>
           <QueryParameter Name="isDocNumberInIssueSign">
             <Value>={?isDocNumberInIssueSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="startDate">
+            <Value>={?startDate}</Value>
+          </QueryParameter>
+          <QueryParameter Name="endDate">
+            <Value>={?endDate}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -923,7 +931,7 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="isDocNumberInIssueSign">
       <DataType>Boolean</DataType>
@@ -937,7 +945,21 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="startDate">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="endDate">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
   <DataSources>
