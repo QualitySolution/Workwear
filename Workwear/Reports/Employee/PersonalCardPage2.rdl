@@ -885,6 +885,7 @@ CONCAT_WS(
         returned.issued_operation_id = operation_issued_by_employee.id
     WHERE
         operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
+        AND operation_issued_by_employee.operation_time BETWEEN @startDate AND @endDate
     GROUP BY
         operation_issued_by_employee.id
     ORDER BY
@@ -898,6 +899,12 @@ CONCAT_WS(
           </QueryParameter>
           <QueryParameter Name="isDocNumberInReturnSign">
             <Value>={?isDocNumberInReturnSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="startDate">
+            <Value>={?startDate}</Value>
+          </QueryParameter>
+          <QueryParameter Name="endDate">
+            <Value>={?endDate}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -975,6 +982,20 @@ CONCAT_WS(
     <ReportParameter Name="printPromo">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="startDate">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="endDate">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt />
