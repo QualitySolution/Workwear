@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -173,6 +174,9 @@ namespace Workwear.ViewModels.Export {
 					"Норма",FillCell = (cell, item) => {
 					cell.SetCellValue(item.ProtectionTools.Name);}},
 				new ColumnInfo() {Label =
+					"Тип выдачи",FillCell = (cell, item) => {
+					cell.SetCellValue(item.ItemsType?.IssueType.GetEnumTitle() ?? "");}},
+				new ColumnInfo() {Label =
 					"Артикул", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Nomenclature?.Number ?? "");}},
 				new ColumnInfo() {Label =
@@ -188,6 +192,9 @@ namespace Workwear.ViewModels.Export {
 				new ColumnInfo() {Label =
 					"Срок\nиспользования", FillCell = (cell, item) => {
 					cell.SetCellValue(item.NormItem.LifeText);}},
+				new ColumnInfo() {Label =
+					"Ограничения", FillCell = (cell, item) => {
+					cell.SetCellValue(item.NormItem.NormCondition?.Name ?? "");}},
 				new ColumnInfo() {Label =
 					"Виртуальная", FillCell = (cell, item) => {
 					cell.SetCellValue(item.VirtualLastIssue ? "+" : "");},},

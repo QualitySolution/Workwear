@@ -832,7 +832,7 @@ FROM
                     return_detail.employee_id = @id AND return_detail.returned &gt; 0
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
-    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0
+    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
 GROUP BY
     operation_issued_by_employee.id
 ORDER BY
@@ -848,7 +848,7 @@ UNION
          '','','','',''
 FROM employee_cards_item as eci
          LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
-WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id)</CommandText>
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>

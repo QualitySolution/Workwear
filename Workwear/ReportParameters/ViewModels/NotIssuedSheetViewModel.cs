@@ -16,6 +16,7 @@ using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -25,16 +26,19 @@ namespace workwear.ReportParameters.ViewModels
 	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		IUnitOfWork UoW;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public NotIssuedSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory, 
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 
 			Title = "Справка по невыданному (Детально)";
 			UoW = uowFactory.CreateWithoutRoot();
@@ -47,7 +51,7 @@ namespace workwear.ReportParameters.ViewModels
 				.Finish();
 			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, SubdivisionEntry);
 			
-			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(UoW);
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			

@@ -16,7 +16,8 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			JournalViewModelBase journalViewModel,
 			PostomatManagerService postomatService,
 			FeaturesService featuresService,
-			IUnitOfWorkFactory unitOfWorkFactory = null)
+			IUnitOfWorkFactory unitOfWorkFactory = null,
+			Action<ClaimsJournalFilterViewModel> setFilterParameters = null)
 			: base(journalViewModel, unitOfWorkFactory)
 		{
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
@@ -29,6 +30,7 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			else 
 				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			Postomats = postomats;
+			setFilterParameters?.Invoke(this);
 		}
 		
 		public IList<PostomatInfo> Postomats { get; }

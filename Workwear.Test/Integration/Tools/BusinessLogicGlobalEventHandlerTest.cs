@@ -327,6 +327,7 @@ namespace Workwear.Test.Integration.Tools
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 4, 22);
+				expense.IssueDate = new DateTime(2018, 4, 22);
 				var expenseItem1 = expense.AddItem(position1, 1);
 				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools1);
 				expenseItem1.ProtectionTools = protectionTools1;

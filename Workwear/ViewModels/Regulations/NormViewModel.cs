@@ -106,7 +106,8 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Amount,
 					x => x.NormCondition,
 					x => x.NormPeriod,
-					x => x.PeriodCount);
+					x => x.PeriodCount,
+					x => x.IsDisabled);
 
 			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
 				.IfEntity<Norm>()
@@ -359,6 +360,14 @@ namespace Workwear.ViewModels.Regulations
 		{
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
 		}
+
+		public void DisableNormItem(NormItem normItem) {
+			normItem.IsDisabled = true;
+		}
+
+		public void EnableNormItem(NormItem normItem) {
+			normItem.IsDisabled = false;
+		}
 		#endregion
 		#endregion
 		#region Сохранение
@@ -408,6 +417,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
 			if (employees.Any() && needUpdateEmployees) 
 			{
 				logger.Info("Пересчитываем сотрудников");
@@ -424,6 +434,7 @@ namespace Workwear.ViewModels.Regulations
 				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 				logger.Info("Ok");
 			}
+			
 			return true;
 		}
 		#endregion
