@@ -102,6 +102,21 @@ namespace Workwear.Tools
 			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
 			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
 		}
+
+		/// <summary>
+		/// Начальная дата периода для отображения на оборотной стороне карточки сотрудника.
+		/// </summary>
+		public virtual DateTime? StartDate {
+			get => Dynamic.StartDate(typeof(DateTime?));
+			set => Dynamic[nameof(StartDate)] = value;
+		}
+		/// <summary>
+		/// Конечная дата периода для отображения на оборотной стороне карточки сотрудника.
+		/// </summary>
+		public virtual DateTime? EndDate {
+			get => Dynamic.EndDate(typeof(DateTime?));
+			set => Dynamic[nameof(EndDate)] = value;
+		}
 		
 		/// <summary>
 		/// Дата запрета редактирования документов.

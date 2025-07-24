@@ -36,8 +36,6 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckCollectiveIssueWithPersonal;
 
-		private global::Gamma.Widgets.yDatePeriodPicker ydateperiodpicker1;
-
 		private global::Gamma.GtkWidgets.yEntry yentryCurrency;
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
@@ -64,9 +62,11 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.GtkWidgets.yLabel ylabel7;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel8;
-
 		private global::Gamma.GtkWidgets.yLabel ylabelCollectiveIssueWithPersonal;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelperiodOfOperations;
+
+		private global::Gamma.Widgets.yDatePeriodPicker yperiodOfOperations;
 
 		protected virtual void Build()
 		{
@@ -274,13 +274,13 @@ namespace Workwear.Views.Tools
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ydateperiodpicker1 = new global::Gamma.Widgets.yDatePeriodPicker();
-			this.ydateperiodpicker1.Events = ((global::Gdk.EventMask)(256));
-			this.ydateperiodpicker1.Name = "ydateperiodpicker1";
-			this.ydateperiodpicker1.StartDate = new global::System.DateTime(0);
-			this.ydateperiodpicker1.EndDate = new global::System.DateTime(0);
-			this.table1.Add(this.ydateperiodpicker1);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateperiodpicker1]));
+			this.yperiodOfOperations = new global::Gamma.Widgets.yDatePeriodPicker();
+			this.yperiodOfOperations.Events = ((global::Gdk.EventMask)(256));
+			this.yperiodOfOperations.Name = "yperiodOfOperations";
+			this.yperiodOfOperations.StartDate = new global::System.DateTime(0);
+			this.yperiodOfOperations.EndDate = new global::System.DateTime(0);
+			this.table1.Add(this.yperiodOfOperations);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.yperiodOfOperations]));
 			w17.TopAttach = ((uint)(10));
 			w17.BottomAttach = ((uint)(11));
 			w17.LeftAttach = ((uint)(1));
@@ -439,12 +439,12 @@ namespace Workwear.Views.Tools
 			w30.XOptions = ((global::Gtk.AttachOptions)(4));
 			w30.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ylabel8 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel8.Name = "ylabel8";
-			this.ylabel8.Xalign = 1F;
-			this.ylabel8.LabelProp = global::Mono.Unix.Catalog.GetString("Отображать на оборотной стороне карточки сотрудника с даты: ");
-			this.table1.Add(this.ylabel8);
-			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel8]));
+			this.ylabelperiodOfOperations = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelperiodOfOperations.Name = "ylabelperiodOfOperations";
+			this.ylabelperiodOfOperations.Xalign = 1F;
+			this.ylabelperiodOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Отображать на оборотной стороне карточки сотрудника с даты: ");
+			this.table1.Add(this.ylabelperiodOfOperations);
+			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelperiodOfOperations]));
 			w31.TopAttach = ((uint)(10));
 			w31.BottomAttach = ((uint)(11));
 			w31.XOptions = ((global::Gtk.AttachOptions)(4));

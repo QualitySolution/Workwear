@@ -18,6 +18,7 @@ namespace Workwear.ViewModels.Tools
 		public bool CollectiveIssueWithPersonalVisible { get; }
 		public bool EditLockDateVisible { get; }
 		public bool CanEdit { get; }
+		public bool PeriodOfOperationsVisible { get; }
 		#endregion
 		
 		public DataBaseSettingsViewModel(
@@ -44,6 +45,9 @@ namespace Workwear.ViewModels.Tools
 			UsedCurrency = baseParameters.UsedCurrency;
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
+			StartDate = baseParameters.StartDate;
+			EndDate = baseParameters.EndDate;
+			PeriodOfOperationsVisible = featuresService.Available(WorkwearFeature.PeriodOfOperations);
 		}
 		
 		#region IDialogDocumentation
@@ -61,7 +65,9 @@ namespace Workwear.ViewModels.Tools
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod
 		                                   || UsedCurrency != baseParameters.UsedCurrency
 		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
-		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
+		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
+										   || StartDate != baseParameters.StartDate
+										   || EndDate != baseParameters.EndDate;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -76,6 +82,9 @@ namespace Workwear.ViewModels.Tools
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		public bool IsDocNumberInIssueSign{get;set;}
 		public bool IsDocNumberInReturnSign { get; set; }
+		
+		public DateTime? StartDate { get; set; }
+		public DateTime? EndDate { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -102,6 +111,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			if(EditLockDate != baseParameters.EditLockDate)
 				baseParameters.EditLockDate = EditLockDate;
+			if(StartDate != baseParameters.StartDate)
+				baseParameters.StartDate = StartDate;
+			if(EndDate != baseParameters.EndDate)
+				baseParameters.EndDate = EndDate;
 			return true;
 		}
 	}
