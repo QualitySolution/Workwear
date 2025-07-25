@@ -885,7 +885,7 @@ CONCAT_WS(
         returned.issued_operation_id = operation_issued_by_employee.id
     WHERE
         operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
-        AND (@startDate = '' OR DATE(operation_issued_by_employee.operation_time) BETWEEN @startDate AND @endDate)
+        AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= @startDateOfOperations)
     GROUP BY
         operation_issued_by_employee.id
     ORDER BY
@@ -900,11 +900,8 @@ CONCAT_WS(
           <QueryParameter Name="isDocNumberInReturnSign">
             <Value>={?isDocNumberInReturnSign}</Value>
           </QueryParameter>
-          <QueryParameter Name="startDate">
-            <Value>={?startDate}</Value>
-          </QueryParameter>
-          <QueryParameter Name="endDate">
-            <Value>={?endDate}</Value>
+          <QueryParameter Name="startDateOfOperations">
+            <Value>={?startDateOfOperations}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -986,14 +983,7 @@ CONCAT_WS(
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="startDate">
-      <DataType>String</DataType>
-      <Nullable>false</Nullable>
-      <AllowBlank>true</AllowBlank>
-      <MultiValue>false</MultiValue>
-      <Prompt></Prompt>
-    </ReportParameter>
-    <ReportParameter Name="endDate">
+    <ReportParameter Name="startDateOfOperations">
       <DataType>String</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>true</AllowBlank>

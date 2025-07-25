@@ -659,6 +659,7 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
+					{"startDateOfOperations", StartDateOfOperations}
 				}
 			};
 
