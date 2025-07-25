@@ -67,14 +67,13 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
 		    
-		    ylabelperiodOfOperations.Binding.AddBinding(ViewModel, v=>v.PeriodOfOperationsVisible, w=>w.Visible)
+		    ylabelstartDateOfOperations.Binding.AddBinding(ViewModel, v=>v.StartDateOfOperationsVisible, w=>w.Visible)
 			    .InitializeFromSource();
 
-		    yperiodOfOperations.Binding.AddSource(ViewModel)
-			    .AddBinding(v => v.StartDate, w => w.StartDateOrNull)
-			    .AddBinding(v => v.EndDate, w => w.EndDateOrNull)
+		    startDateOfOperations.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.StartDateOfOperations, w => w.DateOrNull)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
-			    .AddBinding(v => v.PeriodOfOperationsVisible, w => w.Visible)
+			    .AddBinding(v => v.StartDateOfOperationsVisible, w => w.Visible)
 			    .InitializeFromSource();
 			    
 		    

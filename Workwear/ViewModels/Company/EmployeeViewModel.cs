@@ -347,8 +347,7 @@ namespace Workwear.ViewModels.Company
 
 		public bool IsDocNumberInIssueSign => baseParameters.IsDocNumberInIssueSign;
 		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
-		public DateTime? StartDate => baseParameters.StartDate;
-		public DateTime? EndDate => baseParameters.EndDate;
+		public DateTime? StartDateOfOperations => baseParameters.StartDateOfOperations;
 
 		#region CardUid
 		public virtual string CardUid {
@@ -660,8 +659,6 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
-					{"startDate", StartDate},
-					{"endDate", EndDate},
 				}
 			};
 

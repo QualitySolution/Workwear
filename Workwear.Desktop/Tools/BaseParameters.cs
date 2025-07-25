@@ -104,20 +104,12 @@ namespace Workwear.Tools
 		}
 
 		/// <summary>
-		/// Начальная дата периода для отображения на оборотной стороне карточки сотрудника.
+		/// Дата, с которой будет отображение на оборотной стороне карточки сотрудника.
 		/// </summary>
-		public virtual DateTime? StartDate {
-			get => Dynamic.StartDate(typeof(DateTime?));
-			set => Dynamic[nameof(StartDate)] = value;
+		public virtual DateTime? StartDateOfOperations {
+			get => Dynamic.StartDateOfOperations(typeof(DateTime?));
+			set => Dynamic[nameof(StartDateOfOperations)] = value;
 		}
-		/// <summary>
-		/// Конечная дата периода для отображения на оборотной стороне карточки сотрудника.
-		/// </summary>
-		public virtual DateTime? EndDate {
-			get => Dynamic.EndDate(typeof(DateTime?));
-			set => Dynamic[nameof(EndDate)] = value;
-		}
-		
 		/// <summary>
 		/// Дата запрета редактирования документов.
 		/// </summary>

@@ -9071,11 +9071,16 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.Widgets.yDatePeriodPicker" id="yperiodOfOperations">
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="startDateOfOperations">
                         <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, с которой будут отображаться операции на оборотной стороне карточки сотрудника</property>
                         <property name="Events">ButtonPressMask</property>
-                        <property name="StartDate">0</property>
-                        <property name="EndDate">0</property>
+                        <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
+                        <property name="HideButtonClearDate">False</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">10</property>
@@ -9341,7 +9346,7 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelperiodOfOperations">
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelstartDateOfOperations">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
                         <property name="LabelProp" translatable="yes">Отображать на оборотной стороне карточки сотрудника с даты: </property>

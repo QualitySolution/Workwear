@@ -202,7 +202,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportSupply:
 				case WorkwearFeature.StockForecasting:
 				case WorkwearFeature.Warehouses:
-				case WorkwearFeature.PeriodOfOperations:
+				case WorkwearFeature.StartDateOfOperations:
 					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
 				// Платные функции предприятия
 				case WorkwearFeature.IdentityCards:
@@ -305,8 +305,8 @@ namespace Workwear.Tools.Features
 		Exchange1C,
 		[Display(Name = "Прогнозирование запасов")]
 		StockForecasting,
-		[Display(Name = "Период для оборотной карточки сотрудника")]
-		PeriodOfOperations,
+		[Display(Name = "Дата, с которой будут отображаться операции на оборотной стороне карточки сотрудника")]
+		StartDateOfOperations,
 		#region Отчеты
 		[Display(Name = "Отчет Справка по складским операциям")]
 		ReportStockOperations,
