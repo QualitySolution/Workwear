@@ -150,15 +150,28 @@ namespace Workwear.Domain.Regulations
 					return String.Empty;
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
 					case NormPeriodType.Month:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
 					case NormPeriodType.Shift:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+						return PeriodCount + " " + PeriodText;
 					case NormPeriodType.Wearout:
 						return "До износа";
 					case NormPeriodType.Duty:
 						return "Дежурный";
+					default:
+						return String.Empty;
+				}
+			}
+		}
+
+		public virtual string PeriodText {
+			get {
+				switch(NormPeriod) {
+					case NormPeriodType.Year:
+						return NumberToTextRus.FormatCase(PeriodCount, "год", "года", "лет");
+					case NormPeriodType.Month:
+						return NumberToTextRus.FormatCase(PeriodCount, "месяц", "месяца", "месяцев");
+					case NormPeriodType.Shift:
+						return NumberToTextRus.FormatCase(PeriodCount, "смена", "смены", "смен");
 					default:
 						return String.Empty;
 				}

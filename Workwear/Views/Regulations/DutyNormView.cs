@@ -47,11 +47,13 @@ namespace Workwear.Views.Regulations {
 					.AddNumericRenderer(i => i.Amount).WidthChars(5).Editing().Adjustment(new Gtk.Adjustment(1, 1, 65535, 1, 10, 10))
 					.AddTextRenderer(i => i.AmountUnitText(i.Amount))
 				.AddColumn("Период").Resizable()
-					.AddNumericRenderer(i => i.PeriodCount).WidthChars(3).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
+					.AddNumericRenderer(i => i.PeriodCount).WidthChars(5).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 						.AddSetter((c, n) => c.Visible = n.NormPeriod != DutyNormPeriodType.Wearout)
-					.AddEnumRenderer(i => i.NormPeriod)
-						.AddSetter((c,n) => c.Text = n.PeriodText )
-						.Editing()
+					.AddEnumRenderer(i => i.NormPeriod).Editing()
+					.AddSetter((c, n) => {
+						c.Text = n.PeriodText;
+						c.WidthChars = 8;
+						c.Xalign = 1.0f; })
 				.AddColumn("Числится").Resizable()
 					.AddTextRenderer(i => i.Issued(DateTime.Now).ToString())
 					.AddSetter((w, i) => w.Foreground = i.AmountColor)
