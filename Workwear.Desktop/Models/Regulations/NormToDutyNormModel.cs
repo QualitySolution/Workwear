@@ -22,6 +22,7 @@ namespace Workwear.Models.Regulations {
 			newDutyNorm.DateTo = norm.DateTo;
 			newDutyNorm.ResponsibleEmployee = employee;
 			newDutyNorm.Comment = norm.Comment;
+			newDutyNorm.Subdivision = employee.Subdivision;
 			foreach(var item in norm.Items) {
 				newDutyNorm.Items.Add(CopyNormItems(newDutyNorm, item));
 			}
