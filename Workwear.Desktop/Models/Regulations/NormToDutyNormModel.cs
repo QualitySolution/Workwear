@@ -5,26 +5,24 @@ using Workwear.Domain.Regulations;
 
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
-		private readonly UnitOfWorkProvider unitOfWorkProvider;
+		public virtual void CopyDataFromNorm(int normId, int employeeId) {
+			DutyNorm newDutyNorm = new DutyNorm();
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
+				var norm = uow.GetById<Norm>(normId);
+				var employee = uow.GetById<EmployeeCard>(employeeId);
+				newDutyNorm.Name = norm.Name != null ? $"{norm.Name} ({employee.ShortName})" : $"Дежурная ({employee.ShortName})";
+				newDutyNorm.ResponsibleEmployee = employee;
+				newDutyNorm.DateFrom = norm.DateFrom;
+				newDutyNorm.DateTo = norm.DateTo;
+				newDutyNorm.Comment = norm.Comment ?? "";
+				newDutyNorm.Subdivision = employee.Subdivision;
+				uow.Save(newDutyNorm);
 
-		public NormToDutyNormModel(
-			UnitOfWorkProvider unitOfWorkProvider = null) {
-			this.unitOfWorkProvider = unitOfWorkProvider;
-		}
-		
-		#region Helpers
-		private IUnitOfWork UoW => unitOfWorkProvider?.UoW;
-		#endregion
-
-		public virtual void CopyDataFromNorm(DutyNorm newDutyNorm, Norm norm, EmployeeCard employee) {
-			newDutyNorm.Name = norm.Name;
-			newDutyNorm.DateFrom = norm.DateFrom;
-			newDutyNorm.DateTo = norm.DateTo;
-			newDutyNorm.ResponsibleEmployee = employee;
-			newDutyNorm.Comment = norm.Comment;
-			newDutyNorm.Subdivision = employee.Subdivision;
-			foreach(var item in norm.Items) {
-				newDutyNorm.Items.Add(CopyNormItems(newDutyNorm, item));
+				foreach(var item in norm.Items) {
+					var dutyNormItem = CopyNormItems(newDutyNorm, item);
+					uow.Save(dutyNormItem);
+				}
+				uow.Commit();
 			}
 		}
 
@@ -55,6 +53,10 @@ namespace Workwear.Models.Regulations {
 			newDutyNormItem.Graph = new IssueGraph();
 			
 			return newDutyNormItem;
+		}
+		
+		public virtual void СopyEmployeeIssueOperations (DutyNorm newDutyNorm, Norm norm) {
+			
 		}
 	}
 }

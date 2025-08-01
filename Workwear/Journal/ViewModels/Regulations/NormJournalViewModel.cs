@@ -20,6 +20,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
@@ -29,14 +30,24 @@ namespace workwear.Journal.ViewModels.Regulations
 	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>, IDialogDocumentation
 	{
 		private readonly ILifetimeScope autofacScope;
+		private readonly NormToDutyNormModel normToDutyNormModel;
 		public NormFilterViewModel Filter { get; private set; }
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norms");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Norm));
 		#endregion
-		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NormJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
+			NormToDutyNormModel normToDutyNormModel,
+			IDeleteEntityService deleteEntityService = null,
+			ICurrentPermissionService currentPermissionService = null) 
+			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
 			UseSlider = false;
 			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
@@ -140,6 +151,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
 				(arg) => true,
 				UpdateWearItems));
+			PopupActionsList.Add(new JournalAction("Перенести норму и выдачи в дежурные", (arg)=>arg.Length==1, (arg)=>true, TransformToDutyNorm));
 		}
 
 		private void CopyNorm(object[] nodes)
@@ -185,6 +197,16 @@ namespace workwear.Journal.ViewModels.Regulations
 				localUow.Commit();
 			}
 			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
+		}
+
+		private void TransformToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int normId = (nodes[0] as NormJournalNode).Id;
+			var norm = UoW.GetById<Norm>(normId);
+			foreach(var employee in norm.Employees) {
+				normToDutyNormModel.CopyDataFromNorm(normId, employee.Id);
+			}
 		}
 		#endregion
 	}
