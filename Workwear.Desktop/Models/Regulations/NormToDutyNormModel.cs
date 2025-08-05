@@ -9,12 +9,15 @@ using Workwear.Domain.Regulations;
 
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
+		private Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
+		
 		public virtual void CopyDataFromNorm(int normId, int employeeId) {
 			DutyNorm newDutyNorm = new DutyNorm();
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
 				var norm = uow.GetById<Norm>(normId);
 				var employee = uow.GetById<EmployeeCard>(employeeId);
 				var itemIds = norm.Items.Select(i => i.Id).ToArray();
+				
 				newDutyNorm.Name = norm.Name != null ? $"{norm.Name} ({employee.ShortName})" : $"Дежурная ({employee.ShortName})";
 				newDutyNorm.ResponsibleEmployee = employee;
 				newDutyNorm.DateFrom = norm.DateFrom;
@@ -22,27 +25,32 @@ namespace Workwear.Models.Regulations {
 				newDutyNorm.Comment = norm.Comment ?? "";
 				newDutyNorm.Subdivision = employee.Subdivision;
 				uow.Save(newDutyNorm);
-
+				
 				foreach(var item in norm.Items) {
 					var employeeCardItem = uow.Session
 						.Query<EmployeeCardItem>()
 						.Where(x => x.EmployeeCard.Id == employeeId)
 						.FirstOrDefault(x => x.ActiveNormItem.Id == item.Id);
-					var dutyNormItem = CopyNormItems(newDutyNorm, item, employeeCardItem);
+					
+					var dutyNormItem = CopyNormItem(newDutyNorm, item, employeeCardItem);
 					uow.Save(dutyNormItem);
-				}
-
-				var employeeIssueOperations = GetOperationsForEmployeeWithNormItem(employeeId, itemIds, uow);
-				foreach(var op in employeeIssueOperations) {
-					var dutyNormIssueOperation = СopyEmployeeIssueOperations(newDutyNorm, op);
-					uow.Save(dutyNormIssueOperation);
+					if(!relevantItemsIds.ContainsKey((employee.Id, item.Id)))
+						relevantItemsIds.Add((employee.Id, item.Id), dutyNormItem);
 				}
 				
+				var employeeIssueOperations = GetOperationsForEmployeeWithNormItems(employeeId, itemIds, uow);
+				foreach(var op in employeeIssueOperations) {
+					DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation{
+						DutyNorm = newDutyNorm
+					};
+					СopyEmployeeIssueOperation(op, dutyNormIssueOperation);
+					uow.Save(dutyNormIssueOperation);
+				}
 				uow.Commit();
 			}
 		}
 
-		public virtual DutyNormItem CopyNormItems(DutyNorm newDutyNorm, NormItem normItem, EmployeeCardItem employeeCardItem) {
+		public virtual DutyNormItem CopyNormItem(DutyNorm newDutyNorm, NormItem normItem, EmployeeCardItem employeeCardItem) {
 			DutyNormItem newDutyNormItem = new DutyNormItem();
 			
 			newDutyNormItem.DutyNorm = newDutyNorm;
@@ -72,21 +80,19 @@ namespace Workwear.Models.Regulations {
 			return newDutyNormItem;
 		}
 		
-		public virtual DutyNormIssueOperation СopyEmployeeIssueOperations (DutyNorm newDutyNorm, EmployeeIssueOperation issueOperation) {
-			DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation();
-
-			dutyNormIssueOperation.DutyNorm = newDutyNorm;
+		public virtual void СopyEmployeeIssueOperation (EmployeeIssueOperation issueOperation, DutyNormIssueOperation dutyNormIssueOperation) 
+		{
+			dutyNormIssueOperation.DutyNormItem = relevantItemsIds[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
 			dutyNormIssueOperation.OperationTime = issueOperation.OperationTime;
 			dutyNormIssueOperation.Nomenclature = issueOperation.Nomenclature;
 			dutyNormIssueOperation.ProtectionTools = issueOperation.ProtectionTools;
 			dutyNormIssueOperation.WearPercent = issueOperation.WearPercent;
 			dutyNormIssueOperation.AutoWriteoffDate = issueOperation.AutoWriteoffDate;
 			dutyNormIssueOperation.Issued = issueOperation.Issued;
-			
-			return dutyNormIssueOperation;
+			dutyNormIssueOperation.WarehouseOperation = issueOperation.WarehouseOperation;
 		}
 
-		public IList<EmployeeIssueOperation> GetOperationsForEmployeeWithNormItem(int employeeId, int[] normItemsIds, IUnitOfWork uow) {
+		public IList<EmployeeIssueOperation> GetOperationsForEmployeeWithNormItems(int employeeId, int[] normItemsIds, IUnitOfWork uow) {
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.NormItem.Id.IsIn(normItemsIds))
 				.Where(o => o.Employee.Id == employeeId)
