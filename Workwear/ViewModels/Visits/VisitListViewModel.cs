@@ -32,13 +32,11 @@ namespace Workwear.ViewModels.Visits {
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			
 			Title = "Посещения склада";
-			IntervalMinutes = baseParameters.VisitInterval;
-			VisitIntervalHourStart = baseParameters.VisitIntervalHourStart;
-			VisitIntervalHourEnd = baseParameters.VisitIntervalHourEnd;
-			WorkDaysOfWeak = baseParameters.VisitIntervalWorkDays;
 			
 			WorkDays = UoW.GetAll<WorkDay>().ToDictionary(x => x.Date, x => x.IsWorkday);
+			DaysSchedule = UoW.GetAll<DaySchedule>().ToList();
 
+			//Для обновления вюшки при действиях с документами
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Expense>();
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Return>();
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Writeoff>();
@@ -55,11 +53,9 @@ namespace Workwear.ViewModels.Visits {
 		private readonly IEntityChangeWatcher changeWatcher;
 		public DateTime Day { get; set; } = DateTime.Now.Date;
 		public string PeriodString => Day.Date.ToShortDateString();
-		public int IntervalMinutes { get; }
-		public int VisitIntervalHourStart { get; }
-		public int VisitIntervalHourEnd { get; }
-		public int[] WorkDaysOfWeak { get; }
 		public Dictionary<DateTime, bool> WorkDays { get; }
+		public List<DaySchedule> DaysSchedule { get;}
+		//Коллекция отображаемых номерков
 		public SortedDictionary<DateTime, VisitListWidgetItem> Items { get; set; } = new SortedDictionary<DateTime, VisitListWidgetItem>();
 
 		//Для синхронизации с изменениями внесёнными в базу при открытом диалоге.
@@ -81,6 +77,7 @@ namespace Workwear.ViewModels.Visits {
 	
 		private void loadData() {
 
+			//Очистка отображаемой коллекции
 			foreach(var v in Items.Where(x => x.Value.Visit != null)) 
 				UoW.Session.Evict(v.Value.Visit);
 			Items.Clear();
@@ -101,30 +98,26 @@ namespace Workwear.ViewModels.Visits {
 				foreach(var time in MakeSchedule(Day).Where(x => !Items.ContainsKey(x)))
 					Items.Add(time, new VisitListWidgetItem(time));
 			
-			//Помечаем начало дня
-			if(Items.Any())
-				Items.First().Value.FirstOfDay = true; 
-			
 			OnPropertyChanged(nameof(Items));
 		}
 		/// <summary>
 		/// Создаёт график. Список DataTime начла возможных записей.
-		/// Корректно считает ночные преиоды Например 21:00 - 6:00
 		/// </summary>
-		private List<DateTime> MakeSchedule(DateTime Day) {
-			DateTime start = Day.Date.AddHours(VisitIntervalHourStart);
-			DateTime end = (VisitIntervalHourStart < VisitIntervalHourEnd ? Day : Day.AddDays(1)).Date.AddHours(VisitIntervalHourEnd);
-			
+		private List<DateTime> MakeSchedule(DateTime day) {
 			List<DateTime> result = new List<DateTime>();
-			for(DateTime time = start; time < end; time = time.AddMinutes(IntervalMinutes)) 
+			foreach(var daySchedule in DaysSchedule.Where(ds => ds.DayOfWeak == (int)day.DayOfWeek % 7)) {
+				DateTime start = day.Date + daySchedule.Start; 
+				DateTime end = day.Date + daySchedule.End;
+			for(DateTime time = start; time < end; time = time.AddMinutes(daySchedule.Inteval)) 
 				result.Add(time);
+			}
 			return result;
 		}
 
 		private bool IsWorkDay(DateTime day) {
 			if(WorkDays.ContainsKey(day.Date) && WorkDays[day.Date])
 				return true;
-			if(WorkDaysOfWeak.Contains((int)day.DayOfWeek) && (!WorkDays.ContainsKey(day.Date) || WorkDays[day.Date]))
+			if(DaysSchedule.Any(d => d.DayOfWeak == (int)day.DayOfWeek % 7))
 				return true;
 			return false;
 		}
@@ -217,7 +210,6 @@ namespace Workwear.ViewModels.Visits {
 		
 		public EmployeeCard Employee  { get; }
 		public string FIO => Employee?.FullName ?? "";
-
-		public bool FirstOfDay { get; set; }
+		
 	}
 }

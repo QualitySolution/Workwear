@@ -110,34 +110,6 @@ namespace Workwear.Tools
 			get => Dynamic.EditLockDate(typeof(DateTime?));
 			set => Dynamic[nameof(EditLockDate)] = value;
 		}
-		
-		/// <summary>
-		/// Интервал записей на посещение склада (минут)
-		/// </summary>
-		public virtual int VisitInterval {
-			get => Dynamic.VisitInterval(typeof(int)) ?? 15;
-		}
-		/// <summary>
-		/// Начало приёма склада (час)
-		/// </summary>
-		public virtual int VisitIntervalHourStart {
-			get => Dynamic.VisitIntervalHourStart(typeof(int)) ?? 8;
-		}
-		/// <summary>
-		/// Конец приёма склада (час)
-		/// </summary>
-		public virtual int VisitIntervalHourEnd {
-			get => Dynamic.VisitIntervalHourEnd(typeof(int)) ?? 17;
-		}
-		/// <summary>
-		/// Рабочие дни склада (для посещений) 
-		/// </summary>
-		public virtual int[] VisitIntervalWorkDays {
-			get => (Dynamic.VisitIntervalWorkDays(typeof(string)) as string ?? "12345")
-				.Where(char.IsDigit)  // Берем только цифровые символы
-				.Select(c => int.Parse(c.ToString()))  // Каждый символ преобразуем в число
-				.ToArray();
-		}
 		#endregion
 	}
 	public enum AnswerOptions {
