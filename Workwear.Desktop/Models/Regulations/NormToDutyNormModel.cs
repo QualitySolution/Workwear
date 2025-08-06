@@ -30,14 +30,8 @@ namespace Workwear.Models.Regulations {
 				uow.Save(newDutyNorm);
 				
 				foreach(var item in norm.Items) {
-					var nextIssue = uow.Session
-						.Query<EmployeeCardItem>()
-						.Where(x => x.EmployeeCard.Id == employeeId)
-						.Where(x => x.ActiveNormItem.Id == item.Id)
-						.Select(x=>x.NextIssue)
-						.FirstOrDefault();
-					
-					var dutyNormItem = CopyNormItem(newDutyNorm, item, nextIssue);
+					var nextIssue = GetNextIssue(employeeId, item, uow);
+					var dutyNormItem = CreateDutyNormItem(newDutyNorm, item, nextIssue);
 					uow.Save(dutyNormItem);
 					if(!relevantItemsIds.ContainsKey((employee.Id, item.Id)))
 						relevantItemsIds.Add((employee.Id, item.Id), dutyNormItem);
@@ -80,7 +74,18 @@ namespace Workwear.Models.Regulations {
 			}
 		}
 
-		public virtual DutyNormItem CopyNormItem(DutyNorm newDutyNorm, NormItem normItem, DateTime? nextIssue) {
+		public DateTime? GetNextIssue(int employeeId, NormItem item, IUnitOfWork uow) {
+			var nextIssue = uow.Session
+				.Query<EmployeeCardItem>()
+				.Where(x => x.EmployeeCard.Id == employeeId)
+				.Where(x => x.ActiveNormItem.Id == item.Id)
+				.Select(x=>x.NextIssue)
+				.FirstOrDefault();
+			return nextIssue;
+		}
+		
+
+		public virtual DutyNormItem CreateDutyNormItem(DutyNorm newDutyNorm, NormItem normItem, DateTime? nextIssue) {
 			DutyNormItem newDutyNormItem = new DutyNormItem();
 			
 			newDutyNormItem.DutyNorm = newDutyNorm;
