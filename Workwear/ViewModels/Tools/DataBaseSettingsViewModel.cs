@@ -17,6 +17,7 @@ namespace Workwear.ViewModels.Tools
 		#region Ограниения версии
 		public bool CollectiveIssueWithPersonalVisible { get; }
 		public bool EditLockDateVisible { get; }
+		public bool MarkingVisible { get; }
 		public bool CanEdit { get; }
 		#endregion
 		
@@ -33,6 +34,7 @@ namespace Workwear.ViewModels.Tools
 			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			EditLockDate = baseParameters.EditLockDate;
 			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
+			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
@@ -70,12 +72,14 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
+		public MarkingTypes MarkingType { get; set; }
 		public string UsedCurrency { get; set; }
 
 		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		public bool IsDocNumberInIssueSign{get;set;}
 		public bool IsDocNumberInReturnSign { get; set; }
+
 		#endregion
 
 		public override bool Save()

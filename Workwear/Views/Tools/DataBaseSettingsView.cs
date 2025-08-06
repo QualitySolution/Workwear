@@ -51,7 +51,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.ExtendPeriod, w => w.SelectedItem)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
-		   
+
+		    Combo_markingType.Visible = ylabel_markingType.Visible = ViewModel.MarkingVisible;
+		    Combo_markingType.ItemsEnum = typeof(MarkingTypes);
+		    Combo_markingType.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.MarkingType, w => w.SelectedItem)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		    
 		    yentryCurrency.Binding.AddSource(ViewModel)
 			    .AddBinding(v => v.UsedCurrency, w => w.Text)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)

@@ -138,8 +138,18 @@ namespace Workwear.Tools
 				.Select(c => int.Parse(c.ToString()))  // Каждый символ преобразуем в число
 				.ToArray();
 		}
+
+		/// <summary>
+		/// Тип используемой маркировки
+		/// </summary>
+		public virtual MarkingTypes MarkingType {
+			get => Dynamic.MarkingType(typeof(MarkingTypes)) ?? MarkingTypes.EAN13;
+			set => Dynamic[nameof(MarkingType)] = value;
+		}
+
 		#endregion
 	}
+	
 	public enum AnswerOptions {
 		[Display(Name = "Спрашивать")]
 		Ask,
@@ -147,6 +157,13 @@ namespace Workwear.Tools
 		Yes,
 		[Display(Name = "Всегда нет")]
 		No
+	}
+	
+	public enum MarkingTypes {
+		[Display(Name = "Линейный EAN-13")]
+		EAN13,
+		[Display(Name ="RFID EPC 96bit ")]
+		EPC96 
 	}
 	
 }
