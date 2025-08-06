@@ -5738,6 +5738,23 @@
               </packing>
             </child>
             <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ybutton1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Дежурная</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnButtonDutyNormClicked" />
+              </widget>
+              <packing>
+                <property name="PackType">End</property>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckArchival">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
@@ -5748,7 +5765,7 @@
               </widget>
               <packing>
                 <property name="PackType">End</property>
-                <property name="Position">2</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
