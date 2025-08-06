@@ -38,12 +38,14 @@ namespace Workwear.Models.Regulations {
 				}
 				
 				var employeeIssueOperations = GetOperationsForEmployeeWithNormItems(employeeId, itemIds, uow);
+				IList<DutyNormIssueOperation> dutyNormIssueOperations = new List<DutyNormIssueOperation>();
 				foreach(var op in employeeIssueOperations) {
 					DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation{
 						DutyNorm = newDutyNorm
 					};
-					СopyEmployeeIssueOperation(op, dutyNormIssueOperation);
+					CreateDutyNormIssueOperation(op, dutyNormIssueOperation);
 					uow.Save(dutyNormIssueOperation);
+					dutyNormIssueOperations.Add(dutyNormIssueOperation);
 				}
 				
 
@@ -56,14 +58,13 @@ namespace Workwear.Models.Regulations {
 					uow.Save(expenseDutyNormDoc);
 					
 					foreach(var item in expDoc.Items) {
+						var dutyNormIssueOperation = dutyNormIssueOperations.Where(x=>x.DutyNorm == expenseDutyNormDoc.DutyNorm)
+							.FirstOrDefault(x=>x.WarehouseOperation == item.WarehouseOperation);
 						ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
 							Document = expenseDutyNormDoc,
-							WarehouseOperation = item.WarehouseOperation
+							WarehouseOperation = item.WarehouseOperation,
+							Operation = dutyNormIssueOperation
 						};
-						var dutyNormIssueOperation = uow.Session.Query<DutyNormIssueOperation>()
-							.Where(x => x.DutyNorm == expenseDutyNormDoc.DutyNorm)
-							.FirstOrDefault(x=>x.WarehouseOperation == item.WarehouseOperation);
-						newExpenseDutyNormItem.Operation = dutyNormIssueOperation;
 						uow.Save(newExpenseDutyNormItem);
 					}
 					uow.Save(expenseDutyNormDoc);
@@ -115,7 +116,7 @@ namespace Workwear.Models.Regulations {
 			return newDutyNormItem;
 		}
 		
-		public virtual void СopyEmployeeIssueOperation (EmployeeIssueOperation issueOperation, DutyNormIssueOperation dutyNormIssueOperation) 
+		public virtual void CreateDutyNormIssueOperation (EmployeeIssueOperation issueOperation, DutyNormIssueOperation dutyNormIssueOperation) 
 		{
 			dutyNormIssueOperation.DutyNormItem = relevantItemsIds[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
 			dutyNormIssueOperation.OperationTime = issueOperation.OperationTime;
