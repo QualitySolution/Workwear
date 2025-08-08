@@ -154,7 +154,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				selected => ChangeState());
 			NodeActionsList.Add(changeStateAction);
 			
-			var cancelAction = new JournalAction("Отменить получение",
+			var cancelAction = new JournalAction("Удалить заявку",
 				selected => selected.FirstOrDefault() != null,
 				selected => true,
 				selected => RemoveClaim(selected.Cast<ClaimsJournalNode>()));
