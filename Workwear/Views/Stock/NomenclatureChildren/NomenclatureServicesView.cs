@@ -14,7 +14,7 @@ namespace Workwear.Views.Stock.NomenclatureChildren {
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<Service>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
 				.AddColumn("Название").AddTextRenderer(p => p.Name).WrapWidth(900)
-				.AddColumn("Cтоимость").AddReadOnlyTextRenderer(n => CurrencyWorks.GetShortCurrencyString(n.Cost ?? 0))
+				.AddColumn("Cтоимость").AddReadOnlyTextRenderer(n => CurrencyWorks.GetShortCurrencyString(n.Cost))
 				.AddColumn("Комментарий").AddTextRenderer(p => p.Comment)
 				.Finish();
 			ytreeItems.ItemsDataSource = ViewModel.ObservableServices;
