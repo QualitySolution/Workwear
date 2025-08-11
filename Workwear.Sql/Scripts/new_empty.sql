@@ -1687,6 +1687,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
@@ -1702,6 +1703,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC),
   INDEX `fk_issuance_sheet_items_9_idx` (`height_id` ASC),
   INDEX `fk_issuance_sheet_items_8_idx` (`size_id` ASC),
+  INDEX `fk_issuance_sheet_items_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_issuance_sheet_items_1`
     FOREIGN KEY (`issuance_sheet_id`)
     REFERENCES `issuance_sheet` (`id`)
@@ -1722,6 +1724,11 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_5`
     FOREIGN KEY (`stock_expense_detail_id`)
     REFERENCES `stock_expense_detail` (`id`)
