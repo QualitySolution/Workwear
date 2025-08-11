@@ -8,11 +8,14 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		private Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
+
+		private Dictionary<int, ExpenseDutyNormItem> overwritingIds = new Dictionary<int, ExpenseDutyNormItem>();
 		
 		public virtual void CopyDataFromNorm(int normId, int employeeId) {
 			DutyNorm newDutyNorm = new DutyNorm();
@@ -67,9 +70,13 @@ namespace Workwear.Models.Regulations {
 							Operation = dutyNormIssueOperation
 						};
 						uow.Save(newExpenseDutyNormItem);
+						
+						overwritingIds.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
 					}
 					uow.Save(expenseDutyNormDoc);
-
+					
+					OverWriteIssuanceSheet(expDoc, uow);
+					
 				}
 
 				foreach(var colExpDoc in allCollectiveExpenseDocs) {
@@ -208,5 +215,36 @@ namespace Workwear.Models.Regulations {
 			expenseDutyNormDoc.Comment = collectiveExpenseDoc.Comment;
 
 		}
+		
+		// Перенос в ведомости
+
+		public virtual IEnumerable<IssuanceSheetItem> GetIssuanceSheetItems(Expense expenseDoc, IUnitOfWork uow) {
+			ExpenseItem expenseItemAlias = null;
+			Expense expenseAlias = null;
+			IssuanceSheetItem issuanceSheetItemAlias = null;
+			var query = uow.Session.QueryOver<IssuanceSheetItem>(()=>issuanceSheetItemAlias)
+				.JoinAlias(x=>x.ExpenseItem, () => expenseItemAlias)
+				.JoinAlias(()=>expenseItemAlias.ExpenseDoc, () => expenseAlias)
+				.Where(() => expenseAlias.Id == expenseDoc.Id)
+				.List()
+				.Distinct();
+			return query;
+		}
+
+		public virtual void OverWriteIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
+			
+			IEnumerable<IssuanceSheetItem> issuanceSheetItems = GetIssuanceSheetItems(expenseDoc, uow).ToArray();
+
+			foreach(var item in issuanceSheetItems)
+				item.ExpenseItem = null;
+			
+			if(issuanceSheetItems.Count() == expenseDoc.Items.Count()) {
+				foreach(var item in issuanceSheetItems)
+					item.ExpenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
+
+			}
+
+		}
+		
 }
 }
