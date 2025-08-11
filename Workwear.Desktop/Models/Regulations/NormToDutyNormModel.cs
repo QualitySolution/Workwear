@@ -47,9 +47,10 @@ namespace Workwear.Models.Regulations {
 					uow.Save(dutyNormIssueOperation);
 					dutyNormIssueOperations.Add(dutyNormIssueOperation);
 				}
-				
 
-				var allExpenseDocs = GetExpenseDocs(employeeIssueOperations.Select(x=>x.Id).ToArray(),uow);
+				var employeeIssueOperationsIds = employeeIssueOperations.Select(x => x.Id).ToArray();
+				var allExpenseDocs = GetExpenseDocs(employeeIssueOperationsIds, uow);
+				var allCollectiveExpenseDocs = GetCollectiveExpenseDocs(employeeIssueOperationsIds, uow);
 				foreach(var expDoc in allExpenseDocs) {
 					ExpenseDutyNorm expenseDutyNormDoc = new ExpenseDutyNorm {
 						DutyNorm = newDutyNorm
@@ -68,7 +69,28 @@ namespace Workwear.Models.Regulations {
 						uow.Save(newExpenseDutyNormItem);
 					}
 					uow.Save(expenseDutyNormDoc);
-					
+
+				}
+
+				foreach(var colExpDoc in allCollectiveExpenseDocs) {
+					ExpenseDutyNorm expenseDutyNormDoc = new ExpenseDutyNorm {
+						DutyNorm = newDutyNorm
+					};
+					CreateExpenseDutyNormDoc(expenseDutyNormDoc, colExpDoc);
+					uow.Save(expenseDutyNormDoc);
+
+					foreach(var item in colExpDoc.Items) {
+						var dutyNormIssueOperation = dutyNormIssueOperations.Where(x => x.DutyNorm == expenseDutyNormDoc.DutyNorm)
+							.FirstOrDefault(x => x.WarehouseOperation == item.WarehouseOperation);
+						ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
+							Document = expenseDutyNormDoc,
+							WarehouseOperation = item.WarehouseOperation,
+							Operation = dutyNormIssueOperation
+						};
+						uow.Save(newExpenseDutyNormItem);
+					}
+
+					uow.Save(expenseDutyNormDoc);
 				}
 				
 				uow.Commit();
@@ -162,26 +184,29 @@ namespace Workwear.Models.Regulations {
 			
 		}
 		// Для коллективной выдачи
-		
-		/*public IList<CollectiveExpense> GetCollectiveExpenseDocs(Norm norm, IUnitOfWork uow) {
-			
+
+		public IEnumerable<CollectiveExpense> GetCollectiveExpenseDocs(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			CollectiveExpense collectiveExpenseAlias = null;
 			CollectiveExpenseItem collectiveExpenseItemAlias = null;
-			EmployeeIssueOperation employeeIssueOperationAlias = null;
-			Norm normAlias = null;
-			NormItem normItemAlias = null;
 
-			var allCollectiveExpenseDocsForNorm = uow.Session.QueryOver<CollectiveExpense>(() => collectiveExpenseAlias)
+			var collectiveExpenseDocs = uow.Session.QueryOver<CollectiveExpense>(() => collectiveExpenseAlias)
 				.JoinAlias(x => x.Items, () => collectiveExpenseItemAlias, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => collectiveExpenseItemAlias,
-					() => collectiveExpenseItemAlias.EmployeeIssueOperation.Id == employeeIssueOperationAlias.Id)
-				.JoinAlias(() => employeeIssueOperationAlias.NormItem, () => normItemAlias)
-				.JoinEntityAlias(() => normItemAlias, () => normItemAlias.Norm.Id == normAlias.Id)
-				.Where(() => normAlias.Id == norm.Id)
-				.List();
+				.Where(() => collectiveExpenseItemAlias.EmployeeIssueOperation.Id.IsIn(employeeIssueOperationsIds))
+				.List()
+				.Distinct();
 
-			return allCollectiveExpenseDocsForNorm;
+			return collectiveExpenseDocs;
 
-		}*/ 
-	}
+		}
+
+		public virtual void CreateExpenseDutyNormDoc(ExpenseDutyNorm expenseDutyNormDoc, CollectiveExpense collectiveExpenseDoc) {
+
+			expenseDutyNormDoc.ResponsibleEmployee = collectiveExpenseDoc.TransferAgent;
+			expenseDutyNormDoc.Warehouse = collectiveExpenseDoc.Warehouse;
+			expenseDutyNormDoc.CreationDate = DateTime.Now;
+			expenseDutyNormDoc.Date = collectiveExpenseDoc.Date;
+			expenseDutyNormDoc.Comment = collectiveExpenseDoc.Comment;
+
+		}
+}
 }
