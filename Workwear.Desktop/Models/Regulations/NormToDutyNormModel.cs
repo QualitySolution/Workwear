@@ -14,8 +14,10 @@ using Workwear.Domain.Stock.Documents;
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		private Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
-
 		private Dictionary<int, ExpenseDutyNormItem> overwritingIds = new Dictionary<int, ExpenseDutyNormItem>();
+
+		private Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm =
+			new Dictionary<int, DutyNormIssueOperation>();
 		
 		public virtual void CopyDataFromNorm(int normId, int employeeId) {
 			DutyNorm newDutyNorm = new DutyNorm();
@@ -72,6 +74,7 @@ namespace Workwear.Models.Regulations {
 						uow.Save(newExpenseDutyNormItem);
 						
 						overwritingIds.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
+						dutyNormItemsWithOperationIssuedByDutyNorm.Add(newExpenseDutyNormItem.Id, dutyNormIssueOperation);
 					}
 					uow.Save(expenseDutyNormDoc);
 					
@@ -234,16 +237,23 @@ namespace Workwear.Models.Regulations {
 		public virtual void OverWriteIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
 			
 			IEnumerable<IssuanceSheetItem> issuanceSheetItems = GetIssuanceSheetItems(expenseDoc, uow).ToArray();
-
-			foreach(var item in issuanceSheetItems)
-				item.ExpenseItem = null;
 			
 			if(issuanceSheetItems.Count() == expenseDoc.Items.Count()) {
-				foreach(var item in issuanceSheetItems)
-					item.ExpenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
-
+				foreach(var item in issuanceSheetItems) {
+					var expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
+					item.ExpenseDutyNormItem = expenseDutyNormItem;
+					var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
+					item.DutyNormIssueOperation = dutyNormIssueOperation;
+					uow.Save(item);
+				}
+				
 			}
-
+			
+			foreach(var item in issuanceSheetItems) {
+				item.ExpenseItem = null;
+				item.IssueOperation = null;
+				uow.Save(item);
+			}
 		}
 		
 }
