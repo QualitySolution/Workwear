@@ -222,17 +222,11 @@ namespace Workwear.Models.Regulations {
 		
 		// Перенос в ведомости
 
-		public virtual IEnumerable<IssuanceSheetItem> GetIssuanceSheetItems(Expense expenseDoc, IUnitOfWork uow) {
-			ExpenseItem expenseItemAlias = null;
-			Expense expenseAlias = null;
-			IssuanceSheetItem issuanceSheetItemAlias = null;
-			var query = uow.Session.QueryOver<IssuanceSheetItem>(()=>issuanceSheetItemAlias)
-				.JoinAlias(x=>x.ExpenseItem, () => expenseItemAlias)
-				.JoinAlias(()=>expenseItemAlias.ExpenseDoc, () => expenseAlias)
-				.Where(() => expenseAlias.Id == expenseDoc.Id)
-				.List()
-				.Distinct();
-			return query;
+		public virtual IssuanceSheet GetIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
+			var issuanceSheet = uow.Session
+				.Query<IssuanceSheet>()
+				.FirstOrDefault(x => x.Expense.Id == expenseDoc.Id);
+			return issuanceSheet;
 		}
 
 		public virtual IssuanceSheet GetIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
@@ -243,10 +237,11 @@ namespace Workwear.Models.Regulations {
 		}
 
 		public virtual void OverWriteIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
-			
-			IEnumerable<IssuanceSheetItem> issuanceSheetItems = GetIssuanceSheetItems(expenseDoc, uow).ToArray();
-			
-			if(issuanceSheetItems.Count() == expenseDoc.Items.Count()) {
+
+			IssuanceSheet issuanceSheet = GetIssuanceSheet(expenseDoc, uow);
+			var issuanceSheetItems = issuanceSheet.Items.ToList();
+      
+			if(issuanceSheetItems.Count == expenseDoc.Items.Count) {
 				foreach(var item in issuanceSheetItems) {
 					var expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
 					item.ExpenseDutyNormItem = expenseDutyNormItem;
@@ -262,6 +257,9 @@ namespace Workwear.Models.Regulations {
 				item.IssueOperation = null;
 				uow.Save(item);
 			}
+
+			issuanceSheet.Expense = null;
+			uow.Save(issuanceSheet);
 		}
 		
 		public virtual void OverWriteIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
