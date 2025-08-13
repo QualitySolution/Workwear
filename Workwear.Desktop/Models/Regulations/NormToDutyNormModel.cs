@@ -240,16 +240,17 @@ namespace Workwear.Models.Regulations {
 
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(expenseDoc, uow);
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
-      
+			ExpenseDutyNormItem expenseDutyNormItem = null;
 			if(issuanceSheetItems.Count == expenseDoc.Items.Count) {
 				foreach(var item in issuanceSheetItems) {
-					var expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
+					expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
 					item.ExpenseDutyNormItem = expenseDutyNormItem;
 					var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
 					item.DutyNormIssueOperation = dutyNormIssueOperation;
 					uow.Save(item);
 				}
-				
+
+				issuanceSheet.ExpenseDutyNorm = expenseDutyNormItem?.Document;
 			}
 			
 			foreach(var item in issuanceSheetItems) {
