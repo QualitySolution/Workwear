@@ -241,6 +241,8 @@ namespace Workwear.Models.Regulations {
 		public virtual void OverWriteIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
 
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(expenseDoc, uow);
+			if(issuanceSheet == null)
+				return;
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
 			ExpenseDutyNormItem expenseDutyNormItem = null;
 			if(issuanceSheetItems.Count == expenseDoc.Items.Count) {
@@ -268,6 +270,8 @@ namespace Workwear.Models.Regulations {
 		public virtual void OverWriteIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
 
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(collectiveExpenseDoc, uow);
+			if(issuanceSheet == null)
+				return;
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
 			
 			foreach(var item in issuanceSheetItems) {
