@@ -104,6 +104,8 @@ namespace Workwear.Models.Regulations {
 					OverWriteIssuanceSheet(colExpDoc, uow);
 				}
 				
+				OverWriteWriteOffDocs(employeeIssueOperationsIds, uow);
+				
 				uow.Commit();
 			}
 		}
@@ -281,15 +283,27 @@ namespace Workwear.Models.Regulations {
 		
 		public IList<WriteoffItem> GetWriteOffItems(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			var writeOffOperationsIds = uow.Session.Query<EmployeeIssueOperation>()
-				.Where(x => x.IssuedOperation != null && x.IssuedOperation.Id.IsIn(employeeIssueOperationsIds))
+				.Where(x => x.IssuedOperation != null)
+				.Where(x => employeeIssueOperationsIds.Contains(x.IssuedOperation.Id))
 				.Select(x => x.Id)
 				.ToList();
 
 			var writeOffItems = uow.Session.Query<WriteoffItem>()
-				.Where(x => x.EmployeeWriteoffOperation.Id.IsIn(writeOffOperationsIds))
+				.Where(x => writeOffOperationsIds.Contains(x.EmployeeWriteoffOperation.Id))
 				.ToList();
 
 			return writeOffItems;
+		}
+
+		public virtual void OverWriteWriteOffDocs(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+			var writeOffItems = GetWriteOffItems(employeeIssueOperationsIds, uow);
+			foreach(var item in writeOffItems) {
+				var expenseDutyNormItem = overwritingIds[item.EmployeeWriteoffOperation.IssuedOperation.Id];
+				var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
+				item.DutyNormWriteOffOperation = dutyNormIssueOperation;
+				item.EmployeeWriteoffOperation = null;
+				uow.Save(item);
+			}
 		}
 		
 		
