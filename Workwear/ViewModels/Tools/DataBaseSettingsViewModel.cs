@@ -4,6 +4,7 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -46,6 +47,7 @@ namespace Workwear.ViewModels.Tools
 			UsedCurrency = baseParameters.UsedCurrency;
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
+			MarkingType = baseParameters.MarkingType;
 		}
 		
 		#region IDialogDocumentation
@@ -72,7 +74,7 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
-		public MarkingTypes MarkingType { get; set; }
+		public BarcodeTypes MarkingType { get; set; }
 		public string UsedCurrency { get; set; }
 
 		public bool CollectiveIssueWithPersonal { get; set; }
@@ -106,6 +108,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			if(EditLockDate != baseParameters.EditLockDate)
 				baseParameters.EditLockDate = EditLockDate;
+			if(MarkingType != baseParameters.MarkingType)
+				baseParameters.MarkingType = MarkingType;
 			return true;
 		}
 	}

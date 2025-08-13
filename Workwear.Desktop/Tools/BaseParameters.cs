@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using QS.BaseParameters;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Tools
 {
@@ -142,8 +143,8 @@ namespace Workwear.Tools
 		/// <summary>
 		/// Тип используемой маркировки
 		/// </summary>
-		public virtual MarkingTypes MarkingType {
-			get => Dynamic.MarkingType(typeof(MarkingTypes)) ?? MarkingTypes.EAN13;
+		public virtual BarcodeTypes MarkingType {
+			get => Dynamic.MarkingType(typeof(BarcodeTypes)) ?? BarcodeTypes.EAN13;
 			set => Dynamic[nameof(MarkingType)] = value;
 		}
 
@@ -158,12 +159,4 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
-	
-	public enum MarkingTypes {
-		[Display(Name = "Линейный EAN-13")]
-		EAN13,
-		[Display(Name ="RFID EPC 96bit ")]
-		EPC96 
-	}
-	
 }

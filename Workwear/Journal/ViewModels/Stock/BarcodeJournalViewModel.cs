@@ -23,20 +23,25 @@ using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
-	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation
-	{
+	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation {
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
 		#endregion
+		
+		private readonly BaseParameters baseParameters;
+		
 		public BarcodeJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			INavigationManager navigationManager, 
+			INavigationManager navigationManager,
+			BaseParameters baseParameters, 
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			
 			UseSlider = true;
 			VisibleCreateAction = false;
 			
@@ -58,6 +63,7 @@ namespace workwear.Journal.ViewModels.Stock
 			Size heightAlias = null;
 			
 			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
+				.Where(b => b.Type == baseParameters.MarkingType)
 				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
