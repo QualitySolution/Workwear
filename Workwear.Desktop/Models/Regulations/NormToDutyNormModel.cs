@@ -256,5 +256,22 @@ namespace Workwear.Models.Regulations {
 			}
 		}
 		
+		// Перенос списаний
+		
+		public IList<WriteoffItem> GetWriteOffItems(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+			var writeOffOperationsIds = uow.Session.Query<EmployeeIssueOperation>()
+				.Where(x => x.IssuedOperation != null && x.IssuedOperation.Id.IsIn(employeeIssueOperationsIds))
+				.Select(x => x.Id)
+				.ToList();
+
+			var writeOffItems = uow.Session.Query<WriteoffItem>()
+				.Where(x => x.EmployeeWriteoffOperation.Id.IsIn(writeOffOperationsIds))
+				.ToList();
+
+			return writeOffItems;
+		}
+		
+		
+		
 }
 }
