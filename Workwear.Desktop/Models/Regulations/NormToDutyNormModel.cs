@@ -101,6 +101,7 @@ namespace Workwear.Models.Regulations {
 					}
 
 					uow.Save(expenseDutyNormDoc);
+					OverWriteIssuanceSheet(colExpDoc, uow);
 				}
 				
 				uow.Commit();
@@ -234,6 +235,13 @@ namespace Workwear.Models.Regulations {
 			return query;
 		}
 
+		public virtual IssuanceSheet GetIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
+			var issuanceSheet = uow.Session
+				.Query<IssuanceSheet>()
+				.FirstOrDefault(x => x.CollectiveExpense.Id == collectiveExpenseDoc.Id);
+			return issuanceSheet;
+		}
+
 		public virtual void OverWriteIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
 			
 			IEnumerable<IssuanceSheetItem> issuanceSheetItems = GetIssuanceSheetItems(expenseDoc, uow).ToArray();
@@ -254,6 +262,20 @@ namespace Workwear.Models.Regulations {
 				item.IssueOperation = null;
 				uow.Save(item);
 			}
+		}
+		
+		public virtual void OverWriteIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
+
+			IssuanceSheet issuanceSheet = GetIssuanceSheet(collectiveExpenseDoc, uow);
+			var issuanceSheetItems = issuanceSheet.Items.ToList();
+			
+			foreach(var item in issuanceSheetItems) {
+				item.CollectiveExpenseItem = null;
+				item.IssueOperation = null;
+				uow.Save(item);
+			}
+			issuanceSheet.CollectiveExpense = null;
+			uow.Save(issuanceSheet);
 		}
 		
 		// Перенос списаний
