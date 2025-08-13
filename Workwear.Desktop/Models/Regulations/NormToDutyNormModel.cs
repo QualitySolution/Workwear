@@ -104,7 +104,7 @@ namespace Workwear.Models.Regulations {
 					OverWriteIssuanceSheet(colExpDoc, uow);
 				}
 				
-				OverWriteWriteOffDocs(employeeIssueOperationsIds, uow);
+				var writeOffOperationsIds = OverWriteWriteOffDocs(employeeIssueOperationsIds, uow);
 				
 				uow.Commit();
 			}
@@ -299,18 +299,22 @@ namespace Workwear.Models.Regulations {
 			return writeOffItems;
 		}
 
-		public virtual void OverWriteWriteOffDocs(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+		public virtual IList<int> OverWriteWriteOffDocs(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			var writeOffItems = GetWriteOffItems(employeeIssueOperationsIds, uow);
+			var writeOffOperationsIds = writeOffItems
+				.Select(x => x.EmployeeWriteoffOperation.Id)
+				.ToList();
 			foreach(var item in writeOffItems) {
 				var expenseDutyNormItem = overwritingIds[item.EmployeeWriteoffOperation.IssuedOperation.Id];
+				writeOffOperationsIds.Add(item.EmployeeWriteoffOperation.IssuedOperation.Id);
 				var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
 				item.DutyNormWriteOffOperation = dutyNormIssueOperation;
 				item.EmployeeWriteoffOperation = null;
 				uow.Save(item);
 			}
+
+			return writeOffOperationsIds;
 		}
-		
-		
 		
 }
 }
