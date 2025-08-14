@@ -21,6 +21,9 @@ namespace Workwear.Models.Regulations {
 		
 		public virtual void CopyDataFromNorm(int normId, int employeeId) {
 			DutyNorm newDutyNorm = new DutyNorm();
+			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
+			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();
+
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
 				var norm = uow.GetById<Norm>(normId);
 				var employee = uow.GetById<EmployeeCard>(employeeId);
@@ -54,8 +57,8 @@ namespace Workwear.Models.Regulations {
 				}
 
 				var employeeIssueOperationsIds = employeeIssueOperations.Select(x => x.Id).ToArray();
-				var allExpenseDocs = GetExpenseDocs(employeeIssueOperationsIds, uow);
-				var allCollectiveExpenseDocs = GetCollectiveExpenseDocs(employeeIssueOperationsIds, uow);
+				var allExpenseDocs = GetExpenseDocs(employeeIssueOperationsIds, uow).ToArray();
+				var allCollectiveExpenseDocs = GetCollectiveExpenseDocs(employeeIssueOperationsIds, uow).ToArray();
 				foreach(var expDoc in allExpenseDocs) {
 					ExpenseDutyNorm expenseDutyNormDoc = new ExpenseDutyNorm {
 						DutyNorm = newDutyNorm
@@ -75,6 +78,7 @@ namespace Workwear.Models.Regulations {
 						
 						overwritingIds.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
 						dutyNormItemsWithOperationIssuedByDutyNorm.Add(newExpenseDutyNormItem.Id, dutyNormIssueOperation);
+						removingExpenseItems.Add(item);
 					}
 					uow.Save(expenseDutyNormDoc);
 					
@@ -98,6 +102,8 @@ namespace Workwear.Models.Regulations {
 							Operation = dutyNormIssueOperation
 						};
 						uow.Save(newExpenseDutyNormItem);
+						
+						removingCollectiveExpenseItems.Add(item);
 					}
 
 					uow.Save(expenseDutyNormDoc);
@@ -315,6 +321,30 @@ namespace Workwear.Models.Regulations {
 
 			return writeOffOperationsIds;
 		}
+		
+		// Удаление 
+		public void RemoveDocuments(
+			IList<ExpenseItem> expenseItems,
+			IList<CollectiveExpenseItem> collectiveExpenseItems,
+			Expense[] allExpenseDocs,
+			CollectiveExpense[] allCollectiveExpenseDocs,
+			IUnitOfWork uow) 
+		{
+			// Удаление документов выдачи сотруднику
+			foreach(var expDoc in allExpenseDocs) {
+				expDoc.Items.RemoveAll(item => expenseItems.Contains(item));
+				if(expDoc.Items.Count == 0)
+					uow.Delete(expDoc);
+			}
+			
+			// Удаление документов коллективной выдачи 
+			foreach(var colExpDoc in allCollectiveExpenseDocs) {
+				colExpDoc.Items.RemoveAll(item => collectiveExpenseItems.Contains(item));
+				if(colExpDoc.Items.Count == 0)
+					uow.Delete(colExpDoc);
+			}
+		}
+		
 		
 }
 }
