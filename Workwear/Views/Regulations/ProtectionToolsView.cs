@@ -31,6 +31,13 @@ namespace Workwear.Views.Regulations
 				.AddBinding(ViewModel, e => e.Dispenser, w => w.Active)
 				.AddBinding(ViewModel, vm => vm.SensitiveDispenser, w => w.Sensitive) 
 				.InitializeFromSource();
+			yhboxSizeRisitriction.Binding.AddBinding(ViewModel, vm => vm.CanUseSizeRestriction, w => w.Visible).InitializeFromSource();
+			ycheckbuttonSizeRisitriction.Binding.AddBinding(ViewModel, e=> e.SizeChangeRestriction, w=> w.Active).InitializeFromSource();
+			yspinbuttonSizeRisitriction.Binding
+				.AddBinding(ViewModel, e => e.DayOfSizeRestriction, w=> w.ValueAsInt)
+				.AddBinding(ViewModel, vm => vm.CanSetDayOfSizeRestriction, w => w.Sensitive) 
+                .InitializeFromSource();
+
 			ycheckArchival.Binding.AddBinding(ViewModel, e=> e.Archival, w=> w.Active).InitializeFromSource();
 			
 			entryCategories.ViewModel = ViewModel.CategoriesEntryViewModel;

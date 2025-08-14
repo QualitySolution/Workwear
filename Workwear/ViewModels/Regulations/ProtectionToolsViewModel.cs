@@ -59,6 +59,8 @@ namespace Workwear.ViewModels.Regulations
 				.MakeByType()
 				.Finish();
 
+			sizeChangeRestriction = Entity.SizeChangeRestriction != null;
+			
 			Entity.Nomenclatures.CollectionChanged += EntityNomenclaturesChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
@@ -111,6 +113,9 @@ namespace Workwear.ViewModels.Regulations
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
 		public bool ShowCategoryForAnalytics => featuresService.Available(WorkwearFeature.Dashboard);
 		public bool SensitiveDispenser => Entity.DermalPpe;
+		public bool CanUseSizeRestriction => featuresService.Available(WorkwearFeature.EmployeeLk);
+		public bool CanSetDayOfSizeRestriction => SizeChangeRestriction;
+		
 		#endregion
 
 		#region EntityViewModels
@@ -118,7 +123,7 @@ namespace Workwear.ViewModels.Regulations
 		public readonly EntityEntryViewModel<ProtectionToolsCategory> CategoriesEntryViewModel;
 		#endregion
 
-		#region Проброс свойств
+		#region Cвойства VM и проброс из Entyty
 		public virtual SupplyType SupplyType {
 			get => Entity.SupplyType;
 			set {
@@ -156,6 +161,29 @@ namespace Workwear.ViewModels.Regulations
 				if(!Entity.DermalPpe)
 					Entity.Dispenser = false;
 				OnPropertyChanged(nameof(SensitiveDispenser));
+			}
+		}
+
+		private bool sizeChangeRestriction;
+		public virtual bool SizeChangeRestriction {
+			get => sizeChangeRestriction;
+			set { if(sizeChangeRestriction != value) {
+					sizeChangeRestriction = value;
+					if(value)
+						Entity.SizeChangeRestriction = DayOfSizeRestriction;
+					else
+						Entity.SizeChangeRestriction = null;
+					OnPropertyChanged(nameof(CanSetDayOfSizeRestriction));
+				}
+			}
+		}
+		
+		public virtual int DayOfSizeRestriction {
+			get => Entity.SizeChangeRestriction ?? 0;
+			set { if(SizeChangeRestriction && Entity.SizeChangeRestriction != value) {
+					Entity.SizeChangeRestriction = value;
+					OnPropertyChanged();
+				}
 			}
 		}
 

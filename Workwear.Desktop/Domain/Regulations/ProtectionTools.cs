@@ -61,6 +61,13 @@ namespace Workwear.Domain.Regulations
 			get { return dispenser; }
 			set { SetField(ref dispenser, value, () => Dispenser); }
 		}
+		
+		private int? sizeChangeRestriction = null;
+		[Display(Name = "Ограничение смены размера в личном кабинете (дней до выдачи)")]
+		public virtual int? SizeChangeRestriction {
+			get { return sizeChangeRestriction; }
+			set { SetField(ref sizeChangeRestriction, value, () => sizeChangeRestriction); }
+		}
 
 		private string comment;
 		[Display(Name = "Комментарий")]

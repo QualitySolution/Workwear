@@ -21,6 +21,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.SupplyType).Column("supply_type").Not.Nullable();
 			Map(x => x.DermalPpe).Column("dermal_ppe").Not.Nullable();
 			Map(x => x.Dispenser).Column("dispenser").Not.Nullable();
+			Map(x => x.SizeChangeRestriction).Column("size_change").Nullable();
 			Map(x => x.Archival).Column("archival");
 
 			References(x => x.SupplyNomenclatureUnisex).Column("supply_uni_id").Nullable();
