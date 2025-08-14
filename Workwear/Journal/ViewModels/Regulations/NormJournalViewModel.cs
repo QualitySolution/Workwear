@@ -203,10 +203,8 @@ namespace workwear.Journal.ViewModels.Regulations
 			if(nodes.Length != 1)
 				return;
 			int normId = (nodes[0] as NormJournalNode).Id;
-			var norm = UoW.GetById<Norm>(normId);
-			foreach(var employee in norm.Employees) {
-				normToDutyNormModel.CopyDataFromNorm(normId, employee.Id);
-			}
+			normToDutyNormModel.CopyDataFromNorm(normId);
+			
 		}
 		#endregion
 	}

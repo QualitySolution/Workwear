@@ -448,9 +448,7 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		public void TransformToDutyNorm() {
-			foreach(var employee in Entity.Employees) {
-				normToDutyNormModel.CopyDataFromNorm(Entity.Id, employee.Id);
-			}
+			normToDutyNormModel.CopyDataFromNorm(Entity.Id);
 		}
 	}
 }
