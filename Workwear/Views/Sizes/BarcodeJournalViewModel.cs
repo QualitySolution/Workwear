@@ -101,7 +101,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			NodeActionsList.Add(new JournalAction("Печать",
 				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(),
-				(arg) => true,
+				(arg) => baseParameters.MarkingType == BarcodeTypes.EAN13,
 				PrintBarcodes));
 		}
 
