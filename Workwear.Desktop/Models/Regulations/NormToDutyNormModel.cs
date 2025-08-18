@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
-using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -80,11 +79,12 @@ namespace Workwear.Models.Regulations {
 							dutyNormItemsWithOperationIssuedByDutyNorm.Add(newExpenseDutyNormItem.Id, dutyNormIssueOperation);
 							removingExpenseItems.Add(item);
 						}
-						removingExpenseDocs.Add(expDoc);
 						uow.Save(expenseDutyNormDoc);
-
 						OverWriteIssuanceSheet(expDoc, overwritingIds, dutyNormItemsWithOperationIssuedByDutyNorm, uow);
-
+						
+						expDoc.Items.RemoveAll(item => removingExpenseItems.Contains(item));
+						if(expDoc.Items.Count == 0)
+							uow.Delete(expDoc);
 					}
 
 					foreach(var colExpDocIt in allCollectiveExpenseDocsForEmployeeWithItems) {
@@ -95,7 +95,7 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, colExpDoc);
 						uow.Save(expenseDutyNormDoc);
-
+						
 						foreach(var item in items) {
 							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
@@ -108,17 +108,18 @@ namespace Workwear.Models.Regulations {
 							removingCollectiveExpenseItems.Add(item);
 						}
 						
-						removingCollectiveExpenseDocs.Add(colExpDoc);
 						uow.Save(expenseDutyNormDoc);
 						OverWriteIssuanceSheet(colExpDoc, uow);
+
+						colExpDoc.Items.RemoveAll(item => removingCollectiveExpenseItems.Contains(item));
+						if(colExpDoc.Items.Count == 0)
+							uow.Delete(colExpDoc);
 					}
 
-					var writeOffOperationsIds = OverWriteWriteOffDocs(employeeIssueOperationsIds, overwritingIds, 
-						dutyNormItemsWithOperationIssuedByDutyNorm, uow);
-
+					OverWriteWriteOffDocs(employeeIssueOperationsIds, overwritingIds, dutyNormItemsWithOperationIssuedByDutyNorm, uow);
 					
 				}
-				//RemoveDocuments(removingExpenseItems, removingCollectiveExpenseItems, removingExpenseDocs, removingCollectiveExpenseDocs, uow);
+				
 				uow.Commit();
 			}
 		}
@@ -263,10 +264,13 @@ namespace Workwear.Models.Regulations {
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(expenseDoc, uow);
 			if(issuanceSheet == null)
 				return;
+			var issueOperationsIds = overwritingIds.Keys.ToArray();
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
+			var changingIssuanceSheetItems = issuanceSheetItems
+				.Where(x => issueOperationsIds.Contains(x.IssueOperation.Id));
 			ExpenseDutyNormItem expenseDutyNormItem = null;
 			if(issuanceSheetItems.Count == expenseDoc.Items.Count) {
-				foreach(var item in issuanceSheetItems) {
+				foreach(var item in changingIssuanceSheetItems) {
 					expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
 					item.ExpenseDutyNormItem = expenseDutyNormItem;
 					var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
@@ -319,50 +323,22 @@ namespace Workwear.Models.Regulations {
 			return writeOffItems;
 		}
 
-		public virtual IList<int> OverWriteWriteOffDocs
+		public virtual void OverWriteWriteOffDocs
 			(int[] employeeIssueOperationsIds,
 			Dictionary<int, ExpenseDutyNormItem> overwritingIds,
 			Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm,
 			IUnitOfWork uow) {
 			var writeOffItems = GetWriteOffItems(employeeIssueOperationsIds, uow);
-			var writeOffOperationsIds = writeOffItems
-				.Select(x => x.EmployeeWriteoffOperation.Id)
-				.ToList();
-			foreach(var item in writeOffItems) {
+			foreach(var item in writeOffItems) 
+			{
 				var expenseDutyNormItem = overwritingIds[item.EmployeeWriteoffOperation.IssuedOperation.Id];
-				writeOffOperationsIds.Add(item.EmployeeWriteoffOperation.IssuedOperation.Id);
 				var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
+				var removingWriteOffOperation = item.EmployeeWriteoffOperation;
 				item.DutyNormWriteOffOperation = dutyNormIssueOperation;
 				item.EmployeeWriteoffOperation = null;
 				uow.Save(item);
-			}
-
-			return writeOffOperationsIds;
-		}
-		
-		// Удаление 
-		public void RemoveDocuments(
-			IList<ExpenseItem> expenseItems,
-			IList<CollectiveExpenseItem> collectiveExpenseItems,
-			IList<Expense> allExpenseDocs,
-			IList<CollectiveExpense> allCollectiveExpenseDocs,
-			IUnitOfWork uow) 
-		{
-			// Удаление документов выдачи сотрудникам
-			foreach(var expDoc in allExpenseDocs) {
-				expDoc.Items.RemoveAll(item => expenseItems.Contains(item));
-				if(expDoc.Items.Count == 0)
-					uow.Delete(expDoc);
-			}
-			
-			// Удаление документов коллективной выдачи 
-			foreach(var colExpDoc in allCollectiveExpenseDocs) {
-				colExpDoc.Items.RemoveAll(item => collectiveExpenseItems.Contains(item));
-				if(colExpDoc.Items.Count == 0)
-					uow.Delete(colExpDoc);
+				uow.Delete(removingWriteOffOperation);
 			}
 		}
-		
-		
-}
+	}
 }
