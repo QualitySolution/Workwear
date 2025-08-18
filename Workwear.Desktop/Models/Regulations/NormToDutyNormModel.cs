@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Criterion;
@@ -14,6 +14,7 @@ using Workwear.Domain.Stock.Documents;
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		public virtual void CopyDataFromNorm(int normId) {
+			Dictionary<int, DutyNormIssueOperation> relevantOperations = new Dictionary<int, DutyNormIssueOperation>();
 			IList<Expense> removingExpenseDocs = new List<Expense>();
 			IList<CollectiveExpense> removingCollectiveExpenseDocs = new List<CollectiveExpense>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
@@ -44,29 +45,30 @@ namespace Workwear.Models.Regulations {
 						if(!relevantItemsIds.ContainsKey((employee.Id, item.Id)))
 							relevantItemsIds.Add((employee.Id, item.Id), dutyNormItem);
 					}
-					IList<DutyNormIssueOperation> dutyNormIssueOperations = new List<DutyNormIssueOperation>();
+					
 					foreach(var op in employeeIssueOperations) {
 						DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation {
 							DutyNorm = newDutyNorm
 						};
 						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, relevantItemsIds);
 						uow.Save(dutyNormIssueOperation);
-						dutyNormIssueOperations.Add(dutyNormIssueOperation);
+						relevantOperations.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
 					}
 
 					var employeeIssueOperationsIds = employeeIssueOperations.Select(x => x.Id).ToArray();
-					var allExpenseDocs = GetExpenseDocs(employeeIssueOperationsIds, uow).ToArray();
-					var allCollectiveExpenseDocs = GetCollectiveExpenseDocs(employeeIssueOperationsIds, uow).ToArray();
-					foreach(var expDoc in allExpenseDocs) {
+					var allExpenseDocsForEmployeeWithItems = GetExpenseDocsForEmployee(employeeIssueOperationsIds, uow).ToArray();
+					var allCollectiveExpenseDocsForEmployeeWithItems = GetCollectiveExpenseDocsForEmployee(employeeIssueOperationsIds, uow).ToArray();
+					foreach(var expDocIt in allExpenseDocsForEmployeeWithItems) {
+						var expDoc = expDocIt.Key;
+						var items = expDocIt.Value;
 						ExpenseDutyNorm expenseDutyNormDoc = new ExpenseDutyNorm {
 							DutyNorm = newDutyNorm
 						};
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, expDoc);
 						uow.Save(expenseDutyNormDoc);
 
-						foreach(var item in expDoc.Items) {
-							var dutyNormIssueOperation = dutyNormIssueOperations.FirstOrDefault(x=>
-								x.DutyNorm.Id == expenseDutyNormDoc.DutyNorm.Id && x.WarehouseOperation.Id == item.WarehouseOperation.Id);
+						foreach(var item in items) {
+							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
 								Document = expenseDutyNormDoc,
 								WarehouseOperation = item.WarehouseOperation,
@@ -85,16 +87,17 @@ namespace Workwear.Models.Regulations {
 
 					}
 
-					foreach(var colExpDoc in allCollectiveExpenseDocs) {
+					foreach(var colExpDocIt in allCollectiveExpenseDocsForEmployeeWithItems) {
+						var colExpDoc = colExpDocIt.Key;
+						var items = colExpDocIt.Value;
 						ExpenseDutyNorm expenseDutyNormDoc = new ExpenseDutyNorm {
 							DutyNorm = newDutyNorm
 						};
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, colExpDoc);
 						uow.Save(expenseDutyNormDoc);
 
-						foreach(var item in colExpDoc.Items) {
-							var dutyNormIssueOperation = dutyNormIssueOperations.Where(x => x.DutyNorm == expenseDutyNormDoc.DutyNorm)
-								.FirstOrDefault(x => x.WarehouseOperation == item.WarehouseOperation);
+						foreach(var item in items) {
+							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
 								Document = expenseDutyNormDoc,
 								WarehouseOperation = item.WarehouseOperation,
@@ -115,7 +118,7 @@ namespace Workwear.Models.Regulations {
 
 					
 				}
-				RemoveDocuments(removingExpenseItems, removingCollectiveExpenseItems, removingExpenseDocs, removingCollectiveExpenseDocs, uow);
+				//RemoveDocuments(removingExpenseItems, removingCollectiveExpenseItems, removingExpenseDocs, removingCollectiveExpenseDocs, uow);
 				uow.Commit();
 			}
 		}
@@ -182,20 +185,21 @@ namespace Workwear.Models.Regulations {
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.NormItem.Id.IsIn(normItemsIds))
 				.Where(o => o.Employee.Id == employeeId)
-				.Where(o => o.Issued > 0);
+				.Where(o => o.Issued > 0)
+				.Where(o => o.ManualOperation == false);
 			return query.List();
 
 		}
 		
-		public IEnumerable<Expense> GetExpenseDocs (int[] employeeIssueOperationsIds, IUnitOfWork uow) {
-			Expense expenseAlias = null;
-			ExpenseItem expenseItemAlias = null;
-
-			var expenseDocs = uow.Session.QueryOver<Expense>(() => expenseAlias)
-				.JoinAlias(x => x.Items, () => expenseItemAlias, JoinType.LeftOuterJoin)
-				.Where(() => expenseItemAlias.EmployeeIssueOperation.Id.IsIn(employeeIssueOperationsIds))
-				.List()
-				.Distinct();
+		public Dictionary<Expense, List<ExpenseItem>> GetExpenseDocsForEmployee (int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+			
+			var expenseItems = uow.Session.QueryOver<ExpenseItem>()
+				.Where(x => x.EmployeeIssueOperation.Id.IsIn(employeeIssueOperationsIds))
+				.List();
+			
+			var expenseDocs = expenseItems
+				.GroupBy(x => x.ExpenseDoc)
+				.ToDictionary(g => g.Key, g => g.ToList());
 
 			return expenseDocs;
 
@@ -211,15 +215,14 @@ namespace Workwear.Models.Regulations {
 		}
 		// Для коллективной выдачи
 
-		public IEnumerable<CollectiveExpense> GetCollectiveExpenseDocs(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
-			CollectiveExpense collectiveExpenseAlias = null;
-			CollectiveExpenseItem collectiveExpenseItemAlias = null;
-
-			var collectiveExpenseDocs = uow.Session.QueryOver<CollectiveExpense>(() => collectiveExpenseAlias)
-				.JoinAlias(x => x.Items, () => collectiveExpenseItemAlias, JoinType.LeftOuterJoin)
-				.Where(() => collectiveExpenseItemAlias.EmployeeIssueOperation.Id.IsIn(employeeIssueOperationsIds))
-				.List()
-				.Distinct();
+		public Dictionary<CollectiveExpense, List<CollectiveExpenseItem>> GetCollectiveExpenseDocsForEmployee(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+			
+			var collectiveExpenseItems = uow.Session.QueryOver<CollectiveExpenseItem>()
+				.Where(x => x.EmployeeIssueOperation.Id.IsIn(employeeIssueOperationsIds))
+				.List();
+			var collectiveExpenseDocs = collectiveExpenseItems
+				.GroupBy(x => x.Document)
+				.ToDictionary(g => g.Key, g => g.ToList());
 
 			return collectiveExpenseDocs;
 
