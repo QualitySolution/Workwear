@@ -21,6 +21,7 @@ namespace Workwear.Models.Regulations {
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
 				var norm = uow.GetById<Norm>(normId);
 				var itemIds = norm.Items.Select(i => i.Id).ToArray();
+				var employees = norm.Employees.ToList();
 				 
 				foreach(var employee in norm.Employees) {
 					Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
@@ -120,6 +121,8 @@ namespace Workwear.Models.Regulations {
 					
 				}
 				RemoveNorm(norm, uow);
+				foreach(var emp in employees)
+					emp.UpdateWorkwearItems();
 				uow.Commit();
 			}
 		}
