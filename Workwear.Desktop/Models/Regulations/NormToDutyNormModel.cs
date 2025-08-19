@@ -119,7 +119,7 @@ namespace Workwear.Models.Regulations {
 					OverWriteWriteOffDocs(employeeIssueOperationsIds, overwritingIds, dutyNormItemsWithOperationIssuedByDutyNorm, uow);
 					
 				}
-				
+				RemoveNorm(norm, uow);
 				uow.Commit();
 			}
 		}
@@ -339,6 +339,13 @@ namespace Workwear.Models.Regulations {
 				uow.Save(item);
 				uow.Delete(removingWriteOffOperation);
 			}
+		}
+		public virtual void RemoveNorm(Norm norm, IUnitOfWork uow) {
+			norm.Employees.Clear();
+			norm.Posts.Clear();
+			norm.Items.Clear();
+			uow.Delete(norm);
+			uow.Save();
 		}
 	}
 }
