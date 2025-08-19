@@ -176,7 +176,7 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
-		public bool CanEditIssueDate => CanEdit && Entity.IssuanceSheet == null;
+		public bool CanEditIssueDate => CanEdit;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -283,14 +283,14 @@ namespace Workwear.ViewModels.Stock {
 				Entity.DocNumber = Entity.DocNumberText;	
 
 			if(Entity.IssueDate == null) {
-				var performance_smal = new ProgressPerformanceHelper(modalProgressCreator, 2, "Сохранение черновой выдачи...", logger, true);
+				var performanceSmall = new ProgressPerformanceHelper(modalProgressCreator, 2, "Сохранение черновой выдачи...", logger, true);
 				Entity.CleanupItems();
 				Entity.UpdateOperations(UoW, baseParameters, interactive);
 				
 				UoW.Save(Entity);
 				UoW.Commit();
-				performance_smal.End();
-				logger.Info($"Документ сохранен за {performance_smal.TotalTime.TotalSeconds} сек.");
+				performanceSmall.End();
+				logger.Info($"Документ сохранен за {performanceSmall.TotalTime.TotalSeconds} сек.");
 				return true;
 			}
 			
