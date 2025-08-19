@@ -2041,12 +2041,14 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `barcode_id` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
   UNIQUE INDEX `index_uniq` (`barcode_id` ASC, `employee_issue_operation_id` ASC, `warehouse_operation_id` ASC),
+  INDEX `fk_operation_barcodes_duty_norm_issue_operation_id_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_operation_barcodes_1`
     FOREIGN KEY (`barcode_id`)
     REFERENCES `barcodes` (`id`)
@@ -2061,7 +2063,12 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
     FOREIGN KEY (`warehouse_operation_id`)
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON UPDATE CASCADE
+	ON DELETE NO ACTION)
 ENGINE = InnoDB;
 
 
