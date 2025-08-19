@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentNHibernate.Conventions;
 using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
@@ -14,8 +15,6 @@ namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		public virtual void CopyDataFromNorm(int normId) {
 			Dictionary<int, DutyNormIssueOperation> relevantOperations = new Dictionary<int, DutyNormIssueOperation>();
-			IList<Expense> removingExpenseDocs = new List<Expense>();
-			IList<CollectiveExpense> removingCollectiveExpenseDocs = new List<CollectiveExpense>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
 			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
@@ -27,6 +26,8 @@ namespace Workwear.Models.Regulations {
 					Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
 					Dictionary<int, ExpenseDutyNormItem> overwritingIds = new Dictionary<int, ExpenseDutyNormItem>();
 					Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm =
+						new Dictionary<int, DutyNormIssueOperation>();
+					Dictionary<int, DutyNormIssueOperation> relevantIssueOperations =
 						new Dictionary<int, DutyNormIssueOperation>();
 					DutyNorm newDutyNorm = new DutyNorm();
 					var employeeIssueOperations = GetOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
@@ -53,8 +54,11 @@ namespace Workwear.Models.Regulations {
 						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, relevantItemsIds);
 						uow.Save(dutyNormIssueOperation);
 						relevantOperations.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
+						relevantIssueOperations.Add(op.Id, dutyNormIssueOperation);
 					}
 
+					OverWriteBarcodeOperations(relevantIssueOperations, uow);
+					
 					var employeeIssueOperationsIds = employeeIssueOperations.Select(x => x.Id).ToArray();
 					var allExpenseDocsForEmployeeWithItems = GetExpenseDocsForEmployee(employeeIssueOperationsIds, uow).ToArray();
 					var allCollectiveExpenseDocsForEmployeeWithItems = GetCollectiveExpenseDocsForEmployee(employeeIssueOperationsIds, uow).ToArray();
@@ -344,11 +348,26 @@ namespace Workwear.Models.Regulations {
 			}
 		}
 		public virtual void RemoveNorm(Norm norm, IUnitOfWork uow) {
-			norm.Employees.Clear();
-			norm.Posts.Clear();
-			norm.Items.Clear();
+			norm?.Employees.Clear();
+			norm?.Posts.Clear();
+			norm?.Items.Clear();
 			uow.Delete(norm);
-			uow.Save();
+		}
+
+		private void OverWriteBarcodeOperations(
+			Dictionary<int, DutyNormIssueOperation> relevantIssueOperations, 
+			IUnitOfWork uow) {
+			var employeeIssueOperationsIds = relevantIssueOperations.Keys.ToArray();
+			var barcodeOperations = uow.Session.Query<BarcodeOperation>()
+				.Where(x => employeeIssueOperationsIds.Contains(x.EmployeeIssueOperation.Id))
+				.ToList();
+			if(barcodeOperations.IsEmpty())
+				return;
+			foreach(var op in barcodeOperations) {
+				op.DutyNormIssueOperation = relevantIssueOperations[op.EmployeeIssueOperation.Id];
+				op.EmployeeIssueOperation = null;
+				uow.Save(op);
+			}
 		}
 	}
 }
