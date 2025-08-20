@@ -2,7 +2,7 @@
 -- Учёт RFID
 -- -----------------------------------
 alter table barcodes
-	modify title varchar(14) null;
+	modify title varchar(24) null;
 
 alter table barcodes
 	add type enum ('EAN13', 'EPC96') default 'EAN13' null after last_update;

@@ -42,12 +42,15 @@ namespace Workwear.Views.Stock
 			buttonAdd.Binding
 				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive).InitializeFromSource();
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.CanCreateBarcode, w => w.Visible)
+				.AddBinding(v => v.CanCreateBarcodes, w => w.Sensitive)
 				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label).InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.CanPrintBarcode, w => w.Visible)
 				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive).InitializeFromSource();
+			buttonSetBarcodes.Binding.AddSource(ViewModel)
+                .AddBinding(v => v.CanSetBarcode, w => w.Visible)
+                .AddBinding(v => v.CanAddBarcodeForSelected, w => w.Sensitive).InitializeFromSource();
 
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
@@ -83,7 +86,7 @@ namespace Workwear.Views.Stock
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit)
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
+				.AddColumn(ViewModel.BarcodeTypeString).Visible(ViewModel.VisibleBarcodes)
 					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
@@ -200,6 +203,10 @@ namespace Workwear.Views.Stock
 		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
 			ViewModel.PrintBarcodes();
 			ytreeItems.YTreeModel.EmitModelChanged();
+		}
+
+		protected void OnButtonSetBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.AddBarcodeFromScan(ytreeItems.GetSelectedObject<ExpenseItem>());
 		}
 		#endregion
 	}
