@@ -446,9 +446,5 @@ namespace Workwear.ViewModels.Regulations
 		public void SelectItem(int id) {
 			SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
-
-		public void TransformToDutyNorm() {
-			normToDutyNormModel.CopyDataFromNorm(Entity.Id);
-		}
 	}
 }

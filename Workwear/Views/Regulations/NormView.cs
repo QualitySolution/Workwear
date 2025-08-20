@@ -157,11 +157,6 @@ namespace Workwear.Views.Regulations
 				return "gray";
 			return isArchival ? "#2F353B" : "black";
 		}
-
-		protected void OnButtonDutyNormClicked(object sender, EventArgs e) {
-			ViewModel.TransformToDutyNorm();
-
-		}
 	}
 }
 

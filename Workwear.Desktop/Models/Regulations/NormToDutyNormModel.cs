@@ -97,6 +97,8 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, dutyNormItemByEmployeeAndNormItem);
 						uow.Save(dutyNormIssueOperation);
+						if(op.WarehouseOperation == null)
+							throw new InvalidOperationException("Складская операция должна быть заполнена.");
 						dutyNormIssueOperationByWarehouseOperation.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
 						dutyNormIssueOperationByIssueOperation.Add(op.Id, dutyNormIssueOperation);
 					}
