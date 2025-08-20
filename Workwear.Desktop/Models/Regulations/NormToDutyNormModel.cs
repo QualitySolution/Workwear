@@ -21,6 +21,18 @@ namespace Workwear.Models.Regulations {
 				var norm = uow.GetById<Norm>(normId);
 				var itemIds = norm.Items.Select(i => i.Id).ToArray();
 				var employees = norm.Employees.ToList();
+				
+				if(employees.IsEmpty()) {
+					DutyNorm newDutyNorm = new DutyNorm();
+					CreateDutyNorm(norm, newDutyNorm);
+					uow.Save(newDutyNorm);
+					CreateDutyNormName(norm, newDutyNorm, uow);
+					
+					foreach(var item in norm.Items) {
+						var dutyNormItem = CreateDutyNormItem(newDutyNorm, item);
+						uow.Save(dutyNormItem);
+					}
+				}
 				 
 				foreach(var employee in norm.Employees) {
 					Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
@@ -29,15 +41,11 @@ namespace Workwear.Models.Regulations {
 						new Dictionary<int, DutyNormIssueOperation>();
 					Dictionary<int, DutyNormIssueOperation> relevantIssueOperations =
 						new Dictionary<int, DutyNormIssueOperation>();
-					DutyNorm newDutyNorm = new DutyNorm();
 					var employeeIssueOperations = GetOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
-					newDutyNorm.Name = norm.Name != null ? $"{norm.Name} ({employee.ShortName})" : $"Дежурная ({employee.ShortName})";
-					newDutyNorm.ResponsibleEmployee = employee;
-					newDutyNorm.DateFrom = norm.DateFrom;
-					newDutyNorm.DateTo = norm.DateTo;
-					newDutyNorm.Comment = norm.Comment ?? "";
-					newDutyNorm.Subdivision = employee.Subdivision;
+					DutyNorm newDutyNorm = new DutyNorm();
+					CreateDutyNorm(norm, newDutyNorm, employee);
 					uow.Save(newDutyNorm);
+					CreateDutyNormName(norm, newDutyNorm, uow, employee);
 
 					foreach(var item in norm.Items) {
 						var nextIssue = GetNextIssue(employee.Id, item, uow);
@@ -140,9 +148,22 @@ namespace Workwear.Models.Regulations {
 				.FirstOrDefault();
 			return nextIssue;
 		}
-		
+		public virtual void CreateDutyNorm(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null) {
+			newDutyNorm.ResponsibleEmployee = employee;
+			newDutyNorm.DateFrom = norm.DateFrom;
+			newDutyNorm.DateTo = norm.DateTo;
+			newDutyNorm.Comment = norm.Comment;
+			newDutyNorm.Subdivision = employee?.Subdivision;
+		}
 
-		public virtual DutyNormItem CreateDutyNormItem(DutyNorm newDutyNorm, NormItem normItem, DateTime? nextIssue) {
+		private void CreateDutyNormName(Norm norm, DutyNorm newDutyNorm, IUnitOfWork uow, EmployeeCard employee = null) {
+			newDutyNorm.Name = norm.Name != null 
+				? $"{norm.Name} {(employee != null ? $"({employee.ShortName})" : "")}" 
+				: $"Дежурная {(employee != null ? $"({employee.ShortName})" : $"норма №{newDutyNorm.Id}")}";
+			uow.Save(newDutyNorm);
+		}
+
+		public virtual DutyNormItem CreateDutyNormItem(DutyNorm newDutyNorm, NormItem normItem, DateTime? nextIssue = null) {
 			DutyNormItem newDutyNormItem = new DutyNormItem();
 			
 			newDutyNormItem.DutyNorm = newDutyNorm;
