@@ -41,7 +41,10 @@ namespace Workwear.Models.Regulations {
 						new Dictionary<int, DutyNormIssueOperation>();
 					Dictionary<int, DutyNormIssueOperation> relevantIssueOperations =
 						new Dictionary<int, DutyNormIssueOperation>();
-					var employeeIssueOperations = GetOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
+					Dictionary<int, DutyNormIssueOperation> relevantWriteOffOperations =
+						new Dictionary<int, DutyNormIssueOperation>();
+					var employeeIssueOperations = GetIssueOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
+					var writeOffOperations = GetWriteOffOperationsForEmployeeByNorm(employeeIssueOperations, uow);
 					DutyNorm newDutyNorm = new DutyNorm();
 					CreateDutyNorm(norm, newDutyNorm, employee);
 					uow.Save(newDutyNorm);
@@ -63,6 +66,19 @@ namespace Workwear.Models.Regulations {
 						uow.Save(dutyNormIssueOperation);
 						relevantOperations.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
 						relevantIssueOperations.Add(op.Id, dutyNormIssueOperation);
+					}
+
+					foreach(var writeOffOp in writeOffOperations) {
+						DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation {
+							DutyNorm = newDutyNorm
+						};
+						CreateDutyNormIssueOperation(writeOffOp, dutyNormIssueOperation);
+						uow.Save(dutyNormIssueOperation);
+						relevantWriteOffOperations.Add(writeOffOp.Id, dutyNormIssueOperation);
+						var issuedOperation = relevantIssueOperations[writeOffOp.IssuedOperation.Id];
+						dutyNormIssueOperation.IssuedOperation = issuedOperation;
+						dutyNormIssueOperation.DutyNormItem = issuedOperation.DutyNormItem;
+						uow.Save(dutyNormIssueOperation);
 					}
 
 					OverWriteBarcodeOperations(relevantIssueOperations, uow);
@@ -129,7 +145,7 @@ namespace Workwear.Models.Regulations {
 							uow.Delete(colExpDoc);
 					}
 
-					OverWriteWriteOffDocs(employeeIssueOperationsIds, overwritingIds, dutyNormItemsWithOperationIssuedByDutyNorm, uow);
+					OverWriteWriteOffDocs(employeeIssueOperationsIds, relevantWriteOffOperations, uow);
 					
 				}
 				RemoveNorm(norm, uow);
@@ -196,21 +212,27 @@ namespace Workwear.Models.Regulations {
 		public virtual void CreateDutyNormIssueOperation (
 			EmployeeIssueOperation issueOperation, 
 			DutyNormIssueOperation dutyNormIssueOperation,
-			Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds) 
+			Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = null) 
 		{
-			dutyNormIssueOperation.DutyNormItem = relevantItemsIds[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
+			if(relevantItemsIds != null)
+				dutyNormIssueOperation.DutyNormItem = relevantItemsIds[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
 			dutyNormIssueOperation.OperationTime = issueOperation.OperationTime;
 			dutyNormIssueOperation.Nomenclature = issueOperation.Nomenclature;
-			dutyNormIssueOperation.ProtectionTools = issueOperation.ProtectionTools;
 			dutyNormIssueOperation.WearSize = issueOperation.WearSize;
 			dutyNormIssueOperation.Height = issueOperation.Height;
 			dutyNormIssueOperation.WearPercent = issueOperation.WearPercent;
-			dutyNormIssueOperation.AutoWriteoffDate = issueOperation.AutoWriteoffDate;
 			dutyNormIssueOperation.Issued = issueOperation.Issued;
+			dutyNormIssueOperation.Returned = issueOperation.Returned;
+			dutyNormIssueOperation.UseAutoWriteoff = issueOperation.UseAutoWriteoff;
+			dutyNormIssueOperation.AutoWriteoffDate = issueOperation.AutoWriteoffDate;
+			dutyNormIssueOperation.ProtectionTools = issueOperation.ProtectionTools;
+			dutyNormIssueOperation.StartOfUse = issueOperation.StartOfUse;
+			dutyNormIssueOperation.ExpiryByNorm = issueOperation.ExpiryByNorm;
 			dutyNormIssueOperation.WarehouseOperation = issueOperation.WarehouseOperation;
+			dutyNormIssueOperation.Comment = issueOperation.Comment;
 		}
 
-		public IList<EmployeeIssueOperation> GetOperationsForEmployeeWithNormItems(int employeeId, int[] normItemsIds, IUnitOfWork uow) {
+		public IList<EmployeeIssueOperation> GetIssueOperationsForEmployeeWithNormItems(int employeeId, int[] normItemsIds, IUnitOfWork uow) {
 			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
 				.Where(o => o.NormItem.Id.IsIn(normItemsIds))
 				.Where(o => o.Employee.Id == employeeId)
@@ -219,7 +241,14 @@ namespace Workwear.Models.Regulations {
 			return query.List();
 
 		}
-		
+		public IList<EmployeeIssueOperation> GetWriteOffOperationsForEmployeeByNorm(
+			IList<EmployeeIssueOperation> issueOperations,
+			IUnitOfWork uow) {
+			var writeOffOperations = uow.Session.Query<EmployeeIssueOperation>()
+				.Where(o => issueOperations.Contains(o.IssuedOperation))
+				.ToList();
+			return writeOffOperations;
+		}
 		public Dictionary<Expense, List<ExpenseItem>> GetExpenseDocsForEmployee (int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			
 			var expenseItems = uow.Session.QueryOver<ExpenseItem>()
@@ -353,14 +382,12 @@ namespace Workwear.Models.Regulations {
 
 		public virtual void OverWriteWriteOffDocs
 			(int[] employeeIssueOperationsIds,
-			Dictionary<int, ExpenseDutyNormItem> overwritingIds,
-			Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm,
+			Dictionary<int, DutyNormIssueOperation> relevantWriteOffOperations,
 			IUnitOfWork uow) {
 			var writeOffItems = GetWriteOffItems(employeeIssueOperationsIds, uow);
 			foreach(var item in writeOffItems) 
 			{
-				var expenseDutyNormItem = overwritingIds[item.EmployeeWriteoffOperation.IssuedOperation.Id];
-				var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
+				var dutyNormIssueOperation = relevantWriteOffOperations[item.EmployeeWriteoffOperation.Id];
 				var removingWriteOffOperation = item.EmployeeWriteoffOperation;
 				item.DutyNormWriteOffOperation = dutyNormIssueOperation;
 				item.EmployeeWriteoffOperation = null;
