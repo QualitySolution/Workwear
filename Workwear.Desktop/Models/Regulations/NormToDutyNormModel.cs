@@ -23,7 +23,7 @@ namespace Workwear.Models.Regulations {
 			this.progressBar = progressBar;
 		}
 		public virtual void CopyDataFromNorm(int normId) {
-			Dictionary<int, DutyNormIssueOperation> relevantOperations = new Dictionary<int, DutyNormIssueOperation>();
+			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
 			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
@@ -68,13 +68,13 @@ namespace Workwear.Models.Regulations {
 				}
 				 
 				foreach(var employee in norm.Employees) {
-					Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = new Dictionary<(int, int), DutyNormItem>();
-					Dictionary<int, ExpenseDutyNormItem> overwritingIds = new Dictionary<int, ExpenseDutyNormItem>();
-					Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm =
+					Dictionary<(int employeeId, int normItemId), DutyNormItem> dutyNormItemByEmployeeAndNormItem = new Dictionary<(int, int), DutyNormItem>();
+					Dictionary<int, ExpenseDutyNormItem> expDutyNormItemByIssueOperation = new Dictionary<int, ExpenseDutyNormItem>();
+					Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByExpDutyNormItem =
 						new Dictionary<int, DutyNormIssueOperation>();
-					Dictionary<int, DutyNormIssueOperation> relevantIssueOperations =
+					Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByIssueOperation =
 						new Dictionary<int, DutyNormIssueOperation>();
-					Dictionary<int, DutyNormIssueOperation> relevantWriteOffOperations =
+					Dictionary<int, DutyNormIssueOperation> dutyNormWriteOffOperationByEmployeeWriteOffOperation =
 						new Dictionary<int, DutyNormIssueOperation>();
 					var employeeIssueOperations = GetIssueOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
 					var writeOffOperations = GetWriteOffOperationsForEmployeeByNorm(employeeIssueOperations, uow);
@@ -87,18 +87,18 @@ namespace Workwear.Models.Regulations {
 						var nextIssue = GetNextIssue(employee.Id, item, uow);
 						var dutyNormItem = CreateDutyNormItem(newDutyNorm, item, nextIssue);
 						uow.Save(dutyNormItem);
-						if(!relevantItemsIds.ContainsKey((employee.Id, item.Id)))
-							relevantItemsIds.Add((employee.Id, item.Id), dutyNormItem);
+						if(!dutyNormItemByEmployeeAndNormItem.ContainsKey((employee.Id, item.Id)))
+							dutyNormItemByEmployeeAndNormItem.Add((employee.Id, item.Id), dutyNormItem);
 					}
 					progressBar.Add(text: $"Создаем операции выдачи по дежурной норме {newDutyNorm.Name}");
 					foreach(var op in employeeIssueOperations) {
 						DutyNormIssueOperation dutyNormIssueOperation = new DutyNormIssueOperation {
 							DutyNorm = newDutyNorm
 						};
-						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, relevantItemsIds);
+						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, dutyNormItemByEmployeeAndNormItem);
 						uow.Save(dutyNormIssueOperation);
-						relevantOperations.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
-						relevantIssueOperations.Add(op.Id, dutyNormIssueOperation);
+						dutyNormIssueOperationByWarehouseOperation.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
+						dutyNormIssueOperationByIssueOperation.Add(op.Id, dutyNormIssueOperation);
 					}
 					progressBar.Add(text: $"Создаем операции списания по дежурной норме {newDutyNorm.Name}");
 					foreach(var writeOffOp in writeOffOperations) {
@@ -107,14 +107,14 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateDutyNormIssueOperation(writeOffOp, dutyNormIssueOperation);
 						uow.Save(dutyNormIssueOperation);
-						relevantWriteOffOperations.Add(writeOffOp.Id, dutyNormIssueOperation);
-						var issuedOperation = relevantIssueOperations[writeOffOp.IssuedOperation.Id];
+						dutyNormWriteOffOperationByEmployeeWriteOffOperation.Add(writeOffOp.Id, dutyNormIssueOperation);
+						var issuedOperation = dutyNormIssueOperationByIssueOperation[writeOffOp.IssuedOperation.Id];
 						dutyNormIssueOperation.IssuedOperation = issuedOperation;
 						dutyNormIssueOperation.DutyNormItem = issuedOperation.DutyNormItem;
 						uow.Save(dutyNormIssueOperation);
 					}
 
-					OverWriteBarcodeOperations(relevantIssueOperations, uow);
+					UpdateBarcodeOperations(dutyNormIssueOperationByIssueOperation, uow);
 					
 					var employeeIssueOperationsIds = employeeIssueOperations.Select(x => x.Id).ToArray();
 					var allExpenseDocsForEmployeeWithItems = GetExpenseDocsForEmployee(employeeIssueOperationsIds, uow).ToArray();
@@ -135,7 +135,7 @@ namespace Workwear.Models.Regulations {
 							$" Документ выдачи сотруднику был создан пользователем: {expDoc.CreatedbyUser.Name}"; 
 
 						foreach(var item in items) {
-							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
+							var dutyNormIssueOperation = dutyNormIssueOperationByWarehouseOperation[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
 								Document = expenseDutyNormDoc,
 								WarehouseOperation = item.WarehouseOperation,
@@ -143,12 +143,12 @@ namespace Workwear.Models.Regulations {
 							};
 							uow.Save(newExpenseDutyNormItem);
 
-							overwritingIds.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
-							dutyNormItemsWithOperationIssuedByDutyNorm.Add(newExpenseDutyNormItem.Id, dutyNormIssueOperation);
+							expDutyNormItemByIssueOperation.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
+							dutyNormIssueOperationByExpDutyNormItem.Add(newExpenseDutyNormItem.Id, dutyNormIssueOperation);
 							removingExpenseItems.Add(item);
 						}
 						uow.Save(expenseDutyNormDoc);
-						OverWriteIssuanceSheet(expDoc, overwritingIds, dutyNormItemsWithOperationIssuedByDutyNorm, uow);
+						UpdateIssuanceSheet(expDoc, expDutyNormItemByIssueOperation, dutyNormIssueOperationByExpDutyNormItem, uow);
 						
 						progressBar.Add(text: $"Очищение документа индивидуальной выдачи №{expDoc.DocNumber ?? expDoc.Id.ToString()}");
 						expDoc.Items.RemoveAll(item => removingExpenseItems.Contains(item));
@@ -174,7 +174,7 @@ namespace Workwear.Models.Regulations {
 							$"{(colExpDoc.CreationDate != null ? $" Дата создания документа выдачи сотруднику: {colExpDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
 							$" Документ выдачи сотруднику был создан пользователем: {colExpDoc.CreatedbyUser.Name}"; 
 						foreach(var item in items) {
-							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
+							var dutyNormIssueOperation = dutyNormIssueOperationByWarehouseOperation[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
 								Document = expenseDutyNormDoc,
 								WarehouseOperation = item.WarehouseOperation,
@@ -186,7 +186,7 @@ namespace Workwear.Models.Regulations {
 						}
 						
 						uow.Save(expenseDutyNormDoc);
-						OverWriteIssuanceSheet(colExpDoc, uow);
+						UpdateIssuanceSheet(colExpDoc, uow);
 
 						progressBar.Add(text: $"Очищение документа коллективной выдачи №{colExpDoc.DocNumber ?? colExpDoc.Id.ToString()}");
 						colExpDoc.Items.RemoveAll(item => removingCollectiveExpenseItems.Contains(item));
@@ -195,7 +195,7 @@ namespace Workwear.Models.Regulations {
 							uow.Delete(colExpDoc);
 						}
 					}
-					OverWriteWriteOffDocs(employeeIssueOperationsIds, relevantWriteOffOperations, newDutyNorm, uow);
+					UpdateWriteWriteOffDocs(employeeIssueOperationsIds, dutyNormWriteOffOperationByEmployeeWriteOffOperation, newDutyNorm, uow);
 					
 				}
 				RemoveNorm(norm, uow);
@@ -208,6 +208,7 @@ namespace Workwear.Models.Regulations {
 			}
 		}
 
+		#region Создание дежурной нормы
 		private DateTime? GetNextIssue(int employeeId, NormItem item, IUnitOfWork uow) {
 			var nextIssue = uow.Session
 				.Query<EmployeeCardItem>()
@@ -267,14 +268,16 @@ namespace Workwear.Models.Regulations {
 			
 			return newDutyNormItem;
 		}
-		
+		#endregion
+
+		#region Выдачи и списания
 		private void CreateDutyNormIssueOperation (
 			EmployeeIssueOperation issueOperation, 
 			DutyNormIssueOperation dutyNormIssueOperation,
-			Dictionary<(int employeeId, int normItemId), DutyNormItem> relevantItemsIds = null) 
+			Dictionary<(int employeeId, int normItemId), DutyNormItem> dutyNormItemByEmployeeAndNormItem = null) 
 		{
-			if(relevantItemsIds != null)
-				dutyNormIssueOperation.DutyNormItem = relevantItemsIds[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
+			if(dutyNormItemByEmployeeAndNormItem != null)
+				dutyNormIssueOperation.DutyNormItem = dutyNormItemByEmployeeAndNormItem[(dutyNormIssueOperation.DutyNorm.ResponsibleEmployee.Id, issueOperation.NormItem.Id)];
 			dutyNormIssueOperation.OperationTime = issueOperation.OperationTime;
 			dutyNormIssueOperation.Nomenclature = issueOperation.Nomenclature;
 			dutyNormIssueOperation.WearSize = issueOperation.WearSize;
@@ -308,6 +311,9 @@ namespace Workwear.Models.Regulations {
 				.ToList();
 			return writeOffOperations;
 		}
+		#endregion
+
+		#region Документы выдачи
 		private Dictionary<Expense, List<ExpenseItem>> GetExpenseDocsForEmployee (int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			
 			var expenseItems = uow.Session.QueryOver<ExpenseItem>()
@@ -327,8 +333,6 @@ namespace Workwear.Models.Regulations {
 			expenseDutyNormDoc.Date = expenseDoc.Date;
 			expenseDutyNormDoc.Comment = expenseDoc.Comment;
 		}
-		// Для коллективной выдачи
-
 		private Dictionary<CollectiveExpense, List<CollectiveExpenseItem>> GetCollectiveExpenseDocsForEmployee(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			
 			var collectiveExpenseItems = uow.Session.QueryOver<CollectiveExpenseItem>()
@@ -348,9 +352,9 @@ namespace Workwear.Models.Regulations {
 			expenseDutyNormDoc.Date = collectiveExpenseDoc.Date;
 			expenseDutyNormDoc.Comment = collectiveExpenseDoc.Comment;
 		}
-		
-		// Перенос в ведомости
+		#endregion
 
+		#region Ведомости
 		private IssuanceSheet GetIssuanceSheet(Expense expenseDoc, IUnitOfWork uow) {
 			var issuanceSheet = uow.Session
 				.Query<IssuanceSheet>()
@@ -365,16 +369,16 @@ namespace Workwear.Models.Regulations {
 			return issuanceSheet;
 		}
 
-		private void OverWriteIssuanceSheet(
+		private void UpdateIssuanceSheet(
 			Expense expenseDoc, 
-			Dictionary<int, ExpenseDutyNormItem> overwritingIds,
-			Dictionary<int, DutyNormIssueOperation> dutyNormItemsWithOperationIssuedByDutyNorm,
+			Dictionary<int, ExpenseDutyNormItem> expDutyNormItemByIssueOperation,
+			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByExpDutyNormItem,
 			IUnitOfWork uow) {
 
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(expenseDoc, uow);
 			if(issuanceSheet?.Expense == null)
 				return;
-			var issueOperationsIds = overwritingIds.Keys.ToArray();
+			var issueOperationsIds = expDutyNormItemByIssueOperation.Keys.ToArray();
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
 			var changingIssuanceSheetItems = issuanceSheetItems
 				.Where(x => issueOperationsIds.Contains(x.IssueOperation.Id));
@@ -383,9 +387,9 @@ namespace Workwear.Models.Regulations {
 				progressBar.Add(text: "Переносим операции выдачи по дежурной норме в ведомость №" +
 				                           $"{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()}");
 				foreach(var item in changingIssuanceSheetItems) {
-					expenseDutyNormItem = overwritingIds[item.IssueOperation.Id];
+					expenseDutyNormItem = expDutyNormItemByIssueOperation[item.IssueOperation.Id];
 					item.ExpenseDutyNormItem = expenseDutyNormItem;
-					var dutyNormIssueOperation = dutyNormItemsWithOperationIssuedByDutyNorm[expenseDutyNormItem.Id];
+					var dutyNormIssueOperation = dutyNormIssueOperationByExpDutyNormItem[expenseDutyNormItem.Id];
 					item.DutyNormIssueOperation = dutyNormIssueOperation;
 					uow.Save(item);
 				}
@@ -419,7 +423,7 @@ namespace Workwear.Models.Regulations {
 			uow.Save(issuanceSheet);
 		}
 		
-		private void OverWriteIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
+		private void UpdateIssuanceSheet(CollectiveExpense collectiveExpenseDoc, IUnitOfWork uow) {
 
 			IssuanceSheet issuanceSheet = GetIssuanceSheet(collectiveExpenseDoc, uow);
 			if(issuanceSheet?.CollectiveExpense == null)
@@ -444,9 +448,9 @@ namespace Workwear.Models.Regulations {
 			uow.Save(collectiveExpenseDoc);
 			uow.Save(issuanceSheet);
 		}
-		
-		// Перенос списаний
-		
+		#endregion
+
+		#region Документы списания
 		private IList<WriteoffItem> GetWriteOffItems(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
 			var writeOffOperationsIds = uow.Session.Query<EmployeeIssueOperation>()
 				.Where(x => x.IssuedOperation != null)
@@ -461,9 +465,9 @@ namespace Workwear.Models.Regulations {
 			return writeOffItems;
 		}
 
-		private void OverWriteWriteOffDocs
+		private void UpdateWriteWriteOffDocs
 			(int[] employeeIssueOperationsIds,
-			Dictionary<int, DutyNormIssueOperation> relevantWriteOffOperations,
+			Dictionary<int, DutyNormIssueOperation> dutyNormWriteOffOperationByEmployeeWriteOffOperation,
 			DutyNorm newDutyNorm,
 			IUnitOfWork uow) {
 			var writeOffItems = GetWriteOffItems(employeeIssueOperationsIds, uow);
@@ -471,7 +475,7 @@ namespace Workwear.Models.Regulations {
 				progressBar.Add(text: $"Перенос ссылок на операции списания по дежурной норме {newDutyNorm.Name} в документах списания");
 			foreach(var item in writeOffItems) 
 			{
-				var dutyNormIssueOperation = relevantWriteOffOperations[item.EmployeeWriteoffOperation.Id];
+				var dutyNormIssueOperation = dutyNormWriteOffOperationByEmployeeWriteOffOperation[item.EmployeeWriteoffOperation.Id];
 				var removingWriteOffOperation = item.EmployeeWriteoffOperation;
 				item.DutyNormWriteOffOperation = dutyNormIssueOperation;
 				item.EmployeeWriteoffOperation = null;
@@ -479,6 +483,28 @@ namespace Workwear.Models.Regulations {
 				uow.Delete(removingWriteOffOperation);
 			}
 		}
+		#endregion
+
+		#region Операции со штрихкодами
+		private void UpdateBarcodeOperations(
+			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByIssueOperation, 
+			IUnitOfWork uow) {
+			var employeeIssueOperationsIds = dutyNormIssueOperationByIssueOperation.Keys.ToArray();
+			var barcodeOperations = uow.Session.Query<BarcodeOperation>()
+				.Where(x => employeeIssueOperationsIds.Contains(x.EmployeeIssueOperation.Id))
+				.ToList();
+			if(barcodeOperations.IsEmpty())
+				return;
+			foreach(var op in barcodeOperations) {
+				progressBar.Add(text: $"Изменение ссылки операции выдачи в операции со штрихкодом {op.Barcode.Title}");
+				op.DutyNormIssueOperation = dutyNormIssueOperationByIssueOperation[op.EmployeeIssueOperation.Id];
+				op.EmployeeIssueOperation = null;
+				uow.Save(op);
+			}
+		}
+		#endregion
+
+		#region Удаление
 		private void RemoveNorm(Norm norm, IUnitOfWork uow) {
 			if (norm.Employees.Any()) {
 				progressBar.Add(text: "Очищение подвязанных сотрудников к норме");
@@ -497,22 +523,6 @@ namespace Workwear.Models.Regulations {
 			progressBar.Add(text: "Удаление нормы");
 			uow.Delete(norm);
 		}
-
-		private void OverWriteBarcodeOperations(
-			Dictionary<int, DutyNormIssueOperation> relevantIssueOperations, 
-			IUnitOfWork uow) {
-			var employeeIssueOperationsIds = relevantIssueOperations.Keys.ToArray();
-			var barcodeOperations = uow.Session.Query<BarcodeOperation>()
-				.Where(x => employeeIssueOperationsIds.Contains(x.EmployeeIssueOperation.Id))
-				.ToList();
-			if(barcodeOperations.IsEmpty())
-				return;
-			foreach(var op in barcodeOperations) {
-				progressBar.Add(text: $"Изменение ссылки операции выдачи в операции со штрихкодом {op.Barcode.Title}");
-				op.DutyNormIssueOperation = relevantIssueOperations[op.EmployeeIssueOperation.Id];
-				op.EmployeeIssueOperation = null;
-				uow.Save(op);
-			}
-		}
+		#endregion
 	}
 }
