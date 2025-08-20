@@ -21,8 +21,9 @@ namespace Workwear.Models.Regulations {
 				var norm = uow.GetById<Norm>(normId);
 				var itemIds = norm.Items.Select(i => i.Id).ToArray();
 				var employees = norm.Employees.ToList();
+				var posts = norm.Posts.ToList();
 				
-				if(employees.IsEmpty()) {
+				if(employees.IsEmpty() && posts.IsEmpty()) {
 					DutyNorm newDutyNorm = new DutyNorm();
 					CreateDutyNorm(norm, newDutyNorm);
 					uow.Save(newDutyNorm);
@@ -31,6 +32,19 @@ namespace Workwear.Models.Regulations {
 					foreach(var item in norm.Items) {
 						var dutyNormItem = CreateDutyNormItem(newDutyNorm, item);
 						uow.Save(dutyNormItem);
+					}
+				}
+
+				if(posts.IsNotEmpty()) {
+					foreach(var post in norm.Posts) {
+						DutyNorm newDutyNorm = new DutyNorm();
+						CreateDutyNorm(norm, newDutyNorm, null, post);
+						uow.Save(newDutyNorm);
+						CreateDutyNormName(norm, newDutyNorm, post, uow);
+						foreach(var item in norm.Items) {
+							var dutyNormItem = CreateDutyNormItem(newDutyNorm, item);
+							uow.Save(dutyNormItem);
+						}
 					}
 				}
 				 
@@ -94,6 +108,10 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, expDoc);
 						uow.Save(expenseDutyNormDoc);
+						expenseDutyNormDoc.Comment +=
+							$"{(expDoc.DocNumber != null ? $" Номер документа выдачи сотруднику: {expDoc.DocNumber}" : "")}" +
+							$"{(expDoc.CreationDate != null ? $" Дата создания документа выдачи сотруднику: {expDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
+							$" Документ выдачи сотруднику был создан пользователем: {expDoc.CreatedbyUser.Name}"; 
 
 						foreach(var item in items) {
 							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
@@ -124,7 +142,10 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, colExpDoc);
 						uow.Save(expenseDutyNormDoc);
-						
+						expenseDutyNormDoc.Comment +=
+							$"{(colExpDoc.DocNumber != null ? $" Номер документа выдачи сотруднику: {colExpDoc.DocNumber}" : "")}" +
+							$"{(colExpDoc.CreationDate != null ? $" Дата создания документа выдачи сотруднику: {colExpDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
+							$" Документ выдачи сотруднику был создан пользователем: {colExpDoc.CreatedbyUser.Name}"; 
 						foreach(var item in items) {
 							var dutyNormIssueOperation = relevantOperations[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
@@ -164,18 +185,24 @@ namespace Workwear.Models.Regulations {
 				.FirstOrDefault();
 			return nextIssue;
 		}
-		public virtual void CreateDutyNorm(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null) {
+		public virtual void CreateDutyNorm(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null, Post post = null) {
 			newDutyNorm.ResponsibleEmployee = employee;
 			newDutyNorm.DateFrom = norm.DateFrom;
 			newDutyNorm.DateTo = norm.DateTo;
 			newDutyNorm.Comment = norm.Comment;
-			newDutyNorm.Subdivision = employee?.Subdivision;
+			newDutyNorm.Subdivision = employee?.Subdivision ?? post?.Subdivision;
 		}
 
 		private void CreateDutyNormName(Norm norm, DutyNorm newDutyNorm, IUnitOfWork uow, EmployeeCard employee = null) {
 			newDutyNorm.Name = norm.Name != null 
 				? $"{norm.Name} {(employee != null ? $"({employee.ShortName})" : "")}" 
 				: $"Дежурная {(employee != null ? $"({employee.ShortName})" : $"норма №{newDutyNorm.Id}")}";
+			uow.Save(newDutyNorm);
+		}
+
+		private void CreateDutyNormName(Norm norm, DutyNorm newDutyNorm, Post post, IUnitOfWork uow) {
+			newDutyNorm.Name = norm.Name != null
+				? $"{norm.Name} ({post.Name})" : $"Дежурная ({post.Name})";
 			uow.Save(newDutyNorm);
 		}
 
@@ -337,6 +364,8 @@ namespace Workwear.Models.Regulations {
 
 				issuanceSheet.ExpenseDutyNorm = expenseDutyNormItem?.Document;
 			}
+			else
+				expenseDoc.Comment += $" Ведомость №{issuanceSheet.Id} отвязана от документа";
 			
 			foreach(var item in issuanceSheetItems) {
 				item.ExpenseItem = null;
@@ -345,6 +374,7 @@ namespace Workwear.Models.Regulations {
 			}
 
 			issuanceSheet.Expense = null;
+			uow.Save(expenseDoc);
 			uow.Save(issuanceSheet);
 		}
 		
@@ -354,13 +384,14 @@ namespace Workwear.Models.Regulations {
 			if(issuanceSheet == null)
 				return;
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
-			
+			collectiveExpenseDoc.Comment += $" Ведомость №{issuanceSheet.Id} отвязана от документа";
 			foreach(var item in issuanceSheetItems) {
 				item.CollectiveExpenseItem = null;
 				item.IssueOperation = null;
 				uow.Save(item);
 			}
 			issuanceSheet.CollectiveExpense = null;
+			uow.Save(collectiveExpenseDoc);
 			uow.Save(issuanceSheet);
 		}
 		
