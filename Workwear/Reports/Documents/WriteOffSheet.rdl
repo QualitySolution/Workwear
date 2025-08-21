@@ -29,7 +29,7 @@
        )
     ) as subject_name,
     items.cause,
-    CONCAT(CONVERT(opissue.wear_percent * 100, INTEGER), ' %') as wear_percent
+    CONCAT(ROUND(opissue.wear_percent * 100), ' %') as wear_percent
 FROM stock_write_off_detail as items
          LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
          LEFT JOIN operation_issued_by_employee as opissue on opissue.id = items.employee_issue_operation_id
@@ -73,7 +73,7 @@ WHERE doc.id = @id;</CommandText>
         </Field>
         <Field Name="wear_percent">
           <DataField>wear_percent</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
