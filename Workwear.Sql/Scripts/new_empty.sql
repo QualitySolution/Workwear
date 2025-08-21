@@ -467,6 +467,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
+  `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
