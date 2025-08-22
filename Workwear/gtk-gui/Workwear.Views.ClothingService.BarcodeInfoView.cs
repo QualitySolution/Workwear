@@ -26,6 +26,8 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yLabel labelTitle;
 
+		private global::Gamma.GtkWidgets.yLabel ylabel12;
+
 		private global::Gamma.GtkWidgets.yLabel ylabel2;
 
 		private global::Gamma.GtkWidgets.yLabel ylabel3;
@@ -36,9 +38,7 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yLabel ylabel9;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelCode;
-
-		private global::Gtk.Label GtkLabel;
+		private global::Gtk.Label GtkLabelTop;
 
 		protected virtual void Build()
 		{
@@ -145,71 +145,71 @@ namespace Workwear.Views.ClothingService
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableInfo.Gtk.Table+TableChild
+			this.ylabel12 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel12.Name = "ylabel12";
+			this.ylabel12.Xalign = 1F;
+			this.ylabel12.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудник:");
+			this.tableInfo.Add(this.ylabel12);
+			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel12]));
+			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child tableInfo.Gtk.Table+TableChild
 			this.ylabel2 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel2.Name = "ylabel2";
 			this.ylabel2.Xalign = 1F;
 			this.ylabel2.LabelProp = global::Mono.Unix.Catalog.GetString("Дата создания:");
 			this.tableInfo.Add(this.ylabel2);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel2]));
-			w8.TopAttach = ((uint)(3));
-			w8.BottomAttach = ((uint)(4));
-			w8.XOptions = ((global::Gtk.AttachOptions)(4));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel2]));
+			w9.TopAttach = ((uint)(3));
+			w9.BottomAttach = ((uint)(4));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableInfo.Gtk.Table+TableChild
 			this.ylabel3 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel3.Name = "ylabel3";
 			this.ylabel3.Xalign = 1F;
 			this.ylabel3.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатура:");
 			this.tableInfo.Add(this.ylabel3);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel3]));
-			w9.TopAttach = ((uint)(1));
-			w9.BottomAttach = ((uint)(2));
-			w9.XOptions = ((global::Gtk.AttachOptions)(4));
-			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel3]));
+			w10.TopAttach = ((uint)(1));
+			w10.BottomAttach = ((uint)(2));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableInfo.Gtk.Table+TableChild
 			this.ylabel5 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel5.Name = "ylabel5";
 			this.ylabel5.Xalign = 1F;
 			this.ylabel5.LabelProp = global::Mono.Unix.Catalog.GetString("Значение штрихкода:");
 			this.tableInfo.Add(this.ylabel5);
-			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel5]));
-			w10.TopAttach = ((uint)(2));
-			w10.BottomAttach = ((uint)(3));
-			w10.XOptions = ((global::Gtk.AttachOptions)(4));
-			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel5]));
+			w11.TopAttach = ((uint)(2));
+			w11.BottomAttach = ((uint)(3));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableInfo.Gtk.Table+TableChild
 			this.ylabel8 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel8.Name = "ylabel8";
 			this.ylabel8.Xalign = 1F;
 			this.ylabel8.LabelProp = global::Mono.Unix.Catalog.GetString("Размер:");
 			this.tableInfo.Add(this.ylabel8);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel8]));
-			w11.TopAttach = ((uint)(2));
-			w11.BottomAttach = ((uint)(3));
-			w11.LeftAttach = ((uint)(2));
-			w11.RightAttach = ((uint)(3));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel8]));
+			w12.TopAttach = ((uint)(2));
+			w12.BottomAttach = ((uint)(3));
+			w12.LeftAttach = ((uint)(2));
+			w12.RightAttach = ((uint)(3));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child tableInfo.Gtk.Table+TableChild
 			this.ylabel9 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel9.Name = "ylabel9";
 			this.ylabel9.Xalign = 1F;
 			this.ylabel9.LabelProp = global::Mono.Unix.Catalog.GetString("Рост:");
 			this.tableInfo.Add(this.ylabel9);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel9]));
-			w12.TopAttach = ((uint)(3));
-			w12.BottomAttach = ((uint)(4));
-			w12.LeftAttach = ((uint)(2));
-			w12.RightAttach = ((uint)(3));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child tableInfo.Gtk.Table+TableChild
-			this.ylabelCode = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelCode.Name = "ylabelCode";
-			this.ylabelCode.Xalign = 1F;
-			this.ylabelCode.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудник:");
-			this.tableInfo.Add(this.ylabelCode);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabelCode]));
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel9]));
+			w13.TopAttach = ((uint)(3));
+			w13.BottomAttach = ((uint)(4));
+			w13.LeftAttach = ((uint)(2));
+			w13.RightAttach = ((uint)(3));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.vbox1.Add(this.tableInfo);
 			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.tableInfo]));
@@ -218,11 +218,11 @@ namespace Workwear.Views.ClothingService
 			w14.Fill = false;
 			this.GtkAlignment.Add(this.vbox1);
 			this.frame1.Add(this.GtkAlignment);
-			this.GtkLabel = new global::Gtk.Label();
-			this.GtkLabel.Name = "GtkLabel";
-			this.GtkLabel.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Информация о штрихкоде</b>");
-			this.GtkLabel.UseMarkup = true;
-			this.frame1.LabelWidget = this.GtkLabel;
+			this.GtkLabelTop = new global::Gtk.Label();
+			this.GtkLabelTop.Name = "GtkLabelTop";
+			this.GtkLabelTop.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Информация о штрихкоде</b>");
+			this.GtkLabelTop.UseMarkup = true;
+			this.frame1.LabelWidget = this.GtkLabelTop;
 			this.Add(this.frame1);
 			if ((this.Child != null))
 			{

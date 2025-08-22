@@ -43,7 +43,7 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive).InitializeFromSource();
 			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CanCreateBarcode, w => w.Visible)
-				.AddBinding(v => v.CanCreateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.NeedCreateBarcodes, w => w.Sensitive)
 				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label).InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CanPrintBarcode, w => w.Visible)
@@ -87,7 +87,8 @@ namespace Workwear.Views.Stock
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn(ViewModel.BarcodeTypeString).Visible(ViewModel.VisibleBarcodes)
-					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
+					.AddTextRenderer(x => x.BarcodeTextFunc(ViewModel.BaseParameters.MarkingType))
+				.AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
 						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)

@@ -47,8 +47,10 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		#region Cвойства
 
 		public virtual bool AutoAdd { get; set; } = true;
-		public virtual bool CanEntry => true; //Изначально полагалась проверка на количество выданного
-		public virtual bool CanAdd => ActiveBarcode != null;
+		public virtual bool CanEntry => expenseItem.EmployeeIssueOperation.BarcodeOperations
+			.Select(x => x.Barcode).Concat(AddedBarcodes)
+			.Count() < expenseItem.EmployeeIssueOperation.Issued;
+		public virtual bool CanAdd => CanEntry && ActiveBarcode != null;
 		
 		public virtual string CodeLabel => 
 			baseParameters.MarkingType == BarcodeTypes.EAN13 ? "Штрихкод" :
@@ -77,6 +79,10 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			set => SetField(ref activeBarcode, value);
 		}
 
+		[PropertyChangedAlso(nameof(CanEntry))]
+		public virtual IList<Barcode> AllBarcodes => expenseItem.EmployeeIssueOperation.BarcodeOperations
+			.Select(x => x.Barcode).Concat(AddedBarcodes).ToList();
+
 		private string barcodeText;
 		public string BarcodeText {
 			get => barcodeText;
@@ -87,7 +93,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 						var barcode = barcodeRepository.GetBarcodeByString(barcodeText);
 						if(barcode != null && barcode.BarcodeOperations.Count != 0) {
 							//TODO в будующем при дополнении маркировки это тоже нужно отрабатывать
-							CheckText = "УНже используется в другой операции";
+							CheckText = "Уже используется в другой операции";
 							CheckTextColor = "purple";
 						}
 						else if(addedBarcodes.Any(x => x.Title == barcodeText)) {

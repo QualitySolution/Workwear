@@ -72,6 +72,7 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
+			ObservableItems.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 		}
 
@@ -102,7 +103,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region Sensetive
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
-		public bool CanCreateBarcodes => CanEdit && Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
+		public bool NeedCreateBarcodes => CanEdit && Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 		public bool CanAddBarcodeForSelected => SelectedItem?.Nomenclature.UseBarcode ?? false;
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
@@ -231,7 +232,8 @@ namespace Workwear.ViewModels.Stock
 			? "Обновить штрихкоды" : "Создать штрихкоды";
 
 		public bool CanPrintBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.MarkingType == BarcodeTypes.EAN13;
-		public bool CanCreateBarcode => CanEdit && VisibleBarcodes && BaseParameters.MarkingType == BarcodeTypes.EAN13;
+		public bool CanCreateBarcode => CanEdit && VisibleBarcodes && BaseParameters.MarkingType == BarcodeTypes.EAN13 
+			&& ObservableItems.Any(x => x?.EmployeeIssueOperation?.BarcodeOperations.Count < x?.Amount);
 		public bool CanSetBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.MarkingType == BarcodeTypes.EPC96;
 		
 		public void ReleaseBarcodes() {
@@ -244,12 +246,12 @@ namespace Workwear.ViewModels.Stock
 			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
 			barcodeService.CreateOrRemove(UoW, operations);
 			UoW.Commit();
-			OnPropertyChanged(nameof(CanCreateBarcodes));
+			OnPropertyChanged(nameof(NeedCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 
 		public void PrintBarcodes() {
-			if(CanCreateBarcodes) {
+			if(NeedCreateBarcodes) {
 				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
 					ReleaseBarcodes();
 				else
@@ -277,9 +279,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		public void AddBarcodes(ExpenseItem item, List<Barcode> barcodes) {
 			UoW.GetInSession(item); 
-//Возможно нужно проверить существующие
 			foreach(var barcode in barcodes) {
-				
 				barcode.Nomenclature = item.Nomenclature;
 				barcode.Size = item.WearSize;
 				barcode.Height = item.Height;
@@ -344,8 +344,9 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-			OnPropertyChanged(nameof(CanCreateBarcodes));
+			OnPropertyChanged(nameof(NeedCreateBarcodes));
 			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
+			OnPropertyChanged(nameof(CanCreateBarcode));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
 		}
 		#endregion

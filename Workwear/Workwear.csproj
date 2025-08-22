@@ -200,6 +200,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
@@ -541,6 +542,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
     <Compile Include="Views\Visits\VisitListView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitListView.cs" />
+    <Compile Include="Views\Stock\Widgets\BarcodeAddWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BarcodeAddWidgetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -738,7 +741,6 @@
     <Folder Include="Views\Statements\" />
     <Folder Include="Journal\Filter.ViewModels\Stock\" />
     <Folder Include="Journal\Filter.Views\Stock\" />
-    <Folder Include="ViewModels\Stock\Widgets\" />
     <Folder Include="Views\Stock\NomenclatureChildren\" />
     <Folder Include="Views\Stock\Widgets\" />
     <Folder Include="ViewModels\Tools\" />
