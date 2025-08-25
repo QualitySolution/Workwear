@@ -63,6 +63,13 @@ namespace Workwear.Domain.Stock {
 			get => number;
 			set => SetField(ref number, value?.Trim());
 		}
+
+		private string additionalInfo;
+		[Display(Name = "Дополнительная информация")]
+		public virtual string AdditionalInfo {
+			get => additionalInfo;
+			set => SetField(ref additionalInfo, value);
+		}
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {
