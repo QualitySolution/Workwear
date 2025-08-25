@@ -2493,7 +2493,15 @@ create table work_days
 		constraint work_days_pk
 		primary key (id)
 );
-
+create table days_schedule (
+	id   	     	int unsigned auto_increment,
+	day_of_week 	int unsigned not null,
+	start 		 	time not null,
+	end 		    time not null,
+	visit_interval  int unsigned not null,
+		constraint days_schedule
+	   	primary key (id),
+);
 -- -----------------------------------------------------
 -- Оказываемые услуги
 -- -----------------------------------------------------
@@ -2540,7 +2548,7 @@ create table clothing_service_services_claim
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
 );
-	
+
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------
