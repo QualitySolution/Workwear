@@ -72,7 +72,6 @@ namespace Workwear.ViewModels.Stock
 			Owners = owners;
 			
 			Entity.Items.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
-			ObservableItems.ContentChanged += ExpenseDoc_ObservableItems_ListContentChanged;
 			Entity.PropertyChanged += ExpenseDoc_PropertyChanged;
 		}
 
@@ -105,7 +104,10 @@ namespace Workwear.ViewModels.Stock
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
 		public bool NeedCreateBarcodes => CanEdit && Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
-		public bool CanAddBarcodeForSelected => SelectedItem?.Nomenclature.UseBarcode ?? false;
+
+		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature.UseBarcode ?? false)
+		    && (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == BaseParameters.MarkingType) ?? 0) < (SelectedItem?.Amount ?? 0);
+
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
 			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
 		#endregion

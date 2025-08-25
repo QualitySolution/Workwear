@@ -7,8 +7,9 @@ namespace Workwear.Views.Stock.Widgets {
 		public BarcodeAddWidgetView(BarcodeAddWidgetViewModel viewModel) : base(viewModel) {
 			this.Build();
 
+			yhboxEntryCode.Binding
+				.AddBinding(ViewModel, vm => vm.CanEntry, w => w.Sensitive).InitializeFromSource();
 			entryCode.Binding
-				.AddBinding(ViewModel, vm => vm.CanEntry, w => w.Sensitive)
 				.AddBinding(ViewModel, vm => vm.BarcodeText, w => w.Text).InitializeFromSource();
 			ycheckbuttonAutoAdd.Binding
 				.AddBinding(ViewModel, vm => vm.AutoAdd, w => w.Active).InitializeFromSource();

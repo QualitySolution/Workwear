@@ -47,9 +47,12 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		#region Cвойства
 
 		public virtual bool AutoAdd { get; set; } = true;
-		public virtual bool CanEntry => expenseItem.EmployeeIssueOperation.BarcodeOperations
-			.Select(x => x.Barcode).Concat(AddedBarcodes)
-			.Count() < expenseItem.EmployeeIssueOperation.Issued;
+
+		public virtual bool CanEntry => expenseItem != null
+			? (expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.MarkingType) ?? 0)
+			+ AddedBarcodes.Count < expenseItem.EmployeeIssueOperation.Issued
+			: true;
+
 		public virtual bool CanAdd => CanEntry && ActiveBarcode != null;
 		
 		public virtual string CodeLabel => 
@@ -68,6 +71,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			set => SetField(ref chekcTextColor, value);
 		}
 		private IObservableList<Barcode> addedBarcodes = new ObservableList<Barcode>();
+		[PropertyChangedAlso(nameof(CanEntry))]
 		public virtual IObservableList<Barcode> AddedBarcodes {
 			get { return addedBarcodes; }
 			set { SetField(ref addedBarcodes, value); }

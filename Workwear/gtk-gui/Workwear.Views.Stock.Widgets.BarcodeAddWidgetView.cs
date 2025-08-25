@@ -6,7 +6,7 @@ namespace Workwear.Views.Stock.Widgets
 	{
 		private global::Gamma.GtkWidgets.yVBox yvbox2;
 
-		private global::Gtk.HBox hbox1;
+		private global::Gamma.GtkWidgets.yHBox yhboxEntryCode;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCode;
 
@@ -43,28 +43,28 @@ namespace Workwear.Views.Stock.Widgets
 			this.yvbox2.Name = "yvbox2";
 			this.yvbox2.Spacing = 6;
 			// Container child yvbox2.Gtk.Box+BoxChild
-			this.hbox1 = new global::Gtk.HBox();
-			this.hbox1.Name = "hbox1";
-			this.hbox1.Spacing = 6;
-			// Container child hbox1.Gtk.Box+BoxChild
+			this.yhboxEntryCode = new global::Gamma.GtkWidgets.yHBox();
+			this.yhboxEntryCode.Name = "yhboxEntryCode";
+			this.yhboxEntryCode.Spacing = 6;
+			// Container child yhboxEntryCode.Gtk.Box+BoxChild
 			this.ylabelCode = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelCode.Name = "ylabelCode";
 			this.ylabelCode.Xalign = 1F;
 			this.ylabelCode.LabelProp = global::Mono.Unix.Catalog.GetString("Штрих код:");
-			this.hbox1.Add(this.ylabelCode);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylabelCode]));
+			this.yhboxEntryCode.Add(this.ylabelCode);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yhboxEntryCode[this.ylabelCode]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
+			// Container child yhboxEntryCode.Gtk.Box+BoxChild
 			this.entryCode = new global::Gamma.Widgets.CleanableEntry();
 			this.entryCode.Events = ((global::Gdk.EventMask)(256));
 			this.entryCode.Name = "entryCode";
-			this.hbox1.Add(this.entryCode);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.entryCode]));
+			this.yhboxEntryCode.Add(this.entryCode);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yhboxEntryCode[this.entryCode]));
 			w2.Position = 1;
-			this.yvbox2.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.hbox1]));
+			this.yvbox2.Add(this.yhboxEntryCode);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yhboxEntryCode]));
 			w3.Position = 0;
 			w3.Expand = false;
 			w3.Fill = false;

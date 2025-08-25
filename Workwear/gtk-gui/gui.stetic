@@ -36452,7 +36452,7 @@
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
-          <widget class="Gtk.HBox" id="hbox1">
+          <widget class="Gamma.GtkWidgets.yHBox" id="yhboxEntryCode">
             <property name="MemberName" />
             <property name="Spacing">6</property>
             <child>
