@@ -1687,6 +1687,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
@@ -1702,6 +1703,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC),
   INDEX `fk_issuance_sheet_items_9_idx` (`height_id` ASC),
   INDEX `fk_issuance_sheet_items_8_idx` (`size_id` ASC),
+  INDEX `fk_issuance_sheet_items_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_issuance_sheet_items_1`
     FOREIGN KEY (`issuance_sheet_id`)
     REFERENCES `issuance_sheet` (`id`)
@@ -1722,6 +1724,11 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_5`
     FOREIGN KEY (`stock_expense_detail_id`)
     REFERENCES `stock_expense_detail` (`id`)
@@ -2034,12 +2041,14 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `barcode_id` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
   UNIQUE INDEX `index_uniq` (`barcode_id` ASC, `employee_issue_operation_id` ASC, `warehouse_operation_id` ASC),
+  INDEX `fk_operation_barcodes_duty_norm_issue_operation_id_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_operation_barcodes_1`
     FOREIGN KEY (`barcode_id`)
     REFERENCES `barcodes` (`id`)
@@ -2054,7 +2063,12 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
     FOREIGN KEY (`warehouse_operation_id`)
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON UPDATE CASCADE
+	ON DELETE NO ACTION)
 ENGINE = InnoDB;
 
 

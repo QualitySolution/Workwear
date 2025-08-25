@@ -76,6 +76,7 @@ using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
 using Workwear.Models.Operations;
+using Workwear.Models.Regulations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Models.Supply;
@@ -336,6 +337,7 @@ namespace workwear
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NomenclatureForecastingModel>().AsSelf().InstancePerLifetimeScope();

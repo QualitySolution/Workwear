@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.Barcode).Column("barcode_id").Not.Nullable();
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
+			References(x => x.DutyNormIssueOperation).Column("duty_norm_issue_operation_id");
 		}
 	}
 }
