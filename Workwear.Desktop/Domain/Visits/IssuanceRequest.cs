@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Visits {
 	[Appellative(Gender = GrammaticalGender.Feminine,
@@ -52,6 +53,7 @@ namespace Workwear.Domain.Visits {
 			set => SetField(ref creationDate, value);
 		}
 		public virtual IObservableList<EmployeeCard> Employees { get; set; }
+		public virtual IObservableList<CollectiveExpense> CollectiveExpenses { get; set; }
 
 		public enum IssuanceRequestStatus {
 			[Display(Name = "Новая")]

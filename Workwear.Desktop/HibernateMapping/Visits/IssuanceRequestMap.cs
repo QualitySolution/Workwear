@@ -23,6 +23,11 @@ namespace Workwear.HibernateMapping.Visits {
 				.ParentKeyColumn("issuance_request_id")
 				.ChildKeyColumn("employee_id")
 				.LazyLoad();
+
+			HasMany(x => x.CollectiveExpenses)
+				.KeyColumn("issuance_request_id")
+				.Inverse()
+				.LazyLoad();
 		}
 	}
 }
