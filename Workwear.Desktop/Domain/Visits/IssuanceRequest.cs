@@ -39,11 +39,11 @@ namespace Workwear.Domain.Visits {
 			get => comment;
 			set => SetField(ref comment, value);
 		}
-		private UserBase user;
-		[Display(Name = "Пользователь")]
-		public virtual UserBase User {
-			get => user;
-			set => SetField(ref user, value);
+		private UserBase createdByUser;
+		[Display(Name = "Пользователь, создавший заявку")]
+		public virtual UserBase CreatedByUser {
+			get => createdByUser;
+			set => SetField(ref createdByUser, value);
 		} 
 		private DateTime creationDate;
 		[Display(Name = "Дата создания заявки")]
