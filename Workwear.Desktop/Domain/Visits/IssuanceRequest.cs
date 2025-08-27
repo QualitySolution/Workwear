@@ -5,7 +5,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 
-namespace Workwear.HibernateMapping.Visits {
+namespace Workwear.Domain.Visits {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "заявки на выдачу",
 		Nominative = "заявка на выдачу",
