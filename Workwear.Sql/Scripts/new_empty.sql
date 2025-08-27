@@ -1545,7 +1545,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_request_id` 
   	FOREIGN KEY (`issuance_request_id`)
-	REFERENCES issuance_request (`id`)
+	REFERENCES issuance_requests (`id`)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -2553,7 +2553,7 @@ create table clothing_service_services_claim
 -- -----------------------------------------------------
 
 -- Заявка на выдачу
-CREATE TABLE issuance_request(
+CREATE TABLE issuance_requests(
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`receipt_date` DATE NOT NULL,
 	`status` ENUM('New', 'Issued', 'PartiallyIssued') DEFAULT 'New' NOT NULL,
@@ -2568,14 +2568,14 @@ CREATE TABLE issuance_request(
 );
 
 -- Сотрудники в заявках на выдачу
-CREATE TABLE employee_issuance_request(
+CREATE TABLE employees_issuance_request(
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`employee_id` INT UNSIGNED NOT NULL,
 	`issuance_request_id` INT UNSIGNED NOT NULL,
 	CONSTRAINT `fk_employee_id` FOREIGN KEY (`employee_id`) REFERENCES employees (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
-	CONSTRAINT `fk_issuance_request_id` FOREIGN KEY  (`issuance_request_id`) REFERENCES issuance_request (`id`)
+	CONSTRAINT `fk_issuance_request_id` FOREIGN KEY  (`issuance_request_id`) REFERENCES issuance_requests (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	INDEX `employee_id_idx` (`employee_id` ASC),
