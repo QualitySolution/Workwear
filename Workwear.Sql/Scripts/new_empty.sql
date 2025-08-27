@@ -1830,7 +1830,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
-  `use_catalog` BOOLEAN DEFAULT FALSE NOT NULL,
+  `can_choose` BOOLEAN DEFAULT FALSE NOT NULL,
   PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
   INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
   CONSTRAINT `fk_protection_tools_nomenclature_1`

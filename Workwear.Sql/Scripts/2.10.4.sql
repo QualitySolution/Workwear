@@ -5,7 +5,7 @@ alter table nomenclature
 	add catalog_id char(24) null after archival;
 
 alter table protection_tools_nomenclature
-	add use_catalog boolean default false not null;
+	add can_choose boolean default false not null;
 
 create table employees_selected_nomenclatures
 (
