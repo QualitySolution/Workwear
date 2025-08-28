@@ -71,7 +71,7 @@ namespace workwear.Journal.ViewModels.Visits {
 		public string Comment { get; set; }
 		public string Author { get; set; }
 		public DateTime? CreationDate { get; set; }
-		public string CreationDateString => CreationDate?.ToString("MM/dd/yyyy") ?? String.Empty;
+		public string CreationDateString => CreationDate?.ToString("dd/MM/yyyy") ?? String.Empty;
 	}
 
 	
