@@ -142,6 +142,7 @@
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Supply\ShipmentJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Visits\IssuanceRequestJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Visits\VisitJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
+    <Compile Include="ViewModels\Visits\IssuanceRequestViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitListViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
