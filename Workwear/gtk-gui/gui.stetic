@@ -5357,6 +5357,12 @@
         <property name="ShortLabel" translatable="yes">Посещения склада</property>
         <signal name="Activated" handler="OnActionVisitsActivated" />
       </action>
+      <action id="ActionIssuanceRequest">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Заявки на коллективную выдачу</property>
+        <property name="ShortLabel" translatable="yes">Заявки на коллективную выдачу</property>
+        <signal name="Activated" handler="OnActionIssuanceRequestActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5415,6 +5421,7 @@
                 <node type="Menuitem" action="ActionStockMovements" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionWarehouseForecasting" />
+                <node type="Menuitem" action="ActionIssuanceRequest" />
                 <node type="Menuitem" action="ActionShipment" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionClothingService" />

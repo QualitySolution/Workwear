@@ -1,9 +1,8 @@
 ﻿using QS.DomainModel.UoW;
 using QS.Project.Journal;
 using Workwear.Domain.Visits;
-using workwear.Journal.ViewModels.Visits;
 
-namespace workwear.Journal.Filter.ViewModels.Visits {
+namespace Workwear.Journal.Filter.ViewModels.Visits {
 	public class IssuanceRequestFilterViewModel: JournalFilterViewModelBase<IssuanceRequestFilterViewModel> {
 		public IssuanceRequestFilterViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,

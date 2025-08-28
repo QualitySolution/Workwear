@@ -1,7 +1,7 @@
 ﻿using System;
 using QS.Views;
 using Workwear.Domain.Visits;
-using workwear.Journal.Filter.ViewModels.Visits;
+using Workwear.Journal.Filter.ViewModels.Visits;
 
 namespace Workwear.Journal.Filter.Views.Visits {
 	public partial class IssuanceRequestFilterView : ViewBase<IssuanceRequestFilterViewModel> {

@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using Gamma.ColumnConfig;
+using Gamma.Utilities;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
@@ -10,7 +11,7 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using Workwear.Domain.Visits;
-using workwear.Journal.Filter.ViewModels.Visits;
+using Workwear.Journal.Filter.ViewModels.Visits;
 using Workwear.ViewModels.Visits;
 
 namespace workwear.Journal.ViewModels.Visits {
@@ -43,7 +44,7 @@ namespace workwear.Journal.ViewModels.Visits {
 				query.Where(x => x.Status == Filter.Status);
 
 			query
-				.JoinAlias(() => issuanceRequestAlias, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => issuanceRequestAlias.CreatedByUser, () => authorAlias, JoinType.LeftOuterJoin)
 				.OrderBy(() => issuanceRequestAlias.ReceiptDate).Desc
 				.SelectList(list => list
 					.Select(() => issuanceRequestAlias.Id).WithAlias(() => resultAlias.Id)
@@ -65,10 +66,12 @@ namespace workwear.Journal.ViewModels.Visits {
 		[SearchHighlight]
 		public DateTime ReceiptDate { get; set; }
 		public IssuanceRequestStatus Status { get; set; }
+		public string StatusString => Status.GetEnumTitle();
 		[SearchHighlight]
 		public string Comment { get; set; }
 		public string Author { get; set; }
 		public DateTime? CreationDate { get; set; }
+		public string CreationDateString => CreationDate?.ToString("MM/dd/yyyy") ?? String.Empty;
 	}
 
 	
