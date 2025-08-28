@@ -2572,6 +2572,7 @@ CREATE TABLE employees_issuance_request(
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`employee_id` INT UNSIGNED NOT NULL,
 	`issuance_request_id` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`id`),
 	CONSTRAINT `fk_employee_id` FOREIGN KEY (`employee_id`) REFERENCES employees (`id`)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
