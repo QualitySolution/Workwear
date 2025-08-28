@@ -18,6 +18,7 @@ CREATE TABLE employees_issuance_request(
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`employee_id` INT UNSIGNED NOT NULL,
 	`issuance_request_id` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`id`),
 	CONSTRAINT `fk_employee_id` FOREIGN KEY (`employee_id`) REFERENCES employees (`id`)
     	ON DELETE CASCADE 
         ON UPDATE CASCADE,
@@ -31,7 +32,7 @@ CREATE TABLE employees_issuance_request(
 -- Добавление ссылки на заявку в коллективную выдачу
 ALTER TABLE stock_collective_expense
 	ADD COLUMN `issuance_request_id` INT UNSIGNED NULL DEFAULT NULL AFTER `transfer_agent_id`,
-    ADD CONSTRAINT `fk_issuance_request_id` FOREIGN KEY (`issuance_request_id`) 
+    ADD CONSTRAINT `fk_collective_expense_issuance_request_id` FOREIGN KEY (`issuance_request_id`) 
         REFERENCES issuance_requests (`id`)
 		ON DELETE NO ACTION 
 		ON UPDATE CASCADE,

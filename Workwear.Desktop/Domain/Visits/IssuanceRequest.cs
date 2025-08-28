@@ -54,15 +54,15 @@ namespace Workwear.Domain.Visits {
 		}
 		public virtual IObservableList<EmployeeCard> Employees { get; set; }
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses { get; set; }
-
-		public enum IssuanceRequestStatus {
-			[Display(Name = "Новая")]
-			New,
-			[Display(Name = "Выдано")]
-			Issued,
-			[Display(Name = "Частично выдано")]
-			PartiallyIssued
-		}
+		
 		#endregion
+	}
+	public enum IssuanceRequestStatus {
+		[Display(Name = "Новая")]
+		New,
+		[Display(Name = "Выдано")]
+		Issued,
+		[Display(Name = "Частично выдано")]
+		PartiallyIssued
 	}
 }

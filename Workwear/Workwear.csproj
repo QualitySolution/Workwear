@@ -122,6 +122,7 @@
     <Compile Include="Journal\Filter.ViewModels\Regulations\DutyNormBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Visits\IssuanceRequestFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Analytics\ProtectionToolsCategoryJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\ClothingService\ClaimsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\ClothingService\ServicesJournalViewModel.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\SubdivisionFilterViewModel.cs" />
     <Compile Include="Journal\ViewModels\Supply\ShipmentJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Visits\IssuanceRequestJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Visits\VisitJournalViewModel.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Models\Stock\OpenStockDocumentsModel.cs" />
@@ -215,6 +217,7 @@
     <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
+    <Compile Include="ViewModels\Visits\IssuanceRequestViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitListViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitViewModel.cs" />
     <Compile Include="Views\Company\EmployeeVacationView.cs" />
@@ -541,6 +544,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
     <Compile Include="Views\Visits\VisitListView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitListView.cs" />
+    <Compile Include="Journal\Filter.Views\Visits\IssuanceRequestFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -782,6 +787,7 @@
     <Folder Include="Journal\Filter.Views\Supply\" />
     <Folder Include="Journal\Filter.ViewModels\Supply\" />
     <Folder Include="Views\Visits\" />
+    <Folder Include="Journal\Filter.Views\Visits\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Reports\AmountIssuedWearFlat.rdl">
