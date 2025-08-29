@@ -423,6 +423,7 @@ public partial class MainWindow : Gtk.Window {
 						 || FeaturesService.Available(WorkwearFeature.Postomats)
 						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
 		ActionShipmentReport.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
+		ActionIssuanceRequest.Visible = FeaturesService.Available(WorkwearFeature.IssuanceRequest);
 	}
 	#endregion
 
