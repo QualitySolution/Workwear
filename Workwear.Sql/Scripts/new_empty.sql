@@ -1543,7 +1543,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_issuance_request_id` 
+  CONSTRAINT `fk_collective_expense_issuance_request_id` 
   	FOREIGN KEY (`issuance_request_id`)
 	REFERENCES issuance_requests (`id`)
 	ON DELETE NO ACTION
