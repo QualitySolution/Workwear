@@ -25,74 +25,72 @@
 
     DATE_FORMAT(inRecTerm.operation_time, '%d.%m.%Y') AS dateRepTer,
     DATE_FORMAT(aWait.operation_time, '%d.%m.%Y') AS dateAWait,
-    DATEDIFF(
+    count_working_days(
+            IFNULL(inRecTerm.operation_time,
+                   aWait.operation_time),
             IFNULL(dlvLaund.operation_time,
                    IFNULL(inWash.operation_time,
                           IFNULL(inDry.operation_time,
                                  IFNULL(inRep.operation_time,
                                         IFNULL(dlvDisp.operation_time,
                                                IFNULL(inDispTerm.operation_time,
-                                                      NOW())))))),
-            IFNULL(inRecTerm.operation_time, 
-                   aWait.operation_time)
-        ) AS dayWaitServ,
+                                                      NOW()))))))
+    )
+    AS dayWaitServ,
     DATE_FORMAT(dlvLaund.operation_time, '%d.%m.%Y') AS dateDlvLaund,
-    DATEDIFF(
+    count_working_days(
+            dlvLaund.operation_time,
             IFNULL(inWash.operation_time, 
                    IFNULL(inDry.operation_time, 
-                          inRep.operation_time)),
-            dlvLaund.operation_time
-        ) AS dayDlvLaund,
+                          inRep.operation_time))
+    ) AS dayDlvLaund,
     DATE_FORMAT(inWash.operation_time, '%d.%m.%Y') AS dateInWash,
-    DATEDIFF(
+    count_working_days(
+            inWash.operation_time,
             IFNULL(inDry.operation_time,
                    IFNULL(inRep.operation_time,
                           IFNULL(dlvDisp.operation_time,
                                  IFNULL(inDispTerm.operation_time,
                                         IFNULL(ret.operation_time,
-                                               NOW()))))),
-            inWash.operation_time
-        ) AS dayWash,    
+                                               NOW())))))
+    ) AS dayWash,
     DATE_FORMAT(inDry.operation_time, '%d.%m.%Y') AS dateInDry,
-    DATEDIFF(
+    count_working_days(
+            inDry.operation_time,
             IFNULL(inRep.operation_time, 
                    IFNULL(dlvDisp.operation_time,
                           IFNULL(inDispTerm.operation_time,
                                  IFNULL(ret.operation_time,
-                                        NOW())))),
-            inDry.operation_time
-        ) AS dayDry,
+                                        NOW()))))
+    ) AS dayDry,
     DATE_FORMAT(inRep.operation_time, '%d.%m.%Y') AS dateInRep,
-    DATEDIFF(
+    count_working_days(
+            inRep.operation_time,
             IFNULL(dlvDisp.operation_time,
                    IFNULL(inDispTerm.operation_time,
                           IFNULL(ret.operation_time,
-                                 NOW()))),
-            inRep.operation_time
-        ) AS dayRep,
+                                 NOW())))
+    ) AS dayRep,
     DATE_FORMAT(dlvDisp.operation_time, '%d.%m.%Y') AS dateDlvDisp,
-    DATEDIFF(
+    count_working_days(
+            dlvDisp.operation_time,
             IFNULL(inDispTerm.operation_time,
-                   IFNULL(ret.operation_time,
-                          NOW())),
-            dlvDisp.operation_time
-        ) AS dayDlvDisp,
+                   IFNULL(ret.operation_time, NOW()))
+    ) AS dayDlvDisp,
     DATE_FORMAT(inDispTerm.operation_time, '%d.%m.%Y') AS dateInDisp,
-    DATEDIFF(
-            IFNULL(ret.operation_time,
-                   NOW()),
-            inDispTerm.operation_time
-        ) AS dayDisp,
+    count_working_days(
+            inDispTerm.operation_time,
+            IFNULL(ret.operation_time, NOW())
+    ) AS dayDisp,
     DATE_FORMAT(ret.operation_time, '%d.%m.%Y') AS dateRet,
-    DATEDIFF(
+    count_working_days(
+            start.operation_time,
             IFNULL(inDispTerm.operation_time,
-                   IFNULL(ret.operation_time,
-                          NOW())),
-            start.operation_time
-        ) AS dayService,
-    DATEDIFF(
-            IF(clothing_service_claim.is_closed, finish.operation_time, NOW()),
-            start.operation_time
+                   IFNULL(ret.operation_time, NOW()))
+    ) AS dayService,
+    count_working_days(
+            start.operation_time,
+            IF(clothing_service_claim.is_closed, finish.operation_time, NOW())
     ) AS lifeTime
 FROM clothing_service_claim     
          LEFT JOIN (select s.claim_id AS clid, MIN(s.id) AS st_id FROM clothing_service_states AS s GROUP BY s.claim_id
