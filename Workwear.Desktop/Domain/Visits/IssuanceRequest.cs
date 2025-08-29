@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
+using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
@@ -12,6 +13,7 @@ namespace Workwear.Domain.Visits {
 		Nominative = "заявка на выдачу",
 		Genitive = "заявки на выдачу",
 		GenitivePlural = "заявок на выдачу")]
+	[HistoryTrace]
 	public class IssuanceRequest: PropertyChangedBase, IDomainObject {
 		#region Хранимые свойства
 
@@ -20,7 +22,7 @@ namespace Workwear.Domain.Visits {
 			get => id;
 			set => SetField(ref id, value);
 		}
-		private DateTime receiptDate;
+		private DateTime receiptDate = DateTime.Now;
 		[Display(Name = "Дата поступления заявки")]
 		public virtual DateTime ReceiptDate {
 			get => receiptDate;
@@ -56,6 +58,8 @@ namespace Workwear.Domain.Visits {
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses { get; set; }
 		
 		#endregion
+
+		public virtual string Title => $"Заявка на выдачу №{Id} от {ReceiptDate:d}";
 	}
 	public enum IssuanceRequestStatus {
 		[Display(Name = "Новая")]
