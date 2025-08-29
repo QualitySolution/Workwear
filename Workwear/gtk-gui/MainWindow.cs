@@ -598,8 +598,8 @@ public partial class MainWindow
 		this.ActionVisits = new global::Gtk.Action("ActionVisits", global::Mono.Unix.Catalog.GetString("Посещения склада"), null, null);
 		this.ActionVisits.ShortLabel = global::Mono.Unix.Catalog.GetString("Посещения склада");
 		w1.Add(this.ActionVisits, null);
-		this.ActionIssuanceRequest = new global::Gtk.Action("ActionIssuanceRequest", global::Mono.Unix.Catalog.GetString("Заявки на коллективную выдачу"), null, null);
-		this.ActionIssuanceRequest.ShortLabel = global::Mono.Unix.Catalog.GetString("Заявки на коллективную выдачу");
+		this.ActionIssuanceRequest = new global::Gtk.Action("ActionIssuanceRequest", global::Mono.Unix.Catalog.GetString("Заявки на выдачу"), null, null);
+		this.ActionIssuanceRequest.ShortLabel = global::Mono.Unix.Catalog.GetString("Заявки на выдачу");
 		w1.Add(this.ActionIssuanceRequest, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
