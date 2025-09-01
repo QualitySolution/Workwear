@@ -427,6 +427,8 @@ namespace Workwear
 			#endregion
 			#region Visits
 			DeleteConfig.AddHibernateDeleteInfo<Visit>();
+			DeleteConfig.AddHibernateDeleteInfo<IssuanceRequest>()
+				.AddClearDependence<CollectiveExpense>(x => x.IssuanceRequest);
 			#endregion
 			
 			logger.Info ("Ок");

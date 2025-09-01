@@ -25,8 +25,8 @@ namespace Workwear.HibernateMapping.Visits {
 				.LazyLoad();
 
 			HasMany(x => x.CollectiveExpenses)
-				.KeyColumn("issuance_request_id")
 				.Inverse()
+				.KeyColumn("issuance_request_id").Not.KeyNullable()
 				.LazyLoad();
 		}
 	}

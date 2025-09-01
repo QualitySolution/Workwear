@@ -17,11 +17,8 @@ namespace Workwear.Domain.Visits {
 	public class IssuanceRequest: PropertyChangedBase, IDomainObject {
 		#region Хранимые свойства
 
-		private int id;
-		public virtual int Id {
-			get => id;
-			set => SetField(ref id, value);
-		}
+		public virtual int Id { get; set; }
+		
 		private DateTime receiptDate = DateTime.Now;
 		[Display(Name = "Дата поступления заявки")]
 		public virtual DateTime ReceiptDate {
@@ -54,12 +51,28 @@ namespace Workwear.Domain.Visits {
 			get => creationDate;
 			set => SetField(ref creationDate, value);
 		}
-		public virtual IObservableList<EmployeeCard> Employees { get; set; }
-		public virtual IObservableList<CollectiveExpense> CollectiveExpenses { get; set; }
-		
 		#endregion
 
+		#region Коллекции
+
+		private IObservableList<EmployeeCard> employees = new ObservableList<EmployeeCard>();
+		[Display(Name = "Сотрудники")]
+		public virtual IObservableList<EmployeeCard> Employees {
+			get => employees;
+			set => SetField(ref employees, value);
+		}
+
+		private IObservableList<CollectiveExpense> collectiveExpenses = new ObservableList<CollectiveExpense>();
+		[Display(Name = "Документы коллективной выдачи")]
+		public virtual IObservableList<CollectiveExpense> CollectiveExpenses {
+			get => collectiveExpenses;
+			set { SetField(ref collectiveExpenses, value); }
+		}
+		#endregion
+
+		#region Генерируемые
 		public virtual string Title => $"Заявка на выдачу №{Id} от {ReceiptDate:d}";
+		#endregion
 	}
 	public enum IssuanceRequestStatus {
 		[Display(Name = "Новая")]
