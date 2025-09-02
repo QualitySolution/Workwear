@@ -18,7 +18,7 @@ namespace Workwear.ViewModels.Tools
 		public bool CollectiveIssueWithPersonalVisible { get; }
 		public bool EditLockDateVisible { get; }
 		public bool CanEdit { get; }
-		public bool StartDateOfOperationsVisible { get; }
+		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
 		
 		public DataBaseSettingsViewModel(
@@ -46,7 +46,6 @@ namespace Workwear.ViewModels.Tools
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
-			StartDateOfOperationsVisible = featuresService.Available(WorkwearFeature.StartDateOfOperations);
 		}
 		
 		#region IDialogDocumentation
