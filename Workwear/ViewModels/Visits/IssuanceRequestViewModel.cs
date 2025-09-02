@@ -9,8 +9,10 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
+using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Company;
 
@@ -41,10 +43,12 @@ namespace Workwear.ViewModels.Visits {
 		public virtual IssuanceRequestStatus Status => Entity.Status;
 		public virtual string Comment => Entity.Comment;
 		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
+		public virtual IObservableList<CollectiveExpense> CollectiveExpenses => Entity.CollectiveExpenses;
 		#endregion
 
 		#region Действия View
 
+		#region Сотрудники
 		#region Добавление
 		public void AddEmployees() {
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
@@ -117,6 +121,43 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		#endregion
+		#endregion
+
+		#region Выдачи
+
+		#region Добавление
+
+		public void AddCollectiveExpense() {
+			var selectJournal = navigation.OpenViewModel<StockDocumentsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.StockDocumentType = StockDocumentType.CollectiveExpense;
+			selectJournal.ViewModel.OnSelectResult += LoadCollectiveExpense;
+		}
+
+		private void LoadCollectiveExpense(object sender, JournalSelectedEventArgs e) {
+			var collectiveExpenseIds = e.GetSelectedObjects<StockDocumentsJournalNode>().Select(x => x.Id).ToArray();
+			var collectiveExpense = UoW.GetById<CollectiveExpense>(collectiveExpenseIds);
+			foreach(var ce in collectiveExpense) {
+				ce.IssuanceRequest = Entity;
+				CollectiveExpenses.Add(ce);
+			}
+		}
+
+		#endregion
+
+		#region Удаление ссылки из заявки
+
+		public void RemoveCollectiveExpense(CollectiveExpense[] collectiveExpenses) {
+			foreach(var ce in collectiveExpenses) {
+				ce.IssuanceRequest = null;
+				Entity.CollectiveExpenses.Remove(ce);
+			}
+		}
+
+		#endregion
+
+		#endregion
+		
 		#endregion
 		
 		#region Валидация, сохранение

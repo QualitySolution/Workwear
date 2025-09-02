@@ -54,6 +54,20 @@ namespace Workwear.Views.Visits
 
 		private global::Gtk.Label label1;
 
+		private global::Gamma.GtkWidgets.yVBox yvbox1;
+
+		private global::Gtk.ScrolledWindow GtkScrolledWindow1;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeviewExpense;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yButton buttonAddExpense;
+
+		private global::Gamma.GtkWidgets.yButton buttonRemoveExpense;
+
+		private global::Gtk.Label label2;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -309,9 +323,71 @@ namespace Workwear.Views.Visits
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудники");
 			this.tabs.SetTabLabel(this.yvbox7, this.label1);
 			this.label1.ShowAll();
+			// Container child tabs.Gtk.Notebook+NotebookChild
+			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox1.Name = "yvbox1";
+			this.yvbox1.Spacing = 6;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
+			this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
+			this.ytreeviewExpense = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewExpense.CanFocus = true;
+			this.ytreeviewExpense.Name = "ytreeviewExpense";
+			this.GtkScrolledWindow1.Add(this.ytreeviewExpense);
+			this.yvbox1.Add(this.GtkScrolledWindow1);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow1]));
+			w27.Position = 0;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonAddExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAddExpense.CanFocus = true;
+			this.buttonAddExpense.Name = "buttonAddExpense";
+			this.buttonAddExpense.UseUnderline = true;
+			this.buttonAddExpense.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			global::Gtk.Image w28 = new global::Gtk.Image();
+			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAddExpense.Image = w28;
+			this.yhbox1.Add(this.buttonAddExpense);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAddExpense]));
+			w29.Position = 0;
+			w29.Expand = false;
+			w29.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonRemoveExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonRemoveExpense.CanFocus = true;
+			this.buttonRemoveExpense.Name = "buttonRemoveExpense";
+			this.buttonRemoveExpense.UseUnderline = true;
+			this.buttonRemoveExpense.Label = global::Mono.Unix.Catalog.GetString("Отвязать выдачу");
+			global::Gtk.Image w30 = new global::Gtk.Image();
+			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonRemoveExpense.Image = w30;
+			this.yhbox1.Add(this.buttonRemoveExpense);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonRemoveExpense]));
+			w31.Position = 1;
+			w31.Expand = false;
+			w31.Fill = false;
+			this.yvbox1.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w32.Position = 1;
+			w32.Expand = false;
+			w32.Fill = false;
+			this.tabs.Add(this.yvbox1);
+			global::Gtk.Notebook.NotebookChild w33 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox1]));
+			w33.Position = 2;
+			// Notebook tab
+			this.label2 = new global::Gtk.Label();
+			this.label2.Name = "label2";
+			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Выдачи");
+			this.tabs.SetTabLabel(this.yvbox1, this.label2);
+			this.label2.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w26.Position = 1;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w34.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
@@ -319,6 +395,8 @@ namespace Workwear.Views.Visits
 			}
 			this.Show();
 			this.buttonRemove.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
+			this.buttonAddExpense.Clicked += new global::System.EventHandler(this.OnButtonAddExpenseClicked);
+			this.buttonRemoveExpense.Clicked += new global::System.EventHandler(this.OnButtonRemoveExpenseClicked);
 		}
 	}
 }

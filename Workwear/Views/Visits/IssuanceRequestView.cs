@@ -5,6 +5,7 @@ using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.ViewModels.Visits;
 
@@ -15,6 +16,7 @@ namespace Workwear.Views.Visits {
 			MakeMenu();
 			ConfigureMainInfo();
 			ConfigureEmployeesList();
+			ConfigureCollectiveExpenseList();
 			CommonButtonSubscription();
 		}
 
@@ -72,8 +74,7 @@ namespace Workwear.Views.Visits {
 			ytreeviewEmployees.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
 			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 		}
-		#endregion
-
+		
 		#region PopupMenu
 
 		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
@@ -93,5 +94,37 @@ namespace Workwear.Views.Visits {
 		protected void OnButtonRemoveItemClicked(object sender, EventArgs e) {
 			ViewModel.RemoveEmployees(ytreeviewEmployees.GetSelectedObjects<EmployeeCard>());
 		}
+		#endregion
+
+		#region Вкладка Выдачи
+
+		private void ConfigureCollectiveExpenseList() {
+			ytreeviewExpense.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.CollectiveExpenses, w => w.ItemsDataSource)
+				.InitializeFromSource();
+			ytreeviewExpense.ColumnsConfig = FluentColumnsConfig<CollectiveExpense>.Create()
+				.AddColumn("Номер").AddTextRenderer(c => c.DocNumber ?? c.Id.ToString())
+				.AddColumn("Дата").AddTextRenderer(c => c.Date.ToShortDateString())
+				.AddColumn("Ведомость").AddReadOnlyTextRenderer(c => c.IssuanceSheet?.DocNumber ?? c.IssuanceSheet?.Id.ToString())
+				.AddColumn("Склад").AddTextRenderer(c => c.Warehouse.Name)
+				.AddColumn("Автор").Resizable().AddReadOnlyTextRenderer(c => c.CreatedbyUser?.Name)
+				.AddColumn("Дата создания").AddReadOnlyTextRenderer(c => c.CreationDate?.ToShortDateString())
+				.AddColumn("Комментарий").Resizable().AddReadOnlyTextRenderer(c => c.Comment)
+				.Finish();
+			ytreeviewExpense.Selection.Mode = SelectionMode.Multiple;
+			ytreeviewExpense.Selection.Changed += CollectiveExpense_Selection_Changed;
+		}
+
+		private void CollectiveExpense_Selection_Changed(object sender, EventArgs e) {
+			buttonRemoveExpense.Sensitive = ytreeviewExpense.Selection.CountSelectedRows() > 0;
+		}
+		protected void OnButtonAddExpenseClicked(object sender, EventArgs e) {
+			ViewModel.AddCollectiveExpense();
+		}
+		protected void OnButtonRemoveExpenseClicked(object sender, EventArgs e) {
+			ViewModel.RemoveCollectiveExpense(ytreeviewExpense.GetSelectedObjects<CollectiveExpense>());
+		}
+		#endregion
+		
 	}
 }
