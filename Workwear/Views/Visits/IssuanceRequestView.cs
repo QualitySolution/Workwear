@@ -1,4 +1,5 @@
-﻿using Gamma.ColumnConfig;
+﻿using System;
+using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
@@ -13,6 +14,7 @@ namespace Workwear.Views.Visits {
 			ConfigureMainInfo();
 			ConfigureEmployeesList();
 			MakeMenu();
+			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 			CommonButtonSubscription();
 		}
 
@@ -48,6 +50,10 @@ namespace Workwear.Views.Visits {
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();
 		}
+
+		private void Employee_Selection_Changed(object sender, EventArgs e) {
+			buttonRemove.Sensitive = ytreeviewEmployees.Selection.CountSelectedRows() > 0;
+		}
 		
 		private void ConfigureEmployeesList() {
 			ytreeviewEmployees.Binding.AddSource(ViewModel)
@@ -61,10 +67,10 @@ namespace Workwear.Views.Visits {
 				.AddColumn("Подразделение").AddReadOnlyTextRenderer(e => e.Subdivision?.Name)
 				.AddColumn("Отдел").AddReadOnlyTextRenderer(e => e.Department?.Name)
 				.Finish();
-			
 		}
 		#endregion
 		protected void OnButtonRemoveItemClicked(object sender, System.EventArgs e) {
+			ViewModel.RemoveEmployee(ytreeviewEmployees.GetSelectedObject<EmployeeCard>());
 		}
 
 		

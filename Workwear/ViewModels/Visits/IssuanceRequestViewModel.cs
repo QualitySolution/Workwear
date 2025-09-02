@@ -37,13 +37,14 @@ namespace Workwear.ViewModels.Visits {
 		public virtual string Id => Entity.Id != 0 ? Entity.Id.ToString() : "Новый";
 		public virtual UserBase CreatedByUser => Entity.CreatedByUser;
 		public virtual DateTime ReceiptDate => Entity.ReceiptDate;
-		public IssuanceRequestStatus Status => Entity.Status;
-		public string Comment => Entity.Comment;
+		public virtual IssuanceRequestStatus Status => Entity.Status;
+		public virtual string Comment => Entity.Comment;
 		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
-		
 		#endregion
 
 		#region Действия View
+
+		#region Добавление
 		public void AddEmployees() {
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
@@ -96,6 +97,15 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 		}
+		#endregion
+
+		#region Удаление
+
+		public void RemoveEmployee(EmployeeCard employee) {
+			Entity.Employees.Remove(employee);
+		}
+
+		#endregion
 		#endregion
 		
 		#region Валидация, сохранение
