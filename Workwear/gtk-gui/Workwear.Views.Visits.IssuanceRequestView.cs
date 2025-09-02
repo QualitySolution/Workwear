@@ -40,6 +40,20 @@ namespace Workwear.Views.Visits
 
 		private global::Gtk.Label label9;
 
+		private global::Gamma.GtkWidgets.yVBox yvbox7;
+
+		private global::Gtk.ScrolledWindow GtkScrolledWindow;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeviewEmployees;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox3;
+
+		private global::QSWidgetLib.MenuButton buttonAdd;
+
+		private global::Gamma.GtkWidgets.yButton buttonRemove;
+
+		private global::Gtk.Label label1;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -230,15 +244,81 @@ namespace Workwear.Views.Visits
 			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString("Основное");
 			this.tabs.SetTabLabel(this.table1, this.label9);
 			this.label9.ShowAll();
+			// Container child tabs.Gtk.Notebook+NotebookChild
+			this.yvbox7 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox7.Name = "yvbox7";
+			this.yvbox7.Spacing = 6;
+			// Container child yvbox7.Gtk.Box+BoxChild
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+			this.ytreeviewEmployees = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewEmployees.CanFocus = true;
+			this.ytreeviewEmployees.Name = "ytreeviewEmployees";
+			this.GtkScrolledWindow.Add(this.ytreeviewEmployees);
+			this.yvbox7.Add(this.GtkScrolledWindow);
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yvbox7[this.GtkScrolledWindow]));
+			w19.Position = 0;
+			// Container child yvbox7.Gtk.Box+BoxChild
+			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox3.Name = "yhbox3";
+			this.yhbox3.Spacing = 6;
+			// Container child yhbox3.Gtk.Box+BoxChild
+			this.buttonAdd = new global::QSWidgetLib.MenuButton();
+			this.buttonAdd.CanFocus = true;
+			this.buttonAdd.Name = "buttonAdd";
+			this.buttonAdd.UseUnderline = true;
+			this.buttonAdd.UseMarkup = false;
+			this.buttonAdd.LabelXAlign = 0F;
+			this.buttonAdd.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			global::Gtk.Image w20 = new global::Gtk.Image();
+			w20.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonAdd.Image = w20;
+			this.yhbox3.Add(this.buttonAdd);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.buttonAdd]));
+			w21.Position = 0;
+			w21.Expand = false;
+			w21.Fill = false;
+			// Container child yhbox3.Gtk.Box+BoxChild
+			this.buttonRemove = new global::Gamma.GtkWidgets.yButton();
+			this.buttonRemove.Sensitive = false;
+			this.buttonRemove.CanFocus = true;
+			this.buttonRemove.Name = "buttonRemove";
+			this.buttonRemove.UseUnderline = true;
+			this.buttonRemove.Label = global::Mono.Unix.Catalog.GetString("Удалить");
+			global::Gtk.Image w22 = new global::Gtk.Image();
+			w22.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
+			this.buttonRemove.Image = w22;
+			this.yhbox3.Add(this.buttonRemove);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.buttonRemove]));
+			w23.Position = 1;
+			w23.Expand = false;
+			w23.Fill = false;
+			this.yvbox7.Add(this.yhbox3);
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.yvbox7[this.yhbox3]));
+			w24.Position = 1;
+			w24.Expand = false;
+			w24.Fill = false;
+			this.tabs.Add(this.yvbox7);
+			global::Gtk.Notebook.NotebookChild w25 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox7]));
+			w25.Position = 1;
+			// Notebook tab
+			this.label1 = new global::Gtk.Label();
+			this.label1.Name = "label1";
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудники");
+			this.tabs.SetTabLabel(this.yvbox7, this.label1);
+			this.label1.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w18.Position = 1;
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w26.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
-			this.Hide();
+			this.Show();
+			this.buttonRemove.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
 		}
 	}
 }

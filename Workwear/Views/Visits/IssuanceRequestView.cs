@@ -1,4 +1,8 @@
-﻿using QS.Views.Dialog;
+﻿using Gamma.ColumnConfig;
+using Gamma.GtkWidgets;
+using Gtk;
+using QS.Views.Dialog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Visits;
 using Workwear.ViewModels.Visits;
 
@@ -7,6 +11,8 @@ namespace Workwear.Views.Visits {
 		public IssuanceRequestView(IssuanceRequestViewModel viewModel): base(viewModel) {
 			this.Build();
 			ConfigureMainInfo();
+			ConfigureEmployeesList();
+			MakeMenu();
 			CommonButtonSubscription();
 		}
 
@@ -22,5 +28,52 @@ namespace Workwear.Views.Visits {
 		}
 
 		#endregion
+
+		#region Вкладка Сотрудники
+
+		private void MakeMenu() {
+			var addMenu = new Menu();
+			var item = new yMenuItem("Сотрудников");
+			item.Activated += (sender, e) => ViewModel.AddEmployees();
+			addMenu.Add(item);
+			item = new yMenuItem("Подразделения");
+			item.Activated += (sender, e) => ViewModel.AddSubdivisions();
+			addMenu.Add(item);
+			item = new yMenuItem("Отделы");
+			
+			addMenu.Add(item);
+			item = new yMenuItem("Группы");
+			addMenu.Add(item);
+			addMenu.Add(new SeparatorMenuItem());
+			item = new yMenuItem("Дополнительно выбранному сотруднику");
+			addMenu.Add(item);
+			item = new yMenuItem("Дополнительно всем");
+			addMenu.Add(item);
+			buttonAdd.Menu = addMenu;
+			addMenu.ShowAll();
+		}
+		
+		private void ConfigureEmployeesList() {
+			ytreeviewEmployees.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.Employees, w => w.ItemsDataSource)
+				.InitializeFromSource();
+			
+			ytreeviewEmployees.ColumnsConfig = FluentColumnsConfig<EmployeeCard>.Create()
+				.AddColumn("Табель").AddTextRenderer(e => e.PersonnelNumber)
+				.AddColumn("ФИО").Resizable().AddTextRenderer(e => e.FullName)
+				.AddColumn("Должность").AddReadOnlyTextRenderer(e => e.Post?.Name)
+				.AddColumn("Подразделение").AddReadOnlyTextRenderer(e => e.Subdivision?.Name)
+				.AddColumn("Отдел").AddReadOnlyTextRenderer(e => e.Department?.Name)
+				.Finish();
+			
+		}
+		#endregion
+		protected void OnButtonAddItemClicked(object sender, System.EventArgs e) {
+		}
+
+		protected void OnButtonRemoveItemClicked(object sender, System.EventArgs e) {
+		}
+
+		
 	}
 }

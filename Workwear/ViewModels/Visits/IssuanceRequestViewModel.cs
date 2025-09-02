@@ -1,21 +1,34 @@
 ﻿using System;
+using System.Linq;
+using NHibernate.Criterion;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Services;
 using QS.Validation;
+using QS.ViewModels;
 using QS.ViewModels.Dialog;
+using Workwear.Domain.Company;
 using Workwear.Domain.Visits;
+using workwear.Journal.ViewModels.Company;
+using Workwear.Repository.Company;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private INavigationManager navigation;
+		private readonly EmployeeRepository employeeRepository;
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			IUserService userService,
+			EmployeeRepository employeeRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			
@@ -24,21 +37,42 @@ namespace Workwear.ViewModels.Visits {
 		#region Проброс свойств документа
 		public virtual string Id => Entity.Id != 0 ? Entity.Id.ToString() : "Новый";
 		public virtual UserBase CreatedByUser => Entity.CreatedByUser;
-		public virtual DateTime ReceiptDate {
-			get => Entity.ReceiptDate;
-			set => Entity.ReceiptDate = value;
-		}
-		public IssuanceRequestStatus Status {
-			get => Entity.Status;
-			set => Entity.Status = value;
+		public virtual DateTime ReceiptDate => Entity.ReceiptDate;
+		public IssuanceRequestStatus Status => Entity.Status;
+		public string Comment => Entity.Comment;
+		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
+		
+		#endregion
+
+		#region Действия View
+		public void AddEmployees() {
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
+			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 
-		public string Comment {
-			get => Entity.Comment;
-			set => Entity.Comment = value;
+		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var employeeIds = e.GetSelectedObjects<EmployeeJournalNode>().Select(x => x.Id).ToArray();
+			var employees = UoW.GetById<EmployeeCard>(employeeIds);
+			foreach(var emp in employees)
+				Employees.Add(emp);
+		}
+		
+		public void AddSubdivisions() {
+			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
+		}
+		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			
+			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
+			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
+			foreach(var emp in employees)
+				Employees.Add(emp);
 		}
 		#endregion
-		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		
 		#region Валидация, сохранение
 
 		public override bool Save() {
