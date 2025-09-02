@@ -11,10 +11,9 @@ namespace Workwear.Views.Visits {
 	public partial class IssuanceRequestView : EntityDialogViewBase<IssuanceRequestViewModel, IssuanceRequest> {
 		public IssuanceRequestView(IssuanceRequestViewModel viewModel): base(viewModel) {
 			this.Build();
+			MakeMenu();
 			ConfigureMainInfo();
 			ConfigureEmployeesList();
-			MakeMenu();
-			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 			CommonButtonSubscription();
 		}
 
@@ -67,12 +66,13 @@ namespace Workwear.Views.Visits {
 				.AddColumn("Подразделение").AddReadOnlyTextRenderer(e => e.Subdivision?.Name)
 				.AddColumn("Отдел").AddReadOnlyTextRenderer(e => e.Department?.Name)
 				.Finish();
+			
+			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
+			ytreeviewEmployees.Selection.Mode = SelectionMode.Multiple;
 		}
 		#endregion
-		protected void OnButtonRemoveItemClicked(object sender, System.EventArgs e) {
-			ViewModel.RemoveEmployee(ytreeviewEmployees.GetSelectedObject<EmployeeCard>());
+		protected void OnButtonRemoveItemClicked(object sender, EventArgs e) {
+			ViewModel.RemoveEmployees(ytreeviewEmployees.GetSelectedObjects<EmployeeCard>());
 		}
-
-		
 	}
 }

@@ -101,8 +101,10 @@ namespace Workwear.ViewModels.Visits {
 
 		#region Удаление
 
-		public void RemoveEmployee(EmployeeCard employee) {
-			Entity.Employees.Remove(employee);
+		public void RemoveEmployees(EmployeeCard[] employees) {
+			foreach(var emp in employees) {
+				Entity.Employees.Remove(emp);
+			}
 		}
 
 		#endregion
