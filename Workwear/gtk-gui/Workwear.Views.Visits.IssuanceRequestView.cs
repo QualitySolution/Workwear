@@ -62,9 +62,11 @@ namespace Workwear.Views.Visits
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
-		private global::Gamma.GtkWidgets.yButton buttonAddExpense;
+		private global::Gamma.GtkWidgets.yButton buttonCreateExpense;
 
 		private global::Gamma.GtkWidgets.yButton buttonRemoveExpense;
+
+		private global::Gamma.GtkWidgets.yButton buttonAddExpense;
 
 		private global::Gtk.Label label2;
 
@@ -344,16 +346,16 @@ namespace Workwear.Views.Visits
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
 			// Container child yhbox1.Gtk.Box+BoxChild
-			this.buttonAddExpense = new global::Gamma.GtkWidgets.yButton();
-			this.buttonAddExpense.CanFocus = true;
-			this.buttonAddExpense.Name = "buttonAddExpense";
-			this.buttonAddExpense.UseUnderline = true;
-			this.buttonAddExpense.Label = global::Mono.Unix.Catalog.GetString("Добавить");
+			this.buttonCreateExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCreateExpense.CanFocus = true;
+			this.buttonCreateExpense.Name = "buttonCreateExpense";
+			this.buttonCreateExpense.UseUnderline = true;
+			this.buttonCreateExpense.Label = global::Mono.Unix.Catalog.GetString("Создать коллективную выдачу");
 			global::Gtk.Image w28 = new global::Gtk.Image();
 			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonAddExpense.Image = w28;
-			this.yhbox1.Add(this.buttonAddExpense);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAddExpense]));
+			this.buttonCreateExpense.Image = w28;
+			this.yhbox1.Add(this.buttonCreateExpense);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonCreateExpense]));
 			w29.Position = 0;
 			w29.Expand = false;
 			w29.Fill = false;
@@ -362,13 +364,23 @@ namespace Workwear.Views.Visits
 			this.buttonRemoveExpense.CanFocus = true;
 			this.buttonRemoveExpense.Name = "buttonRemoveExpense";
 			this.buttonRemoveExpense.UseUnderline = true;
-			this.buttonRemoveExpense.Label = global::Mono.Unix.Catalog.GetString("Отвязать выдачу");
-			global::Gtk.Image w30 = new global::Gtk.Image();
-			w30.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.buttonRemoveExpense.Image = w30;
+			this.buttonRemoveExpense.Label = global::Mono.Unix.Catalog.GetString("Отвязать");
 			this.yhbox1.Add(this.buttonRemoveExpense);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonRemoveExpense]));
-			w31.Position = 1;
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonRemoveExpense]));
+			w30.PackType = ((global::Gtk.PackType)(1));
+			w30.Position = 1;
+			w30.Expand = false;
+			w30.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonAddExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAddExpense.CanFocus = true;
+			this.buttonAddExpense.Name = "buttonAddExpense";
+			this.buttonAddExpense.UseUnderline = true;
+			this.buttonAddExpense.Label = global::Mono.Unix.Catalog.GetString("Привязать");
+			this.yhbox1.Add(this.buttonAddExpense);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAddExpense]));
+			w31.PackType = ((global::Gtk.PackType)(1));
+			w31.Position = 2;
 			w31.Expand = false;
 			w31.Fill = false;
 			this.yvbox1.Add(this.yhbox1);
@@ -395,6 +407,7 @@ namespace Workwear.Views.Visits
 			}
 			this.Show();
 			this.buttonRemove.Clicked += new global::System.EventHandler(this.OnButtonRemoveItemClicked);
+			this.buttonCreateExpense.Clicked += new global::System.EventHandler(this.OnButtonCreateExpenseClicked);
 			this.buttonAddExpense.Clicked += new global::System.EventHandler(this.OnButtonAddExpenseClicked);
 			this.buttonRemoveExpense.Clicked += new global::System.EventHandler(this.OnButtonRemoveExpenseClicked);
 		}

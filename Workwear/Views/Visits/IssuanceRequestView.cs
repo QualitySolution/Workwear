@@ -124,6 +124,9 @@ namespace Workwear.Views.Visits {
 		protected void OnButtonRemoveExpenseClicked(object sender, EventArgs e) {
 			ViewModel.RemoveCollectiveExpense(ytreeviewExpense.GetSelectedObjects<CollectiveExpense>());
 		}
+
+		protected void OnButtonCreateExpenseClicked(object sender, EventArgs e) {
+		}
 		#endregion
 		
 	}

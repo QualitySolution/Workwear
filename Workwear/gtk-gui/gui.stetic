@@ -36854,14 +36854,14 @@
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yButton" id="buttonAddExpense">
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonCreateExpense">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="Type">TextAndIcon</property>
                         <property name="Icon">stock:gtk-add Menu</property>
-                        <property name="Label" translatable="yes">Добавить</property>
+                        <property name="Label" translatable="yes">Создать коллективную выдачу</property>
                         <property name="UseUnderline">True</property>
-                        <signal name="Clicked" handler="OnButtonAddExpenseClicked" />
+                        <signal name="Clicked" handler="OnButtonCreateExpenseClicked" />
                       </widget>
                       <packing>
                         <property name="Position">0</property>
@@ -36874,14 +36874,31 @@
                       <widget class="Gamma.GtkWidgets.yButton" id="buttonRemoveExpense">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
-                        <property name="Type">TextAndIcon</property>
-                        <property name="Icon">stock:gtk-remove Menu</property>
-                        <property name="Label" translatable="yes">Отвязать выдачу</property>
+                        <property name="Type">TextOnly</property>
+                        <property name="Label" translatable="yes">Отвязать</property>
                         <property name="UseUnderline">True</property>
                         <signal name="Clicked" handler="OnButtonRemoveExpenseClicked" />
                       </widget>
                       <packing>
+                        <property name="PackType">End</property>
                         <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonAddExpense">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextOnly</property>
+                        <property name="Label" translatable="yes">Привязать</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonAddExpenseClicked" />
+                      </widget>
+                      <packing>
+                        <property name="PackType">End</property>
+                        <property name="Position">2</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
