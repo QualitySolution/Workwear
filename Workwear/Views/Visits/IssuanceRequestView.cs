@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using Gtk;
@@ -67,9 +68,27 @@ namespace Workwear.Views.Visits {
 				.AddColumn("Отдел").AddReadOnlyTextRenderer(e => e.Department?.Name)
 				.Finish();
 			
-			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 			ytreeviewEmployees.Selection.Mode = SelectionMode.Multiple;
+			ytreeviewEmployees.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
+			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 		}
+		#endregion
+
+		#region PopupMenu
+
+		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewEmployees.GetSelectedObjects<EmployeeCard>().FirstOrDefault();
+				if(selected == null) return;
+				var menuItem = new MenuItem("Открыть сотрудника");
+				menuItem.Activated += (sender, e) => ViewModel.OpenEmployee(selected);
+				menu.Add(menuItem);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
 		#endregion
 		protected void OnButtonRemoveItemClicked(object sender, EventArgs e) {
 			ViewModel.RemoveEmployees(ytreeviewEmployees.GetSelectedObjects<EmployeeCard>());

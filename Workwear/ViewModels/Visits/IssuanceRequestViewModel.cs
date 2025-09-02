@@ -12,6 +12,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
+using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
@@ -105,6 +106,14 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees) {
 				Entity.Employees.Remove(emp);
 			}
+		}
+
+		#endregion
+
+		#region Контекстное меню
+
+		public void OpenEmployee(EmployeeCard employee) {
+			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(employee.Id));
 		}
 
 		#endregion
