@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
+using QS.Project.Journal;
 using QS.Services;
 using QS.Validation;
-using QS.ViewModels;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Visits;
@@ -61,13 +60,39 @@ namespace Workwear.ViewModels.Visits {
 		
 		public void AddSubdivisions() {
 			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
 		}
-		private void LoadSubdivisions(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+		private void LoadSubdivisions(object sender, JournalSelectedEventArgs e) {
 			
 			var subdivisionIds = e.GetSelectedObjects<SubdivisionJournalNode>().Select(x => x.Id).ToArray();
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
+			foreach(var emp in employees)
+				Employees.Add(emp);
+		}
+
+		public void AddDepartments() {
+			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
+		}
+
+		private void LoadDepartments(object sender, JournalSelectedEventArgs e) {
+			var departmentIds = e.GetSelectedObjects<DepartmentJournalNode>().Select(x => x.Id).ToArray();
+			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentIds);
+			foreach(var emp in employees)
+				Employees.Add(emp);
+		}
+
+		public void AddGroups() {
+			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += LoadGroups;
+		}
+
+		private void LoadGroups(object sender, JournalSelectedEventArgs e) {
+			var groupIds = e.GetSelectedObjects<EmployeeGroupJournalNode>().Select(x => x.Id).ToArray();
+			var employees = employeeRepository.GetActiveEmployeesFromGroups(UoW, groupIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
 		}

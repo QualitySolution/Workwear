@@ -40,14 +40,10 @@ namespace Workwear.Views.Visits {
 			item.Activated += (sender, e) => ViewModel.AddSubdivisions();
 			addMenu.Add(item);
 			item = new yMenuItem("Отделы");
-			
+			item.Activated += (sender, e) => ViewModel.AddDepartments();
 			addMenu.Add(item);
 			item = new yMenuItem("Группы");
-			addMenu.Add(item);
-			addMenu.Add(new SeparatorMenuItem());
-			item = new yMenuItem("Дополнительно выбранному сотруднику");
-			addMenu.Add(item);
-			item = new yMenuItem("Дополнительно всем");
+			item.Activated += (sender, e) => ViewModel.AddGroups();
 			addMenu.Add(item);
 			buttonAdd.Menu = addMenu;
 			addMenu.ShowAll();
@@ -68,9 +64,6 @@ namespace Workwear.Views.Visits {
 			
 		}
 		#endregion
-		protected void OnButtonAddItemClicked(object sender, System.EventArgs e) {
-		}
-
 		protected void OnButtonRemoveItemClicked(object sender, System.EventArgs e) {
 		}
 
