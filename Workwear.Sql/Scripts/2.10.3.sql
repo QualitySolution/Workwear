@@ -7,6 +7,3 @@
 	   		constraint days_schedule
 		  	primary key (id),
 );
--- Добавление поля для уведомлений о просроченных вещах
-alter table postomat_document_items
-	add column notification_sent boolean not null default false;
