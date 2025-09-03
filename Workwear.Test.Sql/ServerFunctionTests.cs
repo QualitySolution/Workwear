@@ -13,7 +13,6 @@ namespace Workwear.Test.Sql
 	public class ServerFunctionsTests
 	{
 		private SqlServer testServer;
-		private DbSample testSample;
 		
 		[OneTimeSetUp]
 		public void SetUp()
@@ -24,12 +23,7 @@ namespace Workwear.Test.Sql
 			var servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
 			testServer = servers?.FirstOrDefault(s => s.Name?.StartsWith("Plutus") == true);
 			
-			// Получаем образец с SqlFile = "empty_2.8.sql"
-			var samples = configuration.GetSection("Samples").Get<List<DbSample>>();
-			testSample = samples?.FirstOrDefault(s => s.SqlFile == "empty_2.8.sql");
-			
 			Assert.IsNotNull(testServer, "Сервер с именем, начинающимся с 'Plutus', не найден в конфигурации");
-			Assert.IsNotNull(testSample, "Образец с SqlFile = 'empty_2.8.sql' не найден в конфигурации");
 		}
 		
 		[TestCase(1, 12, "2023-01-01", "2023-01-01", "2025-12-31", null, null, 3, TestName = "Базовый сценарий: 3 выдачи за 3 года")]
@@ -46,7 +40,7 @@ namespace Workwear.Test.Sql
 		public void Test_count_issue(int amount, int normPeriod, string nextIssue, string beginDate, string endDate, int? beginIssuePeriod, int? endIssuePeriod, int expectedResult)
 		{
 			var connectionStringBuilder = testServer.ConnectionStringBuilder;
-			connectionStringBuilder.Database = testSample.DbName;
+			connectionStringBuilder.Database = UpdatesTests.CurrentDdName;
 			using(var connection = new MySqlConnection(connectionStringBuilder.ConnectionString)) {
 				connection.Open();
 
