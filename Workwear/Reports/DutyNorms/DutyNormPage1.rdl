@@ -315,7 +315,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox2">
+                    <Textbox Name="TextboxEmptyFooter1">
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -353,7 +353,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox11">
+                    <Textbox Name="TextboxEmptyFooter8">
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -371,7 +371,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox13">
+                    <Textbox Name="TextboxEmptyFooter2">
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
@@ -394,7 +394,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox14">
+                    <Textbox Name="TextboxResponsibleEmployee">
                       <Value>Ответственное лицо</Value>
                       <Style>
                         <BorderStyle>
@@ -412,7 +412,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox21">
+                    <Textbox Name="TextboxSignature">
                       <Value></Value>
                       <Style>
                         <BorderStyle>
@@ -449,7 +449,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox16">
+                    <Textbox Name="TextboxFIOShort">
                       <Value>=First({resp_fio_short},"Card") </Value>
                       <Style>
                         <BorderStyle>
@@ -469,7 +469,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox18">
+                    <Textbox Name="TextboxEmptyFooter5">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -493,7 +493,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox29">
+                    <Textbox Name="TextboxEmptyFooter7">
                       <Value></Value>
                       <Style>
                         <BorderStyle>
@@ -550,7 +550,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox32">
+                    <Textbox Name="TextboxLastnameInitials">
                       <Value>Фамилия, инициалы</Value>
                       <Style>
                         <BorderStyle>
@@ -571,7 +571,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell >
                   <ReportItems>
-                    <Textbox Name="Textbox15">
+                    <Textbox Name="TextboxEmptyFooter4">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -802,7 +802,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox2">
+                    <Textbox Name="TextboxEmptyHeader1">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -824,7 +824,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox13">
+                    <Textbox Name="TextboxAppendix">
                       <Value>Приложение №3
 к Правилам обеспечения работников
 средствами индивидуальной защиты 
@@ -856,7 +856,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox9">
+                    <Textbox Name="TextboxName">
                       <Value>КАРТОЧКА УЧЕТА ВЫДАЧИ ДЕЖУРНЫХ СИЗ</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
@@ -902,7 +902,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
+                    <Textbox Name="TextboxEmptyHeader5">
                       <Value></Value>
                       <Style>
                         <BorderStyle>
@@ -979,7 +979,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox18">
+                    <Textbox Name="TextboxEmptyHeader6">
                       <Value></Value>
                       <Style>
                         <BorderStyle>
@@ -1254,7 +1254,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox2">
+                    <Textbox Name="TextboxSubdivision">
                       <Value>Структурное подразделение</Value>
                       <Style>
                         <BorderStyle>
@@ -1565,7 +1565,7 @@ WHERE duty_norms.id = @duty_norm_id;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox13">
+                    <Textbox Name="TextboxEmptyHeader2">
                       <Value></Value>
                       <Style>
                         <BorderStyle>

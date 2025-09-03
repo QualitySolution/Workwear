@@ -197,7 +197,7 @@ namespace Workwear.ViewModels.Visits {
 				var result = new List<(StockDocumentType, int, string)>();
 				if(Visit?.ExpenseDocuments != null) 
 					result.AddRange(Visit.ExpenseDocuments.Select(x => 
-						(StockDocumentType.ExpenseEmployeeDoc, x.Id, $"{(x.IssueDate != null ? "Выдача" : "Черовик")} {x.DocNumberText}" )));
+						(StockDocumentType.ExpenseEmployeeDoc, x.Id, $"{(x.IssueDate != null ? "Выдача" : "Черновик")} {x.DocNumberText}" )));
 				if(Visit?.WriteoffDocuments != null)
 					result.AddRange(Visit.WriteoffDocuments.Select(x => 
 						(StockDocumentType.WriteoffDoc, x.Id,  $"Списание {x.DocNumberText}" )));
