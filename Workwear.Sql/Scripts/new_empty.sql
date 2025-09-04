@@ -2493,6 +2493,7 @@ create table work_days
 		constraint work_days_pk
 		primary key (id)
 );
+
 create table days_schedule (
 	id   	     	int unsigned auto_increment,
 	day_of_week 	int unsigned not null,
@@ -2500,7 +2501,7 @@ create table days_schedule (
 	end 		    time not null,
 	visit_interval  int unsigned not null,
 		constraint days_schedule
-	   	primary key (id),
+	   	primary key (id)
 );
 -- -----------------------------------------------------
 -- Оказываемые услуги
