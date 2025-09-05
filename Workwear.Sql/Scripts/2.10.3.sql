@@ -11,5 +11,9 @@ create table days_schedule (
 		   primary key (id)
 );
 
+-- Добавление поля для уведомлений о просроченных вещах
+alter table postomat_document_items
+	add column notification_sent boolean not null default false;
+
 -- Создаем пропущенные индексы для снижения нагрузки на ЦП сервиса постоматов
 ALTER TABLE `clothing_service_states` ADD INDEX(`operation_time`);
