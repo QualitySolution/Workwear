@@ -42,7 +42,6 @@ namespace workwear.Journal.ViewModels.Postomats {
 		}
 
 		#region Функции для табличного просмотра
-
 		public string GetLongestPickupTooltip(FullnessInfo node) {
 			var longest = node.Cells.OrderByDescending(x => x.CreateTime).FirstOrDefault();
 			if(longest == null) {
@@ -54,6 +53,16 @@ namespace workwear.Journal.ViewModels.Postomats {
 			       $"\n{longest.NomenclatureName}";
 		}
 
+		public string GetCellsTooltip(FullnessInfo node) {
+			var cellsList = new List<string>();
+			foreach(var cell in node.Cells.Where(c => !c.IsEmpty)) {
+				cellsList.Add($"{cell.CellTitle} - {cell.CreateTime?.ToDateTime():g} - {cell.EmployeeFullName} - {cell.NomenclatureName}");
+			}
+			if (cellsList.Count == 0) 
+				return null;
+			
+			return String.Join("\n", cellsList);
+		}
 		#endregion
 	}
 }

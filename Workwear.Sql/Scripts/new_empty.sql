@@ -2482,9 +2482,7 @@ create table visits_documents
 			on update cascade on delete cascade
 );
 
--- -----------------------------------------------------
--- Учёт дней недели
--- -----------------------------------------------------
+-- Будет удалена в 2.11 - решили не использовать
 create table work_days
 (
 	id          int unsigned auto_increment,
@@ -2494,14 +2492,20 @@ create table work_days
 		constraint work_days_pk
 		primary key (id)
 );
+
+-- -----------------------------------------------------
+-- График работы склада
+-- -----------------------------------------------------
 create table days_schedule (
 	id   	     	int unsigned auto_increment,
-	day_of_week 	int unsigned not null,
-	start 		 	time not null,
-	end 		    time not null,
-	visit_interval  int unsigned not null,
+	date 		 	date null comment 'Если указана дата, то расписание действует только на эту дату',
+	day_of_week 	int unsigned null comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	start 		 	time null comment 'Время начала рабочего дня, если null, то день нерабочий',
+	end 		    time null comment 'Время окончания рабочего дня, если null, то день нерабочий',
+	visit_interval  int unsigned null comment 'Интервал между записями на приём в минутах',
+	comment 	 	text null,
 		constraint days_schedule
-	   	primary key (id),
+	   	primary key (id)
 );
 -- -----------------------------------------------------
 -- Оказываемые услуги
