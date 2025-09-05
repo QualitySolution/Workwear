@@ -20,7 +20,7 @@ namespace Workwear.Test.Sql
 	[NonParallelizable]
 	public class UpdatesTests
 	{
-		private static readonly string currentDdName = "workwear_sqltest_current";
+		public static readonly string CurrentDdName = "workwear_sqltest_current";
 
 		private SqlServer RunningServer { get; set; }
 		
@@ -74,7 +74,7 @@ namespace Workwear.Test.Sql
 				}
 
 				//Сравнение обновлённой базы и новой
-				ComparisonSchema(connection, currentDdName, sample.DbName);
+				ComparisonSchema(connection, CurrentDdName, sample.DbName);
 			}
 
 			//Сделал максимально просто. По хорошему объединить с настоящим обновлением.
@@ -134,9 +134,9 @@ namespace Workwear.Test.Sql
 		{
 			StartSqlServer(server);
 			//Создаем чистую базу
-			TestContext.Progress.WriteLine($"Создаем чистую базу {currentDdName} на сервере {server.Name}");
+			TestContext.Progress.WriteLine($"Создаем чистую базу {CurrentDdName} на сервере {server.Name}");
 			var creator = new TestingCreateDbController(server);
-			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), currentDdName);
+			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), CurrentDdName);
 			Assert.That(success, Is.True);
 		}
 
