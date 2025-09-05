@@ -12,7 +12,6 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
-using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Visits {
@@ -22,7 +21,6 @@ namespace Workwear.ViewModels.Visits {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IEntityChangeWatcher changeWatcher,
 			INavigationManager navigation,
-			BaseParameters baseParameters,
 			IValidator validator = null,
             UnitOfWorkProvider unitOfWorkProvider = null,
 			string UoWTitle = null
@@ -33,9 +31,10 @@ namespace Workwear.ViewModels.Visits {
 			
 			Title = "Посещения склада";
 			
-			WorkDays = UoW.GetAll<WorkDay>().ToDictionary(x => x.Date, x => x.IsWorkday);
-			DaysSchedule = UoW.GetAll<DaySchedule>().ToList();
-
+			var allDaysSchedule = UoW.GetAll<DaySchedule>().ToList();
+			DaysSchedule = allDaysSchedule.Where(d => d.Date == null).ToList();
+			ExclusiveDays = allDaysSchedule.Where(d => d.Date != null).ToList();
+			
 			//Для обновления вюшки при действиях с документами
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Expense>();
 			changeWatcher.BatchSubscribe(VisitChangeEvent).IfEntity<Return>();
@@ -53,7 +52,7 @@ namespace Workwear.ViewModels.Visits {
 		private readonly IEntityChangeWatcher changeWatcher;
 		public DateTime Day { get; set; } = DateTime.Now.Date;
 		public string PeriodString => Day.Date.ToShortDateString();
-		public Dictionary<DateTime, bool> WorkDays { get; }
+		public List<DaySchedule> ExclusiveDays { get; }
 		public List<DaySchedule> DaysSchedule { get;}
 		//Коллекция отображаемых номерков
 		public SortedDictionary<DateTime, VisitListWidgetItem> Items { get; set; } = new SortedDictionary<DateTime, VisitListWidgetItem>();
@@ -105,20 +104,25 @@ namespace Workwear.ViewModels.Visits {
 		/// </summary>
 		private List<DateTime> MakeSchedule(DateTime day) {
 			List<DateTime> result = new List<DateTime>();
-			foreach(var daySchedule in DaysSchedule.Where(ds => ds.DayOfWeak == (int)day.DayOfWeek % 7)) {
-				DateTime start = day.Date + daySchedule.Start; 
-				DateTime end = day.Date + daySchedule.End;
-			for(DateTime time = start; time < end; time = time.AddMinutes(daySchedule.Inteval)) 
+			List<DaySchedule> ScheduleList = (ExclusiveDays.Any(d => d.Date == day)
+				? ExclusiveDays.Where(d => d.Date == day)
+				: DaysSchedule.Where(d => d.DayOfWeak == (int)day.DayOfWeek % 7))
+				.ToList();
+			foreach(var schedule in ScheduleList) {
+				DateTime start = day.Date + (schedule.Start); 
+				DateTime end = day.Date + (schedule.End);
+			for(DateTime time = start; time < end; time = time.AddMinutes(schedule.Interval)) 
 				result.Add(time);
 			}
 			return result;
 		}
 
 		private bool IsWorkDay(DateTime day) {
-			if(WorkDays.ContainsKey(day.Date) && WorkDays[day.Date])
-				return true;
+			if(ExclusiveDays.Any(d => d.Date == day))
+				return ExclusiveDays.Any(d => d.Date == day && d.IsWork);
+			   
 			if(DaysSchedule.Any(d => d.DayOfWeak == (int)day.DayOfWeek % 7))
-				return true;
+				return DaysSchedule.Any(d => d.DayOfWeak == (int)day.DayOfWeek % 7 && d.IsWork);
 			return false;
 		}
 		
