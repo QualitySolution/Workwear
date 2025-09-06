@@ -60,20 +60,16 @@ namespace Workwear.Views.Visits {
 			ItemListTable.Attach(new VSeparator(), 13, 14, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0, 0);			
 			
             ItemListTable.Attach(new HSeparator(), 0, 15, 1, 2);
+            ItemListTable.Attach(new HSeparator(), 0, 15, 3, 4);
 	
             //Заполнение данными
-			uint i = 3;
+			uint i = 5;
 			foreach(var item in ViewModel.Items.Values) {
 				Label label;
 				Entry entry;
 				TextView textView;
 				Button button;
 				uint j = (uint) item.Documents.Count; //смещение многострочных элементов
-				
-				if(item.FirstOfDay) {
-					ItemListTable.Attach(new HSeparator(), 0, 15, i, i+1);
-					i++;
-				}
 
 				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
                 ItemListTable.Attach(label, 4, 5, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);

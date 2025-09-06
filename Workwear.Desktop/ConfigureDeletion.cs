@@ -121,8 +121,7 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeGroupItem>(x => x.Group);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem>();
-
-			DeleteConfig.AddHibernateDeleteInfo<WorkDay>();
+			
 			#endregion
 			#region Операции
 			DeleteConfig.AddHibernateDeleteInfo<BarcodeOperation>();
