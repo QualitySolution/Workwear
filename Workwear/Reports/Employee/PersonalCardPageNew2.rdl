@@ -541,7 +541,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox6">
-                      <Value>=Fields!nom_number.Value</Value>
+                      <Value>=String.Concat({nom_number}, {add_info})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -551,6 +551,7 @@
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -775,6 +776,8 @@
         AS name_siz,
     nomenclature.number
         AS nom_number,
+    nomenclature.additional_info
+         AS add_info,
     DATE_FORMAT(operation_issued_by_employee.operation_time,'%d.%m.%Y'
     ) AS expense_date,
     operation_issued_by_employee.issued
@@ -843,6 +846,7 @@ UNION
 #Выдаваемые дозатором
 (SELECT  pt_eci.name,
          '',
+         '',
          DATE_FORMAT(eci.created, '%d.%m.%Y'),
          '',
          'Дозатор',
@@ -873,6 +877,10 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
         </Field>
         <Field Name="nom_number">
           <DataField>nom_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="add_info">
+          <DataField>add_info</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="expense_date">

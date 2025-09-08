@@ -26,6 +26,10 @@ namespace Workwear.Views.Stock {
 			yentryNumber.Binding
 				.AddBinding(Entity, e => e.Number, w => w.Text)
 				.InitializeFromSource();
+			
+			yentryAdditionalInfo.Binding
+				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text)
+				.InitializeFromSource();
 
 			yentryName.Binding
 				.AddBinding (Entity, e => e.Name, w => w.Text)
