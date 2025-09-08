@@ -65,7 +65,7 @@ namespace Workwear.Domain.Stock {
 		}
 
 		private string additionalInfo;
-		[Display(Name = "Дополнительная информация")]
+		[Display(Name = "Модель, марка, артикул, класс защиты СИЗ, дерматологических СИЗ")]
 		public virtual string AdditionalInfo {
 			get => additionalInfo;
 			set => SetField(ref additionalInfo, value);
