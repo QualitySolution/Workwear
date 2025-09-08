@@ -2607,6 +2607,11 @@ END$$
 
 DELIMITER ;
 
+
+-- -----------------------------------------------------
+-- function count_issue_new
+-- -----------------------------------------------------
+
 DELIMITER $$
 CREATE FUNCTION `count_issue_new`(
 	`amount` INT UNSIGNED,
@@ -2635,34 +2640,34 @@ BEGIN
 	SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
 	SET begin_Issue_Period_New = CONCAT('2000', '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
 	SET end_Issue_Period_New = CONCAT('2000', '-', MONTH(end_Issue_Period), '-', DAY(end_Issue_Period));
-	SET start_Of_Year = CONCAT('2000', '-', 1, '-',  DAY(end_Issue_Period_New));
-	SET end_Of_Year = CONCAT('2000', '-', 12 , '-', DAY(begin_Issue_Period_New));
+	SET start_Of_Year = CONCAT('2000', '-', 1, '-',  1);
+	SET end_Of_Year = CONCAT('2000', '-', 12 , '-', 31);
 
 	WHILE next_issue <= end_date DO
-			IF next_issue >= begin_date THEN
-				IF begin_Issue_Period IS NOT NULL THEN
-					IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
-						OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
-							AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
+			IF begin_Issue_Period IS NOT NULL THEN
+				IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
+					OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
+						AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
+					IF next_issue >= begin_date THEN
 						SET issue_count = issue_count + amount;
-						SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 					END IF;
-					IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
-						OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
-						SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
-						IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
-							SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
-						end if;
-					END IF;
-					SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
-				ELSE
-					SET issue_count = issue_count + amount;
 					SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 				END IF;
+				IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
+					OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
+					SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+					IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
+						SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
+					END IF;
+				END IF;
 			ELSE
+				IF next_issue >= begin_date THEN
+					SET issue_count = issue_count + amount;
+				END IF;
 				SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 			END IF;
-		END WHILE;
+			SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+	END WHILE;
 	RETURN issue_count;
 END$$
 
