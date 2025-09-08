@@ -836,6 +836,7 @@ FROM
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
     operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
+    AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= @startDateOfOperations)
 GROUP BY
     operation_issued_by_employee.id
 ORDER BY
@@ -852,7 +853,8 @@ UNION
          '','','','',''
 FROM employee_cards_item as eci
          LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
-WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</CommandText>
+WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
+       AND (@startDateOfOperations = '' OR eci.created &gt;= @startDateOfOperations))</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
@@ -862,6 +864,9 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
           </QueryParameter>
           <QueryParameter Name="isDocNumberInIssueSign">
             <Value>={?isDocNumberInIssueSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="startDateOfOperations">
+            <Value>={?startDateOfOperations}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -931,7 +936,7 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="isDocNumberInIssueSign">
       <DataType>Boolean</DataType>
@@ -945,7 +950,14 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival)</
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="startDateOfOperations">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
   <DataSources>

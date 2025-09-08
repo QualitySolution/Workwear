@@ -8871,7 +8871,7 @@
                   <widget class="Gtk.Table" id="table1">
                     <property name="MemberName" />
                     <property name="ShowScrollbars">True</property>
-                    <property name="NRows">10</property>
+                    <property name="NRows">11</property>
                     <property name="NColumns">2</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
@@ -9100,6 +9100,34 @@
                       <packing>
                         <property name="TopAttach">6</property>
                         <property name="BottomAttach">7</property>
+                        <property name="LeftAttach">1</property>
+                        <property name="RightAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="startDateOfOperations">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, с которой будут отображаться операции на оборотной стороне карточки сотрудника</property>
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
+                        <property name="HideButtonClearDate">False</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">10</property>
+                        <property name="BottomAttach">11</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
@@ -9349,6 +9377,26 @@
                       <packing>
                         <property name="TopAttach">9</property>
                         <property name="BottomAttach">10</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelstartDateOfOperations">
+                        <property name="MemberName" />
+                        <property name="Xalign">1</property>
+                        <property name="LabelProp" translatable="yes">Отображать на оборотной стороне карточки сотрудника с даты: </property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">10</property>
+                        <property name="BottomAttach">11</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
