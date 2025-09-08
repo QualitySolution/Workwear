@@ -882,6 +882,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
+  `size_change` int null comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта',
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
