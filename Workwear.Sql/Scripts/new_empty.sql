@@ -2589,8 +2589,16 @@ WHILE next_issue <= end_date DO
     END IF;
   SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 	IF begin_Issue_Period IS NOT NULL THEN
-		IF MONTH(next_issue) < begin_Issue_Period AND MONTH(next_issue) NOT BETWEEN 1 AND MONTH(end_Issue_Period) THEN
-			SET next_issue = CONCAT(YEAR(next_issue), '-', begin_Issue_Period, '-01');
+		IF begin_Issue_Period < end_Issue_Period THEN
+			IF MONTH(next_issue) BETWEEN begin_Issue_Period AND end_Issue_Period THEN 
+             SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue) , '-', end_Issue_Period, '-01'), INTERVAL 1 MONTH);
+            END IF; 
+        ELSE
+			IF MONTH(next_issue) BETWEEN begin_Issue_Period AND 12 THEN
+				SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue), '-', end_Issue_Period, '-01'), INTERVAL '1T1' YEAR_MONTH);
+			ELSEIF MONTH(next_issue) BETWEEN 1 AND end_Issue_Period THEN
+				SET next_issue = DATE_ADD(CONCAT(YEAR(next_issue), '-', end_Issue_Period, '-01'), INTERVAL 1 MONTH);
+			END IF;
 		END IF;
 	END IF;
 END WHILE;
