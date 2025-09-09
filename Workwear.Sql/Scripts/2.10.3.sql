@@ -33,12 +33,12 @@ alter table protection_tools
 -- Новое расписание работы склада
 create table days_schedule (
 	   id   	     	int unsigned auto_increment,
-	   date 		 	date null comment 'Если указана дата, то расписание действует только на эту дату',
-	   day_of_week 	int unsigned null comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
-	   start 		 	time null comment 'Время начала рабочего дня, если null, то день нерабочий',
-	   end 		    time null comment 'Время окончания рабочего дня, если null, то день нерабочий',
-	   visit_interval  int unsigned null comment 'Интервал между записями на приём в минутах',
-	   comment 	 	text null,
+	   date 		 	date null 			comment 'Если указана дата, то расписание действует только на эту дату',
+	   day_of_week 		int unsigned null 	comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	   start 			time null 			comment 'Время начала рабочего дня, если null, то день нерабочий',
+	   end 		    	time null 			comment 'Время окончания рабочего дня, если null, то день нерабочий',
+	   visit_interval  	int unsigned null 	comment 'Интервал между записями на приём в минутах, если null, то день нерабочий',
+	   comment 	 		text null,
 	   constraint days_schedule
 		   primary key (id)
 );
