@@ -38,7 +38,6 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
-		private readonly NormToDutyNormModel normToDutyNormModel;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -64,7 +63,6 @@ namespace Workwear.ViewModels.Regulations
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
-			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
 
 			var performance = new PerformanceHelper(logger: logger);
 			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
