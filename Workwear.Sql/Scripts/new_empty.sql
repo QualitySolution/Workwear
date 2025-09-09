@@ -178,6 +178,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_cell` int(11) unsigned NOT NULL,
    `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
+   `notification_sent` boolean not null default false,
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
@@ -467,6 +468,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
+  `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
@@ -880,6 +882,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
+  `size_change` int null comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта',
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
@@ -2617,6 +2620,29 @@ END WHILE;
 RETURN issue_count;
 END$$
 
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- function count_working_days
+-- -----------------------------------------------------
+DELIMITER $$
+CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
+	RETURNS INT
+	DETERMINISTIC
+	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+BEGIN
+	RETURN (WITH RECURSIVE date_range AS
+							   (SELECT start_date as sd
+								UNION ALL
+								SELECT DATE_ADD(sd, INTERVAL 1 Day)
+								FROM date_range
+								WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+							   )
+			SELECT COUNT(*)
+			FROM date_range
+			WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+	);
+END $$;
 DELIMITER ;
 
 SET SQL_MODE=@OLD_SQL_MODE;
