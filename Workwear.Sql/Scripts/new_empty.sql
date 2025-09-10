@@ -470,6 +470,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `number` VARCHAR(20) NULL DEFAULT NULL,
   `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
+  `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
@@ -1832,6 +1833,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
+  `can_choose` BOOLEAN DEFAULT FALSE NOT NULL,
   PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
   INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
   CONSTRAINT `fk_protection_tools_nomenclature_1`
@@ -2555,6 +2557,29 @@ create table clothing_service_services_claim
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
 );
+
+-- ---------------------------------------------
+-- Выбор пользователем предпочтительных номенклатур
+-- --------------------------------------------
+create table employees_selected_nomenclatures
+(
+	id                  int unsigned auto_increment,
+	employee_id         int unsigned not null,
+	protection_tools_id int unsigned not null,
+	nomenclature_id     int unsigned not null,
+	constraint employees_selected_nomenclatures_pk
+		primary key (id),
+	constraint employees_selected_nomenclatures_employees_id_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade,
+	constraint employees_selected_nomenclatures_nomenclature_id_fk
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint employees_selected_nomenclatures_protection_tools_id_fk
+		foreign key (protection_tools_id) references protection_tools (id)
+			on update cascade on delete cascade
+)
+	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
 
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
