@@ -1,6 +1,6 @@
 ﻿-- Создание новой функции, которая корректно считает количество, необходимое к выдаче
 DELIMITER $$
-CREATE FUNCTION `count_issue_new`(
+CREATE FUNCTION `quantity_issue`(
 	`amount` INT UNSIGNED,
 	`norm_period` INT UNSIGNED,
 	`next_issue` DATE,
