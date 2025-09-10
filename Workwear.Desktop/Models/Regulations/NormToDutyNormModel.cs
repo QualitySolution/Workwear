@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.Conventions;
@@ -42,7 +42,7 @@ namespace Workwear.Models.Regulations {
 				progressBar.Start(employees.Count + posts.Count, text: "Переносим норму в дежурные");
 				if(employees.IsEmpty() && posts.IsEmpty()) {
 					DutyNorm newDutyNorm = new DutyNorm();
-					CreateDutyNorm(norm, newDutyNorm);
+					CopyNormData(norm, newDutyNorm);
 					uow.Save(newDutyNorm);
 					CreateDutyNormName(norm, newDutyNorm, uow);
 					progressBar.Add(text: $"Создаем новую дежурную норму {newDutyNorm.Name}");
@@ -56,7 +56,7 @@ namespace Workwear.Models.Regulations {
 				if(posts.IsNotEmpty()) {
 					foreach(var post in norm.Posts) {
 						DutyNorm newDutyNorm = new DutyNorm();
-						CreateDutyNorm(norm, newDutyNorm, null, post);
+						CopyNormData(norm, newDutyNorm, null, post);
 						uow.Save(newDutyNorm);
 						CreateDutyNormName(norm, newDutyNorm, post, uow);
 						progressBar.Add(text: $"Создаем новую дежурную норму {newDutyNorm.Name} для должности: {post.Name}");
@@ -79,7 +79,7 @@ namespace Workwear.Models.Regulations {
 					var employeeIssueOperations = GetIssueOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
 					var writeOffOperations = GetWriteOffOperationsForEmployeeByNorm(employeeIssueOperations, uow);
 					DutyNorm newDutyNorm = new DutyNorm();
-					CreateDutyNorm(norm, newDutyNorm, employee);
+					CopyNormData(norm, newDutyNorm, employee);
 					uow.Save(newDutyNorm);
 					CreateDutyNormName(norm, newDutyNorm, uow, employee);
 					progressBar.Add(text: $"Создаем новую дежурную норму {newDutyNorm.Name} для сотрудника {employee.ShortName}");
@@ -220,7 +220,7 @@ namespace Workwear.Models.Regulations {
 				.FirstOrDefault();
 			return nextIssue;
 		}
-		private void CreateDutyNorm(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null, Post post = null) {
+		private void CopyNormData(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null, Post post = null) {
 			newDutyNorm.ResponsibleEmployee = employee;
 			newDutyNorm.DateFrom = norm.DateFrom;
 			newDutyNorm.DateTo = norm.DateTo;
