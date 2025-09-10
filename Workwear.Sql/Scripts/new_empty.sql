@@ -178,6 +178,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_cell` int(11) unsigned NOT NULL,
    `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
+   `notification_sent` boolean not null default false,
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
@@ -467,6 +468,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
+  `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
@@ -880,6 +882,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
+  `size_change` int null comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта',
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
@@ -2481,9 +2484,7 @@ create table visits_documents
 			on update cascade on delete cascade
 );
 
--- -----------------------------------------------------
--- Учёт дней недели
--- -----------------------------------------------------
+-- Будет удалена в 2.11 - решили не использовать
 create table work_days
 (
 	id          int unsigned auto_increment,
@@ -2494,6 +2495,20 @@ create table work_days
 		primary key (id)
 );
 
+-- -----------------------------------------------------
+-- График работы склада
+-- -----------------------------------------------------
+create table days_schedule (
+	id   	     	int unsigned auto_increment,
+	date 		 	date null 			comment 'Если указана дата, то расписание действует только на эту дату',
+	day_of_week 	int unsigned null 	comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	start 			time null 			comment 'Время начала рабочего дня, если null, то день нерабочий',
+	end 		    time null 			comment 'Время окончания рабочего дня, если null, то день нерабочий',
+	visit_interval  int unsigned null 	comment 'Интервал между записями на приём в минутах, если null, то день нерабочий',
+	comment 	 	text null,
+	constraint days_schedule
+	   primary key (id)
+);
 -- -----------------------------------------------------
 -- Оказываемые услуги
 -- -----------------------------------------------------
@@ -2540,7 +2555,7 @@ create table clothing_service_services_claim
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
 );
-	
+
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------
@@ -2607,7 +2622,6 @@ END$$
 
 DELIMITER ;
 
-
 -- -----------------------------------------------------
 -- function quantity_issue
 -- -----------------------------------------------------
@@ -2670,6 +2684,28 @@ BEGIN
 	END WHILE;
 	RETURN issue_count;
 END$$
+
+-- -----------------------------------------------------
+-- function count_working_days
+-- -----------------------------------------------------
+DELIMITER $$
+CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
+	RETURNS INT
+	DETERMINISTIC
+	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+BEGIN
+	RETURN (WITH RECURSIVE date_range AS
+							   (SELECT start_date as sd
+								UNION ALL
+								SELECT DATE_ADD(sd, INTERVAL 1 Day)
+								FROM date_range
+								WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+							   )
+			SELECT COUNT(*)
+			FROM date_range
+			WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+	);
+END $$;
 
 DELIMITER ;
 

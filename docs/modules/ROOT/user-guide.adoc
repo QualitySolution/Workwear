@@ -42,6 +42,10 @@ include::pages/export.adoc[]
 
 include::pages/mobile-app.adoc[]
 
+include::pages/visits.adoc[]
+
+include::pages/clothing-service.adoc[]
+
 include::pages/postomat.adoc[]
 
 :leveloffset: 0
