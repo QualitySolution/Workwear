@@ -26,7 +26,7 @@ namespace Workwear.Models.Regulations {
 			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
 			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование данных из нормы")) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование обычной нормы в дежурную")) {
 				var norm = uow.GetById<Norm>(normId);
 				var employees = norm.Employees.ToList();
 				
@@ -223,7 +223,7 @@ namespace Workwear.Models.Regulations {
 			newDutyNorm.ResponsibleEmployee = employee;
 			newDutyNorm.DateFrom = norm.DateFrom;
 			newDutyNorm.DateTo = norm.DateTo;
-			newDutyNorm.Comment = norm.Comment;
+			newDutyNorm.Comment = norm.Comment + $" Создана переносом из нормы №{norm.Id} {norm.Name}";
 			newDutyNorm.Subdivision = employee?.Subdivision ?? post?.Subdivision;
 		}
 
