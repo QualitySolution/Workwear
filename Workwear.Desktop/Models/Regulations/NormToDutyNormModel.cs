@@ -11,22 +11,27 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Operations;
 
 namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		private readonly IInteractiveService interactive;
 		private readonly IProgressBarDisplayable progressBar;
+		private EmployeeIssueRepository employeeIssueRepository;
 		public NormToDutyNormModel(
 			IInteractiveService interactive, 
-			IProgressBarDisplayable progressBar) {
+			IProgressBarDisplayable progressBar,
+			EmployeeIssueRepository employeeIssueRepository) {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressBar = progressBar;
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 		}
 		public virtual void CopyNormToDutyNorm(int normId) {
 			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
 			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование обычной нормы в дежурную")) {
+				employeeIssueRepository.RepoUow = uow;
 				var norm = uow.GetById<Norm>(normId);
 				var employees = norm.Employees.ToList();
 				
@@ -76,7 +81,7 @@ namespace Workwear.Models.Regulations {
 						new Dictionary<int, DutyNormIssueOperation>();
 					Dictionary<int, DutyNormIssueOperation> dutyNormWriteOffOperationByEmployeeWriteOffOperation =
 						new Dictionary<int, DutyNormIssueOperation>();
-					var employeeIssueOperations = GetIssueOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
+					var employeeIssueOperations = employeeIssueRepository.GetIssueOperationsForEmployeeWithNormItems(employee.Id, itemIds, uow);
 					var writeOffOperations = GetWriteOffOperationsForEmployeeByNorm(employeeIssueOperations, uow);
 					DutyNorm newDutyNorm = new DutyNorm();
 					CopyNormData(norm, newDutyNorm, employee);
@@ -96,8 +101,6 @@ namespace Workwear.Models.Regulations {
 						};
 						CreateDutyNormIssueOperation(op, dutyNormIssueOperation, dutyNormItemByEmployeeAndNormItem);
 						uow.Save(dutyNormIssueOperation);
-						if(op.WarehouseOperation == null)
-							throw new InvalidOperationException("Складская операция должна быть заполнена.");
 						dutyNormIssueOperationByWarehouseOperation.Add(op.WarehouseOperation.Id, dutyNormIssueOperation);
 						dutyNormIssueOperationByIssueOperation.Add(op.Id, dutyNormIssueOperation);
 					}
@@ -295,15 +298,6 @@ namespace Workwear.Models.Regulations {
 			dutyNormIssueOperation.Comment = issueOperation.Comment;
 		}
 
-		private IList<EmployeeIssueOperation> GetIssueOperationsForEmployeeWithNormItems(int employeeId, int[] normItemsIds, IUnitOfWork uow) {
-			var query = uow.Session.QueryOver<EmployeeIssueOperation>()
-				.Where(o => o.NormItem.Id.IsIn(normItemsIds))
-				.Where(o => o.Employee.Id == employeeId)
-				.Where(o => o.Issued > 0)
-				.Where(o => o.ManualOperation == false);
-			return query.List();
-
-		}
 		private IList<EmployeeIssueOperation> GetWriteOffOperationsForEmployeeByNorm(
 			IList<EmployeeIssueOperation> issueOperations,
 			IUnitOfWork uow) {

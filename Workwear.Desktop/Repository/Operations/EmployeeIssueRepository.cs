@@ -308,6 +308,23 @@ namespace Workwear.Repository.Operations
 				.TransformUsing(Transformers.AliasToBean<EmployeeReceivedInfo>())
 				.List<EmployeeReceivedInfo>();
 		}
+		
+		/// <summary>
+		/// Получаем все операции выдачи указанному сотруднику по определенной строке нормы.
+		/// Исключаем ручные операции.
+		/// </summary>
+		/// <returns></returns>
+		public IList<EmployeeIssueOperation> GetIssueOperationsForEmployeeWithNormItems(int employeeId, int[] normItemsIds, IUnitOfWork uow = null) {
+			var query = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.NormItem.Id.IsIn(normItemsIds))
+				.Where(o => o.Employee.Id == employeeId)
+				.Where(o => o.Issued > 0)
+				.Where(o => o.ManualOperation == false)
+				.List();
+			if (query.Any(o => o.WarehouseOperation == null))
+				throw new InvalidOperationException("Складская операция должна быть заполнена.");
+			return query;
+		}
 	}
 	
 	public class EmployeeReceivedInfo
