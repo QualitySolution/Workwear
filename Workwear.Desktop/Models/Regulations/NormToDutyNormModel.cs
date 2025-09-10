@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.Conventions;
@@ -22,7 +22,7 @@ namespace Workwear.Models.Regulations {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressBar = progressBar;
 		}
-		public virtual void CopyDataFromNorm(int normId) {
+		public virtual void CopyNormToDutyNorm(int normId) {
 			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
 			IList<ExpenseItem> removingExpenseItems = new List<ExpenseItem>();
 			IList<CollectiveExpenseItem> removingCollectiveExpenseItems = new List<CollectiveExpenseItem>();

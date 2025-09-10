@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -207,7 +207,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			if(nodes.Length != 1)
 				return;
 			int normId = (nodes[0] as NormJournalNode).Id;
-			normToDutyNormModel.CopyDataFromNorm(normId);
+			normToDutyNormModel.CopyNormToDutyNorm(normId);
 			
 		}
 		#endregion
