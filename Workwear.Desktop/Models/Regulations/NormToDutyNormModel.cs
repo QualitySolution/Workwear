@@ -87,8 +87,7 @@ namespace Workwear.Models.Regulations {
 						var nextIssue = GetNextIssue(employee.Id, item, uow);
 						var dutyNormItem = CreateDutyNormItem(newDutyNorm, item, nextIssue);
 						uow.Save(dutyNormItem);
-						if(!dutyNormItemByEmployeeAndNormItem.ContainsKey((employee.Id, item.Id)))
-							dutyNormItemByEmployeeAndNormItem.Add((employee.Id, item.Id), dutyNormItem);
+						dutyNormItemByEmployeeAndNormItem.Add((employee.Id, item.Id), dutyNormItem);
 					}
 					progressBar.Add(text: $"Создаем операции выдачи по дежурной норме {newDutyNorm.Name}");
 					foreach(var op in employeeIssueOperations) {
