@@ -50,7 +50,7 @@ namespace Workwear.Test.Sql
 				connection.Open();
 
 				var sql =
-					"SELECT count_issue_new(@amount, @norm_period, @next_issue, @begin_date, @end_date, @begin_Issue_Period, @end_Issue_Period)";
+					"SELECT quantity_issue(@amount, @norm_period, @next_issue, @begin_date, @end_date, @begin_Issue_Period, @end_Issue_Period)";
 				using var command = new MySqlCommand(sql, connection);
 
 				command.Parameters.AddWithValue("@amount", amount);
