@@ -178,6 +178,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_cell` int(11) unsigned NOT NULL,
    `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
+   `notification_sent` boolean not null default false,
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
@@ -467,6 +468,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
+  `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
@@ -881,6 +883,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
+  `size_change` int null comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта',
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
@@ -2483,9 +2486,7 @@ create table visits_documents
 			on update cascade on delete cascade
 );
 
--- -----------------------------------------------------
--- Учёт дней недели
--- -----------------------------------------------------
+-- Будет удалена в 2.11 - решили не использовать
 create table work_days
 (
 	id          int unsigned auto_increment,
@@ -2496,6 +2497,20 @@ create table work_days
 		primary key (id)
 );
 
+-- -----------------------------------------------------
+-- График работы склада
+-- -----------------------------------------------------
+create table days_schedule (
+	id   	     	int unsigned auto_increment,
+	date 		 	date null 			comment 'Если указана дата, то расписание действует только на эту дату',
+	day_of_week 	int unsigned null 	comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	start 			time null 			comment 'Время начала рабочего дня, если null, то день нерабочий',
+	end 		    time null 			comment 'Время окончания рабочего дня, если null, то день нерабочий',
+	visit_interval  int unsigned null 	comment 'Интервал между записями на приём в минутах, если null, то день нерабочий',
+	comment 	 	text null,
+	constraint days_schedule
+	   primary key (id)
+);
 -- -----------------------------------------------------
 -- Оказываемые услуги
 -- -----------------------------------------------------
@@ -2629,6 +2644,93 @@ WHILE next_issue <= end_date DO
 END WHILE;
 RETURN issue_count;
 END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- function quantity_issue
+-- -----------------------------------------------------
+
+DELIMITER $$
+CREATE FUNCTION `quantity_issue`(
+	`amount` INT UNSIGNED,
+	`norm_period` INT UNSIGNED,
+	`next_issue` DATE,
+	`begin_date` DATE,
+	`end_date` DATE,
+	`begin_Issue_Period` DATE,
+	`end_Issue_Period` DATE)
+	RETURNS int(10) unsigned
+	NO SQL
+	DETERMINISTIC
+	COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
+BEGIN
+	DECLARE issue_count INT;
+	DECLARE next_issue_new DATE;
+	DECLARE begin_Issue_Period_New DATE;
+	DECLARE end_Issue_Period_New DATE;
+	DECLARE start_Of_Year DATE;
+	DECLARE end_Of_Year DATE;
+
+	IF norm_period <= 0 THEN RETURN 0; END IF;
+	IF next_issue IS NULL THEN RETURN 0; END IF;
+
+	SET issue_count = 0;
+	SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+	SET begin_Issue_Period_New = CONCAT('2000', '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+	SET end_Issue_Period_New = CONCAT('2000', '-', MONTH(end_Issue_Period), '-', DAY(end_Issue_Period));
+	SET start_Of_Year = CONCAT('2000', '-', 1, '-',  1);
+	SET end_Of_Year = CONCAT('2000', '-', 12 , '-', 31);
+
+	WHILE next_issue <= end_date DO
+			IF begin_Issue_Period IS NOT NULL THEN
+				IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
+					OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
+						AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
+					IF next_issue >= begin_date THEN
+						SET issue_count = issue_count + amount;
+					END IF;
+					SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+				END IF;
+				IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
+					OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
+					SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+					IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
+						SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
+					END IF;
+				END IF;
+			ELSE
+				IF next_issue >= begin_date THEN
+					SET issue_count = issue_count + amount;
+				END IF;
+				SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+			END IF;
+			SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+	END WHILE;
+	RETURN issue_count;
+END$$
+
+-- -----------------------------------------------------
+-- function count_working_days
+-- -----------------------------------------------------
+DELIMITER $$
+CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
+	RETURNS INT
+	DETERMINISTIC
+	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+BEGIN
+	RETURN (WITH RECURSIVE date_range AS
+							   (SELECT start_date as sd
+								UNION ALL
+								SELECT DATE_ADD(sd, INTERVAL 1 Day)
+								FROM date_range
+								WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+							   )
+			SELECT COUNT(*)
+			FROM date_range
+			WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+	);
+END $$;
 
 DELIMITER ;
 
