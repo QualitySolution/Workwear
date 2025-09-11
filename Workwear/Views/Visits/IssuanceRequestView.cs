@@ -126,6 +126,7 @@ namespace Workwear.Views.Visits {
 		}
 
 		protected void OnButtonCreateExpenseClicked(object sender, EventArgs e) {
+			ViewModel.CreateCollectiveExpense();
 		}
 		#endregion
 		

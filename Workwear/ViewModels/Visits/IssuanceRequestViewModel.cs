@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -9,28 +11,44 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private INavigationManager navigation;
+		private readonly IInteractiveMessage interactive;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly IUserService userService;
+		private readonly StockBalanceModel stockBalanceModel;
+		public BaseParameters BaseParameters { get; }
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
 			IUserService userService,
 			EmployeeRepository employeeRepository,
+			BaseParameters baseParameters,
+			StockBalanceModel stockBalanceModel,
+			IInteractiveMessage interactive,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			
@@ -155,6 +173,64 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		#endregion
+
+		#endregion
+
+		#region Создание документа коллективной выдачи
+
+		public void CreateCollectiveExpense() {
+			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
+			CollectiveExpense newCollectiveExpense = new CollectiveExpense() {
+				CreatedbyUser = userService.GetCurrentUser(),
+				Date = DateTime.Today,
+				IssuanceRequest = Entity
+			};
+			var needs = Employees
+				.SelectMany(x => x.WorkwearItems)
+				.Where(x => !newCollectiveExpense.Items.Any(y => y.EmployeeCardItem == x))
+				.ToList();
+
+			stockBalanceModel.OnDate = newCollectiveExpense.Date;
+			
+			foreach(var item in needs) {
+				if(widgetList.ContainsKey(item.ProtectionTools.Id)) {
+					widgetList[item.ProtectionTools.Id].NumberOfNeeds++;
+					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date);
+					if(item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date) != 0)
+						widgetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
+				}
+				else
+					widgetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
+						item.ProtectionTools.Type.IssueType == IssueType.Collective,
+						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date)>0 ? 1 : 0,
+						1,
+						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date),
+						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
+							.Sum(x =>x.Amount)));
+			}
+			if(!widgetList.Any()) {
+				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
+				return;
+			}
+			
+			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
+			(null, widgetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
+				.ToDictionary(x => x.Key, x => x.Value));
+			
+			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(newCollectiveExpense.Id));
+			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, newCollectiveExpense, page, vac);
+		}
+		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs, CollectiveExpense newCollectiveExpense,
+			IPage page, bool excludeOnVacation) {
+			foreach(var item in needs) {
+				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
+					if(excludeOnVacation && item.EmployeeCard.OnVacation(newCollectiveExpense.Date))
+						continue;
+					else
+						newCollectiveExpense.AddItem(item, BaseParameters);
+			}
+			navigation.ForceClosePage(page);
+		}
 
 		#endregion
 		
