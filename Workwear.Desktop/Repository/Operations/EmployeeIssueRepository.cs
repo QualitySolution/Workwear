@@ -325,6 +325,16 @@ namespace Workwear.Repository.Operations
 				throw new InvalidOperationException("Складская операция должна быть заполнена.");
 			return query;
 		}
+		/// <summary>
+		/// Получаем операции списания.
+		/// </summary>
+		/// <returns></returns>
+		public IList<EmployeeIssueOperation> GetWriteOffOperations(IList<EmployeeIssueOperation> issueOperations, IUnitOfWork uow = null) {
+			var writeOffOperations = (uow ?? RepoUow).Session.Query<EmployeeIssueOperation>()
+				.Where(o => issueOperations.Contains(o.IssuedOperation))
+				.ToList();
+			return writeOffOperations;
+		}
 	}
 	
 	public class EmployeeReceivedInfo
