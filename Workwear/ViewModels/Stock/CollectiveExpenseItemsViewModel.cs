@@ -331,6 +331,7 @@ namespace Workwear.ViewModels.Stock
 				Entity.IssuanceSheet.Items.Remove(deleteItem.IssuanceSheetItem);
 			}
 			Entity.RemoveItem(deleteItem);
+			UoW.Delete(deleteItem.WarehouseOperation);
 			OnPropertyChanged(nameof(Sum));
 		}
 

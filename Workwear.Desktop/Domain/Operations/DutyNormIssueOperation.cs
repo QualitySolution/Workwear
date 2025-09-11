@@ -173,6 +173,17 @@ namespace Workwear.Domain.Operations {
          	set => SetField(ref comment, value);
         }
         #endregion
+
+        #region Коллекции
+
+        private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+        [Display(Name = "Операции")]
+        public virtual IList<BarcodeOperation> BarcodeOperations {
+	        get => barcodeOperations;
+	        set => SetField(ref barcodeOperations, value);
+        }	
+
+        #endregion
     
         #region Генерируемые Свойства
         public virtual string Title => Issued > Returned

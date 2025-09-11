@@ -63,21 +63,21 @@ DELIMITER ;
 -- Исключение выходных дней
 DELIMITER $$
 CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
-    RETURNS INT
-    DETERMINISTIC
-    COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+	RETURNS INT
+	DETERMINISTIC
+	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
 BEGIN
-    RETURN (WITH RECURSIVE date_range AS
-                               (SELECT start_date as sd
-                                UNION ALL
-                                SELECT DATE_ADD(sd, INTERVAL 1 Day)
-                                FROM date_range
-                                WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
-                               )
-            SELECT COUNT(*)
-            FROM date_range
-            WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
-    );
+RETURN (WITH RECURSIVE date_range AS
+						   (SELECT start_date as sd
+							UNION ALL
+							SELECT DATE_ADD(sd, INTERVAL 1 Day)
+							FROM date_range
+							WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+						   )
+		SELECT COUNT(*)
+		FROM date_range
+		WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+);
 END $$;
 DELIMITER ;
 
@@ -140,3 +140,32 @@ create table employees_selected_nomenclatures
 			on update cascade on delete cascade
 )
 	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
+
+-- Добавление операции выдачи по дежурной норме в ведомость
+ALTER TABLE issuance_sheet_items 
+	ADD COLUMN duty_norm_issue_operation_id int(10) unsigned NULL DEFAULT NULL AFTER issued_operation_id;
+
+ALTER TABLE issuance_sheet_items
+	ADD CONSTRAINT fk_issuance_sheet_items_duty_norm_issue_operation_id
+		FOREIGN KEY (duty_norm_issue_operation_id) REFERENCES operation_issued_by_duty_norm(id)
+			ON UPDATE CASCADE 
+			ON DELETE NO ACTION;
+
+CREATE INDEX fk_issuance_sheet_items_duty_norm_issue_operation_idx 
+	ON issuance_sheet_items(duty_norm_issue_operation_id ASC);
+
+-- Добавление операций выдачи по дежурной норме в операции со штрихкодами
+ALTER TABLE operation_barcodes
+	ADD COLUMN duty_norm_issue_operation_id int(10) unsigned NULL DEFAULT NULL AFTER employee_issue_operation_id;
+
+ALTER TABLE operation_barcodes
+	ADD CONSTRAINT fk_operation_barcodes_duty_norm_issue_operation_id
+		FOREIGN KEY (duty_norm_issue_operation_id) REFERENCES operation_issued_by_duty_norm(id)
+			ON UPDATE CASCADE
+			ON DELETE NO ACTION;
+
+CREATE INDEX fk_operation_barcodes_duty_norm_issue_operation_id_idx
+	ON operation_barcodes(duty_norm_issue_operation_id ASC);
+
+
+
