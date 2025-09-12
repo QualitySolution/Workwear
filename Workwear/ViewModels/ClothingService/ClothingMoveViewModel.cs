@@ -19,7 +19,9 @@ using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
+using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using ClaimState = Workwear.Domain.ClothingService.ClaimState;
 
@@ -27,6 +29,7 @@ namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
+		private readonly BaseParameters baseParameters;
 		private readonly NotificationManagerService notificationManager;
 		private readonly Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string title, Action action)>();
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
@@ -34,15 +37,16 @@ namespace Workwear.ViewModels.ClothingService {
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
-			IUnitOfWorkFactory unitOfWorkFactory,
-			UnitOfWorkProvider unitOfWorkProvider,
-			INavigationManager navigation,
 			BarcodeInfoViewModel barcodeInfoViewModel,
-			IUserService userService,
 			BarcodeRepository barcodeRepository,
+			BaseParameters baseParameters,
+			FeaturesService featuresService,
 			NotificationManagerService notificationManager,
 			PostomatManagerService postomatService,
-			FeaturesService featuresService,
+			UnitOfWorkProvider unitOfWorkProvider,
+			INavigationManager navigation,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IUserService userService,
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{
@@ -53,6 +57,7 @@ namespace Workwear.ViewModels.ClothingService {
 			
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			barcodeInfoViewModel.ActionBarcodes = ActionBarcodes;
@@ -247,22 +252,41 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание";
 				return;
 			}
-			
-			var reportInfo = new ReportInfo {
-				Title = "Этикетка",
-				Identifier = "ClothingService.ClothingMoveSticker",
-				Parameters = new Dictionary<string, object> {
-					{"barcode_id", claim.Barcode.Id},
-					{"service_claim_id", claim.Id},
-					{"manufacturer_code", claim.Barcode.Title.Substring(2,5)},
-					{"number_system", claim.Barcode.Title.Substring(0,2)},
-					{"product_code", claim.Barcode.Title.Substring(7,5)},
-					{"show_terminal", ShowTerminal},
-					{"preferred_terminal",  claim.PreferredTerminalId.HasValue
-						? GetTerminalLabel(claim.PreferredTerminalId.Value)
-						: string.Empty}
-				}
-			};
+
+			ReportInfo reportInfo; 
+			switch(baseParameters.MarkingType) {
+				case BarcodeTypes.EAN13:
+					reportInfo = new ReportInfo {
+						Title = "Этикетка",
+						Identifier = "ClothingService.ClothingMoveStickerBarcode",
+						Parameters = new Dictionary<string, object> {
+							{ "barcode_id", claim.Barcode.Id },
+							{ "service_claim_id", claim.Id },
+							{ "manufacturer_code", claim.Barcode.Title.Substring(2, 5) },
+							{ "number_system", claim.Barcode.Title.Substring(0, 2) },
+							{ "product_code", claim.Barcode.Title.Substring(7, 5) },
+							{ "show_terminal", ShowTerminal },
+							{ "preferred_terminal", claim.PreferredTerminalId.HasValue
+									? GetTerminalLabel(claim.PreferredTerminalId.Value)
+									: string.Empty}
+						}
+					};  break;
+				case BarcodeTypes.EPC96 :
+					reportInfo = new ReportInfo {
+						Title = "Этикетка",
+						Identifier = "ClothingService.ClothingMoveSticker",
+						Parameters = new Dictionary<string, object> {
+							{ "barcode_id", claim.Barcode.Id },
+							{ "service_claim_id", claim.Id },
+							{ "show_terminal", ShowTerminal },
+							{ "preferred_terminal", claim.PreferredTerminalId.HasValue
+								? GetTerminalLabel(claim.PreferredTerminalId.Value)
+									: string.Empty }
+						}
+					};  break;
+				default: throw new NotImplementedException();
+					
+			}
 			
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
 		}
