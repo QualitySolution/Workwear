@@ -14,7 +14,7 @@ namespace Workwear.Domain.Visits {
 		private int dayOfWeek;
 		[Display(Name = "Номер дня недели")]
 		//(Пн-Вс 1-7) Используется для постоянных расписаний
-		public virtual int DayOfWeak {
+		public virtual int DayOfWeek {
 			get => dayOfWeek;
 			set => dayOfWeek = value; 
 		}
@@ -27,9 +27,9 @@ namespace Workwear.Domain.Visits {
 			set => date = value; 
 		}
 
-		private int interval;
+		private int? interval;
 		[Display(Name = "Интервал в минутах")]
-		public virtual int Interval {
+		public virtual int? Interval {
 			get => interval;
 			set => interval = value; 
 		}
@@ -51,7 +51,7 @@ namespace Workwear.Domain.Visits {
 		public virtual TimeSpan Start => String.IsNullOrEmpty(startString) ? TimeSpan.Zero : TimeSpan.Parse(startString);
 		public virtual TimeSpan End => String.IsNullOrEmpty(endString) ? TimeSpan.Zero : TimeSpan.Parse(endString);
 
-		public virtual bool IsWork => StartString != null && EndString != null && interval != 0;
+		public virtual bool IsWork => !String.IsNullOrWhiteSpace(StartString) && !String.IsNullOrWhiteSpace(EndString) && Interval.HasValue && interval > 0;
 		public virtual string Title {
 			get {
 				if(IsWork) {
@@ -59,13 +59,13 @@ namespace Workwear.Domain.Visits {
 					if(Date.HasValue)
 						return $"{Date.Value:dd.MM.yyyy}: {intervalInfo}";
 					else
-						return $"День недели {DayOfWeak}: {intervalInfo}";
+						return $"День недели {DayOfWeek}: {intervalInfo}";
 				}
 				else {
 					if(Date.HasValue)
 						return $"{Date.Value:dd.MM.yyyy}: Выходной";
 					else
-						return $"День недели {DayOfWeak}: Выходной";
+						return $"День недели {DayOfWeek}: Выходной";
 				}
 			}
 		}
