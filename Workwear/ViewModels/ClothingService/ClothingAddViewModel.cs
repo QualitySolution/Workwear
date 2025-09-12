@@ -44,7 +44,6 @@ namespace Workwear.ViewModels.ClothingService {
 			Title = "Добавить в документ";
 			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 		}
-
 		
 		#region Cвойства 
 		private ServiceClaim activeClaim;
