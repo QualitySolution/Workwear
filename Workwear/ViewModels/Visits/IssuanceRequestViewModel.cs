@@ -31,7 +31,9 @@ namespace Workwear.ViewModels.Visits {
 		private readonly EmployeeRepository employeeRepository;
 		private readonly IUserService userService;
 		private readonly StockBalanceModel stockBalanceModel;
+		private readonly EmployeeIssueModel issueModel;
 		public BaseParameters BaseParameters { get; }
+		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
@@ -41,6 +43,7 @@ namespace Workwear.ViewModels.Visits {
 			BaseParameters baseParameters,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveMessage interactive,
+			EmployeeIssueModel issueModel,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -49,6 +52,8 @@ namespace Workwear.ViewModels.Visits {
 			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			
@@ -180,31 +185,37 @@ namespace Workwear.ViewModels.Visits {
 
 		public void CreateCollectiveExpense() {
 			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
-			CollectiveExpense newCollectiveExpense = new CollectiveExpense() {
-				CreatedbyUser = userService.GetCurrentUser(),
-				Date = DateTime.Today,
-				IssuanceRequest = Entity
-			};
+			var pageNewCollectiveExpense = navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
+			CollectiveExpenseViewModel newCollectiveExpenseViewModel = pageNewCollectiveExpense.ViewModel;
+			newCollectiveExpenseViewModel.Entity.CreatedbyUser = userService.GetCurrentUser();
+			newCollectiveExpenseViewModel.Entity.Date = DateTime.Today;
+			newCollectiveExpenseViewModel.Entity.IssuanceRequest = Entity;
+			
+			stockBalanceModel.OnDate = newCollectiveExpenseViewModel.Entity.Date;
+			
+			foreach (var id in Employees.Select(x => x.Id)) 
+				issueModel.PreloadWearItems(id);
+			issueModel.FillWearReceivedInfo(Employees.ToArray());
+			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
+			
 			var needs = Employees
 				.SelectMany(x => x.WorkwearItems)
-				.Where(x => !newCollectiveExpense.Items.Any(y => y.EmployeeCardItem == x))
+				.Where(x => !newCollectiveExpenseViewModel.Entity.Items.Any(y => y.EmployeeCardItem == x))
 				.ToList();
-
-			stockBalanceModel.OnDate = newCollectiveExpense.Date;
 			
 			foreach(var item in needs) {
 				if(widgetList.ContainsKey(item.ProtectionTools.Id)) {
 					widgetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date);
-					if(item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date) != 0)
+					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date);
+					if(item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date) != 0)
 						widgetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
 				}
 				else
 					widgetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
 						item.ProtectionTools.Type.IssueType == IssueType.Collective,
-						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date)>0 ? 1 : 0,
+						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date)>0 ? 1 : 0,
 						1,
-						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpense.Date),
+						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date),
 						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
 							.Sum(x =>x.Amount)));
 			}
@@ -216,12 +227,16 @@ namespace Workwear.ViewModels.Visits {
 			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
 			(null, widgetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
 				.ToDictionary(x => x.Key, x => x.Value));
-			
-			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(newCollectiveExpense.Id));
-			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, newCollectiveExpense, page, vac);
+			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, newCollectiveExpenseViewModel.Entity, page, vac);
+			Entity.CollectiveExpenses.Add(newCollectiveExpenseViewModel.Entity);
 		}
-		public void AddItemsFromWidget(Dictionary<int, IssueWidgetItem> widgetItems, List<EmployeeCardItem> needs, CollectiveExpense newCollectiveExpense,
-			IPage page, bool excludeOnVacation) {
+		public void AddItemsFromWidget(
+			Dictionary<int, IssueWidgetItem> widgetItems, 
+			List<EmployeeCardItem> needs, 
+			CollectiveExpense newCollectiveExpense,
+			IPage page, 
+			bool excludeOnVacation) 
+		{
 			foreach(var item in needs) {
 				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
 					if(excludeOnVacation && item.EmployeeCard.OnVacation(newCollectiveExpense.Date))
