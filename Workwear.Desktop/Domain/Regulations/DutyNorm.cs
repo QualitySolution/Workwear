@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NLog;
 using QS.DomainModel.Entity;
-using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;

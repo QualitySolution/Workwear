@@ -212,8 +212,10 @@ namespace Workwear.ViewModels.Stock
 						return;
 				deleteService.DeleteEntity<ExpenseItem>(item.Id, UoW, () => Entity.RemoveItem(item));
 			}
-			else
+			else {
 				Entity.RemoveItem(item);
+				UoW.Delete(item.WarehouseOperation);
+			}
 			CalculateTotal();
 		}
 

@@ -271,6 +271,7 @@ namespace workwear.Journal
 							.AddSetter((c, n) => c.Foreground = n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddMonths(-1) ? "red" : 
 								(n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddDays(-7) ? "orange" : "green"))
 					.AddColumn("Заполненность")
+						.ToolTipText(jvm.GetCellsTooltip)
 						.AddProgressRenderer(n => n.Capacity == 0 ? 0 : (int)(100f * n.Filling / n.Capacity))
 						.Text(x => $"{x.Filling} из {x.Capacity}")
 					.Finish()

@@ -20,6 +20,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Postomats;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -28,15 +29,20 @@ using ClaimState = Workwear.Domain.ClothingService.ClaimState;
 namespace Workwear.ViewModels.ClothingService {
 	public class ClothingMoveViewModel: UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
+		private readonly IInteractiveService interactiveService;
 		private readonly BarcodeRepository barcodeRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly NotificationManagerService notificationManager;
-		private readonly Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string title, Action action)>();
 		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 		public readonly FeaturesService FeaturesService;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
+			INavigationManager navigation,
+			IInteractiveService interactiveService,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IUserService userService,
+			UnitOfWorkProvider unitOfWorkProvider,
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			BarcodeRepository barcodeRepository,
 			BaseParameters baseParameters,
@@ -50,6 +56,8 @@ namespace Workwear.ViewModels.ClothingService {
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{
+			Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string title, Action action)>();
+
 			ActionBarcodes = ActionBarcodes.Concat(GetActionBarcodes())
 				.ToDictionary(x => x.Key, x => x.Value);
 			ActionBarcodes = ActionBarcodes.Concat(GetActionServicesBarcodes())
@@ -58,6 +66,8 @@ namespace Workwear.ViewModels.ClothingService {
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
+            this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			barcodeInfoViewModel.ActionBarcodes = ActionBarcodes;
@@ -224,6 +234,18 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		public void Accept() {
+			var pDocItems = UoW.Session.QueryOver<PostomatDocumentItem>()
+				.Where(x => x.ServiceClaim.Id == claim.Id)
+				.Where(x => x.DispenseTime == null)
+				.List();
+			if(pDocItems.Count() > 0 
+			   && interactiveService.Question("СИЗ уже добавлен в документ постомата." +
+			                                  " Если изменить статус, вещь будет считаться выданной, " +
+			                                  "а соответствующая ячейка постомата пустой. \n Продолжить?")) 
+				foreach(var item in pDocItems) {
+					item.DispenseTime = DateTime.Now;
+					UoW.Save(item);
+				}
 			var status = new StateOperation {
 				OperationTime = DateTime.Now,
 				State = State,

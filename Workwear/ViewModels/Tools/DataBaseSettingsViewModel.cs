@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Permissions;
@@ -20,6 +20,7 @@ namespace Workwear.ViewModels.Tools
 		public bool EditLockDateVisible { get; }
 		public bool MarkingVisible { get; }
 		public bool CanEdit { get; }
+		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
 		
 		public DataBaseSettingsViewModel(
@@ -48,6 +49,7 @@ namespace Workwear.ViewModels.Tools
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 			MarkingType = baseParameters.MarkingType;
+			StartDateOfOperations = baseParameters.StartDateOfOperations;
 		}
 		
 		#region IDialogDocumentation
@@ -65,7 +67,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod
 		                                   || UsedCurrency != baseParameters.UsedCurrency
 		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
-		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
+		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
+		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -81,7 +84,7 @@ namespace Workwear.ViewModels.Tools
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		public bool IsDocNumberInIssueSign{get;set;}
 		public bool IsDocNumberInReturnSign { get; set; }
-
+		public DateTime? StartDateOfOperations { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -110,6 +113,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.EditLockDate = EditLockDate;
 			if(MarkingType != baseParameters.MarkingType)
 				baseParameters.MarkingType = MarkingType;
+			if(StartDateOfOperations != baseParameters.StartDateOfOperations)
+				baseParameters.StartDateOfOperations = StartDateOfOperations;
 			return true;
 		}
 	}

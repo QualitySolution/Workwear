@@ -81,6 +81,10 @@ namespace Workwear.Domain.Stock.Documents
 			if (IssueDate != null && IssueDate < Date)
 				yield return new ValidationResult ("Дата выдачи не может быть раньше даты списания.", 
 					new[] { nameof(IssueDate)});
+						
+			if (IssuanceSheet != null && IssueDate == null)
+				yield return new ValidationResult ("Нельзя сохранить ведомость без даты выдачи.", 
+					new[] { nameof(IssueDate)});
 			
 			if (DocNumber != null && DocNumber.Length > 15)
 				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
@@ -220,15 +224,17 @@ namespace Workwear.Domain.Stock.Documents
 			UpdateIssuanceSheet();
 		}
 
-		public virtual void UpdateIssuanceSheet()
-		{
+		public virtual void UpdateIssuanceSheet() {
 			if(IssuanceSheet == null)
 				return;
-
+			
 			if(Employee == null)
 				throw new NullReferenceException("Для обновления ведомости сотрудник должен быть указан.");
-
-			IssuanceSheet.Date = Date;
+			if(IssueDate == null)
+				throw new NullReferenceException("Нельзя сохранить ведомость без даты.");
+			
+			IssuanceSheet.Date = (DateTime)IssueDate;
+			
 			if(Employee.Subdivision != null)
 				IssuanceSheet.Subdivision = Employee.Subdivision;
 

@@ -32,6 +32,8 @@ namespace Workwear.Views.Tools
 
 		private global::Gamma.GtkWidgets.yLabel labelEditLockDate;
 
+		private global::QS.Widgets.GtkUI.DatePicker startDateOfOperations;
+
 		private global::Gamma.GtkWidgets.yCheckButton ycheckAutoWriteoff;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckCollapseDuplicateIssuanceSheet;
@@ -67,6 +69,8 @@ namespace Workwear.Views.Tools
 		private global::Gamma.GtkWidgets.yLabel ylabel7;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelCollectiveIssueWithPersonal;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelstartDateOfOperations;
 
 		protected virtual void Build()
 		{
@@ -289,6 +293,26 @@ namespace Workwear.Views.Tools
 			w17.XOptions = ((global::Gtk.AttachOptions)(4));
 			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.startDateOfOperations = new global::QS.Widgets.GtkUI.DatePicker();
+			this.startDateOfOperations.TooltipMarkup = "Устанавливает дату, с которой будут отображаться операции на оборотной стороне ка" +
+			                                           "рточки сотрудника";
+			this.startDateOfOperations.Events = ((global::Gdk.EventMask)(256));
+			this.startDateOfOperations.Name = "startDateOfOperations";
+			this.startDateOfOperations.WithTime = false;
+			this.startDateOfOperations.HideCalendarButton = false;
+			this.startDateOfOperations.Date = new global::System.DateTime(0);
+			this.startDateOfOperations.IsEditable = true;
+			this.startDateOfOperations.AutoSeparation = true;
+			this.startDateOfOperations.HideButtonClearDate = false;
+			this.table1.Add(this.startDateOfOperations);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.startDateOfOperations]));
+			w17.TopAttach = ((uint)(10));
+			w17.BottomAttach = ((uint)(11));
+			w17.LeftAttach = ((uint)(1));
+			w17.RightAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.yentryCurrency = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryCurrency.CanFocus = true;
 			this.yentryCurrency.Name = "yentryCurrency";
@@ -446,6 +470,17 @@ namespace Workwear.Views.Tools
 					"");
 			this.table1.Add(this.ylabel7);
 			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel7]));
+			w31.TopAttach = ((uint)(10));
+			w31.BottomAttach = ((uint)(11));
+			w31.XOptions = ((global::Gtk.AttachOptions)(4));
+			w31.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.ylabelstartDateOfOperations = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelstartDateOfOperations.Name = "ylabelstartDateOfOperations";
+			this.ylabelstartDateOfOperations.Xalign = 1F;
+			this.ylabelstartDateOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Отображать на оборотной стороне карточки сотрудника с даты: ");
+			this.table1.Add(this.ylabelstartDateOfOperations);
+			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelstartDateOfOperations]));
 			w31.TopAttach = ((uint)(10));
 			w31.BottomAttach = ((uint)(11));
 			w31.XOptions = ((global::Gtk.AttachOptions)(4));

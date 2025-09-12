@@ -74,6 +74,17 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.IsDocNumberInReturnSign, w => w.Active)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
+		    
+		    ylabelstartDateOfOperations.Binding.AddBinding(ViewModel, v=>v.StartDateOfOperationsVisible, w=>w.Visible)
+			    .InitializeFromSource();
+
+		    startDateOfOperations.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.StartDateOfOperations, w => w.DateOrNull)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .AddBinding(v => v.StartDateOfOperationsVisible, w => w.Visible)
+			    .InitializeFromSource();
+			    
+		    
 			CommonButtonSubscription();
 		}
 	}
