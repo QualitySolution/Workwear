@@ -25,10 +25,8 @@ namespace Workwear.Models.Visits {
 		public bool IsWorkDay(DateTime day) {
 			if(ExclusiveDays.Any(d => d.Date == day))
 				return ExclusiveDays.Any(d => d.Date == day && d.IsWork);
-			   
-			if(DaysSchedule.Any(d => d.DayOfWeek == (int)day.DayOfWeek % 7))
-				return DaysSchedule.Any(d => d.DayOfWeek == (int)day.DayOfWeek % 7 && d.IsWork);
-			return false;
+			
+			return DaysSchedule.Any(d => d.DayOfWeek % 7 == (int)day.DayOfWeek && d.IsWork);
 		}
 
 		/// <summary>
