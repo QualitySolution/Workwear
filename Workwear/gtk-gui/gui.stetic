@@ -8876,7 +8876,7 @@
                   <widget class="Gtk.Table" id="table1">
                     <property name="MemberName" />
                     <property name="ShowScrollbars">True</property>
-                    <property name="NRows">11</property>
+                    <property name="NRows">12</property>
                     <property name="NColumns">2</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
@@ -9070,6 +9070,34 @@
                       </packing>
                     </child>
                     <child>
+                      <widget class="QS.Widgets.GtkUI.DatePicker" id="startDateOfOperations">
+                        <property name="MemberName" />
+                        <property name="Tooltip" translatable="yes">Устанавливает дату, с которой будут отображаться операции на оборотной стороне карточки сотрудника</property>
+                        <property name="Events">ButtonPressMask</property>
+                        <property name="WithTime">False</property>
+                        <property name="HideCalendarButton">False</property>
+                        <property name="Date">0</property>
+                        <property name="IsEditable">True</property>
+                        <property name="AutoSeparation">True</property>
+                        <property name="HideButtonClearDate">False</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">11</property>
+                        <property name="BottomAttach">12</property>
+                        <property name="LeftAttach">1</property>
+                        <property name="RightAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckAutoWriteoff">
                         <property name="MemberName" />
                         <property name="Tooltip" translatable="yes">Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке "История выдач" в карточке сотрудника для каждой выдачи.</property>
@@ -9131,34 +9159,6 @@
                       <packing>
                         <property name="TopAttach">6</property>
                         <property name="BottomAttach">7</property>
-                        <property name="LeftAttach">1</property>
-                        <property name="RightAttach">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="XOptions">Fill</property>
-                        <property name="YOptions">Fill</property>
-                        <property name="XExpand">False</property>
-                        <property name="XFill">True</property>
-                        <property name="XShrink">False</property>
-                        <property name="YExpand">False</property>
-                        <property name="YFill">True</property>
-                        <property name="YShrink">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="QS.Widgets.GtkUI.DatePicker" id="startDateOfOperations">
-                        <property name="MemberName" />
-                        <property name="Tooltip" translatable="yes">Устанавливает дату, с которой будут отображаться операции на оборотной стороне карточки сотрудника</property>
-                        <property name="Events">ButtonPressMask</property>
-                        <property name="WithTime">False</property>
-                        <property name="HideCalendarButton">False</property>
-                        <property name="Date">0</property>
-                        <property name="IsEditable">True</property>
-                        <property name="AutoSeparation">True</property>
-                        <property name="HideButtonClearDate">False</property>
-                      </widget>
-                      <packing>
-                        <property name="TopAttach">10</property>
-                        <property name="BottomAttach">11</property>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
                         <property name="AutoSize">True</property>
@@ -9440,14 +9440,14 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelstartDateOfOperations">
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelCollectiveIssueWithPersonal">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Отображать на оборотной стороне карточки сотрудника с даты: </property>
+                        <property name="LabelProp" translatable="yes">При персональной выдаче добавлять позиции коллективной:</property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">10</property>
-                        <property name="BottomAttach">11</property>
+                        <property name="TopAttach">6</property>
+                        <property name="BottomAttach">7</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -9460,14 +9460,14 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelCollectiveIssueWithPersonal">
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelstartDateOfOperations">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">При персональной выдаче добавлять позиции коллективной:</property>
+                        <property name="LabelProp" translatable="yes">Отображать на оборотной стороне карточки сотрудника с даты: </property>
                       </widget>
                       <packing>
-                        <property name="TopAttach">6</property>
-                        <property name="BottomAttach">7</property>
+                        <property name="TopAttach">11</property>
+                        <property name="BottomAttach">12</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>

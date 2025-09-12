@@ -38,11 +38,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
-			INavigationManager navigation,
 			IInteractiveService interactiveService,
-			IUnitOfWorkFactory unitOfWorkFactory,
-			IUserService userService,
-			UnitOfWorkProvider unitOfWorkProvider,
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			BarcodeRepository barcodeRepository,
 			BaseParameters baseParameters,
