@@ -1117,7 +1117,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
-  `issue_date` date NULL DEFAULT `date`,
+  `issue_date` date NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
