@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.Dialog;
@@ -148,19 +149,20 @@ namespace Workwear.Domain.Stock.Documents
 				Nomenclature.Type.Units?.Name
 			).TrimEnd();
 
-		public virtual string BarcodesText {
-			get {
-				if((EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) == 0) {
-					if(Amount > 0 && (Nomenclature?.UseBarcode ?? false))
-						return "необходимо создать";
-					return null;
+	
+		public virtual string BarcodeTextFunc(BarcodeTypes type) {
+			if((!Nomenclature?.UseBarcode ?? true) || Amount <= 0)
+				return null;
+			var actualOperations = EmployeeIssueOperation?.BarcodeOperations?
+				.Where(x => x.Barcode?.Type == type).ToList() ?? new List<BarcodeOperation>();
+			if (!actualOperations.Any())
+				return "необходимо создать";
+			else { //Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
+				var willTake = actualOperations.Count() > 3 ? 2 : 3;
+				var text = String.Join("\n", actualOperations.Take(willTake).Select(x => x.Barcode.Title));
+				if(actualOperations.Count > 3) {
+					text += $"\nещё {actualOperations.Count - 2}";
 				}
-
-				//Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
-				var willTake = EmployeeIssueOperation.BarcodeOperations.Count > 3 ? 2 : 3; 
-				var text = String.Join("\n", EmployeeIssueOperation.BarcodeOperations.Take(willTake).Select(x => x.Barcode.Title));
-				if(EmployeeIssueOperation?.BarcodeOperations.Count > 3)
-					text += $"\nещё {EmployeeIssueOperation?.BarcodeOperations.Count - 2}";
 				return text;
 			}
 		}

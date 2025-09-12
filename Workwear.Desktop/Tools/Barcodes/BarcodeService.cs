@@ -79,6 +79,17 @@ namespace Workwear.Tools.Barcodes
 			uow.Save(service);
 		}
 
+		public static bool CheckBarcode(string barcode, BarcodeTypes type) {
+			switch(type) {
+				case BarcodeTypes.EAN13:
+					return barcode.Length == 13 && barcode.All(char.IsDigit);
+				case BarcodeTypes.EPC96:
+					return barcode.Length == 24 && System.Text.RegularExpressions.Regex.IsMatch(barcode, @"^[0-9A-Fa-f]+$");
+				default:
+					throw new NotImplementedException(typeof(BarcodeTypes)+"in"+typeof(BarcodeService));
+			}
+		}
+
 		#endregion
 
 		#region Private Methods

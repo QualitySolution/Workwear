@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using QS.BaseParameters;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Tools
 {
@@ -117,8 +118,16 @@ namespace Workwear.Tools
 			get => Dynamic.EditLockDate(typeof(DateTime?));
 			set => Dynamic[nameof(EditLockDate)] = value;
 		}
+		/// <summary>
+		/// Тип используемой маркировки
+		/// </summary>
+		public virtual BarcodeTypes MarkingType {
+			get => Dynamic.MarkingType(typeof(BarcodeTypes)) ?? BarcodeTypes.EAN13;
+			set => Dynamic[nameof(MarkingType)] = value;
+		}
 		#endregion
 	}
+	
 	public enum AnswerOptions {
 		[Display(Name = "Спрашивать")]
 		Ask,
@@ -127,5 +136,4 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
-	
 }
