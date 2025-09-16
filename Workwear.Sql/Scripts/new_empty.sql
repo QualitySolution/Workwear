@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
   `name` VARCHAR(240) NOT NULL,
   `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
   `parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
+  `employees_color` VARCHAR(7) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_subdivisions_1_idx` (`warehouse_id` ASC),
   INDEX `fk_subdivisions_2_idx` (`parent_subdivision_id` ASC),
