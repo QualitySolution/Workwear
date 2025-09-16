@@ -112,15 +112,19 @@ namespace Workwear.ViewModels.ClothingService {
 		[PropertyChangedAlso(nameof(Operations))]
 		[PropertyChangedAlso(nameof(SensitivePrint))]
 		[PropertyChangedAlso(nameof(CanAddClaim))]
+		[PropertyChangedAlso(nameof(NeedRepair))]
+		[PropertyChangedAlso(nameof(DefectText))]
 		public virtual ServiceClaim Claim {
 			get => claim;
 			set {
-				if(SetField(ref claim, value)) {
+				if(SetField(ref claim, value) && claim != null) {
 					services.Clear();
 					foreach(var service in claim.Barcode.Nomenclature.UseServices) //Делаем список для заполнеия услуг во вьюшке
 						services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
 							{Select = Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
 					OnPropertyChanged(nameof(Services));
+					NeedRepair = claim.NeedForRepair;
+					DefectText = claim.Defect;
 				}
 			}
 		}
@@ -130,6 +134,10 @@ namespace Workwear.ViewModels.ClothingService {
 			get => state;
 			set => SetField(ref state, value);
 		}
+
+		public virtual StateOperation LastStateOperation {
+			get => Claim.States.OrderBy(o => o.OperationTime).Last(); 
+		}
 		
 		private string comment;
 		public virtual string Comment {
@@ -137,6 +145,18 @@ namespace Workwear.ViewModels.ClothingService {
 			set => SetField(ref comment, value);
 		}
 
+		private bool needRepair;
+		public virtual bool NeedRepair {
+			get => needRepair;
+			set => SetField(ref needRepair, value);
+		}
+		
+		private string defectText;
+		public virtual string DefectText {
+			get => defectText;
+			set => SetField(ref defectText, value);		
+		}
+		
 		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
 		public virtual IObservableList<SelectableEntity<Service>> Services {
 			get => services;
@@ -158,20 +178,30 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		#region Действия
 
-		public void SetState(ClaimState state) {
+		public bool SetState(ClaimState state) {
 			if(Claim != null) {
-				State = state;
-			} else
 				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
+				return false;
+			}
+			if(state == LastStateOperation.State) {
+				BarcodeInfoViewModel.LabelInfo = "Статус прежний.";
+				return false;
+			}
+			State = state;
+			return true;
 		}
 		public void ChangeState(ClaimState state) {
-			if(Claim != null) {
-				State = state;
+			if(SetState(state)) 
 				Accept();
-			} else
-				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
-			
 		}
+		
+		public void ActiveInRepair() {
+			if(Claim != null) {
+				claim.NeedForRepair = NeedRepair = true;
+				UoW.Save(claim);
+				UoW.Commit();
+			}  
+        }
 
 		public void SetService(Service service) {
 			if(Claim == null) {
@@ -236,25 +266,36 @@ namespace Workwear.ViewModels.ClothingService {
 					item.DispenseTime = DateTime.Now;
 					UoW.Save(item);
 				}
-			var status = new StateOperation {
-				OperationTime = DateTime.Now,
-				State = State,
-				Claim = Claim,
-				User = userService.GetCurrentUser(),
-				Comment = Comment
-			};
-			Claim.States.Add(status);
-			if(State == ClaimState.Returned)
-				Claim.IsClosed = true;
+
+			StateOperation newStatus = null;
+			if(State != LastStateOperation.State) {
+				newStatus = new StateOperation {
+					OperationTime = DateTime.Now,
+					State = State,
+					Claim = Claim,
+					User = userService.GetCurrentUser(),
+					Comment = Comment
+				};
+				Claim.States.Add(newStatus);
+				if(State == ClaimState.Returned)
+					Claim.IsClosed = true;
+			}
+			else if(LastStateOperation.Comment != Comment)
+				LastStateOperation.Comment = Comment;
+
+			claim.NeedForRepair = NeedRepair;
+			if(NeedRepair && claim.Defect != DefectText)
+				claim.Defect = DefectText;
 			
-			if(MoveDefiniteClaim) {
+			if(MoveDefiniteClaim) { //Сохранеине и коммит в вызвавающем объекте
 				Close(false, CloseSource.Self);
 				return;
 			}
 			
 			UoW.Save(Claim);
 			UoW.Commit();
-			SendPush(status);
+			if(newStatus != null)
+				SendPush(newStatus);
 			Comment = String.Empty;
 		}
 		public void PrintLabel() {
@@ -296,7 +337,7 @@ namespace Workwear.ViewModels.ClothingService {
 				["2000000000077"] = ($"Статус \"{ClaimState.Returned.GetEnumTitle()}\"", () => SetState(ClaimState.Returned)),
 				["2000000000084"] = ("Принять на обслуживание", () => CreateNew()),
 				["2000000000091"] = ("Печать этикетки", () => PrintLabel()),
-				//["2000000000107"] = ("", null),
+				["2000000000107"] = ("Необходим ремнот", () => ActiveInRepair()),
 				["2000000000114"] = ($"Сменить статус на \"{ClaimState.InTransit.GetEnumTitle()}\"", () => ChangeState(ClaimState.InTransit)),
 				["2000000000121"] = ($"Сменить статус на \"{ClaimState.DeliveryToLaundry.GetEnumTitle()}\"", () => ChangeState(ClaimState.DeliveryToLaundry)),
 				["2000000000138"] = ($"Сменить статус на \"{ClaimState.InRepair.GetEnumTitle()}\"", () => ChangeState(ClaimState.InRepair)),
