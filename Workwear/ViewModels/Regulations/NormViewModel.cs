@@ -18,6 +18,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
+using Workwear.Models.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
@@ -52,6 +53,7 @@ namespace Workwear.ViewModels.Regulations
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
+			NormToDutyNormModel normToDutyNormModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));

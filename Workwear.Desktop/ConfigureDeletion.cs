@@ -121,30 +121,33 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeGroupItem>(x => x.Group);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeGroupItem>();
-
-			DeleteConfig.AddHibernateDeleteInfo<WorkDay>();
+			
 			#endregion
 			#region Операции
 			DeleteConfig.AddHibernateDeleteInfo<BarcodeOperation>();
-			
+
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeIssueOperation>()
 				.RequiredCascadeDeletion()
+				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
+				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<CollectiveExpenseItem>(x => x.EmployeeIssueOperation)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.IssuedOperation)
 				.AddDeleteDependence<ExpenseItem>(x => x.EmployeeIssueOperation)
-				.AddDeleteDependence<CollectiveExpenseItem>(x => x.EmployeeIssueOperation)
+				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue)
+				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
 				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
-				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
-				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
-				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
-				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
+				;
 
 			DeleteConfig.AddHibernateDeleteInfo<DutyNormIssueOperation>()
 				.RequiredCascadeDeletion()
+				.AddClearDependence<IssuanceSheetItem>(x => x.DutyNormIssueOperation)
+				.AddDeleteDependence<BarcodeOperation>(x => x.DutyNormIssueOperation)
 				.AddDeleteDependence<DutyNormIssueOperation>(x => x.IssuedOperation)
 				.AddDeleteDependence<ExpenseDutyNormItem>(x => x.Operation)
 				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromDutyNormOperation)
-				.AddDeleteDependence<WriteoffItem>(x => x.DutyNormWriteOffOperation);
+				.AddDeleteDependence<WriteoffItem>(x => x.DutyNormWriteOffOperation)
+				;
 				
 			DeleteConfig.AddHibernateDeleteInfo<WarehouseOperation>()
 				.RequiredCascadeDeletion()
@@ -427,6 +430,7 @@ namespace Workwear
 			#endregion
 			#region Visits
 			DeleteConfig.AddHibernateDeleteInfo<Visit>();
+			DeleteConfig.AddHibernateDeleteInfo<DaySchedule>();
 			#endregion
 			
 			logger.Info ("Ок");

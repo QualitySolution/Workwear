@@ -52,10 +52,14 @@ namespace Workwear.Views.Regulations
 					.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 						.AddSetter((c, n) => c.Visible = !n.ProtectionTools.Dispenser)
 				.AddColumn("Период")
-				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
+				.AddNumericRenderer(i => i.PeriodCount).WidthChars(5).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty && !n.ProtectionTools.Dispenser)
 				.AddEnumRenderer(i => i.NormPeriod).Editing()
-					.AddSetter((c, n) => c.Visible = !n.ProtectionTools.Dispenser)
+					.AddSetter((c, n) => {
+						c.Text = n.PeriodText;
+						c.Visible = !n.ProtectionTools.Dispenser;
+						c.WidthChars = 8;
+						c.Xalign = 1.0f; })
 				.AddColumn("Условие нормы").Visible(ViewModel.VisibleNormCondition)
 					.AddComboRenderer(i => i.NormCondition)
 						.SetDisplayFunc(x => x?.Name)

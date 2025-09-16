@@ -33,7 +33,7 @@ FROM operation_warehouse
          LEFT JOIN warehouse w1 ON operation_warehouse.warehouse_receipt_id = w1.id
          LEFT JOIN warehouse w2 ON operation_warehouse.warehouse_expense_id = w2.id
         LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
-WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehouse.operation_time &lt;= @end_date                                                                                                        
+WHERE DATE(operation_warehouse.operation_time) BETWEEN @start_date AND @end_date                                                                                                      
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @owner_id)
   AND (@allExpenseWarehouses OR (@withoutExpenseWarehouse AND operation_warehouse.warehouse_expense_id IS NULL) OR
 operation_warehouse.warehouse_expense_id = @warehouse_expense_id)

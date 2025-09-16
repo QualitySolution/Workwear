@@ -23,6 +23,12 @@ namespace Workwear.Views.ClothingService {
 			ybuttonPrintLabel.Binding
 				.AddBinding(ViewModel, v=>v.SensitivePrint, w=>w.Sensitive)
 				.InitializeFromSource();
+			ycheckbuttonNeedRepair.Binding
+				.AddBinding(ViewModel, vm => vm.NeedRepair, w => w.Active).InitializeFromSource();
+			textDefect.Binding
+				.AddBinding(ViewModel, vm => vm.DefectText, w => w.Buffer.Text).InitializeFromSource();
+			yhboxDefect.Binding
+				.AddBinding(ViewModel, vm => vm.NeedRepair, w => w.Visible).InitializeFromSource();
 			comboState.ItemsEnum = typeof(ClaimState);
 			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			comboState.Binding
@@ -45,7 +51,6 @@ namespace Workwear.Views.ClothingService {
 				.Finish();
 			treeServices.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Services, w => w.ItemsDataSource).InitializeFromSource();
-                          			
 		}
 
 		protected void OnButtonAcceptClicked(object sender, EventArgs e) =>
