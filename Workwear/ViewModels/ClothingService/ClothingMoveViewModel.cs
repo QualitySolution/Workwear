@@ -179,7 +179,7 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Действия
 
 		public bool SetState(ClaimState state) {
-			if(Claim != null) {
+			if(Claim == null) {
 				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
 				return false;
 			}

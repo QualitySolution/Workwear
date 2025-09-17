@@ -170,8 +170,3 @@ CREATE INDEX fk_operation_barcodes_duty_norm_issue_operation_id_idx
 -- Подсветка в журнале сотрудников по подразделению
 alter table subdivisions
 	add employees_color varchar(7) null;
-
-
-
-
-
