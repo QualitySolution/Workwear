@@ -62,9 +62,19 @@ namespace Workwear.ViewModels.Visits {
 		#region Проброс свойств документа
 		public virtual string Id => Entity.Id != 0 ? Entity.Id.ToString() : "Новый";
 		public virtual UserBase CreatedByUser => Entity.CreatedByUser;
-		public virtual DateTime ReceiptDate => Entity.ReceiptDate;
-		public virtual IssuanceRequestStatus Status => Entity.Status;
-		public virtual string Comment => Entity.Comment;
+		public virtual DateTime ReceiptDate {
+			get => Entity.ReceiptDate;
+			set => Entity.ReceiptDate = value;
+		}
+
+		public virtual IssuanceRequestStatus Status {
+			get => Entity.Status;
+			set => Entity.Status = value;
+		}
+		public virtual string Comment {
+			get => Entity.Comment;
+			set => Entity.Comment = value;
+		}
 		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses => Entity.CollectiveExpenses;
 		#endregion
