@@ -211,7 +211,7 @@ namespace Workwear.ViewModels.Stock
 			AddEmployeesList(employees, performance);
 		}
 
-		private void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
+		public void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
 			AddEmployeesList(employees.Select(x => x.Id).ToArray(), performance);
 		}
 

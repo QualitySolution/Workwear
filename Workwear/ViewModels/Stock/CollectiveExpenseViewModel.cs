@@ -28,6 +28,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -43,6 +44,8 @@ namespace Workwear.ViewModels.Stock
 		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
+		private IEnumerable<EmployeeCard> Employees;
+		public IssuanceRequest CurrentIssuanceRequest;
 		private IInteractiveQuestion interactive;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly CommonMessages commonMessages;
@@ -68,7 +71,9 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters baseParameters,
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator progressCreator,
-			IEntityChangeWatcher changeWatcher
+			IEntityChangeWatcher changeWatcher,
+			IssuanceRequest issuanceRequest = null,
+			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -117,6 +122,12 @@ namespace Workwear.ViewModels.Stock
 				.AndChangeType(TypeOfChangeEvent.Insert)
 				.AndChangeType(TypeOfChangeEvent.Update);
 			
+			if(issuanceRequest != null) {
+				CurrentIssuanceRequest = issuanceRequest;
+				Entity.IssuanceRequest = CurrentIssuanceRequest;
+				CollectiveExpenseItemsViewModel.AddEmployeesList(issuanceRequest.Employees, performance);
+			}
+
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info($"Создание Нового документа Коллективной выдачи выдачи.");
@@ -195,6 +206,7 @@ namespace Workwear.ViewModels.Stock
 			
 			performance.CheckPoint("Завершение...");
 			UoWGeneric.Commit();
+			CurrentIssuanceRequest.CollectiveExpenses.Add(Entity);
 			performance.End();
 			logger.Info("Ok");
 			return true;

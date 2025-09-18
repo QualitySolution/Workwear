@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private INavigationManager navigation;
-		private readonly IInteractiveMessage interactive;
+		private readonly IInteractiveQuestion interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly IUserService userService;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -42,7 +42,7 @@ namespace Workwear.ViewModels.Visits {
 			EmployeeRepository employeeRepository,
 			BaseParameters baseParameters,
 			StockBalanceModel stockBalanceModel,
-			IInteractiveMessage interactive,
+			IInteractiveQuestion interactive,
 			EmployeeIssueModel issueModel,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
@@ -184,67 +184,12 @@ namespace Workwear.ViewModels.Visits {
 		#region Создание документа коллективной выдачи
 
 		public void CreateCollectiveExpense() {
-			Dictionary<int, IssueWidgetItem> widgetList = new Dictionary<int, IssueWidgetItem>();
-			var pageNewCollectiveExpense = navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForCreate());
-			CollectiveExpenseViewModel newCollectiveExpenseViewModel = pageNewCollectiveExpense.ViewModel;
-			newCollectiveExpenseViewModel.Entity.CreatedbyUser = userService.GetCurrentUser();
-			newCollectiveExpenseViewModel.Entity.Date = DateTime.Today;
-			newCollectiveExpenseViewModel.Entity.IssuanceRequest = Entity;
-			
-			stockBalanceModel.OnDate = newCollectiveExpenseViewModel.Entity.Date;
-			
-			foreach (var id in Employees.Select(x => x.Id)) 
-				issueModel.PreloadWearItems(id);
-			issueModel.FillWearReceivedInfo(Employees.ToArray());
-			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
-			
-			var needs = Employees
-				.SelectMany(x => x.WorkwearItems)
-				.Where(x => !newCollectiveExpenseViewModel.Entity.Items.Any(y => y.EmployeeCardItem == x))
-				.ToList();
-			
-			foreach(var item in needs) {
-				if(widgetList.ContainsKey(item.ProtectionTools.Id)) {
-					widgetList[item.ProtectionTools.Id].NumberOfNeeds++;
-					widgetList[item.ProtectionTools.Id].ItemQuantityForIssuse += item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date);
-					if(item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date) != 0)
-						widgetList[item.ProtectionTools.Id].NumberOfCurrentNeeds++;
-				}
-				else
-					widgetList.Add(item.ProtectionTools.Id, new IssueWidgetItem(item.ProtectionTools,
-						item.ProtectionTools.Type.IssueType == IssueType.Collective,
-						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date)>0 ? 1 : 0,
-						1,
-						item.CalculateRequiredIssue(BaseParameters, newCollectiveExpenseViewModel.Entity.Date),
-						stockBalanceModel.ForNomenclature(item.ProtectionTools.Nomenclatures.ToArray())
-							.Sum(x =>x.Amount)));
+			if(UoW.HasChanges) {
+				if(!interactive.Question("Перед созданием документа коллективной выдачи необходимо сохранить заявку. Сохранить?") || !Save())	
+					return;
 			}
-			if(!widgetList.Any()) {
-				interactive.ShowMessage(ImportanceLevel.Info, "Нет потребностей для добавления");
-				return;
-			}
-			
-			var page = navigation.OpenViewModel<IssueWidgetViewModel, Dictionary<int, IssueWidgetItem>>
-			(null, widgetList.OrderByDescending(x => x.Value.Active).ThenBy(x=>x.Value.ProtectionTools.Name)
-				.ToDictionary(x => x.Key, x => x.Value));
-			page.ViewModel.AddItems = (dic,vac) => AddItemsFromWidget(dic, needs, newCollectiveExpenseViewModel.Entity, page, vac);
-			Entity.CollectiveExpenses.Add(newCollectiveExpenseViewModel.Entity);
-		}
-		public void AddItemsFromWidget(
-			Dictionary<int, IssueWidgetItem> widgetItems, 
-			List<EmployeeCardItem> needs, 
-			CollectiveExpense newCollectiveExpense,
-			IPage page, 
-			bool excludeOnVacation) 
-		{
-			foreach(var item in needs) {
-				if(widgetItems.First(x => x.Key == item.ProtectionTools.Id).Value.Active)
-					if(excludeOnVacation && item.EmployeeCard.OnVacation(newCollectiveExpense.Date))
-						continue;
-					else
-						newCollectiveExpense.AddItem(item, BaseParameters);
-			}
-			navigation.ForceClosePage(page);
+			var pageNewCollectiveExpense = navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
+				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, new Warehouse());
 		}
 
 		#endregion
