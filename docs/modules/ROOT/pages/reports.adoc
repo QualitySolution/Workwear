@@ -142,6 +142,8 @@ image::reports_service-claim_status.png[]
 image::reports_service-claim_metric.png[]
 ****
 
+NOTE: В отчете учитываются только рабочие дни.
+
 ==== Количество обращений
 
 Параметры:
