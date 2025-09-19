@@ -436,8 +436,7 @@ namespace Workwear.Views.Tools
 			this.ylabel7 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel7.Name = "ylabel7";
 			this.ylabel7.Xalign = 1F;
-			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Печатать на оборотной стороне карточки сотрудника номер документа вместо подписи:" +
-					"");
+			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("На обороте карточки номер документа вместо подписи:");
 			this.table1.Add(this.ylabel7);
 			global::Gtk.Table.TableChild w30 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel7]));
 			w30.TopAttach = ((uint)(9));
@@ -459,7 +458,7 @@ namespace Workwear.Views.Tools
 			this.ylabelstartDateOfOperations = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelstartDateOfOperations.Name = "ylabelstartDateOfOperations";
 			this.ylabelstartDateOfOperations.Xalign = 1F;
-			this.ylabelstartDateOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Отображать на оборотной стороне карточки сотрудника с даты: ");
+			this.ylabelstartDateOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("История выдач на обороте карточки с даты:");
 			this.table1.Add(this.ylabelstartDateOfOperations);
 			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelstartDateOfOperations]));
 			w32.TopAttach = ((uint)(10));

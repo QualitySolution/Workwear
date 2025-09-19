@@ -8813,7 +8813,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="1015 454">
+  <widget class="Gtk.Bin" id="Workwear.Views.Tools.DataBaseSettingsView" design-size="1015 528">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -9377,7 +9377,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel7">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Печатать на оборотной стороне карточки сотрудника номер документа вместо подписи:</property>
+                        <property name="LabelProp" translatable="yes">На обороте карточки номер документа вместо подписи:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">9</property>
@@ -9417,7 +9417,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabelstartDateOfOperations">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Отображать на оборотной стороне карточки сотрудника с даты: </property>
+                        <property name="LabelProp" translatable="yes">История выдач на обороте карточки с даты:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">10</property>
@@ -13704,7 +13704,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.ProtectionToolsView" design-size="742 702">
+  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.ProtectionToolsView" design-size="798 702">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -14079,25 +14079,13 @@
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonSizeRisitriction">
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
-                        <property name="Label" translatable="yes" />
+                        <property name="Label" translatable="yes">Запрет смены размера в мобильном приложении за</property>
                         <property name="DrawIndicator">True</property>
                         <property name="HasLabel">True</property>
                         <property name="UseUnderline">True</property>
                       </widget>
                       <packing>
                         <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelSizeRisitriction1">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">Запрет смены размера в мобильном приложении</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -14117,7 +14105,7 @@
                         <property name="ValueAsInt">0</property>
                       </widget>
                       <packing>
-                        <property name="Position">2</property>
+                        <property name="Position">1</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -14129,7 +14117,7 @@
                         <property name="LabelProp" translatable="yes">дней до выдачи</property>
                       </widget>
                       <packing>
-                        <property name="Position">3</property>
+                        <property name="Position">2</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
@@ -27558,9 +27546,6 @@
                       </widget>
                     </child>
                   </widget>
-                </child>
-                <child>
-                  <placeholder />
                 </child>
               </widget>
               <packing>
