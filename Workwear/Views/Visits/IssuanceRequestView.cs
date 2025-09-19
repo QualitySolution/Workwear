@@ -99,6 +99,10 @@ namespace Workwear.Views.Visits {
 		#region Вкладка Выдачи
 
 		private void ConfigureCollectiveExpenseList() {
+			yspeccomboboxWarehouse.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
+				.AddBinding(vm => vm.SelectWarehouse, w => w.SelectedItem)
+				.InitializeFromSource();
 			ytreeviewExpense.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.CollectiveExpenses, w => w.ItemsDataSource)
 				.InitializeFromSource();

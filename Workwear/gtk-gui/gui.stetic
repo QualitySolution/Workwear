@@ -37037,6 +37037,50 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.GtkWidgets.yHBox" id="yhbox2">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelWarehouse">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">Склад выдачи:</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouse">
+                        <property name="MemberName" />
+                        <property name="IsTextCombo">False</property>
+                        <property name="Items" translatable="yes" />
+                        <property name="AddIfNotExist">False</property>
+                        <property name="DefaultFirst">False</property>
+                        <property name="ShowSpecialStateAll">False</property>
+                        <property name="ShowSpecialStateNot">False</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yHBox" id="yhbox1">
                     <property name="MemberName" />
                     <property name="Spacing">6</property>
@@ -37093,7 +37137,7 @@
                     </child>
                   </widget>
                   <packing>
-                    <property name="Position">1</property>
+                    <property name="Position">2</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>

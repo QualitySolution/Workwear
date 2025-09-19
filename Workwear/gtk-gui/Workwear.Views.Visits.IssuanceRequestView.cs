@@ -60,6 +60,12 @@ namespace Workwear.Views.Visits
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeviewExpense;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox2;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelWarehouse;
+
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouse;
+
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
 		private global::Gamma.GtkWidgets.yButton buttonCreateExpense;
@@ -342,6 +348,36 @@ namespace Workwear.Views.Visits
 			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow1]));
 			w27.Position = 0;
 			// Container child yvbox1.Gtk.Box+BoxChild
+			this.yhbox2 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox2.Name = "yhbox2";
+			this.yhbox2.Spacing = 6;
+			// Container child yhbox2.Gtk.Box+BoxChild
+			this.ylabelWarehouse = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelWarehouse.Name = "ylabelWarehouse";
+			this.ylabelWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад выдачи:");
+			this.yhbox2.Add(this.ylabelWarehouse);
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.ylabelWarehouse]));
+			w28.Position = 0;
+			w28.Expand = false;
+			w28.Fill = false;
+			// Container child yhbox2.Gtk.Box+BoxChild
+			this.yspeccomboboxWarehouse = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
+			this.yspeccomboboxWarehouse.AddIfNotExist = false;
+			this.yspeccomboboxWarehouse.DefaultFirst = false;
+			this.yspeccomboboxWarehouse.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
+			this.yhbox2.Add(this.yspeccomboboxWarehouse);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.yspeccomboboxWarehouse]));
+			w29.Position = 1;
+			w29.Expand = false;
+			w29.Fill = false;
+			this.yvbox1.Add(this.yhbox2);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox2]));
+			w30.Position = 1;
+			w30.Expand = false;
+			w30.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
@@ -351,14 +387,14 @@ namespace Workwear.Views.Visits
 			this.buttonCreateExpense.Name = "buttonCreateExpense";
 			this.buttonCreateExpense.UseUnderline = true;
 			this.buttonCreateExpense.Label = global::Mono.Unix.Catalog.GetString("Создать коллективную выдачу");
-			global::Gtk.Image w28 = new global::Gtk.Image();
-			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
-			this.buttonCreateExpense.Image = w28;
+			global::Gtk.Image w31 = new global::Gtk.Image();
+			w31.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.buttonCreateExpense.Image = w31;
 			this.yhbox1.Add(this.buttonCreateExpense);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonCreateExpense]));
-			w29.Position = 0;
-			w29.Expand = false;
-			w29.Fill = false;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonCreateExpense]));
+			w32.Position = 0;
+			w32.Expand = false;
+			w32.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.buttonRemoveExpense = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRemoveExpense.CanFocus = true;
@@ -366,11 +402,11 @@ namespace Workwear.Views.Visits
 			this.buttonRemoveExpense.UseUnderline = true;
 			this.buttonRemoveExpense.Label = global::Mono.Unix.Catalog.GetString("Отвязать");
 			this.yhbox1.Add(this.buttonRemoveExpense);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonRemoveExpense]));
-			w30.PackType = ((global::Gtk.PackType)(1));
-			w30.Position = 1;
-			w30.Expand = false;
-			w30.Fill = false;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonRemoveExpense]));
+			w33.PackType = ((global::Gtk.PackType)(1));
+			w33.Position = 1;
+			w33.Expand = false;
+			w33.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.buttonAddExpense = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAddExpense.CanFocus = true;
@@ -378,19 +414,19 @@ namespace Workwear.Views.Visits
 			this.buttonAddExpense.UseUnderline = true;
 			this.buttonAddExpense.Label = global::Mono.Unix.Catalog.GetString("Привязать");
 			this.yhbox1.Add(this.buttonAddExpense);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAddExpense]));
-			w31.PackType = ((global::Gtk.PackType)(1));
-			w31.Position = 2;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonAddExpense]));
+			w34.PackType = ((global::Gtk.PackType)(1));
+			w34.Position = 2;
+			w34.Expand = false;
+			w34.Fill = false;
 			this.yvbox1.Add(this.yhbox1);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
-			w32.Position = 1;
-			w32.Expand = false;
-			w32.Fill = false;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhbox1]));
+			w35.Position = 2;
+			w35.Expand = false;
+			w35.Fill = false;
 			this.tabs.Add(this.yvbox1);
-			global::Gtk.Notebook.NotebookChild w33 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox1]));
-			w33.Position = 2;
+			global::Gtk.Notebook.NotebookChild w36 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox1]));
+			w36.Position = 2;
 			// Notebook tab
 			this.label2 = new global::Gtk.Label();
 			this.label2.Name = "label2";
@@ -398,8 +434,8 @@ namespace Workwear.Views.Visits
 			this.tabs.SetTabLabel(this.yvbox1, this.label2);
 			this.label2.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w34.Position = 1;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w37.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
@@ -16,12 +17,11 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Models.Operations;
 using Workwear.Repository.Company;
-using Workwear.Tools;
+using Workwear.Repository.Stock;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
-using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
@@ -29,10 +29,7 @@ namespace Workwear.ViewModels.Visits {
 		private INavigationManager navigation;
 		private readonly IInteractiveQuestion interactive;
 		private readonly EmployeeRepository employeeRepository;
-		private readonly IUserService userService;
-		private readonly StockBalanceModel stockBalanceModel;
-		private readonly EmployeeIssueModel issueModel;
-		public BaseParameters BaseParameters { get; }
+		private readonly FeaturesService featuresService;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -40,23 +37,21 @@ namespace Workwear.ViewModels.Visits {
 			INavigationManager navigation,
 			IUserService userService,
 			EmployeeRepository employeeRepository,
-			BaseParameters baseParameters,
-			StockBalanceModel stockBalanceModel,
+			StockRepository stockRepository,
 			IInteractiveQuestion interactive,
-			EmployeeIssueModel issueModel,
+			ILifetimeScope autofacScope,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
-			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-			BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
-			
+			Warehouses = UoW.GetAll<Warehouse>().ToList();
+			DefaultWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			SelectWarehouse = DefaultWarehouse ?? Warehouses.FirstOrDefault();
 		}
 
 		#region Проброс свойств документа
@@ -79,6 +74,27 @@ namespace Workwear.ViewModels.Visits {
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses => Entity.CollectiveExpenses;
 		#endregion
 
+		#region Работа со складом
+		
+		private Warehouse defaultWarehouse;
+		public virtual Warehouse DefaultWarehouse {
+			get => defaultWarehouse;
+			set => SetField(ref defaultWarehouse, value);
+		}
+		private List<Warehouse> warehouses = new List<Warehouse>();
+		public virtual List<Warehouse> Warehouses {
+			get => warehouses;
+			set => SetField(ref warehouses, value);
+		}
+		
+		private Warehouse selectWarehouse;
+		public virtual Warehouse SelectWarehouse {
+			get => selectWarehouse;
+			set => SetField(ref selectWarehouse, value);
+		}
+
+		#endregion
+		
 		#region Действия View
 
 		#region Сотрудники
@@ -199,7 +215,7 @@ namespace Workwear.ViewModels.Visits {
 					return;
 			}
 			var pageNewCollectiveExpense = navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
-				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, new Warehouse());
+				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouse);
 		}
 
 		#endregion
