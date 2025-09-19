@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Company
 			Map(x => x.Code).Column("code");
 			Map (x => x.Name).Column ("name").Not.Nullable ();
 			Map (x => x.Address).Column ("address");
+			Map (x => x.EmployeesColor).Column ("employees_color");
 
 			References(x => x.Warehouse).Column("warehouse_id");
 			References(x => x.ParentSubdivision).Column("parent_subdivision_id");

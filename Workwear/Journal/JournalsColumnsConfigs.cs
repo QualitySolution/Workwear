@@ -151,7 +151,9 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
+					.RowCells()
+						.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
+						.AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.ColorMark)
 					.Finish()
 			);
 

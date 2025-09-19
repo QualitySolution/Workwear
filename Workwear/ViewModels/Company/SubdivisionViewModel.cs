@@ -61,5 +61,18 @@ namespace Workwear.ViewModels.Company
 		public EntityEntryViewModel<Warehouse> EntryWarehouse;
 		public EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		#endregion
+
+		public bool EmployeesColorOn {
+			get => !String.IsNullOrEmpty(Entity.EmployeesColor);
+			set {
+				if(EmployeesColorOn != value) {
+					if(value)
+						Entity.EmployeesColor = "#FFFFFF";
+					else 
+						Entity.EmployeesColor = null;
+					OnPropertyChanged();
+				}
+			}
+		}
 	}
 }

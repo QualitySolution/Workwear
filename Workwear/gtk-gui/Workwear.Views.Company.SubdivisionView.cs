@@ -28,7 +28,7 @@ namespace Workwear.Views.Company
 
 		private global::Gamma.GtkWidgets.yEntry entryCode;
 
-		private global::Gtk.Label label2;
+		private global::Gtk.Label label;
 
 		private global::Gtk.Label label3;
 
@@ -36,7 +36,15 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label lbSubdivision;
 
+		private global::Gtk.Label lbSubdivisionEmployeesColor;
+
 		private global::Gtk.Label lbWarehouse;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonEmployeesColor;
+
+		private global::Gamma.GtkWidgets.yColorButton ycolorbuttonEmployeesColor;
 
 		protected virtual void Build()
 		{
@@ -86,7 +94,7 @@ namespace Workwear.Views.Company
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(5)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(6)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -168,12 +176,12 @@ namespace Workwear.Views.Company
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.label2 = new global::Gtk.Label();
-			this.label2.Name = "label2";
-			this.label2.Xalign = 1F;
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Код подразделения:");
-			this.table1.Add(this.label2);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.label2]));
+			this.label = new global::Gtk.Label();
+			this.label.Name = "label";
+			this.label.Xalign = 1F;
+			this.label.LabelProp = global::Mono.Unix.Catalog.GetString("Код подразделения:");
+			this.table1.Add(this.label);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.label]));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
@@ -211,21 +219,67 @@ namespace Workwear.Views.Company
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.lbSubdivisionEmployeesColor = new global::Gtk.Label();
+			this.lbSubdivisionEmployeesColor.Name = "lbSubdivisionEmployeesColor";
+			this.lbSubdivisionEmployeesColor.Xalign = 1F;
+			this.lbSubdivisionEmployeesColor.LabelProp = global::Mono.Unix.Catalog.GetString("Подсветка сотрудников:");
+			this.table1.Add(this.lbSubdivisionEmployeesColor);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.lbSubdivisionEmployeesColor]));
+			w17.TopAttach = ((uint)(5));
+			w17.BottomAttach = ((uint)(6));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.lbWarehouse = new global::Gtk.Label();
 			this.lbWarehouse.Name = "lbWarehouse";
 			this.lbWarehouse.Xalign = 1F;
 			this.lbWarehouse.LabelProp = global::Mono.Unix.Catalog.GetString("Склад выдачи:");
 			this.table1.Add(this.lbWarehouse);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.lbWarehouse]));
-			w17.TopAttach = ((uint)(3));
-			w17.BottomAttach = ((uint)(4));
-			w17.XOptions = ((global::Gtk.AttachOptions)(4));
-			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.lbWarehouse]));
+			w18.TopAttach = ((uint)(3));
+			w18.BottomAttach = ((uint)(4));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonEmployeesColor = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonEmployeesColor.CanFocus = true;
+			this.ycheckbuttonEmployeesColor.Name = "ycheckbuttonEmployeesColor";
+			this.ycheckbuttonEmployeesColor.Label = "";
+			this.ycheckbuttonEmployeesColor.DrawIndicator = true;
+			this.ycheckbuttonEmployeesColor.UseUnderline = true;
+			this.yhbox1.Add(this.ycheckbuttonEmployeesColor);
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonEmployeesColor]));
+			w19.Position = 0;
+			w19.Expand = false;
+			w19.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ycolorbuttonEmployeesColor = new global::Gamma.GtkWidgets.yColorButton();
+			this.ycolorbuttonEmployeesColor.CanFocus = true;
+			this.ycolorbuttonEmployeesColor.Events = ((global::Gdk.EventMask)(784));
+			this.ycolorbuttonEmployeesColor.Name = "ycolorbuttonEmployeesColor";
+			this.ycolorbuttonEmployeesColor.Xalign = 0F;
+			this.yhbox1.Add(this.ycolorbuttonEmployeesColor);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycolorbuttonEmployeesColor]));
+			w20.Position = 1;
+			w20.Expand = false;
+			w20.Fill = false;
+			this.table1.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w21 = ((global::Gtk.Table.TableChild)(this.table1[this.yhbox1]));
+			w21.TopAttach = ((uint)(5));
+			w21.BottomAttach = ((uint)(6));
+			w21.LeftAttach = ((uint)(1));
+			w21.RightAttach = ((uint)(2));
+			w21.XOptions = ((global::Gtk.AttachOptions)(4));
+			w21.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w18.Position = 1;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w22.Position = 1;
+			w22.Expand = false;
+			w22.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
