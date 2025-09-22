@@ -78,7 +78,7 @@ namespace Workwear.ViewModels.ClothingService {
 			Services.ContentChanged += ServicesOnContentChanged;
 			
 			if(featuresService.Available(WorkwearFeature.Postomats))
-				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
+				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Location}");
 		}
 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
