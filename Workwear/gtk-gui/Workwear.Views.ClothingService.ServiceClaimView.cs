@@ -26,6 +26,20 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yLabel labelIsClosed;
 
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox2;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox3;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox4;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox6;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox7;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelDefect;
+
 		private global::Gtk.Label GtkLabel3;
 
 		private global::Gtk.Frame framePostamat;
@@ -128,8 +142,8 @@ namespace Workwear.Views.ClothingService
 			// Container child GtkAlignment2.Gtk.Container+ContainerChild
 			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable2.Name = "ytable2";
-			this.ytable2.NRows = ((uint)(2));
-			this.ytable2.NColumns = ((uint)(2));
+			this.ytable2.NRows = ((uint)(3));
+			this.ytable2.NColumns = ((uint)(8));
 			this.ytable2.RowSpacing = ((uint)(6));
 			this.ytable2.ColumnSpacing = ((uint)(6));
 			// Container child ytable2.Gtk.Table+TableChild
@@ -146,18 +160,18 @@ namespace Workwear.Views.ClothingService
 			// Container child ytable2.Gtk.Table+TableChild
 			this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow2.Name = "GtkScrolledWindow2";
-			this.GtkScrolledWindow2.VscrollbarPolicy = ((global::Gtk.PolicyType)(2));
-			this.GtkScrolledWindow2.HscrollbarPolicy = ((global::Gtk.PolicyType)(2));
 			this.GtkScrolledWindow2.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow2.Gtk.Container+ContainerChild
 			this.textDefect = new global::Gamma.GtkWidgets.yTextView();
 			this.textDefect.CanFocus = true;
 			this.textDefect.Name = "textDefect";
+			this.textDefect.AcceptsTab = false;
+			this.textDefect.WrapMode = ((global::Gtk.WrapMode)(3));
 			this.GtkScrolledWindow2.Add(this.textDefect);
 			this.ytable2.Add(this.GtkScrolledWindow2);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.ytable2[this.GtkScrolledWindow2]));
-			w8.TopAttach = ((uint)(1));
-			w8.BottomAttach = ((uint)(2));
+			w8.TopAttach = ((uint)(2));
+			w8.BottomAttach = ((uint)(3));
 			w8.RightAttach = ((uint)(2));
 			// Container child ytable2.Gtk.Table+TableChild
 			this.labelIsClosed = new global::Gamma.GtkWidgets.yLabel();
@@ -169,6 +183,83 @@ namespace Workwear.Views.ClothingService
 			w9.RightAttach = ((uint)(2));
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			this.ytable2.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox1]));
+			w10.TopAttach = ((uint)(1));
+			w10.BottomAttach = ((uint)(2));
+			w10.LeftAttach = ((uint)(2));
+			w10.RightAttach = ((uint)(3));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox2 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox2.Name = "yhbox2";
+			this.yhbox2.Spacing = 6;
+			this.ytable2.Add(this.yhbox2);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox2]));
+			w11.TopAttach = ((uint)(1));
+			w11.BottomAttach = ((uint)(2));
+			w11.LeftAttach = ((uint)(3));
+			w11.RightAttach = ((uint)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox3.Name = "yhbox3";
+			this.yhbox3.Spacing = 6;
+			this.ytable2.Add(this.yhbox3);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox3]));
+			w12.TopAttach = ((uint)(1));
+			w12.BottomAttach = ((uint)(2));
+			w12.LeftAttach = ((uint)(4));
+			w12.RightAttach = ((uint)(5));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox4 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox4.Name = "yhbox4";
+			this.yhbox4.Spacing = 6;
+			this.ytable2.Add(this.yhbox4);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox4]));
+			w13.TopAttach = ((uint)(1));
+			w13.BottomAttach = ((uint)(2));
+			w13.LeftAttach = ((uint)(5));
+			w13.RightAttach = ((uint)(6));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox6 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox6.Name = "yhbox6";
+			this.yhbox6.Spacing = 6;
+			this.ytable2.Add(this.yhbox6);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox6]));
+			w14.TopAttach = ((uint)(1));
+			w14.BottomAttach = ((uint)(2));
+			w14.LeftAttach = ((uint)(6));
+			w14.RightAttach = ((uint)(7));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.yhbox7 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox7.Name = "yhbox7";
+			this.yhbox7.Spacing = 6;
+			this.ytable2.Add(this.yhbox7);
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yhbox7]));
+			w15.TopAttach = ((uint)(1));
+			w15.BottomAttach = ((uint)(2));
+			w15.LeftAttach = ((uint)(7));
+			w15.RightAttach = ((uint)(8));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable2.Gtk.Table+TableChild
+			this.ylabelDefect = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelDefect.Name = "ylabelDefect";
+			this.ylabelDefect.Xalign = 0F;
+			this.ylabelDefect.LabelProp = global::Mono.Unix.Catalog.GetString("Дефект:");
+			this.ytable2.Add(this.ylabelDefect);
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabelDefect]));
+			w16.TopAttach = ((uint)(1));
+			w16.BottomAttach = ((uint)(2));
+			w16.XOptions = ((global::Gtk.AttachOptions)(4));
+			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.GtkAlignment2.Add(this.ytable2);
 			this.frame3.Add(this.GtkAlignment2);
 			this.GtkLabel3 = new global::Gtk.Label();
@@ -177,10 +268,8 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel3.UseMarkup = true;
 			this.frame3.LabelWidget = this.GtkLabel3;
 			this.vbox1.Add(this.frame3);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame3]));
-			w12.Position = 1;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame3]));
+			w19.Position = 1;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.framePostamat = new global::Gtk.Frame();
 			this.framePostamat.Name = "framePostamat";
@@ -202,19 +291,19 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel6.UseMarkup = true;
 			this.framePostamat.LabelWidget = this.GtkLabel6;
 			this.vbox1.Add(this.framePostamat);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.framePostamat]));
-			w15.Position = 2;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.framePostamat]));
+			w22.Position = 2;
+			w22.Expand = false;
+			w22.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.barcodeinfoview1 = new global::Workwear.Views.ClothingService.BarcodeInfoView();
 			this.barcodeinfoview1.Events = ((global::Gdk.EventMask)(256));
 			this.barcodeinfoview1.Name = "barcodeinfoview1";
 			this.vbox1.Add(this.barcodeinfoview1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.barcodeinfoview1]));
-			w16.Position = 3;
-			w16.Expand = false;
-			w16.Fill = false;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.barcodeinfoview1]));
+			w23.Position = 3;
+			w23.Expand = false;
+			w23.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.frame2 = new global::Gtk.Frame();
 			this.frame2.Name = "frame2";
@@ -240,8 +329,8 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel5.UseMarkup = true;
 			this.frame2.LabelWidget = this.GtkLabel5;
 			this.vbox1.Add(this.frame2);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame2]));
-			w20.Position = 4;
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame2]));
+			w27.Position = 4;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -273,8 +362,8 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel7.UseMarkup = true;
 			this.frame5.LabelWidget = this.GtkLabel7;
 			this.hbox1.Add(this.frame5);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame5]));
-			w24.Position = 0;
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame5]));
+			w31.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.frame4 = new global::Gtk.Frame();
 			this.frame4.Name = "frame4";
@@ -302,11 +391,11 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel8.UseMarkup = true;
 			this.frame4.LabelWidget = this.GtkLabel8;
 			this.hbox1.Add(this.frame4);
-			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame4]));
-			w28.Position = 1;
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.frame4]));
+			w35.Position = 1;
 			this.vbox1.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
-			w29.Position = 5;
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			w36.Position = 5;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
