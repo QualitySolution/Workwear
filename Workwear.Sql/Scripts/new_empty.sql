@@ -2752,7 +2752,7 @@ RETURN (WITH RECURSIVE date_range AS
 		FROM date_range
 		WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
 );
-END $$
+END$$
 DELIMITER ;
 
 -- -----------------------------------------------------
