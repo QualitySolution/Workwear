@@ -76,6 +76,14 @@ namespace Workwear.Views.Visits
 
 		private global::Gtk.Label label2;
 
+		private global::Gamma.GtkWidgets.yVBox yvbox2;
+
+		private global::Gtk.ScrolledWindow GtkScrolledWindow2;
+
+		private global::QSOrmProject.RepresentationTreeView representationtreeviewWearItems;
+
+		private global::Gtk.Label label3;
+
 		protected virtual void Build()
 		{
 			global::Stetic.Gui.Initialize(this);
@@ -433,9 +441,34 @@ namespace Workwear.Views.Visits
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Выдачи");
 			this.tabs.SetTabLabel(this.yvbox1, this.label2);
 			this.label2.ShowAll();
+			// Container child tabs.Gtk.Notebook+NotebookChild
+			this.yvbox2 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox2.Name = "yvbox2";
+			this.yvbox2.Spacing = 6;
+			// Container child yvbox2.Gtk.Box+BoxChild
+			this.GtkScrolledWindow2 = new global::Gtk.ScrolledWindow();
+			this.GtkScrolledWindow2.Name = "GtkScrolledWindow2";
+			this.GtkScrolledWindow2.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child GtkScrolledWindow2.Gtk.Container+ContainerChild
+			this.representationtreeviewWearItems = new global::QSOrmProject.RepresentationTreeView();
+			this.representationtreeviewWearItems.CanFocus = true;
+			this.representationtreeviewWearItems.Name = "representationtreeviewWearItems";
+			this.GtkScrolledWindow2.Add(this.representationtreeviewWearItems);
+			this.yvbox2.Add(this.GtkScrolledWindow2);
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.GtkScrolledWindow2]));
+			w38.Position = 0;
+			this.tabs.Add(this.yvbox2);
+			global::Gtk.Notebook.NotebookChild w39 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox2]));
+			w39.Position = 3;
+			// Notebook tab
+			this.label3 = new global::Gtk.Label();
+			this.label3.Name = "label3";
+			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Потребности");
+			this.tabs.SetTabLabel(this.yvbox2, this.label3);
+			this.label3.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w37.Position = 1;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w40.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

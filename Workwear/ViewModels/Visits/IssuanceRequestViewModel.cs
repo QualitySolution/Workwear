@@ -17,9 +17,12 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
+using workwear.Representations.Organization;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
@@ -30,6 +33,10 @@ namespace Workwear.ViewModels.Visits {
 		private readonly IInteractiveQuestion interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
+		private readonly StockBalanceModel stockBalanceModel;
+		private readonly EmployeeIssueModel issueModel;
+		private bool alreadyLoaded;
+		private readonly SizeService sizeService;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -40,11 +47,17 @@ namespace Workwear.ViewModels.Visits {
 			StockRepository stockRepository,
 			IInteractiveQuestion interactive,
 			ILifetimeScope autofacScope,
+			StockBalanceModel stockBalanceModel,
+			EmployeeIssueModel issueModel,
+			SizeService sizeService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(Entity.Id == 0)
@@ -218,6 +231,28 @@ namespace Workwear.ViewModels.Visits {
 				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouse);
 		}
 
+		#endregion
+
+		#region Потребности
+		
+		private EmployeeWearItemsVM employeeWearItemsVm;
+		public EmployeeWearItemsVM EmployeeWearItemsVm {
+			get => employeeWearItemsVm;
+			set => SetField(ref employeeWearItemsVm, value);
+		}
+		
+		private bool isConfigured = false;
+		public void OnShow() {
+			stockBalanceModel.Warehouse = SelectWarehouse;
+			stockBalanceModel.OnDate = Entity.CreationDate;
+			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
+			if(!isConfigured) {
+				isConfigured = true;
+				EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, UoW) {
+					IssuanceRequest = Entity
+				};
+			}
+		}
 		#endregion
 		
 		#endregion

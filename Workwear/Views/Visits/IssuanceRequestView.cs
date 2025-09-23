@@ -18,6 +18,8 @@ namespace Workwear.Views.Visits {
 			ConfigureEmployeesList();
 			ConfigureCollectiveExpenseList();
 			CommonButtonSubscription();
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+			ViewModel.OnShow();
 		}
 
 		#region Вкладка Основное
@@ -132,6 +134,15 @@ namespace Workwear.Views.Visits {
 		protected void OnButtonCreateExpenseClicked(object sender, EventArgs e) {
 			ViewModel.CreateCollectiveExpense();
 		}
+		#endregion
+
+		#region Вкладка Потребности
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(ViewModel.EmployeeWearItemsVm))
+				representationtreeviewWearItems.RepresentationModel = ViewModel.EmployeeWearItemsVm;
+		}
+
 		#endregion
 		
 	}
