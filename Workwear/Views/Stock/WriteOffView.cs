@@ -47,8 +47,6 @@ namespace Workwear.Views.Stock
 					.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 				labelSum.Binding
 					.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
-				buttonDel.Binding
-					.AddBinding(ViewModel, vm => vm.DelSensitive, w => w.Sensitive).InitializeFromSource();
 
 				buttonAddStore.Sensitive = ViewModel.CanEdit && ViewModel.Employee == null && ViewModel.DutyNorm == null;
 				buttonAddWorker.Sensitive = ViewModel.CanEdit && ViewModel.DutyNorm == null;
@@ -58,12 +56,12 @@ namespace Workwear.Views.Stock
 				buttonAddWorker.Clicked += (s,e) => ViewModel.AddFromEmployee();
 				buttonAddDutyNorm.Clicked += (s,e) => ViewModel.AddFromDutyNorm();
 				buttonDel.Clicked += (s,e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<WriteoffItem>());
+				buttonDel.Sensitive = false;
 
-				ytreeMembers.Selection.Changed += YtreeItems_Selection_Changed;
 				ybuttonAddMember.Sensitive = ViewModel.CanEdit;
 				ybuttonAddMember.Clicked += (s, e) => ViewModel.AddMembers();
 				ybuttonDelMember.Clicked += (s,e)  => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
-
+				ybuttonDelMember.Sensitive = false;
 				buttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
 
@@ -107,7 +105,8 @@ namespace Workwear.Views.Stock
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.Selection.Changed += (s,e) =>
+				buttonDel.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 		}
 		
@@ -117,6 +116,8 @@ namespace Workwear.Views.Stock
 				.AddColumn("Должность").AddTextRenderer(l => l.Position)
 				.Finish();
 			ytreeMembers.ItemsDataSource = Entity.Members;
+			ytreeMembers.Selection.Changed += (s,e) => 
+				ybuttonDelMember.Sensitive = ViewModel.CanEdit && ytreeMembers.Selection.CountSelectedRows() > 0;
 		}
 
 		#region Methods
@@ -139,9 +140,6 @@ namespace Workwear.Views.Stock
 			ViewModel.NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(
 				ViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
-		
-		private void YtreeItems_Selection_Changed(object sender, EventArgs e) =>
-			ybuttonDelMember.Sensitive = ViewModel.CanEdit && ytreeMembers.Selection.CountSelectedRows() > 0;
 		#endregion
 	}
 }
