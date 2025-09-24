@@ -18,6 +18,14 @@ namespace Workwear.Views.ClothingService
 
 		private global::Workwear.Views.ClothingService.BarcodeInfoView barcodeinfoview1;
 
+		private global::Gtk.Frame framePostamat;
+
+		private global::Gtk.Alignment GtkAlignment6;
+
+		private global::Gamma.Widgets.yListComboBox comboPostomat;
+
+		private global::Gtk.Label GtkLabel7;
+
 		private global::Gtk.Frame frame2;
 
 		private global::Gtk.Alignment GtkAlignment4;
@@ -139,6 +147,31 @@ namespace Workwear.Views.ClothingService
 			w8.Expand = false;
 			w8.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.framePostamat = new global::Gtk.Frame();
+			this.framePostamat.Name = "framePostamat";
+			this.framePostamat.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child framePostamat.Gtk.Container+ContainerChild
+			this.GtkAlignment6 = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
+			this.GtkAlignment6.Name = "GtkAlignment6";
+			this.GtkAlignment6.LeftPadding = ((uint)(12));
+			// Container child GtkAlignment6.Gtk.Container+ContainerChild
+			this.comboPostomat = new global::Gamma.Widgets.yListComboBox();
+			this.comboPostomat.Name = "comboPostomat";
+			this.comboPostomat.AddIfNotExist = false;
+			this.comboPostomat.DefaultFirst = false;
+			this.GtkAlignment6.Add(this.comboPostomat);
+			this.framePostamat.Add(this.GtkAlignment6);
+			this.GtkLabel7 = new global::Gtk.Label();
+			this.GtkLabel7.Name = "GtkLabel7";
+			this.GtkLabel7.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Предпочтительный постамат выдачи</b>");
+			this.GtkLabel7.UseMarkup = true;
+			this.framePostamat.LabelWidget = this.GtkLabel7;
+			this.vbox1.Add(this.framePostamat);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.framePostamat]));
+			w11.Position = 3;
+			w11.Expand = false;
+			w11.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.frame2 = new global::Gtk.Frame();
 			this.frame2.Name = "frame2";
 			this.frame2.ShadowType = ((global::Gtk.ShadowType)(0));
@@ -165,8 +198,8 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel4.UseMarkup = true;
 			this.frame2.LabelWidget = this.GtkLabel4;
 			this.vbox1.Add(this.frame2);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame2]));
-			w12.Position = 3;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame2]));
+			w15.Position = 4;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox3.Name = "yhbox3";
@@ -192,10 +225,10 @@ namespace Workwear.Views.ClothingService
 			this.ycheckbuttonNeedRepair.DrawIndicator = true;
 			this.ycheckbuttonNeedRepair.UseUnderline = true;
 			this.yvbox1.Add(this.ycheckbuttonNeedRepair);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ycheckbuttonNeedRepair]));
-			w13.Position = 0;
-			w13.Expand = false;
-			w13.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ycheckbuttonNeedRepair]));
+			w16.Position = 0;
+			w16.Expand = false;
+			w16.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.yhboxDefect = new global::Gamma.GtkWidgets.yHBox();
 			this.yhboxDefect.Name = "yhboxDefect";
@@ -210,22 +243,22 @@ namespace Workwear.Views.ClothingService
 			this.textDefect.Name = "textDefect";
 			this.GtkScrolledWindow3.Add(this.textDefect);
 			this.yhboxDefect.Add(this.GtkScrolledWindow3);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yhboxDefect[this.GtkScrolledWindow3]));
-			w15.Position = 0;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yhboxDefect[this.GtkScrolledWindow3]));
+			w18.Position = 0;
 			this.yvbox1.Add(this.yhboxDefect);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhboxDefect]));
-			w16.Position = 1;
-			w16.Expand = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yhboxDefect]));
+			w19.Position = 1;
+			w19.Expand = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ylabelStatus = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelStatus.Name = "ylabelStatus";
 			this.ylabelStatus.Xalign = 0F;
 			this.ylabelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Сменить статус:");
 			this.yvbox1.Add(this.ylabelStatus);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelStatus]));
-			w17.Position = 2;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelStatus]));
+			w20.Position = 2;
+			w20.Expand = false;
+			w20.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.comboState = new global::Gamma.Widgets.yEnumComboBox();
 			this.comboState.Name = "comboState";
@@ -234,20 +267,20 @@ namespace Workwear.Views.ClothingService
 			this.comboState.UseShortTitle = false;
 			this.comboState.DefaultFirst = false;
 			this.yvbox1.Add(this.comboState);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.comboState]));
-			w18.Position = 3;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.comboState]));
+			w21.Position = 3;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ylabelComment = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelComment.Name = "ylabelComment";
 			this.ylabelComment.Xalign = 0F;
 			this.ylabelComment.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
 			this.yvbox1.Add(this.ylabelComment);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelComment]));
-			w19.Position = 4;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ylabelComment]));
+			w22.Position = 4;
+			w22.Expand = false;
+			w22.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
@@ -260,27 +293,27 @@ namespace Workwear.Views.ClothingService
 			this.textComment.Name = "textComment";
 			this.GtkScrolledWindow1.Add(this.textComment);
 			this.yvbox1.Add(this.GtkScrolledWindow1);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow1]));
-			w21.Position = 5;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow1]));
+			w24.Position = 5;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.buttonAccept = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAccept.CanFocus = true;
 			this.buttonAccept.Name = "buttonAccept";
 			this.buttonAccept.UseUnderline = true;
 			this.buttonAccept.Label = global::Mono.Unix.Catalog.GetString("Сохранить");
-			global::Gtk.Image w22 = new global::Gtk.Image();
-			w22.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-save", global::Gtk.IconSize.Menu);
-			this.buttonAccept.Image = w22;
+			global::Gtk.Image w25 = new global::Gtk.Image();
+			w25.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-save", global::Gtk.IconSize.Menu);
+			this.buttonAccept.Image = w25;
 			this.yvbox1.Add(this.buttonAccept);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.buttonAccept]));
-			w23.Position = 6;
-			w23.Expand = false;
-			w23.Fill = false;
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.buttonAccept]));
+			w26.Position = 6;
+			w26.Expand = false;
+			w26.Fill = false;
 			this.GtkAlignment7.Add(this.yvbox1);
 			this.frame5.Add(this.GtkAlignment7);
 			this.yhbox3.Add(this.frame5);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame5]));
-			w26.Position = 0;
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame5]));
+			w29.Position = 0;
 			// Container child yhbox3.Gtk.Box+BoxChild
 			this.frame4 = new global::Gtk.Frame();
 			this.frame4.WidthRequest = 300;
@@ -310,11 +343,11 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel9.UseMarkup = true;
 			this.frame4.LabelWidget = this.GtkLabel9;
 			this.yhbox3.Add(this.frame4);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame4]));
-			w30.Position = 1;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame4]));
+			w33.Position = 1;
 			this.vbox1.Add(this.yhbox3);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.yhbox3]));
-			w31.Position = 4;
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.yhbox3]));
+			w34.Position = 5;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

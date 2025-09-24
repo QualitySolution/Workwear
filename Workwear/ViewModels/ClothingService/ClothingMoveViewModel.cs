@@ -30,7 +30,6 @@ namespace Workwear.ViewModels.ClothingService {
 		private readonly IInteractiveService interactiveService;
 		private readonly BarcodeRepository barcodeRepository;
 		private readonly NotificationManagerService notificationManager;
-		readonly IDictionary<uint, string> postomatsLabels = new Dictionary<uint, string>();
 		public readonly FeaturesService FeaturesService;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
@@ -75,10 +74,10 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
 			}
 			
+			if(this.FeaturesService.Available(WorkwearFeature.Postomats))
+				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
+
 			Services.ContentChanged += ServicesOnContentChanged;
-			
-			if(featuresService.Available(WorkwearFeature.Postomats))
-				postomatsLabels = postomatService.GetPostomatList(PostomatListType.Aso).ToDictionary(x => x.Id, x => $"{x.Name} ({x.Location})");
 		}
 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -114,6 +113,7 @@ namespace Workwear.ViewModels.ClothingService {
 		[PropertyChangedAlso(nameof(CanAddClaim))]
 		[PropertyChangedAlso(nameof(NeedRepair))]
 		[PropertyChangedAlso(nameof(DefectText))]
+		[PropertyChangedAlso(nameof(Postomat))]
 		public virtual ServiceClaim Claim {
 			get => claim;
 			set {
@@ -156,7 +156,20 @@ namespace Workwear.ViewModels.ClothingService {
 			get => defectText;
 			set => SetField(ref defectText, value);		
 		}
+		public IList<PostomatInfo> Postomats { get; } = new List<PostomatInfo>();
 		
+		private PostomatInfo postomat;
+		public virtual PostomatInfo Postomat {
+			get => Postomats.FirstOrDefault(x => x.Id == (Claim?.PreferredTerminalId ?? postomat?.Id));
+			set {
+				if(SetField(ref postomat, value) && Claim != null) {
+					Claim.PreferredTerminalId = value?.Id ?? 0;
+					UoW.Save(Claim);
+					UoW.Commit();
+				}
+			}
+		}
+
 		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
 		public virtual IObservableList<SelectableEntity<Service>> Services {
 			get => services;
@@ -173,9 +186,9 @@ namespace Workwear.ViewModels.ClothingService {
 		public virtual bool SensitiveBarcode => !MoveDefiniteClaim;
 	
 		#endregion
-		
-		public string GetTerminalLabel(uint id) => postomatsLabels.ContainsKey(id) ? postomatsLabels[id] : string.Empty;
-		
+
+		public string GetTerminalLabel(uint id) => Postomats.FirstOrDefault(p => p.Id == id)?.Location ?? "";
+
 		#region Действия
 
 		public bool SetState(ClaimState state) {
@@ -232,7 +245,8 @@ namespace Workwear.ViewModels.ClothingService {
 			Claim = new ServiceClaim {
 				Barcode = BarcodeInfoViewModel.Barcode,
 				Employee = BarcodeInfoViewModel?.Employee,
-				IsClosed = false
+				IsClosed = false,
+				PreferredTerminalId = Postomat?.Id
 			};
 			UoW.Save(Claim);
 
