@@ -21,8 +21,8 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using workwear.Representations.Organization;
+using Workwear.Tools;
 using Workwear.Tools.Features;
-using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
 
@@ -35,8 +35,8 @@ namespace Workwear.ViewModels.Visits {
 		private readonly FeaturesService featuresService;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly BaseParameters baseParameters;
 		private bool alreadyLoaded;
-		private readonly SizeService sizeService;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Visits {
 			ILifetimeScope autofacScope,
 			StockBalanceModel stockBalanceModel,
 			EmployeeIssueModel issueModel,
-			SizeService sizeService,
+			BaseParameters baseParameters,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
@@ -57,7 +57,7 @@ namespace Workwear.ViewModels.Visits {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(Entity.Id == 0)
@@ -243,12 +243,12 @@ namespace Workwear.ViewModels.Visits {
 		
 		private bool isConfigured = false;
 		public void OnShow() {
-			stockBalanceModel.Warehouse = SelectWarehouse;
-			stockBalanceModel.OnDate = Entity.CreationDate;
+			stockBalanceModel.OnDate = Entity.ReceiptDate;
 			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
+			issueModel.FillWearReceivedInfo(Employees.ToArray());
 			if(!isConfigured) {
 				isConfigured = true;
-				EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, UoW) {
+				EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, issueModel, baseParameters, UoW) {
 					IssuanceRequest = Entity
 				};
 			}

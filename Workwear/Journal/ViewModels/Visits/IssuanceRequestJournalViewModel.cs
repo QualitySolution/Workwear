@@ -61,7 +61,7 @@ namespace workwear.Journal.ViewModels.Visits {
 					.Select(() => issuanceRequestAlias.Status).WithAlias(() => resultAlias.Status)
 					.Select(() => issuanceRequestAlias.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-					.Select(() => issuanceRequestAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+					.Select(() => issuanceRequestAlias.ReceiptDate).WithAlias(() => resultAlias.ReceiptDate)
 				)
 				.TransformUsing(Transformers.AliasToBean<IssuanceRequestJournalNode>());
 
