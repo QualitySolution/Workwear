@@ -75,7 +75,6 @@ namespace Workwear.ViewModels.Visits {
 			get => Entity.ReceiptDate;
 			set => Entity.ReceiptDate = value;
 		}
-
 		public virtual IssuanceRequestStatus Status {
 			get => Entity.Status;
 			set => Entity.Status = value;
@@ -99,7 +98,6 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Работа со складом
-		
 		private Warehouse defaultWarehouse;
 		public virtual Warehouse DefaultWarehouse {
 			get => defaultWarehouse;
@@ -110,13 +108,11 @@ namespace Workwear.ViewModels.Visits {
 			get => warehouses;
 			set => SetField(ref warehouses, value);
 		}
-		
 		private Warehouse selectWarehouse;
 		public virtual Warehouse SelectWarehouse {
 			get => selectWarehouse;
 			set => SetField(ref selectWarehouse, value);
 		}
-
 		#endregion
 		
 		#region Действия View
@@ -178,35 +174,29 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Удаление
-
 		public void RemoveEmployees(EmployeeCard[] employees) {
 			foreach(var emp in employees) {
 				Entity.Employees.Remove(emp);
 			}
 		}
-
 		#endregion
 
 		#region Контекстное меню
-
 		public void OpenEmployee(EmployeeCard employee) {
 			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(employee.Id));
 		}
-
 		#endregion
 		#endregion
 
 		#region Выдачи
 
 		#region Добавление
-
 		public void AddCollectiveExpense() {
 			var selectJournal = navigation.OpenViewModel<StockDocumentsJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.StockDocumentType = StockDocumentType.CollectiveExpense;
 			selectJournal.ViewModel.OnSelectResult += LoadCollectiveExpense;
 		}
-
 		private void LoadCollectiveExpense(object sender, JournalSelectedEventArgs e) {
 			var collectiveExpenseIds = e.GetSelectedObjects<StockDocumentsJournalNode>().Select(x => x.Id).ToArray();
 			var collectiveExpense = UoW.GetById<CollectiveExpense>(collectiveExpenseIds);
@@ -215,44 +205,36 @@ namespace Workwear.ViewModels.Visits {
 				CollectiveExpenses.Add(ce);
 			}
 		}
-
 		#endregion
 
 		#region Удаление ссылки из заявки
-
 		public void RemoveCollectiveExpense(CollectiveExpense[] collectiveExpenses) {
 			foreach(var ce in collectiveExpenses) {
 				ce.IssuanceRequest = null;
 				Entity.CollectiveExpenses.Remove(ce);
 			}
 		}
-
 		#endregion
 
 		#endregion
 
 		#region Создание документа коллективной выдачи
-
 		public void CreateCollectiveExpense() {
 			if(UoW.HasChanges) {
 				if(!interactive.Question("Перед созданием документа коллективной выдачи необходимо сохранить заявку. Сохранить?") || !Save())	
 					return;
 			}
-			var pageNewCollectiveExpense = navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
+			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
 				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouse);
 		}
-
 		#endregion
 
 		#region Потребности
-		
 		private EmployeeWearItemsVM employeeWearItemsVm;
 		public EmployeeWearItemsVM EmployeeWearItemsVm {
 			get => employeeWearItemsVm;
 			set => SetField(ref employeeWearItemsVm, value);
 		}
-		
-		private bool isConfigured = false;
 		public void OnShow() {
 			if(Entity == null) return;
 			stockBalanceModel.OnDate = Entity.ReceiptDate;
@@ -267,7 +249,6 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 		
 		#region Валидация, сохранение
-
 		public override bool Save() {
 			logger.Info ("Запись заявки...");
 			
@@ -283,7 +264,6 @@ namespace Workwear.ViewModels.Visits {
 			logger.Info("Заявка сохранена");
 			return true;
 		}
-		
 		#endregion
 	}
 }

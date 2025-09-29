@@ -574,7 +574,6 @@ namespace workwear.Journal
 					.AddColumn("Дата поступления заявки").AddTextRenderer(node => node.ReceiptDate.ToShortDateString()).SearchHighlight()
 					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
 					.AddColumn("Автор").AddTextRenderer(node => node.Author)
-					.AddColumn("Дата создания").AddTextRenderer(node => node.CreationDateString)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 			);
