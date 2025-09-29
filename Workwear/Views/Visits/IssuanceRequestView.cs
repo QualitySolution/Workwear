@@ -3,6 +3,7 @@ using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
 using Gtk;
+using QS.Dialog.GtkUI;
 using QS.Views.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
@@ -20,6 +21,12 @@ namespace Workwear.Views.Visits {
 			CommonButtonSubscription();
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			ViewModel.OnShow();
+			tabs.Binding
+				.AddBinding(ViewModel, vm => vm.CurrentTab, w => w.CurrentPage)
+				.InitializeFromSource();
+			buttonColorsLegend.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleColorsLegend, w => w.Visible)
+				.InitializeFromSource();
 		}
 
 		#region Вкладка Основное
@@ -141,6 +148,16 @@ namespace Workwear.Views.Visits {
 		{
 			if(e.PropertyName == nameof(ViewModel.EmployeeWearItemsVm))
 				representationtreeviewWearItems.RepresentationModel = ViewModel.EmployeeWearItemsVm;
+		}
+
+		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
+			MessageDialogHelper.RunInfoDialog(
+				"<span color='gray'>●</span> — выдано полностью\n" +
+				"<b>Колонка «К выдаче»:</b>\n" +
+				"<span color='red'>●</span> — не выдано\n" +
+				"<span color='orange'>●</span> — частично выдано\n" +
+				"<span color='blue'>●</span> — выдано больше необходимого\n"
+				);
 		}
 
 		#endregion

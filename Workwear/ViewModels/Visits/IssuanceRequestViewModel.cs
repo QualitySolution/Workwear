@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -85,6 +86,16 @@ namespace Workwear.ViewModels.Visits {
 		}
 		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses => Entity.CollectiveExpenses;
+		#endregion
+
+		#region ColorsLegend
+		private int currentTab;
+		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
+		public virtual int CurrentTab {
+			get => currentTab;
+			set => SetField(ref currentTab, value);
+		}
+		public bool VisibleColorsLegend => CurrentTab == 3;
 		#endregion
 
 		#region Работа со складом
