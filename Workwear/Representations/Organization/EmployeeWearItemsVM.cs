@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.ColumnConfig;
 using Gamma.GtkWidgets;
+using Gtk;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
@@ -150,7 +151,9 @@ namespace workwear.Representations.Organization {
 			.AddColumn("Требуется").AddTextRenderer(node => node.Need.ToString())
 			.AddColumn("Выдано").AddTextRenderer(node => node.Issued.ToString())
 			.AddColumn("К выдаче").AddTextRenderer(node => node.NeedToBeIssued.ToString())
+			.AddSetter((w, node) => w.Foreground = node.NeedToBeIssuedColor())
 			.AddColumn("На складе").AddTextRenderer(node => node.InStock.ToString())
+			.RowCells().AddSetter<CellRendererText>((c, node) => c.Foreground = node.AllIssued)
 			.Finish();
 		
 		public override IColumnsConfig ColumnsConfig => treeViewConfig;
@@ -184,5 +187,16 @@ namespace workwear.Representations.Organization {
 		public int NeedToBeIssued => Need >= Issued ? Need - Issued : 0;
 		public int InStock { get; set; }
 		
+		public string NeedToBeIssuedColor() {
+			if(NeedToBeIssued == 0)
+				return "gray";
+			if(NeedToBeIssued != 0 && NeedToBeIssued < Need)
+				return "orange";
+			if(NeedToBeIssued == Need)
+				return "red";
+			return null;
+		}
+
+		public string AllIssued => NeedToBeIssued == 0 ? "gray" : null;
 	}
 }
