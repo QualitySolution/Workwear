@@ -146,12 +146,12 @@ namespace workwear.Representations.Organization {
 		}
 
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeWearItemsVMNode>()
-			.AddColumn("Потребность").AddTextRenderer(node => node.ProtectionToolsName)
+			.AddColumn("Потребность").Resizable().AddTextRenderer(node => node.ProtectionToolsName).WrapWidth(500)
 			.AddColumn("Размер/Рост").AddTextRenderer(node => node.Sizes)
 			.AddColumn("Требуется").AddTextRenderer(node => node.NeedText)
 			.AddColumn("Выдано").AddTextRenderer(node => node.IssuedText)
 			.AddColumn("К выдаче").AddTextRenderer(node => node.NeedToBeIssuedText)
-			.AddSetter((w, node) => w.Foreground = node.NeedToBeIssuedColor())
+				.AddSetter((w, node) => w.Foreground = node.NeedToBeIssuedColor())
 			.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
 			.RowCells().AddSetter<CellRendererText>((c, node) => c.Foreground = node.AllIssued)
 			.Finish();
@@ -179,7 +179,10 @@ namespace workwear.Representations.Organization {
 		public string WearSize { get; set; }
 		public int? HeightId { get; set; }
 		public string Height { get; set; }
-		public string Sizes => String.Concat(WearSize, "/", Height);
+		public string OneSize => WearSize == null && Height != null ? Height 
+			: WearSize != null && Height == null ? WearSize : String.Empty;
+		public string Sizes => WearSize != null && Height != null ? $"{WearSize}/{Height}"
+			: WearSize == null || Height == null ? OneSize : String.Empty;
 		public string Units { get; set; } 
 		public int Need { get; set; }
 		public string NeedText => $"{Need} {Units}";
