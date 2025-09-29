@@ -254,15 +254,13 @@ namespace Workwear.ViewModels.Visits {
 		
 		private bool isConfigured = false;
 		public void OnShow() {
+			if(Entity == null) return;
 			stockBalanceModel.OnDate = Entity.ReceiptDate;
 			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
 			issueModel.FillWearReceivedInfo(Employees.ToArray());
-			if(!isConfigured) {
-				isConfigured = true;
-				EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, issueModel, baseParameters, UoW) {
-					IssuanceRequest = Entity
-				};
-			}
+			EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, issueModel, baseParameters, UoW) {
+				IssuanceRequest = Entity
+			};
 		}
 		#endregion
 		
