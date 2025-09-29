@@ -148,11 +148,11 @@ namespace workwear.Representations.Organization {
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeWearItemsVMNode>()
 			.AddColumn("Потребность").AddTextRenderer(node => node.ProtectionToolsName)
 			.AddColumn("Размер/Рост").AddTextRenderer(node => node.Sizes)
-			.AddColumn("Требуется").AddTextRenderer(node => node.Need.ToString())
-			.AddColumn("Выдано").AddTextRenderer(node => node.Issued.ToString())
-			.AddColumn("К выдаче").AddTextRenderer(node => node.NeedToBeIssued.ToString())
+			.AddColumn("Требуется").AddTextRenderer(node => node.NeedText)
+			.AddColumn("Выдано").AddTextRenderer(node => node.IssuedText)
+			.AddColumn("К выдаче").AddTextRenderer(node => node.NeedToBeIssuedText)
 			.AddSetter((w, node) => w.Foreground = node.NeedToBeIssuedColor())
-			.AddColumn("На складе").AddTextRenderer(node => node.InStock.ToString())
+			.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
 			.RowCells().AddSetter<CellRendererText>((c, node) => c.Foreground = node.AllIssued)
 			.Finish();
 		
@@ -182,10 +182,14 @@ namespace workwear.Representations.Organization {
 		public string Sizes => String.Concat(WearSize, "/", Height);
 		public string Units { get; set; } 
 		public int Need { get; set; }
+		public string NeedText => $"{Need} {Units}";
 		public int IssuedByCollectiveExpense { get; set; }
 		public int Issued { get; set; }
+		public string IssuedText => $"{Issued} {Units}";
 		public int NeedToBeIssued => Need >= Issued ? Need - Issued : 0;
+		public string NeedToBeIssuedText => $"{NeedToBeIssued} {Units}";
 		public int InStock { get; set; }
+		public string InStockText => $"{InStock} {Units}";
 		
 		public string NeedToBeIssuedColor() {
 			if(NeedToBeIssued == 0)
