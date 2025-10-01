@@ -186,5 +186,6 @@ ALTER TABLE operation_barcodes
 CREATE INDEX fk_operation_barcodes_duty_norm_issue_operation_id_idx
 	ON operation_barcodes(duty_norm_issue_operation_id ASC);
 
-
-
+-- Подсветка в журнале сотрудников по подразделению
+alter table subdivisions
+	add employees_color varchar(7) null;

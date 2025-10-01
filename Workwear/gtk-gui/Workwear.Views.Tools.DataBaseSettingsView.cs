@@ -260,13 +260,13 @@ namespace Workwear.Views.Tools
 			this.startDateOfOperations.AutoSeparation = true;
 			this.startDateOfOperations.HideButtonClearDate = false;
 			this.table1.Add(this.startDateOfOperations);
-			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.startDateOfOperations]));
-			w15.TopAttach = ((uint)(11));
-			w15.BottomAttach = ((uint)(12));
-			w15.LeftAttach = ((uint)(1));
-			w15.RightAttach = ((uint)(2));
-			w15.XOptions = ((global::Gtk.AttachOptions)(4));
-			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.startDateOfOperations]));
+			w14.TopAttach = ((uint)(10));
+			w14.BottomAttach = ((uint)(11));
+			w14.LeftAttach = ((uint)(1));
+			w14.RightAttach = ((uint)(2));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckAutoWriteoff = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckAutoWriteoff.TooltipMarkup = @"Определяет, будет ли автоматически списываться выданная сотруднику спецодежда (или имущество) по окончании срока носки. Настройка применяется только к новым выдачам — ранее оформленные выдачи сохранят свои параметры. При необходимости автосписание для уже выданных позиций можно изменить вручную на вкладке ""История выдач"" в карточке сотрудника для каждой выдачи.";
@@ -276,13 +276,13 @@ namespace Workwear.Views.Tools
 			this.ycheckAutoWriteoff.DrawIndicator = true;
 			this.ycheckAutoWriteoff.UseUnderline = true;
 			this.table1.Add(this.ycheckAutoWriteoff);
-			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckAutoWriteoff]));
-			w16.TopAttach = ((uint)(1));
-			w16.BottomAttach = ((uint)(2));
-			w16.LeftAttach = ((uint)(1));
-			w16.RightAttach = ((uint)(2));
-			w16.XOptions = ((global::Gtk.AttachOptions)(4));
-			w16.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckAutoWriteoff]));
+			w15.TopAttach = ((uint)(1));
+			w15.BottomAttach = ((uint)(2));
+			w15.LeftAttach = ((uint)(1));
+			w15.RightAttach = ((uint)(2));
+			w15.XOptions = ((global::Gtk.AttachOptions)(4));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckCollapseDuplicateIssuanceSheet = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckCollapseDuplicateIssuanceSheet.Name = "ycheckCollapseDuplicateIssuanceSheet";
@@ -291,13 +291,13 @@ namespace Workwear.Views.Tools
 			this.ycheckCollapseDuplicateIssuanceSheet.DrawIndicator = true;
 			this.ycheckCollapseDuplicateIssuanceSheet.UseUnderline = true;
 			this.table1.Add(this.ycheckCollapseDuplicateIssuanceSheet);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapseDuplicateIssuanceSheet]));
-			w17.TopAttach = ((uint)(7));
-			w17.BottomAttach = ((uint)(8));
-			w17.LeftAttach = ((uint)(1));
-			w17.RightAttach = ((uint)(2));
-			w17.XOptions = ((global::Gtk.AttachOptions)(4));
-			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollapseDuplicateIssuanceSheet]));
+			w16.TopAttach = ((uint)(7));
+			w16.BottomAttach = ((uint)(8));
+			w16.LeftAttach = ((uint)(1));
+			w16.RightAttach = ((uint)(2));
+			w16.XOptions = ((global::Gtk.AttachOptions)(4));
+			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ycheckCollectiveIssueWithPersonal = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckCollectiveIssueWithPersonal.Name = "ycheckCollectiveIssueWithPersonal";
@@ -305,13 +305,13 @@ namespace Workwear.Views.Tools
 			this.ycheckCollectiveIssueWithPersonal.DrawIndicator = true;
 			this.ycheckCollectiveIssueWithPersonal.UseUnderline = true;
 			this.table1.Add(this.ycheckCollectiveIssueWithPersonal);
-			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollectiveIssueWithPersonal]));
-			w18.TopAttach = ((uint)(6));
-			w18.BottomAttach = ((uint)(7));
-			w18.LeftAttach = ((uint)(1));
-			w18.RightAttach = ((uint)(2));
-			w18.XOptions = ((global::Gtk.AttachOptions)(4));
-			w18.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckCollectiveIssueWithPersonal]));
+			w17.TopAttach = ((uint)(6));
+			w17.BottomAttach = ((uint)(7));
+			w17.LeftAttach = ((uint)(1));
+			w17.RightAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.yentryCurrency = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryCurrency.CanFocus = true;
@@ -466,8 +466,7 @@ namespace Workwear.Views.Tools
 			this.ylabel7 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel7.Name = "ylabel7";
 			this.ylabel7.Xalign = 1F;
-			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Печатать на оборотной стороне карточки сотрудника номер документа вместо подписи:" +
-					"");
+			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("На обороте карточки номер документа вместо подписи:");
 			this.table1.Add(this.ylabel7);
 			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel7]));
 			w32.TopAttach = ((uint)(10));
@@ -480,22 +479,22 @@ namespace Workwear.Views.Tools
 			this.ylabelCollectiveIssueWithPersonal.Xalign = 1F;
 			this.ylabelCollectiveIssueWithPersonal.LabelProp = global::Mono.Unix.Catalog.GetString("При персональной выдаче добавлять позиции коллективной:");
 			this.table1.Add(this.ylabelCollectiveIssueWithPersonal);
-			global::Gtk.Table.TableChild w33 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelCollectiveIssueWithPersonal]));
-			w33.TopAttach = ((uint)(6));
-			w33.BottomAttach = ((uint)(7));
-			w33.XOptions = ((global::Gtk.AttachOptions)(4));
-			w33.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w31 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelCollectiveIssueWithPersonal]));
+			w31.TopAttach = ((uint)(6));
+			w31.BottomAttach = ((uint)(7));
+			w31.XOptions = ((global::Gtk.AttachOptions)(4));
+			w31.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabelstartDateOfOperations = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelstartDateOfOperations.Name = "ylabelstartDateOfOperations";
 			this.ylabelstartDateOfOperations.Xalign = 1F;
-			this.ylabelstartDateOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("Отображать на оборотной стороне карточки сотрудника с даты: ");
+			this.ylabelstartDateOfOperations.LabelProp = global::Mono.Unix.Catalog.GetString("История выдач на обороте карточки с даты:");
 			this.table1.Add(this.ylabelstartDateOfOperations);
-			global::Gtk.Table.TableChild w34 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelstartDateOfOperations]));
-			w34.TopAttach = ((uint)(11));
-			w34.BottomAttach = ((uint)(12));
-			w34.XOptions = ((global::Gtk.AttachOptions)(4));
-			w34.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w32 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelstartDateOfOperations]));
+			w32.TopAttach = ((uint)(10));
+			w32.BottomAttach = ((uint)(11));
+			w32.XOptions = ((global::Gtk.AttachOptions)(4));
+			w32.YOptions = ((global::Gtk.AttachOptions)(4));
 			w6.Add(this.table1);
 			this.GtkScrolledWindow.Add(w6);
 			this.vbox1.Add(this.GtkScrolledWindow);

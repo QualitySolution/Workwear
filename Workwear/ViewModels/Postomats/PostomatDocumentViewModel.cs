@@ -173,14 +173,12 @@ namespace Workwear.ViewModels.Postomats {
 				Entity.Items.Remove(item);
 			}
 			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Так же документ будет сохранён. Продолжить?")) {
-				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim);
+				//push не отпавится автоматически
+				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim); 
 				Entity.Items.Remove(item);
 				UoW.Save(Entity);
 				UoW.Commit();
 			}
-			else 
-				return;
-			
 		}
 		#endregion
 
