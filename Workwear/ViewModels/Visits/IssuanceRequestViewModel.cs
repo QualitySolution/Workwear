@@ -37,7 +37,6 @@ namespace Workwear.ViewModels.Visits {
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly BaseParameters baseParameters;
-		private bool alreadyLoaded;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -64,8 +63,8 @@ namespace Workwear.ViewModels.Visits {
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
-			DefaultWarehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
-			SelectWarehouse = DefaultWarehouse ?? Warehouses.FirstOrDefault();
+			SelectWarehouse =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId) 
+			                   ?? Warehouses.FirstOrDefault();
 		}
 
 		#region Проброс свойств документа
@@ -98,11 +97,6 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Работа со складом
-		private Warehouse defaultWarehouse;
-		public virtual Warehouse DefaultWarehouse {
-			get => defaultWarehouse;
-			set => SetField(ref defaultWarehouse, value);
-		}
 		private List<Warehouse> warehouses = new List<Warehouse>();
 		public virtual List<Warehouse> Warehouses {
 			get => warehouses;
