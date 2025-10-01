@@ -218,6 +218,7 @@
     <Compile Include="ViewModels\Stock\ReturnViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\IssueWidgetViewModel.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModel.cs" />
+    <Compile Include="ViewModels\Visits\IssuanceRequestEmployeeCardItemsViewModel.cs" />
     <Compile Include="ViewModels\Visits\IssuanceRequestViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitListViewModel.cs" />
     <Compile Include="ViewModels\Visits\VisitViewModel.cs" />
@@ -549,6 +550,8 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
     <Compile Include="Views\Visits\IssuanceRequestView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestView.cs" />
+    <Compile Include="Views\Visits\IssuanceRequestEmployeeCardItemsView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

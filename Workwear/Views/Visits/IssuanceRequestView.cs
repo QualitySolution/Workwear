@@ -19,8 +19,6 @@ namespace Workwear.Views.Visits {
 			ConfigureEmployeesList();
 			ConfigureCollectiveExpenseList();
 			CommonButtonSubscription();
-			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-			ViewModel.OnShow();
 			tabs.Binding
 				.AddBinding(ViewModel, vm => vm.CurrentTab, w => w.CurrentPage)
 				.InitializeFromSource();
@@ -144,11 +142,6 @@ namespace Workwear.Views.Visits {
 		#endregion
 
 		#region Вкладка Потребности
-		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if(e.PropertyName == nameof(ViewModel.EmployeeWearItemsVm))
-				representationtreeviewWearItems.RepresentationModel = ViewModel.EmployeeWearItemsVm;
-		}
 
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
 			MessageDialogHelper.RunInfoDialog(

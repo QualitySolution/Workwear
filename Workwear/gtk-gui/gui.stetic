@@ -37177,26 +37177,9 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yVBox" id="yvbox2">
+              <widget class="Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView" id="issuancerequestemployeecarditemsview1">
                 <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
-                    <property name="MemberName" />
-                    <property name="ShadowType">In</property>
-                    <child>
-                      <widget class="QSOrmProject.RepresentationTreeView" id="representationtreeviewWearItems">
-                        <property name="MemberName" />
-                        <property name="CanFocus">True</property>
-                        <property name="ShowScrollbars">True</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                  </packing>
-                </child>
+                <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
                 <property name="Position">3</property>
@@ -37216,6 +37199,24 @@
             <property name="Position">1</property>
             <property name="AutoSize">False</property>
           </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.ScrolledWindow" id="scrolledwindow1">
+        <property name="MemberName" />
+        <property name="CanFocus">True</property>
+        <property name="ShadowType">In</property>
+        <child>
+          <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewEmployeeCardItems">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="ShowScrollbars">True</property>
+          </widget>
         </child>
       </widget>
     </child>
