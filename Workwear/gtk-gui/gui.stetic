@@ -37177,9 +37177,17 @@
               </packing>
             </child>
             <child>
-              <widget class="Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView" id="issuancerequestemployeecarditemsview1">
+              <widget class="Gtk.ScrolledWindow" id="scrolledwindow1">
                 <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
+                <property name="CanFocus">True</property>
+                <property name="ShadowType">In</property>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yTreeView" id="ytreeviewEmployeeCardItems">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="ShowScrollbars">True</property>
+                  </widget>
+                </child>
               </widget>
               <packing>
                 <property name="Position">3</property>

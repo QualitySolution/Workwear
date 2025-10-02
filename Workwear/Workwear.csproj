@@ -550,8 +550,6 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
     <Compile Include="Views\Visits\IssuanceRequestView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestView.cs" />
-    <Compile Include="Views\Visits\IssuanceRequestEmployeeCardItemsView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

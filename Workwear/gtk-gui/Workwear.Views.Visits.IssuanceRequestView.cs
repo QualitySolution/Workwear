@@ -78,7 +78,9 @@ namespace Workwear.Views.Visits
 
 		private global::Gtk.Label label2;
 
-		private global::Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView issuancerequestemployeecarditemsview1;
+		private global::Gtk.ScrolledWindow scrolledwindow1;
+
+		private global::Gamma.GtkWidgets.yTreeView ytreeviewEmployeeCardItems;
 
 		private global::Gtk.Label label3;
 
@@ -455,21 +457,27 @@ namespace Workwear.Views.Visits
 			this.tabs.SetTabLabel(this.yvbox1, this.label2);
 			this.label2.ShowAll();
 			// Container child tabs.Gtk.Notebook+NotebookChild
-			this.issuancerequestemployeecarditemsview1 = new global::Workwear.Views.Visits.IssuanceRequestEmployeeCardItemsView();
-			this.issuancerequestemployeecarditemsview1.Events = ((global::Gdk.EventMask)(256));
-			this.issuancerequestemployeecarditemsview1.Name = "issuancerequestemployeecarditemsview1";
-			this.tabs.Add(this.issuancerequestemployeecarditemsview1);
-			global::Gtk.Notebook.NotebookChild w39 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.issuancerequestemployeecarditemsview1]));
-			w39.Position = 3;
+			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
+			this.scrolledwindow1.CanFocus = true;
+			this.scrolledwindow1.Name = "scrolledwindow1";
+			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child scrolledwindow1.Gtk.Container+ContainerChild
+			this.ytreeviewEmployeeCardItems = new global::Gamma.GtkWidgets.yTreeView();
+			this.ytreeviewEmployeeCardItems.CanFocus = true;
+			this.ytreeviewEmployeeCardItems.Name = "ytreeviewEmployeeCardItems";
+			this.scrolledwindow1.Add(this.ytreeviewEmployeeCardItems);
+			this.tabs.Add(this.scrolledwindow1);
+			global::Gtk.Notebook.NotebookChild w40 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.scrolledwindow1]));
+			w40.Position = 3;
 			// Notebook tab
 			this.label3 = new global::Gtk.Label();
 			this.label3.Name = "label3";
 			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Потребности");
-			this.tabs.SetTabLabel(this.issuancerequestemployeecarditemsview1, this.label3);
+			this.tabs.SetTabLabel(this.scrolledwindow1, this.label3);
 			this.label3.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w40.Position = 1;
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w41.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
