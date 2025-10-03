@@ -45,7 +45,6 @@ namespace Workwear.ViewModels.Stock
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
 		private IEnumerable<EmployeeCard> Employees;
-		private IssuanceRequest CurrentIssuanceRequest;
 		private IInteractiveQuestion interactive;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly CommonMessages commonMessages;
@@ -123,8 +122,7 @@ namespace Workwear.ViewModels.Stock
 				.AndChangeType(TypeOfChangeEvent.Update);
 			
 			if(issuanceRequest != null) {
-				CurrentIssuanceRequest = issuanceRequest;
-				Entity.IssuanceRequest = CurrentIssuanceRequest;
+				Entity.IssuanceRequest = issuanceRequest;
 				Entity.Warehouse = warehouse;
 				CollectiveExpenseItemsViewModel.AddEmployeesList(issuanceRequest.Employees, performance);
 			}
@@ -207,7 +205,7 @@ namespace Workwear.ViewModels.Stock
 			
 			performance.CheckPoint("Завершение...");
 			UoWGeneric.Commit();
-			CurrentIssuanceRequest?.CollectiveExpenses.Add(Entity);
+			Entity.IssuanceRequest?.CollectiveExpenses.Add(Entity);
 			performance.End();
 			logger.Info("Ok");
 			return true;
