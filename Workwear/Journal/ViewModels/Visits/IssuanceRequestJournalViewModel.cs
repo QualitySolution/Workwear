@@ -36,7 +36,6 @@ namespace workwear.Journal.ViewModels.Visits {
 			JournalFilter = Filter = autofacScope.Resolve<IssuanceRequestFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 			TableSelectionMode = JournalSelectionMode.Multiple;
-			UseSlider = true;
 		}
 
 		protected override IQueryOver<IssuanceRequest> ItemsQuery(IUnitOfWork uow) {
