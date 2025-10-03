@@ -29,7 +29,6 @@ namespace Workwear.ViewModels.Visits {
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private INavigationManager navigation;
 		private readonly IInteractiveQuestion interactive;
-		private readonly IInteractiveService interactiveService;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
 		
@@ -49,7 +48,6 @@ namespace Workwear.ViewModels.Visits {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			if(Entity.Id == 0)
@@ -207,10 +205,6 @@ namespace Workwear.ViewModels.Visits {
 			var collectiveExpenseIds = e.GetSelectedObjects<StockDocumentsJournalNode>().Select(x => x.Id).ToArray();
 			var collectiveExpense = UoW.GetById<CollectiveExpense>(collectiveExpenseIds);
 			foreach(var ce in collectiveExpense) {
-				if(ce.Date < Entity.ReceiptDate) {
-					interactiveService.ShowMessage(ImportanceLevel.Warning, "Текущая заявка создана позже выбранных документов.");
-					return;
-				}
 				ce.IssuanceRequest = Entity;
 				CollectiveExpenses.Add(ce);
 			}
