@@ -18,11 +18,8 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
-using workwear.Representations.Organization;
-using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
@@ -34,9 +31,6 @@ namespace Workwear.ViewModels.Visits {
 		private readonly IInteractiveQuestion interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
-		private readonly StockBalanceModel stockBalanceModel;
-		private readonly EmployeeIssueModel issueModel;
-		private readonly BaseParameters baseParameters;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -47,17 +41,11 @@ namespace Workwear.ViewModels.Visits {
 			StockRepository stockRepository,
 			IInteractiveQuestion interactive,
 			ILifetimeScope autofacScope,
-			StockBalanceModel stockBalanceModel,
-			EmployeeIssueModel issueModel,
-			BaseParameters baseParameters,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			
 			if(Entity.Id == 0)
@@ -65,8 +53,16 @@ namespace Workwear.ViewModels.Visits {
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
 			SelectWarehouse =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId) 
 			                   ?? Warehouses.FirstOrDefault();
+
+			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
+			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);
 		}
 
+		#region Дочерние модели
+		public IssuanceRequestEmployeeCardItemsViewModel EmployeeCardItemsViewModel { get; }
+
+		#endregion
+		
 		#region Проброс свойств документа
 		public virtual string Id => Entity.Id != 0 ? Entity.Id.ToString() : "Новый";
 		public virtual UserBase CreatedByUser => Entity.CreatedByUser;
@@ -84,18 +80,25 @@ namespace Workwear.ViewModels.Visits {
 		}
 		public virtual IObservableList<EmployeeCard> Employees => Entity.Employees;
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses => Entity.CollectiveExpenses;
-		#endregion
-
-		#region ColorsLegend
-		private int currentTab;
+		
+		private int currentTab = 0;
 		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;
-			set => SetField(ref currentTab, value);
+			set {
+				SetField(ref currentTab, value);
+				if(currentTab == 3) {
+					EmployeeCardItemsViewModel.OnShow();
+					OnPropertyChanged(nameof(GroupedEmployeeCardItems));
+				}
+			}
 		}
-		public bool VisibleColorsLegend => CurrentTab == 3;
 		#endregion
 
+		#region Visible
+		public bool VisibleColorsLegend => CurrentTab == 3;
+		#endregion
+		
 		#region Работа со складом
 		private List<Warehouse> warehouses = new List<Warehouse>();
 		public virtual List<Warehouse> Warehouses {
@@ -125,6 +128,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = UoW.GetById<EmployeeCard>(employeeIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		
 		public void AddSubdivisions() {
@@ -138,6 +142,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 
 		public void AddDepartments() {
@@ -151,6 +156,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 
 		public void AddGroups() {
@@ -164,6 +170,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromGroups(UoW, groupIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -172,6 +179,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees) {
 				Entity.Employees.Remove(emp);
 			}
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -224,20 +232,7 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Потребности
-		private EmployeeWearItemsVM employeeWearItemsVm;
-		public EmployeeWearItemsVM EmployeeWearItemsVm {
-			get => employeeWearItemsVm;
-			set => SetField(ref employeeWearItemsVm, value);
-		}
-		public void OnShow() {
-			if(Entity == null) return;
-			stockBalanceModel.OnDate = Entity.ReceiptDate;
-			issueModel.FillWearInStockInfo(Employees, stockBalanceModel);
-			issueModel.FillWearReceivedInfo(Employees.ToArray());
-			EmployeeWearItemsVm = new EmployeeWearItemsVM(stockBalanceModel, issueModel, baseParameters, UoW) {
-				IssuanceRequest = Entity
-			};
-		}
+		public IList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems => EmployeeCardItemsViewModel.GroupedEmployeeCardItems;
 		#endregion
 		
 		#endregion

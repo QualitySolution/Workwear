@@ -18,6 +18,7 @@ namespace Workwear.Views.Visits {
 			ConfigureMainInfo();
 			ConfigureEmployeesList();
 			ConfigureCollectiveExpenseList();
+			ConfigureEmployeeCardItemsList();
 			CommonButtonSubscription();
 			tabs.Binding
 				.AddBinding(ViewModel, vm => vm.CurrentTab, w => w.CurrentPage)
@@ -142,7 +143,20 @@ namespace Workwear.Views.Visits {
 		#endregion
 
 		#region Вкладка Потребности
-
+		private void ConfigureEmployeeCardItemsList() {
+			ytreeviewEmployeeCardItems.ColumnsConfig = FluentColumnsConfig<EmployeeCardItemsVmNode>.Create()
+				.AddColumn("Потребность").Resizable().AddTextRenderer(node => node.ProtectionToolsName).WrapWidth(500)
+				.AddColumn("Размер/Рост").AddTextRenderer(node => node.Sizes)
+				.AddColumn("Требуется").AddTextRenderer(node => node.NeedText)
+				.AddColumn("К выдаче").AddTextRenderer(node => node.NeedToBeIssuedText)
+				.AddSetter((w, node) => w.Foreground = node.NeedToBeIssuedColor())
+				.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
+				.RowCells().AddSetter<CellRendererText>((c, node) => c.Foreground = node.AllIssued)
+				.Finish();
+			ytreeviewEmployeeCardItems.Binding
+				.AddBinding(ViewModel, vm => vm.GroupedEmployeeCardItems, w => w.ItemsDataSource)
+				.InitializeFromSource();
+		}
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
 			MessageDialogHelper.RunInfoDialog(
 				"<span color='gray'>●</span> — выдано полностью\n" +
