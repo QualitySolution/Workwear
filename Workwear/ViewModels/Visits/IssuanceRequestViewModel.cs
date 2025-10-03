@@ -41,12 +41,13 @@ namespace Workwear.ViewModels.Visits {
 			StockRepository stockRepository,
 			IInteractiveQuestion interactive,
 			ILifetimeScope autofacScope,
+			FeaturesService featuresService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			featuresService = autofacScope.Resolve<FeaturesService>();
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();

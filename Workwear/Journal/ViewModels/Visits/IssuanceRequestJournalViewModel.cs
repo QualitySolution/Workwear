@@ -46,7 +46,7 @@ namespace workwear.Journal.ViewModels.Visits {
 			var query = uow.Session.QueryOver(() => issuanceRequestAlias)
 				.Where(GetSearchCriterion(
 					() => issuanceRequestAlias.Id,
-					() => issuanceRequestAlias.ReceiptDate,
+					() => issuanceRequestAlias.ReceiptDate, //TODO реализовать поиск по полной дате
 					() => issuanceRequestAlias.Comment));
 			if(Filter.Status != null)
 				query.Where(x => x.Status == Filter.Status);
