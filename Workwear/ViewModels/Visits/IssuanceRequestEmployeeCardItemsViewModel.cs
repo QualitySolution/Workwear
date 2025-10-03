@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.ViewModels;
-using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -56,6 +55,8 @@ namespace Workwear.ViewModels.Visits {
 			
 			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
 			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
+
+			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
 			
 			foreach(var item in employeeCardItems) {
 				var wearSize = item.EmployeeCard.Sizes
@@ -72,7 +73,7 @@ namespace Workwear.ViewModels.Visits {
 					.Where(x => x.ProtectionTools.Id == item.ProtectionTools.Id)
 					.Where(x => x.Employee.Id == item.EmployeeCard.Id)
 					.Sum(x => x.Amount);
-				var need = item.CalculateRequiredIssue(baseParameters, IssuanceRequest.ReceiptDate.AddSeconds(-1));
+				var need = item.CalculateRequiredIssue(baseParameters, IssuanceRequest.ReceiptDate.AddSeconds(-1), excludeOperationIds: alreadyIssuedOperationsIds);
 				EmployeeCardItemsVmNode employeeCardItemsNode = new EmployeeCardItemsVmNode() {
 					Id = item.Id,
 					EmployeeCardId = item.EmployeeCard.Id,
@@ -113,9 +114,6 @@ namespace Workwear.ViewModels.Visits {
 		public int EmployeeCardId { get; set; }
 		public int ProtectionToolsId { get; set; }
 		public string ProtectionToolsName { get; set; }
-		
-		//TODO Скорее всего нужен будет учет пола
-		public Sex Sex { get; set; }
 		public int? WearSizeId { get; set; }
 		public string WearSize { get; set; }
 		public int? HeightId { get; set; }

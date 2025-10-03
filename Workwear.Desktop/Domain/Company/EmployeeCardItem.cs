@@ -227,7 +227,7 @@ namespace Workwear.Domain.Company
 		/// <summary>
 		/// Получить необходимое к выдаче количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate, bool ignoreNormConditionPeriod = false) {
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate, bool ignoreNormConditionPeriod = false, HashSet<int> excludeOperationIds = null) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
 			
@@ -243,7 +243,7 @@ namespace Workwear.Domain.Company
 					return 0;
 			}
 
-			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
+			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule), excludeOperationIds));
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {

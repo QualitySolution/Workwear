@@ -131,6 +131,16 @@ namespace Workwear.Domain.Operations.Graph
 				.Where(x => x.IssueOperation.StartOfUse == null || x.IssueOperation.StartOfUse.Value.Date <= date.Date)
 				.Sum(x => x.AmountAtEndOfDay(date, excludeOperation));
 		}
+		
+		public int UsedAmountAtEndOfDay(DateTime date, HashSet<int> excludeOperationIds)
+		{
+			var interval = IntervalOfDate(date);
+			if(interval == null)
+				return 0;
+			return interval.ActiveItems
+				.Where(x => x.IssueOperation.StartOfUse == null || x.IssueOperation.StartOfUse.Value.Date <= date.Date)
+				.Sum(x => x.AmountAtEndOfDay(date, excludeOperationIds));
+		}
 
 		public GraphInterval IntervalOfDate(DateTime date)
 		{
