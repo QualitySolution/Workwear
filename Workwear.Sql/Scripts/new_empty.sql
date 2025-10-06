@@ -987,7 +987,7 @@ CREATE TABLE IF NOT EXISTS `operation_issued_by_employee` (
   `auto_writeoff_date` DATE NULL DEFAULT NULL,
   `protection_tools_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_item_id` INT UNSIGNED NULL DEFAULT NULL,
-  `StartOfUse` DATE NULL DEFAULT NULL,
+  `StartOfUse` DATE NOT NULL,
   `ExpiryByNorm` DATE NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
