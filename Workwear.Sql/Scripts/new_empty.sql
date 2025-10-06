@@ -2455,29 +2455,83 @@ create index index_shipment_items_size
 	on shipment_items (size_id);
 
 -- -----------------------------------------------------
--- Записи  на посещение
+-- информация о окнах
 -- -----------------------------------------------------
-create table visits
+CREATE TABLE visit_windows
 (
-	id              int unsigned auto_increment,
-	create_date     datetime              not null,
-	visit_date      datetime              not null,
-	employee_id     int unsigned          not null,
-	employee_create boolean default TRUE  not null,
-	done            boolean default FALSE not null,
-	cancelled       boolean default FALSE not null,
-	comment         text                  null,
-	constraint visits_pk
-		primary key (id),
-	constraint visits_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade
-);
+    id   INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    name CHAR(32) NULL
+)
+    COMMENT 'информация о окнах';
 
-create index visits_create_date_index
-	on visits (create_date);
-create index visits_visit_date_index
-	on visits (visit_date);
+-- -----------------------------------------------------
+-- основная таблица посещеий
+-- -----------------------------------------------------
+CREATE TABLE visits
+(
+    id              INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    create_date     DATETIME                                                                                         NOT NULL,
+    visit_date      DATETIME                                                                                         NOT NULL,
+    employee_id     INT UNSIGNED                                                                                     NOT NULL,
+    service_type    ENUM ('GiveWear', 'NewEmployee', 'Unidentified', 'Dismiss', 'GiveReport', 'WriteOff', 'ClothingService', 'Appeal') NOT NULL DEFAULT 'GiveWear',
+    employee_create BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    create_from_lk  BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    done            BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    status          ENUM ('New', 'Queued', 'Serviced', 'Done', 'Canceled', 'Missing')                                NOT NULL DEFAULT 'New',
+    ticket_number   CHAR(4)                                                                                          NOT NULL COMMENT 'Талончик в очереди',
+    window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
+    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ ',
+    time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
+    time_finish     DATETIME                                                                                         NULL COMMENT 'Завершение визита',
+    cancelled       BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    comment         TEXT                                                                                             NULL,
+    CONSTRAINT fk_visits_window_id
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_employees_id_fk
+        FOREIGN KEY (employee_id) REFERENCES employees (id)
+            ON UPDATE CASCADE ON DELETE CASCADE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+CREATE INDEX visits_create_date_index ON visits (create_date);
+CREATE INDEX visits_visit_date_index ON visits (visit_date);
+CREATE INDEX visits_employees_id_fk_idx ON visits (employee_id);
+CREATE INDEX fk_visits_window_id_idx ON visits (window_id);
+
+
+-- -----------------------------------------------------
+-- записи какой юзер в каком окне, состояние окна
+-- -----------------------------------------------------
+CREATE TABLE visits_users_log
+(
+    id        INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    user_id   INT UNSIGNED                                                                        NOT NULL,
+    window_id INT UNSIGNED                                                                        NULL,
+    visit_id  INT UNSIGNED                                                                        NULL,
+    tiket     CHAR(4)                                                                             NULL,
+    `time`    DATETIME                                                                            NULL,
+    `type`    ENUM ('WindowStart', 'WindowFinish', 'WindowTimeout', 'StartService', 'FinishService', 'ReRouteService', 'WindowWaiting') NOT NULL COMMENT 'Типы действия',
+    comment   CHAR(64)                                                                            NULL,
+    CONSTRAINT visits_user_users_id_fk
+        FOREIGN KEY (user_id) REFERENCES users (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_user_visit_windows_id_fk
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT visits_users_log_visits_id_fk
+        FOREIGN KEY (visit_id) REFERENCES visits (id)
+)
+    COMMENT 'записи какой юзер в каком окне, состояние окна';
+
+CREATE INDEX visits_user_users_id_fk_idx ON visits_users_log (user_id);
+CREATE INDEX visits_user_visit_windows_id_fk_idx ON visits_users_log (window_id);
+CREATE INDEX visits_users_log_visits_id_fk_idx ON visits_users_log (visit_id);
 
 
 create table visits_documents
@@ -2501,6 +2555,7 @@ create table visits_documents
 		foreign key (visit_id) references visits (id)
 			on update cascade on delete cascade
 );
+
 
 -- Будет удалена в 2.11 - решили не использовать
 create table work_days
@@ -2752,7 +2807,7 @@ RETURN (WITH RECURSIVE date_range AS
 		FROM date_range
 		WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
 );
-END $$
+END$$
 DELIMITER ;
 
 -- -----------------------------------------------------

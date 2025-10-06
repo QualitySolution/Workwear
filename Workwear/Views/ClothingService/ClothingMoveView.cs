@@ -1,5 +1,6 @@
 using System;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Manage;
 using QS.ViewModels.Control;
 using QS.Views;
 using Workwear.Domain.ClothingService;
@@ -35,7 +36,12 @@ namespace Workwear.Views.ClothingService {
 				.AddBinding(ViewModel, v => v.State, w => w.SelectedItem).InitializeFromSource();
 			textComment.Binding
 				.AddBinding(ViewModel, v => v.Comment, w => w.Buffer.Text).InitializeFromSource();
-
+			framePostamat.Visible = viewModel.ShowTerminal;
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
+			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Postomats, w => w.ItemsList)
+				.AddBinding(v => v.Postomat, w => w.SelectedItem).InitializeFromSource();
+			
 			treeOperations.CreateFluentColumnsConfig<StateOperation>()
 				.AddColumn("Время").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g"))
 				.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.State.GetEnumTitle())

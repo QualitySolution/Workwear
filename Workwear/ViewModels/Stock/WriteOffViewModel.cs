@@ -144,7 +144,7 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
         public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
-		
+        
         private bool autoDocNumber = true;
         [PropertyChangedAlso(nameof(DocNumberText))]
         [PropertyChangedAlso(nameof(SensitiveDocNumber))]
@@ -165,11 +165,6 @@ namespace Workwear.ViewModels.Stock
         public string Total {
             get => total;
             set => SetField(ref total, value);
-        }
-        private bool delSensitive;
-        public bool DelSensitive {
-            get => CanEdit && delSensitive;
-            set => SetField(ref delSensitive, value);
         }
         #endregion
 
