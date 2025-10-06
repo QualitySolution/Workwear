@@ -8,6 +8,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
 using Workwear.Tools;
+using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestEmployeeCardItemsViewModel: ViewModelBase {
@@ -79,10 +80,8 @@ namespace Workwear.ViewModels.Visits {
 					EmployeeCardId = item.EmployeeCard.Id,
 					ProtectionToolsId = item.ProtectionTools.Id,
 					ProtectionToolsName = item.ProtectionTools.Name,
-					WearSizeId = wearSize?.Id,
-					WearSize = wearSize?.Name,
-					HeightId = height?.Id,
-					Height = height?.Name,
+					WearSize = wearSize,
+					Height = height,
 					Units = item.ProtectionTools.Type?.Units?.Name,
 					Need = need,
 					Issued = Math.Min(issuedByCollectiveExpense, need),
@@ -92,14 +91,12 @@ namespace Workwear.ViewModels.Visits {
 			}
 			
 			GroupedEmployeeCardItems = employeeCardItemsNodeList
-				.GroupBy(x => (x.ProtectionToolsId, x.WearSizeId, x.HeightId))
+				.GroupBy(x => (x.ProtectionToolsId, x.WearSize, x.Height))
 				.Select(node => new EmployeeCardItemsVmNode {
 					ProtectionToolsId = node.Key.ProtectionToolsId,
 					ProtectionToolsName = node.First().ProtectionToolsName,
-					WearSizeId = node.Key.WearSizeId,
-					WearSize = node.First().WearSize,
-					HeightId = node.Key.HeightId,
-					Height = node.First().Height,
+					WearSize = node.Key.WearSize,
+					Height = node.Key.Height,
 					Units = node.First().Units,
 					Need = node.Sum(x => x.Need),
 					Issued = node.Sum(x => x.Issued),
@@ -114,14 +111,9 @@ namespace Workwear.ViewModels.Visits {
 		public int EmployeeCardId { get; set; }
 		public int ProtectionToolsId { get; set; }
 		public string ProtectionToolsName { get; set; }
-		public int? WearSizeId { get; set; }
-		public string WearSize { get; set; }
-		public int? HeightId { get; set; }
-		public string Height { get; set; }
-		public string OneSize => WearSize == null && Height != null ? Height 
-			: WearSize != null && Height == null ? WearSize : String.Empty;
-		public string Sizes => WearSize != null && Height != null ? $"{WearSize}/{Height}"
-			: WearSize == null || Height == null ? OneSize : String.Empty;
+		public Size WearSize { get; set; }
+		public Size Height { get; set; }
+		public string Sizes => SizeService.SizeTitle(WearSize, Height);
 		public string Units { get; set; } 
 		public int Need { get; set; }
 		public string NeedText => $"{Need} {Units}";
