@@ -1,5 +1,6 @@
 using System;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Manage;
 using QS.ViewModels.Control;
 using QS.Views;
 using Workwear.Domain.ClothingService;
@@ -23,13 +24,24 @@ namespace Workwear.Views.ClothingService {
 			ybuttonPrintLabel.Binding
 				.AddBinding(ViewModel, v=>v.SensitivePrint, w=>w.Sensitive)
 				.InitializeFromSource();
+			ycheckbuttonNeedRepair.Binding
+				.AddBinding(ViewModel, vm => vm.NeedRepair, w => w.Active).InitializeFromSource();
+			textDefect.Binding
+				.AddBinding(ViewModel, vm => vm.DefectText, w => w.Buffer.Text).InitializeFromSource();
+			yhboxDefect.Binding
+				.AddBinding(ViewModel, vm => vm.NeedRepair, w => w.Visible).InitializeFromSource();
 			comboState.ItemsEnum = typeof(ClaimState);
 			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			comboState.Binding
 				.AddBinding(ViewModel, v => v.State, w => w.SelectedItem).InitializeFromSource();
 			textComment.Binding
 				.AddBinding(ViewModel, v => v.Comment, w => w.Buffer.Text).InitializeFromSource();
-
+			framePostamat.Visible = viewModel.ShowTerminal;
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
+			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Postomats, w => w.ItemsList)
+				.AddBinding(v => v.Postomat, w => w.SelectedItem).InitializeFromSource();
+			
 			treeOperations.CreateFluentColumnsConfig<StateOperation>()
 				.AddColumn("Время").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g"))
 				.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.State.GetEnumTitle())
@@ -45,7 +57,6 @@ namespace Workwear.Views.ClothingService {
 				.Finish();
 			treeServices.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.Services, w => w.ItemsDataSource).InitializeFromSource();
-                          			
 		}
 
 		protected void OnButtonAcceptClicked(object sender, EventArgs e) =>

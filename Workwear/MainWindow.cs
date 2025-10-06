@@ -385,6 +385,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionClothingService.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
+		ActionClothingServices.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);

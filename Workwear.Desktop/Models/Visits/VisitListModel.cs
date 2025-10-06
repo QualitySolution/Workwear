@@ -19,16 +19,14 @@ namespace Workwear.Models.Visits {
 		/// <summary>
 		/// </summary>
 		/// <param name="day"></param>
-		/// True, если на этот день есть персональное рассписание или для этого дня недели оно задано.
-		/// False, если на этот день недели нет рассписания или эта дата явно указана выходной.
+		/// True, если на этот день есть персональное расписание или для этого дня недели оно задано.
+		/// False, если на этот день недели нет расписания или эта дата явно указана выходной.
 		/// <returns></returns>
 		public bool IsWorkDay(DateTime day) {
 			if(ExclusiveDays.Any(d => d.Date == day))
 				return ExclusiveDays.Any(d => d.Date == day && d.IsWork);
-			   
-			if(DaysSchedule.Any(d => d.DayOfWeak == (int)day.DayOfWeek % 7))
-				return DaysSchedule.Any(d => d.DayOfWeak == (int)day.DayOfWeek % 7 && d.IsWork);
-			return false;
+			
+			return DaysSchedule.Any(d => d.DayOfWeek % 7 == (int)day.DayOfWeek && d.IsWork);
 		}
 
 		/// <summary>
@@ -43,7 +41,7 @@ namespace Workwear.Models.Visits {
 		}
 		
 		/// <summary>
-		/// Сгенерироветь в списке недостоющие интервалы в соответствии с рассписанием для этого дня
+		/// Сгенерировать в списке недостающие интервалы в соответствии с расписанием для этого дня
 		/// </summary>
 		public void FillScheduleOfDay (DateTime day) {
 			foreach(var time in MakeSchedule(day).Where(x => !Items.ContainsKey(x)))
@@ -55,14 +53,13 @@ namespace Workwear.Models.Visits {
 		/// </summary>
 		private List<DateTime> MakeSchedule(DateTime day) {
 			List<DateTime> result = new List<DateTime>();
-			List<DaySchedule> ScheduleList = (ExclusiveDays.Any(d => d.Date == day)
-					? ExclusiveDays.Where(d => d.Date == day)
-					: DaysSchedule.Where(d => d.DayOfWeak == (int)day.DayOfWeek % 7))
-				.ToList();
-			foreach(var schedule in ScheduleList) {
+			List<DaySchedule> scheduleList = ExclusiveDays.Where(d => d.Date == day).ToList();
+			if(!scheduleList.Any())
+				scheduleList = DaysSchedule.Where(d => d.DayOfWeek == (int)day.DayOfWeek % 7).ToList();
+			foreach(var schedule in scheduleList) {
 				DateTime start = day.Date + (schedule.Start); 
 				DateTime end = day.Date + (schedule.End);
-				for(DateTime time = start; time < end; time = time.AddMinutes(schedule.Interval)) 
+				for(DateTime time = start; time < end; time = time.AddMinutes(schedule.Interval.Value)) 
 					result.Add(time);
 			}
 			return result;

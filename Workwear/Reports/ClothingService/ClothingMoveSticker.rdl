@@ -11,11 +11,12 @@
   <BottomMargin>1mm</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT csl.id AS 'claim_id', 
        barcodes.id AS 'barcode_id',
        csl.preferred_terminal_id,
+       csl.need_for_repair AS repair,
        CONCAT_WS(' ', nomenclature.name, NULLIF(CONCAT('(', CONCAT_WS('/', wear_size.name, height_size.name) ,')'), '()')) AS nomenclature_name,
        employees.personnel_number AS 'tab_num',
        CONCAT_WS(' ', employees.last_name,employees.first_name, employees.patronymic_name) AS 'employee_name'
@@ -35,7 +36,7 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="claim_id">
           <DataField>claim_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -59,6 +60,10 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
         <Field Name="employee_name">
           <DataField>employee_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="repair">
+          <DataField>repair</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -88,21 +93,21 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
             <Height>75.11pt</Height>
             <Width>100.08pt</Width>
             <CustomProperties>
-              <CustomProperty >
+              <CustomProperty>
                 <Name>NumberSystem</Name>
                 <Value>={?number_system}</Value>
               </CustomProperty>
-              <CustomProperty >
+              <CustomProperty>
                 <Name>ManufacturerCode</Name>
                 <Value>={?manufacturer_code}</Value>
               </CustomProperty>
-              <CustomProperty >
+              <CustomProperty>
                 <Name>ProductCode</Name>
                 <Value>={?product_code}</Value>
               </CustomProperty>
             </CustomProperties>
-            <Left>14.8pt</Left>
-            <Top>3.9pt</Top>
+            <Left>14.80pt</Left>
+            <Top>3.90pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -113,7 +118,7 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
         </ReportItems>
         <DataInstanceElementOutput>NoOutput</DataInstanceElementOutput>
       </List>
-      <Table Name="Table1" >
+      <Table Name="Table1">
         <DataSetName>Data</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
@@ -139,8 +144,39 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
               <TableCells>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox1">
+                      <Value>=Iif({repair}, "требуется ремонт", "")</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                        <FontStyle>Italic</FontStyle>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Visibility >
+                <Hidden>=!{repair}</Hidden>
+              </Visibility>
+            </TableRow>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox2">
-                      <Value>="КОРПУС" + " " + {?preferred_terminal}</Value>
+                      <Value>="КОРПУС " + {?preferred_terminal}</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -161,71 +197,18 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
                 </TableCell>
               </TableCells>
               <Visibility>
-                <Hidden>=!{?show_terminal}</Hidden>
+                <Hidden>=!{?show_terminal} OR {?preferred_terminal} = ""</Hidden>
               </Visibility>
             </TableRow>
             <TableRow>
-              <Height>12 pt</Height>
+              <Height>24.8pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox9">
-                      <Value>=First({nomenclature_name}, "Data")</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Normal</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontSize>9pt</FontSize>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-            <TableRow>
-              <Height>11.2pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox8">
-                      <Value>={tab_num}</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Normal</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <FontSize>9pt</FontSize>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                      <CanShrink>false</CanShrink>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-            <TableRow>
-              <Height>12 pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox7">
-                      <Value>={employee_name}
+                      <Value>=IIf(Len(First({nomenclature_name}, "Data")) &gt; 70,
+     Left(First({nomenclature_name}, "Data"), 67) + "...",
+     First({nomenclature_name}, "Data"))
 </Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
@@ -241,7 +224,38 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
                         <BorderWidth />
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow>false</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow>
+              <Height>27.1pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox7">
+                      <Value>={employee_name} + 
+" (" + {tab_num} + ")"
+</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Normal</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>9pt</FontSize>
+                        <VerticalAlign >Bottom</VerticalAlign>
+                      </Style>
                       <CanShrink>true</CanShrink>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -250,12 +264,12 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
           </TableRows>
           <RepeatOnNewPage>true</RepeatOnNewPage>
         </Header>
-        <Left>7.5pt</Left>
-        <Top>89.5pt</Top>
+        <Left>7.4pt</Left>
+        <Top>84.5pt</Top>
       </Table>
-      <Rectangle Name="Rectangle1" >
-        <Height>149.79pt</Height>
-        <Width>144.93pt</Width>
+      <Rectangle Name="Rectangle1">
+        <Height>155.05pt</Height>
+        <Width>145.68pt</Width>
         <Left>5.25pt</Left>
         <Top>6.89pt</Top>
         <Style>
@@ -288,7 +302,7 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="barcode_id">
       <DataType>Integer</DataType>
       <DefaultValue>

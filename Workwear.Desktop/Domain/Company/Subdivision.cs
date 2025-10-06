@@ -46,6 +46,13 @@ namespace Workwear.Domain.Company
 			set => SetField (ref address, value);
 		}
 
+		private string employeesColor;
+		[Display (Name = "Подсветка сотрудников в журнале")]
+		public virtual string EmployeesColor {
+			get => employeesColor;
+			set => SetField (ref employeesColor, value);
+		}
+		
 		private Warehouse warehouse;
 		[Display(Name = "Склад подразделения")]
 		public virtual Warehouse Warehouse {

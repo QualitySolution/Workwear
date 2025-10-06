@@ -116,6 +116,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+	   				.Select(() => subdivisionAlias.EmployeesColor).WithAlias(() => resultAlias.ColorMark)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.SelectSubQuery(vacationSubquery).WithAlias(() => resultAlias.VacationId)
@@ -157,6 +158,7 @@ namespace workwear.Journal.ViewModels.Company
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
+		public string ColorMark { get; set; }
 
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 

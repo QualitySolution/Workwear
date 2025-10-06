@@ -63,6 +63,7 @@ CREATE TABLE `clothing_service_states` (
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
 	KEY `user_id` (`user_id`),
+	INDEX(`operation_time`),
 	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -87,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
   `name` VARCHAR(240) NOT NULL,
   `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
   `parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
+  `employees_color` VARCHAR(7) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_subdivisions_1_idx` (`warehouse_id` ASC),
   INDEX `fk_subdivisions_2_idx` (`parent_subdivision_id` ASC),
@@ -1116,7 +1118,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
-  `issue_date` date NULL DEFAULT `date`,
+  `issue_date` date NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
@@ -1698,6 +1700,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
@@ -1713,6 +1716,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC),
   INDEX `fk_issuance_sheet_items_9_idx` (`height_id` ASC),
   INDEX `fk_issuance_sheet_items_8_idx` (`size_id` ASC),
+  INDEX `fk_issuance_sheet_items_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_issuance_sheet_items_1`
     FOREIGN KEY (`issuance_sheet_id`)
     REFERENCES `issuance_sheet` (`id`)
@@ -1733,6 +1737,11 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_5`
     FOREIGN KEY (`stock_expense_detail_id`)
     REFERENCES `stock_expense_detail` (`id`)
@@ -2046,12 +2055,14 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `barcode_id` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
   UNIQUE INDEX `index_uniq` (`barcode_id` ASC, `employee_issue_operation_id` ASC, `warehouse_operation_id` ASC),
+  INDEX `fk_operation_barcodes_duty_norm_issue_operation_id_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_operation_barcodes_1`
     FOREIGN KEY (`barcode_id`)
     REFERENCES `barcodes` (`id`)
@@ -2066,7 +2077,12 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
     FOREIGN KEY (`warehouse_operation_id`)
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON UPDATE CASCADE
+	ON DELETE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -2446,29 +2462,83 @@ create index index_shipment_items_size
 	on shipment_items (size_id);
 
 -- -----------------------------------------------------
--- Записи  на посещение
+-- информация о окнах
 -- -----------------------------------------------------
-create table visits
+CREATE TABLE visit_windows
 (
-	id              int unsigned auto_increment,
-	create_date     datetime              not null,
-	visit_date      datetime              not null,
-	employee_id     int unsigned          not null,
-	employee_create boolean default TRUE  not null,
-	done            boolean default FALSE not null,
-	cancelled       boolean default FALSE not null,
-	comment         text                  null,
-	constraint visits_pk
-		primary key (id),
-	constraint visits_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade
-);
+    id   INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    name CHAR(32) NULL
+)
+    COMMENT 'информация о окнах';
 
-create index visits_create_date_index
-	on visits (create_date);
-create index visits_visit_date_index
-	on visits (visit_date);
+-- -----------------------------------------------------
+-- основная таблица посещеий
+-- -----------------------------------------------------
+CREATE TABLE visits
+(
+    id              INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    create_date     DATETIME                                                                                         NOT NULL,
+    visit_date      DATETIME                                                                                         NOT NULL,
+    employee_id     INT UNSIGNED                                                                                     NOT NULL,
+    service_type    ENUM ('GiveWear', 'NewEmployee', 'Unidentified', 'Dismiss', 'GiveReport', 'WriteOff', 'ClothingService', 'Appeal') NOT NULL DEFAULT 'GiveWear',
+    employee_create BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    create_from_lk  BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    done            BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    status          ENUM ('New', 'Queued', 'Serviced', 'Done', 'Canceled', 'Missing')                                NOT NULL DEFAULT 'New',
+    ticket_number   CHAR(4)                                                                                          NOT NULL COMMENT 'Талончик в очереди',
+    window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
+    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ ',
+    time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
+    time_finish     DATETIME                                                                                         NULL COMMENT 'Завершение визита',
+    cancelled       BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    comment         TEXT                                                                                             NULL,
+    CONSTRAINT fk_visits_window_id
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_employees_id_fk
+        FOREIGN KEY (employee_id) REFERENCES employees (id)
+            ON UPDATE CASCADE ON DELETE CASCADE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+CREATE INDEX visits_create_date_index ON visits (create_date);
+CREATE INDEX visits_visit_date_index ON visits (visit_date);
+CREATE INDEX visits_employees_id_fk_idx ON visits (employee_id);
+CREATE INDEX fk_visits_window_id_idx ON visits (window_id);
+
+
+-- -----------------------------------------------------
+-- записи какой юзер в каком окне, состояние окна
+-- -----------------------------------------------------
+CREATE TABLE visits_users_log
+(
+    id        INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    user_id   INT UNSIGNED                                                                        NOT NULL,
+    window_id INT UNSIGNED                                                                        NULL,
+    visit_id  INT UNSIGNED                                                                        NULL,
+    tiket     CHAR(4)                                                                             NULL,
+    `time`    DATETIME                                                                            NULL,
+    `type`    ENUM ('WindowStart', 'WindowFinish', 'WindowTimeout', 'StartService', 'FinishService', 'ReRouteService', 'WindowWaiting') NOT NULL COMMENT 'Типы действия',
+    comment   CHAR(64)                                                                            NULL,
+    CONSTRAINT visits_user_users_id_fk
+        FOREIGN KEY (user_id) REFERENCES users (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_user_visit_windows_id_fk
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT visits_users_log_visits_id_fk
+        FOREIGN KEY (visit_id) REFERENCES visits (id)
+)
+    COMMENT 'записи какой юзер в каком окне, состояние окна';
+
+CREATE INDEX visits_user_users_id_fk_idx ON visits_users_log (user_id);
+CREATE INDEX visits_user_visit_windows_id_fk_idx ON visits_users_log (window_id);
+CREATE INDEX visits_users_log_visits_id_fk_idx ON visits_users_log (visit_id);
 
 
 create table visits_documents
@@ -2492,6 +2562,7 @@ create table visits_documents
 		foreign key (visit_id) references visits (id)
 			on update cascade on delete cascade
 );
+
 
 -- Будет удалена в 2.11 - решили не использовать
 create table work_days
@@ -2688,6 +2759,12 @@ END$$
 
 DELIMITER ;
 
+-- Возврат настроек должен находится именно здесь(между функциями) так как старая функция count_issue создалась с режимом ONLY_FULL_GROUP_BY
+-- В новых это не надо. Думаю если удалить старую функцию, то переключение режимов может быть можно будет убрать совсем.
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 -- -----------------------------------------------------
 -- function quantity_issue
 -- -----------------------------------------------------
@@ -2702,51 +2779,51 @@ CREATE FUNCTION `quantity_issue`(
 	`begin_Issue_Period` DATE,
 	`end_Issue_Period` DATE)
 	RETURNS int(10) unsigned
-	NO SQL
-	DETERMINISTIC
-	COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
+    NO SQL
+    DETERMINISTIC
+    COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
 BEGIN
-	DECLARE issue_count INT;
-	DECLARE next_issue_new DATE;
-	DECLARE begin_Issue_Period_New DATE;
-	DECLARE end_Issue_Period_New DATE;
-	DECLARE start_Of_Year DATE;
-	DECLARE end_Of_Year DATE;
+    DECLARE issue_count INT;
+    DECLARE next_issue_new DATE;
+    DECLARE begin_Issue_Period_New DATE;
+    DECLARE end_Issue_Period_New DATE;
+    DECLARE start_Of_Year DATE;
+    DECLARE end_Of_Year DATE;
 
-	IF norm_period <= 0 THEN RETURN 0; END IF;
-	IF next_issue IS NULL THEN RETURN 0; END IF;
+    IF norm_period <= 0 THEN RETURN 0; END IF;
+    IF next_issue IS NULL THEN RETURN 0; END IF;
 
-	SET issue_count = 0;
-	SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
-	SET begin_Issue_Period_New = CONCAT('2000', '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
-	SET end_Issue_Period_New = CONCAT('2000', '-', MONTH(end_Issue_Period), '-', DAY(end_Issue_Period));
-	SET start_Of_Year = CONCAT('2000', '-', 1, '-',  1);
-	SET end_Of_Year = CONCAT('2000', '-', 12 , '-', 31);
+    SET issue_count = 0;
+    SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+    SET begin_Issue_Period_New = CONCAT('2000', '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+    SET end_Issue_Period_New = CONCAT('2000', '-', MONTH(end_Issue_Period), '-', DAY(end_Issue_Period));
+    SET start_Of_Year = CONCAT('2000', '-', 1, '-',  1);
+    SET end_Of_Year = CONCAT('2000', '-', 12 , '-', 31);
 
-	WHILE next_issue <= end_date DO
-			IF begin_Issue_Period IS NOT NULL THEN
-				IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
-					OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
-						AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
-					IF next_issue >= begin_date THEN
-						SET issue_count = issue_count + amount;
+    WHILE next_issue <= end_date DO
+            IF begin_Issue_Period IS NOT NULL THEN
+                IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
+                    OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
+                        AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
+                    IF next_issue >= begin_date THEN
+                        SET issue_count = issue_count + amount;
 					END IF;
-					SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+                    SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 				END IF;
-				IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
-					OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
-					SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
-					IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
-						SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
+                IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
+                    OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
+                    SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+                    IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
+                        SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
 					END IF;
 				END IF;
 			ELSE
-				IF next_issue >= begin_date THEN
-					SET issue_count = issue_count + amount;
+                IF next_issue >= begin_date THEN
+                    SET issue_count = issue_count + amount;
 				END IF;
-				SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+                SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
 			END IF;
-			SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+            SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
 	END WHILE;
 	RETURN issue_count;
 END$$
@@ -2760,31 +2837,26 @@ CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
 	DETERMINISTIC
 	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
 BEGIN
-	RETURN (WITH RECURSIVE date_range AS
-							   (SELECT start_date as sd
-								UNION ALL
-								SELECT DATE_ADD(sd, INTERVAL 1 Day)
-								FROM date_range
-								WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
-							   )
-			SELECT COUNT(*)
-			FROM date_range
-			WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
-	);
-END $$;
-
+RETURN (WITH RECURSIVE date_range AS
+						   (SELECT start_date as sd
+							UNION ALL
+							SELECT DATE_ADD(sd, INTERVAL 1 Day)
+							FROM date_range
+							WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+						   )
+		SELECT COUNT(*)
+		FROM date_range
+		WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+);
+END$$
 DELIMITER ;
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
 -- Data for table `base_parameters`
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.2');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.3');
 
 COMMIT;
 

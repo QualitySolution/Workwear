@@ -1,4 +1,6 @@
-﻿using QS.DomainModel.UoW;
+﻿using System.Collections.Generic;
+using System.Linq;
+using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -36,6 +38,13 @@ namespace Workwear.Repository.Stock {
 				.Where(x => x.IsClosed == false)
 				.Take(1)
 				.SingleOrDefault<ServiceClaim>();
+		}
+
+		public IList<BarcodeOperation> GetBarcodeOperationsByEmployeeIssueOperations(int[] employeeIssueOperationsIds, IUnitOfWork uow) {
+			var barcodeOperations = uow.Session.Query<BarcodeOperation>()
+				.Where(x => employeeIssueOperationsIds.Contains(x.EmployeeIssueOperation.Id))
+				.ToList();
+			return barcodeOperations;
 		}
 	}
 }

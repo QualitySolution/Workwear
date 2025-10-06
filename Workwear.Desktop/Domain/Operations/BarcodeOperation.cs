@@ -28,7 +28,14 @@ namespace Workwear.Domain.Operations {
 			get => employeeIssueOperation;
 			set => SetField(ref employeeIssueOperation, value);
 		}
-		
+
+		private DutyNormIssueOperation dutyNormIssueOperation;
+
+		[Display(Name = "Операция выдачи по дежурной норме")]
+		public virtual DutyNormIssueOperation DutyNormIssueOperation {
+			get => dutyNormIssueOperation;
+			set => SetField(ref dutyNormIssueOperation, value);
+		}
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Операция на складе")]
 		public virtual WarehouseOperation WarehouseOperation {

@@ -1,11 +1,12 @@
-
 -- Добавление поля для архивации номенклатуры нормы
 alter table protection_tools 
 	add column archival bool not null default false;
 
 -- Черновик документа выдачи
 alter table stock_expense
-	add issue_date date null DEFAULT date after date;
+	add issue_date date null after date;
+
+update stock_expense set issue_date = date where issue_date is null;
 
 -- Записи на посещение
 create table visits
@@ -119,4 +120,3 @@ create table clothing_service_services_claim
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
 );
-
