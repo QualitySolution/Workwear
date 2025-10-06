@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -27792,10 +27792,13 @@
                 <child>
                   <widget class="Gamma.GtkWidgets.yTable" id="ytable2">
                     <property name="MemberName" />
-                    <property name="NRows">2</property>
+                    <property name="NRows">3</property>
                     <property name="NColumns">2</property>
                     <property name="RowSpacing">6</property>
                     <property name="ColumnSpacing">6</property>
+                    <child>
+                      <placeholder />
+                    </child>
                     <child>
                       <widget class="Gamma.GtkWidgets.yCheckButton" id="checkNeedRepair">
                         <property name="MemberName" />
@@ -27820,23 +27823,23 @@
                     <child>
                       <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow2">
                         <property name="MemberName" />
-                        <property name="VscrollbarPolicy">Never</property>
-                        <property name="HscrollbarPolicy">Never</property>
                         <property name="ShadowType">In</property>
                         <child>
                           <widget class="Gamma.GtkWidgets.yTextView" id="textDefect">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
                             <property name="ShowScrollbars">True</property>
+                            <property name="AcceptsTab">False</property>
                             <property name="Text" translatable="yes" />
+                            <property name="WrapMode">WordChar</property>
                           </widget>
                         </child>
                       </widget>
                       <packing>
-                        <property name="TopAttach">1</property>
-                        <property name="BottomAttach">2</property>
+                        <property name="TopAttach">2</property>
+                        <property name="BottomAttach">3</property>
                         <property name="RightAttach">2</property>
-                        <property name="AutoSize">False</property>
+                        <property name="AutoSize">True</property>
                         <property name="XExpand">True</property>
                         <property name="XFill">True</property>
                         <property name="XShrink">False</property>
@@ -27853,6 +27856,26 @@
                       <packing>
                         <property name="LeftAttach">1</property>
                         <property name="RightAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDefect">
+                        <property name="MemberName" />
+                        <property name="Xalign">0</property>
+                        <property name="LabelProp" translatable="yes">Дефект:</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">1</property>
+                        <property name="BottomAttach">2</property>
                         <property name="AutoSize">True</property>
                         <property name="XOptions">Fill</property>
                         <property name="YOptions">Fill</property>
@@ -27882,8 +27905,6 @@
           <packing>
             <property name="Position">1</property>
             <property name="AutoSize">True</property>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
