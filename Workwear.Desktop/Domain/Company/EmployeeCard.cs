@@ -274,16 +274,6 @@ namespace Workwear.Domain.Company
                 EmployeeGroupItems.Add(employeeGroup.AddEmployee(this));
             }
 		#endregion
-
-		#region IssuanceRequests
-
-		private IObservableList<IssuanceRequest> issuanceRequests = new ObservableList<IssuanceRequest>();
-		[Display(Name = "Заявки на выдачу")]
-		public virtual IObservableList<IssuanceRequest> IssuanceRequests {
-			get => issuanceRequests;
-			set => SetField(ref issuanceRequests, value);
-		}
-		#endregion
 		
 		#region Расчетные
 		public virtual string Title => PersonHelper.PersonNameWithInitials (LastName, FirstName, Patronymic);
