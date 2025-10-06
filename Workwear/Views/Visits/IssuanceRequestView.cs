@@ -125,6 +125,9 @@ namespace Workwear.Views.Visits {
 				.Finish();
 			ytreeviewExpense.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewExpense.Selection.Changed += CollectiveExpense_Selection_Changed;
+			buttonCreateExpense.Binding
+				.AddBinding(ViewModel, v => v.CanCreateCollectiveExpense, w => w.Sensitive)
+				.InitializeFromSource();
 		}
 
 		private void CollectiveExpense_Selection_Changed(object sender, EventArgs e) {

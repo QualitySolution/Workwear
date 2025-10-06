@@ -40,7 +40,6 @@ namespace Workwear.ViewModels.Visits {
 			EmployeeRepository employeeRepository,
 			StockRepository stockRepository,
 			IInteractiveQuestion interactive,
-			IInteractiveService interactiveService,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
 			IValidator validator = null,
@@ -53,8 +52,7 @@ namespace Workwear.ViewModels.Visits {
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
-			SelectWarehouse =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId) 
-			                   ?? Warehouses.FirstOrDefault();
+			SelectWarehouse =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
 
 			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
 			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);
@@ -100,15 +98,19 @@ namespace Workwear.ViewModels.Visits {
 		#region Visible
 		public bool VisibleColorsLegend => CurrentTab == 3;
 		#endregion
-		
+
+		#region Sensitive
+		public bool CanCreateCollectiveExpense => SelectWarehouse != null;
+		#endregion
 		#region Работа со складом
 		private List<Warehouse> warehouses = new List<Warehouse>();
-		public virtual List<Warehouse> Warehouses {
+		public List<Warehouse> Warehouses {
 			get => warehouses;
 			set => SetField(ref warehouses, value);
 		}
 		private Warehouse selectWarehouse;
-		public virtual Warehouse SelectWarehouse {
+		[PropertyChangedAlso(nameof(CanCreateCollectiveExpense))]
+		public Warehouse SelectWarehouse {
 			get => selectWarehouse;
 			set => SetField(ref selectWarehouse, value);
 		}
