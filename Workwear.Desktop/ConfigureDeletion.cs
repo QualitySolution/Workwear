@@ -54,6 +54,11 @@ namespace Workwear
 				.AddClearDependence<EmployeeCard>(x => x.Department);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
+				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
+				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
+				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
+				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
+				.AddClearDependence<Leader>(x => x.Employee)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
@@ -62,17 +67,13 @@ namespace Workwear
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
 				.AddDeleteDependence<EmployeeVacation>(x => x.Employee)
 				.AddDeleteDependence<Expense>(x => x.Employee)
-				.AddDeleteDependence<ReturnItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Employee)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Employee)
+				.AddDeleteDependence<ReturnItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<ServiceClaim>(x => x.Employee)
 				.AddDeleteDependence<Visit>(x => x.Employee)
-				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
-				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
-				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
-				.AddClearDependence<Leader>(x => x.Employee)
-				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
+				.AddRemoveFromDependence<IssuanceRequest>(x => x.Employees)
 				;
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCardItem>();
@@ -416,6 +417,7 @@ namespace Workwear
 				.AddClearDependence<ExpenseDutyNorm>(x => x.CreatedbyUser)
 				.AddClearDependence<Income>(x => x.CreatedbyUser)
 				.AddClearDependence<Inspection>(x => x.CreatedbyUser)
+				.AddClearDependence<IssuanceRequest>(x => x.CreatedByUser)
 				.AddClearDependence<PostomatDocumentWithdraw>(x => x.User)
 				.AddClearDependence<Return>(x => x.CreatedbyUser)
 				.AddClearDependence<Shipment>(x => x.CreatedbyUser)
