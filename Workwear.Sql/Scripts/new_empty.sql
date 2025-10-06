@@ -1525,6 +1525,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `transfer_agent_id` INT(10) UNSIGNED NULL,
+  `issuance_request_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1532,6 +1533,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_collective_expense_date` (`date` ASC),
   INDEX `fk_transfer_agent_id_idx` (`transfer_agent_id` ASC),
+  INDEX `issuance_request_id_idx` (`issuance_request_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1546,7 +1548,12 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     FOREIGN KEY (`transfer_agent_id`)
     REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_collective_expense_issuance_request_id` 
+  	FOREIGN KEY (`issuance_request_id`)
+	REFERENCES issuance_requests (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4;
@@ -2652,6 +2659,40 @@ create table employees_selected_nomenclatures
 )
 	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
 
+-- -----------------------------------------------------
+-- Заявка на выдачу
+-- -----------------------------------------------------
+
+-- Заявка на выдачу
+CREATE TABLE issuance_requests(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`receipt_date` DATE NOT NULL,
+	`status` ENUM('New', 'Issued', 'PartiallyIssued') DEFAULT 'New' NOT NULL,
+	`comment` TEXT NULL,
+	`user_id` INT UNSIGNED NULL,
+	`creation_date` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `fk_issuance_request_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`)
+	    ON DELETE NO ACTION
+		ON UPDATE CASCADE,
+	INDEX `issuance_request_user_id_idx` (`user_id` ASC)
+);
+
+-- Сотрудники в заявках на выдачу
+CREATE TABLE employees_issuance_request(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`employee_id` INT UNSIGNED NOT NULL,
+	`issuance_request_id` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `fk_employee_id` FOREIGN KEY (`employee_id`) REFERENCES employees (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	CONSTRAINT `fk_issuance_request_id` FOREIGN KEY  (`issuance_request_id`) REFERENCES issuance_requests (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	INDEX `employee_id_idx` (`employee_id` ASC),
+	INDEX `issuance_request_id_idx` (`issuance_request_id` ASC)
+);
 -- -----------------------------------------------------
 -- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
 -- -----------------------------------------------------

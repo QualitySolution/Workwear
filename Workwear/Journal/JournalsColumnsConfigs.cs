@@ -569,6 +569,16 @@ namespace workwear.Journal
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<IssuanceRequestJournalViewModel>(
+				jvm => FluentColumnsConfig<IssuanceRequestJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Дата поступления заявки").AddTextRenderer(node => node.ReceiptDate.ToShortDateString()).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.Finish()
+			);
 			#endregion
 		}
 	}
