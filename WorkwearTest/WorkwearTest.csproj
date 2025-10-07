@@ -54,6 +54,7 @@
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModelTest.cs" />
+    <Compile Include="ViewModels\Visits\IssuanceRequestEmployeeCardItemsViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QSProjects\QS.Testing.Desktop\QS.Testing.Desktop.csproj">
@@ -131,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Integration\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="ViewModels\Stock\" />
   </ItemGroup>
   <ItemGroup>
