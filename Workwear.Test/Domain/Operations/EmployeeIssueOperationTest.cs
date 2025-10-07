@@ -170,7 +170,7 @@ namespace Workwear.Test.Domain.Operations
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount.Returns(1);
 
-			var issueOperation = new EmployeeIssueOperation() {
+			var issueOperation = new EmployeeIssueOperation(baseParameters) {
 				ProtectionTools = protectionTools,
 				Nomenclature = nomenclature,
 				Employee = employee,
@@ -197,7 +197,7 @@ namespace Workwear.Test.Domain.Operations
 			var protectionTools = Substitute.For<ProtectionTools>();
 			var nomenclature = Substitute.For<Nomenclature>();
 			
-			var issueOperation = new EmployeeIssueOperation() {
+			var issueOperation = new EmployeeIssueOperation(baseParameters) {
 				ProtectionTools = protectionTools,
 				Nomenclature = nomenclature,
 				Employee = employee,
@@ -426,7 +426,7 @@ namespace Workwear.Test.Domain.Operations
 			normItem.Amount.Returns(1);
 			normItem.PeriodInMonths.Returns(1);
 
-			var issueOperation = new EmployeeIssueOperation() {
+			var issueOperation = new EmployeeIssueOperation(baseParameters) {
 				ProtectionTools = protectionTools,
 				Employee = employee,
 				Nomenclature = nomenclature,
@@ -469,7 +469,7 @@ namespace Workwear.Test.Domain.Operations
 			var protectionTools = Substitute.For<ProtectionTools>();
 			var nomenclature = Substitute.For<Nomenclature>();
 
-			var issueOperation = new EmployeeIssueOperation() {
+			var issueOperation = new EmployeeIssueOperation(baseParameters) {
 				ProtectionTools = protectionTools,
 				Employee = employee,
 				Nomenclature = nomenclature,
