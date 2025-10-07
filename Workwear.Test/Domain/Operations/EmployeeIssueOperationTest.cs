@@ -10,6 +10,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Tools;
 
 namespace Workwear.Test.Domain.Operations
@@ -158,7 +159,61 @@ namespace Workwear.Test.Domain.Operations
 			Assert.That(issue.StartOfUse, Is.EqualTo(new DateTime(2021, 4, 20)));
 			Assert.That(issue.ExpiryByNorm, Is.EqualTo(new DateTime(2023, 4, 20)));
 		}
+		
+		[Test(Description = "Проверяем, что дата начала использования после пересчета не NULL (при выдачах по норме).")]
+		public void RecalculateDatesOfIssueOperation_WithNorm() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			var employee = Substitute.For<EmployeeCard>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var nomenclature = Substitute.For<Nomenclature>();
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount.Returns(1);
 
+			var issueOperation = new EmployeeIssueOperation() {
+				ProtectionTools = protectionTools,
+				Nomenclature = nomenclature,
+				Employee = employee,
+				NormItem = normItem,
+				OperationTime = new DateTime(2025, 10, 6),
+				Issued = 1
+			};
+			
+			var operations = new List<IGraphIssueOperation>() { issueOperation};
+			var graph = new IssueGraph(operations);
+			
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			
+			issueOperation.RecalculateStartOfUse(graph, baseParameters, ask);
+			Assert.That(issueOperation.StartOfUse, Is.Not.Null);
+		}
+
+		[Test(Description = "Проверяем, что дата начала использования после пересчета не NULL (при выдачах сверх нормы).")]
+		public void RecalculateDatesOfIssueOperation_WithoutNorm() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			var employee = Substitute.For<EmployeeCard>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var nomenclature = Substitute.For<Nomenclature>();
+			
+			var issueOperation = new EmployeeIssueOperation() {
+				ProtectionTools = protectionTools,
+				Nomenclature = nomenclature,
+				Employee = employee,
+				OperationTime = new DateTime(2025, 2, 13),
+				Issued = 1
+			};
+			
+			var operations = new List<IGraphIssueOperation>() { issueOperation };
+			var graph = new IssueGraph(operations);
+			
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			
+			issueOperation.RecalculateStartOfUse(graph, baseParameters, ask);
+			Assert.That(issueOperation.StartOfUse, Is.Not.Null);
+		}
 		#region Отпуск
 
 		[Test(Description = "Проверяем увеличение периода использования на время отпуска.")]
@@ -353,6 +408,98 @@ namespace Workwear.Test.Domain.Operations
 		{
 			var result = EmployeeIssueOperation.CalculatePercentWear(new DateTime(2019, 8, 2), new DateTime(2019, 7, 17), new DateTime(2019, 7, 17), 0);
 			Assert.That(result, Is.EqualTo(0));
+		}
+
+		#endregion
+
+		#region Update
+
+		[Test(Description = "Проверяем, что после обновления операций дата начала использования не NULL (при выдачах по норме)")]
+		public void Update_WithNorm() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var nomenclature = Substitute.For<Nomenclature>();
+			var normItem = Substitute.For<NormItem>();
+			normItem.Amount.Returns(1);
+			normItem.PeriodInMonths.Returns(1);
+
+			var issueOperation = new EmployeeIssueOperation() {
+				ProtectionTools = protectionTools,
+				Employee = employee,
+				Nomenclature = nomenclature,
+				NormItem = normItem,
+				OperationTime = new DateTime(2025, 8, 11),
+				Issued = 1
+			};
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { issueOperation });
+			var employeeCardItem = new EmployeeCardItem() {
+				EmployeeCard = employee,
+				ProtectionTools = protectionTools,
+				ActiveNormItem = normItem
+			};
+			var expenseDoc = new Expense() {
+				Employee = employee,
+				Date = new DateTime(2025, 8, 11),
+				IssueDate = new DateTime(2025,  8, 11),
+			};
+			var expenseItem = new ExpenseItem() {
+				ExpenseDoc = expenseDoc,
+				Nomenclature = nomenclature,
+				EmployeeCardItem = employeeCardItem,
+				EmployeeIssueOperation = issueOperation,
+				ProtectionTools = protectionTools,
+				Amount = 1
+			};
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			
+			issueOperation.Update(uow, baseParameters, ask, expenseItem);
+			Assert.That(issueOperation.StartOfUse, Is.Not.Null);
+		}
+
+		[Test(Description = "Проверяем, что после обновления операций дата начала использования не NULL (при выдачах сверх нормы).")]
+		public void Update_WithoutNorm() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(0);
+			var uow = Substitute.For<IUnitOfWork>();
+			var employee = Substitute.For<EmployeeCard>();
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var nomenclature = Substitute.For<Nomenclature>();
+
+			var issueOperation = new EmployeeIssueOperation() {
+				ProtectionTools = protectionTools,
+				Employee = employee,
+				Nomenclature = nomenclature,
+				OperationTime = new DateTime(2025, 8, 11),
+				Issued = 1
+			};
+			IssueGraph.MakeIssueGraphTestGap = (e, t) => new IssueGraph(new List<IGraphIssueOperation>() { issueOperation });
+			var employeeCardItem = new EmployeeCardItem() {
+				EmployeeCard = employee,
+				ProtectionTools = protectionTools,
+			};
+			var expenseDoc = new Expense() {
+				Employee = employee,
+				Date = new DateTime(2025, 8, 11),
+				IssueDate = new DateTime(2025, 8, 11),
+			};
+			var expenseDocItem = new ExpenseItem() {
+				ExpenseDoc = expenseDoc,
+				Nomenclature = nomenclature,
+				EmployeeIssueOperation = issueOperation,
+				ProtectionTools = protectionTools,
+				EmployeeCardItem = employeeCardItem,
+				Amount = 1
+			};
+			
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			
+			issueOperation.Update(uow, baseParameters, ask, expenseDocItem);
+			Assert.That(issueOperation.StartOfUse, Is.Not.Null);
 		}
 
 		#endregion
