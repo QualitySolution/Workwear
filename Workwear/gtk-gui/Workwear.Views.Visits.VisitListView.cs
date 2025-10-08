@@ -109,7 +109,7 @@ namespace Workwear.Views.Visits
 			// Container child GtkViewport.Gtk.Container+ContainerChild
 			this.ItemListTable = new global::Gamma.GtkWidgets.yTable();
 			this.ItemListTable.Name = "ItemListTable";
-			this.ItemListTable.NColumns = ((uint)(5));
+			this.ItemListTable.NColumns = ((uint)(6));
 			this.ItemListTable.RowSpacing = ((uint)(6));
 			this.ItemListTable.ColumnSpacing = ((uint)(6));
 			w8.Add(this.ItemListTable);
