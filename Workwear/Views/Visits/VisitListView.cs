@@ -116,22 +116,28 @@ namespace Workwear.Views.Visits {
 					button = new Button();
 					Image img = new Image();
 					string name = String.Empty;
+					string toolTip = String.Empty;
 					switch(l) {
 						case 0:
-							name = "gtk-media-play"; 
+							name = "gtk-media-play";
+							toolTip = "Начать";
 							break;
 						case 1:
 							name = "gtk-ok";
+							toolTip = "Завершено";
 							break;
 						case 2:
 							name = "gtk-close";
+							toolTip = "Отменить";
 							break;
 						case 3:
 							name = "gtk-dialog-error";
+							toolTip = "Не пришёл";
 							break;
 					}
 					img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
 					button.Image = img;
+					button.TooltipText = toolTip;
 					buttonBox.PackStart(button, false, false, 0);
 				}
 				
