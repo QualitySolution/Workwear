@@ -230,8 +230,14 @@ namespace Workwear.Sql
 			configuration.AddUpdate(
 				new Version(2, 8, 28),
 				new Version(2, 9),
-				"Workwear.Sql.Scripts.2.9.sql"
-			);
+				"Workwear.Sql.Scripts.2.9.sql",
+			//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
+			delegate (DbConnection connection) {
+				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_1"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_2"); 
+			});
 			configuration.AddUpdate(
 				new Version(2, 9),
 				new Version(2, 9, 1),
