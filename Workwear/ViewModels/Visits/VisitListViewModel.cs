@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NHibernate.Linq;
 using QS.DomainModel.Entity;
@@ -130,6 +131,10 @@ namespace Workwear.ViewModels.Visits {
 				OnPropertyChanged(nameof(PeriodString));
 		}
 
+		public void ChangeAction(VisitListItem item, ActionType type) {
+			
+		}
+		
 		public void AddComment(VisitListItem item, string entryText) {
 			if(item?.Visit != null && item.Visit.Comment != entryText) {
 				item.Visit.Comment = entryText;
@@ -137,5 +142,16 @@ namespace Workwear.ViewModels.Visits {
 				UoW.Commit();
 			}
 		}
+	}
+
+	public enum ActionType {
+		[Display(Name = "Начать")]
+		Play,
+		[Display(Name = "Завершено")]
+		Done,
+		[Display(Name = "Отменить")]
+		Cancel,
+		[Display(Name = "Не пришёл")]
+		Close
 	}
 }
