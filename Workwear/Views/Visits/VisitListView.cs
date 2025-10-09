@@ -112,39 +112,41 @@ namespace Workwear.Views.Visits {
 						ItemListTable.Attach(new VSeparator(), 7, 8, i, i+j+1, AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 				}
 
-				for (uint l =0; l < 4; l++) {
-					button = new Button();
-					Image img = new Image();
-					string name = String.Empty;
-					string toolTip = String.Empty;
-					ActionType type = ActionType.Play;
-					switch(l) {
-						case 0:
-							name = "gtk-media-play";
-							toolTip = "Начать";
-							type = ActionType.Play;
-							break;
-						case 1:
-							name = "gtk-ok";
-							toolTip = "Завершено";
-							type = ActionType.Done;
-							break;
-						case 2:
-							name = "gtk-close";
-							toolTip = "Отменить";
-							type = ActionType.Cancel;
-							break;
-						case 3:
-							name = "gtk-dialog-error";
-							toolTip = "Не пришёл";
-							type = ActionType.Close;
-							break;
+				if(item.Visit != null) {
+					for (uint l =0; l < 4; l++) {
+						button = new Button();
+						Image img = new Image();
+						string name = String.Empty;
+						string toolTip = String.Empty;
+						ActionType type = ActionType.Play;
+						switch(l) {
+							case 0:
+								name = "gtk-media-play";
+								toolTip = "Начать";
+								type = ActionType.Play;
+								break;
+							case 1:
+								name = "gtk-ok";
+								toolTip = "Завершено";
+								type = ActionType.Done;
+								break;
+							case 2:
+								name = "gtk-close";
+								toolTip = "Отменить";
+								type = ActionType.Cancel;
+								break;
+							case 3:
+								name = "gtk-dialog-error";
+								toolTip = "Не пришёл";
+								type = ActionType.Close;
+								break;
+						}
+						img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
+						button.Image = img;
+						button.TooltipText = toolTip;
+						button.Clicked += (sender, args) => ViewModel.ChangeAction(item, type);
+						buttonBox.PackStart(button, false, false, 0);
 					}
-					img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
-					button.Image = img;
-					button.TooltipText = toolTip;
-					button.Clicked += (sender, args) => ViewModel.ChangeAction(item, type);
-					buttonBox.PackStart(button, false, false, 0);
 				}
 				
 				ItemListTable.Attach(buttonBox, 10, 11, i, i+1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
