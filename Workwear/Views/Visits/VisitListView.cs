@@ -54,18 +54,18 @@ namespace Workwear.Views.Visits {
 			ItemListTable.Attach(label6, 10, 11, 0, 1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
 			
 			var label7 = new Label {Markup = "<b>Комментарий</b>", Xalign = 0, };
-			ItemListTable.Attach(label7, 12, 15, 0, 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+			ItemListTable.Attach(label7, 12, 13, 0, 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 			
 			//Границы таблицы (разделители)
 			ItemListTable.Attach(new VSeparator(), 1, 2, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 			ItemListTable.Attach(new VSeparator(), 3, 4, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 			ItemListTable.Attach(new VSeparator(), 5, 6, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
 			ItemListTable.Attach(new VSeparator(), 9, 10,0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0 ,0);
-			ItemListTable.Attach(new VSeparator(), 11, 12, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 2, 0);			
+			ItemListTable.Attach(new VSeparator(), 11, 12, 0, (uint)(3 * rows + 3), AttachOptions.Shrink, AttachOptions.Fill, 0, 0);			
 			
 			
-           ItemListTable.Attach(new HSeparator(), 0, 15, 1, 2);
-           ItemListTable.Attach(new HSeparator(), 0, 15, 3, 4);
+           ItemListTable.Attach(new HSeparator(), 0, 13, 1, 2);
+           ItemListTable.Attach(new HSeparator(), 0, 13, 3, 4);
 	
             //Заполнение данными
 			uint i = 6;
@@ -75,6 +75,7 @@ namespace Workwear.Views.Visits {
 				TextView textView;
 				Button button;
 				HBox buttonBox = new HBox(false, 2);
+				ScrolledWindow scrolledWindow;
 				uint j = (uint) item.Documents.Count; //смещение многострочных элементов
 
 				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
@@ -137,13 +138,16 @@ namespace Workwear.Views.Visits {
 				ItemListTable.Attach(buttonBox, 10, 11, i, i+1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
                 
 				if(item.Visit != null) { //Пока не даём создавать из программы новые
+					scrolledWindow = new ScrolledWindow();
 					textView = new TextView(); //Коментарий
+					textView.WrapMode = (WrapMode)3;
 					textView.Buffer.Text = item.Comment;
+					scrolledWindow.Add(textView);
 					textView.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, textView.Buffer.Text);
-					ItemListTable.Attach(textView, 12, 15, i, i+j+1, AttachOptions.Fill, AttachOptions.Fill, 0, 0);
+					ItemListTable.Attach(scrolledWindow, 12, 13, i, i+j+1, AttachOptions.Fill, AttachOptions.Fill, 0, 0);
 				}
 
-				ItemListTable.Attach(new HSeparator(), 0, 15, i+j+1, i+j+2);
+				ItemListTable.Attach(new HSeparator(), 0, 13, i+j+1, i+j+2);
 				
 				i += j+2;
 			}
