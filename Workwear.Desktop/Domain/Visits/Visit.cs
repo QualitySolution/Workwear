@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
@@ -61,6 +62,24 @@ namespace Workwear.Domain.Visits {
 			set => SetField(ref comment, value);
 		}
 
+		private DateTime? timeStart;
+		public virtual DateTime? TimeStart {
+			get => timeStart;
+			set => SetField(ref timeStart, value);
+		}
+
+		private DateTime? timeFinish;
+		public virtual DateTime? TimeFinish {
+			get => timeFinish;
+			set => SetField(ref timeFinish, value);
+		}
+
+		private Status status;
+		public virtual Status Status {
+			get => status;
+			set => SetField(ref status, value);
+		}
+
 		public virtual IObservableList<Expense> ExpenseDocuments { get; set; }
 		public virtual IObservableList<Writeoff> WriteoffDocuments { get; set; } 
 		public virtual IObservableList<Return> ReturnDocuments { get; set; }
@@ -77,5 +96,20 @@ namespace Workwear.Domain.Visits {
         }
 
 		#endregion
+	}
+
+	public enum Status {
+		[Display(Name ="Новая")]
+		New,
+		[Display(Name ="В очереди")]
+		Queued,
+		[Display(Name ="В обслуживании")]
+		Serviced,
+		[Display(Name ="Завершена")]
+		Done,
+		[Display(Name ="Отменена")]
+		Canceled,
+		[Display(Name ="Пропущена")]
+		Missing
 	}
 }
