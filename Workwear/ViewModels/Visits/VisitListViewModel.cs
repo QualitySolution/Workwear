@@ -132,7 +132,26 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		public void ChangeAction(VisitListItem item, ActionType type) {
-			
+			switch(type) {
+				case ActionType.Play:
+					item.Visit.TimeStart = DateTime.Now;
+					item.Visit.Status = Status.Serviced;
+					break;
+				case ActionType.Done:
+					item.Visit.TimeFinish = DateTime.Now;
+					item.Visit.Status = Status.Done;
+					break;
+				case ActionType.Cancel:
+					item.Visit.TimeFinish = DateTime.Now;
+					item.Visit.Status = Status.Canceled;
+					break;
+				case ActionType.Close:
+					item.Visit.TimeFinish = DateTime.Now;
+					item.Visit.Status = Status.Missing;
+					break;
+			}
+			UoW.Save(item.Visit);
+			UoW.Commit();
 		}
 		
 		public void AddComment(VisitListItem item, string entryText) {

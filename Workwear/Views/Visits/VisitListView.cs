@@ -117,7 +117,7 @@ namespace Workwear.Views.Visits {
 					Image img = new Image();
 					string name = String.Empty;
 					string toolTip = String.Empty;
-					ActionType type;
+					ActionType type = ActionType.Play;
 					switch(l) {
 						case 0:
 							name = "gtk-media-play";
@@ -143,6 +143,7 @@ namespace Workwear.Views.Visits {
 					img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
 					button.Image = img;
 					button.TooltipText = toolTip;
+					button.Clicked += (sender, args) => ViewModel.ChangeAction(item, type);
 					buttonBox.PackStart(button, false, false, 0);
 				}
 				
