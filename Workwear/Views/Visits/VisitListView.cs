@@ -114,6 +114,7 @@ namespace Workwear.Views.Visits {
 
 				if(item.Visit != null) {
 					for (uint l =0; l < 4; l++) {
+						uint padding = 0;
 						button = new Button();
 						Image img = new Image();
 						string name = String.Empty;
@@ -124,6 +125,7 @@ namespace Workwear.Views.Visits {
 								name = "gtk-media-play";
 								toolTip = "Начать";
 								type = ActionType.Play;
+								padding = 12;
 								break;
 							case 1:
 								name = "gtk-ok";
@@ -145,7 +147,7 @@ namespace Workwear.Views.Visits {
 						button.Image = img;
 						button.TooltipText = toolTip;
 						button.Clicked += (sender, args) => ViewModel.ChangeAction(item, type);
-						buttonBox.PackStart(button, false, false, 0);
+						buttonBox.PackStart(button, false, false, padding);
 					}
 				}
 				
