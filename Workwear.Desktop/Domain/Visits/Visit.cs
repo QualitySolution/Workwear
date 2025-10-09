@@ -86,6 +86,9 @@ namespace Workwear.Domain.Visits {
 
 		#endregion
 
+		#region Sensitive
+		public virtual bool SensitiveActionButtons => Status != Status.Done && Status != Status.Canceled && Status != Status.Missing;
+		#endregion
 		#region Расчётные
 		public virtual string Title => $"Посещение {Employee?.ShortName} ({VisitTime.ToShortDateString()})";
 		

@@ -33,6 +33,7 @@ namespace Workwear.Models.Visits {
 		public string Comment => Visit?.Comment;
 
 		public string DocumentsString => string.Join("\n", Documents.Select(x => x.label));
+		public bool SensitiveActionButtons => Visit.SensitiveActionButtons;
 
 		//Список привязанных документов
 		public List<(StockDocumentType doc, int id, string label)> Documents {

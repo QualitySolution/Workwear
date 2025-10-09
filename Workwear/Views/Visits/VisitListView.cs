@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Gtk;
 using QS.Views.Dialog;
+using Workwear.Models.Visits;
 using Workwear.ViewModels.Visits;
 
 namespace Workwear.Views.Visits {
 	public partial class VisitListView : DialogViewBase<VisitListViewModel> {
+		private readonly Dictionary<VisitListItem, List<Button>> itemActionButtons = new Dictionary<VisitListItem, List<Button>>();
 		public VisitListView(VisitListViewModel viewModel) : base(viewModel) {
 			Build();
 			ConfigureHead();
@@ -113,6 +116,7 @@ namespace Workwear.Views.Visits {
 				}
 
 				if(item.Visit != null) {
+					var buttons = new List<Button>();
 					for (uint l =0; l < 4; l++) {
 						uint padding = 0;
 						button = new Button();
@@ -146,9 +150,16 @@ namespace Workwear.Views.Visits {
 						img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
 						button.Image = img;
 						button.TooltipText = toolTip;
-						button.Clicked += (sender, args) => ViewModel.ChangeAction(item, type);
+						button.Sensitive = item.SensitiveActionButtons;
+						button.Clicked += (sender, args) => {
+							ViewModel.ChangeAction(item, type);
+							if(type == ActionType.Done || type == ActionType.Cancel || type == ActionType.Close)
+								UpdateButtonsSensitive(item, false);
+						};
 						buttonBox.PackStart(button, false, false, padding);
+						buttons.Add(button);
 					}
+					itemActionButtons[item] = buttons;
 				}
 				
 				ItemListTable.Attach(buttonBox, 10, 11, i, i+1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
@@ -168,6 +179,11 @@ namespace Workwear.Views.Visits {
 				i += j+2;
 			}
 			ItemListTable.ShowAll();
+		}
+		private void UpdateButtonsSensitive(VisitListItem item, bool sensitive)
+		{
+			foreach(var btn in itemActionButtons[item])
+				btn.Sensitive = sensitive;
 		}
 
 	}
