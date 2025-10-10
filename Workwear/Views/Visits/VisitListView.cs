@@ -12,14 +12,14 @@ namespace Workwear.Views.Visits {
 		public VisitListView(VisitListViewModel viewModel) : base(viewModel) {
 			Build();
 			ConfigureHead();
-			ConfigureTabel();
+			ConfigureTable();
 
 			ViewModel.PropertyChanged += VmPropertyChanged;
 		}
 
 		private void VmPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(ViewModel.Items)) 
-				ConfigureTabel();
+				ConfigureTable();
 		}
 			
 		private void ConfigureHead() {
@@ -30,7 +30,7 @@ namespace Workwear.Views.Visits {
 			buttonPrev.Clicked += (sender, args) => ViewModel.PrevDay();
 		}
 
-		private void ConfigureTabel() {
+		private void ConfigureTable() {
 			//Очистка
 			foreach (Widget child in ItemListTable.Children) {
 				ItemListTable.Remove(child);
