@@ -8,7 +8,7 @@ using Workwear.ViewModels.Visits;
 
 namespace Workwear.Views.Visits {
 	public partial class VisitListView : DialogViewBase<VisitListViewModel> {
-		private readonly Dictionary<VisitListItem, List<Button>> itemActionButtons = new Dictionary<VisitListItem, List<Button>>();
+		private readonly Dictionary<VisitListItem, List<Widget>> itemWidgets = new Dictionary<VisitListItem, List<Widget>>();
 		public VisitListView(VisitListViewModel viewModel) : base(viewModel) {
 			Build();
 			ConfigureHead();
@@ -36,7 +36,7 @@ namespace Workwear.Views.Visits {
 				ItemListTable.Remove(child);
 				child.Destroy(); 
 			}
-			itemActionButtons.Clear();
+			itemWidgets.Clear();
 			//Шапка
 			var rows = ViewModel.Items.Count;
 			ItemListTable.Resize((uint)(rows + 3), 7);
@@ -73,6 +73,8 @@ namespace Workwear.Views.Visits {
             //Заполнение данными
 			uint i = 6;
 			foreach(var item in ViewModel.Items.Values) {
+				var widgets = new List<Widget>();
+				bool isSensitive = item.Visit == null || item.SensitiveElement;
 				Label label;
 				Entry entry;
 				TextView textView;
@@ -83,13 +85,19 @@ namespace Workwear.Views.Visits {
 
 				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
                 ItemListTable.Attach(label, 0, 1, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-
+                label.Sensitive = isSensitive;
+                widgets.Add(label);
+                
                 label = new Label {LabelProp = item.FIO}; //Сотрудник
                 ItemListTable.Attach(label, 2, 3, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
-
+                label.Sensitive = isSensitive;
+                widgets.Add(label);
+                
                 if(item.CreateTime != null) {
 	                label = new Label { LabelProp = ((DateTime)item.CreateTime).ToShortDateString() }; //Дата создания
 	                ItemListTable.Attach(label, 4, 5, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+	                label.Sensitive = isSensitive;
+	                widgets.Add(label);
                 }
                 
                 if(item.Documents.Count != 0) { //Документы
@@ -113,7 +121,9 @@ namespace Workwear.Views.Visits {
                 
 	                if(!string.IsNullOrEmpty(item.DocumentsString))
 						ItemListTable.Attach(new VSeparator(), 7, 8, i, i+j+1, AttachOptions.Shrink, AttachOptions.Fill, 0, 0);
-				}
+	                button.Sensitive = isSensitive;
+	                widgets.Add(button);
+                }
 
 				if(item.Visit != null) {
 					var buttons = new List<Button>();
@@ -168,12 +178,12 @@ namespace Workwear.Views.Visits {
 						button.Clicked += (sender, args) => {
 							ViewModel.ChangeAction(item, type);
 							if(type == ActionType.Done || type == ActionType.Cancel || type == ActionType.Close)
-								UpdateButtonsSensitive(item, false);
+								UpdateItemSensitive(item, false);
 						};
 						buttonBox.PackStart(button, false, false, padding);
 						buttons.Add(button);
 					}
-					itemActionButtons[item] = buttons;
+					widgets.AddRange(buttons);
 				}
 				
 				ItemListTable.Attach(buttonBox, 10, 11, i, i+1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
@@ -186,18 +196,26 @@ namespace Workwear.Views.Visits {
 					scrolledWindow.Add(textView);
 					textView.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, textView.Buffer.Text);
 					ItemListTable.Attach(scrolledWindow, 12, 13, i, i+j+1, AttachOptions.Fill, AttachOptions.Fill, 0, 0);
+					scrolledWindow.Sensitive = isSensitive;
+					textView.Sensitive = isSensitive;
+					widgets.Add(scrolledWindow);
+					widgets.Add(textView);
 				}
 
+				itemWidgets[item] = widgets;
 				ItemListTable.Attach(new HSeparator(), 0, 13, i+j+1, i+j+2);
 				
 				i += j+2;
 			}
 			ItemListTable.ShowAll();
 		}
-		private void UpdateButtonsSensitive(VisitListItem item, bool sensitive)
+		private void UpdateItemSensitive(VisitListItem item, bool sensitive)
 		{
-			foreach(var btn in itemActionButtons[item])
-				btn.Sensitive = sensitive;
+			if(!itemWidgets.ContainsKey(item))
+				return;
+
+			foreach(var widget in itemWidgets[item])
+				widget.Sensitive = sensitive;
 		}
 
 	}
