@@ -212,6 +212,7 @@ namespace Workwear.Domain.Operations
 		/// </summary>
 		public EmployeeIssueOperation() { }
 		public EmployeeIssueOperation(BaseParameters baseParameters) {
+			startOfUse = OperationTime;
 			useAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 		}
 		#region Расчетные
