@@ -2205,10 +2205,10 @@ create table employee_group_items
 	PRIMARY KEY (`id`),
 	constraint employee_groups_items_unique
 		unique (employee_id, employee_group_id),
-	constraint foreign_key_employee_groups_items_employees
+	constraint `employee_groups_items_employees_fk`
 		foreign key (employee_id) references employees (id)
 			on update cascade on delete cascade,
-	constraint foreign_key_employee_groups_items_employee_groups
+	constraint `employee_groups_items_employee_groups_fk`
 		foreign key (employee_group_id) references employee_groups (id)
 			on update cascade on delete cascade
 );

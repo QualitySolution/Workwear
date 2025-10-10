@@ -389,8 +389,18 @@ alter table clothing_service_claim
 alter table departments
 	drop foreign key fk_departaments_1;
 
+# В ScriptsConfiguration реализовано удаление
+# drop foreign key foreign_key_employee_groups_items_employees;
+# Приводим к ожидаемогу названию
 alter table employee_group_items
-	drop foreign key foreign_key_employee_groups_items_employees;
+	add constraint employee_groups_items_employee_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade;
+
+alter table employee_group_items
+	add constraint employee_groups_items_employee_groups_fk
+		foreign key (employee_group_id) references employee_groups (id)
+			on update cascade on delete cascade;
 
 alter table issuance_sheet
 	drop foreign key fk_issuance_sheet_2;
@@ -704,7 +714,8 @@ WHERE stock_income.operation = 'Enter';
 -- Переименования
 create index stock_income_warehouse_id_index
 	on stock_income (warehouse_id);
-drop index fk_stock_income_1_idx on stock_income;
+# В ScriptsConfiguration реализовано удаление
+#drop index fk_stock_income_1_idx on stock_income;
 
 alter table stock_income
 	add constraint fk_stock_income_warehouse
