@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Gtk;
@@ -36,7 +36,7 @@ namespace Workwear.Views.Visits {
 				ItemListTable.Remove(child);
 				child.Destroy(); 
 			}
-			
+			itemActionButtons.Clear();
 			//Шапка
 			var rows = ViewModel.Items.Count;
 			ItemListTable.Resize((uint)(rows + 3), 7);
