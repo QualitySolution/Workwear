@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Gtk;
@@ -121,36 +121,50 @@ namespace Workwear.Views.Visits {
 						uint padding = 0;
 						button = new Button();
 						Image img = new Image();
-						string name = String.Empty;
+						string buttonName = String.Empty;
+						string iconName = String.Empty;
 						string toolTip = String.Empty;
 						ActionType type = ActionType.Play;
 						switch(l) {
 							case 0:
-								name = "gtk-media-play";
+								buttonName = "play";
+								iconName = "gtk-media-play";
 								toolTip = "Начать";
 								type = ActionType.Play;
 								padding = 12;
 								break;
 							case 1:
-								name = "gtk-ok";
+								buttonName = "done";
+								iconName = "gtk-ok";
 								toolTip = "Завершено";
 								type = ActionType.Done;
 								break;
 							case 2:
-								name = "gtk-close";
+								buttonName = "cancel";
+								iconName = "gtk-close";
 								toolTip = "Отменить";
 								type = ActionType.Cancel;
 								break;
 							case 3:
-								name = "gtk-dialog-error";
+								buttonName = "close";
+								iconName = "gtk-dialog-error";
 								toolTip = "Не пришёл";
 								type = ActionType.Close;
 								break;
 						}
-						img.Pixbuf = Stetic.IconLoader.LoadIcon(this, name, IconSize.Menu);
+						img.Pixbuf = Stetic.IconLoader.LoadIcon(this, iconName, IconSize.Menu);
+						button.Name = buttonName;
 						button.Image = img;
 						button.TooltipText = toolTip;
 						button.Sensitive = item.SensitiveActionButtons;
+						if(item.SensitiveActionButtons) {
+							switch(button.Name) {
+								case "done":
+								case "cancel":
+									button.Sensitive = item.SensitiveDoneAndCanceledButtons;
+									break;
+							}
+						}
 						button.Clicked += (sender, args) => {
 							ViewModel.ChangeAction(item, type);
 							if(type == ActionType.Done || type == ActionType.Cancel || type == ActionType.Close)
