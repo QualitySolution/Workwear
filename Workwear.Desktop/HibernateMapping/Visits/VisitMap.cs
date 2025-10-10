@@ -19,6 +19,9 @@ namespace Workwear.HibernateMapping.Visits {
 			Map(x => x.Cancelled).Column("cancelled");
 			Map(x => x.Done).Column("done");
 			Map(x => x.Comment).Column("comment");
+			Map(x => x.TimeStart).Column("time_start");
+			Map(x => x.TimeFinish).Column("time_finish");
+			Map(x => x.Status).Column("status");
 			
 			References (x => x.Employee).Column ("employee_id");
 
