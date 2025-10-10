@@ -237,6 +237,7 @@ namespace Workwear.Sql
 				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups"); 
 				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_1"); 
 				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_2"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "fk_stock_income_1_idx"); 
 			});
 			configuration.AddUpdate(
 				new Version(2, 9),

@@ -714,7 +714,8 @@ WHERE stock_income.operation = 'Enter';
 -- Переименования
 create index stock_income_warehouse_id_index
 	on stock_income (warehouse_id);
-drop index fk_stock_income_1_idx on stock_income;
+# В ScriptsConfiguration реализовано удаление
+#drop index fk_stock_income_1_idx on stock_income;
 
 alter table stock_income
 	add constraint fk_stock_income_warehouse
