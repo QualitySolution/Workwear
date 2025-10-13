@@ -13,7 +13,7 @@ ALTER TABLE `visits`
     ADD COLUMN `service_type` ENUM('GiveWear','NewEmployee','Unidentified','Dismiss','GiveReport','WriteOff','ClothingService','Appeal') NOT NULL DEFAULT 'Unidentified' AFTER `employee_id`,
     ADD COLUMN `create_from_lk` TINYINT(1) NOT NULL DEFAULT 1 AFTER `employee_create`,
     ADD COLUMN `status` ENUM('New','Queued','Serviced','Done','Canceled','Missing') NOT NULL DEFAULT 'New' AFTER `done`,
-    ADD COLUMN `ticket_number` CHAR(4) NOT NULL DEFAULT '' COMMENT 'Талончик в очереди' AFTER `status`,
+    ADD COLUMN `ticket_number` CHAR(4) NULL DEFAULT '' COMMENT 'Талончик в очереди' AFTER `status`,
     ADD COLUMN `window_id` INT(10) UNSIGNED DEFAULT NULL COMMENT 'ID окна обслуживания' AFTER `ticket_number`,
     ADD COLUMN `time_entry` DATETIME DEFAULT NULL COMMENT 'Время постановки в очередь на ПВ' AFTER `window_id`,
     ADD COLUMN `time_start` DATETIME DEFAULT NULL COMMENT 'Начало обслуживания (перво посещение окна)' AFTER `time_entry`,
