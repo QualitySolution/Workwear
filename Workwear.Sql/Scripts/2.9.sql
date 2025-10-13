@@ -716,13 +716,12 @@ create index stock_income_warehouse_id_index
 	on stock_income (warehouse_id);
 # В ScriptsConfiguration реализовано удаление
 #drop index fk_stock_income_1_idx on stock_income;
+#alter table stock_income drop foreign key fk_stock_income_1;
 
 alter table stock_income
 	add constraint fk_stock_income_warehouse
 		foreign key (warehouse_id) references warehouse (id)
 			on update cascade;
-alter table stock_income
-	drop foreign key fk_stock_income_1;
 
 create index stock_income_doc_number_index
 	on stock_income (doc_number);
