@@ -2019,7 +2019,7 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `title` VARCHAR(24) NULL DEFAULT NOT NULL,
+  `title` VARCHAR(24) NOT NULL,
   `type` enum ('EAN13', 'EPC96') default 'EAN13' not null,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2469,12 +2469,12 @@ CREATE TABLE visit_windows
 (
     id   INT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
-    name CHAR(32) NULL
+    name CHAR(32) NOT NULL
 )
     COMMENT 'информация о окнах';
 
 -- -----------------------------------------------------
--- основная таблица посещеий
+-- основная таблица посещений
 -- -----------------------------------------------------
 CREATE TABLE visits
 (
@@ -2490,7 +2490,7 @@ CREATE TABLE visits
     status          ENUM ('New', 'Queued', 'Serviced', 'Done', 'Canceled', 'Missing')                                NOT NULL DEFAULT 'New',
     ticket_number   CHAR(4)                                                                                          NULL COMMENT 'Талончик в очереди',
     window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
-    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ ',
+    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ',
     time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
     time_finish     DATETIME                                                                                         NULL COMMENT 'Завершение визита',
     cancelled       BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
@@ -2860,7 +2860,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.3');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.4');
 
 COMMIT;
 
