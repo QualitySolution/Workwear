@@ -2783,6 +2783,7 @@ CREATE FUNCTION `quantity_issue`(
     NO SQL
     DETERMINISTIC
     COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
+SQL SECURITY INVOKER
 BEGIN
     DECLARE issue_count INT;
     DECLARE next_issue_new DATE;
@@ -2837,6 +2838,7 @@ CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
 	RETURNS INT
 	DETERMINISTIC
 	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+SQL SECURITY INVOKER
 BEGIN
 RETURN (WITH RECURSIVE date_range AS
 						   (SELECT start_date as sd
