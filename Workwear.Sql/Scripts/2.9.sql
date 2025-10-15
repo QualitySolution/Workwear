@@ -1,8 +1,8 @@
 -- Удаляем механизм выдачи со списанием
-ALTER TABLE stock_expense DROP FOREIGN KEY fk_stock_expense_2;
+ALTER TABLE `stock_expense` DROP FOREIGN KEY `fk_stock_expense_2`;
 ALTER TABLE `stock_expense` DROP `write_off_doc`;
 
-ALTER TABLE operation_issued_by_employee DROP FOREIGN KEY fk_operation_issued_by_employee_6;
+ALTER TABLE `operation_issued_by_employee` DROP FOREIGN KEY `fk_operation_issued_by_employee_6`;
 ALTER TABLE `operation_issued_by_employee` DROP `operation_write_off_id`;
 
 ALTER TABLE `stock_write_off_detail` DROP `akt_number`;
@@ -17,723 +17,722 @@ DROP TABLE `protection_tools_replacement`;
 -- stock_income
 DELETE FROM `stock_income` WHERE `operation` = 'Object';
 
-alter table stock_income
-	modify operation enum ('Enter', 'Return') not null;
+ALTER TABLE `stock_income`
+	MODIFY `operation` ENUM ('Enter', 'Return') NOT NULL;
 
-alter table stock_income
-drop foreign key fk_stock_income_object;
+ALTER TABLE `stock_income`
+DROP FOREIGN KEY `fk_stock_income_object`;
 
-alter table stock_income
-drop column object_id;
+ALTER TABLE `stock_income`
+DROP COLUMN `object_id`;
 
-alter table stock_income_detail
-drop foreign key fk_stock_income_detail_3;
+ALTER TABLE `stock_income_detail`
+DROP FOREIGN KEY `fk_stock_income_detail_3`;
 
-alter table stock_income_detail
-drop column subdivision_issue_operation_id;
+ALTER TABLE `stock_income_detail`
+DROP COLUMN `subdivision_issue_operation_id`;
 
 -- stock_expense
 DELETE FROM `stock_expense` WHERE `operation` = 'Object';
 
-alter table stock_expense
-drop foreign key fk_stock_expense_object_id;
+ALTER TABLE `stock_expense`
+DROP FOREIGN KEY `fk_stock_expense_object_id`;
 
-alter table stock_expense
-drop column operation,
-drop column object_id;
+ALTER TABLE `stock_expense`
+DROP COLUMN `operation`,
+DROP COLUMN `object_id`;
      
-alter table stock_expense_detail
-drop foreign key fk_stock_expense_detail_3,
-drop foreign key fk_stock_expense_detail_placement;
+ALTER TABLE `stock_expense_detail`
+DROP FOREIGN KEY `fk_stock_expense_detail_3`,
+DROP FOREIGN KEY `fk_stock_expense_detail_placement`;
 
-alter table stock_expense_detail
-drop column object_place_id,
-drop column subdivision_issue_operation_id;
+ALTER TABLE `stock_expense_detail`
+DROP COLUMN `object_place_id`,
+DROP COLUMN `subdivision_issue_operation_id`;
      
 -- stock_write_off
-DELETE FROM `stock_write_off_detail` WHERE subdivision_issue_operation_id IS NOT NULL;    
+DELETE FROM `stock_write_off_detail` WHERE `subdivision_issue_operation_id` IS NOT NULL;    
      
-alter table stock_write_off_detail
-drop foreign key fk_stock_write_off_detail_4;
+ALTER TABLE `stock_write_off_detail`
+DROP FOREIGN KEY `fk_stock_write_off_detail_4`;
 
-alter table stock_write_off_detail
-drop column subdivision_issue_operation_id;
+ALTER TABLE `stock_write_off_detail`
+DROP COLUMN `subdivision_issue_operation_id`;
      
 -- operation_issued_in_subdivision
 DROP TABLE `operation_issued_in_subdivision`;
 
 -- object_places
-drop table object_places;
+DROP TABLE `object_places`;
 
 -- удаляем тип номенклатур имущества
 
-alter table item_types 
-	drop column category,
-	drop column norm_life;
+ALTER TABLE `item_types` 
+	DROP COLUMN `category`,
+	DROP COLUMN `norm_life`;
 
 -- переименование таблиц: objects в subdivisions, wear_cards в employees и таблички связи с wear_cards , 
 -- norms_professions в norms_posts, переименование ключей, индексов
 -- вставка данных из старых таблиц в новые
 
 --  norms_posts
-create table norms_posts
+CREATE TABLE `norms_posts`
 (
-	id      int unsigned auto_increment
-		primary key,
-	norm_id int unsigned not null,
-	post_id int unsigned not null,
-	constraint fk_norms_posts_1
-		foreign key (norm_id) references norms (id)
-			on update cascade on delete cascade,
-	constraint fk_norms_posts_2
-		foreign key (post_id) references posts (id)
-			on delete restrict
-			on update cascade
+	`id`      INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`norm_id` INT UNSIGNED NOT NULL,
+	`post_id` INT UNSIGNED NOT NULL,
+	CONSTRAINT `fk_norms_posts_1`
+		FOREIGN KEY (`norm_id`) REFERENCES `norms` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_norms_posts_2`
+		FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE
 );
-insert into norms_posts
-select * from norms_professions;
+INSERT INTO `norms_posts`
+SELECT * FROM `norms_professions`;
 
-create index fk_norms_posts_1_idx
-	on norms_posts (norm_id);
+CREATE INDEX `fk_norms_posts_1_idx`
+	ON `norms_posts` (`norm_id`);
 
-create index fk_norms_posts_2_idx
-	on norms_posts (post_id);
+CREATE INDEX `fk_norms_posts_2_idx`
+	ON `norms_posts` (`post_id`);
 
 -- subdivisions
-create table subdivisions
+CREATE TABLE `subdivisions`
 (
-	id                    int unsigned auto_increment
-		primary key,
-	code                  varchar(20)  null default null,
-	address               text         null default null,
-	name                  varchar(240) not null,
-	warehouse_id          int unsigned null default null,
-	parent_subdivision_id int unsigned null default null,
-	constraint fk_subdivisions_1
-		foreign key (warehouse_id) references warehouse (id)
-			on delete no action
-			on update no action 
+	`id`                    INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`code`                  VARCHAR(20)  NULL DEFAULT NULL,
+	`address`               TEXT         NULL DEFAULT NULL,
+	`name`                  VARCHAR(240) NOT NULL,
+	`warehouse_id`          INT UNSIGNED NULL DEFAULT NULL,
+	`parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
+	CONSTRAINT `fk_subdivisions_1`
+		FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE NO ACTION 
 )
-	collate = utf8mb4_general_ci;
+	COLLATE = utf8mb4_general_ci;
 
-insert into subdivisions
-select * from objects;
+INSERT INTO `subdivisions`
+SELECT * FROM `objects`;
 
-alter table subdivisions
-	add constraint fk_subdivisions_2
-		foreign key (parent_subdivision_id) references subdivisions (id)
-			on delete set null
-			on update no action;
+ALTER TABLE `subdivisions`
+	ADD CONSTRAINT `fk_subdivisions_2`
+		FOREIGN KEY (`parent_subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON DELETE SET NULL
+			ON UPDATE NO ACTION;
 
-create index fk_subdivisions_1_idx
-	on subdivisions (warehouse_id);
+CREATE INDEX `fk_subdivisions_1_idx`
+	ON `subdivisions` (`warehouse_id`);
 
-create index fk_subdivisions_2_idx
-	on subdivisions (parent_subdivision_id);
+CREATE INDEX `fk_subdivisions_2_idx`
+	ON `subdivisions` (`parent_subdivision_id`);
 
-create index index_subdivisions_code
-	on subdivisions (code);
+CREATE INDEX `index_subdivisions_code`
+	ON `subdivisions` (`code`);
 
 -- employees
-create table employees
+CREATE TABLE `employees`
 (
-	id                      int unsigned auto_increment
-		primary key,
-	last_update             timestamp  default current_timestamp() not null on update current_timestamp(),
-	card_number             varchar(15)                            null default null,
-	personnel_number        varchar(15)                            null default null,
-	last_name               varchar(20)                            null,
-	first_name              varchar(20)                            null,
-	patronymic_name         varchar(20)                            null,
-	card_key                varchar(16)                            null default null,
-	subdivision_id          int unsigned                           null default null,
-	department_id           int unsigned                           null default null,
-	hire_date               date                                   null default null,
-	change_of_position_date date                                   null default null,
-	dismiss_date            date                                   null default null,
-	post_id                 int unsigned                           null default null,
-	leader_id               int unsigned                           null default null,
-	sex                     enum ('F', 'M')                        null default null,
-	birth_date              date                                   null default null,
-	user_id                 int unsigned                           null default null,
-	phone_number            varchar(16)                            null default null,
-	lk_registered           tinyint(1) default 0                   not null default 0,
-	email                   text                                   null default null,
-	photo                   mediumblob                             null default null,
-	comment                 text                                   null default null,
-	constraint card_key_UNIQUE
-		unique (card_key),
-	constraint card_number_UNIQUE
-		unique (card_number),
-	constraint fk_employees_department
-		foreign key (department_id) references departments (id)
-			on update cascade on delete set null,
-	constraint fk_employees_leader
-		foreign key (leader_id) references leaders (id)
-			on update cascade on delete set null,
-	constraint fk_employees_post
-		foreign key (post_id) references posts (id)
-			on update cascade on delete set null,
-	constraint fk_employees_subdivision
-		foreign key (subdivision_id) references subdivisions (id)
-			on update cascade on delete set null,
-	constraint fk_employees_user
-		foreign key (user_id) references users (id)
-			on update cascade on delete set null
+	`id`                      INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`last_update`             TIMESTAMP  DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP(),
+	`card_number`             VARCHAR(15)                            NULL DEFAULT NULL,
+	`personnel_number`        VARCHAR(15)                            NULL DEFAULT NULL,
+	`last_name`               VARCHAR(20)                            NULL,
+	`first_name`              VARCHAR(20)                            NULL,
+	`patronymic_name`         VARCHAR(20)                            NULL,
+	`card_key`                VARCHAR(16)                            NULL DEFAULT NULL,
+	`subdivision_id`          INT UNSIGNED                           NULL DEFAULT NULL,
+	`department_id`           INT UNSIGNED                           NULL DEFAULT NULL,
+	`hire_date`               DATE                                   NULL DEFAULT NULL,
+	`change_of_position_date` DATE                                   NULL DEFAULT NULL,
+	`dismiss_date`            DATE                                   NULL DEFAULT NULL,
+	`post_id`                 INT UNSIGNED                           NULL DEFAULT NULL,
+	`leader_id`               INT UNSIGNED                           NULL DEFAULT NULL,
+	`sex`                     ENUM ('F', 'M')                        NULL DEFAULT NULL,
+	`birth_date`              DATE                                   NULL DEFAULT NULL,
+	`user_id`                 INT UNSIGNED                           NULL DEFAULT NULL,
+	`phone_number`            VARCHAR(16)                            NULL DEFAULT NULL,
+	`lk_registered`           TINYINT(1) DEFAULT 0                   NOT NULL,
+	`email`                   TEXT                                   NULL DEFAULT NULL,
+	`photo`                   MEDIUMBLOB                             NULL DEFAULT NULL,
+	`comment`                 TEXT                                   NULL DEFAULT NULL,
+	CONSTRAINT `card_key_UNIQUE`
+		UNIQUE (`card_key`),
+	CONSTRAINT `card_number_UNIQUE`
+		UNIQUE (`card_number`),
+	CONSTRAINT `fk_employees_department`
+		FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_employees_leader`
+		FOREIGN KEY (`leader_id`) REFERENCES `leaders` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_employees_post`
+		FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_employees_subdivision`
+		FOREIGN KEY (`subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_employees_user`
+		FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-insert into employees
-select * from wear_cards;
+INSERT INTO `employees`
+SELECT * FROM `wear_cards`;
 
-create index fk_employees_department_idx
-	on employees (department_id);
+CREATE INDEX `fk_employees_department_idx`
+	ON `employees` (`department_id`);
 
-create index fk_employees_leader_idx
-	on employees (leader_id);
+CREATE INDEX `fk_employees_leader_idx`
+	ON `employees` (`leader_id`);
 
-create index fk_employees_post_idx
-	on employees (post_id);
+CREATE INDEX `fk_employees_post_idx`
+	ON `employees` (`post_id`);
 
-create index fk_employees_subdivision_idx
-	on employees (subdivision_id);
+CREATE INDEX `fk_employees_subdivision_idx`
+	ON `employees` (`subdivision_id`);
 
-create index fk_employees_user_idx
-	on employees (user_id);
+CREATE INDEX `fk_employees_user_idx`
+	ON `employees` (`user_id`);
 
-create index index_employees_dismiss_date
-	on employees (dismiss_date);
+CREATE INDEX `index_employees_dismiss_date`
+	ON `employees` (`dismiss_date`);
 
-create index index_employees_first_name
-	on employees (first_name);
+CREATE INDEX `index_employees_first_name`
+	ON `employees` (`first_name`);
 
-create index index_employees_last_name
-	on employees (last_name);
+CREATE INDEX `index_employees_last_name`
+	ON `employees` (`last_name`);
 
-create index index_employees_patronymic_name
-	on employees (patronymic_name);
+CREATE INDEX `index_employees_patronymic_name`
+	ON `employees` (`patronymic_name`);
 
-create index index_employees_personal_number
-	on employees (personnel_number);
+CREATE INDEX `index_employees_personal_number`
+	ON `employees` (`personnel_number`);
 
-create index index_employees_phone_number
-	on employees (phone_number);
+CREATE INDEX `index_employees_phone_number`
+	ON `employees` (`phone_number`);
 
-create index last_update
-	on employees (last_update);
+CREATE INDEX `last_update`
+	ON `employees` (`last_update`);
 
 -- employee_cards_item
-create table employee_cards_item
+CREATE TABLE `employee_cards_item`
 (
-	id                    int unsigned auto_increment
-		primary key,
-	employee_id           int unsigned not null,
-	protection_tools_id   int unsigned not null,
-	norm_item_id          int unsigned null,
-	created               date         null,
-	next_issue            date         null,
-	next_issue_annotation varchar(240) null default null,
-	constraint fk_employee_cards_item_2
-		foreign key (protection_tools_id) references protection_tools (id)
-			on delete restrict
-			on update cascade,
-	constraint fk_employee_cards_item_3
-		foreign key (norm_item_id) references norms_item (id)
-			on delete restrict
-			on update cascade,
-	constraint fk_employees_item_1
-		foreign key (employee_id) references employees (id)
-			on delete restrict
-			on update cascade
+	`id`                    INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`employee_id`           INT UNSIGNED NOT NULL,
+	`protection_tools_id`   INT UNSIGNED NOT NULL,
+	`norm_item_id`          INT UNSIGNED NULL,
+	`created`               DATE         NULL,
+	`next_issue`            DATE         NULL,
+	`next_issue_annotation` VARCHAR(240) NULL DEFAULT NULL,
+	CONSTRAINT `fk_employee_cards_item_2`
+		FOREIGN KEY (`protection_tools_id`) REFERENCES `protection_tools` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_employee_cards_item_3`
+		FOREIGN KEY (`norm_item_id`) REFERENCES `norms_item` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_employees_item_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE
 );
 
-insert into employee_cards_item
-select * from wear_cards_item;
+INSERT INTO `employee_cards_item`
+SELECT * FROM `wear_cards_item`;
 
-create index fk_employee_cards_item_2_idx
-	on employee_cards_item (protection_tools_id);
+CREATE INDEX `fk_employee_cards_item_2_idx`
+	ON `employee_cards_item` (`protection_tools_id`);
 
-create index fk_employee_cards_item_3_idx
-	on employee_cards_item (norm_item_id);
+CREATE INDEX `fk_employee_cards_item_3_idx`
+	ON `employee_cards_item` (`norm_item_id`);
 
-create index fk_employees_item_1_idx
-	on employee_cards_item (employee_id);
+CREATE INDEX `fk_employees_item_1_idx`
+	ON `employee_cards_item` (`employee_id`);
 
-create index index_employee_cards_item_next_issue
-	on employee_cards_item (next_issue);
+CREATE INDEX `index_employee_cards_item_next_issue`
+	ON `employee_cards_item` (`next_issue`);
 
 -- employees_cost_allocation
-create table employees_cost_allocation
+CREATE TABLE `employees_cost_allocation`
 (
-	id             int unsigned auto_increment
-		primary key,
-	employee_id    int unsigned                        not null,
-	cost_center_id int unsigned                        not null,
-	percent        decimal(3, 2) unsigned default 1.00 not null,
-	constraint employees_cost_allocation_ibfk_1
-		foreign key (cost_center_id) references cost_center (id)
-			on delete restrict
-			on update cascade,
-	constraint employees_cost_allocation_ibfk_2
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade
+	`id`             INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`employee_id`    INT UNSIGNED                        NOT NULL,
+	`cost_center_id` INT UNSIGNED                        NOT NULL,
+	`percent`        DECIMAL(3, 2) UNSIGNED DEFAULT 1.00 NOT NULL,
+	CONSTRAINT `employees_cost_allocation_ibfk_1`
+		FOREIGN KEY (`cost_center_id`) REFERENCES `cost_center` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE,
+	CONSTRAINT `employees_cost_allocation_ibfk_2`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-insert into employees_cost_allocation
-select * from wear_cards_cost_allocation;
+INSERT INTO `employees_cost_allocation`
+SELECT * FROM `wear_cards_cost_allocation`;
 
 -- employees_norms
-create table employees_norms
+CREATE TABLE `employees_norms`
 (
-	id          int unsigned auto_increment
-		primary key,
-	employee_id int unsigned not null,
-	norm_id     int unsigned not null,
-	constraint fk_employees_norms_1
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
-	constraint fk_employees_norms_2
-		foreign key (norm_id) references norms (id)
-			on update cascade on delete cascade
+	`id`          INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`employee_id` INT UNSIGNED NOT NULL,
+	`norm_id`     INT UNSIGNED NOT NULL,
+	CONSTRAINT `fk_employees_norms_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_employees_norms_2`
+		FOREIGN KEY (`norm_id`) REFERENCES `norms` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-insert into employees_norms
-select * from wear_cards_norms;
+INSERT INTO `employees_norms`
+SELECT * FROM `wear_cards_norms`;
 
-create index fk_employees_norms_1_idx
-	on employees_norms (employee_id);
+CREATE INDEX `fk_employees_norms_1_idx`
+	ON `employees_norms` (`employee_id`);
 
-create index fk_employees_norms_2_idx
-	on employees_norms (norm_id);
+CREATE INDEX `fk_employees_norms_2_idx`
+	ON `employees_norms` (`norm_id`);
 
 -- employees_sizes
-create table employees_sizes
+CREATE TABLE `employees_sizes`
 (
-	id           int unsigned auto_increment
-		primary key,
-	employee_id  int unsigned not null comment 'Сотрудник для которого установлен размер',
-	size_type_id int unsigned not null comment 'Тип размера, не может быть установлено несколько размеров одного типа одному сотруднику',
-	size_id      int unsigned not null,
-	constraint employees_sizes_unique
-		unique using btree(employee_id, size_type_id),
-	constraint fk_employees_sizes_1
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
-	constraint fk_employees_sizes_2
-		foreign key (size_type_id) references size_types (id)
-			on update cascade on delete cascade,
-	constraint fk_employees_sizes_3
-		foreign key (size_id) references sizes (id)
-			on update cascade on delete cascade
+	`id`           INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`employee_id`  INT UNSIGNED NOT NULL COMMENT 'Сотрудник для которого установлен размер',
+	`size_type_id` INT UNSIGNED NOT NULL COMMENT 'Тип размера, не может быть установлено несколько размеров одного типа одному сотруднику',
+	`size_id`      INT UNSIGNED NOT NULL,
+	CONSTRAINT `employees_sizes_unique`
+		UNIQUE USING BTREE(`employee_id`, `size_type_id`),
+	CONSTRAINT `fk_employees_sizes_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_employees_sizes_2`
+		FOREIGN KEY (`size_type_id`) REFERENCES `size_types` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_employees_sizes_3`
+		FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-insert into employees_sizes
-select * from wear_cards_sizes;
+INSERT INTO `employees_sizes`
+SELECT * FROM `wear_cards_sizes`;
 
-create index fk_employees_sizes_1_idx
-	on employees_sizes (employee_id);
+CREATE INDEX `fk_employees_sizes_1_idx`
+	ON `employees_sizes` (`employee_id`);
 
-create index fk_employees_sizes_2_idx
-	on employees_sizes (size_type_id);
+CREATE INDEX `fk_employees_sizes_2_idx`
+	ON `employees_sizes` (`size_type_id`);
 
-create index fk_employees_sizes_3_idx
-	on employees_sizes (size_id);
+CREATE INDEX `fk_employees_sizes_3_idx`
+	ON `employees_sizes` (`size_id`);
 
 -- employees_vacations
-create table employees_vacations
+CREATE TABLE `employees_vacations`
 (
-	id               int unsigned auto_increment
-		primary key,
-	employee_id      int unsigned not null,
-	vacation_type_id int unsigned not null,
-	begin_date       date         not null,
-	end_date         date         not null,
-	comment          text         null default null,
-	constraint fk_employees_vacations_1
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
-	constraint fk_employees_vacations_2
-		foreign key (vacation_type_id) references vacation_type (id)
-			on delete restrict
-			on update cascade
+	`id`               INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`employee_id`      INT UNSIGNED NOT NULL,
+	`vacation_type_id` INT UNSIGNED NOT NULL,
+	`begin_date`       DATE         NOT NULL,
+	`end_date`         DATE         NOT NULL,
+	`comment`          TEXT         NULL DEFAULT NULL,
+	CONSTRAINT `fk_employees_vacations_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_employees_vacations_2`
+		FOREIGN KEY (`vacation_type_id`) REFERENCES `vacation_type` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE
 );
 
-insert into employees_vacations
-select * from wear_cards_vacations;
+INSERT INTO `employees_vacations`
+SELECT * FROM `wear_cards_vacations`;
 
-create index fk_employees_vacations_1_idx
-	on employees_vacations (employee_id);
+CREATE INDEX `fk_employees_vacations_1_idx`
+	ON `employees_vacations` (`employee_id`);
 
-create index fk_employees_vacations_2_idx
-	on employees_vacations (vacation_type_id);
+CREATE INDEX `fk_employees_vacations_2_idx`
+	ON `employees_vacations` (`vacation_type_id`);
 
 -- Другие таблицы
 
-alter table stock_expense
-	change column wear_card_id employee_id int unsigned null;
+ALTER TABLE `stock_expense`
+	CHANGE COLUMN `wear_card_id` `employee_id` INT UNSIGNED NULL;
 
-create index fk_stock_expense_employee_idx
-	on stock_expense (employee_id);
-alter table stock_income
-	change column wear_card_id employee_id int unsigned null;
+CREATE INDEX `fk_stock_expense_employee_idx`
+	ON `stock_expense` (`employee_id`);
+ALTER TABLE `stock_income`
+	CHANGE COLUMN `wear_card_id` `employee_id` INT UNSIGNED NULL;
 
-create index fk_stock_income_employee_idx
-	on stock_income (employee_id);
+CREATE INDEX `fk_stock_income_employee_idx`
+	ON `stock_income` (`employee_id`);
 
-alter table employee_group_items
-	add constraint employee_groups_items_unique
-		unique (employee_id, employee_group_id);
+ALTER TABLE `employee_group_items`
+	ADD CONSTRAINT `employee_groups_items_unique`
+		UNIQUE (`employee_id`, `employee_group_id`);
 
-alter table clothing_service_claim
-	drop foreign key fk_clothing_service_claim_employee_id;
+ALTER TABLE `clothing_service_claim`
+	DROP FOREIGN KEY `fk_clothing_service_claim_employee_id`;
 
-alter table departments
-	drop foreign key fk_departaments_1;
+ALTER TABLE `departments`
+	DROP FOREIGN KEY `fk_departaments_1`;
 
 # В ScriptsConfiguration реализовано удаление
-# drop foreign key foreign_key_employee_groups_items_employees;
-# Приводим к ожидаемогу названию
-alter table employee_group_items
-	add constraint employee_groups_items_employee_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade;
+# DROP FOREIGN KEY foreign_key_employee_groups_items_employees;
+# Приводим к ожидаемому названию
+ALTER TABLE `employee_group_items`
+	ADD CONSTRAINT `employee_groups_items_employee_fk`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE;
 
-alter table employee_group_items
-	add constraint employee_groups_items_employee_groups_fk
-		foreign key (employee_group_id) references employee_groups (id)
-			on update cascade on delete cascade;
+ALTER TABLE `employee_group_items`
+	ADD CONSTRAINT `employee_groups_items_employee_groups_fk`
+		FOREIGN KEY (`employee_group_id`) REFERENCES `employee_groups` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE;
 
-alter table issuance_sheet
-	drop foreign key fk_issuance_sheet_2;
+ALTER TABLE `issuance_sheet`
+	DROP FOREIGN KEY `fk_issuance_sheet_2`;
 
-alter table issuance_sheet
-	drop foreign key fk_issuance_sheet_8;
+ALTER TABLE `issuance_sheet`
+	DROP FOREIGN KEY `fk_issuance_sheet_8`;
 
-alter table issuance_sheet_items
-	drop foreign key fk_issuance_sheet_items_2;
+ALTER TABLE `issuance_sheet_items`
+	DROP FOREIGN KEY `fk_issuance_sheet_items_2`;
 
-alter table leaders
-	drop foreign key fk_leaders_1;
+ALTER TABLE `leaders`
+	DROP FOREIGN KEY `fk_leaders_1`;
 
-alter table operation_issued_by_employee
-	drop foreign key fk_operation_issued_by_employee_1;
+ALTER TABLE `operation_issued_by_employee`
+	DROP FOREIGN KEY `fk_operation_issued_by_employee_1`;
 
-alter table postomat_document_items
-	drop foreign key fk_postomat_document_items_employee_id;
+ALTER TABLE `postomat_document_items`
+	DROP FOREIGN KEY `fk_postomat_document_items_employee_id`;
 
-alter table postomat_document_withdraw_items
-	drop foreign key fk_postomat_document_withdraw_items_employee_id;
+ALTER TABLE `postomat_document_withdraw_items`
+	DROP FOREIGN KEY `fk_postomat_document_withdraw_items_employee_id`;
 
-alter table posts
-	drop foreign key fk_posts_subdivision;
+ALTER TABLE `posts`
+	DROP FOREIGN KEY `fk_posts_subdivision`;
 
-alter table stock_collective_expense
-	drop foreign key fk_stock_collective_expense_3;
+ALTER TABLE `stock_collective_expense`
+	DROP FOREIGN KEY `fk_stock_collective_expense_3`;
 
-alter table stock_collective_expense_detail
-	drop foreign key fk_stock_collective_expense_detail_6;
+ALTER TABLE `stock_collective_expense_detail`
+	DROP FOREIGN KEY `fk_stock_collective_expense_detail_6`;
 
-alter table stock_expense
-	drop foreign key fk_stock_expense_wear_card;
+ALTER TABLE `stock_expense`
+	DROP FOREIGN KEY `fk_stock_expense_wear_card`;
 
-alter table stock_income
-	drop foreign key fk_stock_income_wear_card;
+ALTER TABLE `stock_income`
+	DROP FOREIGN KEY `fk_stock_income_wear_card`;
 
-alter table departments
-	add constraint fk_departaments_1
-		foreign key (subdivision_id) references subdivisions (id)
-			on update cascade on delete set null;
+ALTER TABLE `departments`
+	ADD CONSTRAINT `fk_departaments_1`
+		FOREIGN KEY (`subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL;
 
-alter table clothing_service_claim
-	add constraint fk_clothing_service_claim_employee_id
-		foreign key (employee_id) references employees (id);
+ALTER TABLE `clothing_service_claim`
+	ADD CONSTRAINT `fk_clothing_service_claim_employee_id`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`);
 
-alter table employee_group_items
-	add constraint foreign_key_employee_groups_items_employees
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade;
+ALTER TABLE `employee_group_items`
+	ADD CONSTRAINT `foreign_key_employee_groups_items_employees`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE;
 
-alter table issuance_sheet
-	add constraint fk_issuance_sheet_2
-		foreign key (subdivision_id) references subdivisions (id)
-			on delete no action
-			on update cascade;
+ALTER TABLE `issuance_sheet`
+	ADD CONSTRAINT `fk_issuance_sheet_2`
+		FOREIGN KEY (`subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
 
-alter table issuance_sheet
-	add constraint fk_issuance_sheet_8
-		foreign key (transfer_agent_id) references employees (id)
-			on delete no action
-			on update cascade;
+ALTER TABLE `issuance_sheet`
+	ADD CONSTRAINT `fk_issuance_sheet_8`
+		FOREIGN KEY (`transfer_agent_id`) REFERENCES `employees` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
 
-alter table issuance_sheet_items
-	add constraint fk_issuance_sheet_items_2
-		foreign key (employee_id) references employees (id)
-			on delete no action
-			on update cascade;
+ALTER TABLE `issuance_sheet_items`
+	ADD CONSTRAINT `fk_issuance_sheet_items_2`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
 
-alter table leaders
-	add constraint fk_leaders_1
-		foreign key (employee_id) references employees (id)
-			on delete no action
-			on update cascade;
+ALTER TABLE `leaders`
+	ADD CONSTRAINT `fk_leaders_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
 
-alter table operation_issued_by_employee
-	add constraint fk_operation_issued_by_employee_1
-		foreign key (employee_id) references employees (id)
-			on delete restrict
-			on update cascade;
+ALTER TABLE `operation_issued_by_employee`
+	ADD CONSTRAINT `fk_operation_issued_by_employee_1`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE;
 
-alter table postomat_document_items
-	add constraint fk_postomat_document_items_employee_id
-		foreign key (employee_id) references employees (id);
+ALTER TABLE `postomat_document_items`
+	ADD CONSTRAINT `fk_postomat_document_items_employee_id`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`);
 
-alter table postomat_document_withdraw_items
-	add constraint fk_postomat_document_withdraw_items_employee_id
-		foreign key (employee_id) references employees (id);
+ALTER TABLE `postomat_document_withdraw_items`
+	ADD CONSTRAINT `fk_postomat_document_withdraw_items_employee_id`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`);
 
-alter table posts
-	add constraint fk_posts_subdivision
-		foreign key (subdivision_id) references subdivisions (id)
-			on update cascade on delete set null;
+ALTER TABLE `posts`
+	ADD CONSTRAINT `fk_posts_subdivision`
+		FOREIGN KEY (`subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL;
 
-alter table stock_collective_expense
-	add constraint fk_stock_collective_expense_3
-		foreign key (transfer_agent_id) references employees (id)
-			on delete restrict
-			on update cascade;
+ALTER TABLE `stock_collective_expense`
+	ADD CONSTRAINT `fk_stock_collective_expense_3`
+		FOREIGN KEY (`transfer_agent_id`) REFERENCES `employees` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE;
 
-alter table stock_collective_expense_detail
-	add constraint fk_stock_collective_expense_detail_6
-		foreign key (employee_id) references employees (id)
-			on delete no action
-			on update cascade;
+ALTER TABLE `stock_collective_expense_detail`
+	ADD CONSTRAINT `fk_stock_collective_expense_detail_6`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE NO ACTION
+			ON UPDATE CASCADE;
 
-alter table stock_expense
-	add constraint fk_stock_expense_employee
-		foreign key (employee_id) references employees (id)
-			on delete restrict
-			on update cascade;
+ALTER TABLE `stock_expense`
+	ADD CONSTRAINT `fk_stock_expense_employee`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE;
 
-alter table stock_income
-	add constraint fk_stock_income_employee
-		foreign key (employee_id) references employees (id)
-			on delete restrict
-			on update cascade;
+ALTER TABLE `stock_income`
+	ADD CONSTRAINT `fk_stock_income_employee`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE RESTRICT
+			ON UPDATE CASCADE;
 
 -- Удаляем
 
-alter table employee_group_items
-	drop key wear_card_groups_items_unique;
+ALTER TABLE `employee_group_items`
+	DROP KEY `wear_card_groups_items_unique`;
 
-drop index fk_stock_expense_wear_card_idx on stock_expense;
+DROP INDEX `fk_stock_expense_wear_card_idx` ON `stock_expense`;
 
-drop index fk_stock_income_wear_card_idx on stock_income;
+DROP INDEX `fk_stock_income_wear_card_idx` ON `stock_income`;
 
-drop table norms_professions;
+DROP TABLE `norms_professions`;
 
-drop table wear_cards_cost_allocation;
+DROP TABLE `wear_cards_cost_allocation`;
 
-drop table wear_cards_item;
+DROP TABLE `wear_cards_item`;
 
-drop table wear_cards_norms;
+DROP TABLE `wear_cards_norms`;
 
-drop table wear_cards_sizes;
+DROP TABLE `wear_cards_sizes`;
 
-drop table wear_cards_vacations;
+DROP TABLE `wear_cards_vacations`;
 
-drop table wear_cards;
+DROP TABLE `wear_cards`;
 
-drop table objects;
+DROP TABLE `objects`;
 
 -- Разделяем документ поступления и возврата
 
 -- Документ возврата
-create table stock_return
+CREATE TABLE `stock_return`
 (
-	id            int unsigned auto_increment
-		primary key,
-	doc_number    varchar(16)  null,
-	date          date         not null,
-	warehouse_id  int unsigned not null,
-	employee_id   int unsigned not null,
-	user_id       int unsigned null,
-	comment       text         null,
-	creation_date datetime     null,
-	constraint stock_return_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
-	constraint stock_return_users_id_fk
-		foreign key (user_id) references users (id)
-			on update cascade on delete set null,
-	constraint stock_return_warehouse_id_fk
-		foreign key (warehouse_id) references warehouse (id)
-			on update cascade on delete cascade
+	`id`            INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`doc_number`    VARCHAR(16)  NULL,
+	`date`          DATE         NOT NULL,
+	`warehouse_id`  INT UNSIGNED NOT NULL,
+	`employee_id`   INT UNSIGNED NOT NULL,
+	`user_id`       INT UNSIGNED NULL,
+	`comment`       TEXT         NULL,
+	`creation_date` DATETIME     NULL,
+	CONSTRAINT `stock_return_employees_id_fk`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `stock_return_users_id_fk`
+		FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `stock_return_warehouse_id_fk`
+		FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create index stock_return_date_index
-	on stock_return (date);
+CREATE INDEX `stock_return_date_index`
+	ON `stock_return` (`date`);
 
-create index stock_return_doc_number_index
-	on stock_return (doc_number);
+CREATE INDEX `stock_return_doc_number_index`
+	ON `stock_return` (`doc_number`);
 
-create index stock_return_employee_id_index
-	on stock_return (employee_id);
+CREATE INDEX `stock_return_employee_id_index`
+	ON `stock_return` (`employee_id`);
 
-create index stock_income_warehouse_id_index
-	on stock_return (warehouse_id);
+CREATE INDEX `stock_income_warehouse_id_index`
+	ON `stock_return` (`warehouse_id`);
 
-create table stock_return_items
+CREATE TABLE `stock_return_items`
 (
-	id                          int unsigned auto_increment
-		primary key,
-	stock_return_id             int unsigned not null,
-	nomenclature_id             int unsigned not null,
-	quantity                    int unsigned not null,
-	employee_issue_operation_id int unsigned not null,
-	warehouse_operation_id      int unsigned not null,
-	size_id                     int unsigned null,
-	height_id                   int unsigned null,
-	comment_return              varchar(120) null,
-	constraint fk_stock_return_items_doc
-		foreign key (stock_return_id) references stock_return (id)
-			on update cascade on delete cascade,
-	constraint fk_stock_return_items_height
-		foreign key (height_id) references sizes (id)
-			on update cascade,
-	constraint fk_stock_return_items_nomenclature
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade,
-	constraint fk_stock_return_items_operation_issue
-		foreign key (employee_issue_operation_id) references operation_issued_by_employee (id),
-	constraint fk_stock_return_items_operation_warehouse
-		foreign key (warehouse_operation_id) references operation_warehouse (id),
-	constraint fk_stock_return_items_size
-		foreign key (size_id) references sizes (id)
-			on update cascade
+	`id`                          INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`stock_return_id`             INT UNSIGNED NOT NULL,
+	`nomenclature_id`             INT UNSIGNED NOT NULL,
+	`quantity`                    INT UNSIGNED NOT NULL,
+	`employee_issue_operation_id` INT UNSIGNED NOT NULL,
+	`warehouse_operation_id`      INT UNSIGNED NOT NULL,
+	`size_id`                     INT UNSIGNED NULL,
+	`height_id`                   INT UNSIGNED NULL,
+	`comment_return`              VARCHAR(120) NULL,
+	CONSTRAINT `fk_stock_return_items_doc`
+		FOREIGN KEY (`stock_return_id`) REFERENCES `stock_return` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_stock_return_items_height`
+		FOREIGN KEY (`height_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_return_items_nomenclature`
+		FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_return_items_operation_issue`
+		FOREIGN KEY (`employee_issue_operation_id`) REFERENCES `operation_issued_by_employee` (`id`),
+	CONSTRAINT `fk_stock_return_items_operation_warehouse`
+		FOREIGN KEY (`warehouse_operation_id`) REFERENCES `operation_warehouse` (`id`),
+	CONSTRAINT `fk_stock_return_items_size`
+		FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE
 );
 
-create index index_stock_return_items_doc
-	on stock_return_items (stock_return_id);
+CREATE INDEX `index_stock_return_items_doc`
+	ON `stock_return_items` (`stock_return_id`);
 
-create index index_stock_return_items_height
-	on stock_return_items (height_id);
+CREATE INDEX `index_stock_return_items_height`
+	ON `stock_return_items` (`height_id`);
 
-create index index_stock_return_items_nomenclature
-	on stock_return_items (nomenclature_id);
+CREATE INDEX `index_stock_return_items_nomenclature`
+	ON `stock_return_items` (`nomenclature_id`);
 
-create index index_stock_return_items_size
-	on stock_return_items (size_id);
+CREATE INDEX `index_stock_return_items_size`
+	ON `stock_return_items` (`size_id`);
 
-create index index_stock_return_items_warehouse_operation
-	on stock_return_items (warehouse_operation_id);
+CREATE INDEX `index_stock_return_items_warehouse_operation`
+	ON `stock_return_items` (`warehouse_operation_id`);
 
 -- Перенос данных
-INSERT INTO stock_return (id, doc_number, date, warehouse_id, employee_id, user_id, comment, creation_date)
-SELECT id, doc_number, date, warehouse_id, employee_id, user_id, comment, creation_date
-FROM stock_income
-WHERE operation = 'Return';
+INSERT INTO `stock_return` (`id`, `doc_number`, `date`, `warehouse_id`, `employee_id`, `user_id`, `comment`, `creation_date`)
+SELECT `id`, `doc_number`, `date`, `warehouse_id`, `employee_id`, `user_id`, `comment`, `creation_date`
+FROM `stock_income`
+WHERE `operation` = 'Return';
 
-INSERT INTO stock_return_items (stock_return_id, nomenclature_id, quantity, employee_issue_operation_id, warehouse_operation_id, size_id, height_id, comment_return)
+INSERT INTO `stock_return_items` (`stock_return_id`, `nomenclature_id`, `quantity`, `employee_issue_operation_id`, `warehouse_operation_id`, `size_id`, `height_id`, `comment_return`)
 SELECT
-	stock_income_detail.stock_income_id as stock_return_id,
-	stock_income_detail.nomenclature_id,
-	stock_income_detail.quantity,
-	stock_income_detail.employee_issue_operation_id,
-	stock_income_detail.warehouse_operation_id,
-	stock_income_detail.size_id,
-	stock_income_detail.height_id,
-	stock_income_detail.comment_return
-FROM stock_income_detail
-		 LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
-WHERE stock_income.operation = 'Return';
+	`stock_income_detail`.`stock_income_id` AS `stock_return_id`,
+	`stock_income_detail`.`nomenclature_id`,
+	`stock_income_detail`.`quantity`,
+	`stock_income_detail`.`employee_issue_operation_id`,
+	`stock_income_detail`.`warehouse_operation_id`,
+	`stock_income_detail`.`size_id`,
+	`stock_income_detail`.`height_id`,
+	`stock_income_detail`.`comment_return`
+FROM `stock_income_detail`
+		 LEFT JOIN `stock_income` ON `stock_income_detail`.`stock_income_id` = `stock_income`.`id`
+WHERE `stock_income`.`operation` = 'Return';
 
-DELETE FROM stock_income_detail WHERE stock_income_detail.stock_income_id in
-									  (SELECT id FROM stock_income WHERE operation = 'Return');
+DELETE FROM `stock_income_detail` WHERE `stock_income_detail`.`stock_income_id` IN
+									  (SELECT `id` FROM `stock_income` WHERE `operation` = 'Return');
 
-DELETE FROM stock_income WHERE stock_income.operation = 'Return';
+DELETE FROM `stock_income` WHERE `stock_income`.`operation` = 'Return';
 
 -- Переименование stock_income_detail
-create table stock_income_items
+CREATE TABLE `stock_income_items`
 (
-	id                     int unsigned auto_increment
-		primary key,
-	stock_income_id        int unsigned                         not null,
-	nomenclature_id        int unsigned                         not null,
-	quantity               int unsigned                         not null,
-	cost                   decimal(10, 2) unsigned default 0.00 not null,
-	certificate            varchar(40)                          null,
-	warehouse_operation_id int unsigned                         not null,
-	size_id                int unsigned                         null,
-	height_id              int unsigned                         null,
-	comment                varchar(120)                         null,
-	constraint fk_stock_income_items_doc
-		foreign key (stock_income_id) references stock_income (id)
-			on update cascade on delete cascade,
-	constraint fk_stock_income_items_height_id
-		foreign key (height_id) references sizes (id)
-			on update cascade,
-	constraint fk_stock_income_items_nomenclature
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade,
-	constraint fk_stock_income_items_operation_warehouse
-		foreign key (warehouse_operation_id) references operation_warehouse (id),
-	constraint fk_stock_income_items_size
-		foreign key (size_id) references sizes (id)
-			on update cascade
+	`id`                     INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`stock_income_id`        INT UNSIGNED                         NOT NULL,
+	`nomenclature_id`        INT UNSIGNED                         NOT NULL,
+	`quantity`               INT UNSIGNED                         NOT NULL,
+	`cost`                   DECIMAL(10, 2) UNSIGNED DEFAULT 0.00 NOT NULL,
+	`certificate`            VARCHAR(40)                          NULL,
+	`warehouse_operation_id` INT UNSIGNED                         NOT NULL,
+	`size_id`                INT UNSIGNED                         NULL,
+	`height_id`              INT UNSIGNED                         NULL,
+	`comment`                VARCHAR(120)                         NULL,
+	CONSTRAINT `fk_stock_income_items_doc`
+		FOREIGN KEY (`stock_income_id`) REFERENCES `stock_income` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_stock_income_items_height_id`
+		FOREIGN KEY (`height_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_income_items_nomenclature`
+		FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_income_items_operation_warehouse`
+		FOREIGN KEY (`warehouse_operation_id`) REFERENCES `operation_warehouse` (`id`),
+	CONSTRAINT `fk_stock_income_items_size`
+		FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE
 );
 
-create index index_stock_income_items_doc
-	on stock_income_items (stock_income_id);
+CREATE INDEX `index_stock_income_items_doc`
+	ON `stock_income_items` (`stock_income_id`);
 
-create index index_stock_income_items_height
-	on stock_income_items (height_id);
+CREATE INDEX `index_stock_income_items_height`
+	ON `stock_income_items` (`height_id`);
 
-create index index_stock_income_items_nomenclature
-	on stock_income_items (nomenclature_id);
+CREATE INDEX `index_stock_income_items_nomenclature`
+	ON `stock_income_items` (`nomenclature_id`);
 
-create index index_stock_income_items_size
-	on stock_income_items (size_id);
+CREATE INDEX `index_stock_income_items_size`
+	ON `stock_income_items` (`size_id`);
 
-create index index_stock_income_items_warehouse_operation
-	on stock_income_items (warehouse_operation_id);
+CREATE INDEX `index_stock_income_items_warehouse_operation`
+	ON `stock_income_items` (`warehouse_operation_id`);
 
 -- Перенос данных
-INSERT INTO stock_income_items (stock_income_id, nomenclature_id, quantity, cost, certificate, warehouse_operation_id, size_id, height_id) 
+INSERT INTO `stock_income_items` (`stock_income_id`, `nomenclature_id`, `quantity`, `cost`, `certificate`, `warehouse_operation_id`, `size_id`, `height_id`) 
 SELECT
-	stock_income_detail.stock_income_id,
-	stock_income_detail.nomenclature_id,
-	stock_income_detail.quantity,
-	stock_income_detail.cost,
-	stock_income_detail.certificate,
-	stock_income_detail.warehouse_operation_id,
-	stock_income_detail.size_id,
-	stock_income_detail.height_id
-FROM stock_income_detail
-		 LEFT JOIN stock_income ON stock_income_detail.stock_income_id = stock_income.id
-WHERE stock_income.operation = 'Enter';
+	`stock_income_detail`.`stock_income_id`,
+	`stock_income_detail`.`nomenclature_id`,
+	`stock_income_detail`.`quantity`,
+	`stock_income_detail`.`cost`,
+	`stock_income_detail`.`certificate`,
+	`stock_income_detail`.`warehouse_operation_id`,
+	`stock_income_detail`.`size_id`,
+	`stock_income_detail`.`height_id`
+FROM `stock_income_detail`
+		 LEFT JOIN `stock_income` ON `stock_income_detail`.`stock_income_id` = `stock_income`.`id`
+WHERE `stock_income`.`operation` = 'Enter';
 
 -- Переименования
-create index stock_income_warehouse_id_index
-	on stock_income (warehouse_id);
+CREATE INDEX `stock_income_warehouse_id_index`
+	ON `stock_income` (`warehouse_id`);
 # В ScriptsConfiguration реализовано удаление
-#drop index fk_stock_income_1_idx on stock_income;
-#alter table stock_income drop foreign key fk_stock_income_1;
+#DROP INDEX fk_stock_income_1_idx ON stock_income;
+#ALTER TABLE stock_income DROP FOREIGN KEY fk_stock_income_1;
 
-alter table stock_income
-	add constraint fk_stock_income_warehouse
-		foreign key (warehouse_id) references warehouse (id)
-			on update cascade;
+ALTER TABLE `stock_income`
+	ADD CONSTRAINT `fk_stock_income_warehouse`
+		FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`)
+			ON UPDATE CASCADE;
 
-create index stock_income_doc_number_index
-	on stock_income (doc_number);
+CREATE INDEX `stock_income_doc_number_index`
+	ON `stock_income` (`doc_number`);
 
 -- Удаления
-alter table stock_income
-    drop column operation;
+ALTER TABLE `stock_income`
+    DROP COLUMN `operation`;
 
-alter table stock_income
-	drop foreign key fk_stock_income_employee;
-alter table stock_income
-	drop column employee_id;
+ALTER TABLE `stock_income`
+	DROP FOREIGN KEY `fk_stock_income_employee`;
+ALTER TABLE `stock_income`
+	DROP COLUMN `employee_id`;
 
-drop table stock_income_detail;
-
+DROP TABLE `stock_income_detail`;

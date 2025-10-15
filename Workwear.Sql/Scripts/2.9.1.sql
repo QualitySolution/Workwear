@@ -2,165 +2,165 @@
 -- Добавляем Дежурные нормы
 --
 
-create table duty_norms
+CREATE TABLE `duty_norms`
 (
-	id                   int unsigned auto_increment
-        primary key,
-	name                 varchar(200) charset utf8mb4 null,
-	responsible_leder_id int unsigned 				  null,
-	responsible_employee_id int unsigned 			  null,
-	subdivision_id 		 int unsigned 				  null, 
-	datefrom             datetime                     null,
-	dateto               datetime                     null,
-	comment              text charset utf8mb4         null,
-	constraint duty_norms_employees_id_fk
-		foreign key (responsible_employee_id) references employees (id)
-			on delete set null on update cascade,
-	constraint duty_norms_leaders_surname_fk
-		foreign key (responsible_leder_id) references leaders (id)
-			on delete set null on update cascade,
-	constraint duty_norms_subdivisions_id_fk
-		foreign key (subdivision_id) references subdivisions (id)
-			on delete set null on update cascade
+	`id`                   INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+	`name`                 		VARCHAR(200) CHARSET utf8mb4 NULL,
+	`responsible_leder_id` 		INT UNSIGNED 				 NULL,
+	`responsible_employee_id` 	INT UNSIGNED 			     NULL,
+	`subdivision_id` 		 	INT UNSIGNED 				 NULL, 
+	`datefrom`             		DATETIME                     NULL,
+	`dateto`               		DATETIME                     NULL,
+	`comment`              		TEXT CHARSET utf8mb4         NULL,
+	CONSTRAINT `duty_norms_employees_id_fk`
+		FOREIGN KEY (`responsible_employee_id`) REFERENCES `employees` (`id`)
+			ON DELETE SET NULL ON UPDATE CASCADE,
+	CONSTRAINT `duty_norms_leaders_surname_fk`
+		FOREIGN KEY (`responsible_leder_id`) REFERENCES `leaders` (`id`)
+			ON DELETE SET NULL ON UPDATE CASCADE,
+	CONSTRAINT `duty_norms_subdivisions_id_fk`
+		FOREIGN KEY (`subdivision_id`) REFERENCES `subdivisions` (`id`)
+			ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-create table duty_norm_items
+CREATE TABLE `duty_norm_items`
 (
-	id                  int unsigned auto_increment
-        primary key,
-	duty_norm_id        int unsigned                                              not null,
-	protection_tools_id int unsigned                                              not null,
-	amount              int unsigned                               default 1      not null,
-	period_type         enum ('Year', 'Month', 'Wearout') default 'Year' not null,
-	period_count        tinyint unsigned                           default 1      not null,
-	next_issue          date                                                      null,
-	norm_paragraph      varchar(200)                                              null comment 'Пункт норм, основание выдачи',
-	comment             text                                                      null,
-	constraint fk_duty_norms_item_norm
-		foreign key (duty_norm_id) references duty_norms (id)
-			on update cascade,
-	constraint fk_duty_norms_item_protection_tools
-		foreign key (protection_tools_id) references protection_tools (id)
-			on update cascade
+	`id`                  INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+	`duty_norm_id`        INT UNSIGNED                                              NOT NULL,
+	`protection_tools_id` INT UNSIGNED                                              NOT NULL,
+	`amount`              INT UNSIGNED                               DEFAULT 1      NOT NULL,
+	`period_type`         ENUM ('Year', 'Month', 'Wearout') DEFAULT 'Year' NOT NULL,
+	`period_count`        TINYINT UNSIGNED                           DEFAULT 1      NOT NULL,
+	`next_issue`          DATE                                                      NULL,
+	`norm_paragraph`      VARCHAR(200)                                              NULL COMMENT 'Пункт норм, основание выдачи',
+	`comment`             TEXT                                                      NULL,
+	CONSTRAINT `fk_duty_norms_item_norm`
+		FOREIGN KEY (`duty_norm_id`) REFERENCES `duty_norms` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_duty_norms_item_protection_tools`
+		FOREIGN KEY (`protection_tools_id`) REFERENCES `protection_tools` (`id`)
+			ON UPDATE CASCADE
 );
 
-create table operation_issued_by_duty_norm
+CREATE TABLE `operation_issued_by_duty_norm`
 (
-	id                     int unsigned auto_increment
-        primary key,
-	operation_time         datetime                                           not null,
-	last_update            timestamp              default current_timestamp() not null on update current_timestamp(),
-	nomenclature_id        int unsigned                                       null,
-	duty_norm_item_id      int unsigned                                       null,
-	duty_norm_id           int unsigned                                       not null,
-	size_id                int unsigned                                       null,
-	height_id              int unsigned                                       null,
-	wear_percent           decimal(3, 2) unsigned default 1.00                not null,
-	issued                 int                    default 0                   not null,
-	returned               int                    default 0                   not null,
-	auto_writeoff          tinyint(1)             default 1                   not null,
-	auto_writeoff_date     date                                               null,
-	protection_tools_id    int unsigned                                       null,
-	start_of_use           date                                               null,
-	expiry_by_norm         date                                               null,
-	issued_operation_id    int unsigned                                       null,
-	warehouse_operation_id int unsigned                                       null,
-	override_before        tinyint(1)             default 0                   not null,
-	comment                text                                               null,
-	constraint fk_operation_issued_by_duty_norm_height
-		foreign key (height_id) references sizes (id)
-			on update cascade,
-	constraint fk_operation_issued_by_duty_norm_issued_operation
-		foreign key (issued_operation_id) references operation_issued_by_duty_norm (id)
-			on update cascade on delete cascade,
-	constraint fk_operation_issued_by_duty_norm_nomenclature
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade,
-	constraint fk_operation_issued_by_duty_norm_norm
-		foreign key (duty_norm_id) references duty_norms (id)
-			on update cascade on delete cascade,
-	constraint fk_operation_issued_by_duty_norm_operation_warehouse
-		foreign key (warehouse_operation_id) references operation_warehouse (id)
-			on update cascade,
-	constraint fk_operation_issued_by_duty_norm_protection_tools
-		foreign key (protection_tools_id) references protection_tools (id)
-			on update cascade on delete set null,
-	constraint fk_operation_issued_by_duty_norm_size
-		foreign key (size_id) references sizes (id)
-			on update cascade,
-	constraint fk_operation_issued_by_employee_duty_norm_item
-		foreign key (duty_norm_item_id) references duty_norm_items (id)
-			on update cascade on delete set null
+	`id`                     INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+	`operation_time`         DATETIME                                           NOT NULL,
+	`last_update`            TIMESTAMP              DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP(),
+	`nomenclature_id`        INT UNSIGNED                                       NULL,
+	`duty_norm_item_id`      INT UNSIGNED                                       NULL,
+	`duty_norm_id`           INT UNSIGNED                                       NOT NULL,
+	`size_id`                INT UNSIGNED                                       NULL,
+	`height_id`              INT UNSIGNED                                       NULL,
+	`wear_percent`           DECIMAL(3, 2) UNSIGNED DEFAULT 1.00                NOT NULL,
+	`issued`                 INT                    DEFAULT 0                   NOT NULL,
+	`returned`               INT                    DEFAULT 0                   NOT NULL,
+	`auto_writeoff`          TINYINT(1)             DEFAULT 1                   NOT NULL,
+	`auto_writeoff_date`     DATE                                               NULL,
+	`protection_tools_id`    INT UNSIGNED                                       NULL,
+	`start_of_use`           DATE                                               NULL,
+	`expiry_by_norm`         DATE                                               NULL,
+	`issued_operation_id`    INT UNSIGNED                                       NULL,
+	`warehouse_operation_id` INT UNSIGNED                                       NULL,
+	`override_before`        TINYINT(1)             DEFAULT 0                   NOT NULL,
+	`comment`                TEXT                                               NULL,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_height`
+		FOREIGN KEY (`height_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_issued_operation`
+		FOREIGN KEY (`issued_operation_id`) REFERENCES `operation_issued_by_duty_norm` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_nomenclature`
+		FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_norm`
+		FOREIGN KEY (`duty_norm_id`) REFERENCES `duty_norms` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_operation_warehouse`
+		FOREIGN KEY (`warehouse_operation_id`) REFERENCES `operation_warehouse` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_protection_tools`
+		FOREIGN KEY (`protection_tools_id`) REFERENCES `protection_tools` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_operation_issued_by_duty_norm_size`
+		FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_operation_issued_by_employee_duty_norm_item`
+		FOREIGN KEY (`duty_norm_item_id`) REFERENCES `duty_norm_items` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-create index operation_issued_by_duty_norm_last_update_idx
-	on operation_issued_by_duty_norm (last_update);
+CREATE INDEX `operation_issued_by_duty_norm_last_update_idx`
+	ON `operation_issued_by_duty_norm` (`last_update`);
 
-create index operation_issued_by_duty_norm_operation_time_idx
-	on operation_issued_by_duty_norm (operation_time);
+CREATE INDEX `operation_issued_by_duty_norm_operation_time_idx`
+	ON `operation_issued_by_duty_norm` (`operation_time`);
 
-create index operation_issued_by_duty_norm_wear_percent_idx
-	on operation_issued_by_duty_norm (wear_percent);
+CREATE INDEX `operation_issued_by_duty_norm_wear_percent_idx`
+	ON `operation_issued_by_duty_norm` (`wear_percent`);
 
-create table stock_expense_duty_norm
+CREATE TABLE `stock_expense_duty_norm`
 (
-	id                      int unsigned auto_increment
-        primary key,
-	doc_number              varchar(16)  null,
-	creation_date           datetime     not null  default (CURRENT_DATE()),
-	date                    date         not null,
-	duty_norm_id            int unsigned null,
-	warehouse_id            int unsigned not null,
-	responsible_employee_id int unsigned null,
-	user_id                 int unsigned null,
-	comment                 text         null,
-	constraint fk_stock_expense_duty_norm_norm
-		foreign key (duty_norm_id) references duty_norms (id)
-			on update cascade,
-	constraint fk_stock_expense_duty_norm_responsible_employee
-		foreign key (responsible_employee_id) references employees (id)
-			on update cascade,
-	constraint fk_stock_expense_duty_norm_user
-		foreign key (user_id) references users (id)
-			on update cascade on delete set null,
-	constraint fk_stock_expense_duty_norm_warehouse
-		foreign key (warehouse_id) references warehouse (id)
-			on update cascade
+	`id`                      INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+	`doc_number`              VARCHAR(16)  NULL,
+	`creation_date`           DATETIME     NOT NULL  DEFAULT (CURRENT_DATE()),
+	`date`                    DATE         NOT NULL,
+	`duty_norm_id`            INT UNSIGNED NULL,
+	`warehouse_id`            INT UNSIGNED NOT NULL,
+	`responsible_employee_id` INT UNSIGNED NULL,
+	`user_id`                 INT UNSIGNED NULL,
+	`comment`                 TEXT         NULL,
+	CONSTRAINT `fk_stock_expense_duty_norm_norm`
+		FOREIGN KEY (`duty_norm_id`) REFERENCES `duty_norms` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_expense_duty_norm_responsible_employee`
+		FOREIGN KEY (`responsible_employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_expense_duty_norm_user`
+		FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+			ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT `fk_stock_expense_duty_norm_warehouse`
+		FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`)
+			ON UPDATE CASCADE
 )
-	charset = utf8mb4;
+	CHARSET = utf8mb4;
 
-create index fk_stock_expense_duty_norm_employee_idx
-	on stock_expense_duty_norm (responsible_employee_id);
+CREATE INDEX `fk_stock_expense_duty_norm_employee_idx`
+	ON `stock_expense_duty_norm` (`responsible_employee_id`);
 
-create index fk_stock_expense_duty_norm_user_idx
-	on stock_expense_duty_norm (user_id);
+CREATE INDEX `fk_stock_expense_duty_norm_user_idx`
+	ON `stock_expense_duty_norm` (`user_id`);
 
-create index fk_stock_expense_duty_norm_warehouse_idx
-	on stock_expense_duty_norm (warehouse_id);
+CREATE INDEX `fk_stock_expense_duty_norm_warehouse_idx`
+	ON `stock_expense_duty_norm` (`warehouse_id`);
 
-create index stock_expense_duty_norm_expense_date_idx
-	on stock_expense_duty_norm (date);
+CREATE INDEX `stock_expense_duty_norm_expense_date_idx`
+	ON `stock_expense_duty_norm` (`date`);
 
-create table stock_expense_duty_norm_items
+CREATE TABLE `stock_expense_duty_norm_items`
 (
-	id                               int unsigned auto_increment
-		primary key,
-	stock_expense_duty_norm_id       int unsigned not null,
-	operation_issued_by_duty_norm_id int unsigned null,
-	warehouse_operation_id           int unsigned not null,
-	constraint fk_stock_expense_duty_norm_items_operation_issued_by_duty_norm
-		foreign key (operation_issued_by_duty_norm_id) references operation_issued_by_duty_norm (id)
-			on update cascade,
-	constraint fk_stock_expense_duty_norm_items_operation_warehouse
-		foreign key (warehouse_operation_id) references operation_warehouse (id),
-	constraint fk_stock_expense_duty_norm_items_stock_expense_duty_norm
-		foreign key (stock_expense_duty_norm_id) references stock_expense_duty_norm (id)
-			on update cascade on delete cascade
+	`id`                               INT UNSIGNED AUTO_INCREMENT
+		PRIMARY KEY,
+	`stock_expense_duty_norm_id`       INT UNSIGNED NOT NULL,
+	`operation_issued_by_duty_norm_id` INT UNSIGNED NULL,
+	`warehouse_operation_id`           INT UNSIGNED NOT NULL,
+	CONSTRAINT `fk_stock_expense_duty_norm_items_operation_issued_by_duty_norm`
+		FOREIGN KEY (`operation_issued_by_duty_norm_id`) REFERENCES `operation_issued_by_duty_norm` (`id`)
+			ON UPDATE CASCADE,
+	CONSTRAINT `fk_stock_expense_duty_norm_items_operation_warehouse`
+		FOREIGN KEY (`warehouse_operation_id`) REFERENCES `operation_warehouse` (`id`),
+	CONSTRAINT `fk_stock_expense_duty_norm_items_stock_expense_duty_norm`
+		FOREIGN KEY (`stock_expense_duty_norm_id`) REFERENCES `stock_expense_duty_norm` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create index fk_stock_expense_duty_norm_items_operation_idx
-	on stock_expense_duty_norm_items (operation_issued_by_duty_norm_id);
-create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
-	on stock_expense_duty_norm_items (warehouse_operation_id);
-create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
-	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
+CREATE INDEX `fk_stock_expense_duty_norm_items_operation_idx`
+	ON `stock_expense_duty_norm_items` (`operation_issued_by_duty_norm_id`);
+CREATE INDEX `fk_stock_expense_duty_norm_items_warehouse_operation_idx`
+	ON `stock_expense_duty_norm_items` (`warehouse_operation_id`);
+CREATE INDEX `fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx`
+	ON `stock_expense_duty_norm_items` (`stock_expense_duty_norm_id`);

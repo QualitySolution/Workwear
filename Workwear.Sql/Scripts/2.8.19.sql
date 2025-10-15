@@ -1,8 +1,8 @@
-﻿alter table `postomat_document_items`
-	modify column `cell_number` varchar(10) null default null;
+﻿ALTER TABLE `postomat_document_items`
+	MODIFY COLUMN `cell_number` VARCHAR(10) NULL DEFAULT NULL;
 
-alter table posts
-	add archival TINYINT(1) not null DEFAULT 0 after cost_center_id;
+ALTER TABLE `posts`
+	ADD `archival` TINYINT(1) NOT NULL DEFAULT 0 AFTER `cost_center_id`;
 
-alter table norms
-	add archival TINYINT(1) not null DEFAULT 0  after dateto;
+ALTER TABLE `norms`
+	ADD `archival` TINYINT(1) NOT NULL DEFAULT 0  AFTER `dateto`;

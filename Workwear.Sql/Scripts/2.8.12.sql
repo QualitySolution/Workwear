@@ -9,5 +9,5 @@ ALTER TABLE `postomat_document_items` ADD `claim_id` INT UNSIGNED NULL DEFAULT N
 ALTER TABLE `postomat_document_items` ADD CONSTRAINT `fk_claim_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- Версионирование для штрихкодов
-ALTER TABLE `barcodes` ADD `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `creation_date`;
+ALTER TABLE `barcodes` ADD `last_update` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `creation_date`;
 ALTER TABLE `barcodes` ADD INDEX(`last_update`);

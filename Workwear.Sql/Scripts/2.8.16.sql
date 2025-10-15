@@ -1,3 +1,3 @@
 ﻿-- Добавляем поле  Email сотруднику
-alter table wear_cards
-	add email text null after lk_registered;
+ALTER TABLE wear_cards
+	ADD email TEXT NULL AFTER lk_registered;

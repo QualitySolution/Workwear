@@ -1,33 +1,33 @@
-﻿create table if not exists `protection_tools_category_for_analytics`
+﻿CREATE TABLE IF NOT EXISTS `protection_tools_category_for_analytics`
 (
-	`id`   int(11) unsigned not null auto_increment primary key,
-	`name` varchar(100)     not null,
-	`comment` text null default null
+	`id`   INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	`name` VARCHAR(100)     NOT NULL,
+	`comment` TEXT NULL DEFAULT NULL
 );
 
-alter table `protection_tools`
-	add column
-		`category_for_analytic_id` int unsigned null default null,
-	add constraint `FK_protection_tools_category_for_analytics`
-		foreign key (`category_for_analytic_id`)
-			references `protection_tools_category_for_analytics` (`id`)
-			on delete set null
-			on update cascade;
+ALTER TABLE `protection_tools`
+	ADD COLUMN
+		`category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
+	ADD CONSTRAINT `FK_protection_tools_category_for_analytics`
+		FOREIGN KEY (`category_for_analytic_id`)
+			REFERENCES `protection_tools_category_for_analytics` (`id`)
+			ON DELETE SET NULL
+			ON UPDATE CASCADE;
 
-alter table stock_collective_expense
-	add doc_number varchar(16) null after id;
+ALTER TABLE `stock_collective_expense`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `id`;
 
-alter table stock_expense
-	add doc_number varchar(16) null after operation;
+ALTER TABLE `stock_expense`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `operation`;
 
-alter table stock_income
-	add doc_number varchar(16) null after operation;
+ALTER TABLE `stock_income`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `operation`;
 
-alter table issuance_sheet
-	add doc_number varchar(16) null after id;
+ALTER TABLE `issuance_sheet`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `id`;
 
-alter table stock_write_off
-	add doc_number varchar(16) null after id;
+ALTER TABLE `stock_write_off`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `id`;
 
-alter table stock_inspection
-	add doc_number varchar(16) null after id;
+ALTER TABLE `stock_inspection`
+	ADD `doc_number` VARCHAR(16) NULL AFTER `id`;

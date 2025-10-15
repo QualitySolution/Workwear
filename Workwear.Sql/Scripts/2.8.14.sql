@@ -1,7 +1,6 @@
 ﻿# Снимаем лишнее ограничение
-alter table norms_item
-	modify amount int unsigned default 1 not null;
+ALTER TABLE norms_item
+	MODIFY amount INT UNSIGNED DEFAULT 1 NOT NULL;
 
-alter table issuance_sheet_items
-	modify amount int unsigned not null;
-
+ALTER TABLE issuance_sheet_items
+	MODIFY amount INT UNSIGNED NOT NULL;

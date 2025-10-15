@@ -8,7 +8,7 @@ CREATE FUNCTION `quantity_issue`(
 	`end_date` DATE,
 	`begin_Issue_Period` DATE,
 	`end_Issue_Period` DATE)
-	RETURNS int(10) unsigned
+	RETURNS INT(10) UNSIGNED
     NO SQL
     DETERMINISTIC
     COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
@@ -82,32 +82,32 @@ END $$;
 DELIMITER ;
 
 -- Добавление дополнительной информации в номенклатуру
-ALTER TABLE nomenclature
-	ADD COLUMN additional_info TEXT NULL DEFAULT NULL AFTER number;
+ALTER TABLE `nomenclature`
+	ADD COLUMN `additional_info` TEXT NULL DEFAULT NULL AFTER `number`;
 
 -- ------------------------------------------------------
 -- Запрет смены размера для потребности в личном кабинете
 -- ------------------------------------------------------
-alter table protection_tools
-	add size_change int null  comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта' 
-		after dispenser;
+ALTER TABLE `protection_tools`
+	ADD `size_change` INT NULL  COMMENT 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта' 
+		AFTER `dispenser`;
 
 -- Новое расписание работы склада
-create table days_schedule (
-	   id   	     	int unsigned auto_increment,
-	   date 		 	date null 			comment 'Если указана дата, то расписание действует только на эту дату',
-	   day_of_week 		int unsigned null 	comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
-	   start 			time null 			comment 'Время начала рабочего дня, если null, то день нерабочий',
-	   end 		    	time null 			comment 'Время окончания рабочего дня, если null, то день нерабочий',
-	   visit_interval  	int unsigned null 	comment 'Интервал между записями на приём в минутах, если null, то день нерабочий',
-	   comment 	 		text null,
-	   constraint days_schedule
-		   primary key (id)
+CREATE TABLE `days_schedule` (
+	   `id`   	     	INT UNSIGNED AUTO_INCREMENT,
+	   `date` 		 	DATE NULL 			COMMENT 'Если указана дата, то расписание действует только на эту дату',
+	   `day_of_week` 	INT UNSIGNED NULL 	COMMENT 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	   `start` 			TIME NULL 			COMMENT 'Время начала рабочего дня, если null, то день нерабочий',
+	   `end` 		    TIME NULL 			COMMENT 'Время окончания рабочего дня, если null, то день нерабочий',
+	   `visit_interval` INT UNSIGNED NULL 	COMMENT 'Интервал между записями на приём в минутах, если null, то день нерабочий',
+	   `comment` 	 	TEXT NULL,
+	   CONSTRAINT `days_schedule`
+		   PRIMARY KEY (`id`)
 );
 
 -- Добавление поля для уведомлений о просроченных вещах
-alter table postomat_document_items
-	add column notification_sent boolean not null default false;
+ALTER TABLE `postomat_document_items`
+	ADD COLUMN `notification_sent` BOOLEAN NOT NULL DEFAULT FALSE;
 
 -- Создаем пропущенные индексы для снижения нагрузки на ЦП сервиса постаматов
 ALTER TABLE `clothing_service_states` ADD INDEX(`operation_time`);
@@ -115,58 +115,58 @@ ALTER TABLE `clothing_service_states` ADD INDEX(`operation_time`);
 -- ---------------------------------------------
 -- Каталог, выбор пользователем предпочтительных номенклатур
 -- ---------------------------------------------
-alter table nomenclature
-	add catalog_id char(24) null after archival;
+ALTER TABLE `nomenclature`
+	ADD `catalog_id` CHAR(24) NULL AFTER `archival`;
 
-alter table protection_tools_nomenclature
-	add can_choose boolean default false not null;
+ALTER TABLE `protection_tools_nomenclature`
+	ADD `can_choose` BOOLEAN DEFAULT FALSE NOT NULL;
 
-create table employees_selected_nomenclatures
+CREATE TABLE `employees_selected_nomenclatures`
 (
-	id                  int unsigned auto_increment,
-	employee_id         int unsigned not null,
-	protection_tools_id int unsigned not null,
-	nomenclature_id     int unsigned not null,
-	constraint employees_selected_nomenclatures_pk
-		primary key (id),
-	constraint employees_selected_nomenclatures_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
-	constraint employees_selected_nomenclatures_nomenclature_id_fk
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade on delete cascade,
-	constraint employees_selected_nomenclatures_protection_tools_id_fk
-		foreign key (protection_tools_id) references protection_tools (id)
-			on update cascade on delete cascade
+	`id`                  INT UNSIGNED AUTO_INCREMENT,
+	`employee_id`         INT UNSIGNED NOT NULL,
+	`protection_tools_id` INT UNSIGNED NOT NULL,
+	`nomenclature_id`     INT UNSIGNED NOT NULL,
+	CONSTRAINT `employees_selected_nomenclatures_pk`
+		PRIMARY KEY (`id`),
+	CONSTRAINT `employees_selected_nomenclatures_employees_id_fk`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `employees_selected_nomenclatures_nomenclature_id_fk`
+		FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `employees_selected_nomenclatures_protection_tools_id_fk`
+		FOREIGN KEY (`protection_tools_id`) REFERENCES `protection_tools` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 )
-	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
+	COMMENT 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
 
 -- Добавление операции выдачи по дежурной норме в ведомость
-ALTER TABLE issuance_sheet_items 
-	ADD COLUMN duty_norm_issue_operation_id int(10) unsigned NULL DEFAULT NULL AFTER issued_operation_id;
+ALTER TABLE `issuance_sheet_items` 
+	ADD COLUMN `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `issued_operation_id`;
 
-ALTER TABLE issuance_sheet_items
-	ADD CONSTRAINT fk_issuance_sheet_items_duty_norm_issue_operation_id
-		FOREIGN KEY (duty_norm_issue_operation_id) REFERENCES operation_issued_by_duty_norm(id)
+ALTER TABLE `issuance_sheet_items`
+	ADD CONSTRAINT `fk_issuance_sheet_items_duty_norm_issue_operation_id`
+		FOREIGN KEY (`duty_norm_issue_operation_id`) REFERENCES `operation_issued_by_duty_norm`(`id`)
 			ON UPDATE CASCADE 
 			ON DELETE NO ACTION;
 
-CREATE INDEX fk_issuance_sheet_items_duty_norm_issue_operation_idx 
-	ON issuance_sheet_items(duty_norm_issue_operation_id ASC);
+CREATE INDEX `fk_issuance_sheet_items_duty_norm_issue_operation_idx` 
+	ON `issuance_sheet_items`(`duty_norm_issue_operation_id` ASC);
 
 -- Добавление операций выдачи по дежурной норме в операции со штрихкодами
-ALTER TABLE operation_barcodes
-	ADD COLUMN duty_norm_issue_operation_id int(10) unsigned NULL DEFAULT NULL AFTER employee_issue_operation_id;
+ALTER TABLE `operation_barcodes`
+	ADD COLUMN `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `employee_issue_operation_id`;
 
-ALTER TABLE operation_barcodes
-	ADD CONSTRAINT fk_operation_barcodes_duty_norm_issue_operation_id
-		FOREIGN KEY (duty_norm_issue_operation_id) REFERENCES operation_issued_by_duty_norm(id)
+ALTER TABLE `operation_barcodes`
+	ADD CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
+		FOREIGN KEY (`duty_norm_issue_operation_id`) REFERENCES `operation_issued_by_duty_norm`(`id`)
 			ON UPDATE CASCADE
 			ON DELETE NO ACTION;
 
-CREATE INDEX fk_operation_barcodes_duty_norm_issue_operation_id_idx
-	ON operation_barcodes(duty_norm_issue_operation_id ASC);
+CREATE INDEX `fk_operation_barcodes_duty_norm_issue_operation_id_idx`
+	ON `operation_barcodes`(`duty_norm_issue_operation_id` ASC);
 
 -- Подсветка в журнале сотрудников по подразделению
-alter table subdivisions
-	add employees_color varchar(7) null;
+ALTER TABLE `subdivisions`
+	ADD `employees_color` VARCHAR(7) NULL;

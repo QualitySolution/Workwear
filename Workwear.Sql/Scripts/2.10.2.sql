@@ -1,122 +1,122 @@
 -- Добавление поля для архивации номенклатуры нормы
-alter table protection_tools 
-	add column archival bool not null default false;
+ALTER TABLE `protection_tools` 
+	ADD COLUMN `archival` BOOL NOT NULL DEFAULT FALSE;
 
 -- Черновик документа выдачи
-alter table stock_expense
-	add issue_date date null after date;
+ALTER TABLE `stock_expense`
+	ADD `issue_date` DATE NULL AFTER `date`;
 
-update stock_expense set issue_date = date where issue_date is null;
+UPDATE `stock_expense` SET `issue_date` = `date` WHERE `issue_date` IS NULL;
 
 -- Записи на посещение
-create table visits
+CREATE TABLE `visits`
 (
-	id              int unsigned auto_increment,
-	create_date     datetime              not null,
-	visit_date      datetime              not null,
-	employee_id     int unsigned          not null,
-	employee_create boolean default TRUE  not null,
-	done            boolean default FALSE not null,
-	cancelled       boolean default FALSE not null,
-	comment         text                  null,
-	constraint visits_pk
-		primary key (id),
-	constraint visits_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade
+	`id`              INT UNSIGNED AUTO_INCREMENT,
+	`create_date`     DATETIME              NOT NULL,
+	`visit_date`      DATETIME              NOT NULL,
+	`employee_id`     INT UNSIGNED          NOT NULL,
+	`employee_create` BOOLEAN DEFAULT TRUE  NOT NULL,
+	`done`            BOOLEAN DEFAULT FALSE NOT NULL,
+	`cancelled`       BOOLEAN DEFAULT FALSE NOT NULL,
+	`comment`         TEXT                  NULL,
+	CONSTRAINT `visits_pk`
+		PRIMARY KEY (`id`),
+	CONSTRAINT `visits_employees_id_fk`
+		FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create index visits_create_date_index
-	on visits (create_date);
-create index visits_visit_date_index
-	on visits (visit_date);
+CREATE INDEX `visits_create_date_index`
+	ON `visits` (`create_date`);
+CREATE INDEX `visits_visit_date_index`
+	ON `visits` (`visit_date`);
 
 
-create table visits_documents
+CREATE TABLE `visits_documents`
 (
-	id         int unsigned auto_increment
-        primary key,
-	visit_id   int unsigned not null,
-	expence_id int unsigned null,
-	writeof_id int unsigned null,
-	return_id  int unsigned null,
-	constraint visits_documents_stock_expense_id_fk
-		foreign key (expence_id) references stock_expense (id)
-			on update cascade on delete cascade,
-	constraint visits_documents_stock_return_id_fk
-		foreign key (return_id) references stock_return (id)
-			on update cascade on delete cascade,
-	constraint visits_documents_stock_write_off_organization_id_fk
-		foreign key (writeof_id) references stock_write_off (id)
-			on update cascade on delete cascade,
-	constraint visits_documents_visits_id_fk
-		foreign key (visit_id) references visits (id)
-			on update cascade on delete cascade
+	`id`         INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+	`visit_id`   INT UNSIGNED NOT NULL,
+	`expence_id` INT UNSIGNED NULL,
+	`writeof_id` INT UNSIGNED NULL,
+	`return_id`  INT UNSIGNED NULL,
+	CONSTRAINT `visits_documents_stock_expense_id_fk`
+		FOREIGN KEY (`expence_id`) REFERENCES `stock_expense` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `visits_documents_stock_return_id_fk`
+		FOREIGN KEY (`return_id`) REFERENCES `stock_return` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `visits_documents_stock_write_off_organization_id_fk`
+		FOREIGN KEY (`writeof_id`) REFERENCES `stock_write_off` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `visits_documents_visits_id_fk`
+		FOREIGN KEY (`visit_id`) REFERENCES `visits` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- Учёт дней недели
-create table work_days
+CREATE TABLE `work_days`
 (
-	id          int unsigned auto_increment,
-	date 		date 	not null,
-	is_work_day boolean default true not null,
-	comment 	text	null,
-	constraint work_days_pk
-		primary key (id)
+	`id`          INT UNSIGNED AUTO_INCREMENT,
+	`date` 		DATE 	NOT NULL,
+	`is_work_day` BOOLEAN DEFAULT TRUE NOT NULL,
+	`comment` 	TEXT	NULL,
+	CONSTRAINT `work_days_pk`
+		PRIMARY KEY (`id`)
 );
 
 -- Добавление параметра для отключения строки нормы
-alter table norms_item
-	add column is_disabled boolean default false not null;
+ALTER TABLE `norms_item`
+	ADD COLUMN `is_disabled` BOOLEAN DEFAULT FALSE NOT NULL;
 
 -- В прошлом релизе по ошибке выпустили в релиз разную структуру базы для новой и обновлений.
 -- Приводим к единой структуре.
 
-alter table shipment
-	modify start_period date null,
-	modify end_period date null;
+ALTER TABLE `shipment`
+	MODIFY `start_period` DATE NULL,
+	MODIFY `end_period` DATE NULL;
 
 -- Оказываемые услуги
-create table clothing_service_services
+CREATE TABLE `clothing_service_services`
 (
-	id   	int unsigned auto_increment,
-	name 	varchar(60)       not null,
-	cost 	decimal default 0 not null,
-	code    varchar(13)       null,
-	comment text       		  null,
-	constraint clothing_service_services_pk
-		primary key (id)
+	`id`   	INT UNSIGNED AUTO_INCREMENT,
+	`name` 	VARCHAR(60)       NOT NULL,
+	`cost` 	DECIMAL DEFAULT 0 NOT NULL,
+	`code`    VARCHAR(13)       NULL,
+	`comment` TEXT       		  NULL,
+	CONSTRAINT `clothing_service_services_pk`
+		PRIMARY KEY (`id`)
 )
-	auto_increment = 101;
+	AUTO_INCREMENT = 101;
 
-create table clothing_service_services_nomenclature
+CREATE TABLE `clothing_service_services_nomenclature`
 (
-	id   			int unsigned auto_increment,
-	nomenclature_id int unsigned not null,
-	service_id     	int unsigned not null,
-	constraint clothing_service_services_pk
-		primary key (id),
-	constraint fk_services_nomenclature_nomenclature_id
-		foreign key (nomenclature_id) references nomenclature (id)
-			on update cascade on delete cascade,
-	constraint fk_services_nomenclature_service_id
-		foreign key (service_id) references clothing_service_services (id)
-			on update cascade on delete cascade
+	`id`   			INT UNSIGNED AUTO_INCREMENT,
+	`nomenclature_id` INT UNSIGNED NOT NULL,
+	`service_id`     	INT UNSIGNED NOT NULL,
+	CONSTRAINT `clothing_service_services_pk`
+		PRIMARY KEY (`id`),
+	CONSTRAINT `fk_services_nomenclature_nomenclature_id`
+		FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `fk_services_nomenclature_service_id`
+		FOREIGN KEY (`service_id`) REFERENCES `clothing_service_services` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create table clothing_service_services_claim
+CREATE TABLE `clothing_service_services_claim`
 (
-	id         int unsigned auto_increment,
-	service_id int unsigned null,
-	claim_id   int unsigned,
-	constraint clothing_service_services_claim_pk
-		primary key (id),
-	constraint clothing_service_services_claim_service_id_claim_id_uindex
-		unique (service_id, claim_id),
-	constraint clothing_service_services_claim_clothing_service_claim_id_fk
-		foreign key (claim_id) references clothing_service_claim (id)
-			on update cascade on delete cascade,
-	constraint clothing_service_services_claim_clothing_service_services_id_fk
-		foreign key (service_id) references clothing_service_services (id)
-			on update cascade on delete cascade
+	`id`         INT UNSIGNED AUTO_INCREMENT,
+	`service_id` INT UNSIGNED NULL,
+	`claim_id`   INT UNSIGNED,
+	CONSTRAINT `clothing_service_services_claim_pk`
+		PRIMARY KEY (`id`),
+	CONSTRAINT `clothing_service_services_claim_service_id_claim_id_uindex`
+		UNIQUE (`service_id`, `claim_id`),
+	CONSTRAINT `clothing_service_services_claim_clothing_service_claim_id_fk`
+		FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `clothing_service_services_claim_clothing_service_services_id_fk`
+		FOREIGN KEY (`service_id`) REFERENCES `clothing_service_services` (`id`)
+			ON UPDATE CASCADE ON DELETE CASCADE
 );

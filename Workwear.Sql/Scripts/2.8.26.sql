@@ -1,13 +1,13 @@
-alter table norms
-	add column last_update timestamp default current_timestamp() not null on update current_timestamp() after id,
+ALTER TABLE `norms`
+	ADD COLUMN `last_update` TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() AFTER `id`,
 	ADD INDEX `norms_last_update_idx` (`last_update` DESC);
 
-alter table norms_item
-	add column last_update timestamp default current_timestamp() not null on update current_timestamp() after id,
+ALTER TABLE `norms_item`
+	ADD COLUMN `last_update` TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() AFTER `id`,
 	ADD INDEX `norms_item_last_update_idx` (`last_update` DESC);
 
-alter table protection_tools
-	add dermal_ppe tinyint(1) default 0 not null after item_types_id;
+ALTER TABLE `protection_tools`
+	ADD `dermal_ppe` TINYINT(1) DEFAULT 0 NOT NULL AFTER `item_types_id`;
 
-alter table protection_tools
-	add dispenser tinyint(1) default 0 not null after dermal_ppe;
+ALTER TABLE `protection_tools`
+	ADD `dispenser` TINYINT(1) DEFAULT 0 NOT NULL AFTER `dermal_ppe`;

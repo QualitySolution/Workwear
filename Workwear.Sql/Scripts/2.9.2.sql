@@ -2,70 +2,68 @@
 -- Добавляем внешние ключи для документа выдачи по дежурной норме в ведомость
 --
 
-ALTER TABLE issuance_sheet
-	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;;
-ALTER TABLE issuance_sheet
-	ADD CONSTRAINT fk_stock_expense_duty_norm_id
-		FOREIGN KEY (stock_expense_duty_norm_id) REFERENCES stock_expense_duty_norm (id)
+ALTER TABLE `issuance_sheet`
+	ADD `stock_expense_duty_norm_id` INT UNSIGNED NULL AFTER `stock_expense_id`;
+ALTER TABLE `issuance_sheet`
+	ADD CONSTRAINT `fk_stock_expense_duty_norm_id`
+		FOREIGN KEY (`stock_expense_duty_norm_id`) REFERENCES `stock_expense_duty_norm` (`id`)
 			ON UPDATE CASCADE ON DELETE NO ACTION;
 
-ALTER TABLE issuance_sheet_items
-	ADD stock_expense_duty_norm_item_id integer unsigned null after stock_expense_detail_id;
-ALTER TABLE issuance_sheet_items
-	ADD CONSTRAINT fk_stock_expense_duty_norm_item_id
-		FOREIGN KEY (stock_expense_duty_norm_item_id) REFERENCES stock_expense_duty_norm_items (id)
+ALTER TABLE `issuance_sheet_items`
+	ADD `stock_expense_duty_norm_item_id` INTEGER UNSIGNED NULL AFTER `stock_expense_detail_id`;
+ALTER TABLE `issuance_sheet_items`
+	ADD CONSTRAINT `fk_stock_expense_duty_norm_item_id`
+		FOREIGN KEY (`stock_expense_duty_norm_item_id`) REFERENCES `stock_expense_duty_norm_items` (`id`)
 			ON UPDATE CASCADE ON DELETE CASCADE ;
 
 -- Документ закупки
-create table shipment
+CREATE TABLE `shipment`
 (
-    id int unsigned auto_increment primary key,
-    start_period date not null,
-    end_period date not null,
-	status enum('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') not null default 'Ordered',
-    user_id int unsigned null,
-    comment text null,
-    creation_date datetime null
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `start_period` DATE NOT NULL,
+    `end_period` DATE NOT NULL,
+	`status` ENUM('Ordered','OnTheWay', 'AwaitPayment','Cancelled','Received') NOT NULL DEFAULT 'Ordered',
+    `user_id` INT UNSIGNED NULL,
+    `comment` TEXT NULL,
+    `creation_date` DATETIME NULL
 );
-create index index_shipment_start_period
-    on shipment (start_period);
-create index index_shipment_end_period
-    on shipment (end_period);
+CREATE INDEX `index_shipment_start_period`
+    ON `shipment` (`start_period`);
+CREATE INDEX `index_shipment_end_period`
+    ON `shipment` (`end_period`);
 
 -- Строки документа закупки
-create table shipment_items
+CREATE TABLE `shipment_items`
 (
-    id int unsigned auto_increment primary key,
-    shipment_id int unsigned not null,
-    nomenclature_id int unsigned not null,
-    quantity int unsigned not null,
-    cost decimal(10, 2) unsigned default 0.00 not null,
-    size_id int unsigned null,
-    height_id int unsigned null,
-    comment varchar(120) null,
-    constraint fk_shipment_items_doc
-        foreign key (shipment_id) references shipment (id)
-            on update cascade on delete cascade,
-    constraint fk_shipment_items_nomenclature
-        foreign key (nomenclature_id) references nomenclature (id)
-            on update cascade,
-    constraint fk_shipment_items_size_id
-        foreign key (size_id) references sizes (id)
-            on update cascade,
-    constraint fk_shipment_items_height_id
-        foreign key (height_id) references sizes (id)
-            on update cascade
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `shipment_id` INT UNSIGNED NOT NULL,
+    `nomenclature_id` INT UNSIGNED NOT NULL,
+    `quantity` INT UNSIGNED NOT NULL,
+    `cost` DECIMAL(10, 2) UNSIGNED DEFAULT 0.00 NOT NULL,
+    `size_id` INT UNSIGNED NULL,
+    `height_id` INT UNSIGNED NULL,
+    `comment` VARCHAR(120) NULL,
+    CONSTRAINT `fk_shipment_items_doc`
+        FOREIGN KEY (`shipment_id`) REFERENCES `shipment` (`id`)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `fk_shipment_items_nomenclature`
+        FOREIGN KEY (`nomenclature_id`) REFERENCES `nomenclature` (`id`)
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_shipment_items_size_id`
+        FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`)
+            ON UPDATE CASCADE,
+    CONSTRAINT `fk_shipment_items_height_id`
+        FOREIGN KEY (`height_id`) REFERENCES `sizes` (`id`)
+            ON UPDATE CASCADE
 );
-create index index_shipment_items_doc
-    on shipment_items (shipment_id);
+CREATE INDEX `index_shipment_items_doc`
+    ON `shipment_items` (`shipment_id`);
 
-create index index_shipment_items_height
-    on shipment_items (height_id);
+CREATE INDEX `index_shipment_items_height`
+    ON `shipment_items` (`height_id`);
 
-create index index_shipment_items_nomenclature
-    on shipment_items (nomenclature_id);
+CREATE INDEX `index_shipment_items_nomenclature`
+    ON `shipment_items` (`nomenclature_id`);
 
-create index index_shipment_items_size
-    on shipment_items (size_id);
-
-
+CREATE INDEX `index_shipment_items_size`
+    ON `shipment_items` (`size_id`);

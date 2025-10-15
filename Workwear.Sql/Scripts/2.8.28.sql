@@ -1,8 +1,8 @@
 ﻿-- добавление типа размер футболки
-INSERT INTO size_types VALUES(13,'Размер футболки',1,'size',13);
+INSERT INTO `size_types` VALUES(13,'Размер футболки',1,'size',13);
 
 -- добавление значений размеров футболок
-INSERT INTO sizes VALUES(370, '3XS', 13,1,1,'40'),
+INSERT INTO `sizes` VALUES(370, '3XS', 13,1,1,'40'),
 						(371, '2XS', 13,1,1,'42'),
 						(372, 'XS', 13,1,1,'44'),
 						(373, 'S', 13,1,1,'46'),
@@ -24,9 +24,9 @@ INSERT INTO sizes VALUES(370, '3XS', 13,1,1,'40'),
 						(389, '14XL', 13,1,1,'78');
 
 -- добавление размера футболок по размеру одежды сотрудника
-INSERT INTO wear_cards_sizes(employee_id, size_type_id, size_id)
-SELECT employee_id, 13, s2.id
-FROM wear_cards_sizes
-		 LEFT JOIN sizes s1 on wear_cards_sizes.size_id = s1.id
-		 LEFT JOIN sizes s2 on s2.alternative_name=right(s1.name,2)
-WHERE wear_cards_sizes.size_type_id=2 AND s2.size_type_id=13;
+INSERT INTO `wear_cards_sizes`(`employee_id`, `size_type_id`, `size_id`)
+SELECT `employee_id`, 13, s2.`id`
+FROM `wear_cards_sizes`
+		 LEFT JOIN `sizes` s1 ON `wear_cards_sizes`.`size_id` = s1.`id`
+		 LEFT JOIN `sizes` s2 ON s2.`alternative_name`=RIGHT(s1.`name`,2)
+WHERE `wear_cards_sizes`.`size_type_id`=2 AND s2.`size_type_id`=13;
