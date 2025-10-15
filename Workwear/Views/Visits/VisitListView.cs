@@ -131,41 +131,38 @@ namespace Workwear.Views.Visits {
 						uint padding = 0;
 						button = new Button();
 						Image img = new Image();
-						string buttonName = String.Empty;
-						string iconName = String.Empty;
-						string toolTip = String.Empty;
 						ActionType type = ActionType.Play;
 						switch(l) {
 							case 0:
-								buttonName = "play";
-								iconName = "gtk-media-play";
-								toolTip = "Начать";
+								button.Name = "play";
+								img.Pixbuf = Stetic.IconLoader.LoadIcon(this, "gtk-media-play", IconSize.Menu);
+								button.Image = img;
+								button.TooltipText = "Начать";
 								type = ActionType.Play;
 								padding = 12;
 								break;
 							case 1:
-								buttonName = "done";
-								iconName = "gtk-ok";
-								toolTip = "Завершено";
+								button.Name = "done";
+								img.Pixbuf = Stetic.IconLoader.LoadIcon(this, "gtk-ok", IconSize.Menu);
+								button.Image = img;
+								button.TooltipText = "Завершено";
 								type = ActionType.Done;
 								break;
 							case 2:
-								buttonName = "cancel";
-								iconName = "gtk-close";
-								toolTip = "Отменить";
+								button.Name = "cancel";
+								img.Pixbuf = Stetic.IconLoader.LoadIcon(this, "gtk-close", IconSize.Menu);
+								button.Image = img;
+								button.TooltipText = "Отменить";
 								type = ActionType.Cancel;
 								break;
 							case 3:
-								buttonName = "close";
-								iconName = "gtk-dialog-error";
-								toolTip = "Не пришёл";
+								button.Name = "close";
+								img.Pixbuf = Stetic.IconLoader.LoadIcon(this, "gtk-dialog-error", IconSize.Menu);
+								button.Image = img;
+								button.TooltipText = "Не пришёл";
 								type = ActionType.Close;
 								break;
 						}
-						img.Pixbuf = Stetic.IconLoader.LoadIcon(this, iconName, IconSize.Menu);
-						button.Name = buttonName;
-						button.Image = img;
-						button.TooltipText = toolTip;
 						button.Sensitive = item.SensitiveActionButtons;
 						if(item.SensitiveActionButtons) {
 							switch(button.Name) {
