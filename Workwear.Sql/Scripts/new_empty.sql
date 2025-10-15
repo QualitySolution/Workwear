@@ -2487,7 +2487,7 @@ CREATE TABLE visits
     create_from_lk  BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
     done            BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
     status          ENUM ('New', 'Queued', 'Serviced', 'Done', 'Canceled', 'Missing')                                NOT NULL DEFAULT 'New',
-    ticket_number   CHAR(4)                                                                                          NOT NULL COMMENT 'Талончик в очереди',
+    ticket_number   CHAR(4)                                                                                          NULL COMMENT 'Талончик в очереди',
     window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
     time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ ',
     time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
