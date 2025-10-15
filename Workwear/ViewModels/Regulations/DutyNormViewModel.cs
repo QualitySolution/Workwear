@@ -40,6 +40,7 @@ namespace Workwear.ViewModels.Regulations {
 		public readonly EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
 		public readonly EntityEntryViewModel<Leader> LeaderEntryViewModel;
+		private readonly BaseParameters baseParameters;
 
 		public DutyNormViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -50,11 +51,13 @@ namespace Workwear.ViewModels.Regulations {
 			IEntityChangeWatcher changeWatcher,
 			DutyNormIssueModel dutyNormIssueModel,
 			DutyNormRepository dutyNormRepository,
+			BaseParameters baseParameters,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 
 			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 
 			this.interactive = interactive;
@@ -106,6 +109,7 @@ namespace Workwear.ViewModels.Regulations {
 		 public virtual IList<DutyNormIssueOperation> Operations => UoW.Session.QueryOver<DutyNormIssueOperation>()
 			 .Where(o => o.DutyNorm.Id == Entity.Id).List();
 
+		 public bool IsDocNumberInIssueSign => baseParameters.IsDocNumberInIssueSign;
 		 #endregion
 		
 		#region Действия View
@@ -183,7 +187,8 @@ namespace Workwear.ViewModels.Regulations {
 						+ $"  №{Entity.Id}",
 				Identifier = typeSheet.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
-					{ "duty_norm_id",  Entity.Id }
+					{ "duty_norm_id",  Entity.Id },
+					{"isDocNumberInIssueSign", IsDocNumberInIssueSign}
 				}
 			};
 
