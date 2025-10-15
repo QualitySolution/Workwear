@@ -93,3 +93,9 @@ ALTER TABLE stock_collective_expense
 		ON DELETE NO ACTION 
 		ON UPDATE CASCADE,
 	ADD INDEX `issuance_request_id_idx` (`issuance_request_id` ASC);
+
+-- Заполнение даты начала использования для выдач
+UPDATE operation_issued_by_employee op1 SET StartOfUse =
+	(SELECT DATE(operation_time) FROM operation_issued_by_employee op2
+WHERE op1.id = op2.id)
+WHERE StartOfUse IS NULL AND (issued != 0 AND returned = 0);
