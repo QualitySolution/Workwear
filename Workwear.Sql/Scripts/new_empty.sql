@@ -2711,6 +2711,10 @@ ALTER TABLE issuance_sheet_items
 		FOREIGN KEY (stock_expense_duty_norm_item_id) REFERENCES stock_expense_duty_norm_items (id)
 			ON UPDATE CASCADE ON DELETE CASCADE ;
 
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 -- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
@@ -2760,12 +2764,6 @@ RETURN issue_count;
 END$$
 
 DELIMITER ;
-
--- Возврат настроек должен находится именно здесь(между функциями) так как старая функция count_issue создалась с режимом ONLY_FULL_GROUP_BY
--- В новых это не надо. Думаю если удалить старую функцию, то переключение режимов может быть можно будет убрать совсем.
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
 -- function quantity_issue
