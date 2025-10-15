@@ -212,7 +212,6 @@ namespace Workwear.Domain.Operations
 		/// </summary>
 		public EmployeeIssueOperation() { }
 		public EmployeeIssueOperation(BaseParameters baseParameters) {
-			startOfUse = OperationTime;
 			useAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 		}
 		#region Расчетные
@@ -267,7 +266,7 @@ namespace Workwear.Domain.Operations
 			return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
 		}
 		#endregion
-		#region Методы обновленя операций
+		#region Методы обновления операций
 		public virtual void Update(
 			IUnitOfWork uow, 
 			BaseParameters baseParameters, 
@@ -281,6 +280,7 @@ namespace Workwear.Domain.Operations
 			if (item.ExpenseDoc.IssueDate.Value.Date != OperationTime.Date)
 				OperationTime = (DateTime)item.ExpenseDoc.IssueDate;
 
+			StartOfUse = OperationTime;
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
@@ -321,6 +321,7 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
+			StartOfUse = OperationTime;
 			Employee = item.Employee;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
@@ -387,10 +388,11 @@ namespace Workwear.Domain.Operations
 			Employee = issueOperation.Employee;
 			Nomenclature = issueOperation.Nomenclature;
 			operationTime = date;
+			StartOfUse = null;
 			Issued = issueOperation.issued;
 			Returned = issueOperation.returned;
 			WarehouseOperation = null;
-			NormItem = issueOperation.normItem;;
+			NormItem = issueOperation.normItem;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
 			protectionTools = issueOperation.protectionTools;
@@ -434,11 +436,10 @@ namespace Workwear.Domain.Operations
 		private bool? lastAnswerRecalculateStartOfUse;
 		
 		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+			StartOfUse = OperationTime;
 			if(!CheckRecalculateCondition())
 				return;
 			
-			StartOfUse = operationTime;
-
 			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
 			if(amountAtEndDay >= NormItem.Amount) {
 				//Ищем первый интервал где числящееся меньше нормы.
