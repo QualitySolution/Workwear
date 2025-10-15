@@ -73,6 +73,7 @@ using Workwear;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.Supply;
+using workwear.Journal.ViewModels.Visits;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
@@ -423,6 +424,7 @@ public partial class MainWindow : Gtk.Window {
 						 || FeaturesService.Available(WorkwearFeature.Postomats)
 						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
 		ActionShipmentReport.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
+		ActionIssuanceRequest.Visible = FeaturesService.Available(WorkwearFeature.IssuanceRequest);
 	}
 	#endregion
 
@@ -1002,5 +1004,9 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionVisitsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<VisitListViewModel>(null);
+	}
+
+	protected void OnActionIssuanceRequestActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<IssuanceRequestJournalViewModel>(null);
 	}
 }

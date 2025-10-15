@@ -48,11 +48,11 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
-					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
-					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
-					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
+					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)
 					.AddColumn("Предпочтительный постамат выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.Postomats))
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
+					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
+					.AddColumn("Дефект").Resizable().AddTextRenderer(node => node.Defect).WrapWidth(400)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
@@ -567,6 +567,16 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FIO).SearchHighlight()
 					.AddColumn("Табельный").AddReadOnlyTextRenderer(x => x.Tabel).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<IssuanceRequestJournalViewModel>(
+				jvm => FluentColumnsConfig<IssuanceRequestJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Дата поступления заявки").AddTextRenderer(node => node.ReceiptDate.ToShortDateString()).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 			);
 			#endregion
