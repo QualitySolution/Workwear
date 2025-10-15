@@ -87,8 +87,8 @@ namespace Workwear.Views.Stock
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
 				.AddColumn(ViewModel.BarcodeTypeString).Visible(ViewModel.VisibleBarcodes)
-					.AddTextRenderer(x => x.BarcodeTextFunc(ViewModel.BaseParameters.MarkingType))
-				.AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
+					.AddTextRenderer(x => x.BarcodeTextFunc(ViewModel.BaseParameters.ClothingMarkingType))
+					.AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
 						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)

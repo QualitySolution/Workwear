@@ -27,7 +27,7 @@ namespace Workwear.ViewModels.ClothingService {
 			get => barcodeText;
 			set {
 				if(SetField(ref barcodeText, value.Trim())) {
-					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.MarkingType)) {
+					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.ClothingMarkingType)) {
 						if(ActionBarcodes.ContainsKey(barcodeText)) {
 							LabelInfo = ActionBarcodes[barcodeText].title;
 							ActionBarcodes[barcodeText].action();

@@ -327,7 +327,7 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 
 			ReportInfo reportInfo; 
-			switch(baseParameters.MarkingType) {
+			switch(baseParameters.ClothingMarkingType) {
 				case BarcodeTypes.EAN13:
 					reportInfo = new ReportInfo {
 						Title = "Этикетка",

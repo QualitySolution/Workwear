@@ -106,7 +106,7 @@ namespace Workwear.ViewModels.Stock
 			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
 
 		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature.UseBarcode ?? false)
-		    && (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == BaseParameters.MarkingType) ?? 0) < (SelectedItem?.Amount ?? 0);
+		    && (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == BaseParameters.ClothingMarkingType) ?? 0) < (SelectedItem?.Amount ?? 0);
 
 		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
 			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
@@ -230,15 +230,15 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region Штрих коды
-		public string BarcodeTypeString => BaseParameters.MarkingType == BarcodeTypes.EPC96 ? "RFID" : "Штрихкод";
+		public string BarcodeTypeString => BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96 ? "RFID" : "Штрихкод";
 		public string ButtonCreateOrRemoveBarcodesTitle => 
 			Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
 			? "Обновить штрихкоды" : "Создать штрихкоды";
 
-		public bool CanPrintBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.MarkingType == BarcodeTypes.EAN13;
-		public bool CanCreateBarcode => CanEdit && VisibleBarcodes && BaseParameters.MarkingType == BarcodeTypes.EAN13 
+		public bool CanPrintBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
+		public bool CanCreateBarcode => CanEdit && VisibleBarcodes && BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13 
 			&& ObservableItems.Any(x => x?.EmployeeIssueOperation?.BarcodeOperations.Count < x?.Amount);
-		public bool CanSetBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.MarkingType == BarcodeTypes.EPC96;
+		public bool CanSetBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96;
 		
 		public void ReleaseBarcodes() {
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;

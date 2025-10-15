@@ -121,9 +121,9 @@ namespace Workwear.Tools
 		/// <summary>
 		/// Тип используемой маркировки
 		/// </summary>
-		public virtual BarcodeTypes MarkingType {
+		public virtual BarcodeTypes ClothingMarkingType {
 			get => Dynamic.MarkingType(typeof(BarcodeTypes)) ?? BarcodeTypes.EAN13;
-			set => Dynamic[nameof(MarkingType)] = value;
+			set => Dynamic[nameof(ClothingMarkingType)] = value;
 		}
 		#endregion
 	}

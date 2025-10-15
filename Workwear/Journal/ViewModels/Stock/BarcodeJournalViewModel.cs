@@ -63,7 +63,6 @@ namespace workwear.Journal.ViewModels.Stock
 			Size heightAlias = null;
 			
 			return  uow.Session.QueryOver<Barcode>(() => barcodeAlias)
-				.Where(b => b.Type == baseParameters.MarkingType)
 				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
 					() => nomenclatureAlias.Name,
@@ -82,6 +81,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(x => x.Type).WithAlias(() => resultAlias.Type)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
@@ -101,7 +101,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			NodeActionsList.Add(new JournalAction("Печать",
 				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(),
-				(arg) => baseParameters.MarkingType == BarcodeTypes.EAN13,
+				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(b => b.Type == BarcodeTypes.EAN13),
 				PrintBarcodes));
 		}
 
@@ -124,6 +124,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class BarcodeJournalNode 
 	{
 		public int Id { get; set; }
+		public BarcodeTypes Type { get; set; }
 		public string Value { get; set; }
 		public string Nomenclature { get; set; }
 		public string Size { get; set; }

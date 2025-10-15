@@ -33,7 +33,7 @@ namespace Workwear.Domain.Stock {
 		}
 
 		private BarcodeTypes type;
-		[Display(Name = "Значение RFID")]
+		[Display(Name = "Тип метки")]
 		public virtual BarcodeTypes Type {
 			get => type;
 			set => SetField(ref type, value);

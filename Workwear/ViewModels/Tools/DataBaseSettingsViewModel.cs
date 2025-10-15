@@ -48,7 +48,7 @@ namespace Workwear.ViewModels.Tools
 			UsedCurrency = baseParameters.UsedCurrency;
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
-			MarkingType = baseParameters.MarkingType;
+			MarkingType = baseParameters.ClothingMarkingType;
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
 		}
 		
@@ -111,8 +111,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			if(EditLockDate != baseParameters.EditLockDate)
 				baseParameters.EditLockDate = EditLockDate;
-			if(MarkingType != baseParameters.MarkingType)
-				baseParameters.MarkingType = MarkingType;
+			if(MarkingType != baseParameters.ClothingMarkingType)
+				baseParameters.ClothingMarkingType = MarkingType;
 			if(StartDateOfOperations != baseParameters.StartDateOfOperations)
 				baseParameters.StartDateOfOperations = StartDateOfOperations;
 			return true;

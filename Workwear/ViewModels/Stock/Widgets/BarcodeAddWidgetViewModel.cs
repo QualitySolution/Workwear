@@ -49,15 +49,15 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		public virtual bool AutoAdd { get; set; } = true;
 
 		public virtual bool CanEntry => expenseItem != null
-			? (expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.MarkingType) ?? 0)
+			? (expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.ClothingMarkingType) ?? 0)
 			+ AddedBarcodes.Count < expenseItem.EmployeeIssueOperation.Issued
 			: true;
 
 		public virtual bool CanAdd => CanEntry && ActiveBarcode != null;
 		
 		public virtual string CodeLabel => 
-			baseParameters.MarkingType == BarcodeTypes.EAN13 ? "Штрихкод" :
-			baseParameters.MarkingType == BarcodeTypes.EPC96 ? "Радиометка" : 
+			baseParameters.ClothingMarkingType == BarcodeTypes.EAN13 ? "Штрихкод" :
+			baseParameters.ClothingMarkingType == BarcodeTypes.EPC96 ? "Радиометка" : 
 			"Код";
 
 		private string chekcText = String.Empty;
@@ -93,7 +93,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			set {
 				if(SetField(ref barcodeText, value.Trim())) {
 
-					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.MarkingType)) {
+					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.ClothingMarkingType)) {
 						var barcode = barcodeRepository.GetBarcodeByString(barcodeText);
 						if(barcode != null && barcode.BarcodeOperations.Count != 0) {
 							//TODO в будующем при дополнении маркировки это тоже нужно отрабатывать
@@ -104,7 +104,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 							CheckText = "Уже добавлено";
 							CheckTextColor = "purple";
 						} else {
-							ActiveBarcode = new Barcode() { Title = barcodeText, Type = baseParameters.MarkingType };
+							ActiveBarcode = new Barcode() { Title = barcodeText, Type = baseParameters.ClothingMarkingType };
 							if(AutoAdd)
 								AddItem();
 							else {
