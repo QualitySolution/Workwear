@@ -1233,6 +1233,7 @@ CREATE FUNCTION `count_issue`(
 	NO SQL
 	DETERMINISTIC
 	COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
+SQL SECURITY INVOKER
 BEGIN
 	DECLARE issue_count INT;
 
