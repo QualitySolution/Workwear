@@ -37287,6 +37287,7 @@
                     <child>
                       <widget class="Gamma.GtkWidgets.yButton" id="buttonRemoveExpense">
                         <property name="MemberName" />
+                        <property name="Sensitive">False</property>
                         <property name="CanFocus">True</property>
                         <property name="Type">TextOnly</property>
                         <property name="Label" translatable="yes">Отвязать</property>
