@@ -56,7 +56,7 @@ namespace Workwear.Views.Tools {
 		    Combo_markingType.Visible = ylabel_markingType.Visible = ViewModel.MarkingVisible;
 		    Combo_markingType.ItemsEnum = typeof(BarcodeTypes);
 		    Combo_markingType.Binding.AddSource(ViewModel)
-			    .AddBinding(v => v.MarkingType, w => w.SelectedItem)
+			    .AddBinding(v => v.ClothingMarkingType, w => w.SelectedItem)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
 		    

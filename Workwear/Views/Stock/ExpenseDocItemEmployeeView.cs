@@ -41,10 +41,10 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			buttonAdd.Binding
 				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive).InitializeFromSource();
-			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
+			buttonCreateOrRenewBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CanCreateBarcode, w => w.Visible)
 				.AddBinding(v => v.NeedCreateBarcodes, w => w.Sensitive)
-				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label).InitializeFromSource();
+				.AddBinding(v => v.ButtonCreateOrRenewBarcodesTitle, w => w.Label).InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.CanPrintBarcode, w => w.Visible)
 				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive).InitializeFromSource();
@@ -86,7 +86,7 @@ namespace Workwear.Views.Stock
 				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit)
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.AddColumn(ViewModel.BarcodeTypeString).Visible(ViewModel.VisibleBarcodes)
+				.AddColumn("Маркировка").Visible(ViewModel.VisibleBarcodes)
 					.AddTextRenderer(x => x.BarcodeTextFunc(ViewModel.BaseParameters.ClothingMarkingType))
 					.AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)

@@ -48,17 +48,15 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 		public virtual bool AutoAdd { get; set; } = true;
 
-		public virtual bool CanEntry => expenseItem != null
-			? (expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.ClothingMarkingType) ?? 0)
-			+ AddedBarcodes.Count < expenseItem.EmployeeIssueOperation.Issued
-			: true;
-
+		public virtual bool CanEntry => expenseItem == null ||
+            //проверка количества
+            ((expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.ClothingMarkingType) ?? 0) + AddedBarcodes.Count < (expenseItem.EmployeeIssueOperation?.Issued ?? 0));
 		public virtual bool CanAdd => CanEntry && ActiveBarcode != null;
 		
 		public virtual string CodeLabel => 
 			baseParameters.ClothingMarkingType == BarcodeTypes.EAN13 ? "Штрихкод" :
 			baseParameters.ClothingMarkingType == BarcodeTypes.EPC96 ? "Радиометка" : 
-			"Код";
+			"Макировка";
 
 		private string chekcText = String.Empty;
 		public virtual string CheckText {
@@ -135,6 +133,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			CheckTextColor = "green";
 			CheckText = "Добавлено";
 			BarcodeText = String.Empty;
+			OnPropertyChanged(nameof(CanEntry));
 		}
 		
 		#region IWindowDialogSettings implementation

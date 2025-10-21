@@ -14,7 +14,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonPrintBarcodes;
 
-		private global::Gamma.GtkWidgets.yButton buttonCreateOrDeleteBarcodes;
+		private global::Gamma.GtkWidgets.yButton buttonCreateOrRenewBarcodes;
 
 		private global::Gamma.GtkWidgets.yButton buttonSetBarcodes;
 
@@ -86,16 +86,16 @@ namespace Workwear.Views.Stock
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
-			this.buttonCreateOrDeleteBarcodes = new global::Gamma.GtkWidgets.yButton();
-			this.buttonCreateOrDeleteBarcodes.CanFocus = true;
-			this.buttonCreateOrDeleteBarcodes.Name = "buttonCreateOrDeleteBarcodes";
-			this.buttonCreateOrDeleteBarcodes.UseUnderline = true;
-			this.buttonCreateOrDeleteBarcodes.Label = global::Mono.Unix.Catalog.GetString("Создать штрихкоды");
+			this.buttonCreateOrRenewBarcodes = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCreateOrRenewBarcodes.CanFocus = true;
+			this.buttonCreateOrRenewBarcodes.Name = "buttonCreateOrRenewBarcodes";
+			this.buttonCreateOrRenewBarcodes.UseUnderline = true;
+			this.buttonCreateOrRenewBarcodes.Label = global::Mono.Unix.Catalog.GetString("Создать штрихкоды");
 			global::Gtk.Image w6 = new global::Gtk.Image();
 			w6.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.barcode-add.png");
-			this.buttonCreateOrDeleteBarcodes.Image = w6;
-			this.hbox2.Add(this.buttonCreateOrDeleteBarcodes);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonCreateOrDeleteBarcodes]));
+			this.buttonCreateOrRenewBarcodes.Image = w6;
+			this.hbox2.Add(this.buttonCreateOrRenewBarcodes);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.buttonCreateOrRenewBarcodes]));
 			w7.PackType = ((global::Gtk.PackType)(1));
 			w7.Position = 3;
 			w7.Expand = false;
@@ -201,7 +201,7 @@ namespace Workwear.Views.Stock
 			}
 			this.Hide();
 			this.buttonSetBarcodes.Clicked += new global::System.EventHandler(this.OnButtonSetBarcodesClicked);
-			this.buttonCreateOrDeleteBarcodes.Clicked += new global::System.EventHandler(this.OnButtonCreateOrDeleteBarcodesClicked);
+			this.buttonCreateOrRenewBarcodes.Clicked += new global::System.EventHandler(this.OnButtonCreateOrDeleteBarcodesClicked);
 			this.buttonPrintBarcodes.Clicked += new global::System.EventHandler(this.OnButtonPrintBarcodesClicked);
 			this.buttonColorsLegend.Clicked += new global::System.EventHandler(this.OnButtonColorsLegendClicked);
 			this.buttonAdd.Clicked += new global::System.EventHandler(this.OnButtonAddClicked);

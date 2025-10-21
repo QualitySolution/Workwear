@@ -91,7 +91,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-				).OrderBy(x => x.Title).Asc
+				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 		}
 		

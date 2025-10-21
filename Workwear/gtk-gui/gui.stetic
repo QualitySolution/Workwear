@@ -5335,7 +5335,7 @@
         <property name="DrawAsRadio">False</property>
         <property name="Active">False</property>
         <property name="Value">0</property>
-        <property name="Group">UpdateChannel</property>
+        <property name="Group">Upda  teChannel</property>
         <signal name="Toggled" handler="OnActionChannelCurrentToggled" />
       </action>
       <action id="ActionChannelStable">
@@ -14793,7 +14793,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yButton" id="buttonCreateOrDeleteBarcodes">
+              <widget class="Gamma.GtkWidgets.yButton" id="buttonCreateOrRenewBarcodes">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextAndIcon</property>

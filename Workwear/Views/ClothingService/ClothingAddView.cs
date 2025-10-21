@@ -18,7 +18,7 @@ namespace Workwear.Views.ClothingService {
 				.InitializeFromSource();
 			treeClaims.CreateFluentColumnsConfig<AddServiceClaimNode>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Add).Editing()
-				.AddColumn("Штрихкод").AddReadOnlyTextRenderer(x => x.BarcodeText)
+				.AddColumn("Метка(штрихкод)").AddReadOnlyTextRenderer(x => x.BarcodeText)
 				.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.EmployeeText)
 				.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.NomenclatureText)
 				.AddColumn("Размер/Рост").AddReadOnlyTextRenderer(x =>  x.SizeText)

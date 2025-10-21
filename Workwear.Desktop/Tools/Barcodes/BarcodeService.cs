@@ -51,7 +51,7 @@ namespace Workwear.Tools.Barcodes
 						if(removed.Barcode.BarcodeOperations.All(x => x.Id == removed.Id)) //Пустая коллекция в этом услоыии тоже вернет true
 							unitOfWork.Delete(removed.Barcode);
 						else
-							logger.Warn($"Штрихкод Id:{removed.Barcode.Id} не был удален, так как он уже используется в других операциях.");
+							logger.Warn($"Метка(штрихкод) Id:{removed.Barcode.Id} не была удалена, так как она уже используется в других операциях.");
 					}
 				}
 			}

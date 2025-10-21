@@ -199,7 +199,7 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public bool SetState(ClaimState state) {
 			if(Claim == null) {
-				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найдена метка(штрихкод).";
 				return false;
 			}
 			if(state == LastStateOperation.State) {
@@ -224,7 +224,7 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public void SetService(Service service) {
 			if(Claim == null) {
-				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найден штрихкод.";
+				BarcodeInfoViewModel.LabelInfo = "Не принято на обслуживание или не найдена метка(штрихкод).";
 				return;
 			}
 			if(service == null) {

@@ -43,7 +43,7 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
 				jvm => FluentColumnsConfig<ClaimsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
-					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Метка(штрихкод)").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Табельный").AddTextRenderer(node => node.EmployeePersonnelNumber).SearchHighlight().XAlign(1.0f)
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
@@ -399,7 +399,7 @@ namespace workwear.Journal
 						.AddTextRenderer(node => node.SaleCostText)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
 						.AddTextRenderer(node => node.RatingText)
-					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+					.AddColumn("Метка(штрихкод)").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)

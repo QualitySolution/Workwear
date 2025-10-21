@@ -230,16 +230,15 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region Штрих коды
-		public string BarcodeTypeString => BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96 ? "RFID" : "Штрихкод";
-		public string ButtonCreateOrRemoveBarcodesTitle => 
+		public string ButtonCreateOrRenewBarcodesTitle => 
 			Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
-			? "Обновить штрихкоды" : "Создать штрихкоды";
+			? "Обновить маркировку" : "Создать штрихкоды";
 
 		public bool CanPrintBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
 		public bool CanCreateBarcode => CanEdit && VisibleBarcodes && BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13 
-			&& ObservableItems.Any(x => x?.EmployeeIssueOperation?.BarcodeOperations.Count < x?.Amount);
-		public bool CanSetBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96;
-		
+			&& ObservableItems.Any(x => (x?.EmployeeIssueOperation?.BarcodeOperations?.Where(o => o.Barcode.Type == BarcodeTypes.EAN13).Count() ?? 0) < x?.Amount);
+		public bool CanSetBarcode => CanEdit && VisibleBarcodes &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96
+			&& ObservableItems.Any(x => x?.EmployeeIssueOperation?.BarcodeOperations?.Where(o => o.Barcode.Type == BarcodeTypes.EPC96).Count() < x?.Amount);
 		public void ReleaseBarcodes() {
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;
 			var saveResult = expenseEmployeeViewModel.Save();
@@ -251,12 +250,12 @@ namespace Workwear.ViewModels.Stock
 			barcodeService.CreateOrRemove(UoW, operations);
 			UoW.Commit();
 			OnPropertyChanged(nameof(NeedCreateBarcodes));
-			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));
 		}
 
 		public void PrintBarcodes() {
 			if(NeedCreateBarcodes) {
-				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
+				if(interactive.Question("Не для всех строк документа была проставлена маркировка. Обновить маркировку?"))
 					ReleaseBarcodes();
 				else
 					return;
@@ -351,7 +350,7 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(NeedCreateBarcodes));
 			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			OnPropertyChanged(nameof(CanCreateBarcode));
-			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));
 		}
 		#endregion
 	}

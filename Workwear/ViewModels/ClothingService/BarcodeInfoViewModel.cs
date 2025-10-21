@@ -41,7 +41,7 @@ namespace Workwear.ViewModels.ClothingService {
 							BarcodeText = String.Empty;
 						}
 						else {
-							LabelInfo = "Штрихкод не найден";
+							LabelInfo = "Метка не найдена";
 							Barcode = null;
 						}
 					}
