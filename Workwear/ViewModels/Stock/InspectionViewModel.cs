@@ -160,7 +160,7 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Запись документа...");
 
 			foreach(var item in Entity.Items) {
-				if(item.Writeoff == false)
+				if(item.Writeoff == false) //если списываем, то StartOfUse остается null
 					item.NewOperationIssue.StartOfUse = Entity.Date;
 
 				if(item.ExpiryByNormAfter != null && baseParameters.DefaultAutoWriteoff) {

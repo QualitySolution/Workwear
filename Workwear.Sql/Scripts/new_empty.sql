@@ -2012,7 +2012,7 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `title` VARCHAR(24) NULL DEFAULT NOT NULL,
+  `title` VARCHAR(24) NOT NULL,
   `type` enum ('EAN13', 'EPC96') default 'EAN13' not null,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2462,12 +2462,12 @@ CREATE TABLE visit_windows
 (
     id   INT UNSIGNED AUTO_INCREMENT
         PRIMARY KEY,
-    name CHAR(32) NULL
+    name CHAR(32) NOT NULL
 )
     COMMENT 'информация о окнах';
 
 -- -----------------------------------------------------
--- основная таблица посещеий
+-- основная таблица посещений
 -- -----------------------------------------------------
 CREATE TABLE visits
 (
@@ -2483,7 +2483,7 @@ CREATE TABLE visits
     status          ENUM ('New', 'Queued', 'Serviced', 'Done', 'Canceled', 'Missing')                                NOT NULL DEFAULT 'New',
     ticket_number   CHAR(4)                                                                                          NOT NULL COMMENT 'Талончик в очереди',
     window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
-    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ ',
+    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ',
     time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
     time_finish     DATETIME                                                                                         NULL COMMENT 'Завершение визита',
     cancelled       BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
@@ -2670,6 +2670,10 @@ ALTER TABLE issuance_sheet_items
 		FOREIGN KEY (stock_expense_duty_norm_item_id) REFERENCES stock_expense_duty_norm_items (id)
 			ON UPDATE CASCADE ON DELETE CASCADE ;
 
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 -- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
@@ -2687,6 +2691,7 @@ CREATE FUNCTION `count_issue`(
     NO SQL
     DETERMINISTIC
     COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
+SQL SECURITY INVOKER	
 BEGIN
 DECLARE issue_count INT;
 
@@ -2719,12 +2724,6 @@ END$$
 
 DELIMITER ;
 
--- Возврат настроек должен находится именно здесь(между функциями) так как старая функция count_issue создалась с режимом ONLY_FULL_GROUP_BY
--- В новых это не надо. Думаю если удалить старую функцию, то переключение режимов может быть можно будет убрать совсем.
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
 -- -----------------------------------------------------
 -- function quantity_issue
 -- -----------------------------------------------------
@@ -2742,6 +2741,7 @@ CREATE FUNCTION `quantity_issue`(
     NO SQL
     DETERMINISTIC
     COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
+SQL SECURITY INVOKER
 BEGIN
     DECLARE issue_count INT;
     DECLARE next_issue_new DATE;
@@ -2796,6 +2796,7 @@ CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
 	RETURNS INT
 	DETERMINISTIC
 	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+SQL SECURITY INVOKER
 BEGIN
 RETURN (WITH RECURSIVE date_range AS
 						   (SELECT start_date as sd
@@ -2816,7 +2817,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.3');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.4');
 
 COMMIT;
 

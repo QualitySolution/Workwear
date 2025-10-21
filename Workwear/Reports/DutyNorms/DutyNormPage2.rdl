@@ -663,7 +663,9 @@
     IFNULL(nomenclature.name, pt.name) AS name,
     nomenclature.number,
     DATE_FORMAT(oidn.operation_time, '%d.%m.%Y') AS expense_date,
-    oidn.issued
+    oidn.issued,
+    IF(@isDocNumberInIssueSign, CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id)), '')
+        AS issue_sign
     FROM operation_issued_by_duty_norm oidn
     LEFT JOIN duty_norms dn ON oidn.duty_norm_id=dn.id
     LEFT JOIN nomenclature ON oidn.nomenclature_id = nomenclature.id
@@ -674,6 +676,9 @@ ORDER BY oidn.operation_time;
         <QueryParameters>
           <QueryParameter Name="duty_norm_id">
             <Value>={?duty_norm_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -705,6 +710,13 @@ ORDER BY oidn.operation_time;
           <Value>1</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
