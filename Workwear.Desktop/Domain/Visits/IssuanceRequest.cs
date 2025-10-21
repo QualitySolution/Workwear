@@ -66,7 +66,7 @@ namespace Workwear.Domain.Visits {
 		[Display(Name = "Документы коллективной выдачи")]
 		public virtual IObservableList<CollectiveExpense> CollectiveExpenses {
 			get => collectiveExpenses;
-			set { SetField(ref collectiveExpenses, value); }
+			set => SetField(ref collectiveExpenses, value);
 		}
 		#endregion
 
