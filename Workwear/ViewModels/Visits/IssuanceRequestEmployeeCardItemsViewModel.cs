@@ -65,6 +65,8 @@ namespace Workwear.ViewModels.Visits {
 				.Where(x => x.Employee.Id.IsIn(employeesIds))
 				.JoinAlias(x => x.ProtectionTools, () => protectionToolsAlias)
 				.JoinAlias(() => protectionToolsAlias.Type, () => itemsTypeAlias)
+				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
+				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
 				.Where(() => itemsTypeAlias.IssueType == IssueType.Collective)
 				.List()
 				.ToArray();
