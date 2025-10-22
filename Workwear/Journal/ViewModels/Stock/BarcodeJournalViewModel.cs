@@ -28,20 +28,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
 		#endregion
-		
-		private readonly BaseParameters baseParameters;
-		
 		public BarcodeJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			INavigationManager navigationManager,
-			BaseParameters baseParameters, 
+			INavigationManager navigationManager, 
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null
 			) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) 
 		{
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			
 			UseSlider = true;
 			VisibleCreateAction = false;
 			

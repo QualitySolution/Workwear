@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -19,13 +18,10 @@ namespace Workwear.ViewModels.Stock
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation,
-			BaseParameters baseParameters,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			
 		}
-		
-		private readonly BaseParameters baseParameters;
 		
 		public void PrintBarcodes() {
 			var reportInfo = new ReportInfo {

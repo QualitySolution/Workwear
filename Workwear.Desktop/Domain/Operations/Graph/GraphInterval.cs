@@ -9,7 +9,7 @@ namespace Workwear.Domain.Operations.Graph
 		public DateTime StartDate;
 		
 		/// <summary>
-		/// Интервал содержит операцию переопределяющую все предыдущие выдачи. То есть если до этого что-то было не списано, то после этой выдачи оно обнулятся
+		/// Интервал содержит операцию, переопределяющую все предыдущие выдачи. То есть если до этого что-то было не списано, то после этой выдачи оно обнулятся
 		/// </summary>
 		public bool Reset = false;
 		/// <summary>
@@ -18,7 +18,7 @@ namespace Workwear.Domain.Operations.Graph
 		public readonly List<GraphItem> ActiveItems = new List<GraphItem>();
 
 		/// <summary>
-		/// Все выдачи графа где выданное количество действует в течении интервала. То есть ActiveItems, но без списанного в это день.
+		/// Все выдачи графа, где выданное количество действует в течении интервала. То есть ActiveItems, но без списанного в это день.
 		/// </summary>
 		public IEnumerable<GraphItem> ActiveIssues => ActiveItems.Where(x => x.AmountAtEndOfDay(StartDate) > 0);
 		public int CurrentCount;

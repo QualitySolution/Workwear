@@ -37,7 +37,10 @@ namespace Workwear.ViewModels.ClothingService {
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingMoveViewModel(
+			INavigationManager navigation,
 			IInteractiveService interactiveService,
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IUserService userService,
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			BarcodeRepository barcodeRepository,
 			BaseParameters baseParameters,
@@ -45,9 +48,6 @@ namespace Workwear.ViewModels.ClothingService {
 			NotificationManagerService notificationManager,
 			PostomatManagerService postomatService,
 			UnitOfWorkProvider unitOfWorkProvider,
-			INavigationManager navigation,
-			IUnitOfWorkFactory unitOfWorkFactory,
-			IUserService userService,
 			ServiceClaim serviceClaim = null
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) 
 		{

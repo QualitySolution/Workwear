@@ -312,6 +312,8 @@ namespace Workwear.ViewModels.Stock
 		public string GetRowColor(ExpenseItem item) {
 			if(item.EmployeeCardItem?.Graph == null)
 				return null;
+			if(item.EmployeeCardItem.Id != 0)
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
