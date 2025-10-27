@@ -138,7 +138,6 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		
 		public void AddSubdivisions() {
@@ -153,7 +152,6 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 
 		public void AddDepartments() {
@@ -168,7 +166,6 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 
 		public void AddGroups() {
@@ -183,7 +180,6 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -193,7 +189,6 @@ namespace Workwear.ViewModels.Visits {
 				Entity.Employees.Remove(emp);
 			}
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -221,7 +216,6 @@ namespace Workwear.ViewModels.Visits {
 				CollectiveExpenses.Add(ce);
 			}
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -232,7 +226,6 @@ namespace Workwear.ViewModels.Visits {
 				Entity.CollectiveExpenses.Remove(ce);
 			}
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -259,7 +252,6 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var doc in  LoadCollectiveExpenses())
 				Entity.CollectiveExpenses.Add(doc);
 			EmployeeCardItemsViewModel.ReloadData();
-			EmployeeCardItemsViewModel.UpdateNodes();
 			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
 		}
 		

@@ -85,12 +85,11 @@ namespace Workwear.ViewModels.Visits {
 		}
 		#endregion
 		public void OnShow() {
-			if(GroupedEmployeeCardItems == null) {
+			if(GroupedEmployeeCardItems == null)
 				ReloadData();
-				UpdateNodes();
-			}
 		}
-		public void UpdateNodes() {
+
+		private void UpdateNodes() {
 			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 			GroupedList.Clear();
 			var alreadyIssuedOperationsIds = new HashSet<int>(CollectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
