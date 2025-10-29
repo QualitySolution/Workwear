@@ -333,6 +333,21 @@ namespace Workwear.ViewModels.Stock
 				return "darkgreen";
 			return null;
 		}
+		public virtual string BarcodesTextColor(ExpenseItem item) {
+				if(item.Nomenclature == null || !item.Nomenclature.UseBarcode || item.EmployeeIssueOperation == null)
+					return null;
+
+				int bcount = item.EmployeeIssueOperation.BarcodeOperations.Count(b => b.Barcode.Type == BaseParameters.ClothingMarkingType);
+				
+				if(item.Amount == bcount)
+					return null;
+
+				if(item.Amount < bcount)
+					return "blue";
+				if(item.Amount > bcount)
+					return "red";
+				return null;
+		}
 		#endregion
 
 		public void CalculateTotal()

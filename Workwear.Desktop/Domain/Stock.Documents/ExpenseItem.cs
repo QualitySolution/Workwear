@@ -166,22 +166,6 @@ namespace Workwear.Domain.Stock.Documents
 				return text;
 			}
 		}
-
-		public virtual string BarcodesTextColor {
-			get {
-				if(Nomenclature == null || !Nomenclature.UseBarcode || EmployeeIssueOperation == null)
-					return null;
-
-				if(Amount == EmployeeIssueOperation.BarcodeOperations.Count)
-					return null;
-
-				if(Amount < EmployeeIssueOperation.BarcodeOperations.Count)
-					return "blue";
-				if(Amount > EmployeeIssueOperation.BarcodeOperations.Count)
-					return "red";
-				return null;
-			}
-		}
 		#endregion
 
 		public ExpenseItem ()
