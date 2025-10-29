@@ -8,10 +8,10 @@ using Workwear.Domain.Sizes;
 
 namespace Workwear.Domain.Stock {
 	[Appellative(Gender = GrammaticalGender.Masculine,
-		NominativePlural = "штрихкоды",
-		Nominative = "штрихкод",
-		Genitive = "штрихкода",
-		GenitivePlural = "штрихкодов"
+		NominativePlural = "метки (штрихкоды)",
+		Nominative = "метка (штрихкод)",
+		Genitive = "метки (штрихкода)",
+		GenitivePlural = "меток (штрихкодов)"
 	)]
 	[HistoryTrace]
 	public class Barcode : PropertyChangedBase, IDomainObject {
