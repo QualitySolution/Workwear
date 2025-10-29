@@ -48,9 +48,18 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 		public virtual bool AutoAdd { get; set; } = true;
 
-		public virtual bool CanEntry => expenseItem == null ||
-            //проверка количества
-            ((expenseItem.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == baseParameters.ClothingMarkingType) ?? 0) + AddedBarcodes.Count < (expenseItem.EmployeeIssueOperation?.Issued ?? 0));
+		public virtual bool CanEntry {
+			get {
+				if(expenseItem == null) 
+					return true;
+				
+				int? a = expenseItem.EmployeeIssueOperation?.BarcodeOperations?
+					.Count(x => x?.Barcode?.Type == baseParameters.ClothingMarkingType);
+				int? b = AddedBarcodes.Count();
+				int c = expenseItem.Amount;
+				return expenseItem == null || (a ?? 0) + b < c ;
+			}
+		}
 		public virtual bool CanAdd => CanEntry && ActiveBarcode != null;
 		
 		public virtual string CodeLabel => 

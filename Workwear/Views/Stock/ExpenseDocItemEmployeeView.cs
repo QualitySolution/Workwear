@@ -33,6 +33,7 @@ namespace Workwear.Views.Stock
 		{
 			CreateTable();
 			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
+			
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding.AddBinding(viewModel, v => v.SelectedItem, w => w.SelectedRow);
@@ -202,7 +203,7 @@ namespace Workwear.Views.Stock
 		}
 
 		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
-			ViewModel.PrintBarcodes();
+			ViewModel.PrintBarcodesEAN13();
 			ytreeItems.YTreeModel.EmitModelChanged();
 		}
 

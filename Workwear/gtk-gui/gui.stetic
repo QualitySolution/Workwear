@@ -5313,7 +5313,7 @@
       </action>
       <action id="ActionBarcodes">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Штрихкоды</property>
+        <property name="Label" translatable="yes">Маркировка (Штрихкоды)</property>
         <property name="ShortLabel" translatable="yes">Штрихкоды</property>
         <signal name="Activated" handler="BarcodeActivated" />
       </action>

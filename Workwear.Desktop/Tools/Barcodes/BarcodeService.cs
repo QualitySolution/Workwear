@@ -26,13 +26,14 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
-		public void CreateOrRemove(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
+		public void CreateOrRemoveEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
 			foreach(var operation in employeeIssueOperations) {
-				if(operation.Issued == operation.BarcodeOperations.Count)
+				int bcount = operation.BarcodeOperations.Count(b => b.Barcode.Type == BarcodeTypes.EAN13);
+				if(operation.Issued == bcount)
 					continue;
 
-				if(operation.Issued > operation.BarcodeOperations.Count) {
-					var barcodes = Create(unitOfWork, operation.Issued - operation.BarcodeOperations.Count, operation.Nomenclature, operation.WearSize, operation.Height);
+				if(operation.Issued > bcount) {
+					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
@@ -42,8 +43,9 @@ namespace Workwear.Tools.Barcodes
 						unitOfWork.Save(barcodeOperation);
 					}
 				}
-				else if(operation.Issued < operation.BarcodeOperations.Count) {
-					var toRemove = operation.BarcodeOperations.OrderBy(x => x.Barcode.BarcodeOperations.Count).Take(operation.BarcodeOperations.Count - operation.Issued).ToArray();
+				else if(operation.Issued < bcount) {
+					var toRemove = operation.BarcodeOperations.Where(b => b.Barcode.Type == BarcodeTypes.EAN13)
+						.OrderBy(x => x.Barcode.BarcodeOperations.Count).Take(bcount - operation.Issued).ToArray();
 					foreach(var removed in toRemove) {
 						operation.BarcodeOperations.Remove(removed);
 						if(removed.Id > 0)
@@ -64,6 +66,7 @@ namespace Workwear.Tools.Barcodes
 				newBarCode.Nomenclature = nomenclature;
 				newBarCode.Size = size;
 				newBarCode.Height = height;
+				newBarCode.Title = "generated" + new Random().Next(); //т.к. в базе not null, а далее уже нужен id
 				unitOfWork.Save(newBarCode);
 				//Перезаписываем Title так как он формируется на основании полученного Id
 				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{CheckSum($"{BaseCode}{newBarCode.Id:D8}")}";
