@@ -229,6 +229,11 @@ namespace Workwear.Sql
 			);
 			configuration.AddUpdate(
 				new Version(2, 8, 28),
+				new Version(2, 8, 33),
+				"Workwear.Sql.Scripts.2.8.33.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 28),
 				new Version(2, 9),
 				"Workwear.Sql.Scripts.2.9.sql",
 			//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
