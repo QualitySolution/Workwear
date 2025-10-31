@@ -984,6 +984,7 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
+        <Timeout>1500</Timeout>
         <CommandText>select
     if(@summary, NULL, subdivisions.id) as subdivision_id,
     if(@summary, NULL, subdivisions.name) as subdivision,
