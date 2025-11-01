@@ -14,7 +14,7 @@ namespace Workwear.Sql
 			return new CreationScript(
 				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
 				"Workwear.Sql.Scripts.new_empty.sql",
-				new Version(2, 10, 4)
+				new Version(2, 8, 33)
 			);
 		}
 
@@ -229,52 +229,8 @@ namespace Workwear.Sql
 			);
 			configuration.AddUpdate(
 				new Version(2, 8, 28),
-				new Version(2, 9),
-				"Workwear.Sql.Scripts.2.9.sql",
-			//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
-			delegate (DbConnection connection) {
-				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees"); 
-				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups"); 
-				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_1"); 
-				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_2"); 
-				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_1_idx"); 
-				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_1"); 
-				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_warehouse"); 
-			});
-			configuration.AddUpdate(
-				new Version(2, 9),
-				new Version(2, 9, 1),
-				"Workwear.Sql.Scripts.2.9.1.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 9, 1),
-				new Version(2, 9, 2),
-				"Workwear.Sql.Scripts.2.9.2.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 9, 2),
-				new Version(2, 10),
-				"Workwear.Sql.Scripts.2.10.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 10),
-				new Version(2, 10, 1),
-				"Workwear.Sql.Scripts.2.10.1.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 10, 1),
-				new Version(2, 10, 2),
-				"Workwear.Sql.Scripts.2.10.2.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 10, 2),
-				new Version(2, 10, 3),
-				"Workwear.Sql.Scripts.2.10.3.sql"
-			);
-			configuration.AddUpdate(
-				new Version(2, 10, 3),
-				new Version(2, 10, 4),
-				"Workwear.Sql.Scripts.2.10.4.sql"
+				new Version(2, 8, 33),
+				"Workwear.Sql.Scripts.2.8.33.sql"
 			);
 			return configuration;
 		}
