@@ -94,6 +94,15 @@ namespace Workwear.Test.Sql.ScriptsTests
 					RunOneUpdate(connection, hop);
 				}
 
+				//Проверяем наличие базы для сравнения
+				var checkDbSql = $"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{CurrentDdName}'";
+				var dbExists = connection.ExecuteScalar(checkDbSql);
+				if(dbExists == null) {
+					TestContext.Progress.WriteLine($"База {CurrentDdName} не найдена. Создаем её перед сравнением.");
+					//Нужно для возможности запускать только выбранный тест обновления.
+					CreateCurrentNewBaseTest();
+				}
+				
 				//Сравнение обновлённой базы и новой
 				ComparisonSchema(connection, CurrentDdName, sample.DbName);
 			}
