@@ -35,6 +35,7 @@ namespace Workwear.Views.Supply {
 			ybuttonSendEmail.Binding
 				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
 			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
+			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -98,6 +99,10 @@ namespace Workwear.Views.Supply {
 
 		protected void OnButtonToOrderClicked(object sender, EventArgs e) {
 			ViewModel.ToOrderItems();
+		}
+		
+		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
+			ViewModel.AddSize(ytreeItems.GetSelectedObjects<ShipmentItem>());
 		}
 	}
 }
