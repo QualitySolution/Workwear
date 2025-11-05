@@ -400,7 +400,7 @@ namespace Workwear.Views.Tools
 			this.ylabel_markingType = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel_markingType.Name = "ylabel_markingType";
 			this.ylabel_markingType.Xalign = 1F;
-			this.ylabel_markingType.LabelProp = global::Mono.Unix.Catalog.GetString("Применяемый тип амркировки:");
+			this.ylabel_markingType.LabelProp = global::Mono.Unix.Catalog.GetString("Применяемый тип маркировки:");
 			this.table1.Add(this.ylabel_markingType);
 			global::Gtk.Table.TableChild w26 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_markingType]));
 			w26.TopAttach = ((uint)(11));

@@ -28,7 +28,7 @@ namespace Workwear.Tools.Barcodes
 
 		public void CreateOrRemoveEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
 			foreach(var operation in employeeIssueOperations) {
-				int bcount = operation.BarcodeOperations.Count(b => b.Barcode.Type == BarcodeTypes.EAN13);
+				int bcount = operation.BarcodeOperations.Count;
 				if(operation.Issued == bcount)
 					continue;
 
@@ -89,7 +89,7 @@ namespace Workwear.Tools.Barcodes
 				case BarcodeTypes.EPC96:
 					return barcode.Length == 24 && System.Text.RegularExpressions.Regex.IsMatch(barcode, @"^[0-9A-Fa-f]+$");
 				default:
-					throw new NotImplementedException(typeof(BarcodeTypes)+"in"+typeof(BarcodeService));
+					throw new NotImplementedException(typeof(BarcodeTypes)+ " in " + type);
 			}
 		}
 

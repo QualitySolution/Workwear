@@ -231,13 +231,11 @@ namespace Workwear.ViewModels.Stock
 		public bool CanCreateBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
 
 		public bool NeedCreateBarcodes => CanEdit && VisibleBarcodes
-             && ObservableItems.Select(i => i.EmployeeIssueOperation)
-                  .SelectMany(o => o.BarcodeOperations)
-                  .Count(b => b.Barcode.Type == BaseParameters.ClothingMarkingType)
-             < ObservableItems.Where(i => i.Nomenclature.UseBarcode).Sum(i => i.Amount);
+             && ObservableItems.Where(i => i.Nomenclature.UseBarcode)
+	             .Any(i => i.Amount > (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
 		public bool CanSetBarcode => CanEdit && VisibleBarcodes  &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96;
 		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature.UseBarcode ?? false)
-			&& (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count(x => x?.Barcode?.Type == BaseParameters.ClothingMarkingType) ?? 0) < (SelectedItem?.Amount ?? 0);
+			&& (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count() ?? 0) < (SelectedItem?.Amount ?? 0);
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		public void ReleaseBarcodes() {
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;
@@ -281,6 +279,12 @@ namespace Workwear.ViewModels.Stock
 		}	
 		
 		public void AddBarcodeFromScan(ExpenseItem item) {
+			expenseEmployeeViewModel.SkipBarcodeCheck = true;
+			var saveResult = expenseEmployeeViewModel.Save();
+			expenseEmployeeViewModel.SkipBarcodeCheck = false;
+			if(!saveResult)
+				return;
+			
 			item.UpdateOperations(UoW,BaseParameters,interactive);
 			navigation.OpenViewModel<BarcodeAddWidgetViewModel, ExpenseDocItemsEmployeeViewModel, ExpenseItem>(expenseEmployeeViewModel, this, item);
 		}
@@ -337,7 +341,7 @@ namespace Workwear.ViewModels.Stock
 				if(item.Nomenclature == null || !item.Nomenclature.UseBarcode || item.EmployeeIssueOperation == null)
 					return null;
 
-				int bcount = item.EmployeeIssueOperation.BarcodeOperations.Count(b => b.Barcode.Type == BaseParameters.ClothingMarkingType);
+				int bcount = item.EmployeeIssueOperation.BarcodeOperations.Count();
 				
 				if(item.Amount == bcount)
 					return null;

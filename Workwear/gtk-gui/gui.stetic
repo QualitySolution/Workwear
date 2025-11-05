@@ -9385,7 +9385,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel_markingType">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Применяемый тип амркировки:</property>
+                        <property name="LabelProp" translatable="yes">Применяемый тип маркировки:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">11</property>

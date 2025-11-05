@@ -150,11 +150,10 @@ namespace Workwear.Domain.Stock.Documents
 			).TrimEnd();
 
 	
-		public virtual string BarcodeTextFunc(BarcodeTypes type) {
+		public virtual string BarcodeTextFunc() {
 			if((!Nomenclature?.UseBarcode ?? true) || Amount <= 0)
 				return null;
-			var actualOperations = EmployeeIssueOperation?.BarcodeOperations?
-				.Where(x => x.Barcode?.Type == type).ToList() ?? new List<BarcodeOperation>();
+			var actualOperations = EmployeeIssueOperation?.BarcodeOperations?.ToList() ?? new List<BarcodeOperation>();
 			if (!actualOperations.Any())
 				return "необходимо создать";
 			else { //Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
