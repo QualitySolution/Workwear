@@ -148,7 +148,7 @@ CREATE TABLE visit_windows
 ALTER TABLE `visits`
     ADD COLUMN `service_type` ENUM('GiveWear','NewEmployee','Unidentified','Dismiss','GiveReport','WriteOff','ClothingService','Appeal') NOT NULL DEFAULT 'GiveWear' AFTER `employee_id`,
     ADD COLUMN `create_from_lk` TINYINT(1) NOT NULL DEFAULT 1 AFTER `employee_create`,
-    ADD COLUMN `status` ENUM('New','Queued','Serviced','Done','Canceled','Missing') NOT NULL DEFAULT 'New' AFTER `done`,
+    ADD COLUMN `status` ENUM('New','Queued','Coming','Serviced','Done','Canceled','Missing') NOT NULL DEFAULT 'New' AFTER `done`,
     ADD COLUMN `ticket_number` CHAR(4) NULL DEFAULT NULL COMMENT 'Талончик в очереди' AFTER `status`,
     ADD COLUMN `window_id` INT(10) UNSIGNED DEFAULT NULL COMMENT 'ID окна обслуживания' AFTER `ticket_number`,
     ADD COLUMN `time_entry` DATETIME DEFAULT NULL COMMENT 'Время постановки в очередь на ПВ' AFTER `window_id`,
