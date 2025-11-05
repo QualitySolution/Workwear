@@ -546,8 +546,9 @@
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitView.cs" />
     <Compile Include="Views\Visits\VisitListView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.VisitListView.cs" />
-	  <Compile Include="Journal\Filter.Views\Visits\IssuanceRequestFilterView.cs" />
-	  <Compile Include="Views\Visits\IssuanceRequestView.cs" />
+    <Compile Include="Journal\Filter.Views\Visits\IssuanceRequestFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
+    <Compile Include="Views\Visits\IssuanceRequestView.cs" />
     <Compile Include="Views\Stock\Widgets\BarcodeAddWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BarcodeAddWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
