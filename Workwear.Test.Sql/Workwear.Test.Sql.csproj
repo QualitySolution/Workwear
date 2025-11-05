@@ -27,4 +27,29 @@
       <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="UpdatesContainerTests.cs" />
+      <None Update="Dumps\empty_1.0.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.3.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.4.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.5.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.6.1.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.7.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.8.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
