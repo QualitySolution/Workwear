@@ -171,7 +171,7 @@ CREATE TABLE visits_users_log
     user_id   INT UNSIGNED                                                                        NOT NULL,
     window_id INT UNSIGNED                                                                        NULL,
     visit_id  INT UNSIGNED                                                                        NULL,
-    tiket     CHAR(4)                                                                             NULL,
+    ticket     CHAR(4)                                                                             NULL,
     `time`    DATETIME                                                                            NULL,
     `type`    ENUM ('WindowStart', 'WindowFinish', 'WindowTimeout', 'StartService', 'FinishService', 'ReRouteService', 'WindowWaiting') NOT NULL COMMENT 'Типы действия',
     comment   CHAR(64)                                                                            NULL,
