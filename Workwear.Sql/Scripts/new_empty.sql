@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `base_parameters` (
   `name` VARCHAR(80) NOT NULL,
   `str_value` VARCHAR(500) NULL DEFAULT NULL,
   PRIMARY KEY (`name`))
-ENGINE = InnoDB;
+ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `clothing_service_claim` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS `warehouse` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `subdivisions`
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 
@@ -298,8 +298,8 @@ CREATE TABLE IF NOT EXISTS `posts` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees`
@@ -390,8 +390,8 @@ CREATE TABLE IF NOT EXISTS `leaders` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `measurement_units`
@@ -456,7 +456,8 @@ CREATE TABLE IF NOT EXISTS `item_types` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
+AUTO_INCREMENT = 1
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -815,8 +816,8 @@ CREATE TABLE IF NOT EXISTS `regulations` (
   `doc_date` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 1000;
-
+AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `regulations_annex`
@@ -834,7 +835,8 @@ CREATE TABLE IF NOT EXISTS `regulations_annex` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 10000;
+AUTO_INCREMENT = 10000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -865,7 +867,8 @@ CREATE TABLE IF NOT EXISTS `norms` (
     REFERENCES `regulations_annex` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Table `protection_tools_category_for_analytics`
@@ -874,7 +877,8 @@ create table if not exists `protection_tools_category_for_analytics` (
 	`id`   int(11) unsigned not null auto_increment primary key,
 	`name` varchar(100)     not null,
 	`comment` text null default null)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `protection_tools`
@@ -966,8 +970,8 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
     REFERENCES `norm_conditions` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `operation_issued_by_employee`
@@ -1088,7 +1092,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
     )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_write_off_members`
@@ -1107,7 +1111,8 @@ create table stock_write_off_members(
 	constraint stock_write_off_members_fk2
 		foreign key (member_id) references leaders (id)
 			on update cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_expense`
@@ -1298,8 +1303,8 @@ CREATE TABLE IF NOT EXISTS `read_news` (
     REFERENCES `users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `norms_posts`
@@ -1321,8 +1326,8 @@ CREATE TABLE IF NOT EXISTS `norms_posts` (
     REFERENCES `posts` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees_norms`
@@ -1344,7 +1349,8 @@ CREATE TABLE IF NOT EXISTS `employees_norms` (
     REFERENCES `norms` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1369,7 +1375,7 @@ CREATE TABLE IF NOT EXISTS `employees_cost_allocation` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1403,8 +1409,8 @@ CREATE TABLE IF NOT EXISTS `employee_cards_item` (
     REFERENCES `norms_item` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `organizations`
@@ -1414,7 +1420,8 @@ CREATE TABLE IF NOT EXISTS `organizations` (
   `name` VARCHAR(300) NULL,
   `address` VARCHAR(300) NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1465,7 +1472,8 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
     REFERENCES `leaders` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1477,8 +1485,8 @@ CREATE TABLE IF NOT EXISTS `vacation_type` (
   `exclude_from_wearing` TINYINT(1) NOT NULL DEFAULT 0,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees_vacations`
@@ -1503,7 +1511,8 @@ CREATE TABLE IF NOT EXISTS `employees_vacations` (
     REFERENCES `vacation_type` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `causes_write_off`
@@ -1512,7 +1521,8 @@ create table causes_write_off
 (
 	id int UNSIGNED auto_increment primary key,
 	name varchar(120) not null
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
@@ -1617,7 +1627,8 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1810,8 +1821,8 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
 	REFERENCES `organizations` (`id`)
 	ON DELETE SET NULL
 	ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_transfer_detail`
@@ -1841,7 +1852,8 @@ CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `protection_tools_nomenclature`
@@ -2009,7 +2021,8 @@ CREATE TABLE IF NOT EXISTS `employees_sizes` (
     REFERENCES `sizes` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -2126,8 +2139,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
     REFERENCES `organizations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_inspection_items`
@@ -2157,8 +2170,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_inspection_members`
@@ -2180,7 +2193,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
     REFERENCES `leaders` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table `employee_groups`
 
@@ -2190,7 +2204,8 @@ create table employee_groups
 	name varchar(128) null,
 	comment text null,
 	PRIMARY KEY (`id`)
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index employee_groups_name_index
 	on employee_groups (name);
@@ -2212,7 +2227,8 @@ create table employee_group_items
 	constraint `employee_groups_items_employee_groups_fk`
 		foreign key (employee_group_id) references employee_groups (id)
 			on update cascade on delete cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index employee_groups_items_employee_groups_id_index
 	on employee_group_items (employee_group_id);
@@ -2228,13 +2244,13 @@ create table duty_norms
 (
 	id                   int unsigned auto_increment
 		primary key,
-	name                 varchar(200) charset utf8mb4 null,
+	name                 varchar(200)                 null,
 	responsible_leder_id int unsigned 				  null,
 	responsible_employee_id int unsigned 			  null,
 	subdivision_id 		 int unsigned 				  null,
 	datefrom             datetime                     null,
 	dateto               datetime                     null,
-	comment              text charset utf8mb4         null,
+	comment              text 				          null,
 	constraint duty_norms_employees_id_fk
 		foreign key (responsible_employee_id) references employees (id)
 			on delete set null on update cascade,
@@ -2244,7 +2260,8 @@ create table duty_norms
 	constraint duty_norms_subdivisions_id_fk
 		foreign key (subdivision_id) references subdivisions (id)
 			on delete set null on update cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- строка дежурной нормы
@@ -2267,7 +2284,8 @@ create table duty_norm_items
 	constraint fk_duty_norms_item_protection_tools
 		foreign key (protection_tools_id) references protection_tools (id)
 			on update cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Операции выдачи по дежурной норме
@@ -2319,7 +2337,8 @@ create table operation_issued_by_duty_norm
 	constraint fk_operation_issued_by_employee_duty_norm_item
 		foreign key (duty_norm_item_id) references duty_norm_items (id)
 			on update cascade on delete set null
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index operation_issued_by_duty_norm_last_update_idx
 	on operation_issued_by_duty_norm (last_update);
@@ -2390,7 +2409,8 @@ create table stock_expense_duty_norm_items
 	constraint fk_stock_expense_duty_norm_items_stock_expense_duty_norm
 		foreign key (stock_expense_duty_norm_id) references stock_expense_duty_norm (id)
 			on update cascade on delete cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index fk_stock_expense_duty_norm_items_operation_idx
 	on stock_expense_duty_norm_items (operation_issued_by_duty_norm_id);
@@ -2415,7 +2435,8 @@ create table shipment
 	user_id int unsigned null,
 	comment text null,
 	creation_date datetime null
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 create index index_shipment_start_period
 	on shipment (start_period);
 create index index_shipment_end_period
@@ -2449,7 +2470,8 @@ create table shipment_items
 	constraint fk_shipment_items_height_id
 		foreign key (height_id) references sizes (id)
 			on update cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 create index index_shipment_items_doc
 	on shipment_items (shipment_id);
 
@@ -2564,7 +2586,8 @@ create table visits_documents
 	constraint visits_documents_visits_id_fk
 		foreign key (visit_id) references visits (id)
 			on update cascade on delete cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- Будет удалена в 2.11 - решили не использовать
@@ -2576,7 +2599,8 @@ create table work_days
 	comment 	text	null,
 		constraint work_days_pk
 		primary key (id)
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- График работы склада
@@ -2591,7 +2615,8 @@ create table days_schedule (
 	comment 	 	text null,
 	constraint days_schedule
 	   primary key (id)
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 -- Оказываемые услуги
 -- -----------------------------------------------------
@@ -2605,7 +2630,8 @@ create table clothing_service_services
 	constraint clothing_service_services_pk
 		primary key (id)
 )
-	auto_increment = 101;
+	auto_increment = 101
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create table clothing_service_services_nomenclature
 (
@@ -2620,7 +2646,8 @@ create table clothing_service_services_nomenclature
 	constraint fk_services_nomenclature_service_id
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create table clothing_service_services_claim
 (
@@ -2637,7 +2664,8 @@ create table clothing_service_services_claim
 	constraint clothing_service_services_claim_clothing_service_services_id_fk
 		foreign key (service_id) references clothing_service_services (id)
 			on update cascade on delete cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ---------------------------------------------
 -- Выбор пользователем предпочтительных номенклатур
@@ -2660,7 +2688,8 @@ create table employees_selected_nomenclatures
 		foreign key (protection_tools_id) references protection_tools (id)
 			on update cascade on delete cascade
 )
-	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче';
+	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче'
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Заявка на выдачу

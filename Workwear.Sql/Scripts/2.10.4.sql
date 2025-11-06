@@ -13,6 +13,167 @@ alter table employee_group_items
 ALTER TABLE stock_expense
 	MODIFY COLUMN `warehouse_id` INT UNSIGNED NOT NULL DEFAULT 1;
 
+-- Исправление расхождений COLLATION на MySQL
+ALTER TABLE `base_parameters`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `causes_write_off`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `clothing_service_services`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `clothing_service_services_claim`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `clothing_service_services_nomenclature`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `days_schedule`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `duty_norm_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `duty_norms`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employee_cards_item`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employee_group_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employee_groups`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees_cost_allocation`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees_norms`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees_selected_nomenclatures`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees_sizes`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `employees_vacations`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `issuance_sheet`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `item_types`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `leaders`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `norms`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `norms_item`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `norms_posts`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `operation_issued_by_duty_norm`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `organizations`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `posts`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `protection_tools_category_for_analytics`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `read_news`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `regulations`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `regulations_annex`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `shipment`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `shipment_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_expense_duty_norm_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_income_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_inspection`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_inspection_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_inspection_members`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_return`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_return_items`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_transfer`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_transfer_detail`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_write_off`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `stock_write_off_members`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `subdivisions`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `user_settings`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `vacation_type`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `visits_documents`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `warehouse`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE `work_days`
+	CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Этим колонкам нужно заново установить TEXT, потому что они были в utf8mb3, и по этому при конвертации в utf8mb4 они превращаются в MEDIUMTEXT чтобы сохранить количество символов, но нам это не надо.
+ALTER TABLE `norms`
+	MODIFY COLUMN `comment` TEXT NULL DEFAULT NULL;
+
+ALTER TABLE `read_news`
+	MODIFY COLUMN `items` TEXT NULL DEFAULT NULL;
+
+ALTER TABLE `stock_write_off`
+	MODIFY COLUMN `comment` TEXT NULL DEFAULT NULL;
+
+ALTER TABLE `vacation_type`
+	MODIFY COLUMN `comment` TEXT NULL DEFAULT NULL;
+
 -- -----------------------------------------------------
 -- Пересоздание функций с новыми правами
 -- -----------------------------------------------------
