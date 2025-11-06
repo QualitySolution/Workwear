@@ -190,8 +190,8 @@ namespace Workwear.Test.Sql.ScriptsTests
 					.Select(x => new RowOfSchema(schema, x))
 					.ToDictionary(x => x.FullName, x => x);
 				
-				Assert.That(db1, Is.Not.Empty, $"Метаданные {schema} в базе {dbname1} отсутствуют");
-				Assert.That(db2, Is.Not.Empty, $"Метаданные {schema} в базе {dbname2} отсутствуют");
+				Assert.That(db1, Is.Not.Empty, $"Метаданные {schema.Name} в базе {dbname1} отсутствуют");
+				Assert.That(db2, Is.Not.Empty, $"Метаданные {schema.Name} в базе {dbname2} отсутствуют");
 
 				foreach(var row in db1) {
 					if(db2.TryGetValue(row.Key, out var value)) {
@@ -201,7 +201,7 @@ namespace Workwear.Test.Sql.ScriptsTests
 						}
 					}
 					else {
-						log($"{schema} — значение {row.Value.FullName}\n" +
+						log($"{schema.Name} — значение {row.Value.FullName}\n" +
 						    $"  присутствует в    {dbname1}\n" +
 						    $"  но отсутствует в  {dbname2}");
 						result = false;
@@ -210,7 +210,7 @@ namespace Workwear.Test.Sql.ScriptsTests
 				
 				foreach(var row in db2) {
 					if(!db1.ContainsKey(row.Key)) {
-						log($"{schema} — значение {row.Value.FullName}\n" +
+						log($"{schema.Name} — значение {row.Value.FullName}\n" +
 						    $"  присутствует в    {dbname2}\n" +
 						    $"  но отсутствует в  {dbname1}");
 						result = false;
