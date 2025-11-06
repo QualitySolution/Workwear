@@ -1,4 +1,4 @@
--- Исправление в расхождениях миграций после обновления на 2.9 и по сути переименование внешних ключей
+-- Остатки исправление в расхождениях миграций после обновления на 2.9 и по сути переименование внешних ключей
 alter table employee_group_items
 	add constraint `employee_groups_items_employees_fk`
 		foreign key (employee_id) references employees (id)
@@ -8,6 +8,10 @@ alter table employee_group_items
 	add constraint `employee_groups_items_employee_groups_fk`
 		foreign key (employee_group_id) references employee_groups (id)
 			on update cascade on delete cascade;
+
+-- Исправления расхождения миграций для версии 2.3
+ALTER TABLE stock_expense
+	MODIFY COLUMN `warehouse_id` INT UNSIGNED NOT NULL DEFAULT 1;
 
 -- -----------------------------------------------------
 -- Пересоздание функций с новыми правами

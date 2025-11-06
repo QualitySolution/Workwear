@@ -1115,7 +1115,7 @@ create table stock_write_off_members(
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
-  `warehouse_id` INT(10) UNSIGNED NOT NULL,
+  `warehouse_id` INT(10) UNSIGNED NOT NULL DEFAULT 1,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
   `issue_date` date NULL DEFAULT NULL,
