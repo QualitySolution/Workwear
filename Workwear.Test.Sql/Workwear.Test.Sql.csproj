@@ -19,6 +19,7 @@
         <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
         <PackageReference Include="Testcontainers.MariaDb" Version="4.7.0" />
+        <PackageReference Include="Testcontainers.MySql" Version="4.7.0" />
     </ItemGroup>
 
     <ItemGroup>
