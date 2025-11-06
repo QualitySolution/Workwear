@@ -153,6 +153,7 @@ CREATE TABLE visit_windows
         PRIMARY KEY,
     name CHAR(32) NOT NULL
 )
+    CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
     COMMENT 'информация о окнах';
 
 -- изменяем записи посещений на новый формат
@@ -164,7 +165,8 @@ ALTER TABLE `visits`
     ADD COLUMN `window_id` INT(10) UNSIGNED DEFAULT NULL COMMENT 'ID окна обслуживания' AFTER `ticket_number`,
     ADD COLUMN `time_entry` DATETIME DEFAULT NULL COMMENT 'Время постановки в очередь на ПВ' AFTER `window_id`,
     ADD COLUMN `time_start` DATETIME DEFAULT NULL COMMENT 'Начало обслуживания (перво посещение окна)' AFTER `time_entry`,
-    ADD COLUMN `time_finish` DATETIME DEFAULT NULL COMMENT 'Завершение визита' AFTER `time_start`;
+    ADD COLUMN `time_finish` DATETIME DEFAULT NULL COMMENT 'Завершение визита' AFTER `time_start`,
+    CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- синхронизируем значениями из employee_create для уже существующих записей
 UPDATE `visits` SET `create_from_lk` = `employee_create`;
@@ -182,7 +184,7 @@ CREATE TABLE visits_users_log
     user_id   INT UNSIGNED                                                                        NOT NULL,
     window_id INT UNSIGNED                                                                        NULL,
     visit_id  INT UNSIGNED                                                                        NULL,
-    ticket     CHAR(4)                                                                             NULL,
+    ticket    CHAR(4)                                                                             NULL,
     `time`    DATETIME                                                                            NULL,
     `type`    ENUM ('WindowStart', 'WindowFinish', 'WindowTimeout', 'StartService', 'FinishService', 'ReRouteService', 'WindowWaiting') NOT NULL COMMENT 'Типы действия',
     comment   CHAR(64)                                                                            NULL,
@@ -195,6 +197,7 @@ CREATE TABLE visits_users_log
     CONSTRAINT visits_users_log_visits_id_fk
         FOREIGN KEY (visit_id) REFERENCES visits (id)
 )
+    CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
     COMMENT 'записи какой юзер в каком окне, состояние окна';
 
 CREATE INDEX visits_user_users_id_fk_idx ON visits_users_log (user_id);
@@ -214,7 +217,8 @@ CREATE TABLE issuance_requests(
     	ON DELETE NO ACTION 
 		ON UPDATE CASCADE,
 	INDEX `issuance_request_user_id_idx` (`user_id` ASC) 
-);
+)
+CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- Сотрудники в заявках на выдачу
 CREATE TABLE employees_issuance_request(
@@ -230,7 +234,8 @@ CREATE TABLE employees_issuance_request(
         ON UPDATE CASCADE,
 	INDEX `employee_id_idx` (`employee_id` ASC),
 	INDEX `issuance_request_id_idx` (`issuance_request_id` ASC)
-);
+)
+CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- Добавление ссылки на заявку в коллективную выдачу
 ALTER TABLE stock_collective_expense
