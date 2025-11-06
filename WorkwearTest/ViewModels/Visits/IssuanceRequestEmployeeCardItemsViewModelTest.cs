@@ -4,7 +4,6 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
