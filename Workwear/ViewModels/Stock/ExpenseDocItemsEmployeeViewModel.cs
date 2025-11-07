@@ -313,6 +313,10 @@ namespace Workwear.ViewModels.Stock
 			UoW.Commit();
 		}
 
+		public void RemoveBarcodeOperation(ExpenseItem item, BarcodeOperation opeation) {
+			item.EmployeeIssueOperation.BarcodeOperations.Remove(opeation);
+			UoW.Delete(opeation);
+		}
 		#endregion
 		#endregion
 

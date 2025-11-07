@@ -4,6 +4,7 @@ using System.Reflection;
 using Gtk;
 using QS.Dialog.GtkUI;
 using QSWidgetLib;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
@@ -147,6 +148,20 @@ namespace Workwear.Views.Stock
 			itemChangeProtectionTools.Sensitive = ViewModel.CanEdit;
 			menu.Add(itemChangeProtectionTools);
 			
+			if(ViewModel.featuresService.Available(WorkwearFeature.Barcodes) && selected.Nomenclature.UseBarcode) {
+				var itemRemoveBarcode = new MenuItem("Отвязать метку");
+				var subItemRemoveBarcode = new Menu();
+
+				foreach(BarcodeOperation bOpeation in selected.EmployeeIssueOperation.BarcodeOperations) {
+					var opItem = new MenuItem(bOpeation.Barcode.Title);
+					opItem.ButtonPressEvent += (sender, e) => ViewModel.RemoveBarcodeOperation(selected, bOpeation);
+					subItemRemoveBarcode.Append(opItem);
+				}
+
+				itemRemoveBarcode.Submenu = subItemRemoveBarcode;
+				menu.Add(itemRemoveBarcode);
+			}
+
 			menu.ShowAll();
 			menu.Popup();
 		}

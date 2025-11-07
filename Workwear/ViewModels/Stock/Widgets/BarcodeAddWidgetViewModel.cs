@@ -67,22 +67,15 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			get => chekcTextColor;
 			set => SetField(ref chekcTextColor, value);
 		}
-		private IObservableList<Barcode> addedBarcodes = new ObservableList<Barcode>();
-		[PropertyChangedAlso(nameof(CanEntry))]
-		public virtual IObservableList<Barcode> AddedBarcodes {
-			get { return addedBarcodes; }
-			set { SetField(ref addedBarcodes, value); }
-		}
+
+		public virtual IObservableList<Barcode> AddedBarcodes { get; } = new ObservableList<Barcode>();
+
 		private Barcode activeBarcode;
 		[PropertyChangedAlso(nameof(CanAdd))]
 		public virtual Barcode ActiveBarcode {
 			get => activeBarcode;
 			set => SetField(ref activeBarcode, value);
 		}
-
-		[PropertyChangedAlso(nameof(CanEntry))]
-		public virtual IList<Barcode> AllBarcodes => expenseItem.EmployeeIssueOperation.BarcodeOperations
-			.Select(x => x.Barcode).Concat(AddedBarcodes).ToList();
 
 		private string barcodeText;
 		public string BarcodeText {
@@ -97,7 +90,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 							CheckText = "Уже используется в другой операции";
 							CheckTextColor = "purple";
 						}
-						else if(addedBarcodes.Any(x => x.Title == barcodeText)) {
+						else if(AddedBarcodes.Any(x => x.Title == barcodeText)) {
 							CheckText = "Уже добавлено";
 							CheckTextColor = "purple";
 						} else {
