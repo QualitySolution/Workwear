@@ -350,11 +350,7 @@ namespace Workwear.ViewModels.ClothingService {
 						Identifier = "ClothingService.ClothingMoveSticker",
 						Parameters = new Dictionary<string, object> {
 							{ "barcode_id", claim.Barcode.Id },
-							{ "service_claim_id", claim.Id },
-							{ "show_terminal", ShowTerminal },
-							{ "preferred_terminal", claim.PreferredTerminalId.HasValue
-								? GetTerminalLabel(claim.PreferredTerminalId.Value)
-									: string.Empty }
+							{ "service_claim_id", claim.Id }
 						}
 					};  break;
 				default: throw new NotImplementedException();

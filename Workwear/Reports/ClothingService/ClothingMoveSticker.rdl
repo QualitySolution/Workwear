@@ -11,7 +11,7 @@
   <BottomMargin>1mm</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT csl.id AS 'claim_id',
        (SELECT
@@ -34,7 +34,6 @@
         WHERE st.claim_id = csl.id
         ORDER BY st.operation_time DESC
         LIMIT 1) as status,
-        csl.preferred_terminal_id,
        csl.need_for_repair AS repair,
        CONCAT_WS(' ', nomenclature.name, NULLIF(CONCAT('(', CONCAT_WS('/', wear_size.name, height_size.name) ,')'), '()')) AS nomenclature_name,
        employees.personnel_number AS 'tab_num',
@@ -56,13 +55,9 @@ WHERE @barcode_id = barcodes.id AND @service_claim_id = csl.id;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="claim_id">
           <DataField>claim_id</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="preferred_terminal_id">
-          <DataField>preferred_terminal_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
         <Field Name="nomenclature_name">
