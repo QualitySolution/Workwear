@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -227,16 +228,15 @@ namespace Workwear.ViewModels.Stock
 		public bool SensitiveBarcodesPrint => CanEdit && VisibleBarcodes 
 			 && ObservableItems.Any(i => i.EmployeeIssueOperation != null && i.EmployeeIssueOperation.BarcodeOperations
 				 .Any(b => b.Barcode.Type == BarcodeTypes.EAN13)); // Есть что печатать
-
 		public bool CanCreateBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
-
-		public bool NeedCreateBarcodes => CanEdit && VisibleBarcodes
-             && ObservableItems.Where(i => i.Nomenclature.UseBarcode)
-	             .Any(i => i.Amount > (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
-		public bool CanSetBarcode => CanEdit && VisibleBarcodes  &&  BaseParameters.ClothingMarkingType == BarcodeTypes.EPC96;
-		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature.UseBarcode ?? false)
+		public bool NeedUpdateBarcodes => CanEdit && VisibleBarcodes
+             && ObservableItems.Where(i => i.Nomenclature?.UseBarcode ?? false)
+	             .Any(i => i.Amount != (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool CanSetBarcode => CanEdit && VisibleBarcodes;
+		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature?.UseBarcode ?? false)
 			&& (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count() ?? 0) < (SelectedItem?.Amount ?? 0);
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
+		
 		public void ReleaseBarcodes() {
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;
 			var saveResult = expenseEmployeeViewModel.Save();
@@ -247,13 +247,13 @@ namespace Workwear.ViewModels.Stock
 			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
 			barcodeService.CreateOrRemoveEAN13(UoW, operations);
 			UoW.Commit();
-			OnPropertyChanged(nameof(NeedCreateBarcodes));
+			OnPropertyChanged(nameof(NeedUpdateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));
 			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 		}
 
 		public void PrintBarcodesEAN13() {
-			if(NeedCreateBarcodes) {
+			if(NeedUpdateBarcodes) {
 				if(interactive.Question("Не для всех строк документа была проставлена маркировка. Обновить маркировку?"))
 					ReleaseBarcodes();
 				else
@@ -290,6 +290,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		public void AddBarcodes(ExpenseItem item, List<Barcode> barcodes) {
 			UoW.GetInSession(item); 
+			barcodes = UoW.Query<Barcode>().Where(b => b.Id.IsIn(barcodes.Select(x => x.Id).ToArray())).List() as List<Barcode>;
 			foreach(var barcode in barcodes) {
 				barcode.Nomenclature = item.Nomenclature;
 				barcode.Size = item.WearSize;
@@ -376,7 +377,7 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-			OnPropertyChanged(nameof(NeedCreateBarcodes));
+			OnPropertyChanged(nameof(NeedUpdateBarcodes));
 			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 			OnPropertyChanged(nameof(CanCreateBarcode));
 			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));

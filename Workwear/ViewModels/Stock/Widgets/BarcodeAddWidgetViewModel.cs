@@ -85,21 +85,39 @@ namespace Workwear.ViewModels.Stock.Widgets {
 
 					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.ClothingMarkingType)) {
 						var barcode = barcodeRepository.GetBarcodeByString(barcodeText);
-						if(barcode != null && barcode.BarcodeOperations.Count != 0) {
-							//TODO в будующем при дополнении маркировки это тоже нужно отрабатывать
-							CheckText = "Уже используется в другой операции";
-							CheckTextColor = "purple";
-						}
-						else if(AddedBarcodes.Any(x => x.Title == barcodeText)) {
-							CheckText = "Уже добавлено";
-							CheckTextColor = "purple";
+
+						if(barcode != null) {
+							if(barcode.BarcodeOperations.Count != 0) {
+								//TODO в будующем при дополнении маркировки это тоже нужно отрабатывать
+								CheckText = "Уже используется в другой операции";
+								CheckTextColor = "purple";
+							} else if(AddedBarcodes.Any(x => x.Title == barcodeText)) {
+								CheckText = "Уже добавлено";
+								CheckTextColor = "purple";
+							} else {
+								ActiveBarcode = barcode;
+								if(AutoAdd)
+									AddItem();
+								else {
+									CheckTextColor = "orange";
+									CheckText = "Можно добавить";
+								}
+							}
 						} else {
-							ActiveBarcode = new Barcode() { Title = barcodeText, Type = baseParameters.ClothingMarkingType };
-							if(AutoAdd)
-								AddItem();
-							else {
-								CheckTextColor = "orange";
-								CheckText = "Можно добавить";
+							if(baseParameters.ClothingMarkingType == BarcodeTypes.EAN13) {
+								CheckTextColor = "red";
+								CheckText = "Штрихкод не найден";
+							}else if(AddedBarcodes.Any(x => x.Title == barcodeText)) {
+                             							CheckText = "Уже добавлено";
+                             							CheckTextColor = "purple";
+                            } else {
+								ActiveBarcode = new Barcode() { Title = barcodeText, Type = baseParameters.ClothingMarkingType };
+								if(AutoAdd)
+									AddItem();
+								else {
+									CheckTextColor = "orange";
+									CheckText = "Можно добавить";
+								}
 							}
 						}
 					} else {
@@ -115,6 +133,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		
 		public void Accept() {
 			if(docItemsVM != null && expenseItem != null) {
+				UoW.Commit();
 				docItemsVM.AddBarcodes(expenseItem, (List<Barcode>)AddedBarcodes);
 			}
 			Close(false, CloseSource.Save);

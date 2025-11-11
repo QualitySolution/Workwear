@@ -294,9 +294,9 @@ namespace Workwear.ViewModels.Stock {
 				return true;
 			}
 			
-			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.NeedCreateBarcodes) {
-				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить штрихкоды.");
-				logger.Warn("Необходимо обновить штрихкоды.");
+			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.NeedUpdateBarcodes) {
+				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить маркировку.");
+				logger.Warn("Необходимо обновить маркировку.");
 				return false;
 			}
 			

@@ -85,7 +85,7 @@ namespace Workwear.Tools.Barcodes
 		public static bool CheckBarcode(string barcode, BarcodeTypes type) {
 			switch(type) {
 				case BarcodeTypes.EAN13:
-					return barcode.Length == 13 && barcode.All(char.IsDigit);
+					return barcode.Length == 13 && barcode.All(char.IsDigit) && CheckSum(barcode.Substring(0, 12)).ToString()[0] == barcode[12];
 				case BarcodeTypes.EPC96:
 					return barcode.Length == 24 && System.Text.RegularExpressions.Regex.IsMatch(barcode, @"^[0-9A-Fa-f]+$");
 				default:
