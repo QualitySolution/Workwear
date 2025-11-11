@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHibernate.Criterion;
 using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
-using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -38,63 +35,35 @@ namespace Workwear.ViewModels.Visits {
 			set => SetField(ref groupedEmployeeCardItems, value);
 		}
 		private IssuanceRequest IssuanceRequest => parent.Entity;
-		private IList<EmployeeCard> Employees => parent.Employees;
-		private IList<CollectiveExpense> CollectiveExpenses => parent.CollectiveExpenses;
-		private EmployeeCardItem[] EmployeeCardItems { get; set; }
-		private CollectiveExpenseItem[] CollectiveExpenseItems { get; set; }
 		
 		#region События
-
-		#region Предзагрузка
-		private EmployeeCardItem[] LoadEmployeeCardItems(int[] employeesIds) {
-			ProtectionTools protectionToolsAlias = null;
-			ItemsType itemsTypeAlias = null;
-			return parent.UoW.Session.QueryOver<EmployeeCardItem>()
-				.Where(x => x.EmployeeCard.Id.IsIn(employeesIds))
-				.JoinAlias(x => x.ProtectionTools, () => protectionToolsAlias)
-				.JoinAlias(() => protectionToolsAlias.Type, () => itemsTypeAlias)
-				.Where(() => itemsTypeAlias.IssueType == IssueType.Collective)
-				.List()
-				.ToArray();
-		}
-		private CollectiveExpenseItem[] LoadCollectiveExpenseItems(int[] employeesIds, int[] collectiveExpensesIds) {
-			ProtectionTools protectionToolsAlias = null;
-			ItemsType itemsTypeAlias = null;
-			return parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.Where(x => x.Document.Id.IsIn(collectiveExpensesIds))
-				.Where(x => x.Employee.Id.IsIn(employeesIds))
-				.JoinAlias(x => x.ProtectionTools, () => protectionToolsAlias)
-				.JoinAlias(() => protectionToolsAlias.Type, () => itemsTypeAlias)
-				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
-				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
-				.Where(() => itemsTypeAlias.IssueType == IssueType.Collective)
-				.List()
-				.ToArray();
-		}
-		public void ReloadData() {
-			var employeesIds = Employees.Select(e => e.Id).ToArray();
-			var collectiveExpensesIds = CollectiveExpenses.Select(c => c.Id).ToArray();
-			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
-			employeeIssueModel.PreloadEmployeeInfo(employeesIds);
-			employeeIssueModel.PreloadWearItems(employeesIds);
-			EmployeeCardItems = LoadEmployeeCardItems(employeesIds);
-			CollectiveExpenseItems = LoadCollectiveExpenseItems(employeesIds, collectiveExpensesIds);
-			employeeIssueModel.FillWearInStockInfo(EmployeeCardItems, stockBalanceModel);
-			employeeIssueModel.FillWearReceivedInfo(EmployeeCardItems);
-			UpdateNodes();
-		}
-		#endregion
 		public void OnShow() {
 			if(GroupedEmployeeCardItems == null)
-				ReloadData();
+				UpdateNodes();
 		}
 
-		private void UpdateNodes() {
+		public void UpdateNodes() {
 			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
-			GroupedList.Clear();
-			var alreadyIssuedOperationsIds = new HashSet<int>(CollectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
+			CollectiveExpense collectiveExpenseAlias = null;
+			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
+			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
+			employeeIssueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 			
-			foreach(var item in EmployeeCardItems) {
+			var employeeCardItems = employees
+				.SelectMany(x => x.WorkwearItems)
+				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
+				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
+				.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective)
+				.ToArray();
+			var collectiveExpenseItems = parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
+				.JoinAlias(x => x.Document, () => collectiveExpenseAlias)
+				.Where(() => collectiveExpenseAlias.IssuanceRequest.Id == IssuanceRequest.Id)
+				.List();
+			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
+			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
+
+			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
+			foreach(var item in employeeCardItems) {
 				var wearSize = item.EmployeeCard.Sizes
 					.Where(x => x.SizeType == item.ProtectionTools.Type.SizeType)
 					.Where(x => x.SizeType.CategorySizeType == CategorySizeType.Size)
@@ -105,7 +74,7 @@ namespace Workwear.ViewModels.Visits {
 					.Where(x => x.SizeType.CategorySizeType == CategorySizeType.Height)
 					.Select(x => x.Size)
 					.FirstOrDefault();
-				var issuedByCollectiveExpense = CollectiveExpenseItems
+				var issuedByCollectiveExpense = collectiveExpenseItems
 					.Where(x => x.ProtectionTools.Id == item.ProtectionTools.Id)
 					.Where(x => x.Employee.Id == item.EmployeeCard.Id)
 					.Sum(x => x.Amount);
