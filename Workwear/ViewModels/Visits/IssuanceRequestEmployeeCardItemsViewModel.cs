@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate.Criterion;
+using QS.Dialog;
 using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
 using Workwear.Domain.Sizes;
@@ -13,20 +15,24 @@ using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestEmployeeCardItemsViewModel: ViewModelBase {
+		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueModel employeeIssueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly BaseParameters baseParameters;
 		private readonly IssuanceRequestViewModel parent;
+		private readonly ModalProgressCreator modalProgress;
 		public IssuanceRequestEmployeeCardItemsViewModel(
 			EmployeeIssueModel employeeIssueModel, 
 			StockBalanceModel stockBalanceModel, 
 			BaseParameters baseParameters,
-			IssuanceRequestViewModel parent) 
+			IssuanceRequestViewModel parent,
+			ModalProgressCreator modalProgress) 
 		{
 			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
+			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 		}
 		public IObservableList<EmployeeCardItemsVmNode> GroupedList = new ObservableList<EmployeeCardItemsVmNode>();
 		private IList<EmployeeCardItemsVmNode> groupedEmployeeCardItems;
@@ -43,26 +49,39 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		public void UpdateNodes() {
+			var performance = new ProgressPerformanceHelper(modalProgress, 10,"Старт" ,logger);
 			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 			CollectiveExpense collectiveExpenseAlias = null;
+
+			performance.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
 			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
 			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
+			
+			performance.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
 			employeeIssueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 			
+			performance.CheckPoint("Загрузка потребностей");
 			var employeeCardItems = employees
 				.SelectMany(x => x.WorkwearItems)
 				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
 				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
 				.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective)
 				.ToArray();
+			
+			performance.CheckPoint("Загрузка строк док-в коллективной выдачи");
 			var collectiveExpenseItems = parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.JoinAlias(x => x.Document, () => collectiveExpenseAlias)
 				.Where(() => collectiveExpenseAlias.IssuanceRequest.Id == IssuanceRequest.Id)
 				.List();
+			
+			performance.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
 			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
+			
+			performance.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
 			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
 
 			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
+			performance.CheckPoint("Заполнение потребностей");
 			foreach(var item in employeeCardItems) {
 				var wearSize = item.EmployeeCard.Sizes
 					.Where(x => x.SizeType == item.ProtectionTools.Type.SizeType)
@@ -94,6 +113,7 @@ namespace Workwear.ViewModels.Visits {
 				employeeCardItemsNodeList.Add(employeeCardItemsNode);
 			}
 			
+			performance.CheckPoint("Группирровка потребностей");
 			GroupedEmployeeCardItems = employeeCardItemsNodeList
 				.GroupBy(x => (x.ProtectionToolsId, x.WearSize, x.Height))
 				.Select(node => new EmployeeCardItemsVmNode {
@@ -108,9 +128,10 @@ namespace Workwear.ViewModels.Visits {
 				})
 				.Where(node => node.Need != 0)
 				.ToList();
-
+			performance.CheckPoint("Добавление элементов в Observable-коллекцию");
 			foreach(var item in GroupedEmployeeCardItems)
 				GroupedList.Add(item);
+			performance.End();
 		}
 		#endregion
 	}
