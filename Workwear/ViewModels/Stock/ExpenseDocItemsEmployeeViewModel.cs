@@ -229,9 +229,10 @@ namespace Workwear.ViewModels.Stock
 			 && ObservableItems.Any(i => i.EmployeeIssueOperation != null && i.EmployeeIssueOperation.BarcodeOperations
 				 .Any(b => b.Barcode.Type == BarcodeTypes.EAN13)); // Есть что печатать
 		public bool CanCreateBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
-		public bool NeedUpdateBarcodes => CanEdit && VisibleBarcodes
-             && ObservableItems.Where(i => i.Nomenclature?.UseBarcode ?? false)
-	             .Any(i => i.Amount != (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		private IEnumerable<ExpenseItem> MarkingItems => ObservableItems.Where(i => i.Nomenclature?.UseBarcode ?? false);
+		public bool NeedUpdateBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount != (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool NeedAddBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount > (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool	NeedRemoveBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount < (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
 		public bool CanSetBarcode => CanEdit && VisibleBarcodes;
 		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature?.UseBarcode ?? false)
 			&& (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count() ?? 0) < (SelectedItem?.Amount ?? 0);
@@ -245,7 +246,7 @@ namespace Workwear.ViewModels.Stock
 				return;
 
 			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
-			barcodeService.CreateOrRemoveEAN13(UoW, operations);
+			barcodeService.CreateBarcodeEAN13(UoW, operations);
 			UoW.Commit();
 			OnPropertyChanged(nameof(NeedUpdateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));

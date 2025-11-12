@@ -26,11 +26,9 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
-		public void CreateOrRemoveEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
+		public void CreateBarcodeEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
 			foreach(var operation in employeeIssueOperations) {
 				int bcount = operation.BarcodeOperations.Count;
-				if(operation.Issued == bcount)
-					continue;
 
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
@@ -41,19 +39,6 @@ namespace Workwear.Tools.Barcodes
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
-					}
-				}
-				else if(operation.Issued < bcount) {
-					var toRemove = operation.BarcodeOperations.Where(b => b.Barcode.Type == BarcodeTypes.EAN13)
-						.OrderBy(x => x.Barcode.BarcodeOperations.Count).Take(bcount - operation.Issued).ToArray();
-					foreach(var removed in toRemove) {
-						operation.BarcodeOperations.Remove(removed);
-						if(removed.Id > 0)
-							unitOfWork.Delete(removed);
-						if(removed.Barcode.BarcodeOperations.All(x => x.Id == removed.Id)) //Пустая коллекция в этом услоыии тоже вернет true
-							unitOfWork.Delete(removed.Barcode);
-						else
-							logger.Warn($"Метка(штрихкод) Id:{removed.Barcode.Id} не была удалена, так как она уже используется в других операциях.");
 					}
 				}
 			}

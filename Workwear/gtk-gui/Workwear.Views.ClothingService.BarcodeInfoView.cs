@@ -220,7 +220,7 @@ namespace Workwear.Views.ClothingService
 			this.frame1.Add(this.GtkAlignment);
 			this.GtkLabelTop = new global::Gtk.Label();
 			this.GtkLabelTop.Name = "GtkLabelTop";
-			this.GtkLabelTop.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Информация о штрихкоде</b>");
+			this.GtkLabelTop.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Информация о метке</b>");
 			this.GtkLabelTop.UseMarkup = true;
 			this.frame1.LabelWidget = this.GtkLabelTop;
 			this.Add(this.frame1);

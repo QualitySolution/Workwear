@@ -27385,7 +27385,7 @@
         <child>
           <widget class="Gtk.Label" id="GtkLabelTop">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">&lt;b&gt;Информация о штрихкоде&lt;/b&gt;</property>
+            <property name="LabelProp" translatable="yes">&lt;b&gt;Информация о метке&lt;/b&gt;</property>
             <property name="UseMarkup">True</property>
           </widget>
           <packing>

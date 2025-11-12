@@ -353,7 +353,7 @@ namespace Workwear.ViewModels.Operations
 			if(SelectOperation.Id == 0)
 				UoW.Save(SelectOperation);
 			
-			barcodeService.CreateOrRemoveEAN13(UoW, new []{SelectOperation});
+			barcodeService.CreateBarcodeEAN13(UoW, new []{SelectOperation});
 			UoW.Commit();
 			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
