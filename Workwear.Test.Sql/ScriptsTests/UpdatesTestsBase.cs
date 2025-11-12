@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
-using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using NLog;
 using NUnit.Framework;
@@ -14,48 +14,69 @@ using QS.Utilities.Text;
 using Workwear.Sql;
 using Workwear.Test.Sql.Models;
 
-namespace Workwear.Test.Sql
+namespace Workwear.Test.Sql.ScriptsTests
 {
 	[TestFixture]
-	[NonParallelizable]
-	public class UpdatesTests
+	public abstract class UpdatesTestsBase
 	{
 		public static readonly string CurrentDdName = "workwear_sqltest_current";
-
-		private SqlServer RunningServer { get; set; }
+		protected SqlServer server;
 		
 		public static IEnumerable<object[]> DbSamples {
 			get {
-				var configuration = TestsConfiguration.Configuration;
-				List<DbSample> samples = configuration.GetSection("Samples").Get<List<DbSample>>();
+				var dumpsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Dumps");
+				if (!Directory.Exists(dumpsPath)) {
+					dumpsPath = Path.Combine(Directory.GetCurrentDirectory(), "Dumps");
+				}
 				
-				foreach (var server in SqlServers) {
-					foreach (var dbSample in samples) {
-						if(!String.IsNullOrEmpty(dbSample.ForServerGroup) && !dbSample.ForServerGroup.Equals(server.Group))
-							continue;
+				if (!Directory.Exists(dumpsPath)) {
+					yield break;
+				}
 
-						yield return new object[] { server, dbSample };
-					}
+				var sqlFiles = Directory.GetFiles(dumpsPath, "*.sql", SearchOption.TopDirectoryOnly)
+					.OrderBy(f => f);
+
+				foreach (var sqlFile in sqlFiles) {
+					var fileName = Path.GetFileName(sqlFile);
+					// Извлекаем версию из имени файла (например, empty_2.8.sql -> 2.8)
+					var versionPart = fileName.Replace("empty_", "").Replace(".sql", "");
+					var dbName = $"workwear_sqltest_{versionPart.Replace(".", "_")}";
+
+					var dbSample = new DbSample {
+						SqlFile = sqlFile,
+						Version = versionPart,
+						DbName = dbName
+					};
+
+					yield return new object[] { dbSample };
 				}
 			}
 		}
 
 		[OneTimeSetUp]
-		public void Setup() {
+		public async Task Setup() {
 			LogManager.Setup().LoadConfiguration(builder => {
 				builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
 			});
+			await InitialiseContainer();
 		}
 		
+		[OneTimeTearDown]
+		public virtual async Task OneTimeTearDown() {
+			await DisposeContainer();
+		}
+
+		protected abstract Task InitialiseContainer();
+		protected abstract Task DisposeContainer();
+
 		[TestCaseSource(nameof(DbSamples))]
-		public void ApplyUpdatesTest(SqlServer server, DbSample sample) {
+		public void ApplyUpdatesTest(DbSample sample) {
 			var updateConfiguration = ScriptsConfiguration.MakeUpdateConfiguration();
 			//Проверяем нужно ли обновлять 
 			if(!updateConfiguration.GetHopsToLast(sample.TypedVersion, false).Any())
 				Assert.Ignore($"Образец базы {sample} версии пропущен. Так как версию базы {sample.Version} невозможно обновить.");
 
 			//Загружаем образец базы на SQL сервер.
-			StartSqlServer(server);
 			TestContext.Progress.WriteLine($"Создаем базу {sample.DbName}");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(sample);
@@ -73,6 +94,15 @@ namespace Workwear.Test.Sql
 					RunOneUpdate(connection, hop);
 				}
 
+				//Проверяем наличие базы для сравнения
+				var checkDbSql = $"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{CurrentDdName}'";
+				var dbExists = connection.ExecuteScalar(checkDbSql);
+				if(dbExists == null) {
+					TestContext.Progress.WriteLine($"База {CurrentDdName} не найдена. Создаем её перед сравнением.");
+					//Нужно для возможности запускать только выбранный тест обновления.
+					CreateCurrentNewBaseTest();
+				}
+				
 				//Сравнение обновлённой базы и новой
 				ComparisonSchema(connection, CurrentDdName, sample.DbName);
 			}
@@ -111,60 +141,24 @@ namespace Workwear.Test.Sql
 				command.ExecuteNonQuery();
 			}
 		}
-
-		public static IEnumerable<SqlServer> SqlServers {
-			get {
-				var configuration = TestsConfiguration.Configuration;
-				var currentVersion = ScriptsConfiguration.MakeCreationScript().Version;
-				var servers = configuration.GetSection("SQLServers").Get<List<SqlServer>>();
-				foreach(var server in servers) {
-					if(!String.IsNullOrEmpty(server.UseBefore) 
-					   && Version.TryParse(server.UseBefore, out Version useBeforeVersion) 
-					   && currentVersion >= useBeforeVersion)
-						continue;
-					yield return server;
-				}
-			}
-		}
 		
 		[Test(Description = "Проверяем что можно создать базу из текущего скрипта создания.")]
-		[TestCaseSource(nameof(SqlServers))]
 		[Order(1)] //Тесты с указанным порядком выполняются раннее других. Нужно для сравнения обновленных баз с чистой установкой.
-		public void CreateCurrentNewBaseTest(SqlServer server)
+		public void CreateCurrentNewBaseTest()
 		{
-			StartSqlServer(server);
-			//Создаем чистую базу
-			TestContext.Progress.WriteLine($"Создаем чистую базу {CurrentDdName} на сервере {server.Name}");
+			// Получаем и выводим версию сервера
+			using(var connection = new MySqlConnection(server.ConnectionStringBuilder.ConnectionString)) {
+				connection.Open();
+				var serverVersion = connection.ServerVersion;
+				TestContext.Progress.WriteLine($"Версия SQL сервера: {serverVersion}");
+			}
+			
+			TestContext.Progress.WriteLine($"Создаем чистую базу {CurrentDdName} из текущего скрипта создания.");
 			var creator = new TestingCreateDbController(server);
 			var success = creator.StartCreation(ScriptsConfiguration.MakeCreationScript(), CurrentDdName);
 			Assert.That(success, Is.True);
 		}
-
-		#region SQL Servers
-
-		void StartSqlServer(SqlServer server) 
-		{
-			if(server.Equals(RunningServer))
-				return;
-			if(RunningServer != null) {
-				TestContext.Progress.WriteLine($"Останавливаем сервер {RunningServer.Name}");
-				RunningServer.Stop();
-				RunningServer = null;
-			}
-			TestContext.Progress.WriteLine($"Запускаем сервер {server.Name}");
-			server.Start();
-			RunningServer = server;
-		}
-
-		[OneTimeTearDown]
-		public void StopSqlServer()
-		{
-			if(RunningServer != null)
-				RunningServer.Stop();
-			RunningServer = null;
-		}
 		
-		#endregion
 		#region Compare DB
 		private string GetVersion(MySqlConnection connection, string db) {
 			var sql = $"SELECT `str_value` FROM {db}.`base_parameters` WHERE `name` = 'version';";
@@ -196,8 +190,8 @@ namespace Workwear.Test.Sql
 					.Select(x => new RowOfSchema(schema, x))
 					.ToDictionary(x => x.FullName, x => x);
 				
-				Assert.That(db1, Is.Not.Empty, $"Метаданные {schema} в базе {dbname1} отсутствуют");
-				Assert.That(db2, Is.Not.Empty, $"Метаданные {schema} в базе {dbname2} отсутствуют");
+				Assert.That(db1, Is.Not.Empty, $"Метаданные {schema.Name} в базе {dbname1} отсутствуют");
+				Assert.That(db2, Is.Not.Empty, $"Метаданные {schema.Name} в базе {dbname2} отсутствуют");
 
 				foreach(var row in db1) {
 					if(db2.TryGetValue(row.Key, out var value)) {
@@ -207,7 +201,7 @@ namespace Workwear.Test.Sql
 						}
 					}
 					else {
-						log($"{schema} — значение {row.Value.FullName}\n" +
+						log($"{schema.Name} — значение {row.Value.FullName}\n" +
 						    $"  присутствует в    {dbname1}\n" +
 						    $"  но отсутствует в  {dbname2}");
 						result = false;
@@ -216,7 +210,7 @@ namespace Workwear.Test.Sql
 				
 				foreach(var row in db2) {
 					if(!db1.ContainsKey(row.Key)) {
-						log($"{schema} — значение {row.Value.FullName}\n" +
+						log($"{schema.Name} — значение {row.Value.FullName}\n" +
 						    $"  присутствует в    {dbname2}\n" +
 						    $"  но отсутствует в  {dbname1}");
 						result = false;

@@ -4,7 +4,6 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -192,7 +191,7 @@ namespace WorkwearTest.ViewModels.Visits
 					var viewModel = parentViewModel.EmployeeCardItemsViewModel;
 
 					// Выполняем тестируемый метод
-					viewModel.UpdateNodes();
+					viewModel.ReloadData();
 
 					// Проверяем результат
 					Assert.That(viewModel.GroupedEmployeeCardItems, Is.Not.Null);

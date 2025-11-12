@@ -23,6 +23,7 @@ using Workwear.Tools;
 using Workwear.Tools.Sizes;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Analytics.WarehouseForecasting;
@@ -30,6 +31,7 @@ using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
 using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
@@ -104,6 +106,7 @@ namespace Workwear.ViewModels.Supply {
 		private ShipmentItem[] selectedItems;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanToOrder))]
+		[PropertyChangedAlso(nameof(CanAddSize))]
 		public virtual ShipmentItem[] SelectedItems {
 			get=>selectedItems;
 			set=>SetField(ref selectedItems, value);
@@ -136,6 +139,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CanEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
 		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
+		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
@@ -166,6 +170,7 @@ namespace Workwear.ViewModels.Supply {
 			foreach(var item in items)
 				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(CanRemoveItem));
+			OnPropertyChanged(nameof(CanAddSize));
 			CalculateTotal();
 		}
 		
@@ -228,6 +233,34 @@ namespace Workwear.ViewModels.Supply {
 						fitem.Nomenclature.SaleCost ?? 0 //Возможно стоит подвязаться на переключатель типа стоимости в прогнозе
 						);
 			}
+		}
+
+		public void AddSize(ShipmentItem[] items) {
+			if(items[0].Nomenclature == null)
+				return;
+			var existItems = Entity.Items
+				.Where(x => x.Nomenclature.IsSame(items[0].Nomenclature))
+				.Cast<IDocItemSizeInfo>().ToList();
+			var selectJournal = NavigationManager
+				.OpenViewModel<SizeWidgetViewModel, IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
+					(null, items[0], UoW, existItems);
+			selectJournal.ViewModel.AddedSizes += (s, e) => SelectWearSize_SizeSelected(e, items[0]);
+		}
+
+		private void SelectWearSize_SizeSelected(AddedSizesEventArgs e, ShipmentItem item) {
+			foreach(var i in e.SizesWithAmount.ToList()) {
+				var exist = Entity.FindItem(item.Nomenclature, i.Size, e.Height);
+				if(exist != null)
+					exist.Requested = i.Amount;
+				else
+					Entity.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Cost);
+			}
+			if(item.WearSize == null) {
+				Entity.RemoveItem(item);
+				OnPropertyChanged(nameof(CanRemoveItem));
+				OnPropertyChanged(nameof(CanAddSize));
+			}
+			CalculateTotal();
 		}
 		#endregion
 

@@ -229,9 +229,13 @@ namespace Workwear.Sql
 			);
 			configuration.AddUpdate(
 				new Version(2, 8, 28),
+				new Version(2, 8, 33),
+				"Workwear.Sql.Scripts.2.8.33.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 33),
 				new Version(2, 9),
 				"Workwear.Sql.Scripts.2.9.sql",
-			//Необходимо только потому что MySQL не поддерживает синтаксис ADD INDEX IF NOT EXISTS
 			delegate (DbConnection connection) {
 				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees"); 
 				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups"); 
@@ -274,7 +278,11 @@ namespace Workwear.Sql
 			configuration.AddUpdate(
 				new Version(2, 10, 3),
 				new Version(2, 10, 4),
-				"Workwear.Sql.Scripts.2.10.4.sql"
+				"Workwear.Sql.Scripts.2.10.4.sql",
+				delegate(DbConnection connection) {
+					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees");
+					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups");
+				}
 			);
 			return configuration;
 		}

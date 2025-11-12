@@ -4,6 +4,7 @@ using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Supply{
 	[Appellative (Gender = GrammaticalGender.Feminine,
@@ -12,7 +13,7 @@ namespace Workwear.Domain.Supply{
 		Genitive = "строки предполагаемой поставки"
 	)]
 	[HistoryTrace]
-	public class ShipmentItem: PropertyChangedBase, IDomainObject 
+	public class ShipmentItem: PropertyChangedBase, IDomainObject, IDocItemSizeInfo
 	{
 		#region Свойства
 		public virtual int Id { get; set; }
@@ -39,7 +40,17 @@ namespace Workwear.Domain.Supply{
 		public virtual int Requested {
 			get => requested;
 			set => SetField(ref requested, value);
-		}	
+		}
+		
+		[Display (Name = "Количество")]
+		[PropertyChangedAlso(nameof(TotalRequested))]
+		public virtual int Amount {
+			get => Requested;
+			set {
+				Requested = value;
+				OnPropertyChanged();
+			}
+		}
 		
 		private int ordered;
 		[Display (Name = "Количество заказано")]
