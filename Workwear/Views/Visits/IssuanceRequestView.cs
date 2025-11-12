@@ -165,8 +165,7 @@ namespace Workwear.Views.Visits {
 				"<span color='gray'>●</span> — выдано полностью\n" +
 				"<b>Колонка «К выдаче»:</b>\n" +
 				"<span color='red'>●</span> — не выдано\n" +
-				"<span color='orange'>●</span> — частично выдано\n" +
-				"<span color='blue'>●</span> — выдано больше необходимого\n"
+				"<span color='orange'>●</span> — частично выдано\n"
 				);
 		}
 

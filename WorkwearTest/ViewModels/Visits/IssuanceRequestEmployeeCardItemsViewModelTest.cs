@@ -191,7 +191,7 @@ namespace WorkwearTest.ViewModels.Visits
 					var viewModel = parentViewModel.EmployeeCardItemsViewModel;
 
 					// Выполняем тестируемый метод
-					viewModel.UpdateNodes();
+					viewModel.ReloadData();
 
 					// Проверяем результат
 					Assert.That(viewModel.GroupedEmployeeCardItems, Is.Not.Null);
