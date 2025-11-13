@@ -942,8 +942,25 @@
     departments.name as department_name,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
-    sizeAlias.name AS size,
-    heightAlias.name AS growth,
+    protection_tools.item_types_id as prTypeId,
+    (SELECT size_type_id 
+     FROM item_types  
+     WHERE id = prTypeId) as prSizeTypeId,
+    (SELECT height_type_id 
+     FROM item_types 
+     WHERE id = prTypeId) as prHeightTypeId,
+    (SELECT sizes.name
+     FROM employees_sizes
+             JOIN sizes  ON sizes.id = employees_sizes.size_id
+     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = prSizeTypeId
+     LIMIT 1
+    ) AS size,
+    (SELECT sizes.name
+     FROM employees_sizes
+             JOIN sizes  ON sizes.id = employees_sizes.size_id
+     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = prHeightTypeId
+     LIMIT 1
+    ) AS growth,
     measurement_units.name AS unit,
     norms_item.amount AS amount_by_norm,
     IFNULL(ballance.amount, 0) as amount_ballance,
@@ -953,15 +970,21 @@ FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-        LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
-        LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+        JOIN (
+            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
+                            item_types.size_type_id, item_types.height_type_id, item_types.issue_type
+            FROM protection_tools_nomenclature
+                LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
+                LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+            )as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
+        LEFT JOIN measurement_units ON nomenclatureTypes.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
         LEFT JOIN departments ON employees.department_id = departments.id
         LEFT JOIN posts ON employees.post_id = posts.id
         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
-        LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
-        LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
+        LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = nomenclatureTypes.size_type_id
+        LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = nomenclatureTypes.height_type_id
         LEFT JOIN employees_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
         LEFT JOIN employees_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
@@ -983,11 +1006,11 @@ FROM
             ) as ballance
                   ON (employee_cards_item.employee_id = ballance.emp_id AND employee_cards_item.protection_tools_id = ballance.pt_id)
         #Остатки на складе
-        LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
+        LEFT JOIN (SELECT sex_b.ptid, sex_b.type_id, sex_b.size_id, sex_b.height_id, sex_const.sex,
                           IF(sex_const.sex = 'Men', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U) AS SUM
                    FROM (
                             #Универсальый зарос
-                            SELECT spt.id AS ptid, sopwh.size_id, sopwh.height_id,
+                            SELECT spt.id AS ptid, sn.type_id, sopwh.size_id, sopwh.height_id,
                                    (SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
                                                                      (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
                                        - SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_expense_id IS NOT NULL AND
@@ -1021,6 +1044,7 @@ FROM
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
         AS stock
                   ON (employee_cards_item.protection_tools_id = stock.ptid
+                      AND nomenclatureTypes.type_id = stock.type_id
                       AND (stock.sex = 'Universal' OR (stock.sex = 'Men' AND employees.sex = 'M') OR (stock.sex = 'Women' AND employees.sex = 'F'))
                       AND (sizeTypeAlias.id IS NULL OR stock.size_id IS NULL OR stock.size_id = employeeSizeAlias.size_id OR stock.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
                       AND (heightTypeAlias.id IS NULL OR stock.height_id IS NULL OR stock.height_id = employeeHeightAlias.size_id OR stock.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
@@ -1043,7 +1067,7 @@ WHERE
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
           SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
-  AND( @issue_type = '' OR item_types.issue_type = @issue_type )
+  AND( @issue_type = '' OR nomenclatureTypes.issue_type = @issue_type )
   AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
 GROUP BY
