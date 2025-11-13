@@ -70,7 +70,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => validator).As<IValidator>();
-			builder.Register(x => changeWatcher).As<IEntityChangeWatcher>();
+			builder.RegisterInstance(changeWatcher).As<IEntityChangeWatcher>();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
