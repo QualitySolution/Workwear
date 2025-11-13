@@ -55,7 +55,6 @@ namespace WorkwearTest.ViewModels.Visits
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var permissions = Substitute.For<ICurrentPermissionService>();
 			permissions.ValidateEntityPermission(Arg.Any<Type>()).Returns(new SimplePermissionResult(true, true, true, true));
-			var changeWatcher = Substitute.For<IEntityChangeWatcher>();
 			
 			var builder = new ContainerBuilder();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
@@ -70,7 +69,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => validator).As<IValidator>();
-			builder.RegisterInstance(changeWatcher).As<IEntityChangeWatcher>();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
