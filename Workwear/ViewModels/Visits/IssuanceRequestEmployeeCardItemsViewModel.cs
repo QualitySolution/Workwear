@@ -49,6 +49,7 @@ namespace Workwear.ViewModels.Visits {
 		}
 
 		public void UpdateNodes() {
+			GroupedList.Clear();
 			var performance = new ProgressPerformanceHelper(modalProgress, 10,"Старт" ,logger);
 			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 			CollectiveExpense collectiveExpenseAlias = null;
