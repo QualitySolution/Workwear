@@ -515,7 +515,7 @@ public partial class MainWindow
 		this.ActionOwner = new global::Gtk.Action("ActionOwner", global::Mono.Unix.Catalog.GetString("Собственники имущества"), null, null);
 		this.ActionOwner.ShortLabel = global::Mono.Unix.Catalog.GetString("Собственники имущества");
 		w1.Add(this.ActionOwner, null);
-		this.ActionBarcodes = new global::Gtk.Action("ActionBarcodes", global::Mono.Unix.Catalog.GetString("Штрихкоды"), null, null);
+		this.ActionBarcodes = new global::Gtk.Action("ActionBarcodes", global::Mono.Unix.Catalog.GetString("Маркировка (Штрихкоды)"), null, null);
 		this.ActionBarcodes.ShortLabel = global::Mono.Unix.Catalog.GetString("Штрихкоды");
 		w1.Add(this.ActionBarcodes, null);
 		this.ActionCostCenter = new global::Gtk.Action("ActionCostCenter", global::Mono.Unix.Catalog.GetString("Места возникновения затрат"), null, null);

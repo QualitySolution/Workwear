@@ -522,7 +522,7 @@ namespace Workwear.Domain.Operations
 
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if((Nomenclature?.UseBarcode ?? false) && BarcodeOperations.Count != Issued)
-				yield return new ValidationResult("Количество созданных штрихкодов должно соответствовать количеству выданного.");
+				yield return new ValidationResult("Количество созданных меток(штрихкодов) должно соответствовать количеству выданного.");
 			if(manualOperation) {
 				if(OperationTime < new DateTime(1990, 1, 1))
 					yield return new ValidationResult("Можно сохранить дату операции только после 1990г.");

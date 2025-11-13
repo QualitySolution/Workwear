@@ -1,4 +1,5 @@
 ﻿using QS.Views.Dialog;
+using Workwear.Domain.Stock;
 using Workwear.Tools;
 using Workwear.ViewModels.Tools;
 
@@ -51,7 +52,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.ExtendPeriod, w => w.SelectedItem)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
-		   
+
+		    Combo_markingType.Visible = ylabel_markingType.Visible = ViewModel.MarkingVisible;
+		    Combo_markingType.ItemsEnum = typeof(BarcodeTypes);
+		    Combo_markingType.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ClothingMarkingType, w => w.SelectedItem)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+		    
 		    yentryCurrency.Binding.AddSource(ViewModel)
 			    .AddBinding(v => v.UsedCurrency, w => w.Text)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)

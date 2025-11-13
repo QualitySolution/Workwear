@@ -5,6 +5,8 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class BarcodeInfoViewModel : ViewModelBase {
@@ -13,17 +15,19 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Свойства модели
 
 		private string barcodeText;
+		private readonly BaseParameters baseParameters;
 		public Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string, Action)>();
 
-		public BarcodeInfoViewModel(BarcodeRepository barcodeRepository) {
+		public BarcodeInfoViewModel(BarcodeRepository barcodeRepository, BaseParameters baseParameters) {
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(this.baseParameters));
 		}
 
 		public string BarcodeText {
 			get => barcodeText;
 			set {
 				if(SetField(ref barcodeText, value.Trim())) {
-					if(barcodeText.Length == 13 && barcodeText != Barcode?.Title) {
+					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.ClothingMarkingType)) {
 						if(ActionBarcodes.ContainsKey(barcodeText)) {
 							LabelInfo = ActionBarcodes[barcodeText].title;
 							ActionBarcodes[barcodeText].action();
@@ -37,7 +41,7 @@ namespace Workwear.ViewModels.ClothingService {
 							BarcodeText = String.Empty;
 						}
 						else {
-							LabelInfo = "Штрихкод не найден";
+							LabelInfo = "Метка не найдена";
 							Barcode = null;
 						}
 					}

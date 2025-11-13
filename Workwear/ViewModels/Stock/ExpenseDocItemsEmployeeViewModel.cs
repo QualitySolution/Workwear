@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -25,9 +26,11 @@ using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using workwear;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -90,6 +93,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		private ExpenseItem selectedItem;
+		[PropertyChangedAlso(nameof(CanAddBarcodeForSelected))]
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -97,16 +101,9 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 
-		#region Sensetive
+		#region Sensetive and visible
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
-		public bool SensitiveCreateBarcodes => CanEdit && Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false)
-			&& (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) != x.Amount);
-		public bool SensitiveBarcodesPrint => Entity.Items.Any(x => x.Amount > 0 
-			&& ((x.Nomenclature?.UseBarcode ?? false) || (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > 0));
-		#endregion
-		#region Visible
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
-		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool CanAddItems => CanEdit && Entity.Warehouse != null && Entity.Employee != null;
 		#endregion
 		#region Действия View
@@ -226,10 +223,24 @@ namespace Workwear.ViewModels.Stock
 			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(expenseEmployeeViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 
-		#region Штрих коды
-		public string ButtonCreateOrRemoveBarcodesTitle => 
+		#region Маркировка
+		public string ButtonCreateOrRenewBarcodesTitle => 
 			Entity.Items.Any(x => (x.Nomenclature?.UseBarcode ?? false) && (x.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0) > x.Amount)
-			? "Обновить штрихкоды" : "Создать штрихкоды";
+			? "Обновить маркировку" : "Создать штрихкоды";
+
+		public bool CanPrintBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
+		public bool SensitiveBarcodesPrint => CanEdit && VisibleBarcodes 
+			 && ObservableItems.Any(i => i.EmployeeIssueOperation != null && i.EmployeeIssueOperation.BarcodeOperations
+				 .Any(b => b.Barcode.Type == BarcodeTypes.EAN13)); // Есть что печатать
+		public bool CanCreateBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
+		private IEnumerable<ExpenseItem> MarkingItems => ObservableItems.Where(i => i.Nomenclature?.UseBarcode ?? false);
+		public bool NeedUpdateBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount != (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool NeedAddBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount > (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool	NeedRemoveBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount < (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
+		public bool CanSetBarcode => CanEdit && VisibleBarcodes;
+		public bool CanAddBarcodeForSelected => (SelectedItem?.Nomenclature?.UseBarcode ?? false)
+			&& (SelectedItem?.EmployeeIssueOperation?.BarcodeOperations?.Count() ?? 0) < (SelectedItem?.Amount ?? 0);
+		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes);
 		
 		public void ReleaseBarcodes() {
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;
@@ -239,15 +250,16 @@ namespace Workwear.ViewModels.Stock
 				return;
 
 			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
-			barcodeService.CreateOrRemove(UoW, operations);
+			barcodeService.CreateBarcodeEAN13(UoW, operations);
 			UoW.Commit();
-			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
-			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			OnPropertyChanged(nameof(NeedUpdateBarcodes));
+			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));
+			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
 		}
 
-		public void PrintBarcodes() {
-			if(SensitiveCreateBarcodes) {
-				if(interactive.Question("Не для всех строк документа были созданы штрих коды. Обновить штрихкоды?"))
+		public void PrintBarcodesEAN13() {
+			if(NeedUpdateBarcodes) {
+				if(interactive.Question("Не для всех строк документа была проставлена маркировка. Обновить маркировку?"))
 					ReleaseBarcodes();
 				else
 					return;
@@ -259,7 +271,9 @@ namespace Workwear.ViewModels.Stock
 				Parameters = new Dictionary<string, object> {
 					{
 						"barcodes", Entity.Items
-							.SelectMany(x => x.EmployeeIssueOperation?.BarcodeOperations.Select(b => b.Barcode?.Id))
+							.SelectMany(x => x.EmployeeIssueOperation?.BarcodeOperations
+								.Where(b => b.Barcode.Type == BarcodeTypes.EAN13)
+								.Select(b => b.Barcode?.Id))
 							.Where(x => x != null)
 							.ToList()
 					}
@@ -267,6 +281,47 @@ namespace Workwear.ViewModels.Stock
 			};
 
 			navigation.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
+		}	
+		
+		public void AddBarcodeFromScan(ExpenseItem item) {
+			expenseEmployeeViewModel.SkipBarcodeCheck = true;
+			var saveResult = expenseEmployeeViewModel.Save();
+			expenseEmployeeViewModel.SkipBarcodeCheck = false;
+			if(!saveResult)
+				return;
+			
+			item.UpdateOperations(UoW,BaseParameters,interactive);
+			navigation.OpenViewModel<BarcodeAddWidgetViewModel, ExpenseDocItemsEmployeeViewModel, ExpenseItem>(expenseEmployeeViewModel, this, item);
+		}
+		public void AddBarcodes(ExpenseItem item, List<Barcode> barcodes) {
+			UoW.GetInSession(item); 
+			barcodes = UoW.Query<Barcode>().Where(b => b.Id.IsIn(barcodes.Select(x => x.Id).ToArray())).List() as List<Barcode>;
+			foreach(var barcode in barcodes) {
+				barcode.Nomenclature = item.Nomenclature;
+				barcode.Size = item.WearSize;
+				barcode.Height = item.Height;
+				UoW.Save(barcode);
+				var barcodeOperation = new BarcodeOperation() {
+					Barcode = barcode,
+					EmployeeIssueOperation = item.EmployeeIssueOperation
+				};
+				barcode.BarcodeOperations.Add(barcodeOperation);
+				item.EmployeeIssueOperation.BarcodeOperations.Add(barcodeOperation);
+
+				UoW.Save(barcodeOperation);
+			}
+			
+			expenseEmployeeViewModel.SkipBarcodeCheck = true;
+			var saveResult = expenseEmployeeViewModel.Save();
+			expenseEmployeeViewModel.SkipBarcodeCheck = false;
+			if(!saveResult)
+				return;
+			UoW.Commit();
+		}
+
+		public void RemoveBarcodeOperation(ExpenseItem item, BarcodeOperation opeation) {
+			item.EmployeeIssueOperation.BarcodeOperations.Remove(opeation);
+			UoW.Delete(opeation);
 		}
 		#endregion
 		#endregion
@@ -274,6 +329,8 @@ namespace Workwear.ViewModels.Stock
 		#region Расчет для View
 		public string GetRowColor(ExpenseItem item) {
 			if(item.EmployeeCardItem?.Graph == null)
+				return null;
+			if(item.Id != 0)
 				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
@@ -289,6 +346,21 @@ namespace Workwear.ViewModels.Stock
 			if(item.EmployeeCardItem?.NextIssue > DateTime.Today)
 				return "darkgreen";
 			return null;
+		}
+		public virtual string BarcodesTextColor(ExpenseItem item) {
+				if(item.Nomenclature == null || !item.Nomenclature.UseBarcode || item.EmployeeIssueOperation == null)
+					return null;
+
+				int bcount = item.EmployeeIssueOperation.BarcodeOperations.Count();
+				
+				if(item.Amount == bcount)
+					return null;
+
+				if(item.Amount < bcount)
+					return "blue";
+				if(item.Amount > bcount)
+					return "red";
+				return null;
 		}
 		#endregion
 
@@ -310,9 +382,10 @@ namespace Workwear.ViewModels.Stock
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
 			CalculateTotal();
-			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
+			OnPropertyChanged(nameof(NeedUpdateBarcodes));
 			OnPropertyChanged(nameof(SensitiveBarcodesPrint));
-			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
+			OnPropertyChanged(nameof(CanCreateBarcode));
+			OnPropertyChanged(nameof(ButtonCreateOrRenewBarcodesTitle));
 		}
 		#endregion
 	}

@@ -31,7 +31,7 @@ namespace Workwear.Domain.Postomats {
 		}
 
 		private Barcode barcode;
-		[Display(Name = "Штрихкод")]
+		[Display(Name = "Метка(штрихкод)")]
 		public virtual Barcode Barcode {
 			get => barcode;
 			set => SetField(ref barcode, value);
