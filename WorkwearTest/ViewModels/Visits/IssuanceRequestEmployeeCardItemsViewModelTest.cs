@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.Dialog.Testing;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -78,7 +79,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<IssuanceRequestViewModel>().AsSelf();
 			builder.RegisterType<IssuanceRequestEmployeeCardItemsViewModel>().AsSelf();
-			builder.RegisterType<ModalProgressCreator>().AsSelf();
+			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			
 			return builder;
 		}
