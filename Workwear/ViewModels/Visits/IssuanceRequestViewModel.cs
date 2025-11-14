@@ -251,7 +251,7 @@ namespace Workwear.ViewModels.Visits {
 			Entity.CollectiveExpenses.Clear();
 			foreach(var doc in  LoadCollectiveExpenses())
 				Entity.CollectiveExpenses.Add(doc);
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(false);
 			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
 		}
 		

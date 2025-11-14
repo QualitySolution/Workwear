@@ -4,6 +4,7 @@ using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.Dialog.Testing;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -55,7 +56,7 @@ namespace WorkwearTest.ViewModels.Visits
 			var commonMessages = Substitute.For<CommonMessages>(interactive);
 			var permissions = Substitute.For<ICurrentPermissionService>();
 			permissions.ValidateEntityPermission(Arg.Any<Type>()).Returns(new SimplePermissionResult(true, true, true, true));
-
+			
 			var builder = new ContainerBuilder();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
@@ -69,6 +70,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => userService).As<IUserService>();
 			builder.Register(x => validator).As<IValidator>();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
@@ -77,6 +79,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<IssuanceRequestViewModel>().AsSelf();
 			builder.RegisterType<IssuanceRequestEmployeeCardItemsViewModel>().AsSelf();
+			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			
 			return builder;
 		}
@@ -191,7 +194,7 @@ namespace WorkwearTest.ViewModels.Visits
 					var viewModel = parentViewModel.EmployeeCardItemsViewModel;
 
 					// Выполняем тестируемый метод
-					viewModel.ReloadData();
+					viewModel.UpdateNodes();
 
 					// Проверяем результат
 					Assert.That(viewModel.GroupedEmployeeCardItems, Is.Not.Null);

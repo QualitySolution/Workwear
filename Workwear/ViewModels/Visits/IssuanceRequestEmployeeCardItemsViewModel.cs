@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHibernate.Criterion;
 using QS.Dialog;
 using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
@@ -48,19 +47,22 @@ namespace Workwear.ViewModels.Visits {
 				UpdateNodes();
 		}
 
-		public void UpdateNodes() {
+		public void UpdateNodes(bool needPerformance = true) {
+			GroupedList.Clear();
 			var performance = new ProgressPerformanceHelper(modalProgress, 10,"Старт" ,logger);
+			if(!needPerformance)
+				performance = null;
 			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 			CollectiveExpense collectiveExpenseAlias = null;
 
-			performance.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
+			performance?.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
 			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
 			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
 			
-			performance.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
+			performance?.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
 			employeeIssueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 			
-			performance.CheckPoint("Загрузка потребностей");
+			performance?.CheckPoint("Загрузка потребностей");
 			var employeeCardItems = employees
 				.SelectMany(x => x.WorkwearItems)
 				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
@@ -68,20 +70,20 @@ namespace Workwear.ViewModels.Visits {
 				.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective)
 				.ToArray();
 			
-			performance.CheckPoint("Загрузка строк док-в коллективной выдачи");
+			performance?.CheckPoint("Загрузка строк док-в коллективной выдачи");
 			var collectiveExpenseItems = parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
 				.JoinAlias(x => x.Document, () => collectiveExpenseAlias)
 				.Where(() => collectiveExpenseAlias.IssuanceRequest.Id == IssuanceRequest.Id)
 				.List();
 			
-			performance.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
+			performance?.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
 			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
 			
-			performance.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
+			performance?.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
 			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
 
 			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
-			performance.CheckPoint("Заполнение потребностей");
+			performance?.CheckPoint("Заполнение потребностей");
 			foreach(var item in employeeCardItems) {
 				var wearSize = item.EmployeeCard.Sizes
 					.Where(x => x.SizeType == item.ProtectionTools.Type.SizeType)
@@ -113,7 +115,7 @@ namespace Workwear.ViewModels.Visits {
 				employeeCardItemsNodeList.Add(employeeCardItemsNode);
 			}
 			
-			performance.CheckPoint("Группирровка потребностей");
+			performance?.CheckPoint("Группирровка потребностей");
 			GroupedEmployeeCardItems = employeeCardItemsNodeList
 				.GroupBy(x => (x.ProtectionToolsId, x.WearSize, x.Height))
 				.Select(node => new EmployeeCardItemsVmNode {
@@ -128,10 +130,10 @@ namespace Workwear.ViewModels.Visits {
 				})
 				.Where(node => node.Need != 0)
 				.ToList();
-			performance.CheckPoint("Добавление элементов в Observable-коллекцию");
+			performance?.CheckPoint("Добавление элементов в Observable-коллекцию");
 			foreach(var item in GroupedEmployeeCardItems)
 				GroupedList.Add(item);
-			performance.End();
+			performance?.End();
 		}
 		#endregion
 	}
