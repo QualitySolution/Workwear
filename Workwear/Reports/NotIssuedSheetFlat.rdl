@@ -942,23 +942,16 @@
     departments.name as department_name,
     sizeTypeAlias.id as sizeTypeId,
     heightTypeAlias.id as heightTypeId,
-    protection_tools.item_types_id as prTypeId,
-    (SELECT size_type_id 
-     FROM item_types  
-     WHERE id = prTypeId) as prSizeTypeId,
-    (SELECT height_type_id 
-     FROM item_types 
-     WHERE id = prTypeId) as prHeightTypeId,
     (SELECT sizes.name
      FROM employees_sizes
              JOIN sizes  ON sizes.id = employees_sizes.size_id
-     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = prSizeTypeId
+     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = item_types.size_type_id
      LIMIT 1
     ) AS size,
     (SELECT sizes.name
      FROM employees_sizes
              JOIN sizes  ON sizes.id = employees_sizes.size_id
-     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = prHeightTypeId
+     WHERE employees_sizes.employee_id = employees.id AND employees_sizes.size_type_id = item_types.height_type_id
      LIMIT 1
     ) AS growth,
     measurement_units.name AS unit,
@@ -982,6 +975,7 @@ FROM
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
         LEFT JOIN departments ON employees.department_id = departments.id
         LEFT JOIN posts ON employees.post_id = posts.id
+        LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
         LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = nomenclatureTypes.size_type_id
         LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = nomenclatureTypes.height_type_id
