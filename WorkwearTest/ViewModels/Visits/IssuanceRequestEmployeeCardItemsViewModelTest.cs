@@ -78,6 +78,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<IssuanceRequestViewModel>().AsSelf();
 			builder.RegisterType<IssuanceRequestEmployeeCardItemsViewModel>().AsSelf();
+			builder.RegisterType<ModalProgressCreator>().AsSelf();
 			
 			return builder;
 		}
