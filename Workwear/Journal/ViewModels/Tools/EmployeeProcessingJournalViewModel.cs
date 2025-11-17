@@ -47,7 +47,7 @@ namespace workwear.Journal.ViewModels.Tools
 		private readonly IDataBaseInfo dataBaseInfo;
 		private readonly EmployeeIssueModel issueModel;
 		/// <summary>
-		/// Внимание все диалоги создаются отменяемыми!!! Не забывайте использовать токен отмены.
+		/// Внимание! Все диалоги создаются отменяемыми!!! Не забывайте использовать токен отмены.
 		/// </summary>
 		private readonly ModalProgressCreator progressCreator;
 
@@ -220,14 +220,14 @@ namespace workwear.Journal.ViewModels.Tools
 					);
 			recalculateAction.ChildActionsList.Add(updateNextIssueAction);
 
-			var updateLastIssueAction = new JournalAction("Сроки носки у последего полученного",
+			var updateLastIssueAction = new JournalAction("Сроки носки у последнего получения",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => CatchExceptionAndCloseProgress(UpdateLastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
 					);
 			recalculateAction.ChildActionsList.Add(updateLastIssueAction);
 			
-			var update2LastIssueAction = new JournalAction("Сроки носки у 2 последих получений",
+			var update2LastIssueAction = new JournalAction("Сроки носки у 2 последних получений",
 				(selected) => selected.Any(),
 				(selected) => true,
 				(selected) => CatchExceptionAndCloseProgress(Update2LastIssue, selected.Cast<EmployeeProcessingJournalNode>().ToArray())
