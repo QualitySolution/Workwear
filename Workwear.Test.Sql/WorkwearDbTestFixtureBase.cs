@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using MySqlConnector;
+using NUnit.Framework;
 using QS.Testing.DB;
 using Workwear.Sql;
 
 namespace Workwear.Test.Sql {
+	[Parallelizable(ParallelScope.Fixtures)]
 	public class WorkwearDbTestFixtureBase : MariaDbTestContainerSqlFixtureBase {
 		protected string WorkwearDBName = "workwear";
 		
