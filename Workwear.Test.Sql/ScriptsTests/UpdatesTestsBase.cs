@@ -17,6 +17,7 @@ using Workwear.Test.Sql.Models;
 namespace Workwear.Test.Sql.ScriptsTests
 {
 	[TestFixture]
+	[Parallelizable(ParallelScope.Fixtures)]
 	public abstract class UpdatesTestsBase
 	{
 		public static readonly string CurrentDdName = "workwear_sqltest_current";
