@@ -202,6 +202,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
+    <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
@@ -548,6 +549,9 @@
     <Compile Include="Journal\Filter.Views\Visits\IssuanceRequestFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
     <Compile Include="Views\Visits\IssuanceRequestView.cs" />
+    <Compile Include="Views\Stock\Widgets\BarcodeAddWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BarcodeAddWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -935,6 +939,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="icon\buttons\qr-code.png" />
+    <Content Include="Reports\ClothingService\ClothingMoveStickerBarcode.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\ClothingService\ClothingServiceCodes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

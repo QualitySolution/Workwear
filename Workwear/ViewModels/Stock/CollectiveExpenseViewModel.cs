@@ -205,7 +205,6 @@ namespace Workwear.ViewModels.Stock
 			
 			performance.CheckPoint("Завершение...");
 			UoWGeneric.Commit();
-			Entity.IssuanceRequest?.CollectiveExpenses.Add(Entity);
 			performance.End();
 			logger.Info("Ok");
 			return true;

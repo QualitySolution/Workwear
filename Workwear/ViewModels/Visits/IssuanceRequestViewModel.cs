@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.Entity;
+using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -31,6 +32,7 @@ namespace Workwear.ViewModels.Visits {
 		private readonly IInteractiveQuestion interactive;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
+		private readonly IEntityChangeWatcher changeWatcher;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -42,13 +44,16 @@ namespace Workwear.ViewModels.Visits {
 			IInteractiveQuestion interactive,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
+			IEntityChangeWatcher changeWatcher,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null): base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
+			changeWatcher.BatchSubscribe(IssuanceRequestChangeEvent)
+				.IfEntity<CollectiveExpense>();
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
@@ -210,6 +215,7 @@ namespace Workwear.ViewModels.Visits {
 				ce.IssuanceRequest = Entity;
 				CollectiveExpenses.Add(ce);
 			}
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -219,6 +225,7 @@ namespace Workwear.ViewModels.Visits {
 				ce.IssuanceRequest = null;
 				Entity.CollectiveExpenses.Remove(ce);
 			}
+			EmployeeCardItemsViewModel.UpdateNodes();
 		}
 		#endregion
 
@@ -233,10 +240,25 @@ namespace Workwear.ViewModels.Visits {
 			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
 				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouse);
 		}
+
+		private IList<CollectiveExpense> LoadCollectiveExpenses() {
+			var collectiveExpenses = UoW.GetAll<CollectiveExpense>()
+				 .Where(x => x.IssuanceRequest.Id == Entity.Id)
+				 .ToList();
+			return collectiveExpenses;
+		}
+		private void IssuanceRequestChangeEvent(EntityChangeEvent[] changeevents) {
+			Entity.CollectiveExpenses.Clear();
+			foreach(var doc in  LoadCollectiveExpenses())
+				Entity.CollectiveExpenses.Add(doc);
+			EmployeeCardItemsViewModel.UpdateNodes(false);
+			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
+		}
+		
 		#endregion
 
 		#region Потребности
-		public IList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems => EmployeeCardItemsViewModel.GroupedEmployeeCardItems;
+		public IObservableList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems => EmployeeCardItemsViewModel.GroupedList;
 		#endregion
 		
 		#endregion

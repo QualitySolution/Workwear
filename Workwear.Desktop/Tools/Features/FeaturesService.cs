@@ -314,7 +314,7 @@ namespace Workwear.Tools.Features
 		ReportSupply,
 		#endregion
 		#region Платные
-		[Display(Name = "Штрихкоды")]
+		[Display(Name = "Маркировка(штрихкоды)")]
 		Barcodes,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,

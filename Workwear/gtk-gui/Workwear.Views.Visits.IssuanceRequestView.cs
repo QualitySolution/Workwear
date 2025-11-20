@@ -420,6 +420,7 @@ namespace Workwear.Views.Visits
 			w34.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.buttonRemoveExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonRemoveExpense.Sensitive = false;
 			this.buttonRemoveExpense.CanFocus = true;
 			this.buttonRemoveExpense.Name = "buttonRemoveExpense";
 			this.buttonRemoveExpense.UseUnderline = true;

@@ -42,6 +42,7 @@ namespace Workwear.ViewModels.Stock
 
 		#region ViewProperty
 
+		public bool CanPrint => Entity.Type == BarcodeTypes.EAN13;
 
 		#endregion
 	}
