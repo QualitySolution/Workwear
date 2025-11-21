@@ -43,16 +43,18 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
 				jvm => FluentColumnsConfig<ClaimsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
-					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Метка(штрихкод)").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Табельный").AddTextRenderer(node => node.EmployeePersonnelNumber).SearchHighlight().XAlign(1.0f)
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
-					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
+					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)
 					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
 					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
 					.AddColumn("Предпочтительный постамат выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.Postomats))
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
+					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
+					.AddColumn("Дефект").Resizable().AddTextRenderer(node => node.Defect).WrapWidth(400)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
@@ -399,7 +401,7 @@ namespace workwear.Journal
 						.AddTextRenderer(node => node.SaleCostText)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
 						.AddTextRenderer(node => node.RatingText)
-					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+					.AddColumn("Метка(штрихкод)").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)
@@ -567,6 +569,16 @@ namespace workwear.Journal
 					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FIO).SearchHighlight()
 					.AddColumn("Табельный").AddReadOnlyTextRenderer(x => x.Tabel).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<IssuanceRequestJournalViewModel>(
+				jvm => FluentColumnsConfig<IssuanceRequestJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Дата поступления заявки").AddTextRenderer(node => node.ReceiptDate.ToShortDateString()).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 			);
 			#endregion

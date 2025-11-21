@@ -440,7 +440,7 @@ namespace Workwear.Models.Regulations {
 			if(barcodeOperations.IsEmpty())
 				return;
 			foreach(var op in barcodeOperations) {
-				progressBar.Add(text: $"Изменение ссылки операции выдачи в операции со штрихкодом {op.Barcode.Title}");
+				progressBar.Add(text: $"Изменение ссылки операции выдачи в операции с маркировкой {op.Barcode.Title}");
 				op.DutyNormIssueOperation = dutyNormIssueOperationByIssueOperation[op.EmployeeIssueOperation.Id];
 				op.EmployeeIssueOperation = null;
 				uow.Save(op);

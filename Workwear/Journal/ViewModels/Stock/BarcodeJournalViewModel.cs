@@ -23,8 +23,7 @@ using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
-	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation
-	{
+	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>, IDialogDocumentation {
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
@@ -76,6 +75,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(x => x.Type).WithAlias(() => resultAlias.Type)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
@@ -85,7 +85,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-				).OrderBy(x => x.Title).Asc
+				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 		}
 		
@@ -95,7 +95,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			NodeActionsList.Add(new JournalAction("Печать",
 				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(),
-				(arg) => true,
+				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(b => b.Type == BarcodeTypes.EAN13),
 				PrintBarcodes));
 		}
 
@@ -118,6 +118,7 @@ namespace workwear.Journal.ViewModels.Stock
 	public class BarcodeJournalNode 
 	{
 		public int Id { get; set; }
+		public BarcodeTypes Type { get; set; }
 		public string Value { get; set; }
 		public string Nomenclature { get; set; }
 		public string Size { get; set; }

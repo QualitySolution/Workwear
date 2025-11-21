@@ -188,6 +188,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Dashboard:
 				case WorkwearFeature.Shipment:
 				case WorkwearFeature.Visits:
+				case WorkwearFeature.IssuanceRequest:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
@@ -313,7 +314,7 @@ namespace Workwear.Tools.Features
 		ReportSupply,
 		#endregion
 		#region Платные
-		[Display(Name = "Штрихкоды")]
+		[Display(Name = "Маркировка(штрихкоды)")]
 		Barcodes,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
@@ -338,6 +339,8 @@ namespace Workwear.Tools.Features
 		Shipment,
 		[Display(Name = "Посещения склада")]
 		Visits,
+		[Display(Name = "Заявки на выдачу")]
+		IssuanceRequest,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]

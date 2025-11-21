@@ -9,6 +9,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
+using Workwear.Domain.Visits;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
@@ -55,6 +56,13 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual IssuanceSheet IssuanceSheet {
 			get => issuanceSheet;
 			set => SetField(ref issuanceSheet, value);
+		}
+
+		private IssuanceRequest issuanceRequest;
+		[Display(Name = "Заявка на выдачу")]
+		public virtual IssuanceRequest IssuanceRequest {
+			get => issuanceRequest;
+			set => SetField(ref issuanceRequest, value);
 		}
 
 		#endregion

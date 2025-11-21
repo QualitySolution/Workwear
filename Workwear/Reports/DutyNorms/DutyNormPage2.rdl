@@ -555,7 +555,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox37">
-                      <Value></Value>
+                      <Value>={issue_sign}</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -663,9 +663,14 @@
     IFNULL(nomenclature.name, pt.name) AS name,
     nomenclature.number,
     DATE_FORMAT(oidn.operation_time, '%d.%m.%Y') AS expense_date,
-    oidn.issued
+    oidn.issued,
+    IF(@isDocNumberInIssueSign, CONCAT('Ведомость №', IFNULL(issuance_sheet.doc_number, issuance_sheet.id)), '')
+        AS issue_sign
     FROM operation_issued_by_duty_norm oidn
     LEFT JOIN duty_norms dn ON oidn.duty_norm_id=dn.id
+    LEFT JOIN stock_expense_duty_norm_items items ON items.operation_issued_by_duty_norm_id = oidn.id
+    LEFT JOIN stock_expense_duty_norm exp ON exp.id = items.stock_expense_duty_norm_id
+    LEFT JOIN issuance_sheet ON issuance_sheet.stock_expense_duty_norm_id = exp.id
     LEFT JOIN nomenclature ON oidn.nomenclature_id = nomenclature.id
     LEFT JOIN protection_tools pt ON oidn.protection_tools_id = pt.id
 WHERE oidn.duty_norm_id = @duty_norm_id AND oidn.issued &gt; 0
@@ -674,6 +679,9 @@ ORDER BY oidn.operation_time;
         <QueryParameters>
           <QueryParameter Name="duty_norm_id">
             <Value>={?duty_norm_id}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isDocNumberInIssueSign">
+            <Value>={?isDocNumberInIssueSign}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -694,6 +702,10 @@ ORDER BY oidn.operation_time;
           <DataField>issued</DataField>
           <TypeName>System.Int32</TypeName>
         </Field>
+        <Field Name="issue_sign">
+          <DataField>issue_sign</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -705,6 +717,13 @@ ORDER BY oidn.operation_time;
           <Value>1</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isDocNumberInIssueSign">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Permissions;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -17,6 +18,7 @@ namespace Workwear.ViewModels.Tools
 		#region Ограниения версии
 		public bool CollectiveIssueWithPersonalVisible { get; }
 		public bool EditLockDateVisible { get; }
+		public bool MarkingVisible { get; }
 		public bool CanEdit { get; }
 		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
@@ -34,6 +36,7 @@ namespace Workwear.ViewModels.Tools
 			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			EditLockDate = baseParameters.EditLockDate;
 			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
+			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
@@ -45,6 +48,7 @@ namespace Workwear.ViewModels.Tools
 			UsedCurrency = baseParameters.UsedCurrency;
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
+			ClothingMarkingType = baseParameters.ClothingMarkingType;
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
 		}
 		
@@ -64,7 +68,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || UsedCurrency != baseParameters.UsedCurrency
 		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
 		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
-		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations;
+		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations
+		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -73,6 +78,7 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
+		public BarcodeTypes ClothingMarkingType { get; set; }
 		public string UsedCurrency { get; set; }
 
 		public bool CollectiveIssueWithPersonal { get; set; }
@@ -106,6 +112,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			if(EditLockDate != baseParameters.EditLockDate)
 				baseParameters.EditLockDate = EditLockDate;
+			if(ClothingMarkingType != baseParameters.ClothingMarkingType)
+				baseParameters.ClothingMarkingType = ClothingMarkingType;
 			if(StartDateOfOperations != baseParameters.StartDateOfOperations)
 				baseParameters.StartDateOfOperations = StartDateOfOperations;
 			return true;
