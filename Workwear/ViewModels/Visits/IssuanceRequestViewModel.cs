@@ -202,9 +202,10 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Контекстное меню
-		public void OpenEmployee(EmployeeCard employee) {
+		public void OpenEmployee(EmployeeCard employee) =>
 			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(employee.Id));
-		}
+		public void OpenCollectiveExpense(CollectiveExpense document) =>
+			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(null, EntityUoWBuilder.ForOpen(document.Id));
 		#endregion
 		#endregion
 

@@ -79,13 +79,12 @@ namespace Workwear.Views.Visits {
 				.Finish();
 			
 			ytreeviewEmployees.Selection.Mode = SelectionMode.Multiple;
-			ytreeviewEmployees.ButtonReleaseEvent += TreeItems_ButtonReleaseEvent;
+			ytreeviewEmployees.ButtonReleaseEvent += TreeEmployees_ButtonReleaseEvent;
 			ytreeviewEmployees.Selection.Changed += Employee_Selection_Changed;
 		}
-		
 		#region PopupMenu
 
-		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+		private void TreeEmployees_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if(args.Event.Button == 3) {
 				var menu = new Menu();
 				var selected = ytreeviewEmployees.GetSelectedObjects<EmployeeCard>().FirstOrDefault();
@@ -125,10 +124,28 @@ namespace Workwear.Views.Visits {
 				.Finish();
 			ytreeviewExpense.Selection.Mode = SelectionMode.Multiple;
 			ytreeviewExpense.Selection.Changed += CollectiveExpense_Selection_Changed;
+			ytreeviewExpense.ButtonReleaseEvent += TreeIssues_ButtonReleaseEvent;
 			buttonCreateExpense.Binding
 				.AddBinding(ViewModel, v => v.CanCreateCollectiveExpense, w => w.Sensitive)
 				.InitializeFromSource();
 		}
+		
+		#region PopupMenu
+
+		private void TreeIssues_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewExpense.GetSelectedObjects<CollectiveExpense>().FirstOrDefault();
+				if(selected == null) return;
+				var menuItem = new MenuItem("Открыть документ");
+				menuItem.Activated += (sender, e) => ViewModel.OpenCollectiveExpense(selected);
+				menu.Add(menuItem);
+				menu.ShowAll();
+				menu.Popup();
+			}
+		}
+
+		#endregion
 
 		private void CollectiveExpense_Selection_Changed(object sender, EventArgs e) {
 			buttonRemoveExpense.Sensitive = ytreeviewExpense.Selection.CountSelectedRows() > 0;
