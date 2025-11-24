@@ -77,7 +77,10 @@ namespace Workwear.ViewModels.Visits {
 		}
 		public virtual IssuanceRequestStatus Status {
 			get => Entity.Status;
-			set => Entity.Status = value;
+			set { if(Entity.Status != value)
+				Entity.Status = value;
+				OnPropertyChanged();
+			} 
 		}
 		public virtual string Comment {
 			get => Entity.Comment;
@@ -107,6 +110,7 @@ namespace Workwear.ViewModels.Visits {
 		#region Sensitive
 		public bool CanCreateCollectiveExpense => SelectWarehouse != null;
 		#endregion
+		
 		#region Работа со складом
 		private List<Warehouse> warehouses = new List<Warehouse>();
 		public List<Warehouse> Warehouses {
@@ -121,7 +125,7 @@ namespace Workwear.ViewModels.Visits {
 		}
 		#endregion
 		
-		#region Действия View
+		#region Действия
 
 		#region Сотрудники
 		#region Добавление
@@ -138,6 +142,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 		
 		public void AddSubdivisions() {
@@ -152,6 +157,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 
 		public void AddDepartments() {
@@ -166,6 +172,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 
 		public void AddGroups() {
@@ -180,6 +187,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees)
 				Employees.Add(emp);
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 		#endregion
 
@@ -189,6 +197,7 @@ namespace Workwear.ViewModels.Visits {
 				Entity.Employees.Remove(emp);
 			}
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 		#endregion
 
@@ -216,6 +225,7 @@ namespace Workwear.ViewModels.Visits {
 				CollectiveExpenses.Add(ce);
 			}
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 		#endregion
 
@@ -226,6 +236,7 @@ namespace Workwear.ViewModels.Visits {
 				Entity.CollectiveExpenses.Remove(ce);
 			}
 			EmployeeCardItemsViewModel.UpdateNodes();
+			UpdateStatus();
 		}
 		#endregion
 
@@ -252,6 +263,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var doc in  LoadCollectiveExpenses())
 				Entity.CollectiveExpenses.Add(doc);
 			EmployeeCardItemsViewModel.UpdateNodes(false);
+			UpdateStatus();
 			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
 		}
 		
@@ -260,6 +272,16 @@ namespace Workwear.ViewModels.Visits {
 		#region Потребности
 		public IObservableList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems => EmployeeCardItemsViewModel.GroupedList;
 		#endregion
+
+		//выдачи и потребности должны быть загружены
+		protected void UpdateStatus() {
+			if(CollectiveExpenses.Count == 0)
+				Status = IssuanceRequestStatus.New;
+			else if(EmployeeCardItemsViewModel.GroupedEmployeeCardItems.All(x => x.NeedToBeIssued <= 0))
+				Status = IssuanceRequestStatus.Issued;
+			else if(EmployeeCardItemsViewModel.GroupedEmployeeCardItems.Any(x => x.NeedToBeIssued > 0))
+				Status = IssuanceRequestStatus.PartiallyIssued;
+		}
 		
 		#endregion
 		
