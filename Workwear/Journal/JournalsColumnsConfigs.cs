@@ -579,6 +579,7 @@ namespace workwear.Journal
 					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
 					.AddColumn("Автор").AddTextRenderer(node => node.Author)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 			);
 			#endregion

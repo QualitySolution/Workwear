@@ -6,11 +6,15 @@ namespace Workwear.Journal.Filter.Views.Visits
 	{
 		private global::Gamma.GtkWidgets.yVBox yvbox2;
 
-		private global::Gamma.GtkWidgets.yTable ytable2;
+		private global::Gtk.VBox vbox1;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox1;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelStatus;
 
 		private global::Gamma.Widgets.yEnumComboBox yenumcomboboxStatus;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelStatus;
+		private global::Gamma.GtkWidgets.yButton buttonColorsLegend;
 
 		protected virtual void Build()
 		{
@@ -23,38 +27,58 @@ namespace Workwear.Journal.Filter.Views.Visits
 			this.yvbox2.Name = "yvbox2";
 			this.yvbox2.Spacing = 6;
 			// Container child yvbox2.Gtk.Box+BoxChild
-			this.ytable2 = new global::Gamma.GtkWidgets.yTable();
-			this.ytable2.Name = "ytable2";
-			this.ytable2.NColumns = ((uint)(2));
-			this.ytable2.RowSpacing = ((uint)(6));
-			this.ytable2.ColumnSpacing = ((uint)(6));
-			// Container child ytable2.Gtk.Table+TableChild
+			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
+			this.vbox1.Spacing = 6;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox1.Name = "yhbox1";
+			this.yhbox1.Spacing = 6;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.ylabelStatus = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelStatus.Name = "ylabelStatus";
+			this.ylabelStatus.Xalign = 0F;
+			this.ylabelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Статус:");
+			this.yhbox1.Add(this.ylabelStatus);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ylabelStatus]));
+			w1.Position = 0;
+			w1.Expand = false;
+			w1.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
 			this.yenumcomboboxStatus = new global::Gamma.Widgets.yEnumComboBox();
 			this.yenumcomboboxStatus.Name = "yenumcomboboxStatus";
 			this.yenumcomboboxStatus.ShowSpecialStateAll = true;
 			this.yenumcomboboxStatus.ShowSpecialStateNot = false;
 			this.yenumcomboboxStatus.UseShortTitle = false;
 			this.yenumcomboboxStatus.DefaultFirst = false;
-			this.ytable2.Add(this.yenumcomboboxStatus);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable2[this.yenumcomboboxStatus]));
-			w1.LeftAttach = ((uint)(1));
-			w1.RightAttach = ((uint)(2));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable2.Gtk.Table+TableChild
-			this.ylabelStatus = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelStatus.Name = "ylabelStatus";
-			this.ylabelStatus.Xalign = 0F;
-			this.ylabelStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Статус:");
-			this.ytable2.Add(this.ylabelStatus);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable2[this.ylabelStatus]));
-			w2.XOptions = ((global::Gtk.AttachOptions)(4));
-			w2.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.yvbox2.Add(this.ytable2);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.ytable2]));
-			w3.Position = 0;
-			w3.Expand = false;
-			w3.Fill = false;
+			this.yhbox1.Add(this.yenumcomboboxStatus);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.yenumcomboboxStatus]));
+			w2.Position = 1;
+			w2.Expand = false;
+			w2.Fill = false;
+			// Container child yhbox1.Gtk.Box+BoxChild
+			this.buttonColorsLegend = new global::Gamma.GtkWidgets.yButton();
+			this.buttonColorsLegend.TooltipMarkup = "Цветовая легенда";
+			this.buttonColorsLegend.CanFocus = true;
+			this.buttonColorsLegend.Name = "buttonColorsLegend";
+			this.buttonColorsLegend.UseUnderline = true;
+			global::Gtk.Image w3 = new global::Gtk.Image();
+			w3.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.legend.png");
+			this.buttonColorsLegend.Image = w3;
+			this.yhbox1.Add(this.buttonColorsLegend);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.buttonColorsLegend]));
+			w4.PackType = ((global::Gtk.PackType)(1));
+			w4.Position = 2;
+			w4.Expand = false;
+			w4.Fill = false;
+			this.vbox1.Add(this.yhbox1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.yhbox1]));
+			w5.Position = 0;
+			w5.Expand = false;
+			w5.Fill = false;
+			this.yvbox2.Add(this.vbox1);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.vbox1]));
+			w6.Position = 0;
 			this.Add(this.yvbox2);
 			if ((this.Child != null))
 			{
