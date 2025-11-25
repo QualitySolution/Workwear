@@ -421,10 +421,8 @@ WHERE StartOfUse IS NULL AND (issued != 0 AND returned = 0);
 -- -----------------------------------
 -- Учёт RFID
 -- -----------------------------------
-DELETE FROM barcodes WHERE title IS NULL;
-
 alter table barcodes
-	modify title varchar(24) not null;
+	modify title varchar(24);
 
 alter table barcodes
 	add type enum ('EAN13', 'EPC96') default 'EAN13' not null after title;
@@ -438,3 +436,8 @@ drop key value_UNIQUE;
 alter table barcodes
 	add constraint value_UNIQUE
 		unique (type, title);
+
+-- Права на изменение даты
+
+ALTER TABLE users
+	ADD COLUMN `can_change_document_date` TINYINT(1) NOT NULL DEFAULT 1 AFTER `can_accounting_settings`;

@@ -151,6 +151,8 @@ namespace Workwear.ViewModels.Stock
 		#region Свойства View
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
+		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
 		[PropertyChangedAlso(nameof(SensitiveDocNumber))]

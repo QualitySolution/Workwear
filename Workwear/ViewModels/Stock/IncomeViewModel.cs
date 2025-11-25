@@ -158,6 +158,7 @@ namespace Workwear.ViewModels.Stock {
 		#region Свойства для View
 
 		public virtual bool SensitiveDocNumber => !AutoDocNumber && CanEdit;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddItem => CanEdit;
 		public virtual bool CanRemoveItem => SelectedItem != null && CanEdit;
 		public virtual bool CanAddSize => SelectedItem != null && (SelectedItem.WearSizeType != null || SelectedItem.HeightType != null) && CanEdit;
