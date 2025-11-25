@@ -26,7 +26,9 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource(); 
 			datepicker.Binding
 				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
-				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel,vm => vm.CanChangeDocDate, w => w.IsEditable)
+				.InitializeFromSource();
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource(); 
 			ytextComment.Binding

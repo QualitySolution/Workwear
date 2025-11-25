@@ -129,6 +129,7 @@ namespace Workwear.ViewModels.Stock
 				stockBalanceModel.OnDate = Entity.Date;
 		}
 		#region Sensetive
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool CanAddItem => CanEdit && Entity.WarehouseFrom != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		#endregion

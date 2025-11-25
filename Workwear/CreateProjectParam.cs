@@ -128,6 +128,8 @@ namespace workwear
 				"Пользователь может удалять документы и элементы справочников"));
 			QSMain.ProjectPermission.Add ("can_accounting_settings", new UserPermission ("can_accounting_settings", "Изменение настроек учета",
 				"Пользователь может изменять настройки учета"));
+			QSMain.ProjectPermission.Add ("can_change_document_date", new UserPermission ("can_change_document_date", "Изменение даты документов",
+            				"Пользователь может изменить дату документов на произвольную"));
 			QSMain.User.LoadUserInfo();
 
 			#if DEBUG

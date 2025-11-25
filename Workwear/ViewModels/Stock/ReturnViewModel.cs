@@ -147,6 +147,7 @@ namespace Workwear.ViewModels.Stock {
 		#endregion 
 		
 		#region Свойства для View
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;

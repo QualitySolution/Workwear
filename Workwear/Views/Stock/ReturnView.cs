@@ -28,7 +28,9 @@ namespace Workwear.Views.Stock {
 				.InitializeFromSource ();
 			ydateDoc.Binding
 				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
-				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource ();
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel,vm => vm.CanChangeDocDate, w => w.IsEditable)
+				.InitializeFromSource ();
 			ytextComment.Binding
 				.AddBinding(ViewModel, vm => vm.DocComment, w => w.Buffer.Text)
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();

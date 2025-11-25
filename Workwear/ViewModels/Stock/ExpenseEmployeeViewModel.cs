@@ -173,10 +173,11 @@ namespace Workwear.ViewModels.Stock {
 
 		#region Свойства для View
 		public bool CanCreateIssuanceSheet => CanEdit && Entity.Employee != null && Entity.IssueDate != null;
+		public bool CanEditIssueDate => CanEdit;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
-		public bool CanEditIssueDate => CanEdit;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;

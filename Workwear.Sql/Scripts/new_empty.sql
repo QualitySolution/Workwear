@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `admin` TINYINT(1) NOT NULL DEFAULT FALSE,
   `can_delete` TINYINT(1) NOT NULL DEFAULT TRUE,
   `can_accounting_settings` TINYINT(1) NOT NULL DEFAULT TRUE,
+  `can_change_document_date` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1

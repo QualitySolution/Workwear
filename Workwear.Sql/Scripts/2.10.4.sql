@@ -436,3 +436,8 @@ drop key value_UNIQUE;
 alter table barcodes
 	add constraint value_UNIQUE
 		unique (type, title);
+
+-- Права на изменение даты
+
+ALTER TABLE users
+	ADD COLUMN `can_change_document_date` TINYINT(1) NOT NULL DEFAULT 1 AFTER `can_accounting_settings`;

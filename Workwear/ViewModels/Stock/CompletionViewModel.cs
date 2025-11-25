@@ -99,6 +99,7 @@ namespace Workwear.ViewModels.Stock
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		#region View
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool SensitiveDellSourceItemButton => CanEdit && SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => CanEdit && SelectedResultItem != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
