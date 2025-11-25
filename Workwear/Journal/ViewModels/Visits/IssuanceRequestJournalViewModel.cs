@@ -66,21 +66,34 @@ namespace workwear.Journal.ViewModels.Visits {
 
 			return query;
 		}
+		
+		public static string ColorsLegendText = 
+			"<span color='black'>●</span> — новая\n" +
+			"<span color='orange'>●</span> — закрыта частично\n" +
+			"<span color='gray'>●</span> — закрыта\n";
 	}
 
 	public class IssuanceRequestJournalNode {
-		[SearchHighlight]
-		public int Id { get; set; }
-		[SearchHighlight]
-		public DateTime ReceiptDate { get; set; }
+		[SearchHighlight] public int Id { get; set; }
+		[SearchHighlight] public DateTime ReceiptDate { get; set; }
 		public IssuanceRequestStatus Status { get; set; }
 		public string StatusString => Status.GetEnumTitle();
-		[SearchHighlight]
-		public string Comment { get; set; }
+		[SearchHighlight] public string Comment { get; set; }
 		public string Author { get; set; }
 		public DateTime? CreationDate { get; set; }
 		public string CreationDateString => CreationDate?.ToString("dd/MM/yyyy") ?? String.Empty;
+
+		public string RowColor {
+			get {
+				//Не забываем править ColorsLegendText
+				switch(Status) {
+					case IssuanceRequestStatus.New: return "black";
+					case IssuanceRequestStatus.PartiallyIssued: return "orange";
+					case IssuanceRequestStatus.Issued: return "gray";
+					default: return "black";
+				}
+			}
+		}
 	}
 
-	
 }
