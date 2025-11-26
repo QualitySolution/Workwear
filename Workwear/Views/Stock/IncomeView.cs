@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Gtk;
 using QS.Views.Dialog;
 using QSOrmProject;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
 
@@ -80,10 +82,12 @@ namespace Workwear.Views.Stock {
 					.AddTextRenderer(e => e.Certificate).Editable(ViewModel.CanEdit)
 				.AddColumn("Размер").MinWidth(60)
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+					.FillItems(new List<Size>(), "Нет")
 					.DynamicFillListFunc(x => ViewModel.GetSizeVariants(x))
 					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.WearSizeType != null)
 				.AddColumn("Рост").MinWidth(70)
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+					.FillItems(new List<Size>(), "Нет")
 					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
 					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.HeightType != null)
 				.AddColumn("Собственники").Resizable()
