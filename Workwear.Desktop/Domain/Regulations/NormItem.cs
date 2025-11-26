@@ -172,6 +172,10 @@ namespace Workwear.Domain.Regulations
 						return NumberToTextRus.FormatCase(PeriodCount, "месяц", "месяца", "месяцев");
 					case NormPeriodType.Shift:
 						return NumberToTextRus.FormatCase(PeriodCount, "смена", "смены", "смен");
+					case NormPeriodType.Wearout:
+						return "До износа";
+					case NormPeriodType.Duty:
+						return "Дежурный";
 					default:
 						return String.Empty;
 				}
