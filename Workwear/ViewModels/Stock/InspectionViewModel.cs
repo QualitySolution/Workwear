@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Report;
@@ -26,7 +27,7 @@ using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
-	public class InspectionViewModel : EntityDialogViewModelBase<Inspection>, IDialogDocumentation {
+	public class InspectionViewModel : PermittingEntityDialogViewModelBase<Inspection>, IDialogDocumentation {
 		public InspectionViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -36,12 +37,13 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
 			OrganizationRepository organizationRepository,
+			ICurrentPermissionService permissionService,
 			EmployeeCard employee = null,
 			IValidator validator = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator) {
 			this.interactive = interactive;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-				
+			SetDocumentDateProperty(e => e.Date);
 			if(UoW.IsNew)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			Employee = UoW.GetInSession(employee);
@@ -52,14 +54,17 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
+			ResponsibleDirectorPersonEntryViewModel.IsEditable = CanEdit;
 			ResponsibleChairmanPersonEntryViewModel = entryBuilder.ForProperty(x => x.Chairman)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
+			ResponsibleChairmanPersonEntryViewModel.IsEditable = CanEdit;
 			ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
 				.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
+			ResponsibleOrganizationEntryViewModel.IsEditable = CanEdit;
 			
 			if(UoW.IsNew) {
 				Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -84,7 +89,8 @@ namespace Workwear.ViewModels.Stock {
 		public EmployeeCard Employee { get;}
 
 		#region Для View
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
