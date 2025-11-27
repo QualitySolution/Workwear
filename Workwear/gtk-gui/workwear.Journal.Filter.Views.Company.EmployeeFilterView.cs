@@ -40,6 +40,7 @@ namespace workwear.Journal.Filter.Views.Company
 			this.Name = "workwear.Journal.Filter.Views.Company.EmployeeFilterView";
 			// Container child workwear.Journal.Filter.Views.Company.EmployeeFilterView.Gtk.Container+ContainerChild
 			this.table1 = new global::Gtk.Table(((uint)(4)), ((uint)(5)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild
@@ -192,17 +193,18 @@ namespace workwear.Journal.Filter.Views.Company
 			this.yDatePicker.AutoSeparation = true;
 			this.table1.Add(this.yDatePicker);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.yDatePicker]));
-			w12.LeftAttach = ((uint)(1));
-			w12.RightAttach = ((uint)(2));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.LeftAttach = ((uint)(4));
+			w12.RightAttach = ((uint)(5));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
-			this.ylabel1.Xalign = 0F;
+			this.ylabel1.Xalign = 1F;
 			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("На дату:");
 			this.table1.Add(this.ylabel1);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
+			w13.LeftAttach = ((uint)(3));
+			w13.RightAttach = ((uint)(4));
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.table1);
