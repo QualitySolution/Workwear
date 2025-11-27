@@ -60,16 +60,19 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 			Department departmentAlias = null;
-
+			
+			if (Filter.Date <= default(DateTime).AddYears(10))
+				Filter.Date = DateTime.Today;
+			
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
-				.Where(ev => ev.BeginDate <= DateTime.Today && ev.EndDate >= DateTime.Today)
+				.Where(ev => ev.BeginDate <= Filter.Date && ev.EndDate >= Filter.Date)
 				.Select(ev => ev.Id)
 				.Take(1);
 			
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
-				employees.Where(x => x.DismissDate == null);
+				employees.Where(x => x.DismissDate == null || (x.DismissDate != null && x.DismissDate > Filter.Date));
 			if(Filter.ExcludeInVacation)
 				employees.WithSubquery.WhereNotExists(vacationSubquery);
 			if(Filter.Subdivision != null)

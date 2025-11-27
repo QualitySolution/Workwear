@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -76,7 +77,13 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			get => norm;
 			set => SetField(ref norm, value);
 		}
-
+		
+		private DateTime date = DateTime.Today;
+		public virtual DateTime Date {
+			get => date;
+			set => SetField(ref date, value);
+		}
+		
 		#endregion
 
 		#region EntityModels
