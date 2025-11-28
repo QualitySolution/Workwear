@@ -188,7 +188,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void CleanupItems()
 		{
-			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
+			foreach(var item in Items.Where(x =>  x.Id == 0 && x.Amount <= 0).ToList()) {
 				RemoveItem(item);
 			}
 		}
