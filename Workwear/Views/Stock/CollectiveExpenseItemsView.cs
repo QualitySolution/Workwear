@@ -194,7 +194,7 @@ namespace Workwear.Views.Stock
 				"<span color='black'>●</span> — обычная выдача\n" +
 				"<span color='gray'>●</span> — выдача не требуется\n" +
 				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
-				"<span color='red'>●</span> — отсутствует номенклатура\n" +
+				"<span color='red'>●</span> — отсутствует номенклатура или количество\n" +
 				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n"
 			);
 		}
