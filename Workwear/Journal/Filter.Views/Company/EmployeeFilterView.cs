@@ -12,7 +12,12 @@ namespace workwear.Journal.Filter.Views.Company
 			checkShowOnlyWithoutNorms.Binding.AddBinding(ViewModel, vm => vm.ShowOnlyWithoutNorms, w => w.Active).InitializeFromSource();
 			checkShowOnlyWithoutNorms.Binding.AddBinding(ViewModel, vm => vm.CanShowOnlyWithoutNorms, w => w.Visible).InitializeFromSource();
 			checkExcludeInVacation.Binding.AddBinding(ViewModel, vm=>vm.ExcludeInVacation,w=>w.Active).InitializeFromSource();
-			yDatePicker.Binding.AddBinding(ViewModel, vm => vm.Date, w => w.Date).InitializeFromSource();
+			datepicker.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.Date, w => w.Date)
+				.AddBinding(vm => vm.VisibleDate, w => w.Visible)
+				.InitializeFromSource();
+			ylabel1.Binding.AddBinding(ViewModel, vm => vm.VisibleDate, w => w.Visible).InitializeFromSource();
 			entitySubdivision.ViewModel = viewModel.SubdivisionEntry;
 			entityDepartment.ViewModel = viewModel.DepartmentEntry;
 			entityPost.ViewModel = viewModel.PostEntry;

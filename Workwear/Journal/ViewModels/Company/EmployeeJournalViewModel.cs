@@ -61,9 +61,6 @@ namespace workwear.Journal.ViewModels.Company
 			Norm normAlias = null;
 			Department departmentAlias = null;
 			
-			if (Filter.Date <= default(DateTime).AddYears(10))
-				Filter.Date = DateTime.Today;
-			
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
 				.Where(ev => ev.BeginDate <= Filter.Date && ev.EndDate >= Filter.Date)

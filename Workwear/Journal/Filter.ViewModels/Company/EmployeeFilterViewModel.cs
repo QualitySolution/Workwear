@@ -18,6 +18,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		#region Ограничения
 
 		private bool showOnlyWork = true;
+		[PropertyChangedAlso(nameof(VisibleDate))]
 		public virtual bool ShowOnlyWork {
 			get => showOnlyWork;
 			set => SetField(ref showOnlyWork, value);
@@ -35,10 +36,12 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		}
 
 		private bool excludeInVacation = false;
+		[PropertyChangedAlso(nameof(VisibleDate))]
 		public virtual bool ExcludeInVacation {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+		public virtual bool VisibleDate => showOnlyWork || excludeInVacation;
 		
 		private Subdivision subdivision;
 		public virtual Subdivision Subdivision {
@@ -81,7 +84,11 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		private DateTime date = DateTime.Today;
 		public virtual DateTime Date {
 			get => date;
-			set => SetField(ref date, value);
+			set {
+				SetField(ref date, value);
+				if(value == DateTime.MinValue)
+					SetField(ref date, DateTime.Today);
+			}
 		}
 		
 		#endregion
