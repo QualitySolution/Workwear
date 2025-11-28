@@ -347,6 +347,10 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Расчет для View
 		public string GetRowColor(CollectiveExpenseItem item) {
+			if(item.Id != 0 && item.Amount <= 0)
+				return "red";
+			if(item.Id != 0)
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
