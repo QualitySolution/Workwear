@@ -328,6 +328,8 @@ namespace Workwear.ViewModels.Stock
 
 		#region Расчет для View
 		public string GetRowColor(ExpenseItem item) {
+			if(item.Id != 0 && item.Amount <= 0)
+				return "red";
 			if(item.EmployeeCardItem?.Graph == null)
 				return null;
 			if(item.Id != 0)

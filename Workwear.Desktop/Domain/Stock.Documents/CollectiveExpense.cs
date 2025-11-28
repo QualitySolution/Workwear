@@ -87,6 +87,10 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { nameof(Items)});
+						
+			if(Items.Any(i => i.Id != 0 && i.Amount <= 0))
+				yield return new ValidationResult ("Нельзя в соханённом документе изменить в строке количество на 0. Но строку можжно удалить.", 
+					new[] { nameof (Items)});
 
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
 				yield return new ValidationResult (
