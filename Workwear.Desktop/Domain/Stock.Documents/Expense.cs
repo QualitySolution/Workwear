@@ -37,9 +37,16 @@ namespace Workwear.Domain.Stock.Documents
 		
 		EmployeeCard employee;
 		[Display (Name = "Сотрудник")]
+		[PropertyChangedAlso(nameof(Warehouse))]
 		public virtual EmployeeCard Employee {
 			get { return employee; }
-			set { SetField (ref employee, value, () => Employee); }
+			set {
+				if(Employee != value) {
+					SetField(ref employee, value, () => Employee);
+					if(Warehouse != null) return;
+					Warehouse = Employee?.Subdivision?.Warehouse;
+				}
+			}
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
