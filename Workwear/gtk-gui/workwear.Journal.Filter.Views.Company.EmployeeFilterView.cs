@@ -30,7 +30,7 @@ namespace workwear.Journal.Filter.Views.Company
 
 		private global::Gtk.Label label4;
 
-		private global::Gamma.GtkWidgets.yLabel ylabel1;
+		private global::Gamma.GtkWidgets.yLabel ylabelDate;
 
 		protected virtual void Build()
 		{
@@ -189,12 +189,12 @@ namespace workwear.Journal.Filter.Views.Company
 			w12.XOptions = ((global::Gtk.AttachOptions)(4));
 			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabel1.Name = "ylabel1";
-			this.ylabel1.Xalign = 1F;
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("На дату:");
-			this.table1.Add(this.ylabel1);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel1]));
+			this.ylabelDate = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelDate.Name = "ylabelDate";
+			this.ylabelDate.Xalign = 1F;
+			this.ylabelDate.LabelProp = global::Mono.Unix.Catalog.GetString("На дату:");
+			this.table1.Add(this.ylabelDate);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelDate]));
 			w13.TopAttach = ((uint)(2));
 			w13.BottomAttach = ((uint)(3));
 			w13.LeftAttach = ((uint)(3));

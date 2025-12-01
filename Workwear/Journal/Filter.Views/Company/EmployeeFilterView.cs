@@ -17,7 +17,7 @@ namespace workwear.Journal.Filter.Views.Company
 				.AddBinding(vm => vm.Date, w => w.Date)
 				.AddBinding(vm => vm.VisibleDate, w => w.Visible)
 				.InitializeFromSource();
-			ylabel1.Binding.AddBinding(ViewModel, vm => vm.VisibleDate, w => w.Visible).InitializeFromSource();
+			ylabelDate.Binding.AddBinding(ViewModel, vm => vm.VisibleDate, w => w.Visible).InitializeFromSource();
 			entitySubdivision.ViewModel = viewModel.SubdivisionEntry;
 			entityDepartment.ViewModel = viewModel.DepartmentEntry;
 			entityPost.ViewModel = viewModel.PostEntry;

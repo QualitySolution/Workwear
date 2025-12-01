@@ -69,7 +69,7 @@ namespace workwear.Journal.ViewModels.Company
 			
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
-				employees.Where(x => x.DismissDate == null || (x.DismissDate != null && x.DismissDate > Filter.Date));
+				employees.Where(x => x.DismissDate == null || x.DismissDate > Filter.Date);
 			if(Filter.ExcludeInVacation)
 				employees.WithSubquery.WhereNotExists(vacationSubquery);
 			if(Filter.Subdivision != null)
