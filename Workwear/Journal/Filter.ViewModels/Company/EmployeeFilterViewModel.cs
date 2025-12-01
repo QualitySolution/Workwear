@@ -84,15 +84,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		private DateTime date = DateTime.Today;
 		public virtual DateTime Date {
 			get => date;
-			set {
-				if(Date != value) {
-					if(value == DateTime.MinValue)
-						date = DateTime.Today;
-					else
-						date = value;
-					OnPropertyChanged();
-				}
-			}
+			set => SetField(ref date, value == default(DateTime) ? DateTime.Today : value);
 		}
 		
 		#endregion
