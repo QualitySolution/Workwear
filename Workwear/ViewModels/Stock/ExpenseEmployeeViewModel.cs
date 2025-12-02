@@ -243,8 +243,7 @@ namespace Workwear.ViewModels.Stock {
 
 			if(Entity.Employee == null || Entity.Warehouse == null)
 				return;
-
-			stockBalanceModel.Warehouse = Entity.Warehouse;
+			
 			performance.CheckPoint("Предварительная загрузка сотрудника");
 			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
 			performance.CheckPoint("Предварительная загрузка потребностей");
@@ -384,6 +383,7 @@ namespace Workwear.ViewModels.Stock {
 		{
 			switch(e.PropertyName) {
 				case nameof(Entity.Warehouse):
+					stockBalanceModel.Warehouse = Entity.Warehouse;
 					var performanceWarehouse = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
 					FillUnderreceived(performanceWarehouse);
 					performanceWarehouse.End();
