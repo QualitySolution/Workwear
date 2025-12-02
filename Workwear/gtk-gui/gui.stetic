@@ -15501,6 +15501,22 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="checkByDepartment">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Детализировать по отделам</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkByEmployee">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -15510,7 +15526,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15527,7 +15543,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">4</property>
+            <property name="Position">5</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15544,7 +15560,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">5</property>
+            <property name="Position">6</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15561,7 +15577,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">6</property>
+            <property name="Position">7</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15578,7 +15594,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">7</property>
+            <property name="Position">8</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15595,7 +15611,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">8</property>
+            <property name="Position">9</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15612,7 +15628,7 @@
             <property name="UseUnderline">True</property>
           </widget>
           <packing>
-            <property name="Position">9</property>
+            <property name="Position">10</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -15642,8 +15658,36 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">10</property>
+            <property name="Position">11</property>
             <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander3">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <signal name="Activated" handler="OnExpander1Activated" />
+            <child>
+              <widget class="QS.Views.Control.ChoiceListView" id="choicedepartmentview">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelDepartment">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Отдел:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">12</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
           </packing>
         </child>
         <child>
@@ -15669,7 +15713,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">11</property>
+            <property name="Position">13</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
           </packing>
@@ -15686,7 +15730,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">12</property>
+            <property name="Position">14</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
