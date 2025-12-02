@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -17,6 +18,7 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		#region Ограничения
 
 		private bool showOnlyWork = true;
+		[PropertyChangedAlso(nameof(VisibleDate))]
 		public virtual bool ShowOnlyWork {
 			get => showOnlyWork;
 			set => SetField(ref showOnlyWork, value);
@@ -34,10 +36,12 @@ namespace workwear.Journal.Filter.ViewModels.Company
 		}
 
 		private bool excludeInVacation = false;
+		[PropertyChangedAlso(nameof(VisibleDate))]
 		public virtual bool ExcludeInVacation {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+		public virtual bool VisibleDate => showOnlyWork || excludeInVacation;
 		
 		private Subdivision subdivision;
 		public virtual Subdivision Subdivision {
@@ -76,7 +80,13 @@ namespace workwear.Journal.Filter.ViewModels.Company
 			get => norm;
 			set => SetField(ref norm, value);
 		}
-
+		
+		private DateTime date = DateTime.Today;
+		public virtual DateTime Date {
+			get => date;
+			set => SetField(ref date, value == default(DateTime) ? DateTime.Today : value);
+		}
+		
 		#endregion
 
 		#region EntityModels
