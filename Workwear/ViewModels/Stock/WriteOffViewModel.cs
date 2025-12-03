@@ -212,6 +212,7 @@ namespace Workwear.ViewModels.Stock
 		        // для всех списаний со склада
 		        var nomenclatures = itemsWh.Select(i => i.Nomenclature);
 		        stockBalanceModel.OnDate = date;
+		        stockBalanceModel.ExcludeOperations = itemsWh.Select(i => i.WarehouseOperation);
 		        stockBalanceModel.AddNomenclatures(nomenclatures);
 		        foreach(var item in itemsWh)
 			        item.MaxAmount = stockBalanceModel.GetAmount(item.StockPosition);
