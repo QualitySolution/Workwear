@@ -76,7 +76,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"showCostCenter", ShowCostCenter},
 					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm},
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
+					{"byDepartment", ByDepartment}
 		};
 
 		public override string Identifier { 
