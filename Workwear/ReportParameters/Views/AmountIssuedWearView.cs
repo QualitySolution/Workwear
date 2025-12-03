@@ -34,6 +34,8 @@ namespace workwear.ReportParameters.Views {
             checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.SensetiveBySize, w => w.Sensitive).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
+			checkByDepartment.Binding.AddBinding(ViewModel, v => v.ByDepartment, w => w.Active).InitializeFromSource();
+			checkByDepartment.Binding.AddBinding(ViewModel, v => v.SensitiveByDepartment, w => w.Sensitive).InitializeFromSource();
 			
 			buttonPrintReport.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 

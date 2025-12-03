@@ -117,9 +117,11 @@ namespace workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(SensetiveBySubdiviion))]
 		[PropertyChangedAlso(nameof(SensetiveByEmployee))]
 		[PropertyChangedAlso(nameof(SensetiveBySize))]
+		[PropertyChangedAlso(nameof(SensitiveByDepartment))]
 		[PropertyChangedAlso(nameof(BySubdivision))]
 		[PropertyChangedAlso(nameof(ByEmployee))]
 		[PropertyChangedAlso(nameof(BySize))]
+		[PropertyChangedAlso(nameof(ByDepartment))]
 		public virtual bool ByOperation {
 			get => ReportType == AmountIssuedWearReportType.Flat && byOperation;
 			set => SetField(ref byOperation, ReportType == AmountIssuedWearReportType.Flat && value);
@@ -144,6 +146,12 @@ namespace workwear.ReportParameters.ViewModels {
 			set { if(!ByOperation) SetField(ref bySize, value); }
 		}
 
+		private bool byDepartment;
+		public virtual bool ByDepartment {
+			get => byDepartment || ByOperation;
+			set { if(!ByOperation) SetField(ref byDepartment, value); }
+		}
+		
 		private bool addChildSubdivisions;
 		public bool AddChildSubdivisions {
 			get => addChildSubdivisions;
@@ -203,6 +211,7 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool SensetiveBySubdiviion => !ByOperation;
 		public bool SensetiveByEmployee => !ByOperation;
 		public bool SensetiveBySize => !ByOperation;
+		public bool SensitiveByDepartment => !ByOperation;
 		
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
