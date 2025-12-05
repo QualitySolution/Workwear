@@ -17,13 +17,27 @@ namespace Workwear.Views.ClothingService {
 			entrySearchBarcode.Binding
 				.AddBinding(ViewModel.BarcodeInfoViewModel, e => e.BarcodeText, w => w.Text)
 				.AddBinding(ViewModel, v => v.SensitiveBarcode, w => w.Sensitive).InitializeFromSource();
-			buttonAddClaim.Binding
-				.AddBinding(ViewModel, vm => vm.CanAddClaim, w => w.Visible).InitializeFromSource();
-			buttonAccept.Binding
-				.AddBinding(ViewModel, v => v.SensitiveAccept, w => w.Sensitive).InitializeFromSource();
 			ybuttonPrintLabel.Binding
 				.AddBinding(ViewModel, v=>v.SensitivePrint, w=>w.Sensitive)
 				.InitializeFromSource();
+			buttonAddClaim.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddClaim, w => w.Visible).InitializeFromSource();
+			
+			yhboxClaimActions.Binding
+				.AddBinding(ViewModel, v => v.SensitiveActions, w => w.Sensitive).InitializeFromSource();
+			framePostamat.Visible = viewModel.ShowTerminal;
+			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
+			comboPostomat.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Postomats, w => w.ItemsList)
+				.AddBinding(v => v.Postomat, w => w.SelectedItem).InitializeFromSource();
+			treeOperations.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.Operations, w => w.ItemsDataSource).InitializeFromSource();
+			treeOperations.CreateFluentColumnsConfig<StateOperation>()
+				.AddColumn("Время").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g"))
+				.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.State.GetEnumTitle())
+				.AddColumn("Пользователь").AddReadOnlyTextRenderer(x => x.User?.Name)
+				.AddColumn("Комментарий").AddReadOnlyTextRenderer(x => x.Comment)
+				.Finish();
 			ycheckbuttonNeedRepair.Binding
 				.AddBinding(ViewModel, vm => vm.NeedRepair, w => w.Active).InitializeFromSource();
 			textDefect.Binding
@@ -36,21 +50,8 @@ namespace Workwear.Views.ClothingService {
 				.AddBinding(ViewModel, v => v.State, w => w.SelectedItem).InitializeFromSource();
 			textComment.Binding
 				.AddBinding(ViewModel, v => v.Comment, w => w.Buffer.Text).InitializeFromSource();
-			framePostamat.Visible = viewModel.ShowTerminal;
-			comboPostomat.SetRenderTextFunc<PostomatInfo>(p => $"{p.Name} ({p.Location})");
-			comboPostomat.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Postomats, w => w.ItemsList)
-				.AddBinding(v => v.Postomat, w => w.SelectedItem).InitializeFromSource();
-			
-			treeOperations.CreateFluentColumnsConfig<StateOperation>()
-				.AddColumn("Время").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g"))
-				.AddColumn("Статус").AddReadOnlyTextRenderer(x => x.State.GetEnumTitle())
-				.AddColumn("Пользователь").AddReadOnlyTextRenderer(x => x.User?.Name)
-				.AddColumn("Комментарий").AddReadOnlyTextRenderer(x => x.Comment)
-				.Finish();
-			treeOperations.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Operations, w => w.ItemsDataSource).InitializeFromSource();
-			
+			buttonAccept.Binding
+				.AddBinding(ViewModel, v => v.SensitiveAccept, w => w.Sensitive).InitializeFromSource();
 			treeServices.CreateFluentColumnsConfig<SelectableEntity<Service>>()			
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
