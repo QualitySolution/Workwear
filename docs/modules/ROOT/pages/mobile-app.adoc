@@ -110,6 +110,7 @@ image:mobile-app_ratings-desktop.png[]
 
 Средняя оценка пользователей так же отображается в <<stock.adoc#nomenclatures,справочнике номенклатуры>>.
 
+[#service_claims]
 == Стирка
 
 NOTE: Функциональность доступна только в редакции https://workwear.qsolution.ru/stoimost/[«Предприятие»]
