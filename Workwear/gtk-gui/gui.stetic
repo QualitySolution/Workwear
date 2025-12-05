@@ -26969,7 +26969,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Штрих код:</property>
+                <property name="LabelProp" translatable="yes">Идентификатор метки:</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -27350,7 +27350,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel5">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Значение штрихкода:</property>
+                        <property name="LabelProp" translatable="yes">Идентификатор метки:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">2</property>
@@ -27450,7 +27450,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Штрих код:</property>
+                <property name="LabelProp" translatable="yes">Идентификатор метки:</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -35959,7 +35959,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel1">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Штрих код:</property>
+                <property name="LabelProp" translatable="yes">Идентификатор метки:</property>
               </widget>
               <packing>
                 <property name="Position">0</property>

@@ -178,7 +178,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel5 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel5.Name = "ylabel5";
 			this.ylabel5.Xalign = 1F;
-			this.ylabel5.LabelProp = global::Mono.Unix.Catalog.GetString("Значение штрихкода:");
+			this.ylabel5.LabelProp = global::Mono.Unix.Catalog.GetString("Идентификатор метки:");
 			this.tableInfo.Add(this.ylabel5);
 			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel5]));
 			w11.TopAttach = ((uint)(2));
