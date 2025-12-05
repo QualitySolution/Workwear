@@ -75,16 +75,13 @@ namespace Workwear.Views.Visits {
 			foreach(var item in ViewModel.Items.Values) {
 				var widgets = new List<Widget>();
 				bool isSensitive = item.Visit == null || item.SensitiveElement;
-				Label label;
-				Entry entry;
 				TextView textView;
 				Button button;
 				HBox buttonBox = new HBox(false, 2);
-				ScrolledWindow scrolledWindow;
 				uint j = (uint) item.Documents.Count; //смещение многострочных элементов
 
-				label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
-                ItemListTable.Attach(label, 0, 1, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
+				var label = new Label {LabelProp = item.VisitTime.ToShortTimeString()}; //Время
+				ItemListTable.Attach(label, 0, 1, i, i+j+1, AttachOptions.Shrink, AttachOptions.Shrink, 0, 0);
                 label.Sensitive = isSensitive;
                 widgets.Add(label);
                 
@@ -139,7 +136,6 @@ namespace Workwear.Views.Visits {
 								button.Image = img;
 								button.TooltipText = "Начать";
 								type = ActionType.Play;
-								padding = 12;
 								break;
 							case 1:
 								button.Name = "done";
@@ -186,9 +182,9 @@ namespace Workwear.Views.Visits {
 				ItemListTable.Attach(buttonBox, 10, 11, i, i+1, AttachOptions.Shrink, AttachOptions.Shrink, 0 ,0);
                 
 				if(item.Visit != null) { //Пока не даём создавать из программы новые
-					scrolledWindow = new ScrolledWindow();
-					textView = new TextView(); //Коментарий
-					textView.WrapMode = (WrapMode)3;
+					var scrolledWindow = new ScrolledWindow();
+					textView = new TextView(); //Комментарий
+					textView.WrapMode = WrapMode.WordChar;
 					textView.Buffer.Text = item.Comment;
 					scrolledWindow.Add(textView);
 					textView.FocusOutEvent += (sender, args) => ViewModel.AddComment(item, textView.Buffer.Text);
