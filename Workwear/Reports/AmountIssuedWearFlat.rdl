@@ -1053,12 +1053,19 @@
         END AS wearing_period,
     GROUP_CONCAT(DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y')) as operation_date,
     GROUP_CONCAT(IFNULL(issuance_sheet.doc_number, issuance_sheet.id)) as issuance_sheet,
-    IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
-        FROM operation_issued_by_employee as op2
-             LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
-        WHERE op2.employee_id = operation_issued_by_employee.employee_id 
-          AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
-          AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
+    IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(rop.operation_time) BETWEEN MAX(op.operation_time) AND operation_issued_by_employee.operation_time,
+                    MAX(rop.operation_time),
+                    IF(MAX(op.ExpiryByNorm) BETWEEN MAX(op.operation_time) AND operation_issued_by_employee.operation_time,
+                        MAX(op.ExpiryByNorm), MAX(rop.operation_time))),'%d.%m.%Y')
+        FROM operation_issued_by_employee op
+                 LEFT JOIN operation_issued_by_employee rop ON op.employee_id = rop.employee_id 
+                        and op.protection_tools_id = rop.protection_tools_id
+                        and rop.issued_operation_id is not null
+                        AND rop.operation_time &lt;= operation_issued_by_employee.operation_time
+        WHERE op.employee_id = operation_issued_by_employee.employee_id
+          AND op.protection_tools_id = operation_issued_by_employee.protection_tools_id
+          AND op.operation_time &lt; operation_issued_by_employee.operation_time
+          )
     ,NULL) AS date_need,
     operation_issued_by_employee.comment AS operation_comment,
     IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment

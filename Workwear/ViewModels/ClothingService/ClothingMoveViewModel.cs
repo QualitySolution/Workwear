@@ -131,6 +131,7 @@ namespace Workwear.ViewModels.ClothingService {
 					OnPropertyChanged(nameof(Services));
 					NeedRepair = claim.NeedForRepair;
 					DefectText = claim.Defect;
+					OnPropertyChanged(nameof(SensitiveActions));
 				}
 			}
 		}
@@ -186,6 +187,7 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
 		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null;
+		public virtual bool SensitiveActions => Claim != null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
 		public virtual bool MoveDefiniteClaim { get; } = false; //Движение единственного объекта
