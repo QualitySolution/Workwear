@@ -177,7 +177,7 @@ ALTER TABLE `vacation_type`
 -- -----------------------------------------------------
 -- Пересоздание функций с новыми правами
 -- -----------------------------------------------------
-DROP FUNCTION count_issue;
+DROP FUNCTION IF EXISTS  count_issue;
 
 DELIMITER $$
 CREATE FUNCTION `count_issue`(
@@ -225,7 +225,7 @@ END$$
 
 DELIMITER ;
 
-DROP FUNCTION quantity_issue;
+DROP FUNCTION IF EXISTS  quantity_issue;
 
 DELIMITER $$
 CREATE FUNCTION `quantity_issue`(
@@ -288,7 +288,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-DROP FUNCTION count_working_days;
+DROP FUNCTION IF EXISTS  count_working_days;
 
 DELIMITER $$
 CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
