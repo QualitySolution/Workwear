@@ -963,7 +963,7 @@ FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-        JOIN (
+        LEFT JOIN (
             SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
                             item_types.size_type_id, item_types.height_type_id, item_types.issue_type
             FROM protection_tools_nomenclature
