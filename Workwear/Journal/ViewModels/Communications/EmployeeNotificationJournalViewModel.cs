@@ -456,7 +456,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSandNotification => StatusInfo.Status != LkStatus.Missing || !string.IsNullOrWhiteSpace(Email);
+		public bool CanSandNotification => StatusInfo?.Status == LkStatus.HasTokens || StatusInfo?.Status == LkStatus.Registered || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 
