@@ -205,7 +205,7 @@ namespace Workwear.Models.Regulations {
 						}
 					}
 					UpdateWriteOffDocs(writeOffOperations, dutyNormWriteOffOperationByEmployeeWriteOffOperation, newDutyNorm, uow);
-					
+					UpdateReturnfDocs(writeOffOperations, dutyNormWriteOffOperationByEmployeeWriteOffOperation, newDutyNorm, uow);
 				}
 				RemoveNorm(norm, uow);
 				foreach(var emp in employees) {
@@ -408,7 +408,7 @@ namespace Workwear.Models.Regulations {
 		}
 		#endregion
 
-		#region Документы списания
+		#region Документы списания и возврата
 		private void UpdateWriteOffDocs
 			(IList<EmployeeIssueOperation> writeOffOperations,
 			Dictionary<int, DutyNormIssueOperation> dutyNormWriteOffOperationByEmployeeWriteOffOperation,
@@ -427,6 +427,26 @@ namespace Workwear.Models.Regulations {
 				item.EmployeeWriteoffOperation = null;
 				uow.Save(item);
 				uow.Delete(removingWriteOffOperation);
+			}
+		}
+		private void UpdateReturnfDocs
+		(IList<EmployeeIssueOperation> writeOffOperations,
+			Dictionary<int, DutyNormIssueOperation> dutyNormWriteOffOperationByEmployeeWriteOffOperation,
+			DutyNorm newDutyNorm,
+			IUnitOfWork uow) {
+			var writeOffOperationsIds = writeOffOperations.Select(x => x.Id).ToArray();
+			var returnItems = uow.Session.Query<ReturnItem>()
+				.Where(x => writeOffOperationsIds.Contains(x.ReturnFromEmployeeOperation.Id)).ToList();
+			if(returnItems.IsNotEmpty())
+				progressBar.Add(text: $"Перенос ссылок на операции возврата с дежурной нормы {newDutyNorm.Name} в документах возврата");
+			foreach(var item in returnItems) 
+			{
+				var dutyNormIssueOperation = dutyNormWriteOffOperationByEmployeeWriteOffOperation[item.ReturnFromEmployeeOperation.Id];
+				var removingReturnOperation = item.ReturnFromEmployeeOperation;
+				item.ReturnFromDutyNormOperation = dutyNormIssueOperation;
+				item.ReturnFromEmployeeOperation= null;
+				uow.Save(item);
+				uow.Delete(removingReturnOperation);
 			}
 		}
 		#endregion
