@@ -87,5 +87,8 @@ namespace workwear.ReportParameters.Views {
 		protected void OnExpander2Activated(object sender, EventArgs e) {
 			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
 		}
+
+		protected void OnExpanderDepartmentActivated(object sender, EventArgs e) {
+		}
 	}
 }

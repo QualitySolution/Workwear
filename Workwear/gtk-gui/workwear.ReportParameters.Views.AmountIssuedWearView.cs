@@ -58,7 +58,7 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Label GtkLabel12;
 
-		private global::Gtk.Expander expander3;
+		private global::Gtk.Expander expanderDepartment;
 
 		private global::QS.Views.Control.ChoiceListView choicedepartmentview;
 
@@ -388,21 +388,21 @@ namespace workwear.ReportParameters.Views
 			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander1]));
 			w25.Position = 11;
 			// Container child vbox2.Gtk.Box+BoxChild
-			this.expander3 = new global::Gtk.Expander(null);
-			this.expander3.CanFocus = true;
-			this.expander3.Name = "expander3";
-			// Container child expander3.Gtk.Container+ContainerChild
+			this.expanderDepartment = new global::Gtk.Expander(null);
+			this.expanderDepartment.CanFocus = true;
+			this.expanderDepartment.Name = "expanderDepartment";
+			// Container child expanderDepartment.Gtk.Container+ContainerChild
 			this.choicedepartmentview = new global::QS.Views.Control.ChoiceListView();
 			this.choicedepartmentview.Events = ((global::Gdk.EventMask)(256));
 			this.choicedepartmentview.Name = "choicedepartmentview";
-			this.expander3.Add(this.choicedepartmentview);
+			this.expanderDepartment.Add(this.choicedepartmentview);
 			this.labelDepartment = new global::Gtk.Label();
 			this.labelDepartment.Name = "labelDepartment";
 			this.labelDepartment.LabelProp = global::Mono.Unix.Catalog.GetString("Отдел:");
 			this.labelDepartment.UseUnderline = true;
-			this.expander3.LabelWidget = this.labelDepartment;
-			this.vbox2.Add(this.expander3);
-			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander3]));
+			this.expanderDepartment.LabelWidget = this.labelDepartment;
+			this.vbox2.Add(this.expanderDepartment);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expanderDepartment]));
 			w27.Position = 12;
 			w27.Expand = false;
 			// Container child vbox2.Gtk.Box+BoxChild
@@ -443,7 +443,7 @@ namespace workwear.ReportParameters.Views
 			}
 			this.Hide();
 			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
-			this.expander3.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expanderDepartment.Activated += new global::System.EventHandler(this.OnExpanderDepartmentActivated);
 			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.buttonPrintReport.Clicked += new global::System.EventHandler(this.OnButtonPrintReportClicked);
 		}

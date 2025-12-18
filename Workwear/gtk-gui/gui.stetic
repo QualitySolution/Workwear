@@ -15663,10 +15663,10 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Expander" id="expander3">
+          <widget class="Gtk.Expander" id="expanderDepartment">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <signal name="Activated" handler="OnExpander1Activated" />
+            <signal name="Activated" handler="OnExpanderDepartmentActivated" />
             <child>
               <widget class="QS.Views.Control.ChoiceListView" id="choicedepartmentview">
                 <property name="MemberName" />
