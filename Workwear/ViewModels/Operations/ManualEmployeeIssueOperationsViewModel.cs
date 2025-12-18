@@ -350,6 +350,9 @@ namespace Workwear.ViewModels.Operations
 
 		public string BarcodesColor => NeedCreateBarcodes ? "red" : null;
 		public void ReleaseBarcodes() {
+			if(SelectOperation == null)
+				return;
+			
 			if(SelectOperation.Id == 0)
 				UoW.Save(SelectOperation);
 			

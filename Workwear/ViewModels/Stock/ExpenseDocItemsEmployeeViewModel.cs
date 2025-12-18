@@ -249,7 +249,11 @@ namespace Workwear.ViewModels.Stock
 			if(!saveResult)
 				return;
 
-			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
+			var operations = Entity.Items
+				.Where(i => i.Nomenclature?.UseBarcode ?? false)
+				.Select(x => x.EmployeeIssueOperation)
+				.Where(o => o != null)
+				.ToList();
 			barcodeService.CreateBarcodeEAN13(UoW, operations);
 			UoW.Commit();
 			OnPropertyChanged(nameof(NeedUpdateBarcodes));
