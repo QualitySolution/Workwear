@@ -79,16 +79,25 @@ namespace workwear.ReportParameters.Views {
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e) {
 			ViewModel.LoadReport();
 		}
-
+		private bool GetExpandedState(Gtk.Expander expanderFirst, Gtk.Expander expanderSecond) {
+			return !(expanderFirst.Expanded && expanderSecond.Expanded);
+		}
 		protected void OnExpander1Activated(object sender, EventArgs e) {
+			if(expander1.Expanded)
+				expander1.Expanded = GetExpandedState(expander2, expanderDepartment);
 			(vbox2[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
 		}
 
 		protected void OnExpander2Activated(object sender, EventArgs e) {
+			if(expander2.Expanded)
+				expander2.Expanded = GetExpandedState(expander1, expanderDepartment);
 			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
 		}
 
 		protected void OnExpanderDepartmentActivated(object sender, EventArgs e) {
+			if(expanderDepartment.Expanded)
+				expanderDepartment.Expanded = GetExpandedState(expander1, expander2);
+			(vbox2[expanderDepartment] as Gtk.Box.BoxChild).Expand = expanderDepartment.Expanded;
 		}
 	}
 }
