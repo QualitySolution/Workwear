@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.Views;
 using workwear.ReportParameters.ViewModels;
 using Workwear.Domain.Stock;
@@ -73,6 +73,7 @@ namespace workwear.ReportParameters.Views {
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choicedepartmentview.ViewModel = ViewModel.ChoiceDepartmentViewModel;
 			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 

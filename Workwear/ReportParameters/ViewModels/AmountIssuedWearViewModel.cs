@@ -22,6 +22,7 @@ namespace workwear.ReportParameters.ViewModels {
 		public readonly FeaturesService FeaturesService;
 		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<Department> ChoiceDepartmentViewModel;
 		
 		public AmountIssuedWearViewModel(
 			RdlViewerViewModel rdlViewerViewModel, 
@@ -40,6 +41,11 @@ namespace workwear.ReportParameters.ViewModels {
 			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
 			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+
+			var departmentsList = UoW.GetAll<Department>().ToList();
+			ChoiceDepartmentViewModel = new ChoiceListViewModel<Department>(departmentsList);
+			ChoiceDepartmentViewModel.ShowNullValue(true, "Без отдела");
+			ChoiceDepartmentViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -208,7 +214,8 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool VisibleIssueType => FeaturesService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleByOperation => ReportType == AmountIssuedWearReportType.Flat;
 		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate
-									&& !ChoiceEmployeeGroupViewModel.AllUnSelected;
+									&& !ChoiceEmployeeGroupViewModel.AllUnSelected
+									&& !ChoiceDepartmentViewModel.AllUnSelected;
 		public bool SensetiveBySubdiviion => !ByOperation;
 		public bool SensetiveByEmployee => !ByOperation;
 		public bool SensetiveBySize => !ByOperation;
@@ -218,6 +225,8 @@ namespace workwear.ReportParameters.ViewModels {
 			if(nameof(ChoiceSubdivisionViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)== e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+			if(nameof(ChoiceDepartmentViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion
