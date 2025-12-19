@@ -1094,6 +1094,7 @@ WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE
   AND (@issue_type = '' OR item_types.issue_type = @issue_type)
   and operation_issued_by_employee.returned = 0
            AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
+  AND ((-1 IN (@departments)) OR (@withoutDepartment AND departments.id IS NULL) OR (departments.id IN (@departments)))
   and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
   and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
@@ -1170,6 +1171,12 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), department, employee, nomen, size, 
           </QueryParameter>
           <QueryParameter Name="byDepartment">
             <Value>={?byDepartment}</Value>
+          </QueryParameter>
+          <QueryParameter Name="departments">
+            <Value>={?departments}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutDepartment">
+            <Value>={?withoutDepartment}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1456,7 +1463,21 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), department, employee, nomen, size, 
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="departments">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutDepartment">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>

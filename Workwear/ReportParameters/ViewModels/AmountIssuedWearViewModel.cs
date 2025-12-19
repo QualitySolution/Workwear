@@ -83,7 +83,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"showOnlyWithoutNorm",ShowOnlyWithoutNorm},
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
-					{"byDepartment", ByDepartment}
+					{"byDepartment", ByDepartment},
+					{"departments", ChoiceDepartmentViewModel.SelectedIdsMod},
+					{"withoutDepartment", ChoiceDepartmentViewModel.NullIsSelected}
 		};
 
 		public override string Identifier { 
