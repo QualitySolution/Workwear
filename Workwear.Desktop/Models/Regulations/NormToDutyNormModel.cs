@@ -35,6 +35,8 @@ namespace Workwear.Models.Regulations {
 		}
 		public virtual void CopyNormToDutyNorm(int normId) {
 			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
+			Dictionary<ExpenseDutyNorm, Expense> expenseDocs = new Dictionary<ExpenseDutyNorm, Expense>();
+			Dictionary<ExpenseDutyNorm, CollectiveExpense> collectiveExpenseDocs = new Dictionary<ExpenseDutyNorm, CollectiveExpense>();
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование обычной нормы в дежурную")) {
 				employeeIssueRepository.RepoUow = uow;
 				var norm = uow.GetById<Norm>(normId);
@@ -140,9 +142,9 @@ namespace Workwear.Models.Regulations {
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, expDoc);
 						uow.Save(expenseDutyNormDoc);
 						expenseDutyNormDoc.Comment +=
-							$"{(expDoc.DocNumber != null ? $" Номер документа выдачи сотруднику: {expDoc.DocNumber}" : "")}" +
-							$"{(expDoc.CreationDate != null ? $" Дата создания документа выдачи сотруднику: {expDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
-							$" Документ выдачи сотруднику был создан пользователем: {expDoc.CreatedbyUser.Name}"; 
+							$"{(expenseDutyNormDoc.Comment != null ? " " : "")}Исходная выдача №{expDoc.DocNumber ?? expDoc.Id.ToString()}" +
+						    $"{(expDoc.CreationDate != null ? $" от {expDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
+						    $", автор {expDoc.CreatedbyUser.Name}";
 
 						foreach(var item in items) {
 							var dutyNormIssueOperation = dutyNormIssueOperationByWarehouseOperation[item.WarehouseOperation.Id];
@@ -156,6 +158,11 @@ namespace Workwear.Models.Regulations {
 							removingExpenseItems.Add(item);
 						}
 						uow.Save(expenseDutyNormDoc);
+						
+						var sh = GetIssuanceSheet(expDoc, uow);
+						if(sh?.Items.Count != items.Count)
+							expenseDocs.Add(expenseDutyNormDoc, expDoc);
+						
 						UpdateIssuanceSheet(expDoc, items, expDutyNormItemByIssueOperation, uow);
 						
 						progressBar.Add(text: $"Очищение документа индивидуальной выдачи №{expDoc.DocNumber ?? expDoc.Id.ToString()}");
@@ -179,9 +186,10 @@ namespace Workwear.Models.Regulations {
 						CreateExpenseDutyNormDoc(expenseDutyNormDoc, colExpDoc, employee);
 						uow.Save(expenseDutyNormDoc);
 						expenseDutyNormDoc.Comment +=
-							$"{(colExpDoc.DocNumber != null ? $" Номер документа выдачи сотруднику: {colExpDoc.DocNumber}" : "")}" +
-							$"{(colExpDoc.CreationDate != null ? $" Дата создания документа выдачи сотруднику: {colExpDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
-							$" Документ выдачи сотруднику был создан пользователем: {colExpDoc.CreatedbyUser.Name}"; 
+							$"{(expenseDutyNormDoc.Comment != null ? " " : "")}Исходная выдача №{colExpDoc.DocNumber ?? colExpDoc.Id.ToString()}" +
+						    $"{(colExpDoc.CreationDate != null ? $" от {colExpDoc.CreationDate?.ToString("dd.MM.yyyy")}" : "")}" +
+						    $", автор {colExpDoc.CreatedbyUser.Name}";
+							
 						foreach(var item in items) {
 							var dutyNormIssueOperation = dutyNormIssueOperationByWarehouseOperation[item.WarehouseOperation.Id];
 							ExpenseDutyNormItem newExpenseDutyNormItem = new ExpenseDutyNormItem {
@@ -195,6 +203,7 @@ namespace Workwear.Models.Regulations {
 						}
 						
 						uow.Save(expenseDutyNormDoc);
+						collectiveExpenseDocs.Add(expenseDutyNormDoc, colExpDoc);
 						UpdateIssuanceSheet(colExpDoc, uow);
 
 						progressBar.Add(text: $"Очищение документа коллективной выдачи №{colExpDoc.DocNumber ?? colExpDoc.Id.ToString()}");
@@ -212,6 +221,9 @@ namespace Workwear.Models.Regulations {
 					progressBar.Add(text: $"Пересчитываем потребности для {emp.ShortName}");
 					emp.UpdateWorkwearItems();
 				}
+
+				UpdateDocsComments(expenseDocs);
+				UpdateDocsComments(collectiveExpenseDocs);
 				uow.Commit();
 			}
 			progressBar.Close();
@@ -358,8 +370,6 @@ namespace Workwear.Models.Regulations {
 			else {
 				progressBar.Add(text: $"Отвязываем ведомость №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()} " +
 				                      $"от документа выдачи №{issuanceSheet.Expense.DocNumber ?? issuanceSheet.Expense.Id.ToString()}");
-				expenseDoc.Comment += $" Ведомость №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()} отвязана от документа выдачи №" +
-				                      $"{issuanceSheet.Expense.DocNumber ?? issuanceSheet.Expense.Id.ToString()}";
 			}
 				
 			if(issuanceSheetItems.IsNotEmpty())
@@ -375,7 +385,6 @@ namespace Workwear.Models.Regulations {
 			                      $"{issuanceSheet.Expense.DocNumber ?? issuanceSheet.Expense.Id.ToString()} " +
 			                      $"в ведомости №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()}");
 			issuanceSheet.Expense = null;
-			uow.Save(expenseDoc);
 			uow.Save(issuanceSheet);
 		}
 		
@@ -389,8 +398,7 @@ namespace Workwear.Models.Regulations {
 			var issuanceSheetItems = issuanceSheet.Items.ToList();
 			progressBar.Add(text: $"Отвязываем ведомость №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()} " +
 			                      $"от документа коллективной выдачи №{issuanceSheet.CollectiveExpense.DocNumber ?? issuanceSheet.CollectiveExpense.Id.ToString()}");
-			collectiveExpenseDoc.Comment += $" Ведомость №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()} отвязана от документа коллективной выдачи №" +
-			                                $"{issuanceSheet.CollectiveExpense.DocNumber ?? issuanceSheet.CollectiveExpense.Id.ToString()}";
+			
 			if(issuanceSheetItems.IsNotEmpty())
 				progressBar.Add(text: $"Очищаем ведомость №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()} " +
 				                      "от операций выдачи сотрудникам");
@@ -403,8 +411,37 @@ namespace Workwear.Models.Regulations {
 			                      $"{issuanceSheet.CollectiveExpense.DocNumber ?? issuanceSheet.CollectiveExpense.Id.ToString()} " +
 			                      $"в ведомости №{issuanceSheet.DocNumber ?? issuanceSheet.Id.ToString()}");
 			issuanceSheet.CollectiveExpense = null;
-			uow.Save(collectiveExpenseDoc);
 			uow.Save(issuanceSheet);
+		}
+
+		private void UpdateDocsComments(Dictionary<ExpenseDutyNorm, Expense> docs) {
+			foreach(var item in docs) {
+				if(item.Value.IssuanceSheet == null)
+					continue;
+				item.Key.Comment += $", ведомость №{item.Value.IssuanceSheet.DocNumber ?? item.Value.IssuanceSheet.Id.ToString()}";
+				item.Value.Comment +=
+					$"{(item.Value.Comment != null ? " ": "")}Отвязана ведомость №{item.Value.IssuanceSheet.DocNumber ?? item.Value.IssuanceSheet.Id.ToString()}. " +
+					$"Частично перенесено в дежурную выдачу №{item.Key.DocNumber ?? item.Key.Id.ToString()}";
+			}
+		}
+
+		private void UpdateDocsComments(Dictionary<ExpenseDutyNorm, CollectiveExpense> docs) {
+			foreach(var item in docs) {
+				if(item.Value.IssuanceSheet == null)
+					continue;
+				item.Key.Comment += $", ведомость №{item.Value.IssuanceSheet.DocNumber ?? item.Value.IssuanceSheet.Id.ToString()}";
+			}
+			
+			foreach(var docPair in docs.GroupBy(x => x.Value)) {
+				var expenseDoc = docPair.Key;
+				if(expenseDoc.IssuanceSheet == null)
+					continue;
+				var expenseDutyNormsNumber = docPair
+					.Select(x => x.Key.DocNumber ?? x.Key.Id.ToString())
+					.Distinct();
+				expenseDoc.Comment += $"{(expenseDoc.Comment != null ? " ": "")}Отвязана ведомость №{expenseDoc.IssuanceSheet.DocNumber ?? expenseDoc.IssuanceSheet.Id.ToString()}. " +
+				                      $"Частично перенесено в дежурные выдачи №{string.Join(",", expenseDutyNormsNumber)}";
+			}
 		}
 		#endregion
 
