@@ -139,6 +139,9 @@ namespace Workwear.Views.Company {
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
+			label8.UseMarkup = true;
+			label8.Markup = "<span foreground='red' weight='bold'>Дежурное</span>";
+
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 		
