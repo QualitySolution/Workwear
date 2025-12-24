@@ -240,7 +240,7 @@ namespace Workwear.ViewModels.Stock {
 		#region Для View свойства, методы и пробросы
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool CanDelSelectedItem => CanEdit && SelectedItem != null;
-		public bool CanChooseStockPositionsSelectedItem => CanEdit && SelectedItem != null && SelectedItem.ProtectionTools != null;
+		public bool CanChooseStockPositionsSelectedItem => CanEdit && SelectedItem != null && SelectedItem.ProtectionTools != null && Entity.Warehouse != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 	
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
@@ -389,6 +389,9 @@ namespace Workwear.ViewModels.Stock {
 					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 					ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
+					break;
+				case nameof(Entity.Warehouse):
+					OnPropertyChanged(nameof(CanChooseStockPositionsSelectedItem));
 					break;
 			}
 		}
