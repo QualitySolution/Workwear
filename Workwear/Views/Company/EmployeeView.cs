@@ -51,6 +51,8 @@ namespace Workwear.Views.Company {
 			emploeeingroupsview1.ViewModel = ViewModel.InGroupsViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
+			// Здесь происходит неявная установка вкладки 0, это специально сделано до скрытия вкладок. Потому что если программист сохранит монодевелоп на вкладке 4 или дальше по списку то возникает слующий эффект, вкладака 4 скрывается, поэтому вызывается событие переключения на вкдадку 5, та в свою очередь тоже скрывается, и т.д. Что приводит к ложному вызову событий OnShow и загрузке данных, на вкладках которые будут скрыты.
+			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 			notebook1.GetNthPage(4).Visible = ViewModel.VisibleDutyNorm;
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleCostCenters;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleEmployeeGroups;
@@ -59,8 +61,6 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(9).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
-			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
-
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
 			yenumcomboSex.ItemsEnum = typeof(Sex);
@@ -139,6 +139,9 @@ namespace Workwear.Views.Company {
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
+			label8.UseMarkup = true;
+			label8.Markup = "<span foreground='red' weight='bold'>Дежурное</span>";
+
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 		

@@ -17,10 +17,11 @@ namespace Workwear.Views.Communications
 				.AddColumn("Дата").AddTextRenderer(n => n.CreateTime.ToDateTime().ToString("g"))
 				.AddColumn("Отправитель").AddTextRenderer(node => node.UserPhone)
 				.AddColumn("Оценка").AddNumericRenderer(node => node.Rating_)
-				.AddColumn("Номенклатура")
+				.AddColumn("Номенклатура").Resizable()
 					.Binding(b => b.AddBinding(ViewModel, v => v.NomenclatureColumnVisible, col => col.Visible).InitializeFromSource())
-					.AddTextRenderer(n => ViewModel.GetNomenclatureName(n))
-				.AddColumn("Описание").AddTextRenderer(node => node.Description)
+					.AddTextRenderer(n => ViewModel.GetNomenclatureName(n)).WrapWidth(700)
+				.AddColumn("Описание").Resizable()
+					.AddTextRenderer(node => node.Description).WrapWidth(700)
 				.Finish();
 			
 			ytreeviewRatings.Binding.AddBinding(ViewModel, v => v.SelectedRating, w => w.SelectedRow).InitializeFromSource();

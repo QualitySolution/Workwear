@@ -139,15 +139,11 @@ namespace Workwear.ViewModels.Stock {
 		public virtual Shipment Shipment {
 			get => Entity.Shipment;
 			set {
-				if(value == null)
-					Entity.Shipment = value;
-				if(Entity.Shipment != value &&
-				   (Entity.Items.Count == 0 ||
-				    interactive.Question(
-					    "При привязке поставки текущий документ будет очищен и заполнен заново из документа поставки. Продолжить?"))) {
-					Items.Clear();
-					Entity.FillFromShipment(value);
-					Entity.Shipment = value;
+				if(Entity.Shipment != value) {
+				   if (Entity.Items.Count == 0 && value != null) 
+						Entity.FillFromShipment(value);
+				   Entity.Shipment = value;
+				   OnPropertyChanged();
 				}
 			}
 		}

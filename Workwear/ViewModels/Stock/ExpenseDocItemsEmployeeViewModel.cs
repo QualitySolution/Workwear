@@ -105,6 +105,7 @@ namespace Workwear.ViewModels.Stock
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool CanAddItems => CanEdit && Entity.Warehouse != null && Entity.Employee != null;
+		public bool SensitiveShowAllSize => CanEdit && Entity.Warehouse != null;
 		#endregion
 		#region Действия View
 		public void AddItem()
@@ -249,7 +250,11 @@ namespace Workwear.ViewModels.Stock
 			if(!saveResult)
 				return;
 
-			var operations = Entity.Items.Where(i => i.Nomenclature?.UseBarcode ?? false).Select(x => x.EmployeeIssueOperation).ToList();
+			var operations = Entity.Items
+				.Where(i => i.Nomenclature?.UseBarcode ?? false)
+				.Select(x => x.EmployeeIssueOperation)
+				.Where(o => o != null)
+				.ToList();
 			barcodeService.CreateBarcodeEAN13(UoW, operations);
 			UoW.Commit();
 			OnPropertyChanged(nameof(NeedUpdateBarcodes));
@@ -378,8 +383,10 @@ namespace Workwear.ViewModels.Stock
 		
 		void ExpenseDoc_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == nameof(Entity.Warehouse) || e.PropertyName == nameof(Entity.Employee))
+			if(e.PropertyName == nameof(Entity.Warehouse) || e.PropertyName == nameof(Entity.Employee)) {
 				OnPropertyChanged(nameof(CanAddItems));
+				OnPropertyChanged(nameof(SensitiveShowAllSize));
+			}
 		}
 		private void ExpenseDoc_ObservableItems_ListContentChanged(object sender, EventArgs e)
 		{
