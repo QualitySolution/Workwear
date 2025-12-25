@@ -54,6 +54,9 @@ namespace Workwear.Views.Stock
                 .AddBinding(v => v.CanSetBarcode, w => w.Visible)
                 .AddBinding(v => v.CanAddBarcodeForSelected, w => w.Sensitive).InitializeFromSource();
 
+			buttonShowAllSize.Binding
+				.AddBinding(ViewModel,v => v.SensitiveShowAllSize, w => w.Sensitive).InitializeFromSource();
+			
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
 		}
@@ -188,8 +191,12 @@ namespace Workwear.Views.Stock
 		protected void OnButtonDelClicked(object sender, EventArgs e) =>
 			viewModel.Delete(ytreeItems.GetSelectedObject<ExpenseItem>());
 
-		void YtreeItems_Selection_Changed(object sender, EventArgs e) =>
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
+		void YtreeItems_Selection_Changed(object sender, EventArgs e) {
+			buttonDel.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonShowAllSize.Sensitive =
+				ViewModel.SensitiveShowAllSize && ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
+		}
+			
 
 		protected void OnButtonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();

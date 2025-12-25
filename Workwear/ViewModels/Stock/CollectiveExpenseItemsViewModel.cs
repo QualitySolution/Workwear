@@ -146,7 +146,7 @@ namespace Workwear.ViewModels.Stock
 		#region Sensetive
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(CollectiveExpense), Entity.Date).CanUpdate;
 		public bool SensitiveAddButton => CanEdit && Entity.Warehouse != null;
-		public bool SensitiveButtonChange => CanEdit && SelectedItem != null;
+		public bool SensitiveButtonChange => CanEdit && SelectedItem != null && Entity.Warehouse != null;
 		public bool SensitiveButtonDel => CanEdit && SelectedItem != null;
 		public bool SensitiveRefreshMenuItem => SelectedItem != null;
 		public bool SensitiveRefreshAllMenuItem => Entity.Items.Any();
@@ -407,6 +407,7 @@ namespace Workwear.ViewModels.Stock
 				case nameof(Entity.Warehouse):
 					stockBalanceModel.Warehouse = Entity.Warehouse;
 					OnPropertyChanged(nameof(SensitiveAddButton));
+					OnPropertyChanged(nameof(SensitiveButtonChange));
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;

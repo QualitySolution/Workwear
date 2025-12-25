@@ -28,7 +28,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gtk.Button buttonDel;
 
-		private global::Gtk.Button buttonShowAllSize;
+		private global::Gamma.GtkWidgets.yButton buttonShowAllSize;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
 
@@ -166,7 +166,7 @@ namespace Workwear.Views.Stock
 			w16.Expand = false;
 			w16.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.buttonShowAllSize = new global::Gtk.Button();
+			this.buttonShowAllSize = new global::Gamma.GtkWidgets.yButton();
 			this.buttonShowAllSize.Sensitive = false;
 			this.buttonShowAllSize.CanFocus = true;
 			this.buttonShowAllSize.Name = "buttonShowAllSize";
