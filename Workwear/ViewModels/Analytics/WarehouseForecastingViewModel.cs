@@ -436,8 +436,8 @@ namespace Workwear.ViewModels.Analytics {
 		}
 
 		public void CreateShipment(ShipmentCreateType eItemEnum) => 
-			NavigationManager.OpenViewModel<ShipmentViewModel, IEntityUoWBuilder, List<WarehouseForecastingItem>, ShipmentCreateType>
-				(null, EntityUoWBuilder.ForCreate(), Items, eItemEnum);
+			NavigationManager.OpenViewModel<ShipmentViewModel, IEntityUoWBuilder, List<WarehouseForecastingItem>, ShipmentParams>
+				(null, EntityUoWBuilder.ForCreate(), Items, new ShipmentParams(eItemEnum, EndDate));
 
 		#endregion
 
@@ -526,4 +526,16 @@ namespace Workwear.ViewModels.Analytics {
 		[Display(Name = "С долгом")]
 		WithDebt
 	}
+	public class ShipmentParams
+	{
+		public ShipmentCreateType Type { get; }
+		public DateTime EndDate { get; }
+
+		public ShipmentParams(ShipmentCreateType type, DateTime endDate)
+		{
+			Type = type;
+			EndDate = endDate;
+		}
+	}
+
 }

@@ -2434,6 +2434,7 @@ create table shipment
 	has_receive boolean default false not null,
 	submitted datetime null,
 	user_id int unsigned null,
+	warehouse_forecasting_date datetime null default null,
 	comment text null,
 	creation_date datetime null
 )
