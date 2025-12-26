@@ -100,6 +100,13 @@ namespace Workwear.Domain.Supply {
 			get => hasReceive;
 			set { SetField(ref hasReceive, value); }
 		}
+
+		private DateTime? warehouseForecastingDate;
+		[Display(Name = "Дата прогнозирования склада")]
+		public virtual DateTime? WarehouseForecastingDate {
+			get => warehouseForecastingDate;
+			set => SetField(ref warehouseForecastingDate, value);
+		}
 		
 		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
 		[Display(Name = "Строки документа")]
