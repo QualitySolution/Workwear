@@ -48,7 +48,7 @@ namespace Workwear.ViewModels.Supply {
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
-			ShipmentCreateType eItemEnum = default
+			ShipmentParams shipmentParameters = null
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -59,8 +59,11 @@ namespace Workwear.ViewModels.Supply {
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 
+			if(shipmentParameters != null)
+				Entity.WarehouseForecastingDate = shipmentParameters.EndDate;
+			
 			if(forecastingItems != null) 
-				AddFromForecasting(forecastingItems, eItemEnum);
+				AddFromForecasting(forecastingItems, shipmentParameters);
 			
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
@@ -125,6 +128,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual DateTime? StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
 		public virtual DateTime? EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
 		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value; }
+		public virtual DateTime? WarehouseForecastingDate { get => Entity.WarehouseForecastingDate; set => Entity.WarehouseForecastingDate = value; }
 		public virtual IObservableList<ShipmentItem> Items => Entity.Items;
 		
 		#endregion
@@ -199,7 +203,7 @@ namespace Workwear.ViewModels.Supply {
 			};
 		}
 		
-		public void AddFromForecasting(List<WarehouseForecastingItem> forecastingItems, ShipmentCreateType eItemEnum) {
+		public void AddFromForecasting(List<WarehouseForecastingItem> forecastingItems, ShipmentParams shipmentParameters) {
 
 			var nomIds = forecastingItems
 				.Where( i => i.Nomenclature != null)
@@ -223,13 +227,13 @@ namespace Workwear.ViewModels.Supply {
 				.Future();
 			
 			foreach(var fitem in forecastingItems.Where( i => i.Nomenclature != null)) {
-				if(eItemEnum == ShipmentCreateType.WithDebt && fitem.WithDebt < 0 ||
-				   eItemEnum == ShipmentCreateType.WithoutDebt && fitem.WithoutDebt < 0)
+				if(shipmentParameters.Type == ShipmentCreateType.WithDebt && fitem.WithDebt < 0 ||
+				   shipmentParameters.Type == ShipmentCreateType.WithoutDebt && fitem.WithoutDebt < 0)
 					Entity.AddItem(
 						UoW.GetInSession(fitem.Nomenclature),
 						UoW.GetInSession(fitem.Size),
 						UoW.GetInSession(fitem.Height),
-						(eItemEnum == ShipmentCreateType.WithDebt ? fitem.WithDebt : fitem.WithoutDebt) * -1,
+						(shipmentParameters.Type == ShipmentCreateType.WithDebt ? fitem.WithDebt : fitem.WithoutDebt) * -1,
 						fitem.Nomenclature.SaleCost ?? 0 //Возможно стоит подвязаться на переключатель типа стоимости в прогнозе
 						);
 			}
