@@ -158,6 +158,8 @@ namespace Workwear.Domain.Supply {
 				Requested = 1,
 				Nomenclature = nomenclature,
 				Cost = nomenclature.SaleCost ?? 0m,
+				StartPeriod = this.StartPeriod,
+				EndPeriod = this.EndPeriod,
 			};
 			Items.Add(newItem);
 			return newItem;
