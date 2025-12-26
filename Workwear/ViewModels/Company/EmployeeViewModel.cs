@@ -209,8 +209,8 @@ namespace Workwear.ViewModels.Company
 
 		#region Visible
 
-		public bool VisibleListedItem => Entity.Id == 0;
-		public bool VisibleHistory => Entity.Id == 0;
+		public bool VisibleListedItem => Entity.Id != 0;
+		public bool VisibleHistory => Entity.Id != 0;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
