@@ -36,6 +36,11 @@ namespace Workwear.Views.Supply {
 				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
 			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
+			ylabelDate.Binding.AddBinding(ViewModel, vm => vm.VisibleWarehouseForecastingDate, w => w.Visible).InitializeFromSource();
+			ydateWarehouseForecasting.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
+				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
+				.InitializeFromSource();
 		}
 
 		private void ConfigureItems() {

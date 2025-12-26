@@ -100,6 +100,13 @@ namespace Workwear.Domain.Supply {
 			get => hasReceive;
 			set { SetField(ref hasReceive, value); }
 		}
+
+		private DateTime? warehouseForecastingDate;
+		[Display(Name = "Дата прогнозирования склада")]
+		public virtual DateTime? WarehouseForecastingDate {
+			get => warehouseForecastingDate;
+			set => SetField(ref warehouseForecastingDate, value);
+		}
 		
 		private IObservableList<ShipmentItem> items = new ObservableList<ShipmentItem>();
 		[Display(Name = "Строки документа")]
@@ -120,8 +127,8 @@ namespace Workwear.Domain.Supply {
 		public virtual string PeriodTitle => DateHelper.GetDateRangeText(StartPeriod, EndPeriod);
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
-			if (Status != ShipmentStatus.Draft && (StartPeriod == null || EndPeriod == null))
-				yield return new ValidationResult ("Без периода можно сохранить только черновик.", 
+			if ((Status == ShipmentStatus.Ordered || Status == ShipmentStatus.Received) && (StartPeriod == null || EndPeriod == null))
+				yield return new ValidationResult ("Для статусов заказано и оприходовано должен быть указан период поставки.", 
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
 			if (StartPeriod < new DateTime(2025, 1, 1))
 				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го).", 
