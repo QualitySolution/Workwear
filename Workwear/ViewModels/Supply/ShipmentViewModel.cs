@@ -144,6 +144,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
+		public virtual bool VisibleWarehouseForecastingDate => Entity.WarehouseForecastingDate != null;
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
