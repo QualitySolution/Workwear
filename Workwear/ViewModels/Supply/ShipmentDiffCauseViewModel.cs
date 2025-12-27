@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -19,8 +19,8 @@ namespace Workwear.ViewModels.Supply {
 			string initialDiffCause,
 			IUnitOfWork unitOfWork
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
-			this.selectedItems = selectedItems;
-			this.uow = unitOfWork;
+			this.selectedItems = selectedItems ?? throw new ArgumentNullException(nameof(selectedItems));
+			this.uow = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 			DiffCause = initialDiffCause;
 			Title = "Заполнение причины расхождения";
 		}
