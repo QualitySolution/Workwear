@@ -64,6 +64,8 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddSizes;
 
+		private global::Gamma.GtkWidgets.yButton ybuttonSetDiffCause;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelAmount;
 
 		protected virtual void Build()
@@ -409,24 +411,36 @@ namespace Workwear.Views.Supply
 			w35.Expand = false;
 			w35.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
+			this.ybuttonSetDiffCause = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonSetDiffCause.Sensitive = false;
+			this.ybuttonSetDiffCause.CanFocus = true;
+			this.ybuttonSetDiffCause.Name = "ybuttonSetDiffCause";
+			this.ybuttonSetDiffCause.UseUnderline = true;
+			this.ybuttonSetDiffCause.Label = global::Mono.Unix.Catalog.GetString("Заполнить причину расхождения");
+			this.yhbox5.Add(this.ybuttonSetDiffCause);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ybuttonSetDiffCause]));
+			w36.Position = 4;
+			w36.Expand = false;
+			w36.Fill = false;
+			// Container child yhbox5.Gtk.Box+BoxChild
 			this.ylabelAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAmount.Name = "ylabelAmount";
 			this.ylabelAmount.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.ylabelAmount.Justify = ((global::Gtk.Justification)(1));
 			this.yhbox5.Add(this.ylabelAmount);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
-			w36.PackType = ((global::Gtk.PackType)(1));
-			w36.Position = 4;
-			w36.Expand = false;
-			w36.Fill = false;
-			this.yvbox3.Add(this.yhbox5);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
-			w37.Position = 2;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
+			w37.PackType = ((global::Gtk.PackType)(1));
+			w37.Position = 5;
 			w37.Expand = false;
 			w37.Fill = false;
-			this.yvbox1.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			this.yvbox3.Add(this.yhbox5);
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
 			w38.Position = 2;
+			w38.Expand = false;
+			w38.Fill = false;
+			this.yvbox1.Add(this.yvbox3);
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			w39.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
@@ -438,6 +452,7 @@ namespace Workwear.Views.Supply
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
 			this.buttonToOrder.Clicked += new global::System.EventHandler(this.OnButtonToOrderClicked);
 			this.ybuttonAddSizes.Clicked += new global::System.EventHandler(this.OnYbuttonAddSizesClicked);
+			this.ybuttonSetDiffCause.Clicked += new global::System.EventHandler(this.OnButtonSetDiffCauseClicked);
 		}
 	}
 }

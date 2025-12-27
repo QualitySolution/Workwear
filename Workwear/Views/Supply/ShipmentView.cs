@@ -109,6 +109,9 @@ namespace Workwear.Views.Supply {
 		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
 			ViewModel.AddSize(ytreeItems.GetSelectedObjects<ShipmentItem>());
 		}
+		
+		protected void OnButtonSetDiffCauseClicked(object sender, EventArgs e) {
+		}
 	}
 }
 
