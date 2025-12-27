@@ -16,13 +16,12 @@ namespace Workwear.ViewModels.Supply {
 			UnitOfWorkProvider unitOfWorkProvider,
 			INavigationManager navigation,
 			ShipmentItem[] selectedItems,
+			string initialDiffCause,
 			IUnitOfWork unitOfWork
 		) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
 			this.selectedItems = selectedItems;
 			this.uow = unitOfWork;
-			DiffCause = selectedItems
-				.Select(x => x.DiffCause)
-				.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+			DiffCause = initialDiffCause;
 			Title = "Заполнение причины расхождения";
 		}
 
