@@ -41,6 +41,7 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
 				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
 				.InitializeFromSource();
+			ybuttonSetDiffCause.Binding.AddBinding(ViewModel, vm => vm.CanSetDiffCause, w => w.Sensitive).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -108,6 +109,10 @@ namespace Workwear.Views.Supply {
 		
 		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
 			ViewModel.AddSize(ytreeItems.GetSelectedObjects<ShipmentItem>());
+		}
+		
+		protected void OnButtonSetDiffCauseClicked(object sender, EventArgs e) {
+			ViewModel.SetDiffCause();
 		}
 	}
 }
