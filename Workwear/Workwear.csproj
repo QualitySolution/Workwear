@@ -556,6 +556,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestView.cs" />
     <Compile Include="Views\Supply\ShipmentDiffCauseView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentDiffCauseView.cs" />
+    <Compile Include="Views\Supply\ShipmentPeriodView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentPeriodView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
