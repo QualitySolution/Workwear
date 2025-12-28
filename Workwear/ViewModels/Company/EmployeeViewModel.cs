@@ -599,6 +599,13 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
+
+			if(featuresService.Available(WorkwearFeature.Postomats)) {
+				if(Entity.FirstName == null) {
+					interactive.ShowMessage(ImportanceLevel.Warning, "В Вашей версии программы включена функциональность Постаматы. Имя сотрудника должно быть заполнено");
+					return false;
+				}
+			}
 			
 			return SyncLkPassword();
 		}
