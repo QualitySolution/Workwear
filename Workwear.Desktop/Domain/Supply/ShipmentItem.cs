@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -103,6 +104,20 @@ namespace Workwear.Domain.Supply{
 		public virtual string DiffCause {
 			get => diffCause;
 			set => SetField(ref diffCause, value);
+		}
+
+		private DateTime? startPeriod;
+		[Display(Name="Начало периода")]
+		public virtual DateTime? StartPeriod {
+			get => startPeriod;
+			set { SetField(ref startPeriod, value); }
+		}
+		
+		private DateTime? endPeriod;
+		[Display(Name="Окончание периода")]
+		public virtual DateTime? EndPeriod {
+			get => endPeriod;
+			set { SetField(ref endPeriod, value); }
 		}
 		#endregion
 		

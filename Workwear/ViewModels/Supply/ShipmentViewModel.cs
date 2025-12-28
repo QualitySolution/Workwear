@@ -308,6 +308,11 @@ namespace Workwear.ViewModels.Supply {
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
 
+			if (Entity.Items.Any(item => item.StartPeriod > item.EndPeriod)) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Начало периода не может быть больше его окончания", "Проверка периода");
+				return false;
+			}
+
 			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
 			
 			if(Entity.Id == 0) 
