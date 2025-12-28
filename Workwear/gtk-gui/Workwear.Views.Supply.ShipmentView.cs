@@ -64,7 +64,7 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddSizes;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonSetDiffCause;
+		private global::QS.Widgets.MenuButton buttonSetFields;
 
 		private global::Gamma.GtkWidgets.yLabel ylabelAmount;
 
@@ -411,14 +411,16 @@ namespace Workwear.Views.Supply
 			w35.Expand = false;
 			w35.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
-			this.ybuttonSetDiffCause = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonSetDiffCause.Sensitive = false;
-			this.ybuttonSetDiffCause.CanFocus = true;
-			this.ybuttonSetDiffCause.Name = "ybuttonSetDiffCause";
-			this.ybuttonSetDiffCause.UseUnderline = true;
-			this.ybuttonSetDiffCause.Label = global::Mono.Unix.Catalog.GetString("Заполнить причину расхождения");
-			this.yhbox5.Add(this.ybuttonSetDiffCause);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ybuttonSetDiffCause]));
+			this.buttonSetFields = new global::QS.Widgets.MenuButton();
+			this.buttonSetFields.Sensitive = false;
+			this.buttonSetFields.CanFocus = true;
+			this.buttonSetFields.Name = "buttonSetFields";
+			this.buttonSetFields.UseUnderline = true;
+			this.buttonSetFields.UseMarkup = false;
+			this.buttonSetFields.LabelXAlign = 0F;
+			this.buttonSetFields.Label = global::Mono.Unix.Catalog.GetString("Заполнить");
+			this.yhbox5.Add(this.buttonSetFields);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonSetFields]));
 			w36.Position = 4;
 			w36.Expand = false;
 			w36.Fill = false;
@@ -452,7 +454,6 @@ namespace Workwear.Views.Supply
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
 			this.buttonToOrder.Clicked += new global::System.EventHandler(this.OnButtonToOrderClicked);
 			this.ybuttonAddSizes.Clicked += new global::System.EventHandler(this.OnYbuttonAddSizesClicked);
-			this.ybuttonSetDiffCause.Clicked += new global::System.EventHandler(this.OnButtonSetDiffCauseClicked);
 		}
 	}
 }

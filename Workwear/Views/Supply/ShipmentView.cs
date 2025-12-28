@@ -1,4 +1,5 @@
 using System;
+using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Supply;
@@ -11,6 +12,7 @@ namespace Workwear.Views.Supply {
 			ConfigureDlg();
 			ConfigureItems();
 			CommonButtonSubscription();
+			MakeMenu();
 		}
 		private void ConfigureDlg() {
 			ylabelNumber.Binding.AddBinding(ViewModel, v => v.DocID, w => w.LabelProp)
@@ -41,7 +43,7 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
 				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
 				.InitializeFromSource();
-			ybuttonSetDiffCause.Binding.AddBinding(ViewModel, vm => vm.CanSetDiffCause, w => w.Sensitive).InitializeFromSource();
+			buttonSetFields.Binding.AddBinding(ViewModel, vm => vm.CanSetDiffCause, w => w.Sensitive).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -91,7 +93,17 @@ namespace Workwear.Views.Supply {
 			ytreeItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 		}
-		
+
+		private void MakeMenu() {
+			var menu = new Menu();
+			var item = new yMenuItem("Причину расхождения");
+			item.Activated += (sender, e) => ViewModel.SetDiffCause();
+			menu.Add(item);
+			item = new yMenuItem("Период");
+			menu.Add(item);
+			buttonSetFields.Menu = menu;
+			menu.ShowAll();
+		}
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
 			ViewModel.SelectedItems = ytreeItems.GetSelectedObjects<ShipmentItem>();
 		}
@@ -109,10 +121,6 @@ namespace Workwear.Views.Supply {
 		
 		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
 			ViewModel.AddSize(ytreeItems.GetSelectedObjects<ShipmentItem>());
-		}
-		
-		protected void OnButtonSetDiffCauseClicked(object sender, EventArgs e) {
-			ViewModel.SetDiffCause();
 		}
 	}
 }

@@ -35158,14 +35158,15 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonSetDiffCause">
+                  <widget class="QS.Widgets.MenuButton" id="buttonSetFields">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextOnly</property>
-                    <property name="Label" translatable="yes">Заполнить причину расхождения</property>
+                    <property name="Label" translatable="yes">Заполнить</property>
                     <property name="UseUnderline">True</property>
-                    <signal name="Clicked" handler="OnButtonSetDiffCauseClicked" />
+                    <property name="UseMarkup">False</property>
+                    <property name="LabelXAlign">0</property>
                   </widget>
                   <packing>
                     <property name="Position">4</property>
