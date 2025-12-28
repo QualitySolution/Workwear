@@ -55,9 +55,15 @@ namespace Workwear.ViewModels.Supply {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-            			
-			if(Entity.Id == 0)
+
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+				foreach(var item in Entity.Items) {
+					item.StartPeriod = StartPeriod;
+					item.EndPeriod = EndPeriod;
+				}
+			}
+				
 
 			if(shipmentParameters != null)
 				Entity.WarehouseForecastingDate = shipmentParameters.EndDate;
@@ -277,7 +283,7 @@ namespace Workwear.ViewModels.Supply {
 			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], string, IUnitOfWork>(this, SelectedItems, initialDiffCause, UoW);
 		}
 		public void SetPeriod() {
-			NavigationManager.OpenViewModel<ShipmentPeriodViewModel>(this);
+			NavigationManager.OpenViewModel<ShipmentPeriodViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
 		}
 		#endregion
 

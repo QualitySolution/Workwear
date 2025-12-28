@@ -15,6 +15,7 @@ namespace Workwear.Views.Supply {
 		}
 
 		protected void OnButtonSetPeriodClicked(object sender, EventArgs e) {
+			ViewModel.FillPeriod();
 		}
 	}
 }
