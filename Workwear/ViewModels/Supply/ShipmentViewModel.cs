@@ -276,6 +276,9 @@ namespace Workwear.ViewModels.Supply {
 				.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
 			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], string, IUnitOfWork>(this, SelectedItems, initialDiffCause, UoW);
 		}
+		public void SetPeriod() {
+			NavigationManager.OpenViewModel<ShipmentPeriodViewModel>(this);
+		}
 		#endregion
 
 		private void OnExternalShipmentChange(EntityChangeEvent[] changeEvents) {

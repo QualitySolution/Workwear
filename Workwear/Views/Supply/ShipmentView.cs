@@ -106,6 +106,7 @@ namespace Workwear.Views.Supply {
 			item.Activated += (sender, e) => ViewModel.SetDiffCause();
 			menu.Add(item);
 			item = new yMenuItem("Период");
+			item.Activated += (sender, e) => ViewModel.SetPeriod();
 			menu.Add(item);
 			buttonSetFields.Menu = menu;
 			menu.ShowAll();

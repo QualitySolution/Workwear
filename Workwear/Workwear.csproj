@@ -204,6 +204,7 @@
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentDiffCauseViewModel.cs" />
+    <Compile Include="ViewModels\Supply\ShipmentPeriodViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
