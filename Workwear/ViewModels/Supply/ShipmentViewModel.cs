@@ -271,10 +271,7 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		public void SetDiffCause() {
-			var initialDiffCause = Items
-				.Select(x => x.DiffCause)
-				.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
-			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], string, IUnitOfWork>(this, SelectedItems, initialDiffCause, UoW);
+			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
 		}
 		public void SetPeriod() {
 			NavigationManager.OpenViewModel<ShipmentPeriodViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);

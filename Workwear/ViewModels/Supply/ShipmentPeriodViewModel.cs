@@ -20,10 +20,9 @@ namespace Workwear.ViewModels.Supply {
 		) :  base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
 			this.selectedItems = selectedItems ?? throw new ArgumentNullException(nameof(selectedItems));
 			this.uow = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-			var shipment = uow.GetById<Shipment>(selectedItems.Select(x => x.Shipment.Id)).First();
-			StartPeriod = shipment.Items.Select(x => x.StartPeriod)
+			StartPeriod = this.selectedItems.Select(x => x.StartPeriod)
 				.FirstOrDefault(x => x != null);
-			EndPeriod = shipment.Items.Select(x => x.EndPeriod)
+			EndPeriod = this.selectedItems.Select(x => x.EndPeriod)
 				.FirstOrDefault(x => x != null);
 			Title = "Заполнение периода";
 		}
