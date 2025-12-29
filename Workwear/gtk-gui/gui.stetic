@@ -37822,46 +37822,15 @@
         <child>
           <widget class="Gamma.GtkWidgets.yTable" id="ytable1">
             <property name="MemberName" />
-            <property name="NRows">2</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <child>
-              <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateEnd">
+              <widget class="QS.Widgets.GtkUI.DateRangePicker" id="datePeriod">
                 <property name="MemberName" />
                 <property name="Events">ButtonPressMask</property>
-                <property name="WithTime">False</property>
-                <property name="HideCalendarButton">False</property>
-                <property name="Date">0</property>
-                <property name="IsEditable">True</property>
-                <property name="AutoSeparation">True</property>
-                <property name="HideButtonClearDate">False</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">True</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="QS.Widgets.GtkUI.DatePicker" id="ydateStart">
-                <property name="MemberName" />
-                <property name="Events">ButtonPressMask</property>
-                <property name="WithTime">False</property>
-                <property name="HideCalendarButton">False</property>
-                <property name="Date">0</property>
-                <property name="IsEditable">True</property>
-                <property name="AutoSeparation">True</property>
-                <property name="HideButtonClearDate">False</property>
+                <property name="StartDate">0</property>
+                <property name="EndDate">0</property>
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
@@ -37877,30 +37846,10 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelEndPeriod">
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelPeriod">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Окончание:</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelStartPeriod">
-                <property name="MemberName" />
-                <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Начало:</property>
+                <property name="LabelProp" translatable="yes">Период:</property>
               </widget>
               <packing>
                 <property name="AutoSize">True</property>

@@ -8,13 +8,9 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
-		private global::QS.Widgets.GtkUI.DatePicker ydateEnd;
+		private global::QS.Widgets.GtkUI.DateRangePicker datePeriod;
 
-		private global::QS.Widgets.GtkUI.DatePicker ydateStart;
-
-		private global::Gamma.GtkWidgets.yLabel ylabelEndPeriod;
-
-		private global::Gamma.GtkWidgets.yLabel ylabelStartPeriod;
+		private global::Gamma.GtkWidgets.yLabel ylabelPeriod;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonSetPeriod;
 
@@ -31,67 +27,34 @@ namespace Workwear.Views.Supply
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NRows = ((uint)(2));
 			this.ytable1.NColumns = ((uint)(2));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
 			// Container child ytable1.Gtk.Table+TableChild
-			this.ydateEnd = new global::QS.Widgets.GtkUI.DatePicker();
-			this.ydateEnd.Events = ((global::Gdk.EventMask)(256));
-			this.ydateEnd.Name = "ydateEnd";
-			this.ydateEnd.WithTime = false;
-			this.ydateEnd.HideCalendarButton = false;
-			this.ydateEnd.Date = new global::System.DateTime(0);
-			this.ydateEnd.IsEditable = true;
-			this.ydateEnd.AutoSeparation = true;
-			this.ydateEnd.HideButtonClearDate = false;
-			this.ytable1.Add(this.ydateEnd);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateEnd]));
-			w1.TopAttach = ((uint)(1));
-			w1.BottomAttach = ((uint)(2));
+			this.datePeriod = new global::QS.Widgets.GtkUI.DateRangePicker();
+			this.datePeriod.Events = ((global::Gdk.EventMask)(256));
+			this.datePeriod.Name = "datePeriod";
+			this.datePeriod.StartDate = new global::System.DateTime(0);
+			this.datePeriod.EndDate = new global::System.DateTime(0);
+			this.ytable1.Add(this.datePeriod);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.datePeriod]));
 			w1.LeftAttach = ((uint)(1));
 			w1.RightAttach = ((uint)(2));
 			w1.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
-			this.ydateStart = new global::QS.Widgets.GtkUI.DatePicker();
-			this.ydateStart.Events = ((global::Gdk.EventMask)(256));
-			this.ydateStart.Name = "ydateStart";
-			this.ydateStart.WithTime = false;
-			this.ydateStart.HideCalendarButton = false;
-			this.ydateStart.Date = new global::System.DateTime(0);
-			this.ydateStart.IsEditable = true;
-			this.ydateStart.AutoSeparation = true;
-			this.ydateStart.HideButtonClearDate = false;
-			this.ytable1.Add(this.ydateStart);
-			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ydateStart]));
-			w2.LeftAttach = ((uint)(1));
-			w2.RightAttach = ((uint)(2));
+			this.ylabelPeriod = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelPeriod.Name = "ylabelPeriod";
+			this.ylabelPeriod.Xalign = 1F;
+			this.ylabelPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Период:");
+			this.ytable1.Add(this.ylabelPeriod);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelPeriod]));
+			w2.XOptions = ((global::Gtk.AttachOptions)(4));
 			w2.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabelEndPeriod = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelEndPeriod.Name = "ylabelEndPeriod";
-			this.ylabelEndPeriod.Xalign = 1F;
-			this.ylabelEndPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Окончание:");
-			this.ytable1.Add(this.ylabelEndPeriod);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelEndPeriod]));
-			w3.TopAttach = ((uint)(1));
-			w3.BottomAttach = ((uint)(2));
-			w3.XOptions = ((global::Gtk.AttachOptions)(4));
-			w3.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child ytable1.Gtk.Table+TableChild
-			this.ylabelStartPeriod = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelStartPeriod.Name = "ylabelStartPeriod";
-			this.ylabelStartPeriod.Xalign = 1F;
-			this.ylabelStartPeriod.LabelProp = global::Mono.Unix.Catalog.GetString("Начало:");
-			this.ytable1.Add(this.ylabelStartPeriod);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.ylabelStartPeriod]));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.yvbox1.Add(this.ytable1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
-			w5.Position = 0;
-			w5.Expand = false;
-			w5.Fill = false;
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ytable1]));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.ybuttonSetPeriod = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonSetPeriod.CanFocus = true;
@@ -99,11 +62,11 @@ namespace Workwear.Views.Supply
 			this.ybuttonSetPeriod.UseUnderline = true;
 			this.ybuttonSetPeriod.Label = global::Mono.Unix.Catalog.GetString("Заполнить");
 			this.yvbox1.Add(this.ybuttonSetPeriod);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ybuttonSetPeriod]));
-			w6.PackType = ((global::Gtk.PackType)(1));
-			w6.Position = 1;
-			w6.Expand = false;
-			w6.Fill = false;
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ybuttonSetPeriod]));
+			w4.PackType = ((global::Gtk.PackType)(1));
+			w4.Position = 1;
+			w4.Expand = false;
+			w4.Fill = false;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
