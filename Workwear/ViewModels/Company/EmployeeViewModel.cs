@@ -192,6 +192,8 @@ namespace Workwear.ViewModels.Company
 			
 			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
@@ -599,14 +601,6 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
-
-			if(featuresService.Available(WorkwearFeature.Postomats)) {
-				if(Entity.FirstName == null) {
-					interactive.ShowMessage(ImportanceLevel.Warning, "В Вашей версии программы включена функциональность Постаматы. Имя сотрудника должно быть заполнено");
-					return false;
-				}
-			}
-			
 			return SyncLkPassword();
 		}
 
