@@ -190,8 +190,10 @@ namespace Workwear.ViewModels.Company
 			lkLastPhone = Entity.PhoneNumber;
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 			
-			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(this));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
@@ -599,7 +601,6 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
-			
 			return SyncLkPassword();
 		}
 
