@@ -68,8 +68,18 @@ namespace Workwear.ViewModels.Supply {
 			
 			if(forecastingItems != null) 
 				AddFromForecasting(forecastingItems, shipmentParameters);
-			
+
+			var warehouses = UoW.GetAll<Warehouse>().ToList();
+			if(!featuresService.Available(WorkwearFeature.Warehouses) || warehouses.Count == 1) {
+				warehousesList.Add(new Warehouse(){Id = -1, Name = "Показать"});
+			}
+			else {
+				warehousesList.Add(new Warehouse(){Id = -1, Name = "На всех складах"});
+				warehousesList.AddRange(warehouses);
+			}
+			Warehouse = warehousesList.First();
 			FillInStock();
+			
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
 				.ExcludeUow(UoW)
@@ -283,13 +293,30 @@ namespace Workwear.ViewModels.Supply {
 			}
 		}
 
+		#region Складские остатки
+		private Warehouse warehouse;
+		public virtual Warehouse Warehouse {
+			get => warehouse;
+			set => SetField(ref warehouse, value);
+		}
+		private List<Warehouse> warehousesList = new List<Warehouse>();
+		public virtual List<Warehouse> WarehousesList {
+			get => warehousesList;
+			set => SetField(ref warehousesList, value);
+		}
+		private bool isNullWearPercent;
+		public virtual bool IsNullWearPercent {
+			get => isNullWearPercent;
+			set => SetField(ref isNullWearPercent, value);
+		}
 		private void FillInStock() {
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
-				item.InStock = StockBalanceModel.GetAmount(item.Nomenclature, item.WearSize, item.Height);
+				item.InStock = StockBalanceModel.GetAmount(item.StockPosition);
 			}
 		}
+		#endregion
 		#region Валидация, сохранение и печать
 
 		public override bool Save() {

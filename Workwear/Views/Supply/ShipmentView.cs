@@ -41,6 +41,12 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
 				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
 				.InitializeFromSource();
+			yspeccomboboxWarehouse.Binding
+				.AddSource(ViewModel)
+				.AddBinding(v => v.WarehousesList, w => w.ItemsList)
+				.AddBinding(v => v.Warehouse, w => w.SelectedItem)
+				.InitializeFromSource();
+			ycheckbuttonIsNullWearPercent.Binding.AddBinding(ViewModel, v => v.IsNullWearPercent, w => w.Active).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
