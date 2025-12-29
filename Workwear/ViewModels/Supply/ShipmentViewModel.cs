@@ -110,7 +110,7 @@ namespace Workwear.ViewModels.Supply {
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanToOrder))]
 		[PropertyChangedAlso(nameof(CanAddSize))]
-		[PropertyChangedAlso(nameof(CanSetDiffCause))]
+		[PropertyChangedAlso(nameof(CanSetFields))]
 		public virtual ShipmentItem[] SelectedItems {
 			get=>selectedItems;
 			set=>SetField(ref selectedItems, value);
@@ -146,7 +146,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
 		public virtual bool VisibleWarehouseForecastingDate => Entity.WarehouseForecastingDate != null;
-		public virtual bool CanSetDiffCause => SelectedItems != null && SelectedItems.Length > 0;
+		public virtual bool CanSetFields => SelectedItems != null && SelectedItems.Length > 0;
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();

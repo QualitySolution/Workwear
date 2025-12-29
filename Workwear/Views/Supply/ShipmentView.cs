@@ -43,7 +43,7 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
 				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
 				.InitializeFromSource();
-			buttonSetFields.Binding.AddBinding(ViewModel, vm => vm.CanSetDiffCause, w => w.Sensitive).InitializeFromSource();
+			buttonSetFields.Binding.AddBinding(ViewModel, vm => vm.CanSetFields, w => w.Sensitive).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
