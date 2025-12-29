@@ -27,6 +27,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Analytics.WarehouseForecasting;
+using Workwear.Models.Operations;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
@@ -35,6 +36,7 @@ using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
+		public StockBalanceModel StockBalanceModel { get; set; }
 		public ShipmentViewModel(
 			BaseParameters baseParameters,
 			CurrentUserSettings currentUserSettings,
@@ -45,6 +47,7 @@ namespace Workwear.ViewModels.Supply {
 			IInteractiveService interactive,
 			IUserService userService,
 			IEntityChangeWatcher watcher,
+			StockBalanceModel stockBalanceModel,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -55,6 +58,7 @@ namespace Workwear.ViewModels.Supply {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
             			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
@@ -65,6 +69,7 @@ namespace Workwear.ViewModels.Supply {
 			if(forecastingItems != null) 
 				AddFromForecasting(forecastingItems, shipmentParameters);
 			
+			FillInStock();
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
 				.ExcludeUow(UoW)
@@ -84,6 +89,7 @@ namespace Workwear.ViewModels.Supply {
 				OnPropertyChanged(nameof(CanEditRequested));
 				OnPropertyChanged(nameof(CanEditOrdered));
 			}
+			FillInStock();
 		}
 
 		#region IDialogDocumentation
@@ -276,7 +282,14 @@ namespace Workwear.ViewModels.Supply {
 					UoW.Session.Refresh(myItem);
 			}
 		}
-		
+
+		private void FillInStock() {
+			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
+			StockBalanceModel.AddNomenclatures(allNomenclatures);
+			foreach(var item in Entity.Items) {
+				item.InStock = StockBalanceModel.GetAmount(item.Nomenclature, item.WearSize, item.Height);
+			}
+		}
 		#region Валидация, сохранение и печать
 
 		public override bool Save() {

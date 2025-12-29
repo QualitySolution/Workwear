@@ -137,5 +137,14 @@ namespace Workwear.Domain.Supply{
 		public ShipmentItem(Shipment shipment) {
 			this.shipment = shipment;
 		}
+
+		#region Работа со складом
+
+		private int inStock;
+		public virtual int InStock {
+			get => inStock;
+			set => SetField(ref inStock, value);
+		}
+		#endregion
 	}
 }

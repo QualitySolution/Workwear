@@ -58,6 +58,8 @@ namespace Workwear.Views.Supply {
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
+				.AddColumn("На складе")
+					.AddReadOnlyTextRenderer(x => x.InStock.ToString() + ' ' + x.Units?.Name)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
 					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditRequested ).WidthChars(8)

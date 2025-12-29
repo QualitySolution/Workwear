@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
 
@@ -94,6 +95,10 @@ namespace Workwear.Models.Operations {
 		public virtual IEnumerable<StockBalance> Balances => stockBalances;
 		public IEnumerable<StockBalance> ForNomenclature(params Nomenclature[] nomenclatures) => stockBalances.Where(x => nomenclatures.Contains(x.Position.Nomenclature));
 		public int GetAmount(StockPosition stockPosition) => stockBalances.FirstOrDefault(x => x.Position.Equals(stockPosition))?.Amount ?? 0;
+		public int GetAmount(Nomenclature nomenclature, Size wearSize, Size height) => stockBalances
+			.Where(x => x.Position.Nomenclature.Id == nomenclature.Id &&
+			            x.Position.WearSize?.Id == wearSize?.Id && x.Position.Height?.Id == height?.Id).Sum(x => x.Amount);
+
 		#endregion
 	}
 
