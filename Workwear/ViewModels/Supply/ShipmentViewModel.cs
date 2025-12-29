@@ -78,7 +78,6 @@ namespace Workwear.ViewModels.Supply {
 				warehousesList.AddRange(warehouses);
 			}
 			Warehouse = warehousesList.First();
-			FillInStock();
 			
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
@@ -99,7 +98,6 @@ namespace Workwear.ViewModels.Supply {
 				OnPropertyChanged(nameof(CanEditRequested));
 				OnPropertyChanged(nameof(CanEditOrdered));
 			}
-			FillInStock();
 		}
 
 		#region IDialogDocumentation
@@ -297,7 +295,12 @@ namespace Workwear.ViewModels.Supply {
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
 			get => warehouse;
-			set => SetField(ref warehouse, value);
+			set {
+				if(SetField(ref warehouse, value)) {
+					FillInStock();
+					OnPropertyChanged(nameof(Items));
+				} 
+			}
 		}
 		private List<Warehouse> warehousesList = new List<Warehouse>();
 		public virtual List<Warehouse> WarehousesList {
@@ -310,6 +313,10 @@ namespace Workwear.ViewModels.Supply {
 			set => SetField(ref isNullWearPercent, value);
 		}
 		private void FillInStock() {
+			if(Warehouse.Id != -1)
+				StockBalanceModel.Warehouse = Warehouse;
+			else
+				StockBalanceModel.Warehouse = null;
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
