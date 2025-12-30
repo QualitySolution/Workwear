@@ -78,6 +78,7 @@ namespace Workwear.ViewModels.Supply {
 				WarehousesList.AddRange(warehouses);
 			}
 			Warehouse = warehousesList.First();
+			IsNullWearPercent = false;
 			
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
@@ -315,7 +316,12 @@ namespace Workwear.ViewModels.Supply {
 		private bool isNullWearPercent;
 		public virtual bool IsNullWearPercent {
 			get => isNullWearPercent;
-			set => SetField(ref isNullWearPercent, value);
+			set {
+				if(SetField(ref isNullWearPercent, value)) {
+					FillInStock();
+					OnPropertyChanged(nameof(Items));
+				}
+			}
 		}
 		private void FillInStock() {
 			if(Warehouse.Id != -1)
@@ -325,7 +331,7 @@ namespace Workwear.ViewModels.Supply {
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
-				item.InStock = StockBalanceModel.GetInStock(item.StockPosition);
+				item.InStock = StockBalanceModel.GetShipmentItemInStock(item.StockPosition, IsNullWearPercent);
 			}
 		}
 		#endregion
