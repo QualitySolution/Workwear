@@ -17,8 +17,4 @@
 	<ItemGroup Condition="'$(Configuration)' != 'IsSubmodule'">
 		<ProjectReference Include="..\QSProjects\QS.Updater.Core\QS.Updater.Core.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="MySqlConnector" Version="2.2.7" />
-	</ItemGroup>
 </Project>
