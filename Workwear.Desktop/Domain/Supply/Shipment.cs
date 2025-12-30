@@ -134,7 +134,7 @@ namespace Workwear.Domain.Supply {
 				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го).", 
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
 			if(StartPeriod > EndPeriod)
-				yield return new ValidationResult("Дата начала периода должна быть меньше его окончания.",
+				yield return new ValidationResult("Начало периода поставки должно быть меньше его окончания.",
 					new[] { this.GetPropertyName(o => o.StartPeriod) });
 			if(Items.Count == 0)
 				yield return new ValidationResult ("Поставка должна содержать хотя бы одну строку.", 
@@ -143,8 +143,12 @@ namespace Workwear.Domain.Supply {
 			if(Items.Any (i => i.Requested <= 0))
 				yield return new ValidationResult ("Поставка не должна содержать строк с нулевым количеством.", 
 					new[] { this.GetPropertyName (o => o.Items)});
-			
-			
+
+			if(Items.Any(i => i.StartPeriod > i.EndPeriod))
+				yield return new ValidationResult("Начало периода в строках документа должно быть меньше его окончания.",
+					new[] { this.GetPropertyName(o => o.StartPeriod) });
+
+
 		}
 		#endregion
 
