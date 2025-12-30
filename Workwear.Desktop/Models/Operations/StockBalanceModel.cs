@@ -94,6 +94,11 @@ namespace Workwear.Models.Operations {
 		public virtual IEnumerable<StockBalance> Balances => stockBalances;
 		public IEnumerable<StockBalance> ForNomenclature(params Nomenclature[] nomenclatures) => stockBalances.Where(x => nomenclatures.Contains(x.Position.Nomenclature));
 		public int GetAmount(StockPosition stockPosition) => stockBalances.FirstOrDefault(x => x.Position.Equals(stockPosition))?.Amount ?? 0;
+		public int GetInStock(StockPosition stockPosition) => stockBalances
+			.Where(x => x.Position.Nomenclature.Id == stockPosition.Nomenclature.Id &&
+			            x.Position.WearSize?.Id == stockPosition.WearSize?.Id && 
+			            x.Position.Height?.Id == stockPosition.Height?.Id)
+			.Sum(x => x.Amount);
 		#endregion
 	}
 

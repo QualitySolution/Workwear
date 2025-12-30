@@ -71,11 +71,11 @@ namespace Workwear.ViewModels.Supply {
 
 			var warehouses = UoW.GetAll<Warehouse>().ToList();
 			if(!featuresService.Available(WorkwearFeature.Warehouses) || warehouses.Count == 1) {
-				warehousesList.Add(new Warehouse(){Id = -1, Name = "Показать"});
+				WarehousesList.Add(new Warehouse(){Id = -1, Name = "Показать"});
 			}
 			else {
-				warehousesList.Add(new Warehouse(){Id = -1, Name = "На всех складах"});
-				warehousesList.AddRange(warehouses);
+				WarehousesList.Add(new Warehouse(){Id = -1, Name = "На всех складах"});
+				WarehousesList.AddRange(warehouses);
 			}
 			Warehouse = warehousesList.First();
 			
@@ -85,7 +85,8 @@ namespace Workwear.ViewModels.Supply {
 				.IfEntity<ShipmentItem>()
 				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(x => x.Shipment.Id == Entity.Id);
-			
+
+			Entity.Items.ContentChanged += Shipment_ObservableItems_ListContentChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 
@@ -98,6 +99,10 @@ namespace Workwear.ViewModels.Supply {
 				OnPropertyChanged(nameof(CanEditRequested));
 				OnPropertyChanged(nameof(CanEditOrdered));
 			}
+		}
+
+		private void Shipment_ObservableItems_ListContentChanged(object sender, EventArgs e) {
+			FillInStock();
 		}
 
 		#region IDialogDocumentation
@@ -320,7 +325,7 @@ namespace Workwear.ViewModels.Supply {
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
-				item.InStock = StockBalanceModel.GetAmount(item.StockPosition);
+				item.InStock = StockBalanceModel.GetInStock(item.StockPosition);
 			}
 		}
 		#endregion
