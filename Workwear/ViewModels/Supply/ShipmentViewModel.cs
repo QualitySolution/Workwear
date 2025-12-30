@@ -55,10 +55,10 @@ namespace Workwear.ViewModels.Supply {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-            			
+
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-
+			
 			if(shipmentParameters != null)
 				Entity.WarehouseForecastingDate = shipmentParameters.EndDate;
 			
@@ -110,6 +110,7 @@ namespace Workwear.ViewModels.Supply {
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanToOrder))]
 		[PropertyChangedAlso(nameof(CanAddSize))]
+		[PropertyChangedAlso(nameof(CanSetFields))]
 		public virtual ShipmentItem[] SelectedItems {
 			get=>selectedItems;
 			set=>SetField(ref selectedItems, value);
@@ -145,6 +146,7 @@ namespace Workwear.ViewModels.Supply {
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
 		public virtual bool VisibleWarehouseForecastingDate => Entity.WarehouseForecastingDate != null;
+		public virtual bool CanSetFields => SelectedItems != null && SelectedItems.Length > 0;
 		
 		public virtual IList<Size> GetSizeVariants(ShipmentItem item) {
 			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
@@ -267,6 +269,13 @@ namespace Workwear.ViewModels.Supply {
 			}
 			CalculateTotal();
 		}
+
+		public void SetDiffCause() {
+			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
+		}
+		public void SetPeriod() {
+			NavigationManager.OpenViewModel<ShipmentPeriodViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
+		}
 		#endregion
 
 		private void OnExternalShipmentChange(EntityChangeEvent[] changeEvents) {
@@ -298,7 +307,7 @@ namespace Workwear.ViewModels.Supply {
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
-
+			
 			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
 			
 			if(Entity.Id == 0) 

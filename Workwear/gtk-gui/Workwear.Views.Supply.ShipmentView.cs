@@ -64,6 +64,8 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddSizes;
 
+		private global::QS.Widgets.MenuButton buttonSetFields;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelAmount;
 
 		protected virtual void Build()
@@ -409,24 +411,38 @@ namespace Workwear.Views.Supply
 			w35.Expand = false;
 			w35.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
+			this.buttonSetFields = new global::QS.Widgets.MenuButton();
+			this.buttonSetFields.Sensitive = false;
+			this.buttonSetFields.CanFocus = true;
+			this.buttonSetFields.Name = "buttonSetFields";
+			this.buttonSetFields.UseUnderline = true;
+			this.buttonSetFields.UseMarkup = false;
+			this.buttonSetFields.LabelXAlign = 0F;
+			this.buttonSetFields.Label = global::Mono.Unix.Catalog.GetString("Заполнить");
+			this.yhbox5.Add(this.buttonSetFields);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonSetFields]));
+			w36.Position = 4;
+			w36.Expand = false;
+			w36.Fill = false;
+			// Container child yhbox5.Gtk.Box+BoxChild
 			this.ylabelAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAmount.Name = "ylabelAmount";
 			this.ylabelAmount.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.ylabelAmount.Justify = ((global::Gtk.Justification)(1));
 			this.yhbox5.Add(this.ylabelAmount);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
-			w36.PackType = ((global::Gtk.PackType)(1));
-			w36.Position = 4;
-			w36.Expand = false;
-			w36.Fill = false;
-			this.yvbox3.Add(this.yhbox5);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
-			w37.Position = 2;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
+			w37.PackType = ((global::Gtk.PackType)(1));
+			w37.Position = 5;
 			w37.Expand = false;
 			w37.Fill = false;
-			this.yvbox1.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			this.yvbox3.Add(this.yhbox5);
+			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
 			w38.Position = 2;
+			w38.Expand = false;
+			w38.Fill = false;
+			this.yvbox1.Add(this.yvbox3);
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			w39.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
