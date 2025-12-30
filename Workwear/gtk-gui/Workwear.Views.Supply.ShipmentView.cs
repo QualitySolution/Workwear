@@ -70,6 +70,8 @@ namespace Workwear.Views.Supply
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddSizes;
 
+		private global::QS.Widgets.MenuButton buttonSetFields;
+
 		private global::Gamma.GtkWidgets.yLabel ylabelAmount;
 
 		protected virtual void Build()
@@ -455,6 +457,20 @@ namespace Workwear.Views.Supply
 			w38.Position = 3;
 			w38.Expand = false;
 			w38.Fill = false;
+			// Container child yhbox5.Gtk.Box+BoxChild
+			this.buttonSetFields = new global::QS.Widgets.MenuButton();
+			this.buttonSetFields.Sensitive = false;
+			this.buttonSetFields.CanFocus = true;
+			this.buttonSetFields.Name = "buttonSetFields";
+			this.buttonSetFields.UseUnderline = true;
+			this.buttonSetFields.UseMarkup = false;
+			this.buttonSetFields.LabelXAlign = 0F;
+			this.buttonSetFields.Label = global::Mono.Unix.Catalog.GetString("Заполнить");
+			this.yhbox5.Add(this.buttonSetFields);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonSetFields]));
+			w36.Position = 4;
+			w36.Expand = false;
+			w36.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
 			this.ylabelAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAmount.Name = "ylabelAmount";

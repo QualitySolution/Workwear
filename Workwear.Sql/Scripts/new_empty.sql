@@ -2459,6 +2459,8 @@ create table shipment_items
 	size_id int unsigned null,
 	height_id int unsigned null,
 	diff_cause varchar(120) null,
+	start_period date null default null,
+	end_period date null default null,
 	comment varchar(120) null,
 	constraint fk_shipment_items_doc
 		foreign key (shipment_id) references shipment (id)
