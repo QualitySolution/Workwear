@@ -467,29 +467,29 @@ namespace Workwear.Views.Supply
 			this.buttonSetFields.LabelXAlign = 0F;
 			this.buttonSetFields.Label = global::Mono.Unix.Catalog.GetString("Заполнить");
 			this.yhbox5.Add(this.buttonSetFields);
-			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonSetFields]));
-			w36.Position = 4;
-			w36.Expand = false;
-			w36.Fill = false;
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.buttonSetFields]));
+			w39.Position = 4;
+			w39.Expand = false;
+			w39.Fill = false;
 			// Container child yhbox5.Gtk.Box+BoxChild
 			this.ylabelAmount = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelAmount.Name = "ylabelAmount";
 			this.ylabelAmount.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.ylabelAmount.Justify = ((global::Gtk.Justification)(1));
 			this.yhbox5.Add(this.ylabelAmount);
-			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
-			w39.PackType = ((global::Gtk.PackType)(1));
-			w39.Position = 4;
-			w39.Expand = false;
-			w39.Fill = false;
-			this.yvbox3.Add(this.yhbox5);
-			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
-			w40.Position = 2;
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
+			w40.PackType = ((global::Gtk.PackType)(1));
+			w40.Position = 4;
 			w40.Expand = false;
 			w40.Fill = false;
-			this.yvbox1.Add(this.yvbox3);
-			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			this.yvbox3.Add(this.yhbox5);
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.yvbox3[this.yhbox5]));
 			w41.Position = 2;
+			w41.Expand = false;
+			w41.Fill = false;
+			this.yvbox1.Add(this.yvbox3);
+			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.yvbox3]));
+			w42.Position = 2;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
