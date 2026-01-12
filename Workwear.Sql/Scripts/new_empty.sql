@@ -1419,6 +1419,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(300) NULL,
+  `okpo` CHAR(10) NULL comment 'Общероссийский классификатор предприятий и организаций',
   `address` VARCHAR(300) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
