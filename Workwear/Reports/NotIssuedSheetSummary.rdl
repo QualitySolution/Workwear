@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>361mm</PageHeight>
-  <PageWidth>255mm</PageWidth>
+  <PageHeight>403mm</PageHeight>
+  <PageWidth>285mm</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -54,10 +54,10 @@
             <Width>40.9pt</Width>
           </TableColumn>
           <TableColumn >
-            <Width>73.5pt</Width>
+            <Width>92.5pt</Width>
           </TableColumn>
           <TableColumn >
-            <Width>55.1pt</Width>
+            <Width>117.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>55.5pt</Width>
