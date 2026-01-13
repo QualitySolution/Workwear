@@ -62,10 +62,10 @@ namespace Workwear.Models.Print {
 	
 	public enum IssuedSheetPrint
 	{
-		[Display(Name = "Альбомная")]
+		[Display(Name = "Альбомная МБ-7")]
 		[ReportIdentifier("Statements.IssuanceSheet")]
 		IssuanceSheet,
-		[Display(Name = "Книжная")]
+		[Display(Name = "Книжная МБ-7")]
 		[ReportIdentifier("Statements.IssuanceSheetVertical")]
 		IssuanceSheetVertical,
 		[Display(Name = "Задание на сборку")]
