@@ -191,7 +191,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell>
+                <TableCell >
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>Кол-во на складе</Value>
@@ -651,7 +651,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell>
+                    <TableCell >
                       <ReportItems>
                         <Textbox Name="Textbox17">
                           <Style>
