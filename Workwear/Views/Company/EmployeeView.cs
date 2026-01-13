@@ -121,7 +121,7 @@ namespace Workwear.Views.Company {
 				.AddBinding(vm => vm.SensitiveDeductSpecCoins, w => w.Sensitive)
 				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
 				.InitializeFromSource();
-			labelSpecCoinsSymbol.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			ySpecCoinIcon.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
 			labelSpecCoinsBalance.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
 			    .AddBinding(vm => vm.SpecCoinsBalance, w => w.Text, new IntToStringConverter())
