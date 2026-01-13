@@ -106,7 +106,8 @@ namespace workwear.Journal
 					.AddColumn("Табельный №").AddTextRenderer(x => x.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(x => x.EmployeeText)
 					.AddColumn("Телефон").AddTextRenderer(x => x.EmployeePhone)
-					.AddColumn("Баланс").AddTextRenderer(x => x.EmployeeBalanceText)
+					.AddColumn("Баланс").AddTextRenderer(x => x.EmployeeBalanceText, expand: false)
+						.AddPixbufRenderer(x => new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.speccoin.png"), expand: false)
 					.Finish()
 			);
 			
