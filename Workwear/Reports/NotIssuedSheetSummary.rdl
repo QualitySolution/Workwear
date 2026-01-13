@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>403mm</PageHeight>
-  <PageWidth>285mm</PageWidth>
+  <PageHeight>297mm</PageHeight>
+  <PageWidth>210mm</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -52,12 +52,6 @@
           </TableColumn>
           <TableColumn>
             <Width>40.9pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>92.5pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>117.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>55.5pt</Width>
@@ -198,42 +192,6 @@
                   </ReportItems>
                 </TableCell>
                 <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox6">
-                      <Value>Причина расхождения</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox37">
-                      <Value>Дата поставки</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>Кол-во на складе</Value>
@@ -379,42 +337,6 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value>={diff_causes}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox39">
-                      <Value>={shipment_periods}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox54">
                       <Value>=Iif(Fields!in_stock.IsMissing, 0, {in_stock})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -473,42 +395,6 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox2">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>None</Right>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <FontSize>11pt</FontSize>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox25">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                              <Right>None</Right>
-                              <Left>None</Left>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <FontWeight>Bold</FontWeight>
-                            <FontSize>11pt</FontSize>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell >
-                      <ReportItems>
-                        <Textbox Name="Textbox41">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
@@ -623,38 +509,6 @@
                             <FontWeight>Bold</FontWeight>
                           </Style>
                           <Value>=Sum({need})</Value>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
-                        <Textbox Name="Textbox35">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Center</TextAlign>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell >
-                      <ReportItems>
-                        <Textbox Name="Textbox42">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Center</TextAlign>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -799,38 +653,6 @@
                     </TableCell>
                     <TableCell >
                       <ReportItems>
-                        <Textbox Name="Textbox36">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Center</TextAlign>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell >
-                      <ReportItems>
-                        <Textbox Name="Textbox43">
-                          <Value></Value>
-                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
-                            <BorderColor />
-                            <BorderWidth />
-                            <TextAlign>Center</TextAlign>
-                            <FontWeight>Bold</FontWeight>
-                          </Style>
-                        </Textbox>
-                      </ReportItems>
-                    </TableCell>
-                    <TableCell>
-                      <ReportItems>
                         <Textbox Name="Textbox17">
                           <Style>
                             <BorderStyle>
@@ -961,36 +783,6 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox40">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
                     <Textbox Name="Textbox29">
                       <Style>
                         <BorderStyle>
@@ -1073,48 +865,13 @@ FROM(SELECT
          heightAlias.name AS growth,
          measurement_units.name AS unit,
          SUM(norms_item.amount) AS amount_by_norm,
-         SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS need,
-         GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
-         GROUP_CONCAT(DISTINCT IFNULL(period,
-                            IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
-                               CONCAT(
-                                 CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
-                                           NULLIF(
-                                             DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
-                                             DATE_FORMAT(diff.start_period, '%d.%m.%Y')
-                                           )
-                                 ),
-                                ' (№', diff.shipment_id, ')'
-                               )))
-                         SEPARATOR ', ') AS shipment_periods
+         SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS need
      FROM
          employee_cards_item
              JOIN employees ON employees.id = employee_cards_item.employee_id
              LEFT JOIN posts ON employees.post_id = posts.id
              LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
              JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-             LEFT JOIN protection_tools_nomenclature ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
-             LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-             LEFT JOIN (SELECT nomenclature.id AS nom_id,
-                                 shipment.id as shipment_id,
-                                 shipment.start_period,
-                                 shipment.end_period,
-                                 GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
-                                 IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
-                                    CONCAT(
-                                            CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
-                                                      NULLIF(
-                                                              DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
-                                                              DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
-                                                      )),
-                                            ' (№', shipment.id, ')'
-                                    )) AS period
-                          FROM nomenclature
-                                   LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
-                                   LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
-                          WHERE shipment.status NOT LIKE 'Received'
-                          GROUP BY nomenclature.id, shipment.id) AS diff
-             ON diff.nom_id = nomenclature.id
              LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
              LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
              LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
@@ -1336,14 +1093,6 @@ GROUP BY
         <Field Name="need">
           <DataField>need</DataField>
           <TypeName>System.Int32</TypeName>
-        </Field>
-        <Field Name="diff_causes">
-          <DataField>diff_causes</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
-        <Field Name="shipment_periods">
-          <DataField>shipment_periods</DataField>
-          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>
