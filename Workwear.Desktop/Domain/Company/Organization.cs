@@ -28,7 +28,7 @@ namespace Workwear.Domain.Company
 		}
 
 		private string okpo;
-		[Display(Name = "Гос.Классификатор")]
+		[Display(Name = "ОКПО")]
 		[StringLength(10, ErrorMessage = "Максимальная длинна ОКПО 10 символов")]
 		public virtual string OKPO {
 			get { return okpo; }
