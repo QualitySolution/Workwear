@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using NHibernate;
 using NLog;
 using QS.Dialog;
@@ -25,11 +23,11 @@ using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -48,7 +46,7 @@ namespace Workwear.ViewModels.Stock
 		private IInteractiveQuestion interactive;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly CommonMessages commonMessages;
-		private readonly FeaturesService featuresService;
+		private readonly IssuedSheetPrintModel printModel;
 		private readonly BaseParameters baseParameters;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly IEntityChangeWatcher changeWatcher;
@@ -71,6 +69,7 @@ namespace Workwear.ViewModels.Stock
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator progressCreator,
 			IEntityChangeWatcher changeWatcher,
+			IssuedSheetPrintModel printModel,
 			IssuanceRequest issuanceRequest = null,
 			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
@@ -80,7 +79,7 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
@@ -238,28 +237,14 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 			OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 		}
-		public void PrintIssuanceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint type)
 		{
 			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), type == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
 					return;
 			}
 
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
-					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
-
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
 		}
 		#endregion
 

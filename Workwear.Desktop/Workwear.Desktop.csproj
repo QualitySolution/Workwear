@@ -17,6 +17,7 @@
       <ProjectReference Include="..\QSProjects\QS.Project.Core\QS.Project.Core.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Report.Core\QS.Report.Core.csproj" />
+      <ProjectReference Include="..\QSProjects\QS.Report\QS.Report.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Updater.App\QS.Updater.App.csproj" />
       <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj" />
     </ItemGroup>
@@ -26,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ClosedXML" Version="0.104.2" />
+      <PackageReference Include="ClosedXML" Version="0.105.0" />
       <PackageReference Include="NPOI" Version="2.5.6" />
     </ItemGroup>
 
