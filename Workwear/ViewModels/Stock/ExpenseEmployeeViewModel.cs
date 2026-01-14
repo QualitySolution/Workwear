@@ -384,10 +384,12 @@ namespace Workwear.ViewModels.Stock {
 		{
 			switch(e.PropertyName) {
 				case nameof(Entity.Warehouse):
-					stockBalanceModel.Warehouse = Entity.Warehouse;
-					var performanceWarehouse = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-					FillUnderreceived(performanceWarehouse);
-					performanceWarehouse.End();
+					if(Entity.Id == 0) {
+						stockBalanceModel.Warehouse = Entity.Warehouse;
+						var performanceWarehouse = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+						FillUnderreceived(performanceWarehouse);
+						performanceWarehouse.End();
+					}
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
