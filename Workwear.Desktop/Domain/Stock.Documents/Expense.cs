@@ -41,10 +41,9 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual EmployeeCard Employee {
 			get { return employee; }
 			set {
-				if(Employee != value) {
-					SetField(ref employee, value, () => Employee);
-					if(Warehouse != null) return;
-					Warehouse = Employee?.Subdivision?.Warehouse;
+				if(SetField(ref employee, value, () => Employee)) {
+					if(value != null)
+						Warehouse = value.Subdivision?.Warehouse;
 				}
 			}
 		}
