@@ -342,7 +342,7 @@ namespace workwear
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<IssuedSheetPrintModel>().AsSelf();
+			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NomenclatureForecastingModel>().AsSelf().InstancePerLifetimeScope();
