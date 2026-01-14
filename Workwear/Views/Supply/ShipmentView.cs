@@ -44,6 +44,12 @@ namespace Workwear.Views.Supply {
 				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
 				.InitializeFromSource();
 			buttonSetFields.Binding.AddBinding(ViewModel, vm => vm.CanSetFields, w => w.Sensitive).InitializeFromSource();
+			yspeccomboboxWarehouse.Binding
+				.AddSource(ViewModel)
+				.AddBinding(v => v.WarehousesList, w => w.ItemsList)
+				.AddBinding(v => v.Warehouse, w => w.SelectedItem)
+				.InitializeFromSource();
+			ycheckbuttonIsNullWearPercent.Binding.AddBinding(ViewModel, v => v.IsNullWearPercent, w => w.Active).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -67,6 +73,8 @@ namespace Workwear.Views.Supply {
 				.AddColumn("Окончание периода")
 					.AddDateRenderer(x => x.EndPeriod)
 					.Editable()
+				.AddColumn("На складе")
+					.AddReadOnlyTextRenderer(x => x.InStock.ToString() + ' ' + x.Units?.Name)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
 					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditRequested ).WidthChars(8)

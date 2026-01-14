@@ -27,6 +27,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Analytics.WarehouseForecasting;
+using Workwear.Models.Operations;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
@@ -35,6 +36,7 @@ using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Supply {
 	public class ShipmentViewModel :EntityDialogViewModelBase<Shipment>, IDialogDocumentation {
+		public StockBalanceModel StockBalanceModel { get; set; }
 		public ShipmentViewModel(
 			BaseParameters baseParameters,
 			CurrentUserSettings currentUserSettings,
@@ -45,6 +47,7 @@ namespace Workwear.ViewModels.Supply {
 			IInteractiveService interactive,
 			IUserService userService,
 			IEntityChangeWatcher watcher,
+			StockBalanceModel stockBalanceModel,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -55,7 +58,8 @@ namespace Workwear.ViewModels.Supply {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-
+			StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+            			
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
@@ -64,6 +68,17 @@ namespace Workwear.ViewModels.Supply {
 			
 			if(forecastingItems != null) 
 				AddFromForecasting(forecastingItems, shipmentParameters);
+
+			var warehouses = UoW.GetAll<Warehouse>().ToList();
+			if(!featuresService.Available(WorkwearFeature.Warehouses) || warehouses.Count == 1) {
+				WarehousesList.Add(new Warehouse(){Id = -1, Name = "Показать"});
+			}
+			else {
+				WarehousesList.Add(new Warehouse(){Id = -1, Name = "На всех складах"});
+				WarehousesList.AddRange(warehouses);
+			}
+			Warehouse = warehousesList.First();
+			IsNullWearPercent = false;
 			
 			CalculateTotal();
 			watcher.BatchSubscribe(OnExternalShipmentChange)
@@ -71,7 +86,8 @@ namespace Workwear.ViewModels.Supply {
 				.IfEntity<ShipmentItem>()
 				.AndChangeType(TypeOfChangeEvent.Update)
 				.AndWhere(x => x.Shipment.Id == Entity.Id);
-			
+
+			Entity.Items.ContentChanged += Shipment_ObservableItems_ListContentChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 
@@ -84,6 +100,10 @@ namespace Workwear.ViewModels.Supply {
 				OnPropertyChanged(nameof(CanEditRequested));
 				OnPropertyChanged(nameof(CanEditOrdered));
 			}
+		}
+
+		private void Shipment_ObservableItems_ListContentChanged(object sender, EventArgs e) {
+			FillInStock();
 		}
 
 		#region IDialogDocumentation
@@ -285,7 +305,45 @@ namespace Workwear.ViewModels.Supply {
 					UoW.Session.Refresh(myItem);
 			}
 		}
-		
+
+		#region Складские остатки
+		private Warehouse warehouse;
+		public virtual Warehouse Warehouse {
+			get => warehouse;
+			set {
+				if(SetField(ref warehouse, value)) {
+					FillInStock();
+					OnPropertyChanged(nameof(Items));
+				} 
+			}
+		}
+		private List<Warehouse> warehousesList = new List<Warehouse>();
+		public virtual List<Warehouse> WarehousesList {
+			get => warehousesList;
+			set => SetField(ref warehousesList, value);
+		}
+		private bool isNullWearPercent;
+		public virtual bool IsNullWearPercent {
+			get => isNullWearPercent;
+			set {
+				if(SetField(ref isNullWearPercent, value)) {
+					FillInStock();
+					OnPropertyChanged(nameof(Items));
+				}
+			}
+		}
+		private void FillInStock() {
+			if(Warehouse.Id != -1)
+				StockBalanceModel.Warehouse = Warehouse;
+			else
+				StockBalanceModel.Warehouse = null;
+			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
+			StockBalanceModel.AddNomenclatures(allNomenclatures);
+			foreach(var item in Entity.Items) {
+				item.InStock = StockBalanceModel.GetShipmentItemInStock(item.StockPosition, IsNullWearPercent);
+			}
+		}
+		#endregion
 		#region Валидация, сохранение и печать
 
 		public override bool Save() {
