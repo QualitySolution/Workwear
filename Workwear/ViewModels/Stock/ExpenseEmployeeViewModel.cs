@@ -76,7 +76,8 @@ namespace Workwear.ViewModels.Stock {
 			EmployeeIssueModel issueModel,
 			IssuedSheetPrintModel printModel,
 			EmployeeCard employee = null,
-			Visit visit = null
+			Visit visit = null,
+			string answer = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -129,9 +130,17 @@ namespace Workwear.ViewModels.Stock {
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
-				performance.StartGroup("FillUnderreceived");
-				FillUnderreceived(performance);
-				performance.EndGroup();
+				switch (answer) {
+					case "Выдать всё":
+					case null:
+						performance.StartGroup("FillUnderreceived");
+						FillUnderreceived(performance);
+						performance.EndGroup();
+						break;
+					case "Пустой":
+						Entity.Items.Clear();
+						break;
+				}
 			}
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)

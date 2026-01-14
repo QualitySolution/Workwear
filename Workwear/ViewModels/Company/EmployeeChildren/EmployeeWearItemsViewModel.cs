@@ -28,7 +28,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-		
+		private string answer;
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -171,7 +171,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
-			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			if(Entity?.DismissDate != null) {
+				answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {Entity.FullName} " +
+				                                                                          $"указана дата увольнения: {Entity.DismissDate?.ToShortDateString()}. Выдать?",
+					"Предупреждение о наличии даты увольнения у выбранного сотрудника");
+			}
+			if(answer != "Отмена")
+				navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard, string>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity, answer);
 		}
 
 		public void ReturnWear() {
