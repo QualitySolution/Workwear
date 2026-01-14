@@ -143,7 +143,7 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-			EmployeeCardEntryViewModel.IsEditable = CanEdit;
+			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
 			
 			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
@@ -179,6 +179,7 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool SensitiveEntryEmployee => Entity.Id == 0 && CanEdit;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]

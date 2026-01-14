@@ -56,7 +56,7 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
 			yentryEmployee.Binding
-				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel,vm => vm.SensitiveEntryEmployee, w => w.Sensitive)
 				.InitializeFromSource();
 
 			enumPrint.ItemsEnum = typeof(IssuedSheetPrint);
