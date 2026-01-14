@@ -4,8 +4,8 @@ using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Print;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock {

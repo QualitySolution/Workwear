@@ -11,10 +11,9 @@ namespace Workwear.Domain.Company
 		Nominative = "организация",
 		Genitive = "организации",
 		GenitivePlural = "организаций"
-		)]
+	)]
 	[HistoryTrace]
-	public class Organization : PropertyChangedBase, IDomainObject
-	{
+	public class Organization : PropertyChangedBase, IDomainObject {
 		#region Свойства
 
 		public virtual int Id { get; set; }
@@ -28,8 +27,15 @@ namespace Workwear.Domain.Company
 			set { SetField(ref name, value); }
 		}
 
+		private string okpo;
+		[Display(Name = "ОКПО")]
+		[StringLength(10, ErrorMessage = "Максимальная длинна ОКПО 10 символов")]
+		public virtual string OKPO {
+			get { return okpo; }
+			set { SetField(ref okpo, value); }
+		}
+		
 		private string address;
-
 		[Display(Name = "Адрес")]
 		public virtual string Address {
 			get { return address; }

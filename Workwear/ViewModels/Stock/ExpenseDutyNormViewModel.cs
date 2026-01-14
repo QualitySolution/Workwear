@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
@@ -23,7 +21,6 @@ using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -31,6 +28,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -49,7 +47,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly DutyNormIssueModel dutyNormIssueModel;
 		private readonly CurrentUserSettings currentUserSettings;
 		private readonly CommonMessages commonMessages;
-		private readonly FeaturesService featuresService;
+		private readonly IssuedSheetPrintModel printModel;
 		public SizeService SizeService { get; }
 		
 		#region ViewModels
@@ -77,6 +75,7 @@ namespace Workwear.ViewModels.Stock {
 			CommonMessages commonMessages,
 			FeaturesService featuresService,
 			StockRepository stockRepository,
+			IssuedSheetPrintModel printModel,
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
@@ -87,7 +86,7 @@ namespace Workwear.ViewModels.Stock {
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			SetDocumentDateProperty(e => e.Date);
 			
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
@@ -355,28 +354,14 @@ namespace Workwear.ViewModels.Stock {
 			
 		}
 		
-		public void PrintIssuanceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint type)
 		{
 			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), type == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
 					return;
 			}
 
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
-					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
-			
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
 		}
 
 		#endregion

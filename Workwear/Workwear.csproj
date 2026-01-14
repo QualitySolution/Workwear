@@ -904,7 +904,7 @@
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
     <PackageReference Include="Autofac" Version="7.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
-    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="FluentNHibernate" Version="3.1.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
@@ -967,6 +967,12 @@
     <Content Include="Reports\ShipmentReportFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\Statements\IssuanceSheet_0504210_1.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Statements\IssuanceSheet_0504210_2.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
