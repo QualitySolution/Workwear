@@ -107,7 +107,7 @@ namespace workwear.Journal.ViewModels.Communications {
 		public string EmployeeLastName { get; set; }
 		public string EmployeePatronymic { get; set; }
 		public string PersonnelNumber { get; set; }
-		public string EmployeeBalanceText => $"{Balance} \u24c8";
+		public string EmployeeBalanceText => Balance.ToString();
 		public string EmployeeText => PersonHelper.PersonFullName(EmployeeLastName, EmployeeFirstName, EmployeePatronymic);
 	}
 }

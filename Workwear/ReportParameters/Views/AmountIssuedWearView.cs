@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using QS.Views;
 using workwear.ReportParameters.ViewModels;
 using Workwear.Domain.Stock;
@@ -34,6 +34,8 @@ namespace workwear.ReportParameters.Views {
             checkByEmployee.Binding.AddBinding(ViewModel, v => v.ByEmployee, w => w.Active).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.SensetiveBySize, w => w.Sensitive).InitializeFromSource();
 			checkBySize.Binding.AddBinding(ViewModel, v => v.BySize, w => w.Active).InitializeFromSource();
+			checkByDepartment.Binding.AddBinding(ViewModel, v => v.ByDepartment, w => w.Active).InitializeFromSource();
+			checkByDepartment.Binding.AddBinding(ViewModel, v => v.SensitiveByDepartment, w => w.Sensitive).InitializeFromSource();
 			
 			buttonPrintReport.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
@@ -71,19 +73,23 @@ namespace workwear.ReportParameters.Views {
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choicedepartmentview.ViewModel = ViewModel.ChoiceDepartmentViewModel;
 			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e) {
 			ViewModel.LoadReport();
 		}
-
 		protected void OnExpander1Activated(object sender, EventArgs e) {
 			(vbox2[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
 		}
 
 		protected void OnExpander2Activated(object sender, EventArgs e) {
 			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
+		}
+
+		protected void OnExpanderDepartmentActivated(object sender, EventArgs e) {
+			(vbox2[expanderDepartment] as Gtk.Box.BoxChild).Expand = expanderDepartment.Expanded;
 		}
 	}
 }

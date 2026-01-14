@@ -4,7 +4,7 @@ namespace Workwear.Views.ClothingService
 {
 	public partial class ClothingMoveView
 	{
-		private global::Gtk.VBox vbox1;
+		private global::Gtk.VBox vboxAll;
 
 		private global::Gtk.HBox hbox1;
 
@@ -17,6 +17,8 @@ namespace Workwear.Views.ClothingService
 		private global::Gamma.GtkWidgets.yButton buttonAddClaim;
 
 		private global::Workwear.Views.ClothingService.BarcodeInfoView barcodeinfoview1;
+
+		private global::Gamma.GtkWidgets.yVBox yvboxClaimActions;
 
 		private global::Gtk.Frame framePostamat;
 
@@ -36,7 +38,7 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gtk.Label GtkLabel4;
 
-		private global::Gamma.GtkWidgets.yHBox yhbox3;
+		private global::Gamma.GtkWidgets.yHBox yhboxClaimActions;
 
 		private global::Gtk.Frame frame5;
 
@@ -81,10 +83,10 @@ namespace Workwear.Views.ClothingService
 			global::Stetic.BinContainer.Attach(this);
 			this.Name = "Workwear.Views.ClothingService.ClothingMoveView";
 			// Container child Workwear.Views.ClothingService.ClothingMoveView.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox();
-			this.vbox1.Name = "vbox1";
-			this.vbox1.Spacing = 6;
-			// Container child vbox1.Gtk.Box+BoxChild
+			this.vboxAll = new global::Gtk.VBox();
+			this.vboxAll.Name = "vboxAll";
+			this.vboxAll.Spacing = 6;
+			// Container child vboxAll.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
@@ -92,7 +94,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Штрих код:");
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Идентификатор метки:");
 			this.hbox1.Add(this.ylabel1);
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylabel1]));
 			w1.Position = 0;
@@ -118,12 +120,12 @@ namespace Workwear.Views.ClothingService
 			w4.Position = 2;
 			w4.Expand = false;
 			w4.Fill = false;
-			this.vbox1.Add(this.hbox1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+			this.vboxAll.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vboxAll[this.hbox1]));
 			w5.Position = 0;
 			w5.Expand = false;
 			w5.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
+			// Container child vboxAll.Gtk.Box+BoxChild
 			this.buttonAddClaim = new global::Gamma.GtkWidgets.yButton();
 			this.buttonAddClaim.CanFocus = true;
 			this.buttonAddClaim.Name = "buttonAddClaim";
@@ -132,21 +134,25 @@ namespace Workwear.Views.ClothingService
 			global::Gtk.Image w6 = new global::Gtk.Image();
 			w6.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-revert-to-saved", global::Gtk.IconSize.Menu);
 			this.buttonAddClaim.Image = w6;
-			this.vbox1.Add(this.buttonAddClaim);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonAddClaim]));
+			this.vboxAll.Add(this.buttonAddClaim);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vboxAll[this.buttonAddClaim]));
 			w7.Position = 1;
 			w7.Expand = false;
 			w7.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
+			// Container child vboxAll.Gtk.Box+BoxChild
 			this.barcodeinfoview1 = new global::Workwear.Views.ClothingService.BarcodeInfoView();
 			this.barcodeinfoview1.Events = ((global::Gdk.EventMask)(256));
 			this.barcodeinfoview1.Name = "barcodeinfoview1";
-			this.vbox1.Add(this.barcodeinfoview1);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.barcodeinfoview1]));
+			this.vboxAll.Add(this.barcodeinfoview1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vboxAll[this.barcodeinfoview1]));
 			w8.Position = 2;
 			w8.Expand = false;
 			w8.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
+			// Container child vboxAll.Gtk.Box+BoxChild
+			this.yvboxClaimActions = new global::Gamma.GtkWidgets.yVBox();
+			this.yvboxClaimActions.Name = "yvboxClaimActions";
+			this.yvboxClaimActions.Spacing = 6;
+			// Container child yvboxClaimActions.Gtk.Box+BoxChild
 			this.framePostamat = new global::Gtk.Frame();
 			this.framePostamat.Name = "framePostamat";
 			this.framePostamat.ShadowType = ((global::Gtk.ShadowType)(0));
@@ -166,12 +172,12 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel7.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Предпочтительный постамат выдачи</b>");
 			this.GtkLabel7.UseMarkup = true;
 			this.framePostamat.LabelWidget = this.GtkLabel7;
-			this.vbox1.Add(this.framePostamat);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.framePostamat]));
-			w11.Position = 3;
+			this.yvboxClaimActions.Add(this.framePostamat);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.yvboxClaimActions[this.framePostamat]));
+			w11.Position = 0;
 			w11.Expand = false;
 			w11.Fill = false;
-			// Container child vbox1.Gtk.Box+BoxChild
+			// Container child yvboxClaimActions.Gtk.Box+BoxChild
 			this.frame2 = new global::Gtk.Frame();
 			this.frame2.Name = "frame2";
 			this.frame2.ShadowType = ((global::Gtk.ShadowType)(0));
@@ -197,14 +203,14 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel4.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Выполненные операции</b>");
 			this.GtkLabel4.UseMarkup = true;
 			this.frame2.LabelWidget = this.GtkLabel4;
-			this.vbox1.Add(this.frame2);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.frame2]));
-			w15.Position = 4;
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.yhbox3 = new global::Gamma.GtkWidgets.yHBox();
-			this.yhbox3.Name = "yhbox3";
-			this.yhbox3.Spacing = 6;
-			// Container child yhbox3.Gtk.Box+BoxChild
+			this.yvboxClaimActions.Add(this.frame2);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvboxClaimActions[this.frame2]));
+			w15.Position = 1;
+			// Container child yvboxClaimActions.Gtk.Box+BoxChild
+			this.yhboxClaimActions = new global::Gamma.GtkWidgets.yHBox();
+			this.yhboxClaimActions.Name = "yhboxClaimActions";
+			this.yhboxClaimActions.Spacing = 6;
+			// Container child yhboxClaimActions.Gtk.Box+BoxChild
 			this.frame5 = new global::Gtk.Frame();
 			this.frame5.Name = "frame5";
 			this.frame5.ShadowType = ((global::Gtk.ShadowType)(4));
@@ -311,10 +317,10 @@ namespace Workwear.Views.ClothingService
 			w26.Fill = false;
 			this.GtkAlignment7.Add(this.yvbox1);
 			this.frame5.Add(this.GtkAlignment7);
-			this.yhbox3.Add(this.frame5);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame5]));
+			this.yhboxClaimActions.Add(this.frame5);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.yhboxClaimActions[this.frame5]));
 			w29.Position = 0;
-			// Container child yhbox3.Gtk.Box+BoxChild
+			// Container child yhboxClaimActions.Gtk.Box+BoxChild
 			this.frame4 = new global::Gtk.Frame();
 			this.frame4.WidthRequest = 300;
 			this.frame4.HeightRequest = 200;
@@ -342,13 +348,16 @@ namespace Workwear.Views.ClothingService
 			this.GtkLabel9.LabelProp = global::Mono.Unix.Catalog.GetString("  Услуги обслуживания:");
 			this.GtkLabel9.UseMarkup = true;
 			this.frame4.LabelWidget = this.GtkLabel9;
-			this.yhbox3.Add(this.frame4);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yhbox3[this.frame4]));
+			this.yhboxClaimActions.Add(this.frame4);
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.yhboxClaimActions[this.frame4]));
 			w33.Position = 1;
-			this.vbox1.Add(this.yhbox3);
-			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.yhbox3]));
-			w34.Position = 5;
-			this.Add(this.vbox1);
+			this.yvboxClaimActions.Add(this.yhboxClaimActions);
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.yvboxClaimActions[this.yhboxClaimActions]));
+			w34.Position = 2;
+			this.vboxAll.Add(this.yvboxClaimActions);
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.vboxAll[this.yvboxClaimActions]));
+			w35.Position = 3;
+			this.Add(this.vboxAll);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();

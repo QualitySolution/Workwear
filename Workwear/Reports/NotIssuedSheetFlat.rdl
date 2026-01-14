@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>40in</PageWidth>
+  <PageWidth>41in</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -76,6 +76,12 @@
           </TableColumn>
           <TableColumn>
             <Width>151.6pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>151.4pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>153.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>108.9pt</Width>
@@ -261,6 +267,48 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Top>None</Top>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox38">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Top>None</Top>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox43">
                       <Value></Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
@@ -580,6 +628,42 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox41">
+                      <Value>Причина расхождения</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox44">
+                      <Value>Дата поставки</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>Кол-во на складе</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -853,6 +937,46 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox42">
+                      <Value>={diff_causes}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor></BackgroundColor>
+                        <Color>Black</Color>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox46">
+                      <Value>={shipment_periods}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor></BackgroundColor>
+                        <Color>Black</Color>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox54">
@@ -958,18 +1082,57 @@
     norms_item.amount AS amount_by_norm,
     IFNULL(ballance.amount, 0) as amount_ballance,
     IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) as need,
-    IF(@show_stock, SUM(stock.SUM), null) AS in_stock
+    IF(@show_stock, SUM(stock.SUM), null) AS in_stock,
+    nomenclatureTypes.diff_causes,
+    nomenclatureTypes.shipment_periods
 FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-        JOIN (
-            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
-                            item_types.size_type_id, item_types.height_type_id, item_types.issue_type
+        LEFT JOIN (
+            SELECT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
+                            item_types.size_type_id, item_types.height_type_id, item_types.issue_type,
+                            GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
+                            GROUP_CONCAT(
+                                DISTINCT
+                                IFNULL(period,
+                                    IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,  
+                                    CONCAT(
+                                        CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
+                                           NULLIF(
+                                                DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
+                                                DATE_FORMAT(diff.start_period, '%d.%m.%Y')
+                                           )
+                                        ),
+                                    ' (№', diff.shipment_id, ')'
+                                    )))
+                                SEPARATOR ', '
+                            ) AS shipment_periods
             FROM protection_tools_nomenclature
                 LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
                 LEFT JOIN item_types ON item_types.id = nomenclature.type_id
-            )as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
+                LEFT JOIN (SELECT nomenclature.id AS nom_id,
+                                   shipment.id as shipment_id,
+                                   shipment.start_period,
+                                   shipment.end_period,
+                                   GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
+                                   IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL, 
+                                   CONCAT(
+                                      CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
+                                                NULLIF(
+                                                   DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
+                                                   DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
+                                                )),
+                                      ' (№', shipment.id, ')'
+                                   )) AS period
+                            FROM nomenclature
+                                     LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
+                                     LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
+                            WHERE shipment.status NOT LIKE 'Received'
+                            GROUP BY nomenclature.id, shipment.id) AS diff
+        ON diff.nom_id = nomenclature.id
+        GROUP BY protection_tools_id, item_types.id
+        ) AS nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
         LEFT JOIN measurement_units ON nomenclatureTypes.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
@@ -1213,9 +1376,17 @@ ORDER BY
           <DataField>phone_number</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="diff_causes">
+          <DataField>diff_causes</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="need">
           <DataField>need</DataField>
           <TypeName>System.UInt16</TypeName>
+        </Field>
+        <Field Name="shipment_periods">
+          <DataField>shipment_periods</DataField>
+          <TypeName>System.String</TypeName>
         </Field>
       </Fields>
     </DataSet>

@@ -203,6 +203,8 @@
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
+    <Compile Include="ViewModels\Supply\ShipmentDiffCauseViewModel.cs" />
+    <Compile Include="ViewModels\Supply\ShipmentPeriodViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\NormChildren\NormPostsViewModel.cs" />
     <Compile Include="ViewModels\Sizes\SizeTypeViewModel.cs" />
@@ -553,6 +555,10 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.Widgets.BarcodeAddWidgetView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Visits.IssuanceRequestFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Visits.IssuanceRequestView.cs" />
+    <Compile Include="Views\Supply\ShipmentDiffCauseView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentDiffCauseView.cs" />
+    <Compile Include="Views\Supply\ShipmentPeriodView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentPeriodView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -935,6 +941,7 @@
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="icon\buttons\speccoin.png" />
     <Content Include="Reports\ClothingService\ClothingMoveSticker.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

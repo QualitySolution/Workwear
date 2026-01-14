@@ -3,6 +3,7 @@ using Autofac;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
@@ -44,10 +45,16 @@ namespace workwear.Journal.ViewModels.Visits {
 			UserBase authorAlias = null;
 			
 			var query = uow.Session.QueryOver(() => issuanceRequestAlias)
-				.Where(GetSearchCriterion(
-					() => issuanceRequestAlias.Id,
-					() => issuanceRequestAlias.ReceiptDate, //TODO реализовать поиск по полной дате
-					() => issuanceRequestAlias.Comment));
+				.Where(
+					MakeSearchCriterion()
+						.WithLikeMode(MatchMode.Exact)
+						.By(() => issuanceRequestAlias.Id)
+						.WithLikeMode(MatchMode.Start)
+						.By(() => issuanceRequestAlias.ReceiptDate)
+						.WithLikeMode(MatchMode.Anywhere)
+						.By(() => issuanceRequestAlias.Comment)
+						.Finish()
+					);
 			if(Filter.Status != null)
 				query.Where(x => x.Status == Filter.Status);
 

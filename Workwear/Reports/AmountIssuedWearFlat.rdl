@@ -35,6 +35,12 @@
               <Hidden>={?summary}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn >
+            <Width>177.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?byDepartment}</Hidden>
+            </Visibility>
+          </TableColumn>
           <TableColumn>
             <Width>179.2pt</Width>
             <Visibility>
@@ -135,6 +141,23 @@
                   <ReportItems>
                     <Textbox Name="Textbox4">
                       <Value>={subdivision}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox43">
+                      <Value>={department}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -473,7 +496,7 @@
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>10</ColSpan>
+                  <ColSpan>11</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -664,6 +687,22 @@
                   <ReportItems>
                     <Textbox Name="Textbox31">
                       <Value>Подразделение</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox38">
+                      <Value>Отдел</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -984,10 +1023,12 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
+        <Timeout>1500</Timeout>
         <CommandText>select
     if(@summary, NULL, subdivisions.id) as subdivision_id,
     if(@summary, NULL, subdivisions.name) as subdivision,
     if(@summary, NULL, subdivisions.code) as subdivision_code,
+    if(@byDepartment, departments.name, NULL) as department,
     if(@showCostCenter,IFNULL((SELECT CONCAT_WS(' ',cc.code, cc.name)
                                FROM employees_cost_allocation as ecca
                                         JOIN cost_center as cc on ecca.cost_center_id = cc.id
@@ -1012,18 +1053,26 @@
         END AS wearing_period,
     GROUP_CONCAT(DATE_FORMAT(operation_issued_by_employee.operation_time, '%d.%m.%Y')) as operation_date,
     GROUP_CONCAT(IFNULL(issuance_sheet.doc_number, issuance_sheet.id)) as issuance_sheet,
-    IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(op3.operation_time) &gt; MAX(op2.auto_writeoff_date), op3.auto_writeoff_date, op2.auto_writeoff_date), '%d.%m.%Y')
-        FROM operation_issued_by_employee as op2
-             LEFT JOIN operation_issued_by_employee as op3 on op3.issued_operation_id = op2.id
-        WHERE op2.employee_id = operation_issued_by_employee.employee_id 
-          AND op2.protection_tools_id = operation_issued_by_employee.protection_tools_id 
-          AND op2.auto_writeoff_date &lt;= operation_issued_by_employee.operation_time )
+    IF(@byOperation, (SELECT DATE_FORMAT(IF(MAX(rop.operation_time) BETWEEN MAX(op.operation_time) AND operation_issued_by_employee.operation_time,
+                    MAX(rop.operation_time),
+                    IF(MAX(op.ExpiryByNorm) BETWEEN MAX(op.operation_time) AND operation_issued_by_employee.operation_time,
+                        MAX(op.ExpiryByNorm), MAX(rop.operation_time))),'%d.%m.%Y')
+        FROM operation_issued_by_employee op
+                 LEFT JOIN operation_issued_by_employee rop ON op.employee_id = rop.employee_id 
+                        and op.protection_tools_id = rop.protection_tools_id
+                        and rop.issued_operation_id is not null
+                        AND rop.operation_time &lt;= operation_issued_by_employee.operation_time
+        WHERE op.employee_id = operation_issued_by_employee.employee_id
+          AND op.protection_tools_id = operation_issued_by_employee.protection_tools_id
+          AND op.operation_time &lt; operation_issued_by_employee.operation_time
+          )
     ,NULL) AS date_need,
     operation_issued_by_employee.comment AS operation_comment,
     IFNULL(stock_expense.comment, stock_collective_expense.comment) AS document_comment
 FROM operation_issued_by_employee
        LEFT JOIN employees on employees.id = operation_issued_by_employee.employee_id
        LEFT JOIN subdivisions on subdivisions.id = employees.subdivision_id
+       LEFT JOIN departments on departments.id = employees.department_id
        LEFT JOIN posts ON posts.id = employees.post_id
          LEFT JOIN cost_center ON cost_center.id = posts.cost_center_id
          LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_employee.nomenclature_id
@@ -1045,6 +1094,7 @@ WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE
   AND (@issue_type = '' OR item_types.issue_type = @issue_type)
   and operation_issued_by_employee.returned = 0
            AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
+  AND ((-1 IN (@departments)) OR (@withoutDepartment AND departments.id IS NULL) OR (departments.id IN (@departments)))
   and (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
   and (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
@@ -1056,8 +1106,8 @@ AND ((-1 IN (@employee_groups_ids))
         OR (EXISTS (SELECT * FROM employee_group_items as gi
                     WHERE gi.employee_id = operation_issued_by_employee.employee_id
                       AND gi.employee_group_id IN (@employee_groups_ids))) )
-GROUP BY IF(@summary, NULL, subdivisions.id), IF(@byEmployee, employees.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
-ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</CommandText>
+GROUP BY IF(@summary, NULL, subdivisions.id), IF(@byDepartment, departments.id, NULL), IF(@byEmployee, employees.id, NULL), operation_issued_by_employee.nomenclature_id, IF(@bysize, size, NULL), IF(@bysize, growth, NULL), IF(@showOwners, owners.id, NULL), IF(@byOperation, operation_issued_by_employee.id, NULL)
+ORDER BY CAST(subdivision_code AS UNSIGNED), department, employee, nomen, size, growth;</CommandText>
         <QueryParameters>
           <QueryParameter Name="dateStart">
             <Value>=Format({?dateStart}, "yyyy-MM-dd")</Value>
@@ -1119,6 +1169,15 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <QueryParameter Name="employee_groups_ids">
             <Value>={?employee_groups_ids}</Value>
           </QueryParameter>
+          <QueryParameter Name="byDepartment">
+            <Value>={?byDepartment}</Value>
+          </QueryParameter>
+          <QueryParameter Name="departments">
+            <Value>={?departments}</Value>
+          </QueryParameter>
+          <QueryParameter Name="withoutDepartment">
+            <Value>={?withoutDepartment}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -1132,6 +1191,10 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
         </Field>
         <Field Name="subdivision_code">
           <DataField>subdivision_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="department">
+          <DataField>department</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="cost_center_name">
@@ -1390,6 +1453,27 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), employee, nomen, size, growth;</Com
           <Value>true</Value>
         </Values>
       </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="byDepartment">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="departments">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutDepartment">
+      <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>

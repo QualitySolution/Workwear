@@ -282,13 +282,16 @@ namespace workwear.Journal.ViewModels.Stock
 				() => expenseDutyNormAlias.Id,
 				() => authorAlias.Name,
 				() => expenseDutyNormAlias.DocNumber,
-				() => dutyNormAlias.Name
+				() => dutyNormAlias.Name,
+				() => issuanceSheetAlias.Id,
+				() => issuanceSheetAlias.DocNumber
 			));
 			
 			expenseDutyNormQuery
 				.JoinAlias(() => expenseDutyNormAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)	
 				.JoinAlias(() => expenseDutyNormAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseDutyNormAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormAlias.IssuanceSheet, () => issuanceSheetAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
 					.Select(() => expenseDutyNormAlias.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -296,6 +299,8 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => dutyNormAlias.Name).WithAlias(() => resultAlias.DutyNormName)
 					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
+					.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 					.Select(() => expenseDutyNormAlias.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => StockDocumentType.ExpenseDutyNormDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					.Select(() => expenseDutyNormAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)

@@ -2434,6 +2434,7 @@ create table shipment
 	has_receive boolean default false not null,
 	submitted datetime null,
 	user_id int unsigned null,
+	warehouse_forecasting_date datetime null default null,
 	comment text null,
 	creation_date datetime null
 )
@@ -2458,6 +2459,8 @@ create table shipment_items
 	size_id int unsigned null,
 	height_id int unsigned null,
 	diff_cause varchar(120) null,
+	start_period date null default null,
+	end_period date null default null,
 	comment varchar(120) null,
 	constraint fk_shipment_items_doc
 		foreign key (shipment_id) references shipment (id)

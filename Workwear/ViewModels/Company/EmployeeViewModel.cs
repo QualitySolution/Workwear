@@ -165,7 +165,7 @@ namespace Workwear.ViewModels.Company
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание карточки для нового сотрудника");
 			}
@@ -190,8 +190,10 @@ namespace Workwear.ViewModels.Company
 			lkLastPhone = Entity.PhoneNumber;
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 			
-			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(this));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
@@ -209,13 +211,14 @@ namespace Workwear.ViewModels.Company
 
 		#region Visible
 
-		public bool VisibleListedItem => !UoW.IsNew;
-		public bool VisibleHistory => !UoW.IsNew;
+		public bool VisibleListedItem => Entity.Id != 0;
+		public bool VisibleHistory => Entity.Id != 0;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.RelatedDutyNorms.Count > 0;
+		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
@@ -231,7 +234,6 @@ namespace Workwear.ViewModels.Company
 			set => SetField(ref visibleSpecCoinsViews, value);
 		}
 
-		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		#endregion
 
 		#region Sensetive
@@ -514,7 +516,7 @@ namespace Workwear.ViewModels.Company
 				case 2: NormsViewModel.OnShow();
 					break;
 				case 3:
-					if (UoW.IsNew)
+					if (Entity.Id == 0)
 						if (interactive.Question("Перед работой с имуществом сотрудника необходимо сохранить карточку. Сохранить?",
 							    "Сохранить сотрудника?") && Save())
 						{
@@ -531,12 +533,16 @@ namespace Workwear.ViewModels.Company
 					break;
 				case 6: InGroupsViewModel.OnShow();
 					break;
-				case 7: ListedItemsViewModel.OnShow();
+				case 7:
+					if(Entity.Id != 0)
+						ListedItemsViewModel.OnShow();
 					break;
-				case 8: MovementsViewModel.OnShow();
+				case 8: 
+					if(Entity.Id != 0)
+						MovementsViewModel.OnShow();
 					break;
 				case 9:
-					if(UoW.IsNew) {
+					if( Entity.Id == 0) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {
 							VacationsViewModel.OnShow();
@@ -595,7 +601,6 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
-			
 			return SyncLkPassword();
 		}
 
