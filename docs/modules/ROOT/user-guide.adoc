@@ -1,6 +1,6 @@
 :title-separator: {sp}|
 = QS: Спецодежда | Руководство пользователя
-Quality Solution 2025
+Quality Solution 2026
 версия 2.10
 :organization: Quality Solution
 :doctype: book
