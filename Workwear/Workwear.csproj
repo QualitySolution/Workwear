@@ -941,6 +941,7 @@
     <None Include="Reports\DutyNorms\DutyNormPage2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="icon\buttons\speccoin.png" />
     <Content Include="Reports\ClothingService\ClothingMoveSticker.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

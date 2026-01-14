@@ -71,6 +71,11 @@
         <property name="Image">resource:Workwear.icon.toolbar.claims.png</property>
       </source>
     </icon-set>
+    <icon-set id="SpecCoin">
+      <source>
+        <property name="Image">resource:Workwear.icon.buttons.speccoin.png</property>
+      </source>
+    </icon-set>
   </icon-factory>
   <widget class="Gtk.Bin" id="Workwear.Views.Stock.ItemTypeView" design-size="552 730">
     <property name="MemberName" />
@@ -1572,8 +1577,9 @@
               <widget class="Gamma.GtkWidgets.yButton" id="buttonSpecCoinOperations">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Ⓢ Операции</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.speccoin.png</property>
+                <property name="Label" translatable="yes">Операции</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonSpecCoinOperationsClicked" />
               </widget>
@@ -1588,8 +1594,9 @@
               <widget class="Gamma.GtkWidgets.yButton" id="buttonDeductSpecCoins">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Ⓢ Списать спецкойны</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">resource:Workwear.icon.buttons.speccoin.png</property>
+                <property name="Label" translatable="yes">Списать спецкойны</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButtonDeductSpecCoinsClicked" />
               </widget>
@@ -1601,11 +1608,9 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yLabel" id="labelSpecCoinsSymbol">
+              <widget class="Gamma.GtkWidgets.yImage" id="ySpecCoinIcon">
                 <property name="MemberName" />
-                <property name="LabelProp">Ⓢ</property>
-                <property name="WidthChars">0</property>
-                <property name="MaxWidthChars">0</property>
+                <property name="Pixbuf">resource:Workwear.icon.buttons.speccoin.png</property>
               </widget>
               <packing>
                 <property name="Position">7</property>
@@ -5422,8 +5427,9 @@
       </action>
       <action id="ActionSpecCoinsBalance">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Баланс Спецкойнов Ⓢ</property>
-        <property name="ShortLabel" translatable="yes">Баланс Спецкойнов Ⓢ</property>
+        <property name="Label" translatable="yes">Баланс Спецкойнов</property>
+        <property name="ShortLabel" translatable="yes">Баланс Спецкойнов</property>
+        <property name="StockId">SpecCoin</property>
         <signal name="Activated" handler="OnActionSpecCoinsBalanceActivated" />
       </action>
       <action id="ActionWarehouseForecasting">
