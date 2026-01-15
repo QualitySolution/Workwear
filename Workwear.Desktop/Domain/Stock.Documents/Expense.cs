@@ -37,13 +37,12 @@ namespace Workwear.Domain.Stock.Documents
 		
 		EmployeeCard employee;
 		[Display (Name = "Сотрудник")]
-		[PropertyChangedAlso(nameof(Warehouse))]
 		public virtual EmployeeCard Employee {
-			get { return employee; }
+			get { return employee; } 
 			set {
 				if(SetField(ref employee, value, () => Employee)) {
 					if(value != null)
-						Warehouse = value.Subdivision?.Warehouse;
+						warehouse = value.Subdivision?.Warehouse;
 				}
 			}
 		}
