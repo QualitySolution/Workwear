@@ -14,7 +14,7 @@ namespace Workwear.Sql
 			return new CreationScript(
 				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
 				"Workwear.Sql.Scripts.new_empty.sql",
-				new Version(2, 10, 4)
+				new Version(2, 10, 6)
 			);
 		}
 
@@ -283,6 +283,11 @@ namespace Workwear.Sql
 					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees");
 					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups");
 				}
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 4),
+				new Version(2, 10, 6),
+				"Workwear.Sql.Scripts.2.10.6.sql"
 			);
 			return configuration;
 		}
