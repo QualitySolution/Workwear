@@ -19,6 +19,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.Domain.Company
 {
@@ -351,6 +352,15 @@ namespace Workwear.Domain.Company
 				yield return new ValidationResult(
 				"Сумма по МВЗ в должна быть равна 100%", 
 				new[] { nameof(CostCenters) });
+
+			var featureService = (FeaturesService)validationContext.Items[nameof(FeaturesService)];
+			if(featureService.Available(WorkwearFeature.Postomats)) {
+				if(FirstName == null) {
+					yield return new ValidationResult(
+						"В Вашей версии программы включена функциональность Постаматы. Имя сотрудника должно быть заполнено.",
+						new[] { this.GetPropertyName(o => o.FirstName) });
+				}
+			}
 		}
 
 		#endregion

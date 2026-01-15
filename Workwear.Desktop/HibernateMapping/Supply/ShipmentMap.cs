@@ -20,6 +20,7 @@ namespace Workwear.HibernateMapping.Supply {
 			Map(x => x.HasReceive).Column("has_receive");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.CreationDate).Column("creation_date");
+			Map(x => x.WarehouseForecastingDate).Column("warehouse_forecasting_date");
 
 			References(x => x.CreatedbyUser).Column("user_id");
 

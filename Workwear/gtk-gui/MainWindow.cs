@@ -568,8 +568,8 @@ public partial class MainWindow
 		this.ActionClothingServiceReport = new global::Gtk.Action("ActionClothingServiceReport", global::Mono.Unix.Catalog.GetString("Обслуживание одежды"), null, null);
 		this.ActionClothingServiceReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Обслуживание одежды");
 		w1.Add(this.ActionClothingServiceReport, null);
-		this.ActionSpecCoinsBalance = new global::Gtk.Action("ActionSpecCoinsBalance", global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ"), null, null);
-		this.ActionSpecCoinsBalance.ShortLabel = global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ");
+		this.ActionSpecCoinsBalance = new global::Gtk.Action("ActionSpecCoinsBalance", global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов"), null, "SpecCoin");
+		this.ActionSpecCoinsBalance.ShortLabel = global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов");
 		w1.Add(this.ActionSpecCoinsBalance, null);
 		this.ActionWarehouseForecasting = new global::Gtk.Action("ActionWarehouseForecasting", global::Mono.Unix.Catalog.GetString("Прогнозирование склада"), null, null);
 		this.ActionWarehouseForecasting.ShortLabel = global::Mono.Unix.Catalog.GetString("Прогнозирование склада");

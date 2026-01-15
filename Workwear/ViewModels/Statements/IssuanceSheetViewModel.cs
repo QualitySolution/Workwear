@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -26,6 +23,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Print;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -43,7 +41,7 @@ namespace Workwear.ViewModels.Statements
 		private readonly BaseParameters baseParameters;
 		public ILifetimeScope AutofacScope;
 		private readonly CommonMessages commonMessages;
-		private readonly FeaturesService featuresService;
+		private readonly IssuedSheetPrintModel printModel;
 
 		public IssuanceSheetViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -55,13 +53,16 @@ namespace Workwear.ViewModels.Statements
 			ICurrentPermissionService permissionService,
 			SizeService sizeService,
 			FeaturesService featuresService,
-			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator)
+			CommonMessages commonMessages,
+			BaseParameters baseParameters,
+			IssuedSheetPrintModel printModel
+			) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			SetDocumentDateProperty(e => e.Date);
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
@@ -232,7 +233,7 @@ namespace Workwear.ViewModels.Statements
 
 		#region Кнопки
 
-		public void Print(IssuedSheetPrint doc)
+		public void Print(IssuedSheetPrint type)
 		{
 			if(UoW.HasChanges) {
 				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
@@ -241,21 +242,7 @@ namespace Workwear.ViewModels.Statements
 					return;
 			}
 
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.DocNumber ?? Entity.Id.ToString()}" 
-					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
-
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity));
 		}
 
 		public override bool Save() {

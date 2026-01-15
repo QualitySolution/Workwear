@@ -1419,6 +1419,7 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(300) NULL,
+  `okpo` CHAR(10) NULL comment 'Общероссийский классификатор предприятий и организаций',
   `address` VARCHAR(300) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -2434,6 +2435,7 @@ create table shipment
 	has_receive boolean default false not null,
 	submitted datetime null,
 	user_id int unsigned null,
+	warehouse_forecasting_date datetime null default null,
 	comment text null,
 	creation_date datetime null
 )
@@ -2458,6 +2460,8 @@ create table shipment_items
 	size_id int unsigned null,
 	height_id int unsigned null,
 	diff_cause varchar(120) null,
+	start_period date null default null,
+	end_period date null default null,
 	comment varchar(120) null,
 	constraint fk_shipment_items_doc
 		foreign key (shipment_id) references shipment (id)
@@ -2892,7 +2896,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.4');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.6');
 
 COMMIT;
 

@@ -21,6 +21,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -76,6 +77,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
+			builder.RegisterType<IssuedSheetPrintModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();

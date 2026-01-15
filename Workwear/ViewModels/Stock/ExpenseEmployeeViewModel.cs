@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.IO;
 using Autofac;
-using Gamma.Utilities;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NLog;
@@ -24,13 +22,13 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -55,6 +53,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly ModalProgressCreator modalProgressCreator;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
+		private readonly IssuedSheetPrintModel printModel;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -75,6 +74,7 @@ namespace Workwear.ViewModels.Stock {
 			FeaturesService featuresService,
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
+			IssuedSheetPrintModel printModel,
 			EmployeeCard employee = null,
 			Visit visit = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
@@ -90,6 +90,7 @@ namespace Workwear.ViewModels.Stock {
 			this.modalProgressCreator = modalProgressCreator ?? throw new ArgumentNullException(nameof(modalProgressCreator));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			SetDocumentDateProperty(e => e.Date);
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
@@ -354,28 +355,13 @@ namespace Workwear.ViewModels.Stock {
 			Entity.CreateIssuanceSheet(defaultOrganization, defaultLeader, defaultResponsiblePerson);
 		}
 
-		public void PrintIssuanceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint type)
 		{
-			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+			if(UoW.HasChanges) 
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), type == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
 					return;
-			}
-
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
-					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
 			
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
 		}
 		#endregion
 

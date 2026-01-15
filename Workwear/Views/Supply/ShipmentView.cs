@@ -1,4 +1,5 @@
 using System;
+using Gamma.GtkWidgets;
 using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Supply;
@@ -11,6 +12,7 @@ namespace Workwear.Views.Supply {
 			ConfigureDlg();
 			ConfigureItems();
 			CommonButtonSubscription();
+			MakeMenu();
 		}
 		private void ConfigureDlg() {
 			ylabelNumber.Binding.AddBinding(ViewModel, v => v.DocID, w => w.LabelProp)
@@ -36,6 +38,18 @@ namespace Workwear.Views.Supply {
 				.AddBinding(ViewModel, vm => vm.CanSandEmail, w => w.Visible).InitializeFromSource();
 			ybuttonPrint.Clicked += (s,e) => ViewModel.Print();
 			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
+			ylabelDate.Binding.AddBinding(ViewModel, vm => vm.VisibleWarehouseForecastingDate, w => w.Visible).InitializeFromSource();
+			ydateWarehouseForecasting.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.WarehouseForecastingDate, w => w.DateOrNull)
+				.AddBinding(v => v.VisibleWarehouseForecastingDate, w => w.Visible)
+				.InitializeFromSource();
+			buttonSetFields.Binding.AddBinding(ViewModel, vm => vm.CanSetFields, w => w.Sensitive).InitializeFromSource();
+			yspeccomboboxWarehouse.Binding
+				.AddSource(ViewModel)
+				.AddBinding(v => v.WarehousesList, w => w.ItemsList)
+				.AddBinding(v => v.Warehouse, w => w.SelectedItem)
+				.InitializeFromSource();
+			ycheckbuttonIsNullWearPercent.Binding.AddBinding(ViewModel, v => v.IsNullWearPercent, w => w.Active).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -53,6 +67,14 @@ namespace Workwear.Views.Supply {
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
 					.AddSetter((c, n) => c.Editable = n.HeightType != null)
+				.AddColumn("Начало периода")
+					.AddDateRenderer(x => x.StartPeriod)
+					.Editable()
+				.AddColumn("Окончание периода")
+					.AddDateRenderer(x => x.EndPeriod)
+					.Editable()
+				.AddColumn("На складе")
+					.AddReadOnlyTextRenderer(x => x.InStock.ToString() + ' ' + x.Units?.Name)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)
 					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEditRequested ).WidthChars(8)
@@ -85,7 +107,18 @@ namespace Workwear.Views.Supply {
 			ytreeItems.Selection.Mode = SelectionMode.Multiple;
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 		}
-		
+
+		private void MakeMenu() {
+			var menu = new Menu();
+			var item = new yMenuItem("Причину расхождения");
+			item.Activated += (sender, e) => ViewModel.SetDiffCause();
+			menu.Add(item);
+			item = new yMenuItem("Период");
+			item.Activated += (sender, e) => ViewModel.SetPeriod();
+			menu.Add(item);
+			buttonSetFields.Menu = menu;
+			menu.ShowAll();
+		}
 		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
 			ViewModel.SelectedItems = ytreeItems.GetSelectedObjects<ShipmentItem>();
 		}
