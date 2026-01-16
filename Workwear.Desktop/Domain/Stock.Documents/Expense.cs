@@ -39,12 +39,7 @@ namespace Workwear.Domain.Stock.Documents
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
 			get { return employee; } 
-			set {
-				if(SetField(ref employee, value, () => Employee)) {
-					if(value != null)
-						warehouse = value.Subdivision?.Warehouse;
-				}
-			}
+			set { SetField(ref employee, value, () => Employee); }
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();

@@ -398,7 +398,13 @@ namespace Workwear.ViewModels.Stock {
 					break;
 				case nameof(Entity.Employee):
 					var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-					FillUnderreceived(performanceEmployee);
+					if(Entity.Employee?.Subdivision?.Warehouse != null) {
+						Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
+					}
+					else {
+						stockBalanceModel.Warehouse = Entity.Warehouse;
+						FillUnderreceived(performanceEmployee);
+					}
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
 					performanceEmployee.End();
 					break;
