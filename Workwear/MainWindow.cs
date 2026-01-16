@@ -1009,4 +1009,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionIssuanceRequestActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<IssuanceRequestJournalViewModel>(null);
 	}
+
+	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
+	}
 }
