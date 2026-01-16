@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
@@ -14,14 +13,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 {
 	public class EmployeeListedItemsViewModel : ViewModelBase
 	{
-		private readonly IInteractiveService interactive;
-		private string answer;
-		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation, FeaturesService featuresService, IInteractiveService interactive)
+		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation, FeaturesService featuresService)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.featuresService = featuresService;
-			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 		}
 
 		#region Хелперы
@@ -73,13 +69,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
-			if(Entity?.DismissDate != null) {
-				answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {Entity.FullName} " +
-				                                                                          $"указана дата увольнения: {Entity.DismissDate?.ToShortDateString()}. Выдать?",
-					"Предупреждение о наличии даты увольнения у выбранного сотрудника");
-			}
-			if(answer != "Отмена")
-				navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard, string>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity, answer);
+			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
 		public void ReturnWear(EmployeeBalanceVMNode node)
