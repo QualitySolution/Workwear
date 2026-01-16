@@ -144,7 +144,7 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-			EmployeeCardEntryViewModel.IsEditable = CanEdit;
+			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
 			
 			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
@@ -180,6 +180,7 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool SensitiveEntryEmployee => Entity.Id == 0 && CanEdit;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -242,9 +243,9 @@ namespace Workwear.ViewModels.Stock {
 		{
 			Entity.Items.Clear();
 
-			if(Entity.Employee == null)
+			if(Entity.Employee == null || Entity.Warehouse == null)
 				return;
-
+			
 			performance.CheckPoint("Предварительная загрузка сотрудника");
 			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
 			performance.CheckPoint("Предварительная загрузка потребностей");
@@ -369,7 +370,12 @@ namespace Workwear.ViewModels.Stock {
 		{
 			switch(e.PropertyName) {
 				case nameof(Entity.Warehouse):
-					stockBalanceModel.Warehouse = Entity.Warehouse;
+					if(Entity.Id == 0) {
+						stockBalanceModel.Warehouse = Entity.Warehouse;
+						var performanceWarehouse = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+						FillUnderreceived(performanceWarehouse);
+						performanceWarehouse.End();
+					}
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
@@ -377,10 +383,16 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-					FillUnderreceived(performance);
+					var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
+					if(Entity.Employee?.Subdivision?.Warehouse != null) {
+						Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
+					}
+					else {
+						stockBalanceModel.Warehouse = Entity.Warehouse;
+						FillUnderreceived(performanceEmployee);
+					}
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
-					performance.End();
+					performanceEmployee.End();
 					break;
 				case nameof(Entity.IssueDate):
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
