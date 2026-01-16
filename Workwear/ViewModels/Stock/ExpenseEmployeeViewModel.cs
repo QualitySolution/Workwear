@@ -129,9 +129,36 @@ namespace Workwear.ViewModels.Stock {
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
-				performance.StartGroup("FillUnderreceived");
-				FillUnderreceived(performance);
-				performance.EndGroup();
+				if(employee.DismissDate != null) {
+					if(employee.DismissDate > DateTime.Today) {
+						var answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {employee.FullName} " +
+							$"указана дата увольнения: {employee.DismissDate?.ToShortDateString()}. Выдать?",
+							"Предупреждение о наличии даты увольнения");
+						switch(answer) {
+							case "Выдать всё":
+								performance.StartGroup("FillUnderreceived");
+								FillUnderreceived(performance);
+								performance.EndGroup();
+								break;
+							case "Пустой":
+								Entity.Items.Clear();
+								break;
+							case "Отмена":
+								globalProgress.Close();
+								throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
+						}
+					}
+					else {
+						globalProgress.Close();
+						throw new AbortCreatingPageException(
+							$"Сотрудник уволен {employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
+					}
+				}
+				else {
+					performance.StartGroup("FillUnderreceived");
+					FillUnderreceived(performance);
+					performance.EndGroup();
+				}
 			}
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
@@ -377,10 +404,34 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-					FillUnderreceived(performance);
+					if(Entity.Employee?.DismissDate == null) {
+						var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
+						FillUnderreceived(performance);
+						performance.End();
+					}
+					if(Entity.Employee?.DismissDate > DateTime.Today) {
+						var answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {Entity.Employee.FullName} " +
+							$"указана дата увольнения: {Entity.Employee?.DismissDate?.ToShortDateString()}. Выдать?",
+							"Предупреждение о наличии даты увольнения");
+						switch(answer) {
+							case "Выдать всё":
+								var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
+								FillUnderreceived(performance);
+								performance.End();
+								break;
+							case "Пустой":
+								Entity.Items.Clear();
+								break;
+							case "Отмена":
+								Close(false, CloseSource.Self);
+								break;
+						}
+					}
+					if(Entity.Employee?.DismissDate <= DateTime.Today) {
+						interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
+						Close(false, CloseSource.Self);
+					}
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
-					performance.End();
 					break;
 				case nameof(Entity.IssueDate):
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
