@@ -136,12 +136,13 @@ public partial class MainWindow : Gtk.Window {
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
 				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
+				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
 					channel = UpdateChannel.Current.ToString();
 					configuration[$"AppUpdater:Channel"] = channel;
 				}
 				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
 				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+				ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
@@ -150,28 +151,30 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
-			var checker = updateScope.Resolve<VersionCheckerService>();
-			UpdateInfo? updateInfo = checker.RunUpdate();
-			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
-				quitService.Quit();
-				return;
-			}
-
-			if(updateInfo?.Status == UpdateStatus.ConnectionError) {
-				logger.Warn(updateInfo.Value.Message);
-			}
-
-			if(updateInfo?.Status == UpdateStatus.BaseError) {
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				quitService.Quit();
-				return;
-			}
-
-			if(updateInfo?.Status == UpdateStatus.ExternalError) {
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if(!EnterNewSN()) {
+			if(!ActionOffAutoUpdate.Active) {
+				var checker = updateScope.Resolve<VersionCheckerService>();
+				UpdateInfo? updateInfo = checker.RunUpdate();
+				if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 					quitService.Quit();
 					return;
+				}
+
+				if(updateInfo?.Status == UpdateStatus.ConnectionError) {
+					logger.Warn(updateInfo.Value.Message);
+				}
+
+				if(updateInfo?.Status == UpdateStatus.BaseError) {
+					interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+					quitService.Quit();
+					return;
+				}
+
+				if(updateInfo?.Status == UpdateStatus.ExternalError) {
+					interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+					if(!EnterNewSN()) {
+						quitService.Quit();
+						return;
+					}
 				}
 			}
 		}
@@ -1011,5 +1014,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
+		if(ActionOffAutoUpdate.Active)
+			SetChannel(UpdateChannel.OffAutoUpdate);
 	}
 }
