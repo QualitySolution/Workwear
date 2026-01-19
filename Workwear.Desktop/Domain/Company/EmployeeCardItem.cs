@@ -72,6 +72,15 @@ namespace Workwear.Domain.Company
 			get => ProtectionTools?.Dispenser ?? false ? String.Empty : nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
 		}
+
+		private Nomenclature selectedNomenclature;
+		[IgnoreHistoryTrace]
+		[Display (Name = "Выбор сотрудника")]
+		public virtual Nomenclature SelectedNomenclature {
+			get => selectedNomenclature;
+			set => SetField (ref selectedNomenclature, value);
+		}
+		
 		#endregion
 		/// <summary>
 		/// Получаем значения остатков на складе для подходящих позиций.
