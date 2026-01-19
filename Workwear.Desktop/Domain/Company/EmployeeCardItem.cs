@@ -99,6 +99,9 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
+
+		public virtual string SelectedNomenclatureText =>
+			SelectedNomenclature != null ? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : "";
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
 			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {

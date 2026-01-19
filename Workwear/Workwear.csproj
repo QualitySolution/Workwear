@@ -942,6 +942,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <EmbeddedResource Include="icon\buttons\speccoin.png" />
+    <EmbeddedResource Include="icon\rows\choose.png" />
     <Content Include="Reports\ClothingService\ClothingMoveSticker.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
