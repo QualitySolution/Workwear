@@ -136,14 +136,6 @@ public partial class MainWindow : Gtk.Window {
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
 				UpdateChannelActive(configuration);
-				/*var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-				ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();*/
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
