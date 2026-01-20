@@ -551,6 +551,8 @@ public partial class MainWindow : Gtk.Window {
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
 			_ = updater.CheckUpdate(true);
+			var configuration = scope.Resolve<IChangeableConfiguration>();
+			UpdateChannelActive(configuration);
 		}
 	}
 
