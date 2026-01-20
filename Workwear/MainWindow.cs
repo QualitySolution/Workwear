@@ -135,14 +135,15 @@ public partial class MainWindow : Gtk.Window {
 			var appInfo = releaseScope.Resolve<IApplicationInfo>();
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
+				UpdateChannelActive(configuration);
+				/*var channel = configuration[$"AppUpdater:Channel"];
 				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
 					channel = UpdateChannel.Current.ToString();
 					configuration[$"AppUpdater:Channel"] = channel;
 				}
 				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
 				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-				ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
+				ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();*/
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
@@ -153,7 +154,9 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			if(!ActionOffAutoUpdate.Active) {
 				var checker = updateScope.Resolve<VersionCheckerService>();
+				var configuration = updateScope.Resolve<IChangeableConfiguration>();
 				UpdateInfo? updateInfo = checker.RunUpdate();
+				UpdateChannelActive(configuration);
 				if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 					quitService.Quit();
 					return;
@@ -439,6 +442,17 @@ public partial class MainWindow : Gtk.Window {
 		}
 	}
 	#endregion
+
+	private void UpdateChannelActive(IChangeableConfiguration configuration) {
+		var channel = configuration[$"AppUpdater:Channel"];
+		if(channel == null) {  //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
+			channel = UpdateChannel.Current.ToString();
+			configuration[$"AppUpdater:Channel"] = channel;
+		}
+		ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+		ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+		ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
+	}
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
