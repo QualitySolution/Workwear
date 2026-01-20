@@ -131,7 +131,7 @@ namespace Workwear.ViewModels.Stock {
 			if(employee != null) {
 				if(employee.DismissDate != null) {
 					if(employee.DismissDate > DateTime.Today) {
-						var answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {employee.FullName} " +
+						var answer = interactive.Question(new[] { "Выдать всё", "Отмена" }, $"У сотрудника {employee.FullName} " +
 							$"указана дата увольнения: {employee.DismissDate?.ToShortDateString()}. Выдать?",
 							"Предупреждение о наличии даты увольнения");
 						switch(answer) {
@@ -139,9 +139,6 @@ namespace Workwear.ViewModels.Stock {
 								performance.StartGroup("FillUnderreceived");
 								FillUnderreceived(performance);
 								performance.EndGroup();
-								break;
-							case "Пустой":
-								Entity.Items.Clear();
 								break;
 							case "Отмена":
 								globalProgress.Close();
