@@ -129,32 +129,17 @@ namespace Workwear.ViewModels.Stock {
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
-				if(employee.DismissDate != null) {
-					if(employee.DismissDate > DateTime.Today) {
-						var answer = interactive.Question(new[] { "Выдать всё", "Отмена" }, $"У сотрудника {employee.FullName} " +
-							$"указана дата увольнения: {employee.DismissDate?.ToShortDateString()}. Выдать?",
-							"Предупреждение о наличии даты увольнения");
-						switch(answer) {
-							case "Выдать всё":
-								performance.StartGroup("FillUnderreceived");
-								FillUnderreceived(performance);
-								performance.EndGroup();
-								break;
-							case "Отмена":
-								globalProgress.Close();
-								throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
-						}
-					}
-					else {
-						globalProgress.Close();
-						throw new AbortCreatingPageException(
-							$"Сотрудник уволен {employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
-					}
-				}
-				else {
+				if(CheckDismissDate()) {
 					performance.StartGroup("FillUnderreceived");
 					FillUnderreceived(performance);
 					performance.EndGroup();
+				}
+				else {
+					globalProgress.Close();
+					if(employee.DismissDate > DateTime.Today)
+						throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
+					throw new AbortCreatingPageException(
+						$"Сотрудник уволен {employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
 				}
 			}
 
@@ -184,6 +169,18 @@ namespace Workwear.ViewModels.Stock {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 			performance.End();
+		}
+		private bool CheckDismissDate() {
+			if(Entity.Employee?.DismissDate == null)
+				return true;
+			if(Entity.Employee?.DismissDate > DateTime.Today) {
+				var answer = interactive.Question($"У сотрудника {Entity.Employee.FullName} " +
+				                                  $"указана дата увольнения: {Entity.Employee?.DismissDate?.ToShortDateString()}. Выдать?",
+					"Предупреждение о наличии даты увольнения");
+				return answer;
+			}
+			//interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
+			return false;
 		}
 
 		#region IDialogDocumentation
