@@ -410,7 +410,7 @@ namespace Workwear.ViewModels.Stock {
 						performance.End();
 					}
 					if(Entity.Employee?.DismissDate > DateTime.Today) {
-						var answer = interactive.Question(new[] { "Выдать всё", "Пустой", "Отмена" }, $"У сотрудника {Entity.Employee.FullName} " +
+						var answer = interactive.Question(new[] { "Выдать всё", "Отмена" }, $"У сотрудника {Entity.Employee.FullName} " +
 							$"указана дата увольнения: {Entity.Employee?.DismissDate?.ToShortDateString()}. Выдать?",
 							"Предупреждение о наличии даты увольнения");
 						switch(answer) {
@@ -418,9 +418,6 @@ namespace Workwear.ViewModels.Stock {
 								var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
 								FillUnderreceived(performance);
 								performance.End();
-								break;
-							case "Пустой":
-								Entity.Items.Clear();
 								break;
 							case "Отмена":
 								Close(false, CloseSource.Self);
