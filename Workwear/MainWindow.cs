@@ -144,32 +144,30 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
-			if(!ActionOffAutoUpdate.Active) {
-				var checker = updateScope.Resolve<VersionCheckerService>();
-				var configuration = updateScope.Resolve<IChangeableConfiguration>();
-				UpdateInfo? updateInfo = checker.RunUpdate();
-				UpdateChannelActive(configuration);
-				if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
+			var checker = updateScope.Resolve<VersionCheckerService>();
+			var configuration = updateScope.Resolve<IChangeableConfiguration>();
+			UpdateInfo? updateInfo = checker.RunUpdate(ActionOffAutoUpdate.Active);
+			UpdateChannelActive(configuration);
+			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
+				quitService.Quit();
+				return;
+			}
+
+			if(updateInfo?.Status == UpdateStatus.ConnectionError) {
+				logger.Warn(updateInfo.Value.Message);
+			}
+
+			if(updateInfo?.Status == UpdateStatus.BaseError) {
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				quitService.Quit();
+				return;
+			}
+
+			if(updateInfo?.Status == UpdateStatus.ExternalError) {
+				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
+				if(!EnterNewSN()) {
 					quitService.Quit();
 					return;
-				}
-
-				if(updateInfo?.Status == UpdateStatus.ConnectionError) {
-					logger.Warn(updateInfo.Value.Message);
-				}
-
-				if(updateInfo?.Status == UpdateStatus.BaseError) {
-					interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-					quitService.Quit();
-					return;
-				}
-
-				if(updateInfo?.Status == UpdateStatus.ExternalError) {
-					interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-					if(!EnterNewSN()) {
-						quitService.Quit();
-						return;
-					}
 				}
 			}
 		}
