@@ -135,13 +135,7 @@ public partial class MainWindow : Gtk.Window {
 			var appInfo = releaseScope.Resolve<IApplicationInfo>();
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+				UpdateChannelActive(configuration);
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
@@ -151,7 +145,9 @@ public partial class MainWindow : Gtk.Window {
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
-			UpdateInfo? updateInfo = checker.RunUpdate();
+			var configuration = updateScope.Resolve<IChangeableConfiguration>();
+			UpdateInfo? updateInfo = checker.RunUpdate(ActionOffAutoUpdate.Active);
+			UpdateChannelActive(configuration);
 			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 				quitService.Quit();
 				return;
@@ -437,6 +433,17 @@ public partial class MainWindow : Gtk.Window {
 	}
 	#endregion
 
+	private void UpdateChannelActive(IChangeableConfiguration configuration) {
+		var channel = configuration[$"AppUpdater:Channel"];
+		if(channel == null) {  //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
+			channel = UpdateChannel.Current.ToString();
+			configuration[$"AppUpdater:Channel"] = channel;
+		}
+		ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
+		ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+		ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
+	}
+
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
@@ -544,6 +551,8 @@ public partial class MainWindow : Gtk.Window {
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
 			_ = updater.CheckUpdate(true);
+			var configuration = scope.Resolve<IChangeableConfiguration>();
+			UpdateChannelActive(configuration);
 		}
 	}
 
@@ -1008,5 +1017,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionIssuanceRequestActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<IssuanceRequestJournalViewModel>(null);
+	}
+
+	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
+		if(ActionOffAutoUpdate.Active)
+			SetChannel(UpdateChannel.OffAutoUpdate);
 	}
 }
