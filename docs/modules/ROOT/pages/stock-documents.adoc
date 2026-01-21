@@ -262,3 +262,15 @@ image::stock-documents_issuance-sheet_print.png[]
 ****
 image::stock-documents_issuance-sheet_print-task.png[]
 ****
+
+Третья печатная форма ведомости — форма ОКУД 0504210, используемая в государственных учреждениях. Данная форма состоит из двух листов.
+
+.Ведомость ОКУД 0504210 (лист 1)
+****
+image::stock-documents_issuance-sheet_okud0504210-page1.png[]
+****
+
+.Ведомость ОКУД 0504210 (лист 2)
+****
+image::stock-documents_issuance-sheet_okud0504210-page2.png[]
+****
