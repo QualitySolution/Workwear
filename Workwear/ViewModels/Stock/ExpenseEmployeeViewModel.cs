@@ -155,7 +155,7 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-			EmployeeCardEntryViewModel.IsEditable = CanEdit;
+			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
 			EmployeeCardEntryViewModel.BeforeChangeByUser += (s, e) => { employeeBefore = Entity.Employee; };
 			EmployeeCardEntryViewModel.ChangedByUser += OnEmployeeChangedByUser;
 			
@@ -183,7 +183,6 @@ namespace Workwear.ViewModels.Stock {
 					"Предупреждение о наличии даты увольнения");
 				return answer;
 			}
-			//interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
 			return false;
 		}
 
@@ -393,16 +392,21 @@ namespace Workwear.ViewModels.Stock {
 		
 		private void OnEmployeeChangedByUser(object sender, EventArgs args)
 		{
-			if(Entity.Employee?.DismissDate <= Entity.Date) {
-				interactive.ShowMessage(ImportanceLevel.Error,
-					$"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
-				try {
-					backEmployee = true;
-					Entity.Employee = employeeBefore;
+			if(CheckDismissDate()) {
+				var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+				if(Entity.Employee?.Subdivision?.Warehouse != null && Entity.Employee?.Subdivision?.Warehouse != Entity.Warehouse) {
+					Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
 				}
-				finally {
-					backEmployee = false;
+				else {
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					FillUnderreceived(performanceEmployee);
 				}
+				performanceEmployee.End();
+			}
+			else {
+				if(Entity.Employee?.DismissDate <= Entity.Date)
+					interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.\", \"Запрет выдачи\"");
+				Entity.Employee = employeeBefore;
 			}
 		}
 		
@@ -423,34 +427,6 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					if(backEmployee)
-						break;
-					if(Entity.Employee?.DismissDate == null) {
-						var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-						FillUnderreceived(performance);
-						performance.End();
-					}
-					if(Entity.Employee?.DismissDate > DateTime.Today) {
-						var answer = interactive.Question(new[] { "Выдать всё", "Отмена" }, $"У сотрудника {Entity.Employee.FullName} " +
-							$"указана дата увольнения: {Entity.Employee?.DismissDate?.ToShortDateString()}. Выдать?",
-							"Предупреждение о наличии даты увольнения");
-						switch(answer) {
-							case "Выдать всё":
-								var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-								FillUnderreceived(performance);
-								performance.End();
-								break;
-							case "Отмена":
-								try {
-									backEmployee = true;
-									Entity.Employee = employeeBefore;
-								}
-								finally {
-									backEmployee = false;
-								}
-								break;
-						}
-					}
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
 					break;
 				case nameof(Entity.IssueDate):
