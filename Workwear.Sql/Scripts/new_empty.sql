@@ -1861,11 +1861,13 @@ DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 -- Table `protection_tools_nomenclature`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `can_choose` BOOLEAN DEFAULT FALSE NOT NULL,
-  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
+  PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
+  UNIQUE INDEX `unique_protection_tools_nomenclature` (protection_tools_id, nomenclature_id),
   CONSTRAINT `fk_protection_tools_nomenclature_1`
     FOREIGN KEY (`protection_tools_id`)
     REFERENCES `protection_tools` (`id`)

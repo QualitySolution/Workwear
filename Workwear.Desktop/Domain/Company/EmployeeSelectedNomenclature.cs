@@ -4,9 +4,17 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Company {
+
+	[Appellative(Gender = GrammaticalGender.Feminine,
+		NominativePlural = "выборов сотрудником номенклатур",
+		Nominative = "выбор сотрудником номенклатуры",
+		Genitive = "выбор сотрудником номенклатуры",
+		GenitivePlural = "выбор сотрудником номенклатур"
+	)]
 	public class EmployeeSelectedNomenclature: PropertyChangedBase, IDomainObject {
-		
 		public virtual int Id { get; }
+		
+		public virtual string Title => $"{Employee.ShortName} в качестве \"{ProtectionTools.Name}\" предпоч{(Employee.Sex == Sex.F ? "ла" : "ёл")} \"{Nomenclature.Name}\"";
 		
 		private EmployeeCard employee;
 		[Display (Name = "Сотрудник")]

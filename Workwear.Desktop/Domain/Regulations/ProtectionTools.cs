@@ -137,7 +137,7 @@ namespace Workwear.Domain.Regulations
 		#region Номенклатура
 
 		private IObservableList<ProtectionToolsNomenclature> protectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>();
-		[Display(Name = "Связи с номенклатурами")]
+		[Display(Name = "Список номенклатур")]
         public virtual IObservableList<ProtectionToolsNomenclature> ProtectionToolsNomenclatures {
         	get { return protectionToolsNomenclatures; }
 	        set { SetField(ref protectionToolsNomenclatures, value); }
