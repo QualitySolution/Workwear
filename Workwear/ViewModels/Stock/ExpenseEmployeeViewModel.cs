@@ -138,10 +138,7 @@ namespace Workwear.ViewModels.Stock {
 				}
 				else {
 					globalProgress.Close();
-					if(employee.DismissDate > Entity.Date)
-						throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
-					throw new AbortCreatingPageException(
-						$"Сотрудник уволен {employee.DismissDate?.ToShortDateString()}. Выдача невозможна.", "Запрет выдачи");
+					throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
 				}
 			}
 
@@ -183,6 +180,7 @@ namespace Workwear.ViewModels.Stock {
 					"Предупреждение о наличии даты увольнения");
 				return answer;
 			}
+			interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.");
 			return false;
 		}
 
@@ -404,8 +402,6 @@ namespace Workwear.ViewModels.Stock {
 				performanceEmployee.End();
 			}
 			else {
-				if(Entity.Employee?.DismissDate <= Entity.Date)
-					interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.\", \"Запрет выдачи\"");
 				Entity.Employee = employeeBefore;
 			}
 		}
