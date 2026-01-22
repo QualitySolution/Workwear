@@ -55,7 +55,6 @@ namespace Workwear.ViewModels.Stock {
 		private readonly EmployeeIssueModel issueModel;
 		private readonly IssuedSheetPrintModel printModel;
 		private EmployeeCard employeeBefore;
-		private bool backEmployee;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -401,9 +400,8 @@ namespace Workwear.ViewModels.Stock {
 				}
 				performanceEmployee.End();
 			}
-			else {
+			else
 				Entity.Employee = employeeBefore;
-			}
 		}
 		
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
