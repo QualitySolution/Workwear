@@ -493,8 +493,8 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
 				employee.DismissDate = null;
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
@@ -513,11 +513,10 @@ namespace WorkwearTest.ViewModels.Stock
 					);
 
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
-					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
 					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
-					if(vmCreateIssue.Entity.Employee.DismissDate == null)
-						Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
+					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
+					
+					Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
 					
 					var itemLast = vmCreateIssue.Entity.Items.First(x => x.ProtectionTools.Id == protectionTools.Id);
 					itemLast.Amount = 1;
