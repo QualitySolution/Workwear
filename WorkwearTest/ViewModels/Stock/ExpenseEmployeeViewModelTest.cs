@@ -373,6 +373,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
+				employee.DismissDate = null;
 				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
@@ -389,12 +390,12 @@ namespace WorkwearTest.ViewModels.Stock
 				//Диалог создания документа выдачи.
 				using (var scope = container.BeginLifetimeScope()) {
 					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
-						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()),
+						new TypedParameter(typeof(EmployeeCard), employee)
 					);
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
-					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
+					
 					Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
 					var itemLast = vmCreateIssue.Entity.Items.First(x => x.ProtectionTools.Id == protectionTools.Id);
 					itemLast.Amount = 1;
@@ -493,6 +494,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
+				employee.DismissDate = null;
 				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
@@ -508,14 +510,15 @@ namespace WorkwearTest.ViewModels.Stock
 				//Диалог создания документа выдачи.
 				using (var scope = container.BeginLifetimeScope()) {
 					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
-						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()), 
+						new TypedParameter(typeof(EmployeeCard), employee)
 					);
 
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
-					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
+					
 					Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
+					
 					var itemLast = vmCreateIssue.Entity.Items.First(x => x.ProtectionTools.Id == protectionTools.Id);
 					itemLast.Amount = 1;
 					

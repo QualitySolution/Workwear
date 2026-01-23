@@ -69,7 +69,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
-
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 

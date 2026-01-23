@@ -133,6 +133,10 @@ namespace Workwear.Domain.Stock.Documents
 					}
 				}
 			}
+			if(Employee?.DismissDate < Date) {
+				yield return new ValidationResult($"Запрещается выдача сотруднику, уволенному до {Date.ToShortDateString()}",
+					new[] { nameof(Employee.DismissDate), nameof(Date)});
+			}
 		}
 		#endregion
 
