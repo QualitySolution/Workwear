@@ -4,6 +4,7 @@ using System.Linq;
 using QS.Dialog;
 using QS.Extensions.Observable.Collections.List;
 using QS.ViewModels;
+using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
@@ -34,6 +35,7 @@ namespace Workwear.ViewModels.Visits {
 			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 		}
 		public IObservableList<EmployeeCardItemsVmNode> GroupedList = new ObservableList<EmployeeCardItemsVmNode>();
+		public IList<EmployeeCardItemsVmNode> EmployeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 		private IList<EmployeeCardItemsVmNode> groupedEmployeeCardItems;
 		public virtual IList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems {
 			get => groupedEmployeeCardItems;
@@ -47,18 +49,33 @@ namespace Workwear.ViewModels.Visits {
 				UpdateNodes();
 		}
 
+		public void UpdateInStock(EmployeeCardItem[] employeeCardItems, Warehouse warehouse = null) {
+			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
+			stockBalanceModel.Warehouse = warehouse;
+			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
+			foreach(var item in EmployeeCardItemsNodeList) {
+				item.InStock = employeeCardItems.FirstOrDefault(x => x.Id == item.Id).InStock.Sum(x => x.Amount);
+			}
+
+			foreach(var grItem in GroupedList) {
+				grItem.InStock = EmployeeCardItemsNodeList
+					.Where(x => x.ProtectionToolsId == grItem.ProtectionToolsId)
+					.Where(x => x.WearSize?.Id == grItem.WearSize?.Id)
+					.Where(x => x.Height?.Id == grItem.Height?.Id)
+					.Select(x => x.InStock).First();
+			}
+		}
+		
 		public void UpdateNodes(bool needPerformance = true, Warehouse warehouse = null) {
 			GroupedList.Clear();
 			ProgressPerformanceHelper performance = null;
 			if(needPerformance)
 				performance =  new ProgressPerformanceHelper(modalProgress, 10,"Старт" ,logger);
 			
-			IList<EmployeeCardItemsVmNode> employeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 			CollectiveExpense collectiveExpenseAlias = null;
 
 			performance?.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
-			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
-			stockBalanceModel.Warehouse = warehouse;
+			
 			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
 			
 			performance?.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
@@ -77,9 +94,6 @@ namespace Workwear.ViewModels.Visits {
 				.JoinAlias(x => x.Document, () => collectiveExpenseAlias)
 				.Where(() => collectiveExpenseAlias.IssuanceRequest.Id == IssuanceRequest.Id)
 				.List();
-			
-			performance?.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
-			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
 			
 			performance?.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
 			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
@@ -112,13 +126,12 @@ namespace Workwear.ViewModels.Visits {
 					Units = item.ProtectionTools.Type?.Units?.Name,
 					Need = need,
 					Issued = Math.Min(issuedByCollectiveExpense, need),
-					InStock = item.InStock.Sum(x => x.Amount),
 				};
-				employeeCardItemsNodeList.Add(employeeCardItemsNode);
+				EmployeeCardItemsNodeList.Add(employeeCardItemsNode);
 			}
 			
 			performance?.CheckPoint("Группирровка потребностей");
-			GroupedEmployeeCardItems = employeeCardItemsNodeList
+			GroupedEmployeeCardItems = EmployeeCardItemsNodeList
 				.GroupBy(x => (x.ProtectionToolsId, x.WearSize, x.Height))
 				.Select(node => new EmployeeCardItemsVmNode {
 					ProtectionToolsId = node.Key.ProtectionToolsId,
@@ -128,13 +141,16 @@ namespace Workwear.ViewModels.Visits {
 					Units = node.First().Units,
 					Need = node.Sum(x => x.Need),
 					Issued = node.Sum(x => x.Issued),
-					InStock = node.First().InStock
 				})
 				.Where(node => node.Need != 0)
 				.ToList();
 			performance?.CheckPoint("Добавление элементов в Observable-коллекцию");
 			foreach(var item in GroupedEmployeeCardItems)
 				GroupedList.Add(item);
+			
+			performance?.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
+			UpdateInStock(employeeCardItems, warehouse);
+			
 			performance?.End();
 		}
 		#endregion

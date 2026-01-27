@@ -129,7 +129,10 @@ namespace Workwear.ViewModels.Visits {
 			get => selectWarehouseStock;
 			set {
 				SetField(ref selectWarehouseStock, value);
-				EmployeeCardItemsViewModel.UpdateNodes(false, selectWarehouseStock);
+				EmployeeCardItemsViewModel.UpdateInStock(Employees
+					.SelectMany(x => x.WorkwearItems)
+					.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective) /*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику. Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
+					.ToArray(), selectWarehouseStock);
 			}
 		}
 		#endregion
