@@ -154,7 +154,7 @@ namespace Workwear.ViewModels.Visits {
 		public int NeedToBeIssued => Need >= Issued ? Need - Issued : 0;
 		public string NeedToBeIssuedText => $"{NeedToBeIssued} {Units}";
 		public int InStock { get; set; }
-		public string InStockText => $"{InStock} {Units}";
+		public string InStockText => $"{(InStock > 0 ? InStock : 0)} {Units}";
 		
 		public string NeedToBeIssuedColor() {
 			if(NeedToBeIssued == 0)
