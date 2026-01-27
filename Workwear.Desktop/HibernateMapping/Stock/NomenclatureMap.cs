@@ -21,6 +21,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Number).Column("number");
 			Map(x => x.AdditionalInfo).Column("additional_info");
+			Map(x => x.CatalogId).Column("catalog_id");
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.SaleCost).Column("sale_cost");
 			Map(x => x.Rating).Column("rating");

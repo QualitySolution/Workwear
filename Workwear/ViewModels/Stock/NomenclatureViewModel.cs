@@ -89,6 +89,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
 		public bool VisibleServices => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool VisibleCatalogId => featuresService.Available(WorkwearFeature.Catalog);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;

@@ -90,7 +90,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("Цена").Visible(ViewModel.VisibleSaleCost)
 					.AddReadOnlyTextRenderer(n => n.Nomenclature.SaleCost?.ToString("C"))
 				.AddColumn("Пол").AddTextRenderer(p => p.Nomenclature.Sex.GetEnumTitle())
-				.AddColumn("Выбор сотрудником")
+				.AddColumn("Выбор сотрудником").Visible(ViewModel.VisibleChoosingNomenclature)
 					.AddToggleRenderer(x => x.CanChoose)
 					.Editing()
 				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Nomenclature.Archival? "gray": "black")
