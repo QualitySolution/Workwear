@@ -57,8 +57,8 @@ namespace Workwear.ViewModels.Visits {
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
-			SelectWarehouse =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
-
+			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			SelectWarehouseStock = SelectWarehouseIssued;
 			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
 			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);
 		}
@@ -108,7 +108,7 @@ namespace Workwear.ViewModels.Visits {
 		#endregion
 
 		#region Sensitive
-		public bool CanCreateCollectiveExpense => SelectWarehouse != null;
+		public bool CanCreateCollectiveExpense => SelectWarehouseIssued != null;
 		#endregion
 		
 		#region Работа со складом
@@ -117,11 +117,17 @@ namespace Workwear.ViewModels.Visits {
 			get => warehouses;
 			set => SetField(ref warehouses, value);
 		}
-		private Warehouse selectWarehouse;
+		private Warehouse selectWarehouseIssued;
 		[PropertyChangedAlso(nameof(CanCreateCollectiveExpense))]
-		public Warehouse SelectWarehouse {
-			get => selectWarehouse;
-			set => SetField(ref selectWarehouse, value);
+		public Warehouse SelectWarehouseIssued {
+			get => selectWarehouseIssued;
+			set => SetField(ref selectWarehouseIssued, value);
+		}
+
+		private Warehouse selectWarehouseStock;
+		public Warehouse SelectWarehouseStock {
+			get => selectWarehouseStock;
+			set => SetField(ref selectWarehouseStock, value);
 		}
 		#endregion
 		
@@ -250,7 +256,7 @@ namespace Workwear.ViewModels.Visits {
 					return;
 			}
 			navigation.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder, 
-				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouse);
+				IssuanceRequest, Warehouse>(this, EntityUoWBuilder.ForCreate(), Entity, SelectWarehouseIssued);
 		}
 
 		private IList<CollectiveExpense> LoadCollectiveExpenses() {

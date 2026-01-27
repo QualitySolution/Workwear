@@ -108,7 +108,11 @@ namespace Workwear.Views.Visits {
 		private void ConfigureCollectiveExpenseList() {
 			yspeccomboboxWarehouseIssued.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
-				.AddBinding(vm => vm.SelectWarehouse, w => w.SelectedItem)
+				.AddBinding(vm => vm.SelectWarehouseIssued, w => w.SelectedItem)
+				.InitializeFromSource();
+			yspeccomboboxWarehouseStock.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
+				.AddBinding(vm => vm.SelectWarehouseStock, w => w.SelectedItem)
 				.InitializeFromSource();
 			ytreeviewExpense.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.CollectiveExpenses, w => w.ItemsDataSource)
