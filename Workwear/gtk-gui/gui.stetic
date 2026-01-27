@@ -37886,10 +37886,11 @@
                     <child>
                       <widget class="Gamma.Widgets.ySpecComboBox" id="yspeccomboboxWarehouseStock">
                         <property name="MemberName" />
+                        <property name="IsTextCombo">False</property>
                         <property name="Items" translatable="yes" />
                         <property name="AddIfNotExist">False</property>
                         <property name="DefaultFirst">False</property>
-                        <property name="ShowSpecialStateAll">False</property>
+                        <property name="ShowSpecialStateAll">True</property>
                         <property name="ShowSpecialStateNot">False</property>
                       </widget>
                       <packing>

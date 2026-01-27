@@ -58,7 +58,7 @@ namespace Workwear.ViewModels.Visits {
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
 			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
-			SelectWarehouseStock = SelectWarehouseIssued;
+			selectWarehouseStock = SelectWarehouseIssued;
 			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
 			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);
 		}
@@ -127,7 +127,10 @@ namespace Workwear.ViewModels.Visits {
 		private Warehouse selectWarehouseStock;
 		public Warehouse SelectWarehouseStock {
 			get => selectWarehouseStock;
-			set => SetField(ref selectWarehouseStock, value);
+			set {
+				SetField(ref selectWarehouseStock, value);
+				EmployeeCardItemsViewModel.UpdateNodes(false, selectWarehouseStock);
+			}
 		}
 		#endregion
 		

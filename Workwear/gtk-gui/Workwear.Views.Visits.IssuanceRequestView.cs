@@ -500,7 +500,7 @@ namespace Workwear.Views.Visits
 			this.yspeccomboboxWarehouseStock.Name = "yspeccomboboxWarehouseStock";
 			this.yspeccomboboxWarehouseStock.AddIfNotExist = false;
 			this.yspeccomboboxWarehouseStock.DefaultFirst = false;
-			this.yspeccomboboxWarehouseStock.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouseStock.ShowSpecialStateAll = true;
 			this.yspeccomboboxWarehouseStock.ShowSpecialStateNot = false;
 			this.yhbox4.Add(this.yspeccomboboxWarehouseStock);
 			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.yhbox4[this.yspeccomboboxWarehouseStock]));

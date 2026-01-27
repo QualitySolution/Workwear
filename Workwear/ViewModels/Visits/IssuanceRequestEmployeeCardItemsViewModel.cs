@@ -47,7 +47,7 @@ namespace Workwear.ViewModels.Visits {
 				UpdateNodes();
 		}
 
-		public void UpdateNodes(bool needPerformance = true) {
+		public void UpdateNodes(bool needPerformance = true, Warehouse warehouse = null) {
 			GroupedList.Clear();
 			ProgressPerformanceHelper performance = null;
 			if(needPerformance)
@@ -58,6 +58,7 @@ namespace Workwear.ViewModels.Visits {
 
 			performance?.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
 			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
+			stockBalanceModel.Warehouse = warehouse;
 			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
 			
 			performance?.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
