@@ -36,6 +36,7 @@ namespace Workwear.ViewModels.Visits {
 		}
 		public IObservableList<EmployeeCardItemsVmNode> GroupedList = new ObservableList<EmployeeCardItemsVmNode>();
 		public IList<EmployeeCardItemsVmNode> EmployeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
+		private IList<EmployeeCardItem> employeeCardItems = new List<EmployeeCardItem>();
 		private IList<EmployeeCardItemsVmNode> groupedEmployeeCardItems;
 		public virtual IList<EmployeeCardItemsVmNode> GroupedEmployeeCardItems {
 			get => groupedEmployeeCardItems;
@@ -49,7 +50,7 @@ namespace Workwear.ViewModels.Visits {
 				UpdateNodes();
 		}
 
-		public void UpdateInStock(EmployeeCardItem[] employeeCardItems, Warehouse warehouse = null) {
+		public void UpdateInStock(Warehouse warehouse = null) {
 			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
 			stockBalanceModel.Warehouse = warehouse;
 			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
@@ -67,6 +68,7 @@ namespace Workwear.ViewModels.Visits {
 		}
 		
 		public void UpdateNodes(bool needPerformance = true, Warehouse warehouse = null) {
+			employeeCardItems.Clear();
 			GroupedList.Clear();
 			ProgressPerformanceHelper performance = null;
 			if(needPerformance)
@@ -82,12 +84,12 @@ namespace Workwear.ViewModels.Visits {
 			employeeIssueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
 			
 			performance?.CheckPoint("Загрузка потребностей");
-			var employeeCardItems = employees
+			employeeCardItems = employees
 				.SelectMany(x => x.WorkwearItems)
 				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
 				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
 				.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective)
-				.ToArray();
+				.ToList();
 			
 			performance?.CheckPoint("Загрузка строк док-в коллективной выдачи");
 			var collectiveExpenseItems = parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
@@ -96,7 +98,7 @@ namespace Workwear.ViewModels.Visits {
 				.List();
 			
 			performance?.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
-			employeeIssueModel.FillWearReceivedInfo(employeeCardItems);
+			employeeIssueModel.FillWearReceivedInfo(employeeCardItems.ToArray());
 
 			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
 			performance?.CheckPoint("Заполнение потребностей");
@@ -149,7 +151,7 @@ namespace Workwear.ViewModels.Visits {
 				GroupedList.Add(item);
 			
 			performance?.CheckPoint(nameof(employeeIssueModel.FillWearInStockInfo));
-			UpdateInStock(employeeCardItems, warehouse);
+			UpdateInStock(warehouse);
 			
 			performance?.End();
 		}
