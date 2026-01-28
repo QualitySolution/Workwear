@@ -41,14 +41,14 @@ namespace workwear.Journal.ViewModels.Regulations {
 				Subdivision subdivisionAlias = null;
 				
 				return uow.Session.QueryOver<DutyNorm>(() => dutyNormsAlias)
-					.Where(GetSearchCriterion<DutyNorm>(
-						x => x.Id, 
-						x => x.Name,
-						x => x.Subdivision,
-						x => x.Comment
+					.JoinAlias(x => dutyNormsAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
+					.Where(GetSearchCriterion(
+						() => dutyNormsAlias.Id,
+						() => dutyNormsAlias.Name,
+						() => subdivisionAlias.Name,
+						() => dutyNormsAlias.Comment
 					))
-					.JoinAlias(() => dutyNormsAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
-                    .SelectList((list) => list
+					.SelectList((list) => list
 						.Select(x => x.Id).WithAlias(() => resultAlias.Id)
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.SubdivisionName)
