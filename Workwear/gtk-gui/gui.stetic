@@ -5537,6 +5537,16 @@
         <property name="ShortLabel" translatable="yes">Заявки на выдачу</property>
         <signal name="Activated" handler="OnActionIssuanceRequestActivated" />
       </action>
+      <action id="ActionOffAutoUpdate">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Без обновлений</property>
+        <property name="ShortLabel" translatable="yes">Без обновлений</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">UpdateChannel</property>
+        <signal name="Toggled" handler="OnActionOffAutoUpdateToggled" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -5678,6 +5688,7 @@
                 <node type="Menu" action="ActionUpdateChannel">
                   <node type="Menuitem" action="ActionChannelCurrent" />
                   <node type="Menuitem" action="ActionChannelStable" />
+                  <node type="Menuitem" action="ActionOffAutoUpdate" />
                 </node>
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />

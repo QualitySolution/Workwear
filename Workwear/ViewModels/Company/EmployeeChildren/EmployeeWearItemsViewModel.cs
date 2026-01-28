@@ -28,7 +28,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-		
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
