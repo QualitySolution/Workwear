@@ -47,10 +47,10 @@ namespace Workwear.ViewModels.Visits {
 		#region События
 		public void OnShow() {
 			if(GroupedEmployeeCardItems == null)
-				UpdateNodes();
+				UpdateNodes(parent.SelectWarehouseStock);
 		}
 
-		public void UpdateInStock(Warehouse warehouse = null) {
+		public void UpdateInStock(Warehouse warehouse) {
 			stockBalanceModel.OnDate = IssuanceRequest.ReceiptDate;
 			stockBalanceModel.Warehouse = warehouse;
 			employeeIssueModel.FillWearInStockInfo(employeeCardItems, stockBalanceModel);
@@ -67,7 +67,7 @@ namespace Workwear.ViewModels.Visits {
 			}
 		}
 		
-		public void UpdateNodes(bool needPerformance = true, Warehouse warehouse = null) {
+		public void UpdateNodes(Warehouse warehouse, bool needPerformance = true) {
 			employeeCardItems.Clear();
 			GroupedList.Clear();
 			ProgressPerformanceHelper performance = null;

@@ -150,7 +150,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = UoW.GetById<EmployeeCard>(employeeIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 		
@@ -165,7 +165,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromSubdivisions(UoW, subdivisionIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 
@@ -180,7 +180,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromDepartments(UoW, departmentIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 
@@ -195,7 +195,7 @@ namespace Workwear.ViewModels.Visits {
 			var employees = employeeRepository.GetActiveEmployeesFromGroups(UoW, groupIds);
 			foreach(var emp in employees)
 				Employees.Add(emp);
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 		#endregion
@@ -205,7 +205,7 @@ namespace Workwear.ViewModels.Visits {
 			foreach(var emp in employees) {
 				Entity.Employees.Remove(emp);
 			}
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 		#endregion
@@ -234,7 +234,7 @@ namespace Workwear.ViewModels.Visits {
 				ce.IssuanceRequest = Entity;
 				CollectiveExpenses.Add(ce);
 			}
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 		#endregion
@@ -245,7 +245,7 @@ namespace Workwear.ViewModels.Visits {
 				ce.IssuanceRequest = null;
 				Entity.CollectiveExpenses.Remove(ce);
 			}
-			EmployeeCardItemsViewModel.UpdateNodes();
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
 			UpdateStatus();
 		}
 		#endregion
@@ -272,7 +272,7 @@ namespace Workwear.ViewModels.Visits {
 			Entity.CollectiveExpenses.Clear();
 			foreach(var doc in  LoadCollectiveExpenses())
 				Entity.CollectiveExpenses.Add(doc);
-			EmployeeCardItemsViewModel.UpdateNodes(false);
+			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock, false);
 			UpdateStatus();
 			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
 		}
