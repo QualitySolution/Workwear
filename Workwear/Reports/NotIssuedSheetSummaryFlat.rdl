@@ -809,9 +809,7 @@ FROM (SELECT protection_tools.name                                              
                LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR
                                     employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
                JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-               LEFT JOIN protection_tools_nomenclature ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
-               LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-               LEFT JOIN (SELECT nomenclature.id AS nom_id,
+               LEFT JOIN (SELECT protection_tools_nomenclature.protection_tools_id as prt_id,
                                  shipment.id as shipment_id,
                                  shipment.start_period,
                                  shipment.end_period,
@@ -826,11 +824,12 @@ FROM (SELECT protection_tools.name                                              
                                             ' (№', shipment.id, ')'
                                     )) AS period
                           FROM nomenclature
+                            LEFT JOIN protection_tools_nomenclature  ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
                             LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
                             LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
                           WHERE shipment.status NOT LIKE 'Received'
                           GROUP BY nomenclature.id, shipment.id) AS diff
-               ON diff.nom_id = nomenclature.id
+               ON diff.prt_id = protection_tools.id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
                LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
