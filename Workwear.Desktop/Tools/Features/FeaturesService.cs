@@ -181,6 +181,10 @@ namespace Workwear.Tools.Features
 						if(ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("catalog");
+					case WorkwearFeature.EmployeeChoose:
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+							return false;
+						return AvailableCloudFeatures.Contains("choice_nomenclature_lk");
 				}
 			}
 
@@ -206,7 +210,6 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportStockOperations:
 				case WorkwearFeature.ReportSupply:
 				case WorkwearFeature.StockForecasting:
-				case WorkwearFeature.EmployeeChoose:
 				case WorkwearFeature.Warehouses:
 					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
 				// Платные функции предприятия
@@ -310,6 +313,7 @@ namespace Workwear.Tools.Features
 		Exchange1C,
 		[Display(Name = "Прогнозирование запасов")]
 		StockForecasting,
+		[IsCloudFeature]
 		[Display(Name = "Выбор сотрудника")]
 		EmployeeChoose,
 		#region Отчеты

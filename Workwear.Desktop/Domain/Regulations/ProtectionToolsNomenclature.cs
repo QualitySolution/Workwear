@@ -30,7 +30,7 @@ namespace Workwear.Domain.Regulations {
 		}
 		
 		private bool canChoose;
-		[Display(Name = "Можно мыбрать в ЛК")]
+		[Display(Name = "Можно выбрать в ЛК")]
 		public virtual bool CanChoose {
 			get => canChoose;
 			set => SetField(ref canChoose, value);
