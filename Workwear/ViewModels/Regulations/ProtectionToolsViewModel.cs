@@ -61,7 +61,7 @@ namespace Workwear.ViewModels.Regulations
 
 			sizeChangeRestriction = Entity.SizeChangeRestriction != null;
 			
-			Entity.Nomenclatures.CollectionChanged += EntityNomenclaturesChanged;
+			Entity.ProtectionToolsNomenclatures.CollectionChanged += EntityNomenclaturesChanged;
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 		}
 		
@@ -108,6 +108,7 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Visible Sensitive
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool VisibleChoosingNomenclature => featuresService.Available(WorkwearFeature.EmployeeChoose);
 		public bool ShowSupply => featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel);
 		public bool ShowSupplyUnisex => SupplyType == SupplyType.Unisex;
 		public bool ShowSupplyTwosex => SupplyType == SupplyType.TwoSex;
@@ -217,10 +218,10 @@ namespace Workwear.ViewModels.Regulations
 			}
 		}
 
-		public void RemoveNomenclature(Nomenclature[] tools)
+		public void RemoveNomenclature(ProtectionToolsNomenclature[] items)
 		{
-			foreach(var item in tools) {
-				Entity.RemoveNomenclature(item);
+			foreach(var item in items) {
+				Entity.RemoveNomenclature(item.Nomenclature);
 			}
 		}
 

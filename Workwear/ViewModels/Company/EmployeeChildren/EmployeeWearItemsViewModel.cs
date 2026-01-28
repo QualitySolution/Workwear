@@ -110,7 +110,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#endregion
 
 		#region Sensetive And Visibility
-
+		public bool VisibleEmployeeChoose => FeaturesService.Available(WorkwearFeature.EmployeeChoose);
 		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 
 		#endregion

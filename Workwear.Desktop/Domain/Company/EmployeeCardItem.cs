@@ -72,6 +72,15 @@ namespace Workwear.Domain.Company
 			get => ProtectionTools?.Dispenser ?? false ? String.Empty : nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
 		}
+
+		private Nomenclature selectedNomenclature;
+		[IgnoreHistoryTrace]
+		[Display (Name = "Выбор сотрудника")]
+		public virtual Nomenclature SelectedNomenclature {
+			get => selectedNomenclature;
+			set => SetField (ref selectedNomenclature, value);
+		}
+		
 		#endregion
 		/// <summary>
 		/// Получаем значения остатков на складе для подходящих позиций.
@@ -90,6 +99,9 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
+
+		public virtual string SelectedNomenclatureText =>
+			SelectedNomenclature != null ? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : "";
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
 			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
@@ -140,7 +152,7 @@ namespace Workwear.Domain.Company
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
 				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
-				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools));
+				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools, SelectedNomenclature));
 				return bestChoice;
 			}
 		}
@@ -369,16 +381,27 @@ namespace Workwear.Domain.Company
 
 	public class BestChoiceInStockComparer : IComparer<StockBalance> {
 		private readonly ProtectionTools protectionTools;
-		public BestChoiceInStockComparer(ProtectionTools protectionTools) => 
+		private readonly Nomenclature priorityNomenclature;
+
+		public BestChoiceInStockComparer(ProtectionTools protectionTools, Nomenclature priority = null) {
 			this.protectionTools = protectionTools;
-		//Сортируем позиции по следующим критериям
-		//Сначала берем позицию более приоритетного собственника
-		//Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
-		//Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
-		//Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
+			this.priorityNomenclature = priority;
+		}
+		
+		//Сортируем позиции по следующим критериям:
+		//-Сначала приоритетная номеннклатура, если задана
+		//-Позиция более приоритетного собственника
+		//-Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
+		//-Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
+		//-Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
 		public int Compare(StockBalance x, StockBalance y) {
 			if(x is null || y is null)
 				throw new ArgumentNullException();
+			if(priorityNomenclature != null &&
+					!DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, y.Position?.Nomenclature) && (
+					DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ||
+					DomainHelper.EqualDomainObjects(y.Position?.Nomenclature, priorityNomenclature)))
+				return DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ? -1 : 1;
 			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
 			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();

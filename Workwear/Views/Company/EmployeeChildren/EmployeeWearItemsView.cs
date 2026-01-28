@@ -48,6 +48,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 		#region private
 		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.нand.png");
 		Pixbuf infoIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.info.png");
+		Pixbuf chooseIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.choose.png");
 
 		void ConfigureTable()
 		{
@@ -70,9 +71,12 @@ namespace Workwear.Views.Company.EmployeeChildren
 					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.NextIssueAnnotation) ? null : infoIcon)
 				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
 				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
-				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
-				.AddColumn("Подходящая номенклатура").AddTextRenderer(item => item.MatchedNomenclatureShortText)
-				.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
+					.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
+				.AddColumn("Подходящая номенклатура").Visible(ViewModel.VisibleEmployeeChoose)
+					.ToolTipText(item => item.SelectedNomenclatureText)
+					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.SelectedNomenclatureText) ? null : chooseIcon)
+					.AddTextRenderer(item => item.MatchedNomenclatureShortText)
+					.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
 				.Finish();
 			ytreeWorkwear.Selection.Changed += ytreeWorkwear_Selection_Changed;
 			ytreeWorkwear.ButtonReleaseEvent += YtreeWorkwear_ButtonReleaseEvent;

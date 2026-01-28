@@ -70,6 +70,13 @@ namespace Workwear.Domain.Stock {
 			get => additionalInfo;
 			set => SetField(ref additionalInfo, value);
 		}
+		private string catalogId;
+		[Display(Name = "ID каталога")]
+		[StringLength(24, ErrorMessage = "Максимальная длинна идентификатора в каталоге - 24 символа.")]
+		public virtual string CatalogId {
+			get => catalogId;
+			set => SetField(ref catalogId, value);
+		}
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {

@@ -406,6 +406,8 @@ namespace workwear.Journal
 						.AddTextRenderer(n => n.UseBarcodeText)
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)
+					.AddColumn("Идентификатор в каталоге").Visible(jvm.FeaturesService.Available(WorkwearFeature.Catalog))
+						.AddTextRenderer(n => n.UseBarcodeText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
@@ -505,6 +507,7 @@ namespace workwear.Journal
 					.Finish()
 				);
 			#endregion
+			
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
 				() => FluentColumnsConfig<SizeJournalNode>.Create()

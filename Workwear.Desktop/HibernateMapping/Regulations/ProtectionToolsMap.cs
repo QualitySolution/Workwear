@@ -29,11 +29,11 @@ namespace Workwear.HibernateMapping.Regulations
 			References(x => x.SupplyNomenclatureFemale).Column("supply_female_id").Nullable();
 			References(x => x.CategoryForAnalytic).Column("category_for_analytic_id").Nullable();
 			References(x => x.Type).Column("item_types_id");
-
-			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
-			.Table("protection_tools_nomenclature")
-			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("nomenclature_id");
-		}
+			
+			HasMany(x => x.ProtectionToolsNomenclatures)
+				.KeyColumn("protection_tools_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
+				.LazyLoad(); }
 	}
 }

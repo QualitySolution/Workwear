@@ -22,8 +22,8 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
-				Nomenclatures = new ObservableList<Nomenclature>() {
-					new Nomenclature()
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
 			};
 
@@ -73,8 +73,8 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
-				Nomenclatures = new ObservableList<Nomenclature>() {
-					new Nomenclature()
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
 			};
 
@@ -135,9 +135,9 @@ namespace Workwear.Test.Models.Analytics {
 			};
 			employee.AddVacation(vacation);
 			
-			var protectionTools1 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
-			var protectionTools2 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
-			var protectionTools3 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
+			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
 			
 			var norm = new Norm();
 			
@@ -241,8 +241,8 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
-				Nomenclatures = new ObservableList<Nomenclature>() {
-					new Nomenclature()
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
 			};
 
@@ -295,10 +295,10 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 
-			var protectionTools1 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature> { new Nomenclature { Name = "Средство 1" } } };
-			var protectionTools2 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature> { new Nomenclature { Name = "Средство 2" } } };
-			var protectionTools3 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature> { new Nomenclature { Name = "Средство 3" } } };
-			var protectionTools4 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature> { new Nomenclature { Name = "Средство 4" } } };
+			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 1" }}}};
+			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 2" }}}};
+			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 3" }}}};
+			var protectionTools4 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 4" }}}};
 
 			var norm = new Norm();
 
