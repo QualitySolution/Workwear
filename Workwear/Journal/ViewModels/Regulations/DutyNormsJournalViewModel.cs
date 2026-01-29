@@ -54,6 +54,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 						.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.SubdivisionName)
 						.Select(x => x.DateFrom).WithAlias(() => resultAlias.DateFrom)
 						.Select(x => x.DateTo).WithAlias(() => resultAlias.DateTo)
+						.Select(x => x.Archival).WithAlias(() => resultAlias.Archival)
 						.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					).OrderBy(x => x.Name).Asc
 					.TransformUsing(Transformers.AliasToBean<DutyNormsJournalNode>());
@@ -84,6 +85,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 		public string SubdivisionName { get; set; } 
 		public DateTime? DateFrom { get; set; }
 		public DateTime? DateTo { get; set; }
+		public bool Archival { get; set; }
 		public string DateFromString => DateFrom == null ? String.Empty : DateFrom.Value.ToString("d", _culture); 
 		public string DateToString => DateTo == null ? String.Empty : DateTo.Value.ToString("d", _culture); 
 	}
