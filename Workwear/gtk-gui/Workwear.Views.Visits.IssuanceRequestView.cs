@@ -66,7 +66,7 @@ namespace Workwear.Views.Visits
 
 		private global::Gamma.GtkWidgets.yLabel ylabelWarehouse;
 
-		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouse;
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseIssued;
 
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
@@ -78,9 +78,17 @@ namespace Workwear.Views.Visits
 
 		private global::Gtk.Label label2;
 
+		private global::Gamma.GtkWidgets.yVBox yvbox2;
+
 		private global::Gtk.ScrolledWindow scrolledwindow1;
 
 		private global::Gamma.GtkWidgets.yTreeView ytreeviewEmployeeCardItems;
+
+		private global::Gamma.GtkWidgets.yHBox yhbox4;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelWarehouse1;
+
+		private global::Gamma.Widgets.ySpecComboBox yspeccomboboxWarehouseStock;
 
 		private global::Gtk.Label label3;
 
@@ -384,14 +392,14 @@ namespace Workwear.Views.Visits
 			w30.Expand = false;
 			w30.Fill = false;
 			// Container child yhbox2.Gtk.Box+BoxChild
-			this.yspeccomboboxWarehouse = new global::Gamma.Widgets.ySpecComboBox();
-			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
-			this.yspeccomboboxWarehouse.AddIfNotExist = false;
-			this.yspeccomboboxWarehouse.DefaultFirst = false;
-			this.yspeccomboboxWarehouse.ShowSpecialStateAll = false;
-			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
-			this.yhbox2.Add(this.yspeccomboboxWarehouse);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.yspeccomboboxWarehouse]));
+			this.yspeccomboboxWarehouseIssued = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseIssued.Name = "yspeccomboboxWarehouseIssued";
+			this.yspeccomboboxWarehouseIssued.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseIssued.DefaultFirst = false;
+			this.yspeccomboboxWarehouseIssued.ShowSpecialStateAll = false;
+			this.yspeccomboboxWarehouseIssued.ShowSpecialStateNot = false;
+			this.yhbox2.Add(this.yspeccomboboxWarehouseIssued);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.yhbox2[this.yspeccomboboxWarehouseIssued]));
 			w31.Position = 1;
 			w31.Expand = false;
 			w31.Fill = false;
@@ -458,6 +466,10 @@ namespace Workwear.Views.Visits
 			this.tabs.SetTabLabel(this.yvbox1, this.label2);
 			this.label2.ShowAll();
 			// Container child tabs.Gtk.Notebook+NotebookChild
+			this.yvbox2 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox2.Name = "yvbox2";
+			this.yvbox2.Spacing = 6;
+			// Container child yvbox2.Gtk.Box+BoxChild
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
@@ -467,18 +479,51 @@ namespace Workwear.Views.Visits
 			this.ytreeviewEmployeeCardItems.CanFocus = true;
 			this.ytreeviewEmployeeCardItems.Name = "ytreeviewEmployeeCardItems";
 			this.scrolledwindow1.Add(this.ytreeviewEmployeeCardItems);
-			this.tabs.Add(this.scrolledwindow1);
-			global::Gtk.Notebook.NotebookChild w40 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.scrolledwindow1]));
-			w40.Position = 3;
+			this.yvbox2.Add(this.scrolledwindow1);
+			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.scrolledwindow1]));
+			w40.Position = 0;
+			// Container child yvbox2.Gtk.Box+BoxChild
+			this.yhbox4 = new global::Gamma.GtkWidgets.yHBox();
+			this.yhbox4.Name = "yhbox4";
+			this.yhbox4.Spacing = 6;
+			// Container child yhbox4.Gtk.Box+BoxChild
+			this.ylabelWarehouse1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelWarehouse1.Name = "ylabelWarehouse1";
+			this.ylabelWarehouse1.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать остатки:");
+			this.yhbox4.Add(this.ylabelWarehouse1);
+			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.yhbox4[this.ylabelWarehouse1]));
+			w41.Position = 0;
+			w41.Expand = false;
+			w41.Fill = false;
+			// Container child yhbox4.Gtk.Box+BoxChild
+			this.yspeccomboboxWarehouseStock = new global::Gamma.Widgets.ySpecComboBox();
+			this.yspeccomboboxWarehouseStock.Name = "yspeccomboboxWarehouseStock";
+			this.yspeccomboboxWarehouseStock.AddIfNotExist = false;
+			this.yspeccomboboxWarehouseStock.DefaultFirst = false;
+			this.yspeccomboboxWarehouseStock.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouseStock.ShowSpecialStateNot = false;
+			this.yhbox4.Add(this.yspeccomboboxWarehouseStock);
+			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.yhbox4[this.yspeccomboboxWarehouseStock]));
+			w42.Position = 1;
+			w42.Expand = false;
+			w42.Fill = false;
+			this.yvbox2.Add(this.yhbox4);
+			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.yvbox2[this.yhbox4]));
+			w43.Position = 1;
+			w43.Expand = false;
+			w43.Fill = false;
+			this.tabs.Add(this.yvbox2);
+			global::Gtk.Notebook.NotebookChild w44 = ((global::Gtk.Notebook.NotebookChild)(this.tabs[this.yvbox2]));
+			w44.Position = 3;
 			// Notebook tab
 			this.label3 = new global::Gtk.Label();
 			this.label3.Name = "label3";
 			this.label3.LabelProp = global::Mono.Unix.Catalog.GetString("Потребности");
-			this.tabs.SetTabLabel(this.scrolledwindow1, this.label3);
+			this.tabs.SetTabLabel(this.yvbox2, this.label3);
 			this.label3.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);
-			global::Gtk.Box.BoxChild w41 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
-			w41.Position = 1;
+			global::Gtk.Box.BoxChild w45 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w45.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
