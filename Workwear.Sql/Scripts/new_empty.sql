@@ -2254,6 +2254,7 @@ create table duty_norms
 	subdivision_id 		 int unsigned 				  null,
 	datefrom             datetime                     null,
 	dateto               datetime                     null,
+	archival			 tinyint(1)					  not null default 0,
 	comment              text 				          null,
 	constraint duty_norms_employees_id_fk
 		foreign key (responsible_employee_id) references employees (id)
