@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Autofac;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
@@ -13,6 +14,7 @@ using QS.Project.Services;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Journal.Filter.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Regulations;
 
@@ -22,15 +24,20 @@ namespace workwear.Journal.ViewModels.Regulations {
 		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#duty-norms");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(DutyNorm));
 		#endregion
+
+		private ILifetimeScope autofacScope;
+		public DutyNormFilterViewModel Filter { get; set; }
 		public DutyNormsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
-			INavigationManager navigationManager, 
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
 			IDeleteEntityService deleteEntityService = null, 
 			ICurrentPermissionService currentPermissionService = null) 
-			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
-		{
+			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) {
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			UseSlider = true;
+			JournalFilter = Filter = autofacScope.Resolve<DutyNormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
 		}
 
@@ -39,8 +46,11 @@ namespace workwear.Journal.ViewModels.Regulations {
 				DutyNormsJournalNode resultAlias = null;
 				DutyNorm dutyNormsAlias = null;
 				Subdivision subdivisionAlias = null;
-				
-				return uow.Session.QueryOver<DutyNorm>(() => dutyNormsAlias)
+
+				var query = uow.Session.QueryOver<DutyNorm>(() => dutyNormsAlias);
+				if(!Filter.ShowArchival)
+					query.Where(x => !x.Archival);
+				return query
 					.JoinAlias(x => dutyNormsAlias.Subdivision, () => subdivisionAlias, JoinType.LeftOuterJoin)
 					.Where(GetSearchCriterion(
 						() => dutyNormsAlias.Id,

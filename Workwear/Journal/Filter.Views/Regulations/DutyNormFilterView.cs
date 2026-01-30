@@ -1,9 +1,11 @@
-﻿using System;
+﻿using QS.Views;
+using Workwear.Journal.Filter.ViewModels.Regulations;
+
 namespace Workwear.Journal.Filter.Views.Regulations {
-	[System.ComponentModel.ToolboxItem(true)]
-	public partial class DutyNormFilterView : Gtk.Bin {
-		public DutyNormFilterView() {
+	public partial class DutyNormFilterView : ViewBase<DutyNormFilterViewModel>{
+		public DutyNormFilterView(DutyNormFilterViewModel viewModel) : base(viewModel) {
 			this.Build();
+			yShowArchival.Binding.AddBinding(viewModel, vm => vm.ShowArchival, w => w.Active).InitializeFromSource();
 		}
 	}
 }
