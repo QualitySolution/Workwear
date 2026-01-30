@@ -57,20 +57,23 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		}
 
 		private void Load() {
-			DutyNormsItemsList = new ObservableList<DutyNormItem>(dutyNormRepository.AllItemsFor(responsibleemployeesIds: new[] { Entity.Id }));
+			DutyNormsItemsList.Clear();
+			var dutyNormsItems = new ObservableList<DutyNormItem>(dutyNormRepository.AllItemsFor(responsibleemployeesIds: new[] { Entity.Id }));
 			dutyNormRepository.LoadFullInfo(Entity.RelatedDutyNorms.Select(x => x.Id).ToArray());
-			dutyNormIssueModel.FillDutyNormItems(DutyNormsItemsList.ToArray());
+			dutyNormIssueModel.FillDutyNormItems(dutyNormsItems.ToArray());
+			foreach(var item in dutyNormsItems)
+				if(!item.DutyNorm.Archival || (item.DutyNorm.Archival && item.Issued(DateTime.Now) > 0))
+					DutyNormsItemsList.Add(item);
 		}
 
 		private void DutyNormChangeEvent(EntityChangeEvent[] changeevents) {
-			foreach(var changeEvent in changeevents) {
+			foreach(var changeEvent in changeevents)
 				if(changeEvent.EventType != TypeOfChangeEvent.Insert) {
 					var op = UoW.GetById<DutyNormIssueOperation>(changeEvent.Entity.GetId());
 					if(op != null)
 						UoW.Session.Evict(op);
 				}
-				Load();
-			}
+			Load();
 		}
 		
 	    #region Свойства и пробросы

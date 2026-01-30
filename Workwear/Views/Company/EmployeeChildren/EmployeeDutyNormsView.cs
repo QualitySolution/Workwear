@@ -1,5 +1,6 @@
 ﻿using System;
 using Gamma.ColumnConfig;
+using Gtk;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -40,15 +41,17 @@ namespace Workwear.Views.Company.EmployeeChildren {
 					.AddSetter((c,n) => c.Text = n.PeriodText )
 				.AddColumn("Числится")
 					.AddTextRenderer(i => i.Issued(DateTime.Now)!=0 ? i.Issued(DateTime.Now).ToString() : String.Empty)
-					.AddSetter((w, i) => w.Foreground = i.AmountColor)
+					.AddSetter((w, i) => w.Foreground = i.DutyNorm.Archival ? "gray" : i.AmountColor)
 					.AddTextRenderer(i => i.AmountUnitText(i.Issued(DateTime.Now)))
 				.AddColumn("След. получение")
 					.AddTextRenderer(i => i.NextIssueText)
-					.AddSetter((w, i) => w.Foreground = i.NextIssueColor)
+					.AddSetter((w, i) => w.Foreground = i.DutyNorm.Archival ? "gray" : i.NextIssueColor)
 				.AddColumn("Пункт норм").Resizable()
 					.AddTextRenderer(x => x.NormParagraph)
 				.AddColumn("Комментарий")
 					.AddTextRenderer(x => x.Comment)
+				.RowCells()
+				.AddSetter<CellRendererText>((c,x) => c.Foreground = x.DutyNorm.Archival ? "gray" : "black")
 				.Finish ();
 			ytreeview.Selection.Changed += ytreeView_Selection_Changed;
 		}
