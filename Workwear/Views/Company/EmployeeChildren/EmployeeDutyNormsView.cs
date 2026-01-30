@@ -58,6 +58,8 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		
 		void ytreeView_Selection_Changed(object sender, EventArgs e) {
 			ybuttonOpenDutyNorm.Sensitive = ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0;
+			ybuttonGiveWearByDutyNorm.Sensitive = ytreeview.Selection.CountSelectedRows() > 0 &&
+			                                      !ytreeview.GetSelectedObject<DutyNormItem>().DutyNorm.Archival;
 		}
 		
 		#region Кнопки
