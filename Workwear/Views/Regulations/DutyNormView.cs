@@ -21,6 +21,7 @@ namespace Workwear.Views.Regulations {
 		private void ConfigureBase() {
 			enumSaveAndPrint.ItemsEnum = typeof(DutyNormSheetPrint);
 			ycheckArchival.Binding.AddBinding(Entity, e => e.Archival, w=> w.Active).InitializeFromSource();
+			buttonSaveAndGive.Binding.AddFuncBinding(Entity, e => !e.Archival, w => w.Sensitive).InitializeFromSource();
 		}
 
 		#region Вкладка Основное
