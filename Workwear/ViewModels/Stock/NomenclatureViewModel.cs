@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
+using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -21,6 +22,7 @@ using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Stock.NomenclatureChildren;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Tools;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -36,8 +38,8 @@ namespace Workwear.ViewModels.Stock
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService,
 			IInteractiveService interactive,
+			FeaturesService featuresService,
 			ModalProgressCreator progressCreator,
 			SizeTypeReplaceModel sizeTypeReplaceModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
@@ -53,6 +55,12 @@ namespace Workwear.ViewModels.Stock
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
+			
+			EntryCatalogItemsViewModel = entryBuilder.ForProperty(x => x.CatalogId)
+				.UseViewModelJournal<ProductJournalViewModel>()
+				.UseFuncAdapter(x => ((Product)x).CatalogId)
+				.Finish();
+				
 			Validations.Clear();
 			Validations.Add(
 				new ValidationRequest(Entity, 
@@ -75,6 +83,7 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		public EntityEntryViewModel<Product> EntryCatalogItemsViewModel;
 		#endregion
 
 		#region ChildrenViewModels	

@@ -4,6 +4,7 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
+using QS.Cloud.WearLk.Manage;
 using QS.Journal.GtkUI;
 using QS.Utilities;
 using QS.Utilities.Numeric;
@@ -545,6 +546,14 @@ namespace workwear.Journal
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).WrapWidth(400)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<ProductJournalViewModel>(
+				() => FluentColumnsConfig<Product>.Create()
+					.AddColumn("Идентификатор").Resizable().AddTextRenderer(p => p.CatalogId)
+					.AddColumn("Наименование").Resizable().AddTextRenderer(p => p.Name)
+					//.AddColumn("Производитель").Resizable().AddTextRenderer(p => p.Producer)
 					.Finish()
 			);
 			#endregion

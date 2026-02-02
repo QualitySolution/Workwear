@@ -903,11 +903,9 @@
               </packing>
             </child>
             <child>
-              <widget class="Gamma.GtkWidgets.yEntry" id="yentryCatalogId">
+              <widget class="QS.Views.Control.EntityEntry" id="yentryItemsCatalogId">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="IsEditable">True</property>
-                <property name="InvisibleChar">•</property>
+                <property name="Events">ButtonPressMask</property>
               </widget>
               <packing>
                 <property name="TopAttach">5</property>
