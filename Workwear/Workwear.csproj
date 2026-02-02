@@ -120,6 +120,7 @@
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Regulations\DutyNormBalanceFilterViewModel.cs" />
+    <Compile Include="Journal\Filter.ViewModels\Regulations\DutyNormFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Sizes\SizeTypeFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Visits\IssuanceRequestFilterViewModel.cs" />
@@ -559,6 +560,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentDiffCauseView.cs" />
     <Compile Include="Views\Supply\ShipmentPeriodView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentPeriodView.cs" />
+    <Compile Include="Journal\Filter.Views\Regulations\DutyNormFilterView.cs" />
+    <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -778,7 +781,6 @@
     <Folder Include="Models\" />
     <Folder Include="Views\Import\" />
     <Folder Include="Journal\ViewModels\Tools\" />
-    <Folder Include="Journal\Filter.ViewModels\Regulations\" />
     <Folder Include="Journal\Filter.Views\Regulations\" />
     <Folder Include="ViewModels\Operations\" />
     <Folder Include="Views\Operations\" />

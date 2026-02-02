@@ -305,6 +305,7 @@ namespace workwear.Journal
 					.AddColumn("Начало действия").AddTextRenderer(node => node.DateFromString)
 					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 			

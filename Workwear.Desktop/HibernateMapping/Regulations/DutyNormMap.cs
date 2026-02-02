@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.Name).Column("name");
 			Map(x => x.DateFrom).Column("datefrom");
 			Map(x => x.DateTo).Column("dateto");
+			Map(x => x.Archival).Column("archival");
 			Map(x => x.Comment).Column("comment");
 
 			References(x => x.ResponsibleLeader).Column("responsible_leder_id");
