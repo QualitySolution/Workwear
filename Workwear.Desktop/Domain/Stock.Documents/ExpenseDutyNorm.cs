@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -175,7 +176,8 @@ namespace Workwear.Domain.Stock.Documents {
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if(UoW != null && baseParameters.CheckBalances) {
 				var repository = new StockRepository();
-				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+				var nomenclaturesIds = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature.Id).Distinct().ToList();
+				var nomenclatures = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Id.IsIn(nomenclaturesIds)).List();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
 
