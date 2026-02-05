@@ -29,6 +29,8 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text).InitializeFromSource();
 			ylabelCatalogId.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
+			yentryItemsCatalogId.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
 			yentryName.Binding
 				.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
@@ -63,8 +65,8 @@ namespace Workwear.Views.Stock {
 			checkWashable.Binding
 				.AddBinding(ViewModel, v => v.VisibleWashable, w => w.Visible)
 				.AddBinding(Entity, e => e.Washable, w => w.Active).InitializeFromSource();
-
-			yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
+			if(ViewModel.EntryCatalogItemsViewModel != null)
+				yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
 
