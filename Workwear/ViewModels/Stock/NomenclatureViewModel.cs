@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
+using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -16,6 +17,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Journal.ViewModels.Catalog;
 using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
 using Workwear.Tools;
@@ -28,6 +30,7 @@ namespace Workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>, IDialogDocumentation {
 		private readonly FeaturesService featuresService;
+		private readonly ProductsManagerService productsService;
 		private readonly IInteractiveService interactive;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
@@ -40,26 +43,32 @@ namespace Workwear.ViewModels.Stock
 			ILifetimeScope autofacScope,
 			IInteractiveService interactive,
 			FeaturesService featuresService,
+			ProductsManagerService productsService,
 			ModalProgressCreator progressCreator,
 			SizeTypeReplaceModel sizeTypeReplaceModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.productsService = productsService;
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
 			
 			var entryBuilder = 
 				new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
+			var viewModelBuilder = 
+				new CommonEEVMBuilderFactory<NomenclatureViewModel>(this, this, UoW, navigation, autofacScope);
 
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
 			
-			EntryCatalogItemsViewModel = entryBuilder.ForProperty(x => x.CatalogId)
-				.UseViewModelJournal<ProductJournalViewModel>()
-				.UseFuncAdapter(x => ((Product)x).CatalogId)
-				.Finish();
+			if(featuresService.Available(WorkwearFeature.Catalog) && productsService != null) {
+				EntryCatalogItemsViewModel = viewModelBuilder.ForProperty(x => x.Product)
+					.UseViewModelJournal<ProductJournalViewModel>()
+					.UseFuncAdapter(x => productsService.GetProduct(((Product)x).CatalogId))
+					.Finish();
+			}
 				
 			Validations.Clear();
 			Validations.Add(
@@ -83,9 +92,23 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
-		public EntityEntryViewModel<Product> EntryCatalogItemsViewModel;
+		public EntityEntryViewModel<ProductResponse> EntryCatalogItemsViewModel;
 		#endregion
-
+		#region Свойства
+		private ProductResponse product;
+		public ProductResponse Product {
+			get {
+				if(product == null && Entity.CatalogId != null) {
+					product = productsService.GetProduct(Entity.CatalogId);
+				}
+				return product;
+			}
+			set {
+				Entity.CatalogId = value?.CatalogId; //Сначала устанавливаем CatalogId, чтобы при очистке поле не восстанавливалось.
+				SetField(ref product, value);
+			}
+		}
+		#endregion
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
 		public NomenclatureServicesViewModel ServicesViewModel;

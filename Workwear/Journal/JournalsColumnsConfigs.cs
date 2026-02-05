@@ -9,6 +9,7 @@ using QS.Journal.GtkUI;
 using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Journal.ViewModels.Analytics;
+using Workwear.Journal.ViewModels.Catalog;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;

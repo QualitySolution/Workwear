@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
+using QS.Project.Journal.DataLoader;
 
-namespace workwear.Journal.ViewModels.Tools {
+namespace Workwear.Journal.ViewModels.Catalog {
 	
 	public class ProductJournalViewModel : JournalViewModelBase {
-		private IList<Product> catalogProducts;
+		private readonly ProductsManagerService productsManagerService;
 		
 		public ProductJournalViewModel(
 			ProductsManagerService productsManagerService,
@@ -18,12 +20,15 @@ namespace workwear.Journal.ViewModels.Tools {
 			INavigationManager navigation)
 			: base(unitOfWorkFactory, interactiveService, navigation)
 		{
-			catalogProducts = productsManagerService.Products();
+			this.productsManagerService = productsManagerService;
 			Title = "Каталог продукции";
+			SearchEnabled = false;
+			
+			DataLoader = new AnyDataLoader<Product>(GetNodes);
 		}
 		
-		private IList<Product> GetNodes() {
-			return catalogProducts;
+		private IList<Product> GetNodes(CancellationToken token) {
+			return productsManagerService.Products();
 		}
 	}
 }

@@ -20,6 +20,13 @@ namespace QS.Cloud.WearLk.Client {
 			return client.GetProducts(request, Headers).Products.ToList();
 		}
 		
+		public ProductResponse GetProduct(string catalogId)
+		{
+			var client = new ProductsManager.ProductsManagerClient(Channel);
+			var request = new ProductRequest { CatalogId = catalogId };
+			return client.GetProduct(request, Headers);
+		}
+		
 		#endregion
 		
 		
