@@ -373,6 +373,7 @@ namespace workwear
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<ProductsManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

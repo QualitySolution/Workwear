@@ -1,0 +1,54 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package QS.Cloud.WearLk.Manage;
+
+service ProductsManager {
+  rpc GetProducts (ProductsRequest) returns (ProductsResponse);
+  rpc GetProduct (ProductRequest) returns (ProductResponse);
+}
+
+message ProductsRequest {}
+
+message ProductsResponse{
+	repeated Product products = 1;
+}
+
+message ProductRequest {
+  string catalog_id = 1;
+}
+
+message ProductResponse{
+  string catalog_id = 1;
+
+  string name = 2;
+
+  optional string producer = 3;
+
+  optional string description = 4;
+
+  repeated Image images = 5;
+
+  repeated Characteristic characteristics = 6;
+}
+message Image {
+  string preview = 1;
+  string full = 2;
+}
+
+message Characteristic {
+  string title = 1;
+  
+  string value = 2;
+}
+
+message Product {
+  string catalog_id = 1;
+
+  string name = 2;
+
+  optional string producer = 3;
+
+  repeated string previews_url = 4;
+}

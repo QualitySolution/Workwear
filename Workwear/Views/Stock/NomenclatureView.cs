@@ -29,8 +29,7 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text).InitializeFromSource();
 			ylabelCatalogId.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
-			yentryCatalogId.Binding
-				.AddBinding(Entity, e => e.CatalogId, w => w.Text)
+			yentryItemsCatalogId.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
 			yentryName.Binding
 				.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
@@ -66,7 +65,8 @@ namespace Workwear.Views.Stock {
 			checkWashable.Binding
 				.AddBinding(ViewModel, v => v.VisibleWashable, w => w.Visible)
 				.AddBinding(Entity, e => e.Washable, w => w.Active).InitializeFromSource();
-
+			if(ViewModel.EntryCatalogItemsViewModel != null)
+				yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
 

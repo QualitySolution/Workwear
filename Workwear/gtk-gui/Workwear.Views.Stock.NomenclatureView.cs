@@ -40,7 +40,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yEntry yentryAdditionalInfo;
 
-		private global::Gamma.GtkWidgets.yEntry yentryCatalogId;
+		private global::QS.Views.Control.EntityEntry yentryItemsCatalogId;
 
 		private global::QS.Views.Control.EntityEntry yentryItemsType;
 
@@ -284,13 +284,11 @@ namespace Workwear.Views.Stock
 			w19.XOptions = ((global::Gtk.AttachOptions)(4));
 			w19.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
-			this.yentryCatalogId = new global::Gamma.GtkWidgets.yEntry();
-			this.yentryCatalogId.CanFocus = true;
-			this.yentryCatalogId.Name = "yentryCatalogId";
-			this.yentryCatalogId.IsEditable = true;
-			this.yentryCatalogId.InvisibleChar = '•';
-			this.table2.Add(this.yentryCatalogId);
-			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryCatalogId]));
+			this.yentryItemsCatalogId = new global::QS.Views.Control.EntityEntry();
+			this.yentryItemsCatalogId.Events = ((global::Gdk.EventMask)(256));
+			this.yentryItemsCatalogId.Name = "yentryItemsCatalogId";
+			this.table2.Add(this.yentryItemsCatalogId);
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table2[this.yentryItemsCatalogId]));
 			w20.TopAttach = ((uint)(5));
 			w20.BottomAttach = ((uint)(6));
 			w20.LeftAttach = ((uint)(1));
