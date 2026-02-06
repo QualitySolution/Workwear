@@ -93,6 +93,7 @@ namespace Workwear.Views.Regulations
 				.AddColumn("Выбор сотрудником").Visible(ViewModel.VisibleChoosingNomenclature)
 					.AddToggleRenderer(x => x.CanChoose)
 					.Editing()
+				.AddColumn("") //Затычка, чтобы хвост не растягивался
 				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Nomenclature.Archival? "gray": "black")
 				.Finish();
 			ytreeItems.ItemsDataSource = Entity.ProtectionToolsNomenclatures;

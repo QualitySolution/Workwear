@@ -21,14 +21,6 @@ namespace Workwear.HibernateMapping.Company
 			References (x => x.EmployeeCard).Column ("employee_id").Not.Nullable ();
 			References (x => x.ActiveNormItem).Column ("norm_item_id"); //.Not.Nullable (); Из за странной работы NHibernate при удалении по зависимости он это свойство переключает в Null и падает с эксепшен, даже если в той же транзакции эта строка будет удалена.
 			References (x => x.ProtectionTools).Column ("protection_tools_id").Not.Nullable ();
-////i520 Но пока не понятно насколько накладный при больших расчётах
-			References(x => x.SelectedNomenclature)
-				.Formula(@"(SELECT esn.nomenclature_id 
-                FROM employees_selected_nomenclatures esn
-                WHERE esn.employee_id = employee_id 
-                  AND esn.protection_tools_id = protection_tools_id)")
-				.Nullable()
-				.LazyLoad();
 		}
 	}
 }

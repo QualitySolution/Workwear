@@ -17,7 +17,7 @@ namespace Workwear.Domain.Regulations
 		GenitivePlural = "номенклатур нормы"
 		)]
 	[HistoryTrace]
-	public class ProtectionTools : PropertyChangedBase, IDomainObject
+	public class ProtectionTools : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -157,6 +157,13 @@ namespace Workwear.Domain.Regulations
 
 		public virtual void RemoveNomenclature(Nomenclature nomenclature) {
 			ProtectionToolsNomenclatures.RemoveAll(x => DomainHelper.EqualDomainObjects(x.Nomenclature, nomenclature));
+		}
+		#endregion
+		
+		#region IValidatableObject implementation
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(ProtectionToolsNomenclatures.Count(x => x.CanChoose) == 1)
+					yield return new ValidationResult($"Отмечен только 1 возможный вариант для выбора. Допустимо не менее 2.");
 		}
 		#endregion
 	}
