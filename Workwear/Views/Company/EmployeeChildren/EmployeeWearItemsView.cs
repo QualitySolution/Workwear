@@ -4,9 +4,11 @@ using Gamma.GtkWidgets;
 using Gamma.Utilities;
 using Gdk;
 using Gtk;
+using QS.DomainModel.Entity;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
@@ -48,7 +50,8 @@ namespace Workwear.Views.Company.EmployeeChildren
 		#region private
 		Pixbuf handIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.нand.png");
 		Pixbuf infoIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.info.png");
-		Pixbuf chooseIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.choose.png");
+		Pixbuf chooseIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.star_full.png");
+		Pixbuf notChooseIcon = new Gdk.Pixbuf(System.Reflection.Assembly.GetEntryAssembly(), "Workwear.icon.rows.star_empty.png");
 
 		void ConfigureTable()
 		{
@@ -72,9 +75,11 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
 				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
 					.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
-				.AddColumn("Подходящая номенклатура").Visible(ViewModel.VisibleEmployeeChoose)
+				.AddColumn("\u2605").Visible(ViewModel.VisibleEmployeeChoose) //Выбор сотрудника
 					.ToolTipText(item => item.SelectedNomenclatureText)
-					.AddPixbufRenderer(item => String.IsNullOrEmpty(item.SelectedNomenclatureText) ? null : chooseIcon)
+					.AddPixbufRenderer(item => ViewModel.VisibleEmployeeChoose && item.ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) ? 
+						(item.SelectedNomenclature != null ? chooseIcon : notChooseIcon) : null)
+				.AddColumn("Подходящая номенклатура")
 					.AddTextRenderer(item => item.MatchedNomenclatureShortText)
 					.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
 				.Finish();
@@ -175,6 +180,28 @@ namespace Workwear.Views.Company.EmployeeChildren
 				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
 				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemRecalculateLastIssue);
+
+				if(selected.ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose)) {
+					var itemSetEmployeeChoose = new MenuItemId<EmployeeCardItem>("Установить предпочтительную к выдаче номенклатуру");
+                    itemSetEmployeeChoose.ID = selected;
+                    
+                    var submenuSetChoose = new Menu();
+                    var itemMakeEmpty = new MenuItemId<EmployeeCardItem>("Очистить");
+                    itemMakeEmpty.ID = selected;
+                    itemMakeEmpty.ButtonPressEvent += (sender, e) => ViewModel.SetEmployeeChoose(selected, null);
+                    submenuSetChoose.Append(itemMakeEmpty);
+                    
+                    foreach(Nomenclature nomenclature in selected.ProtectionTools.ProtectionToolsNomenclatures
+	                            .Where(x => x.CanChoose).Select(x => x.Nomenclature)) {
+                    	var nItem = new MenuItem((selected.EmployeeCard.SelectedNomenclatures
+		                    .Any(x => DomainHelper.EqualDomainObjects(nomenclature, x.Nomenclature) && DomainHelper.EqualDomainObjects(selected.ProtectionTools, x.ProtectionTools))
+		                    ? "✅" : "") + nomenclature.Name);
+	                    nItem.ButtonPressEvent += (sender, e) => ViewModel.SetEmployeeChoose(selected,nomenclature);
+	                    submenuSetChoose.Append(nItem);
+                    }
+                    itemSetEmployeeChoose.Submenu = submenuSetChoose;
+                    menu.Add(itemSetEmployeeChoose);
+				}
 
 				menu.ShowAll();
 				menu.Popup();

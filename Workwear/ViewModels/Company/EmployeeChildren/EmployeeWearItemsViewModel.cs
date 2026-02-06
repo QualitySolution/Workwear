@@ -13,6 +13,7 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
@@ -281,7 +282,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			row.Graph.Refresh();
 			row.UpdateNextIssue(UoW);
 		}
-
+		
+		public void SetEmployeeChoose(EmployeeCardItem item, Nomenclature nomenclature) {
+			var choose = Entity.SelectedNomenclatures
+				.FirstOrDefault(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, item.ProtectionTools));
+    
+			if (choose == null && nomenclature != null) {
+				Entity.SelectedNomenclatures.Add(new EmployeeSelectedNomenclature {
+					Employee = Entity,
+					ProtectionTools = item.ProtectionTools,
+					Nomenclature = nomenclature
+				});
+			} else if (choose != null) {
+				if (nomenclature == null)
+					Entity.SelectedNomenclatures.Remove(choose);
+				else
+					choose.Nomenclature = nomenclature;
+			}
+		}
 		#endregion
 		protected void RefreshWorkItems()
 		{
