@@ -96,7 +96,7 @@ namespace Workwear.Domain.Company
 		#endregion
 		public virtual string SelectedNomenclatureText =>
 			ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) && SelectedNomenclature != null 
-				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : "";
+				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : null;
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
 			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
