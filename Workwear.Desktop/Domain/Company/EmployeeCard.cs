@@ -233,6 +233,12 @@ namespace Workwear.Domain.Company
 			get => workwearItems;
 			set => SetField(ref workwearItems, value);
 		}
+		private IObservableList<EmployeeSelectedNomenclature> selectedNomenclatures = new ObservableList<EmployeeSelectedNomenclature>();
+        [Display (Name = "Предпочтения")]
+        public virtual IObservableList<EmployeeSelectedNomenclature> SelectedNomenclatures {
+        	get => selectedNomenclatures;
+        	set => SetField(ref selectedNomenclatures, value);
+        }
 		#endregion
 		#region Vacation
 		private IObservableList<EmployeeVacation> vacations = new ObservableList<EmployeeVacation>();

@@ -72,16 +72,7 @@ namespace Workwear.Domain.Company
 			get => ProtectionTools?.Dispenser ?? false ? String.Empty : nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
 		}
-
-		private Nomenclature selectedNomenclature;
-		[IgnoreHistoryTrace]
-		[Display (Name = "Выбор сотрудника")]
-		public virtual Nomenclature SelectedNomenclature {
-			get => selectedNomenclature;
-			set => SetField (ref selectedNomenclature, value);
-		}
 		
-		#endregion
 		/// <summary>
 		/// Получаем значения остатков на складе для подходящих позиций.
 		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
@@ -100,8 +91,12 @@ namespace Workwear.Domain.Company
 		#endregion
 		#region Расчетное
 
+		public virtual Nomenclature SelectedNomenclature => EmployeeCard.SelectedNomenclatures
+			.FirstOrDefault(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))?.Nomenclature;
+		#endregion
 		public virtual string SelectedNomenclatureText =>
-			SelectedNomenclature != null ? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : "";
+			ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) && SelectedNomenclature != null 
+				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : "";
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
 			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {

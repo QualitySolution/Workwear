@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -24,7 +24,6 @@ using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Stock.NomenclatureChildren;
 using workwear.Journal.ViewModels.Stock;
-using workwear.Journal.ViewModels.Tools;
 
 namespace Workwear.ViewModels.Stock
 {
