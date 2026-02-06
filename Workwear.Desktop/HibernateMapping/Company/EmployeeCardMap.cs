@@ -81,6 +81,11 @@ namespace Workwear.HibernateMapping.Company
 				.Cascade.AllDeleteOrphan()
 				.Inverse()
 				.LazyLoad();
+			HasMany(x => x.SelectedNomenclatures).Table("employees_selected_nomenclatures")
+				.KeyColumn("employee_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
+				.LazyLoad();
 		}
 	}
 }

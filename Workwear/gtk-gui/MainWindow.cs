@@ -224,6 +224,8 @@ public partial class MainWindow
 	private global::Gtk.Action ActionVisits;
 
 	private global::Gtk.Action ActionIssuanceRequest;
+	
+	private global::Gtk.RadioAction ActionOffAutoUpdate;
 
 	private global::Gtk.VBox vbox1;
 
@@ -601,6 +603,10 @@ public partial class MainWindow
 		this.ActionIssuanceRequest = new global::Gtk.Action("ActionIssuanceRequest", global::Mono.Unix.Catalog.GetString("Заявки на выдачу"), null, null);
 		this.ActionIssuanceRequest.ShortLabel = global::Mono.Unix.Catalog.GetString("Заявки на выдачу");
 		w1.Add(this.ActionIssuanceRequest, null);
+		this.ActionOffAutoUpdate = new global::Gtk.RadioAction("ActionOffAutoUpdate", global::Mono.Unix.Catalog.GetString("Без обновлений"), null, null, 0);
+		this.ActionOffAutoUpdate.Group = this.ActionChannelCurrent.Group;
+		this.ActionOffAutoUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Без обновлений");
+		w1.Add(this.ActionOffAutoUpdate, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -691,10 +697,11 @@ public partial class MainWindow
 				"me=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' acti" +
 				"on=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionCha" +
 				"nnelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/" +
-				"></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuit" +
-				"em name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionSN\' " +
-				"action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'" +
-				"/></menu></menubar></ui>");
+				"><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menu" +
+				"item name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'Acti" +
+				"onSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionSN\' action=\'Actio" +
+				"nSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></me" +
+				"nubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -918,5 +925,6 @@ public partial class MainWindow
 		this.ActionShipmentReport.Activated += new global::System.EventHandler(this.OnActionShipmentReportActivated);
 		this.ActionVisits.Activated += new global::System.EventHandler(this.OnActionVisitsActivated);
 		this.ActionIssuanceRequest.Activated += new global::System.EventHandler(this.OnActionIssuanceRequestActivated);
+		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
 	}
 }

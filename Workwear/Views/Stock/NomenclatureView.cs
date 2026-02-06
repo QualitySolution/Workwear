@@ -24,71 +24,49 @@ namespace Workwear.Views.Stock {
 		private void ConfigureDlg(IGtkViewResolver viewResolver)
 		{
 			yentryNumber.Binding
-				.AddBinding(Entity, e => e.Number, w => w.Text)
-				.InitializeFromSource();
-			
+				.AddBinding(Entity, e => e.Number, w => w.Text).InitializeFromSource();
 			yentryAdditionalInfo.Binding
-				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text)
-				.InitializeFromSource();
-
+				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text).InitializeFromSource();
+			ylabelCatalogId.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
+			yentryItemsCatalogId.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
 			yentryName.Binding
-				.AddBinding (Entity, e => e.Name, w => w.Text)
-				.InitializeFromSource ();
-
+				.AddBinding (Entity, e => e.Name, w => w.Text).InitializeFromSource ();
 			ycomboClothesSex.ItemsEnum = typeof(ClothesSex);
 			ycomboClothesSex.Binding
-				.AddBinding (Entity, e => e.Sex, w => w.SelectedItem)
-				.InitializeFromSource ();
+				.AddBinding (Entity, e => e.Sex, w => w.SelectedItem).InitializeFromSource ();
 			ycomboClothesSex.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleClothesSex, w => w.Visible)
-				.InitializeFromSource();
-
+				.AddBinding(ViewModel, vm => vm.VisibleClothesSex, w => w.Visible).InitializeFromSource();
 			ylabelClothesSex.Binding
-				.AddSource(ViewModel)
-				.AddBinding(vm => vm.VisibleClothesSex, w => w.Visible)
-				.AddBinding(vm => vm.ClothesSexLabel, w => w.LabelProp)
-				.InitializeFromSource();
-				
+				.AddSource(ViewModel).AddBinding(vm => vm.VisibleClothesSex, w => w.Visible)
+				.AddBinding(vm => vm.ClothesSexLabel, w => w.LabelProp).InitializeFromSource();
 			ytextComment.Binding
-				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
-				.InitializeFromSource();
-
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			ycheckArchival.Binding
-				.AddBinding(Entity, e => e.Archival, w => w.Active)
-				.InitializeFromSource();
-
+				.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
 			yspinbuttonSaleCost.Visible = ViewModel.VisibleSaleCost;
 			yspinbuttonSaleCost.Binding
-				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter())
-				.InitializeFromSource();
-
+				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
 			ybuttonratingDetails.Binding
 				.AddSource(ViewModel)
 					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
-					.AddBinding(vm => vm.RatingButtonLabel, w => w.Label)
-				.InitializeFromSource();
-			
+					.AddBinding(vm => vm.RatingButtonLabel, w => w.Label).InitializeFromSource();
 			ylabel1.Binding
-				.AddBinding(ViewModel, vm => vm.VisibleRating, w => w.Visible)
-				.InitializeFromSource();
-			
+				.AddBinding(ViewModel, vm => vm.VisibleRating, w => w.Visible).InitializeFromSource();
 			ylabelAvgRating.Binding
 				.AddSource(ViewModel)
 				.AddBinding(vm => vm.VisibleRating, w => w.Visible)
-				.AddBinding(wm => wm.RatingLabel, w => w.Text)
-				.InitializeFromSource();
-			
+				.AddBinding(wm => wm.RatingLabel, w => w.Text).InitializeFromSource();
 			ycheckBarcode.Binding
 				.AddBinding(ViewModel, v => v.VisibleBarcode, w => w.Visible)
-				.AddBinding(Entity, e => e.UseBarcode, w => w.Active)
-				.InitializeFromSource();
-			
+				.AddBinding(Entity, e => e.UseBarcode, w => w.Active).InitializeFromSource();
 			checkWashable.Binding
 				.AddBinding(ViewModel, v => v.VisibleWashable, w => w.Visible)
-				.AddBinding(Entity, e => e.Washable, w => w.Active)
-				.InitializeFromSource();
-
+				.AddBinding(Entity, e => e.Washable, w => w.Active).InitializeFromSource();
+			if(ViewModel.EntryCatalogItemsViewModel != null)
+				yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
 

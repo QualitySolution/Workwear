@@ -70,15 +70,12 @@ namespace Workwear.Domain.Regulations {
 			get => dateTo;
 			set => SetField(ref dateTo, value);
 		}
-		
-//TODO Не реализовано				
-		private bool archive;
-		[Display(Name = "Архивная(отключена)")]
-		public virtual bool Archive {
-			get => archive;
-			set => SetField(ref archive, value);
-		}
-		
+		private bool archival;
+		[Display(Name = "Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		} 
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {

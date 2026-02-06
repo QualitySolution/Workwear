@@ -54,6 +54,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly IssuedSheetPrintModel printModel;
+		private EmployeeCard employeeBefore;
 
 		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -129,9 +130,15 @@ namespace Workwear.ViewModels.Stock {
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			if(employee != null) {
-				performance.StartGroup("FillUnderreceived");
-				FillUnderreceived(performance);
-				performance.EndGroup();
+				if(CheckDismissDate()) {
+					performance.StartGroup("FillUnderreceived");
+					FillUnderreceived(performance);
+					performance.EndGroup();
+				}
+				else {
+					globalProgress.Close();
+					throw new AbortCreatingPageException("Диалог документа выдачи будет закрыт.", "Отмена создания документа");
+				}
 			}
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
@@ -144,7 +151,9 @@ namespace Workwear.ViewModels.Stock {
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
-			EmployeeCardEntryViewModel.IsEditable = CanEdit;
+			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
+			EmployeeCardEntryViewModel.BeforeChangeByUser += (s, e) => { employeeBefore = Entity.Employee; };
+			EmployeeCardEntryViewModel.ChangedByUser += OnEmployeeChangedByUser;
 			
 			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
@@ -160,6 +169,18 @@ namespace Workwear.ViewModels.Stock {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 			performance.End();
+		}
+		private bool CheckDismissDate() {
+			if(Entity.Employee?.DismissDate == null)
+				return true;
+			if(Entity.Employee?.DismissDate > Entity.Date) {
+				var answer = interactive.Question($"У сотрудника {Entity.Employee.FullName} " +
+				                                  $"указана дата увольнения: {Entity.Employee?.DismissDate?.ToShortDateString()}. Выдать?",
+					"Предупреждение о наличии даты увольнения");
+				return answer;
+			}
+			interactive.ShowMessage(ImportanceLevel.Error, $"Сотрудник уволен {Entity.Employee.DismissDate?.ToShortDateString()}. Выдача невозможна.");
+			return false;
 		}
 
 		#region IDialogDocumentation
@@ -180,6 +201,7 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool SensitiveEntryEmployee => Entity.Id == 0 && CanEdit;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -242,9 +264,9 @@ namespace Workwear.ViewModels.Stock {
 		{
 			Entity.Items.Clear();
 
-			if(Entity.Employee == null)
+			if(Entity.Employee == null || Entity.Warehouse == null)
 				return;
-
+			
 			performance.CheckPoint("Предварительная загрузка сотрудника");
 			issueModel.PreloadEmployeeInfo(Entity.Employee.Id);
 			performance.CheckPoint("Предварительная загрузка потребностей");
@@ -364,12 +386,34 @@ namespace Workwear.ViewModels.Stock {
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
 		}
 		#endregion
-
+		
+		private void OnEmployeeChangedByUser(object sender, EventArgs args)
+		{
+			if(CheckDismissDate()) {
+				var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+				if(Entity.Employee?.Subdivision?.Warehouse != null && Entity.Employee?.Subdivision?.Warehouse != Entity.Warehouse) {
+					Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
+				}
+				else {
+					stockBalanceModel.Warehouse = Entity.Warehouse;
+					FillUnderreceived(performanceEmployee);
+				}
+				performanceEmployee.End();
+			}
+			else
+				Entity.Employee = employeeBefore;
+		}
+		
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			switch(e.PropertyName) {
 				case nameof(Entity.Warehouse):
-					stockBalanceModel.Warehouse = Entity.Warehouse;
+					if(Entity.Id == 0) {
+						stockBalanceModel.Warehouse = Entity.Warehouse;
+						var performanceWarehouse = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+						FillUnderreceived(performanceWarehouse);
+						performanceWarehouse.End();
+					}
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
@@ -377,10 +421,7 @@ namespace Workwear.ViewModels.Stock {
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
-					var performance = new ProgressPerformanceHelper(globalProgress, 6,"Обновление строк документа", logger);
-					FillUnderreceived(performance);
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));
-					performance.End();
 					break;
 				case nameof(Entity.IssueDate):
 					OnPropertyChanged(nameof(CanCreateIssuanceSheet));

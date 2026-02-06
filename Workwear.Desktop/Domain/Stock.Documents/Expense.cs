@@ -38,8 +38,8 @@ namespace Workwear.Domain.Stock.Documents
 		EmployeeCard employee;
 		[Display (Name = "Сотрудник")]
 		public virtual EmployeeCard Employee {
-			get { return employee; }
-			set { SetField (ref employee, value, () => Employee); }
+			get { return employee; } 
+			set { SetField(ref employee, value, () => Employee); }
 		}
 
 		private IObservableList<ExpenseItem> items = new ObservableList<ExpenseItem>();
@@ -132,6 +132,10 @@ namespace Workwear.Domain.Stock.Documents
 						continue;
 					}
 				}
+			}
+			if(Employee?.DismissDate < Date) {
+				yield return new ValidationResult($"Запрещается выдача сотруднику, уволенному до {Date.ToShortDateString()}",
+					new[] { nameof(Employee.DismissDate), nameof(Date)});
 			}
 		}
 		#endregion

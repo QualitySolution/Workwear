@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
@@ -16,7 +17,7 @@ namespace Workwear.Domain.Regulations
 		GenitivePlural = "номенклатур нормы"
 		)]
 	[HistoryTrace]
-	public class ProtectionTools : PropertyChangedBase, IDomainObject
+	public class ProtectionTools : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -135,26 +136,34 @@ namespace Workwear.Domain.Regulations
 
 		#region Номенклатура
 
-		private IObservableList<Nomenclature> nomenclatures = new ObservableList<Nomenclature>();
+		private IObservableList<ProtectionToolsNomenclature> protectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>();
+		[Display(Name = "Список номенклатур")]
+        public virtual IObservableList<ProtectionToolsNomenclature> ProtectionToolsNomenclatures {
+        	get { return protectionToolsNomenclatures; }
+	        set { SetField(ref protectionToolsNomenclatures, value); }
+        }
 
 		[Display(Name = "Номенклатура")]
-		public virtual IObservableList<Nomenclature> Nomenclatures {
-			get { return nomenclatures; }
-			set { SetField(ref nomenclatures, value, () => Nomenclatures); }
-		}
+		public virtual IEnumerable<Nomenclature> Nomenclatures => ProtectionToolsNomenclatures.Select(x => x.Nomenclature); 
 
-		public virtual void AddNomenclature(Nomenclature nomenclature)
-		{
+		public virtual void AddNomenclature(Nomenclature nomenclature) {
+			bool a = Nomenclatures.Any(x => x.Id != 0);
 			if(Nomenclatures.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
 				logger.Warn("Номеклатура уже добавлена. Пропускаем...");
 				return;
 			}
-			Nomenclatures.Add(nomenclature);
+			ProtectionToolsNomenclatures.Add(new ProtectionToolsNomenclature() {ProtectionTools = this, Nomenclature = nomenclature});
 		}
 
-		public virtual void RemoveNomenclature(Nomenclature nomenclature)
-		{
-			Nomenclatures.Remove(nomenclature);
+		public virtual void RemoveNomenclature(Nomenclature nomenclature) {
+			ProtectionToolsNomenclatures.RemoveAll(x => DomainHelper.EqualDomainObjects(x.Nomenclature, nomenclature));
+		}
+		#endregion
+		
+		#region IValidatableObject implementation
+		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
+			if(ProtectionToolsNomenclatures.Count(x => x.CanChoose) == 1)
+					yield return new ValidationResult($"Отмечен только 1 возможный вариант для выбора. Допустимо не менее 2.");
 		}
 		#endregion
 	}

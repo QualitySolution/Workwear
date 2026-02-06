@@ -62,6 +62,7 @@ namespace Workwear
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
+				.AddDeleteDependence<EmployeeSelectedNomenclature>(x => x.Employee)
 				.AddDeleteDependence<EmployeeGroupItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeIssueOperation>(x => x.Employee)
 				.AddDeleteDependence<EmployeeSize>(x => x.Employee)
@@ -81,6 +82,8 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeVacation>();
 			
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCostCenter>();
+			
+			DeleteConfig.AddHibernateDeleteInfo<EmployeeSelectedNomenclature>();
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader>()
 				.AddClearDependence<EmployeeCard>(x => x.Leader)
@@ -204,6 +207,8 @@ namespace Workwear
 				.AddClearDependence<Post>(x => x.Profession);
 
 			DeleteConfig.AddHibernateDeleteInfo<ProtectionTools>()
+				.AddDeleteDependence<ProtectionToolsNomenclature>(x => x.ProtectionTools)
+				.AddDeleteDependence<EmployeeSelectedNomenclature>(x => x.ProtectionTools)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.ProtectionTools)
 				.AddDeleteDependence<NormItem>(x => x.ProtectionTools)
 				.AddDeleteDependence<DutyNormItem>(x => x.ProtectionTools)
@@ -212,7 +217,9 @@ namespace Workwear
 				.AddClearDependence<CollectiveExpenseItem>(x => x.ProtectionTools)
 				.AddClearDependence<EmployeeIssueOperation>(x => x.ProtectionTools)
 				.AddClearDependence<DutyNormIssueOperation>(x => x.ProtectionTools);
-
+			
+			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsNomenclature>();
+			
 			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
 			            .AddDeleteDependence<Norm>(x => x.Document)
 						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
@@ -296,6 +303,8 @@ namespace Workwear
 				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
+				.AddDeleteDependence<ProtectionToolsNomenclature>(x => x.Nomenclature)
+				.AddDeleteDependence<EmployeeSelectedNomenclature>(x => x.Nomenclature)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureFemale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureMale)
 				.AddClearDependence<ProtectionTools>(x => x.SupplyNomenclatureUnisex)

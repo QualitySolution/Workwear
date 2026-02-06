@@ -106,9 +106,13 @@ namespace Workwear.Views.Visits {
 		#region Вкладка Выдачи
 
 		private void ConfigureCollectiveExpenseList() {
-			yspeccomboboxWarehouse.Binding.AddSource(ViewModel)
+			yspeccomboboxWarehouseIssued.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
-				.AddBinding(vm => vm.SelectWarehouse, w => w.SelectedItem)
+				.AddBinding(vm => vm.SelectWarehouseIssued, w => w.SelectedItem)
+				.InitializeFromSource();
+			yspeccomboboxWarehouseStock.Binding.AddSource(ViewModel)
+				.AddBinding(vm => vm.Warehouses, w => w.ItemsList)
+				.AddBinding(vm => vm.SelectWarehouseStock, w => w.SelectedItem)
 				.InitializeFromSource();
 			ytreeviewExpense.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.CollectiveExpenses, w => w.ItemsDataSource)
@@ -173,9 +177,8 @@ namespace Workwear.Views.Visits {
 				.AddColumn("На складе").AddTextRenderer(node => node.InStockText)
 				.RowCells().AddSetter<CellRendererText>((c, node) => c.Foreground = node.AllIssued)
 				.Finish();
-			ytreeviewEmployeeCardItems.Binding
-				.AddBinding(ViewModel, vm => vm.GroupedEmployeeCardItems, w => w.ItemsDataSource)
-				.InitializeFromSource();
+			ytreeviewEmployeeCardItems.ItemsDataSource = ViewModel.GroupedEmployeeCardItems;
+			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e) {
 			MessageDialogHelper.RunInfoDialog(
@@ -187,6 +190,10 @@ namespace Workwear.Views.Visits {
 		}
 
 		#endregion
+		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(ViewModel.SelectWarehouseStock))
+				ytreeviewEmployeeCardItems.ItemsDataSource = ViewModel.GroupedEmployeeCardItems;
+		}
 		
 	}
 }

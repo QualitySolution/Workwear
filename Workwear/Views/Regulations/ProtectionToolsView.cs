@@ -82,17 +82,21 @@ namespace Workwear.Views.Regulations
 				.InitializeFromSource();
 			#endregion
 
-			ytreeItems.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
-				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
-				.AddColumn("Тип").AddTextRenderer(p => p.TypeName).WrapWidth(500)
-				.AddColumn("Номер").AddTextRenderer(n => n.Number)
-				.AddColumn("Наименование").AddTextRenderer(p => p.Name + (p.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
+			ytreeItems.ColumnsConfig = FluentColumnsConfig<ProtectionToolsNomenclature>.Create()
+				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Nomenclature.Id.ToString())
+				.AddColumn("Тип").AddTextRenderer(p => p.Nomenclature.TypeName).WrapWidth(500)
+				.AddColumn("Номер").AddTextRenderer(n => n.Nomenclature.Number)
+				.AddColumn("Наименование").AddTextRenderer(p => p.Nomenclature.Name + (p.Nomenclature.Archival? "(архивная)" : String.Empty)).WrapWidth(700)
 				.AddColumn("Цена").Visible(ViewModel.VisibleSaleCost)
-					.AddReadOnlyTextRenderer(n => n.SaleCost?.ToString("C"))
-				.AddColumn("Пол").AddTextRenderer(p => p.Sex.GetEnumTitle())
-				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+					.AddReadOnlyTextRenderer(n => n.Nomenclature.SaleCost?.ToString("C"))
+				.AddColumn("Пол").AddTextRenderer(p => p.Nomenclature.Sex.GetEnumTitle())
+				.AddColumn("Выбор сотрудником").Visible(ViewModel.VisibleChoosingNomenclature)
+					.AddToggleRenderer(x => x.CanChoose)
+					.Editing()
+				.AddColumn("") //Затычка, чтобы хвост не растягивался
+				.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Nomenclature.Archival? "gray": "black")
 				.Finish();
-			ytreeItems.ItemsDataSource = Entity.Nomenclatures;
+			ytreeItems.ItemsDataSource = Entity.ProtectionToolsNomenclatures;
 			ytreeItems.Selection.Changed += Nomenclature_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 
@@ -102,11 +106,11 @@ namespace Workwear.Views.Regulations
 		private void YtreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args) {
 			if (args.Event.Button != 3) return;
 			var menu = new Menu();
-			var selected = ytreeItems.GetSelectedObject<Nomenclature>();
+			var selected = ytreeItems.GetSelectedObject<ProtectionToolsNomenclature>();
 			
 			var itemNomenclature = new MenuItem("Открыть номенклатуру");
 			itemNomenclature.Sensitive = selected != null;
-			itemNomenclature.Activated += (sender, eventArgs) => ViewModel.OpenNomenclature(selected);
+			itemNomenclature.Activated += (sender, eventArgs) => ViewModel.OpenNomenclature(selected?.Nomenclature);
 			menu.Add(itemNomenclature);
 			
 			menu.ShowAll();
@@ -119,7 +123,7 @@ namespace Workwear.Views.Regulations
 		}
 
 		protected void OnButtonRemoveNomeclatureClicked(object sender, EventArgs e) {
-			ViewModel.RemoveNomenclature(ytreeItems.GetSelectedObjects<Nomenclature>());
+			ViewModel.RemoveNomenclature(ytreeItems.GetSelectedObjects<ProtectionToolsNomenclature>());
 		}
 
 		void Nomenclature_Selection_Changed(object sender, EventArgs e){

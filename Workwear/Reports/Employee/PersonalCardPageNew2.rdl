@@ -836,7 +836,7 @@ FROM
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
     operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
-    AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= @startDateOfOperations)
+    AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= NULLIF(@startDateOfOperations, ''))
 GROUP BY
     operation_issued_by_employee.id
 ORDER BY
@@ -854,7 +854,7 @@ UNION
 FROM employee_cards_item as eci
          LEFT JOIN protection_tools as pt_eci on eci.protection_tools_id = pt_eci.id
 WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
-       AND (@startDateOfOperations = '' OR eci.created &gt;= @startDateOfOperations))</CommandText>
+       AND (@startDateOfOperations = '' OR eci.created &gt;= NULLIF(@startDateOfOperations, '')))</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
             <Value>={?id}</Value>
