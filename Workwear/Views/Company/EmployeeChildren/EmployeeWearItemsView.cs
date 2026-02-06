@@ -75,7 +75,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("Просрочка").AddTextRenderer(item => item.DelayText)
 				.AddColumn("На складе").AddTextRenderer(item => item.InStockText)
 					.AddSetter((w, item) => w.Foreground = item.InStockState.GetEnumColor())
-				.AddColumn("").Visible(ViewModel.VisibleEmployeeChoose) //Выбор сотрудника
+				.AddColumn("\u2605").Visible(ViewModel.VisibleEmployeeChoose) //Выбор сотрудника
 					.ToolTipText(item => item.SelectedNomenclatureText)
 					.AddPixbufRenderer(item => ViewModel.VisibleEmployeeChoose && item.ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) ? 
 						(item.SelectedNomenclature != null ? chooseIcon : notChooseIcon) : null)
