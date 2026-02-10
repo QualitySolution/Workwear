@@ -67,7 +67,8 @@ namespace workwear.Journal.ViewModels.Company
 				.Where(GetSearchCriterion<Subdivision>(
 					x => x.Code,
 					x => x.Name,
-					x => x.Address
+					x => x.Address,
+					x => x.Comment
 				))
 				.JoinAlias(() => subdivisionAlias.ParentSubdivision, () => parent1SubdivisionAlias,
 					JoinType.LeftOuterJoin)
@@ -87,6 +88,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 						.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 						.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+						.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 						.SelectSubQuery(employeesSubQuery).WithAlias(() => resultAlias.Employees)
 						.Select(() => parent1SubdivisionAlias.Id).WithAlias(() => resultAlias.Parent1Id)
 						.Select(() => parent2SubdivisionAlias.Id).WithAlias(() => resultAlias.Parent2Id)
@@ -102,6 +104,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(x => x.Code).WithAlias(() => resultAlias.Code)
 					.Select(x => x.Name).WithAlias(() => resultAlias.Name)
 					.Select(x => x.Address).WithAlias(() => resultAlias.Address)
+					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.SelectSubQuery(employeesSubQuery).WithAlias(() => resultAlias.Employees)
 					.Select(() => parent1SubdivisionAlias.Name).WithAlias(() => resultAlias.ParentName)
 					).OrderBy(x => x.Name).Asc
@@ -126,5 +129,6 @@ namespace workwear.Journal.ViewModels.Company
 			+ (Parent4Id.HasValue ? 1 : 0) + (Parent5Id.HasValue ? 1 : 0) + (Parent6Id.HasValue ? 1 : 0);
 		public string IndentedName => 
 			new string('	', SumParent) + (Parent1Id.HasValue ? "↑" : String.Empty) + Name;
+		public string Comment { get; set; }
 	}
 }
