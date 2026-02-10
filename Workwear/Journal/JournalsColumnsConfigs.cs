@@ -210,6 +210,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудников").Resizable().AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
 					.AddColumn("Головное подразделение").Resizable().AddTextRenderer(node => node.ParentName)
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).WrapWidth(700).SearchHighlight()
 					.Finish()
 			);
 
