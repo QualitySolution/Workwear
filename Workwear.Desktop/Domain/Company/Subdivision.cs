@@ -66,6 +66,13 @@ namespace Workwear.Domain.Company
 			get => parentSubdivision;
 			set => SetField(ref parentSubdivision, value);
 		}
+
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
+		}
 		
 		private IObservableList<Subdivision> childSubdivisions = new ObservableList<Subdivision>();
 		[Display (Name = "Дочерние подразделения")]
