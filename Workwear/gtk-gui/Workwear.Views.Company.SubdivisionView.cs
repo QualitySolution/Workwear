@@ -40,11 +40,17 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label lbWarehouse;
 
+		private global::Gtk.ScrolledWindow scrolledwindow1;
+
+		private global::Gamma.GtkWidgets.yTextView ytextviewComment;
+
 		private global::Gamma.GtkWidgets.yHBox yhbox1;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonEmployeesColor;
 
 		private global::Gamma.GtkWidgets.yColorButton ycolorbuttonEmployeesColor;
+
+		private global::Gamma.GtkWidgets.yLabel ylabelComment;
 
 		protected virtual void Build()
 		{
@@ -94,7 +100,7 @@ namespace Workwear.Views.Company
 			w5.Expand = false;
 			w5.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(6)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(7)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -241,6 +247,22 @@ namespace Workwear.Views.Company
 			w18.XOptions = ((global::Gtk.AttachOptions)(4));
 			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.scrolledwindow1 = new global::Gtk.ScrolledWindow();
+			this.scrolledwindow1.Name = "scrolledwindow1";
+			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child scrolledwindow1.Gtk.Container+ContainerChild
+			this.ytextviewComment = new global::Gamma.GtkWidgets.yTextView();
+			this.ytextviewComment.CanFocus = true;
+			this.ytextviewComment.Name = "ytextviewComment";
+			this.scrolledwindow1.Add(this.ytextviewComment);
+			this.table1.Add(this.scrolledwindow1);
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.scrolledwindow1]));
+			w20.TopAttach = ((uint)(6));
+			w20.BottomAttach = ((uint)(7));
+			w20.LeftAttach = ((uint)(1));
+			w20.RightAttach = ((uint)(2));
+			w20.XOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.yhbox1 = new global::Gamma.GtkWidgets.yHBox();
 			this.yhbox1.Name = "yhbox1";
 			this.yhbox1.Spacing = 6;
@@ -252,10 +274,10 @@ namespace Workwear.Views.Company
 			this.ycheckbuttonEmployeesColor.DrawIndicator = true;
 			this.ycheckbuttonEmployeesColor.UseUnderline = true;
 			this.yhbox1.Add(this.ycheckbuttonEmployeesColor);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonEmployeesColor]));
-			w19.Position = 0;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycheckbuttonEmployeesColor]));
+			w21.Position = 0;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child yhbox1.Gtk.Box+BoxChild
 			this.ycolorbuttonEmployeesColor = new global::Gamma.GtkWidgets.yColorButton();
 			this.ycolorbuttonEmployeesColor.CanFocus = true;
@@ -263,23 +285,33 @@ namespace Workwear.Views.Company
 			this.ycolorbuttonEmployeesColor.Name = "ycolorbuttonEmployeesColor";
 			this.ycolorbuttonEmployeesColor.Xalign = 0F;
 			this.yhbox1.Add(this.ycolorbuttonEmployeesColor);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycolorbuttonEmployeesColor]));
-			w20.Position = 1;
-			w20.Expand = false;
-			w20.Fill = false;
-			this.table1.Add(this.yhbox1);
-			global::Gtk.Table.TableChild w21 = ((global::Gtk.Table.TableChild)(this.table1[this.yhbox1]));
-			w21.TopAttach = ((uint)(5));
-			w21.BottomAttach = ((uint)(6));
-			w21.LeftAttach = ((uint)(1));
-			w21.RightAttach = ((uint)(2));
-			w21.XOptions = ((global::Gtk.AttachOptions)(4));
-			w21.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.yhbox1[this.ycolorbuttonEmployeesColor]));
 			w22.Position = 1;
 			w22.Expand = false;
 			w22.Fill = false;
+			this.table1.Add(this.yhbox1);
+			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table1[this.yhbox1]));
+			w23.TopAttach = ((uint)(5));
+			w23.BottomAttach = ((uint)(6));
+			w23.LeftAttach = ((uint)(1));
+			w23.RightAttach = ((uint)(2));
+			w23.XOptions = ((global::Gtk.AttachOptions)(4));
+			w23.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.ylabelComment = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelComment.Name = "ylabelComment";
+			this.ylabelComment.Xalign = 1F;
+			this.ylabelComment.Yalign = 0F;
+			this.ylabelComment.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
+			this.table1.Add(this.ylabelComment);
+			global::Gtk.Table.TableChild w24 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelComment]));
+			w24.TopAttach = ((uint)(6));
+			w24.BottomAttach = ((uint)(7));
+			w24.XOptions = ((global::Gtk.AttachOptions)(4));
+			w24.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.dialog1_VBox.Add(this.table1);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w25.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

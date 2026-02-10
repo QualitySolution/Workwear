@@ -29,7 +29,9 @@ namespace Workwear.Views.Company {
 			ycolorbuttonEmployeesColor.Binding
 				.AddBinding(ViewModel, e => e.EmployeesColorOn, w => w.Visible)
 				.AddBinding(Entity, e => e.EmployeesColor, w => w.Color, new HexStringToColorConvertor()).InitializeFromSource();
-
+			ytextviewComment.Binding
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			
 			entitywarehouse.ViewModel = ViewModel.EntryWarehouse;
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 
