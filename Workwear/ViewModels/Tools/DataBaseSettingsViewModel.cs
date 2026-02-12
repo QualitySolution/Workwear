@@ -50,6 +50,7 @@ namespace Workwear.ViewModels.Tools
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
 			ClothingMarkingType = baseParameters.ClothingMarkingType;
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
+			IsGenericName = baseParameters.IsGenericName;
 		}
 		
 		#region IDialogDocumentation
@@ -69,7 +70,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
 		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
 		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations
-		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType;
+		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType
+										   || IsGenericName != baseParameters.IsGenericName;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -86,6 +88,7 @@ namespace Workwear.ViewModels.Tools
 		public bool IsDocNumberInIssueSign{get;set;}
 		public bool IsDocNumberInReturnSign { get; set; }
 		public DateTime? StartDateOfOperations { get; set; }
+		public bool IsGenericName { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -116,6 +119,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.ClothingMarkingType = ClothingMarkingType;
 			if(StartDateOfOperations != baseParameters.StartDateOfOperations)
 				baseParameters.StartDateOfOperations = StartDateOfOperations;
+			if(IsGenericName != baseParameters.IsGenericName)
+				baseParameters.IsGenericName = IsGenericName;
 			return true;
 		}
 	}
