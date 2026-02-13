@@ -1677,7 +1677,9 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     REFERENCES `wear_cards` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET = utf8mb4 
+COLLATE = utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
