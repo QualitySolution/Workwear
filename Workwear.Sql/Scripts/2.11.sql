@@ -5,4 +5,4 @@ DROP FUNCTION IF EXISTS count_issue;
 DROP TABLE work_days;
 
 -- Удаление из нормы типа периода Смена
-ALTER TABLE norms_item CHANGE period_type period_type ENUM ('Year', 'Month', 'Wearout', 'Duty');
+ALTER TABLE norms_item CHANGE period_type period_type ENUM ('Year', 'Month', 'Wearout', 'Duty') NOT NULL DEFAULT 'Year';
