@@ -181,7 +181,6 @@ namespace Workwear.Domain.Regulations
 		{
 			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
 				return null;
-			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
@@ -200,7 +199,6 @@ namespace Workwear.Domain.Regulations
 		{
 			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
 				return null;
-			//TODO Некорректно считаем смены
 			var maxWriteofDate = issueDate.AddMonths(PeriodInMonths);
 			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
 		}
