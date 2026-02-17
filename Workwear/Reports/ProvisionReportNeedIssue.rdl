@@ -30,7 +30,6 @@ SELECT
     issue.operation_date_string_issue,
     issue.amount_issue,
     CASE
-        WHEN norms_item.period_type = 'Shift' THEN CONCAT(norms_item.amount, 'на смену')
         WHEN norms_item.period_type = 'Wearout' THEN ',До износа'
         WHEN norms_item.period_type = 'Duty' THEN 'Деж.'
         WHEN norms_item.period_type = 'Year' THEN CONCAT(norms_item.amount, ' на ', norms_item.period_count,
