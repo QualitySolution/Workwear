@@ -580,6 +580,10 @@
       <Project>{c776ee5a-1795-439b-bb7d-9ab1b20eeac4}</Project>
       <Name>QS.Updater.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Updates.Client\QS.Updates.Client.csproj">
+      <Project>{08451b0a-4e72-4b12-b422-b36e9047dcaf}</Project>
+      <Name>QS.Updates.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
       <Name>QSProjectsLib</Name>

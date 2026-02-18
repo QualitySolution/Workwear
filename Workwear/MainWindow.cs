@@ -32,6 +32,7 @@ using QS.Tdi.Gtk;
 using QS.Tdi;
 using QS.Updater.App;
 using QS.Updater;
+using QS.Updates;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
 using QSOrmProject;
@@ -41,20 +42,27 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
+using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
 using Workwear.Models.Import;
+using Workwear.ReportParameters.ViewModels;
+using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.Tools;
+using Workwear.ViewModels.Analytics;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Export;
 using Workwear.ViewModels.Import;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Tools;
 using Workwear.ViewModels.User;
+using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -65,16 +73,9 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
-using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
-using Workwear;
-using workwear.Journal.Filter.ViewModels.Stock;
-using Workwear.Journal.ViewModels.Analytics;
-using Workwear.Repository.Company;
-using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
-using Workwear.ViewModels.Analytics;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -132,13 +133,12 @@ public partial class MainWindow : Gtk.Window {
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
 				var channel = configuration[$"AppUpdater:Channel"];
-				var stableChannelText = UpdateChannel.Stable.ToString();
-				if(channel != stableChannelText) { //Устанавливаем канал в Stable принудительно. Так как версия из этого канала.
-					channel = stableChannelText;
-					configuration[$"AppUpdater:Channel"] = stableChannelText;
+				if(channel == null) { //Устанавливаем значение по умолчанию.
+					channel = nameof(UpdateChannel.Stable);
+					configuration[$"AppUpdater:Channel"] = channel;
 				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+				ActionChannelStable.Active = channel == nameof(UpdateChannel.Stable);
+				ActionChannelCurrent.Active = channel == nameof(UpdateChannel.Current);
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
@@ -164,12 +164,13 @@ public partial class MainWindow : Gtk.Window {
 				return;
 			}
 			
-			if (updateInfo?.Status == UpdateStatus.ExternalError) {
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) {
+			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
+			if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
+				interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
+				EnterNewSN();
+				appUpdater.CheckUpdate();
+				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
 					quitService.Quit();
-					return;
-				}
 			}
 		}
 
@@ -258,11 +259,8 @@ public partial class MainWindow : Gtk.Window {
 			{
 				if (FeaturesService.ExpiryDate < DateTime.Now) 
 				{
-					if (EnterNewSN())
-					{
-						quitService.Quit();
-						return;
-					}
+					interactive.ShowMessage(ImportanceLevel.Error, "Срок действия серийного номера истек. Введите новый серийный номер для продолжения работы.", "Серийный номер истек");
+					EnterNewSN();
 				}
 				else
 				{
@@ -347,32 +345,20 @@ public partial class MainWindow : Gtk.Window {
 		UoW.Session.Save(warehouse);
 	}
 
-	private bool EnterNewSN() 
+	private void EnterNewSN() 
 	{
-		if (!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
-		{
-			return false;
-		}
-					
 		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
-		bool res = false;
 		bool isClosed = false;
 		page.PageClosed += (sender, closedArgs) => 
 		{
 			isClosed = true;
 			if (closedArgs.CloseSource == CloseSource.Save) 
-			{
 				FeaturesService.UpdateSerialNumber();
-				res = true;
-			}
 			else
-			{
-				res = false;
-			}
+				quitService.Quit();
 		};
 
 		dispatcher.WaitInMainLoop(() => isClosed);
-		return res;
 	}
 
 	#region Workwear featrures
@@ -539,7 +525,8 @@ public partial class MainWindow : Gtk.Window {
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
-			_ = updater.CheckUpdate(true);
+			updater.CheckUpdate();
+			updater.RunUpdate();
 		}
 	}
 
