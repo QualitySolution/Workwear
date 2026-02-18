@@ -111,9 +111,6 @@ namespace Workwear.Domain.Regulations
 					case NormPeriodType.Month:
 						years = (double)PeriodCount / 12;
 						break;
-					case NormPeriodType.Shift:
-						years = (double)PeriodCount / 247;
-						break;
 					case NormPeriodType.Duty:
 					case NormPeriodType.Wearout:
 						return 0;
@@ -131,8 +128,6 @@ namespace Workwear.Domain.Regulations
 					return PeriodCount * 12;
 				case NormPeriodType.Month:
 					return PeriodCount;
-				case NormPeriodType.Shift:
-					return PeriodCount / 21;
 				case NormPeriodType.Duty:
 				case NormPeriodType.Wearout:
 					return 0;
@@ -151,7 +146,6 @@ namespace Workwear.Domain.Regulations
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
 					case NormPeriodType.Month:
-					case NormPeriodType.Shift:
 						return PeriodCount + " " + PeriodText;
 					case NormPeriodType.Wearout:
 						return "До износа";
@@ -170,8 +164,6 @@ namespace Workwear.Domain.Regulations
 						return NumberToTextRus.FormatCase(PeriodCount, "год", "года", "лет");
 					case NormPeriodType.Month:
 						return NumberToTextRus.FormatCase(PeriodCount, "месяц", "месяца", "месяцев");
-					case NormPeriodType.Shift:
-						return NumberToTextRus.FormatCase(PeriodCount, "смена", "смены", "смен");
 					case NormPeriodType.Wearout:
 						return "До износа";
 					case NormPeriodType.Duty:
@@ -189,7 +181,6 @@ namespace Workwear.Domain.Regulations
 		{
 			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
 				return null;
-			//TODO Некорректно считаем смены
 			double oneItemByMonths = (double)PeriodInMonths / Amount;
 			double months = amount * oneItemByMonths;
 			int wholeMonths = (int)months;
@@ -208,7 +199,6 @@ namespace Workwear.Domain.Regulations
 		{
 			if(NormPeriod == NormPeriodType.Wearout || NormPeriod == NormPeriodType.Duty)
 				return null;
-			//TODO Некорректно считаем смены
 			var maxWriteofDate = issueDate.AddMonths(PeriodInMonths);
 			return wearPercent == 0 ? maxWriteofDate : maxWriteofDate.AddDays((double)((maxWriteofDate - issueDate).Days * wearPercent * -1)) ;
 		}

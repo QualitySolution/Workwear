@@ -266,7 +266,6 @@ namespace Workwear.Models.Regulations {
 					newDutyNormItem.NormPeriod = DutyNormPeriodType.Month;
 					break;
 				case NormPeriodType.Wearout:
-				case NormPeriodType.Shift:
 				case NormPeriodType.Duty:
 					newDutyNormItem.NormPeriod = DutyNormPeriodType.Wearout;
 				break;

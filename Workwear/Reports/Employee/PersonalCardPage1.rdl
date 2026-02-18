@@ -122,7 +122,6 @@ WHERE
     IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
     measurement_units.name AS unit,
     CASE
-        WHEN norms_item.period_type = 'Shift' THEN CONCAT_WS(' ', norms_item.amount, 'на смену')
         WHEN norms_item.period_type = 'Wearout' THEN CONCAT_WS(' ', norms_item.amount, 'до износа')
         WHEN norms_item.period_type = 'Year'
             THEN IF (norms_item.period_count = 1, norms_item.amount,

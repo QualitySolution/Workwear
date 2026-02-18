@@ -1267,26 +1267,21 @@
        CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
            WHEN 'Month' THEN 'месяцев'
            WHEN 'Year' THEN 'лет'
-           WHEN 'Shift' THEN 'смен'
            END, IF(COALESCE(norms_item.period_count, duty_norm_items.period_count) % 10 = 1,
                    CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
                        WHEN 'Month' THEN 'месяц'
                        WHEN 'Year' THEN 'год'
-                       WHEN 'Shift' THEN 'смена'
                        END, IF(COALESCE(norms_item.period_count, duty_norm_items.period_count) % 10 BETWEEN 2 and 4,
                                CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
                                    WHEN 'Month' THEN 'месяца'
                                    WHEN 'Year' THEN 'года'
-                                   WHEN 'Shift' THEN 'смены'
                                    END, CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
                                             WHEN 'Month' THEN 'месяцев'
                                             WHEN 'Year' THEN 'лет'
-                                            WHEN 'Shift' THEN 'смен'
                                    END))) as period_type,
     CASE COALESCE(norms_item.period_type, duty_norm_items.period_type)
         WHEN 'Month' THEN 'время'
         WHEN 'Year' THEN 'время'
-        WHEN 'Shift' THEN 'время'
         WHEN 'Wearout' THEN 'До износа'
         WHEN 'Duty' THEN 'Дежурный'
         ELSE ' '
