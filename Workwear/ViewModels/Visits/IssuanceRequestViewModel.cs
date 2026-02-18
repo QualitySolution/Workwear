@@ -142,6 +142,7 @@ namespace Workwear.ViewModels.Visits {
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
+			selectJournal.ViewModel.Filter.Date = Entity.ReceiptDate;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 

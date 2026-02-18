@@ -25,6 +25,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -148,7 +149,7 @@ namespace Workwear.ViewModels.Stock {
 			WarehouseEntryViewModel.IsEditable = CanEdit;
 			
 			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.Employee)
-									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel, EmployeeFilterViewModel>(f => f.Date = Entity.Date)
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
 			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
