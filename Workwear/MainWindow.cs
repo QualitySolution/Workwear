@@ -375,11 +375,6 @@ public partial class MainWindow : Gtk.Window {
 		return res;
 	}
 
-	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e) {
-		if(e.ViewModel != null)
-			MainTelemetry.AddCount(e.ViewModel.GetType().Name.Replace("ViewModel", ""));
-	}
-
 	#region Workwear featrures
 	private void DisableFeatures() {
 		ActionBarcodeCompletenessReport.Visible = FeaturesService.Available(WorkwearFeature.Barcodes);
