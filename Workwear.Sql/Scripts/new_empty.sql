@@ -2635,6 +2635,7 @@ create table clothing_service_services
 	name 	varchar(60)       not null,
 	cost 	decimal default 0 not null,
 	code    varchar(13)       null,
+	`with_state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NULL COMMENT 'Применять при проставлении статуса заявки на обслуживание',
 	comment text       		  null,
 	constraint clothing_service_services_pk
 		primary key (id)
