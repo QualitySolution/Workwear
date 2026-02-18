@@ -54,7 +54,9 @@ namespace Workwear.Views.Regulations
 				.AddColumn("Период")
 				.AddNumericRenderer(i => i.PeriodCount).WidthChars(5).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty && !n.ProtectionTools.Dispenser)
-				.AddEnumRenderer(i => i.NormPeriod).Editing()
+				.AddEnumRenderer(i => i.NormPeriod)
+					.HideCondition((node, value) => value == NormPeriodType.Shift) 
+					.Editing()
 					.AddSetter((c, n) => {
 						c.Text = n.PeriodText;
 						c.Visible = !n.ProtectionTools.Dispenser;
