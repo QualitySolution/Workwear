@@ -213,6 +213,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionWearCardsReport;
 
+	private global::Gtk.RadioAction ActionOffAutoUpdate;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -575,6 +577,10 @@ public partial class MainWindow
 		this.ActionWearCardsReport = new global::Gtk.Action("ActionWearCardsReport", global::Mono.Unix.Catalog.GetString("Список сотрудников"), null, null);
 		this.ActionWearCardsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Список сотрудников");
 		w1.Add(this.ActionWearCardsReport, null);
+		this.ActionOffAutoUpdate = new global::Gtk.RadioAction("ActionOffAutoUpdate", global::Mono.Unix.Catalog.GetString("Без обновлений"), null, null, 0);
+		this.ActionOffAutoUpdate.Group = this.ActionChannelCurrent.Group;
+		this.ActionOffAutoUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Без обновлений");
+		w1.Add(this.ActionOffAutoUpdate, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -898,5 +904,6 @@ public partial class MainWindow
 		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
 		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
+		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
 	}
 }

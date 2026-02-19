@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -5880,6 +5880,16 @@
         <property name="ShortLabel" translatable="yes">Список сотрудников</property>
         <signal name="Activated" handler="OnActionWearCardsReportActivated" />
       </action>
+      <action id="ActionOffAutoUpdate">
+        <property name="Type">Radio</property>
+        <property name="Label" translatable="yes">Без обновлений</property>
+        <property name="ShortLabel" translatable="yes">Без обновлений</property>
+        <property name="DrawAsRadio">False</property>
+        <property name="Active">False</property>
+        <property name="Value">0</property>
+        <property name="Group">UpdateChannel</property>
+        <signal name="Toggled" handler="OnActionOffAutoUpdateToggled" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6014,6 +6024,7 @@
                 <node type="Menu" action="ActionUpdateChannel">
                   <node type="Menuitem" action="ActionChannelCurrent" />
                   <node type="Menuitem" action="ActionChannelStable" />
+                  <node type="Menuitem" action="ActionOffAutoUpdate" />
                 </node>
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
