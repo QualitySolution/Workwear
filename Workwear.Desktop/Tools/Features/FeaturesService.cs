@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using QS.BaseParameters;
 using QS.Cloud.Client;
 using QS.Dialog;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Versioning.Product;
-using QS.Serial;
 using QS.Serial.Encoding;
 
 namespace Workwear.Tools.Features
@@ -26,10 +26,10 @@ namespace Workwear.Tools.Features
 			new ProductEdition(4, "Спецаутсорсинг")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
+		private readonly ParametersService parametersService;
 		private readonly CloudClientService cloudClientService;
 		private readonly IInteractiveMessage interactive;
 		private readonly IErrorReporter errorReporter;
-		private readonly ILifetimeScope autofacScope;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; private set; }
@@ -68,19 +68,19 @@ namespace Workwear.Tools.Features
 			}
 		}
 
-		public FeaturesService(ISerialNumberService serialNumberService,
+		public FeaturesService(
+			ParametersService parametersService,
 			SerialNumberEncoder serialNumberEncoder,
 			CloudClientService cloudClientService,
 			IInteractiveMessage interactive,
 			IErrorReporter errorReporter,
-			ILifetimeScope autofacScope,
 			IDataBaseInfo dataBaseInfo = null)
 		{
+			this.parametersService = parametersService ?? throw new ArgumentNullException(nameof(parametersService));
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -89,10 +89,10 @@ namespace Workwear.Tools.Features
 
 			ProductEdition = 1;
 			 
-			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
+			if(String.IsNullOrWhiteSpace(parametersService.Dynamic.serial_number))
 				return;
 
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 
 		/// <summary>
@@ -102,9 +102,9 @@ namespace Workwear.Tools.Features
 		{
 		}
 
-		private void SetProperties(ISerialNumberService serialNumberService)
+		private void SetProperties()
 		{
-			serialNumberEncoder.Number = serialNumberService.SerialNumber;
+			serialNumberEncoder.Number = parametersService.Dynamic.serial_number;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
@@ -121,8 +121,7 @@ namespace Workwear.Tools.Features
 		
 		public void UpdateSerialNumber() 
 		{
-			ISerialNumberService serialNumberService = autofacScope.Resolve<ISerialNumberService>();
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 		
 		public string GetEditionName(int editionId) 
