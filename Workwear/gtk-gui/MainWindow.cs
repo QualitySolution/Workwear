@@ -241,6 +241,10 @@ public partial class MainWindow
 
 	private global::Gtk.Label labelStatus;
 
+	private global::Gamma.GtkWidgets.yEventBox eventboxSubscriptionStatus;
+
+	private global::Gamma.GtkWidgets.yLabel labelSubscriptionStatus;
+
 	protected virtual void Build()
 	{
 		global::Stetic.Gui.Initialize(this);
@@ -772,17 +776,32 @@ public partial class MainWindow
 		this.MainStatusBar.Add(this.labelStatus);
 		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
 		w13.Position = 2;
+		// Container child MainStatusBar.Gtk.Box+BoxChild
+		this.eventboxSubscriptionStatus = new global::Gamma.GtkWidgets.yEventBox();
+		this.eventboxSubscriptionStatus.Name = "eventboxSubscriptionStatus";
+		this.eventboxSubscriptionStatus.VisibleWindow = false;
+		// Container child eventboxSubscriptionStatus.Gtk.Container+ContainerChild
+		this.labelSubscriptionStatus = new global::Gamma.GtkWidgets.yLabel();
+		this.labelSubscriptionStatus.Name = "labelSubscriptionStatus";
+		this.labelSubscriptionStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Подписка");
+		this.labelSubscriptionStatus.UseMarkup = true;
+		this.eventboxSubscriptionStatus.Add(this.labelSubscriptionStatus);
+		this.MainStatusBar.Add(this.eventboxSubscriptionStatus);
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.eventboxSubscriptionStatus]));
+		w15.Position = 3;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.vbox1.Add(this.MainStatusBar);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
-		w14.Position = 5;
-		w14.Expand = false;
-		w14.Fill = false;
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
+		w16.Position = 5;
+		w16.Expand = false;
+		w16.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1018;
+		this.DefaultWidth = 1116;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -878,5 +897,6 @@ public partial class MainWindow
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
 		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
 		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
+		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

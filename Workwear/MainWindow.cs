@@ -91,6 +91,11 @@ public partial class MainWindow : Gtk.Window {
 	
 	public FeaturesService FeaturesService { get; private set; }
 	
+	// Информация о статусе подписки
+	private SubscriptionStatus currentSubscriptionStatus = SubscriptionStatus.None;
+	private string subscriptionStatusTitle = string.Empty;
+	private string subscriptionStatusMessage = string.Empty;
+	
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
 		ProgressBar = progresswidget1;
@@ -165,12 +170,30 @@ public partial class MainWindow : Gtk.Window {
 			}
 			
 			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
-			if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
-				interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
-				EnterNewSN();
-				appUpdater.CheckUpdate();
-				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
-					quitService.Quit();
+			if(appUpdater.LastResponse != null) {
+				switch(appUpdater.LastResponse.SubscriptionStatus) {
+					case SubscriptionStatus.Blocked:
+						interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
+						EnterNewSN();
+						appUpdater.CheckUpdate();
+						if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
+							quitService.Quit();
+						break;
+					case SubscriptionStatus.Active:
+						// Все нормально, ничего не показываем
+						break;
+					case SubscriptionStatus.None:
+						// Показываем что это бесплатная версия
+						SetSubscriptionStatusInStatusBar(SubscriptionStatus.None, 
+							"Бесплатная версия", "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.");
+						break;
+					default:
+						// Для всех остальных статусов (Expired, ExpiredUnsupported, ExpiredSupported)
+						// Сохраняем информацию для отображения в строке состояния
+						SetSubscriptionStatusInStatusBar(appUpdater.LastResponse.SubscriptionStatus, 
+							appUpdater.LastResponse.Title, appUpdater.LastResponse.Message);
+						break;
+				}
 			}
 		}
 
@@ -969,4 +992,69 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionWearCardsReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearCardsReportViewModel));
 	}
+
+	#region Обработка статуса подписки
+	
+	/// <summary>
+	/// Устанавливает статус подписки в строке состояния
+	/// </summary>
+	private void SetSubscriptionStatusInStatusBar(SubscriptionStatus status, string title, string message) {
+		currentSubscriptionStatus = status;
+		subscriptionStatusTitle = title;
+		subscriptionStatusMessage = message;
+		
+		string statusText = string.Empty;
+		string color = "black";
+		
+		switch(status) {
+			case SubscriptionStatus.None:
+				statusText = "Бесплатная версия";
+				color = "blue";
+				break;
+			case SubscriptionStatus.Expired:
+				statusText = "⚠ Подписка истекла";
+				color = "orange";
+				break;
+			case SubscriptionStatus.ExpiredUnsupported:
+				statusText = "⚠ Не поддерживается";
+				color = "red";
+				break;
+			case SubscriptionStatus.ExpiredSupported:
+				statusText = "⚠ Поддержка ограничена";
+				color = "orange";
+				break;
+			default:
+				labelSubscriptionStatus.Visible = false;
+				eventboxSubscriptionStatus.Visible = false;
+				return;
+		}
+		
+		labelSubscriptionStatus.Markup = $"<span foreground=\"{color}\" weight=\"bold\"> {statusText}</span>";
+		labelSubscriptionStatus.Visible = true;
+		eventboxSubscriptionStatus.Visible = true;
+	}
+	
+	/// <summary>
+	/// Обработчик клика по статусу подписки
+	/// </summary>
+	protected void OnSubscriptionStatusClicked(object o, ButtonPressEventArgs args) {
+		if(currentSubscriptionStatus == SubscriptionStatus.Active)
+			return;
+		
+		interactive.ShowMessage(ImportanceLevel.Warning, subscriptionStatusMessage, subscriptionStatusTitle);
+		
+		// Открываем страницу покупки
+		try {
+			string url = "https://workwear.qsolution.ru/stoimost/";
+			Process.Start(new ProcessStartInfo {
+				FileName = url,
+				UseShellExecute = true
+			});
+		}
+		catch(Exception ex) {
+			logger.Error(ex, "Не удалось открыть браузер");
+		}
+	}
+
+	#endregion
 }
