@@ -76,6 +76,7 @@ using workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
+using NumberToTextRus = QS.Utilities.NumberToTextRus;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -171,29 +172,14 @@ public partial class MainWindow : Gtk.Window {
 			
 			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
 			if(appUpdater.LastResponse != null) {
-				switch(appUpdater.LastResponse.SubscriptionStatus) {
-					case SubscriptionStatus.Blocked:
-						interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
-						EnterNewSN();
-						appUpdater.CheckUpdate();
-						if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
-							quitService.Quit();
-						break;
-					case SubscriptionStatus.Active:
-						// Все нормально, ничего не показываем
-						break;
-					case SubscriptionStatus.None:
-						// Показываем что это бесплатная версия
-						SetSubscriptionStatusInStatusBar(SubscriptionStatus.None, 
-							"Бесплатная версия", "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.");
-						break;
-					default:
-						// Для всех остальных статусов (Expired, ExpiredUnsupported, ExpiredSupported)
-						// Сохраняем информацию для отображения в строке состояния
-						SetSubscriptionStatusInStatusBar(appUpdater.LastResponse.SubscriptionStatus, 
-							appUpdater.LastResponse.Title, appUpdater.LastResponse.Message);
-						break;
-				}
+				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
+					interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
+					EnterNewSN();
+					appUpdater.CheckUpdate();
+					if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
+						quitService.Quit();
+				} else 
+					SetSubscriptionStatusInStatusBar(appUpdater.LastResponse);
 			}
 		}
 
@@ -996,34 +982,66 @@ public partial class MainWindow : Gtk.Window {
 	#region Обработка статуса подписки
 	
 	/// <summary>
-	/// Устанавливает статус подписки в строке состояния
+	/// Устанавливает статус подписки в строке состояния на основе ответа от сервера обновлений
 	/// </summary>
-	private void SetSubscriptionStatusInStatusBar(SubscriptionStatus status, string title, string message) {
-		currentSubscriptionStatus = status;
-		subscriptionStatusTitle = title;
-		subscriptionStatusMessage = message;
+	private void SetSubscriptionStatusInStatusBar(CheckForUpdatesResponse response) {
+		currentSubscriptionStatus = response.SubscriptionStatus;
+		subscriptionStatusTitle = response.Title;
+		subscriptionStatusMessage = response.Message;
 		
 		string statusText = string.Empty;
 		string color = "black";
 		
-		switch(status) {
+		switch(currentSubscriptionStatus) {
 			case SubscriptionStatus.None:
 				statusText = "Бесплатная версия";
 				color = "blue";
+				subscriptionStatusTitle = "Бесплатная версия";
+				subscriptionStatusMessage = "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.";
 				break;
+				
+			case SubscriptionStatus.Active:
+				// Проверяем, не истекает ли подписка в ближайшие 30 дней
+				if(response.SubscriptionActiveUntil != null) {
+					var expirationDate = response.SubscriptionActiveUntil.ToDateTime();
+					var daysLeft = (expirationDate - DateTime.UtcNow).Days;
+					
+					if(daysLeft <= 30 && daysLeft > 0) {
+						statusText = $"Активно ещё {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}";
+						color = "green";
+						subscriptionStatusTitle = "Подписка скоро истекает";
+						subscriptionStatusMessage = $"До окончания подписки осталось {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}. Рекомендуем продлить подписку заранее.";
+					} else {
+						// Подписка активна и не истекает в ближайшее время - ничего не показываем
+						labelSubscriptionStatus.Visible = false;
+						eventboxSubscriptionStatus.Visible = false;
+						return;
+					}
+				} else {
+					// Нет информации о дате окончания - не показываем статус
+					labelSubscriptionStatus.Visible = false;
+					eventboxSubscriptionStatus.Visible = false;
+					return;
+				}
+				break;
+				
 			case SubscriptionStatus.Expired:
 				statusText = "⚠ Подписка истекла";
 				color = "orange";
 				break;
+				
 			case SubscriptionStatus.ExpiredUnsupported:
 				statusText = "⚠ Не поддерживается";
 				color = "red";
 				break;
+				
 			case SubscriptionStatus.ExpiredSupported:
 				statusText = "⚠ Поддержка ограничена";
 				color = "orange";
 				break;
+				
 			default:
+				// Для неизвестных статусов ничего не показываем
 				labelSubscriptionStatus.Visible = false;
 				eventboxSubscriptionStatus.Visible = false;
 				return;
@@ -1038,9 +1056,10 @@ public partial class MainWindow : Gtk.Window {
 	/// Обработчик клика по статусу подписки
 	/// </summary>
 	protected void OnSubscriptionStatusClicked(object o, ButtonPressEventArgs args) {
-		if(currentSubscriptionStatus == SubscriptionStatus.Active)
+		// Показываем сообщение для всех статусов, кроме случая когда статус не установлен
+		if(string.IsNullOrEmpty(subscriptionStatusMessage))
 			return;
-		
+			
 		interactive.ShowMessage(ImportanceLevel.Warning, subscriptionStatusMessage, subscriptionStatusTitle);
 		
 		// Открываем страницу покупки
