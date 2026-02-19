@@ -666,10 +666,11 @@ public partial class MainWindow
 				"<menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateC" +
 				"hannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' actio" +
 				"n=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionCha" +
-				"nnelStable\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separa" +
-				"tor/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name" +
-				"=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'" +
-				"aboutAction\'/></menu></menubar></ui>");
+				"nnelStable\'/><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionOffAutoUpdate\'/>" +
+				"</menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuite" +
+				"m name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionSN\' a" +
+				"ction=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/" +
+				"></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -903,7 +904,7 @@ public partial class MainWindow
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
 		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
 		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
-		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
+		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

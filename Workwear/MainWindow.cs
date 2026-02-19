@@ -149,7 +149,7 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			var configuration = updateScope.Resolve<IChangeableConfiguration>();
-			UpdateInfo? updateInfo = checker.RunUpdate(ActionOffAutoUpdate.Active);
+			UpdateInfo? updateInfo = checker.RunUpdate();
 			UpdateChannelActive(configuration);
 			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 				quitService.Quit();
@@ -432,12 +432,12 @@ public partial class MainWindow : Gtk.Window {
 	private void UpdateChannelActive(IChangeableConfiguration configuration) {
 		var channel = configuration[$"AppUpdater:Channel"];
 		if(channel == null) {  //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
-			channel = UpdateChannel.Current.ToString();
+			channel = nameof(UpdateChannel.Current);
 			configuration[$"AppUpdater:Channel"] = channel;
 		}
-		ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-		ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-		ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
+		ActionChannelStable.Active = channel == nameof(UpdateChannel.Stable);
+		ActionChannelCurrent.Active = channel == nameof(UpdateChannel.Current);
+		ActionOffAutoUpdate.Active = channel == nameof(UpdateChannel.Off);
 	}
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
@@ -1090,8 +1090,9 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	#endregion
+	
 	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
 		if(ActionOffAutoUpdate.Active)
-			SetChannel(UpdateChannel.OffAutoUpdate);
+			SetChannel(UpdateChannel.Off);
 	}
 }
