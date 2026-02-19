@@ -1040,17 +1040,17 @@ public partial class MainWindow : Gtk.Window {
 				break;
 				
 			case SubscriptionStatus.Expired:
-				statusText = "⚠ Подписка истекла";
+				statusText = "(!) Подписка истекла";
 				color = "orange";
 				break;
 				
 			case SubscriptionStatus.ExpiredUnsupported:
-				statusText = "⚠ Не поддерживается";
+				statusText = "(!) Не поддерживается";
 				color = "red";
 				break;
 				
 			case SubscriptionStatus.ExpiredSupported:
-				statusText = "⚠ Поддержка ограничена";
+				statusText = "(!) Поддержка ограничена";
 				color = "orange";
 				break;
 				
