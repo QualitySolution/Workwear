@@ -216,6 +216,7 @@ namespace Workwear.ViewModels.ClothingService {
 				return false;
 			}
 			State = state;
+
 			return true;
 		}
 		public void ChangeState(ClaimState state) {
@@ -315,6 +316,9 @@ namespace Workwear.ViewModels.ClothingService {
 			claim.NeedForRepair = NeedRepair;
 			if(NeedRepair && claim.Defect != DefectText)
 				claim.Defect = DefectText;
+			
+			foreach(var s in ServicesList.Where(x => x.Entity.Service.WithState == state))
+				s.Select = true;
 			
 			if(MoveDefiniteClaim) { //Сохранеине и коммит в вызвавающем объекте
 				Close(false, CloseSource.Self);
