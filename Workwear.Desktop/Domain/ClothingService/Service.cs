@@ -36,6 +36,12 @@ namespace Workwear.Domain.ClothingService {
 			get => code;
 			set => SetField(ref code, value);
 		}
+		
+		private ClaimState withState = ClaimState.InTransit;
+		public virtual ClaimState WithState {
+			get => withState;
+			set => SetField(ref withState, value);
+		}
 
 		private string comment;
 		[Display(Name = "Комментарий")]
