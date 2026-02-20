@@ -23,7 +23,7 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref name, value);
 		}
 
-		private decimal cost = 0;
+		private decimal cost;
 		[Display(Name = "Стоимость")]
 		public virtual decimal Cost {
 			get => cost;

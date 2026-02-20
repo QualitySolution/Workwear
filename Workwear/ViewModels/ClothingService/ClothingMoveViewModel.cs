@@ -83,7 +83,7 @@ namespace Workwear.ViewModels.ClothingService {
 			if(this.FeaturesService.Available(WorkwearFeature.Postomats))
 				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 
-			Services.ContentChanged += ServicesOnContentChanged;
+			ServicesList.ContentChanged += ServicesListOnContentChanged;
 		}
 
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -100,13 +100,16 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 		
-		private void ServicesOnContentChanged(object sender, EventArgs e) {
-			if(sender is SelectableEntity<Service> item) {
-				if(item.Select && !Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(item.Entity, provided)))
+		private void ServicesListOnContentChanged(object sender, EventArgs e) {
+			if(sender is SelectableEntity<ProvidedService> item) {
+				if(item.Select) {
+					item.Entity.Id = 0; //Отмечаем как новый, чтобы  пересоздался. Так коректно работает журналирование
+					item.Entity.Cost = item.Entity.Service.Cost;
 					Claim.ProvidedServices.Add(item.Entity);
-				else if(!item.Select && Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(item.Entity, provided)))
-					Claim.ProvidedServices.Remove(item.Entity);
-                UoW.Save(claim);
+				} else
+					Claim.ProvidedServices.RemoveAll(x => DomainHelper.EqualDomainObjects(item.Entity, x));
+
+				UoW.Save(claim);
 				UoW.Commit();
 			}
 		}
@@ -124,11 +127,15 @@ namespace Workwear.ViewModels.ClothingService {
 			get => claim;
 			set {
 				if(SetField(ref claim, value) && claim != null) {
-					services.Clear();
-					foreach(var service in claim.Barcode.Nomenclature.UseServices) //Делаем список для заполнеия услуг во вьюшке
-						services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
-							{Select = Claim.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
-					OnPropertyChanged(nameof(Services));
+					servicesList.Clear();
+					foreach(var service in claim.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
+						ProvidedService provServ = Claim.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
+								?? new ProvidedService(claim, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
+						servicesList.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+							{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
+					}
+
+					OnPropertyChanged(nameof(ServicesList));
 					NeedRepair = claim.NeedForRepair;
 					DefectText = claim.Defect;
 					OnPropertyChanged(nameof(SensitiveActions));
@@ -177,10 +184,10 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
-		public virtual IObservableList<SelectableEntity<Service>> Services {
-			get => services;
-			set => SetField(ref services, value);
+		private IObservableList<SelectableEntity<ProvidedService>> servicesList = new ObservableList<SelectableEntity<ProvidedService>>();
+		public virtual IObservableList<SelectableEntity<ProvidedService>> ServicesList {
+			get => servicesList;
+			set => SetField(ref servicesList, value);
 		}
 		
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
@@ -233,7 +240,7 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = "Услуга не найдена.";
 				return;
 			}
-			var ser = Services.FirstOrDefault(s => s.Entity.Id == service.Id);
+			var ser = ServicesList.FirstOrDefault(s => s.Entity.Id == service.Id);
 			if(ser != default)
 				ser.Select = true;
 			else

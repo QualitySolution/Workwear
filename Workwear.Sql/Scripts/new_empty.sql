@@ -2664,6 +2664,7 @@ create table clothing_service_services_claim
 	id         int unsigned auto_increment,
 	service_id int unsigned null,
 	claim_id   int unsigned,
+	`cost` 		DECIMAL DEFAULT 0 NULL,
 	constraint clothing_service_services_claim_pk
 		primary key (id),
 	constraint clothing_service_services_claim_service_id_claim_id_uindex

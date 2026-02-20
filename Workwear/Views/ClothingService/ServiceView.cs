@@ -15,7 +15,7 @@ namespace Workwear.Views.ClothingService {
 			yentryName.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			yspinbuttonSaleCost.Binding
-				.AddBinding(Entity, e => e.Cost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
+				.AddBinding(Entity, e => e.Cost, w=> w.ValueAsDecimal).InitializeFromSource();
 			ytextComment.Binding
         		.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			
