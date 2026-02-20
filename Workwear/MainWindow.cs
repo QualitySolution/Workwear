@@ -32,6 +32,7 @@ using QS.Tdi.Gtk;
 using QS.Tdi;
 using QS.Updater.App;
 using QS.Updater;
+using QS.Updates;
 using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
@@ -42,20 +43,27 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
+using Workwear.Journal.ViewModels.Analytics;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
 using Workwear.Models.Import;
+using Workwear.ReportParameters.ViewModels;
+using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.Tools;
+using Workwear.ViewModels.Analytics;
 using Workwear.ViewModels.Communications;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Export;
 using Workwear.ViewModels.Import;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Tools;
 using Workwear.ViewModels.User;
+using Workwear;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -66,7 +74,6 @@ using workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
-using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
 using workwear;
 using Workwear;
@@ -77,6 +84,7 @@ using workwear.Journal.ViewModels.Visits;
 using Workwear.Repository.Company;
 using Workwear.ViewModels.Export;
 using CurrencyWorks = QS.Utilities.CurrencyWorks;
+using NumberToTextRus = QS.Utilities.NumberToTextRus;
 using Workwear.ViewModels.Analytics;
 using Workwear.ViewModels.Visits;
 
@@ -93,6 +101,11 @@ public partial class MainWindow : Gtk.Window {
 	public readonly IGuiDispatcher dispatcher;
 	
 	public FeaturesService FeaturesService { get; private set; }
+	
+	// Информация о статусе подписки
+	private SubscriptionStatus currentSubscriptionStatus = SubscriptionStatus.None;
+	private string subscriptionStatusTitle = string.Empty;
+	private string subscriptionStatusMessage = string.Empty;
 	
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
@@ -146,7 +159,7 @@ public partial class MainWindow : Gtk.Window {
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			var configuration = updateScope.Resolve<IChangeableConfiguration>();
-			UpdateInfo? updateInfo = checker.RunUpdate(ActionOffAutoUpdate.Active);
+			UpdateInfo? updateInfo = checker.RunUpdate();
 			UpdateChannelActive(configuration);
 			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 				quitService.Quit();
@@ -162,13 +175,17 @@ public partial class MainWindow : Gtk.Window {
 				quitService.Quit();
 				return;
 			}
-
-			if(updateInfo?.Status == UpdateStatus.ExternalError) {
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if(!EnterNewSN()) {
-					quitService.Quit();
-					return;
-				}
+			
+			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
+			if(appUpdater.LastResponse != null) {
+				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
+					interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
+					EnterNewSN();
+					appUpdater.CheckUpdate();
+					if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
+						quitService.Quit();
+				} else 
+					SetSubscriptionStatusInStatusBar(appUpdater.LastResponse);
 			}
 		}
 
@@ -253,12 +270,12 @@ public partial class MainWindow : Gtk.Window {
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
 
 			//Уведомление о скором истечении срока действия серийного номера
-			if(FeaturesService.ExpiryDate != null) {
-				if(FeaturesService.ExpiryDate < DateTime.Now) {
-					if(EnterNewSN()) {
-						quitService.Quit();
-						return;
-					}
+			if (FeaturesService.ExpiryDate != null) 
+			{
+				if (FeaturesService.ExpiryDate < DateTime.Now) 
+				{
+					interactive.ShowMessage(ImportanceLevel.Error, "Срок действия серийного номера истек. Введите новый серийный номер для продолжения работы.", "Серийный номер истек");
+					EnterNewSN();
 				}
 				else {
 					int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
@@ -342,27 +359,19 @@ public partial class MainWindow : Gtk.Window {
 		UoW.Session.Save(warehouse);
 	}
 
-	private bool EnterNewSN() {
-		if(!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) {
-			return false;
-		}
-
+	private void EnterNewSN() 
+	{
 		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
-		bool res = false;
 		bool isClosed = false;
 		page.PageClosed += (sender, closedArgs) => {
 			isClosed = true;
-			if(closedArgs.CloseSource == CloseSource.Save) {
+			if (closedArgs.CloseSource == CloseSource.Save) 
 				FeaturesService.UpdateSerialNumber();
-				res = true;
-			}
-			else {
-				res = false;
-			}
+			else
+				quitService.Quit();
 		};
 
 		dispatcher.WaitInMainLoop(() => isClosed);
-		return res;
 	}
 
 	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e) {
@@ -435,13 +444,13 @@ public partial class MainWindow : Gtk.Window {
 
 	private void UpdateChannelActive(IChangeableConfiguration configuration) {
 		var channel = configuration[$"AppUpdater:Channel"];
-		if(channel == null) {  //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
+		if(channel == null) {  //Устанавливаем значение по умолчанию.
 			channel = UpdateChannel.Current.ToString();
 			configuration[$"AppUpdater:Channel"] = channel;
 		}
-		ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-		ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
-		ActionOffAutoUpdate.Active = channel == UpdateChannel.OffAutoUpdate.ToString();
+		ActionChannelStable.Active = channel == nameof(UpdateChannel.Stable);
+		ActionChannelCurrent.Active = channel == nameof(UpdateChannel.Current);
+		ActionOffAutoUpdate.Active = channel == nameof(UpdateChannel.Off);
 	}
 
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
@@ -550,7 +559,8 @@ public partial class MainWindow : Gtk.Window {
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
-			_ = updater.CheckUpdate(true);
+			updater.CheckUpdate();
+			updater.RunUpdate();
 			var configuration = scope.Resolve<IChangeableConfiguration>();
 			UpdateChannelActive(configuration);
 		}
@@ -1019,8 +1029,106 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<IssuanceRequestJournalViewModel>(null);
 	}
 
+	#region Обработка статуса подписки
+	
+	/// <summary>
+	/// Устанавливает статус подписки в строке состояния на основе ответа от сервера обновлений
+	/// </summary>
+	private void SetSubscriptionStatusInStatusBar(CheckForUpdatesResponse response) {
+		currentSubscriptionStatus = response.SubscriptionStatus;
+		subscriptionStatusTitle = response.Title;
+		subscriptionStatusMessage = response.Message;
+		
+		string statusText = string.Empty;
+		string color = "black";
+		
+		switch(currentSubscriptionStatus) {
+			case SubscriptionStatus.None:
+				statusText = "Бесплатная версия";
+				color = "blue";
+				subscriptionStatusTitle = "Бесплатная версия";
+				subscriptionStatusMessage = "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.";
+				break;
+				
+			case SubscriptionStatus.Active:
+				// Проверяем, не истекает ли подписка в ближайшие 30 дней
+				if(response.SubscriptionActiveUntil != null) {
+					var expirationDate = response.SubscriptionActiveUntil.ToDateTime();
+					var daysLeft = (expirationDate - DateTime.UtcNow).Days;
+					
+					if(daysLeft <= 30 && daysLeft > 0) {
+						statusText = $"Активно ещё {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}";
+						color = "green";
+						subscriptionStatusTitle = "Подписка скоро истекает";
+						subscriptionStatusMessage = $"До окончания подписки осталось {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}. Рекомендуем продлить подписку заранее.";
+					} else {
+						// Подписка активна и не истекает в ближайшее время - ничего не показываем
+						labelSubscriptionStatus.Visible = false;
+						eventboxSubscriptionStatus.Visible = false;
+						return;
+					}
+				} else {
+					// Нет информации о дате окончания - не показываем статус
+					labelSubscriptionStatus.Visible = false;
+					eventboxSubscriptionStatus.Visible = false;
+					return;
+				}
+				break;
+				
+			case SubscriptionStatus.Expired:
+				statusText = "(!) Подписка истекла";
+				color = "orange";
+				break;
+				
+			case SubscriptionStatus.ExpiredUnsupported:
+				statusText = "(!) Не поддерживается";
+				color = "red";
+				break;
+				
+			case SubscriptionStatus.ExpiredSupported:
+				statusText = "(!) Поддержка ограничена";
+				color = "orange";
+				break;
+				
+			default:
+				// Для неизвестных статусов ничего не показываем
+				labelSubscriptionStatus.Visible = false;
+				eventboxSubscriptionStatus.Visible = false;
+				return;
+		}
+		
+		labelSubscriptionStatus.Markup = $"<span foreground=\"{color}\" weight=\"bold\"> {statusText}</span>";
+		labelSubscriptionStatus.Visible = true;
+		eventboxSubscriptionStatus.Visible = true;
+	}
+	
+	/// <summary>
+	/// Обработчик клика по статусу подписки
+	/// </summary>
+	protected void OnSubscriptionStatusClicked(object o, ButtonPressEventArgs args) {
+		// Показываем сообщение для всех статусов, кроме случая когда статус не установлен
+		if(string.IsNullOrEmpty(subscriptionStatusMessage))
+			return;
+			
+		interactive.ShowMessage(ImportanceLevel.Warning, subscriptionStatusMessage, subscriptionStatusTitle);
+		
+		// Открываем страницу покупки
+		try {
+			string url = "https://workwear.qsolution.ru/stoimost/";
+			Process.Start(new ProcessStartInfo {
+				FileName = url,
+				UseShellExecute = true
+			});
+		}
+		catch(Exception ex) {
+			logger.Error(ex, "Не удалось открыть браузер");
+		}
+	}
+
+	#endregion
+	
 	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
 		if(ActionOffAutoUpdate.Active)
-			SetChannel(UpdateChannel.OffAutoUpdate);
+			SetChannel(UpdateChannel.Off);
 	}
 }
