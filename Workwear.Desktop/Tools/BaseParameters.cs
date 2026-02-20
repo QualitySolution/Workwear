@@ -110,6 +110,15 @@ namespace Workwear.Tools
 			get => Dynamic.StartDateOfOperations(typeof(DateTime?));
 			set => Dynamic[nameof(StartDateOfOperations)] = value;
 		}
+
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника в наименовании СИЗ будет указана номенклатура нормы вместо номенклатуры.
+		/// </summary>
+		public virtual bool IsGenericName {
+			get => Dynamic.IsGenericName(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsGenericName)] = value;
+		}
+		
 		/// <summary>
 		/// Дата запрета редактирования документов.
 		/// </summary>
