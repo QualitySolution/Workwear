@@ -49,7 +49,7 @@ WHERE (((@only_without_norms AND (en.id IS NULL OR employees.id IN (SELECT arch.
                                                                    GROUP BY employees.id))arch
                                                                         WHERE num=0)))
     OR (@only_without_norms=false))
-  AND ((@only_working AND dismiss_date IS NULL) OR (@only_working=false)))
+  AND ((@only_working AND (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)) OR (@only_working=false)))
 GROUP BY employees.id
 ORDER BY employee_name;</CommandText>
         <QueryParameters>
