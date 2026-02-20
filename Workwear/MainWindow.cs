@@ -431,8 +431,8 @@ public partial class MainWindow : Gtk.Window {
 
 	private void UpdateChannelActive(IChangeableConfiguration configuration) {
 		var channel = configuration[$"AppUpdater:Channel"];
-		if(channel == null) {  //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable и OffAutoUpdate
-			channel = nameof(UpdateChannel.Current);
+		if(channel == null) {  //Устанавливаем значение по умолчанию.
+			channel = nameof(UpdateChannel.Stable);
 			configuration[$"AppUpdater:Channel"] = channel;
 		}
 		ActionChannelStable.Active = channel == nameof(UpdateChannel.Stable);
