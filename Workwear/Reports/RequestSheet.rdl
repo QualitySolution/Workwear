@@ -979,8 +979,8 @@ FROM employee_cards_item
     LEFT JOIN norm_conditions AS conditions ON conditions.id = norms_item.condition_id
 WHERE (-1 IN (@subdivisions) OR employees.subdivision_id IN (@subdivisions)) 
     AND ((@department_id = -1) OR employees.department_id = @department_id) 
-    AND employees.dismiss_date &gt;= DATE_ADD(DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'),INTERVAL 1 MONTH), INTERVAL -1 DAY) 
-        OR employees.dismiss_date IS NULL
+    AND (employees.dismiss_date &gt;= DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'),INTERVAL 1 MONTH)
+        OR employees.dismiss_date IS NULL)
     AND employee_cards_item.next_issue &lt; DATE_ADD(CONCAT(@end_year, '-', @end_month, '-01'), INTERVAL 1 MONTH) 
     AND( @issue_type = '' OR item_types.issue_type = @issue_type )
     AND ((-1 IN (@protectionTools)) OR (employee_cards_item.protection_tools_id IN (@protectionTools)))
