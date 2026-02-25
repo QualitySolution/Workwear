@@ -55,7 +55,7 @@ FROM (SELECT
             GROUP BY op.employee_id, op.protection_tools_id
            ) as bar_op on bar_op.pt = employee_cards_item.protection_tools_id AND bar_op.emp = employee_cards_item.employee_id
       WHERE
-          employees.dismiss_date IS NULL
+          (employees.dismiss_date &gt; CONVERT(@report_date, DATE) OR employees.dismiss_date IS NULL)
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
         AND (@exclude_in_vacation = false
