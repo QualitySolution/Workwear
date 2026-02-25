@@ -44,7 +44,7 @@ FROM
         LEFT JOIN employees_sizes AS top6 ON employees.id = top6.employee_id AND top6.size_type_id = @type_id_5
         LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
 WHERE
-    dismiss_date IS NULL
+    (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
 ORDER BY last_name , first_name , patronymic_name</CommandText>
         <QueryParameters>
           <QueryParameter Name="@type_id_0">

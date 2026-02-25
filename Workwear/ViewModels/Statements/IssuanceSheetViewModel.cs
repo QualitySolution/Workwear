@@ -179,6 +179,7 @@ namespace Workwear.ViewModels.Statements
 			var selectDialog = selectPage.ViewModel;
 			selectDialog.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectDialog.Tag = items;
+			selectDialog.Filter.Date = Entity.Date;
 			selectDialog.OnSelectResult += SelectDialog_OnSelectResult;
 		}
 

@@ -161,6 +161,7 @@ namespace Workwear.ViewModels.Stock
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
+			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
