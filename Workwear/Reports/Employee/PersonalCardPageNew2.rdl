@@ -772,7 +772,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>(SELECT
-    IFNULL(nomenclature.name, protection_tools.name)
+    IF(@isGenericName, protection_tools.name, IFNULL(nomenclature.name, protection_tools.name))
         AS name_siz,
     nomenclature.number
         AS nom_number,
@@ -868,6 +868,9 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
           <QueryParameter Name="startDateOfOperations">
             <Value>={?startDateOfOperations}</Value>
           </QueryParameter>
+          <QueryParameter Name="isGenericName">
+            <Value>={?isGenericName}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
@@ -958,6 +961,13 @@ WHERE pt_eci.dispenser IS TRUE AND eci.employee_id = @id AND !pt_eci.archival
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isGenericName">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources>
