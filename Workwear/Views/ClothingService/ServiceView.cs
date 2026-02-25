@@ -15,9 +15,13 @@ namespace Workwear.Views.ClothingService {
 			yentryName.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			yspinbuttonSaleCost.Binding
-				.AddBinding(Entity, e => e.Cost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
+				.AddBinding(Entity, e => e.Cost, w=> w.ValueAsDecimal).InitializeFromSource();
 			ytextComment.Binding
         		.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+			comboState.ItemsEnum = typeof(ClaimState);
+			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
+			comboState.Binding
+				.AddBinding(Entity, v => v.WithState, w => w.SelectedItem).InitializeFromSource();
 			
 			ytreeNomenclatures.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
