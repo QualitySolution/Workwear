@@ -25,7 +25,7 @@
        ),
        COALESCE(w.name, dn.name)
     ) as subject_name,
-    items.cause,
+    causes_write_off.name as cause,
     CONCAT(ROUND(COALESCE(opissue.wear_percent, opdutn.wear_percent, opwarh.wear_percent) * 100), ' %') as wear_percent
 FROM stock_write_off_detail as items
          LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
@@ -41,7 +41,7 @@ FROM stock_write_off_detail as items
          LEFT JOIN measurement_units as mu on it.units_id = mu.id
          LEFT JOIN sizes as size on size.id = opwarh.size_id
          LEFT JOIN sizes as height on height.id = opwarh.height_id
-
+         LEFT JOIN causes_write_off ON items.cause_write_off_id = causes_write_off.id
 WHERE doc.id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
