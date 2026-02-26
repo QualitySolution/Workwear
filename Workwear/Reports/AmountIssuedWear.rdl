@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
-  <PageHeight>521mm</PageHeight>
-  <PageWidth>368mm</PageWidth>
+  <PageHeight>8.3in</PageHeight>
+  <PageWidth>11.7in</PageWidth>
   <Width>210mm</Width>
   <TopMargin>.10in</TopMargin>
   <LeftMargin>.10in</LeftMargin>
@@ -50,40 +50,40 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>74.5pt</Width>
+            <Width>51.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>346.0pt</Width>
+            <Width>314.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>88.0pt</Width>
+            <Width>74.4pt</Width>
             <Visibility>
               <Hidden>=!{?bySize}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>88.0pt</Width>
+            <Width>67.7pt</Width>
             <Visibility>
               <Hidden>=!{?showOwners}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>124.7pt</Width>
+            <Width>73.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>124.7pt</Width>
+            <Width>77.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>60.4pt</Width>
+            <Width>59.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>58.7pt</Width>
+            <Width>56.2pt</Width>
             <Visibility>
               <Hidden>=!{?showCost}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>61.1pt</Width>
+            <Width>49.5pt</Width>
             <Visibility>
               <Hidden>=!{?showCost}</Hidden>
             </Visibility>
@@ -1099,6 +1099,7 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <FontSize >9pt</FontSize>
                           </Style>
                           <Value>=Sum({sum})</Value>
                         </Textbox>
@@ -1135,6 +1136,7 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
+                            <FontSize >9pt</FontSize>
                           </Style>
                           <Value>=Sum({cost_sum})</Value>
                         </Textbox>
@@ -1345,6 +1347,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <PaddingRight>2pt</PaddingRight>
+                            <FontSize >9pt</FontSize>
                           </Style>
                           <Value>=Sum({sum})</Value>
                         </Textbox>
@@ -1372,6 +1375,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <PaddingRight>2pt</PaddingRight>
+                            <FontSize >9pt</FontSize>
                           </Style>
                           <Value>=Sum({cost_sum})</Value>
                         </Textbox>
@@ -1499,6 +1503,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1515,6 +1520,7 @@
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1531,6 +1537,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1547,6 +1554,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1563,7 +1571,9 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize >8pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1579,7 +1589,9 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
+                        <FontSize >8pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1596,6 +1608,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1612,6 +1625,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1628,6 +1642,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
