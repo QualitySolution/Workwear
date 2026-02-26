@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
-  <PageHeight>391.5mm</PageHeight>
-  <PageWidth>14.5in</PageWidth>
+  <PageHeight>521mm</PageHeight>
+  <PageWidth>368mm</PageWidth>
   <Width>210mm</Width>
   <TopMargin>.10in</TopMargin>
   <LeftMargin>.10in</LeftMargin>
