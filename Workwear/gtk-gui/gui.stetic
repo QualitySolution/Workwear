@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -12931,6 +12931,9 @@
           <placeholder />
         </child>
         <child>
+          <placeholder />
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkExcludeInVacation">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -12967,6 +12970,8 @@
           <packing>
             <property name="TopAttach">2</property>
             <property name="BottomAttach">3</property>
+            <property name="LeftAttach">4</property>
+            <property name="RightAttach">5</property>
             <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
@@ -13002,30 +13007,6 @@
           </packing>
         </child>
         <child>
-          <widget class="Gamma.Widgets.yDatePicker" id="datepicker">
-            <property name="MemberName" />
-            <property name="Events">ButtonPressMask</property>
-            <property name="WithTime">False</property>
-            <property name="Date">0</property>
-            <property name="IsEditable">True</property>
-            <property name="AutoSeparation">False</property>
-          </widget>
-          <packing>
-            <property name="TopAttach">2</property>
-            <property name="BottomAttach">3</property>
-            <property name="LeftAttach">4</property>
-            <property name="RightAttach">5</property>
-            <property name="AutoSize">True</property>
-            <property name="YOptions">Fill</property>
-            <property name="XExpand">True</property>
-            <property name="XFill">True</property>
-            <property name="XShrink">False</property>
-            <property name="YExpand">False</property>
-            <property name="YFill">True</property>
-            <property name="YShrink">False</property>
-          </packing>
-        </child>
-        <child>
           <widget class="QS.Views.Control.EntityEntry" id="entityDepartment">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
@@ -13034,8 +13015,9 @@
             <property name="LeftAttach">4</property>
             <property name="RightAttach">5</property>
             <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
-            <property name="XExpand">True</property>
+            <property name="XExpand">False</property>
             <property name="XFill">True</property>
             <property name="XShrink">False</property>
             <property name="YExpand">False</property>
@@ -13053,7 +13035,7 @@
             <property name="BottomAttach">2</property>
             <property name="LeftAttach">4</property>
             <property name="RightAttach">5</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
             <property name="YOptions">Fill</property>
             <property name="XExpand">True</property>
             <property name="XFill">True</property>
@@ -13091,6 +13073,52 @@
           <packing>
             <property name="LeftAttach">2</property>
             <property name="RightAttach">3</property>
+            <property name="AutoSize">True</property>
+            <property name="XOptions">Fill</property>
+            <property name="YOptions">Fill</property>
+            <property name="XExpand">False</property>
+            <property name="XFill">True</property>
+            <property name="XShrink">False</property>
+            <property name="YExpand">False</property>
+            <property name="YFill">True</property>
+            <property name="YShrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox6">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDate">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">на дату:</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.yDatePicker" id="datepicker">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+                <property name="WithTime">False</property>
+                <property name="Date">0</property>
+                <property name="IsEditable">True</property>
+                <property name="AutoSeparation">False</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="TopAttach">2</property>
+            <property name="BottomAttach">3</property>
             <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
@@ -13175,28 +13203,6 @@
             <property name="BottomAttach">2</property>
             <property name="LeftAttach">1</property>
             <property name="RightAttach">2</property>
-            <property name="AutoSize">True</property>
-            <property name="XOptions">Fill</property>
-            <property name="YOptions">Fill</property>
-            <property name="XExpand">False</property>
-            <property name="XFill">True</property>
-            <property name="XShrink">False</property>
-            <property name="YExpand">False</property>
-            <property name="YFill">True</property>
-            <property name="YShrink">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDate">
-            <property name="MemberName" />
-            <property name="Xalign">1</property>
-            <property name="LabelProp" translatable="yes">На дату:</property>
-          </widget>
-          <packing>
-            <property name="TopAttach">2</property>
-            <property name="BottomAttach">3</property>
-            <property name="LeftAttach">3</property>
-            <property name="RightAttach">4</property>
             <property name="AutoSize">True</property>
             <property name="XOptions">Fill</property>
             <property name="YOptions">Fill</property>
