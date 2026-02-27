@@ -1,7 +1,6 @@
 [#postamat]
 = Постаматы
 :experimental:
-:imagesdir: ../images
 
 == Введение
 

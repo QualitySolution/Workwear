@@ -195,7 +195,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 	                            .Where(x => x.CanChoose).Select(x => x.Nomenclature)) {
                     	var nItem = new MenuItem((selected.EmployeeCard.SelectedNomenclatures
 		                    .Any(x => DomainHelper.EqualDomainObjects(nomenclature, x.Nomenclature) && DomainHelper.EqualDomainObjects(selected.ProtectionTools, x.ProtectionTools))
-		                    ? "✅" : "") + nomenclature.Name);
+		                    ? "\u2605" : "") + nomenclature.Name);
 	                    nItem.ButtonPressEvent += (sender, e) => ViewModel.SetEmployeeChoose(selected,nomenclature);
 	                    submenuSetChoose.Append(nItem);
                     }

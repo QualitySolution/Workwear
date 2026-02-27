@@ -1,7 +1,6 @@
 [#clothing-service]
 = Обслуживание спецодежды
 :experimental:
-:imagesdir: ../images
 
 NOTE: Функциональность покупается отдельно и доступна для редакции https://workwear.qsolution.ru/stoimost/[«Предприятие»]
 

@@ -155,6 +155,7 @@
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\IssuedSizesViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ShipmentReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
@@ -563,6 +564,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentPeriodView.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\DutyNormFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.cs" />
+    <Compile Include="ReportParameters\Views\IssuedSizesView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.IssuedSizesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -641,6 +644,10 @@
     <ProjectReference Include="..\QSProjects\QS.Updater.Desktop\QS.Updater.Desktop.csproj">
       <Project>{c776ee5a-1795-439b-bb7d-9ab1b20eeac4}</Project>
       <Name>QS.Updater.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Updates.Client\QS.Updates.Client.csproj">
+      <Project>{08451b0a-4e72-4b12-b422-b36e9047dcaf}</Project>
+      <Name>QS.Updates.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\QSProjects\QSProjectsLib\QSProjectsLib.csproj">
       <Project>{A6C1914F-7732-49F5-BABA-8BBBA521FAAB}</Project>
@@ -964,6 +971,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\ListBySizeFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\IssuedSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">

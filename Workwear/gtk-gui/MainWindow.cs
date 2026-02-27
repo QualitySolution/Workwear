@@ -224,8 +224,10 @@ public partial class MainWindow
 	private global::Gtk.Action ActionVisits;
 
 	private global::Gtk.Action ActionIssuanceRequest;
-	
+
 	private global::Gtk.RadioAction ActionOffAutoUpdate;
+
+	private global::Gtk.Action IssueSizeReport;
 
 	private global::Gtk.VBox vbox1;
 
@@ -254,6 +256,10 @@ public partial class MainWindow
 	private global::Gtk.Label labelUser;
 
 	private global::Gtk.Label labelStatus;
+
+	private global::Gamma.GtkWidgets.yEventBox eventboxSubscriptionStatus;
+
+	private global::Gamma.GtkWidgets.yLabel labelSubscriptionStatus;
 
 	protected virtual void Build()
 	{
@@ -607,6 +613,9 @@ public partial class MainWindow
 		this.ActionOffAutoUpdate.Group = this.ActionChannelCurrent.Group;
 		this.ActionOffAutoUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Без обновлений");
 		w1.Add(this.ActionOffAutoUpdate, null);
+		this.IssueSizeReport = new global::Gtk.Action("IssueSizeReport", global::Mono.Unix.Catalog.GetString("Выдачи по размерам"), null, null);
+		this.IssueSizeReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдачи по размерам");
+		w1.Add(this.IssueSizeReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -679,29 +688,29 @@ public partial class MainWindow
 				"rs\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Ac" +
 				"tion11\' action=\'Action11\'/><menuitem name=\'ActionStockOperations\' action=\'Action" +
 				"StockOperations\'/><separator/><menuitem name=\'Action10\' action=\'Action10\'/><menu" +
-				"item name=\'Action12\' action=\'Action12\'/><separator/><menuitem name=\'ActionAmount" +
-				"IssuedWear\' action=\'ActionAmountIssuedWear\'/><menuitem name=\'ActionWriteOffAct\' " +
-				"action=\'ActionWriteOffAct\'/><menuitem name=\'ActionClothingServiceReport\' action=" +
-				"\'ActionClothingServiceReport\'/><separator/><menuitem name=\'ActionRequestSheet\' a" +
-				"ction=\'ActionRequestSheet\'/><menuitem name=\'ActionShipmentReport\' action=\'Action" +
-				"ShipmentReport\'/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageA" +
-				"nnualNeed\'/><menu name=\'Action\' action=\'Action\'><menuitem name=\'ActionNotIssuedS" +
-				"heetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssued" +
-				"SheetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem" +
-				" name=\'ActionWearCardsReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'Ac" +
-				"tionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=" +
-				"\'ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeComplet" +
-				"enessReport\' action=\'ActionBarcodeCompletenessReport\'/></menu><menu name=\'Action" +
-				"Help\' action=\'ActionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menu" +
-				"item name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem na" +
-				"me=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' acti" +
-				"on=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionCha" +
-				"nnelCurrent\'/><menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/" +
-				"><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menu" +
-				"item name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'Acti" +
-				"onSite\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionSN\' action=\'Actio" +
-				"nSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></me" +
-				"nubar></ui>");
+				"item name=\'Action12\' action=\'Action12\'/><menuitem name=\'IssueSizeReport\' action=" +
+				"\'IssueSizeReport\'/><separator/><menuitem name=\'ActionAmountIssuedWear\' action=\'A" +
+				"ctionAmountIssuedWear\'/><menuitem name=\'ActionWriteOffAct\' action=\'ActionWriteOf" +
+				"fAct\'/><menuitem name=\'ActionClothingServiceReport\' action=\'ActionClothingServic" +
+				"eReport\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestS" +
+				"heet\'/><menuitem name=\'ActionShipmentReport\' action=\'ActionShipmentReport\'/><men" +
+				"uitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menu nam" +
+				"e=\'Action\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'A" +
+				"ctionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=" +
+				"\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem name=\'ActionWearCard" +
+				"sReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'ActionAmountEmployeeGet" +
+				"Wear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionProvision\' act" +
+				"ion=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' action=\'" +
+				"ActionBarcodeCompletenessReport\'/></menu><menu name=\'ActionHelp\' action=\'ActionH" +
+				"elp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdmi" +
+				"nGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' ac" +
+				"tion=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChann" +
+				"el\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuit" +
+				"em name=\'ActionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'Acti" +
+				"onOffAutoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpda" +
+				"te\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Actio" +
+				"nSite\'/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><me" +
+				"nuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -711,6 +720,7 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
+		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -813,17 +823,32 @@ public partial class MainWindow
 		this.MainStatusBar.Add(this.labelStatus);
 		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
 		w13.Position = 2;
+		// Container child MainStatusBar.Gtk.Box+BoxChild
+		this.eventboxSubscriptionStatus = new global::Gamma.GtkWidgets.yEventBox();
+		this.eventboxSubscriptionStatus.Name = "eventboxSubscriptionStatus";
+		this.eventboxSubscriptionStatus.VisibleWindow = false;
+		// Container child eventboxSubscriptionStatus.Gtk.Container+ContainerChild
+		this.labelSubscriptionStatus = new global::Gamma.GtkWidgets.yLabel();
+		this.labelSubscriptionStatus.Name = "labelSubscriptionStatus";
+		this.labelSubscriptionStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Подписка");
+		this.labelSubscriptionStatus.UseMarkup = true;
+		this.eventboxSubscriptionStatus.Add(this.labelSubscriptionStatus);
+		this.MainStatusBar.Add(this.eventboxSubscriptionStatus);
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.eventboxSubscriptionStatus]));
+		w15.Position = 3;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.vbox1.Add(this.MainStatusBar);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
-		w14.Position = 5;
-		w14.Expand = false;
-		w14.Fill = false;
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
+		w16.Position = 5;
+		w16.Expand = false;
+		w16.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1094;
+		this.DefaultWidth = 1116;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -926,5 +951,7 @@ public partial class MainWindow
 		this.ActionVisits.Activated += new global::System.EventHandler(this.OnActionVisitsActivated);
 		this.ActionIssuanceRequest.Activated += new global::System.EventHandler(this.OnActionIssuanceRequestActivated);
 		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
+		this.IssueSizeReport.Activated += new global::System.EventHandler(this.OnIssueSizeReportActivated);
+		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

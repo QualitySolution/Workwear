@@ -2,7 +2,7 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>11in</PageHeight>
+  <PageHeight>297mm</PageHeight>
   <PageWidth>210mm</PageWidth>
   <Width>210mm</Width>
   <TopMargin>.25in</TopMargin>
@@ -44,7 +44,7 @@ FROM
         LEFT JOIN employees_sizes AS top6 ON employees.id = top6.employee_id AND top6.size_type_id = @type_id_5
         LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
 WHERE
-    dismiss_date IS NULL
+    (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
 ORDER BY last_name , first_name , patronymic_name</CommandText>
         <QueryParameters>
           <QueryParameter Name="@type_id_0">
@@ -171,13 +171,13 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>34.1pt</Width>
+            <Width>29.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>180.2pt</Width>
+            <Width>170.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>49.0pt</Width>
+            <Width>58.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>33.5pt</Width>
@@ -195,7 +195,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>43.7pt</Width>
+            <Width>43.0pt</Width>
             <Visibility>
               <Hidden>=!({?type_id_2} &gt; 0)</Hidden>
             </Visibility>
@@ -213,7 +213,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>43.7pt</Width>
+            <Width>44.5pt</Width>
             <Visibility>
               <Hidden>=!({?type_id_5} &gt; 0)</Hidden>
             </Visibility>

@@ -661,7 +661,7 @@ FROM
         LEFT JOIN
     sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
 WHERE
-    employees.dismiss_date IS NULL
+    (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
     AND( @subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
     AND( @issue_type = "" OR item_types.issue_type = @issue_type )
     AND( norms_item.period_type = 'Year' OR norms_item.period_type = 'Month') 
