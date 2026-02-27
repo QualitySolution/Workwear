@@ -40,5 +40,9 @@ namespace Workwear.Domain.ClothingService {
 			get => cost;
 			set => SetField(ref cost, value);
 		}
+
+		#region Вычисляемые свойства
+		public virtual string Title => $"{Service?.Name} за {Cost} руб.";
+		#endregion
 	}
 }
