@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>296.926mm</PageHeight>
-  <PageWidth>240.058mm</PageWidth>
+  <PageHeight>11.7in</PageHeight>
+  <PageWidth>8.3in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.15in</TopMargin>
   <LeftMargin>.15in</LeftMargin>
@@ -25,7 +25,7 @@
        ),
        COALESCE(w.name, dn.name)
     ) as subject_name,
-    items.cause,
+    causes_write_off.name as cause,
     CONCAT(ROUND(COALESCE(opissue.wear_percent, opdutn.wear_percent, opwarh.wear_percent) * 100), ' %') as wear_percent
 FROM stock_write_off_detail as items
          LEFT JOIN stock_write_off as doc on doc.id = items.stock_write_off_id
@@ -41,7 +41,7 @@ FROM stock_write_off_detail as items
          LEFT JOIN measurement_units as mu on it.units_id = mu.id
          LEFT JOIN sizes as size on size.id = opwarh.size_id
          LEFT JOIN sizes as height on height.id = opwarh.height_id
-
+         LEFT JOIN causes_write_off ON items.cause_write_off_id = causes_write_off.id
 WHERE doc.id = @id;</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">
@@ -1214,10 +1214,10 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <Width>24.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>282.0pt</Width>
+            <Width>254.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>114.4pt</Width>
+            <Width>99.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>32.2pt</Width>
@@ -1226,10 +1226,10 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
             <Width>33.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>85.0pt</Width>
+            <Width>78.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>87.5pt</Width>
+            <Width>53.3pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -1643,8 +1643,8 @@ WHERE stock_write_off_members.write_off_id = @id</CommandText>
         <Width>264.22pt</Width>
         <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
         <ZIndex>1</ZIndex>
-        <Left>397.5pt</Left>
-        <Top>1pt</Top>
+        <Left>312.9pt</Left>
+        <Top>1.8pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
