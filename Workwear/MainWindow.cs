@@ -1125,4 +1125,8 @@ public partial class MainWindow : Gtk.Window {
 		if(ActionOffAutoUpdate.Active)
 			SetChannel(UpdateChannel.Off);
 	}
+
+	protected void OnIssueSizeReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuedSizesViewModel));
+	}
 }

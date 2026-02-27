@@ -155,6 +155,7 @@
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\IssuedSizesViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ShipmentReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
@@ -563,6 +564,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Supply.ShipmentPeriodView.cs" />
     <Compile Include="Journal\Filter.Views\Regulations\DutyNormFilterView.cs" />
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.cs" />
+    <Compile Include="ReportParameters\Views\IssuedSizesView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.IssuedSizesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -968,6 +971,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\ListBySizeFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\IssuedSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
