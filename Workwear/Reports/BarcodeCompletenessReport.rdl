@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>11in</PageHeight>
-  <PageWidth>8.5in</PageWidth>
+  <PageHeight>11.7in</PageHeight>
+  <PageWidth>8.3in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -147,7 +147,7 @@ WHERE tabel.balance != 0 </CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>333.1pt</Width>
+            <Width>321.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>50.9pt</Width>
@@ -459,7 +459,7 @@ WHERE tabel.balance != 0 </CommandText>
       </Table>
       <Textbox Name="Textbox1">
         <Height>20.30pt</Height>
-        <Width>576.68pt</Width>
+        <Width>559.42pt</Width>
         <Value>= "Покрытие маркировкой на " +  Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
