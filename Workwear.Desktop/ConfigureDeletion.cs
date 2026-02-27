@@ -33,12 +33,16 @@ namespace Workwear
 			#region Обслуживание спецодежды
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
 				.AddDeleteDependence<StateOperation>(x => x.Claim)
+				.AddDeleteDependence<ProvidedService>(x => x.Claim)
 				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
 		
 			DeleteConfig.AddHibernateDeleteInfo<Service>()
+				.AddDeleteDependence<ProvidedService>(x => x.Service)
 				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices);
+			
+			DeleteConfig.AddHibernateDeleteInfo<ProvidedService>();
 			
 			#endregion
 			#region Связь

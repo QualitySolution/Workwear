@@ -38,6 +38,7 @@ namespace Workwear.Domain.ClothingService {
 		}
 		
 		private ClaimState withState = ClaimState.InTransit;
+		[Display (Name = "Статус подразумивающий услугу")]
 		public virtual ClaimState WithState {
 			get => withState;
 			set => SetField(ref withState, value);
