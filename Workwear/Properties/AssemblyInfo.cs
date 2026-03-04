@@ -11,6 +11,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyDescription("Программа выдачи и обслуживания спецодежды по договорам «Спецаутсорсинг».")]
 [assembly: AssemblyModification("sposhiv", HideFromUser = true)]
 [assembly: AssemblyCompatibleModification("aros")]
+[assembly: AssemblyCompatibleModification(null)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]
@@ -26,7 +27,7 @@ using QS.Project.Versioning;
 
 [assembly: AssemblyAuthor("Ганьков Андрей <gav@qsolution.ru>")]
 [assembly: AssemblyAuthor("Горячев Иван <space@qsolution.ru>")]
-[assembly: AssemblyAuthor("Тимирева Екатерина <e.timireva@qsolution.ru>")]
+[assembly: AssemblyAuthor("Тимирева Екатерина 2024-2025")]
 [assembly: AssemblyAuthor("Покровский Михаил 2024")]
 [assembly: AssemblyAuthor("Мингалимов Ильяс 2022")]
 [assembly: AssemblyAuthor("Солдаткина Алина 2020")]
