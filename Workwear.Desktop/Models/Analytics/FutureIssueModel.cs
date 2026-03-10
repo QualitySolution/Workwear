@@ -20,24 +20,104 @@ namespace Workwear.Models.Analytics {
 		}
 
 		/// <summary>
-		/// Метод прогнозирует будущие выдачи
+		/// Метод прогнозирует будущие выдачи по дежурным нормам
 		/// </summary>
 		/// <param name="startDate">Дата начала периода прогнозирования.</param>
 		/// <param name="endDate">Дата окончания периода прогнозирования.</param>
-		/// <param name="moveDebt">Если True перемещает все долги на начала периода прогнозирования, в этой ситуации все даты выдачи для должников будут сдвинуты, на начало периода.</param>
+		/// <param name="moveDebt">Если True перемещает все долги на начало периода прогнозирования.</param>
+		/// <param name="dutyNormItems">Список строк дежурных норм для прогнозирования.</param>
+		/// <param name="progress">Не обязательный аргумент, прогресс выполнения.</param>
+		/// <returns></returns>
+		public List<FutureIssueDutyNorm> CalculateDutyNormIssues(
+			DateTime startDate,
+			DateTime endDate,
+			bool moveDebt,
+			IList<DutyNormItem> dutyNormItems,
+			IProgressBarDisplayable progress = null)
+		{
+			progress?.Start(dutyNormItems.Count + 2);
+			int gc = 0;
+			var issues = new List<FutureIssueDutyNorm>();
+			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода
+
+			foreach(var item in dutyNormItems) {
+				if(gc++ > 10000) {
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+					gc = 0;
+				}
+
+				progress?.Add(text: "Планирование выдач для " + item.DutyNorm.Name + " - " + item.ProtectionTools.Name);
+
+				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
+				var virtualOperations = new List<DutyNormIssueOperation>();
+
+				Nomenclature nomenclature = item.ProtectionTools.GetSupplyNomenclature(null);
+
+				item.UpdateNextIssue();
+				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
+					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
+					if(need == 0)
+						break;
+
+					var lastIssueDate = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue)?.OperationTime;
+
+					var op = new DutyNormIssueOperation {
+						OperationTime = issueDate,
+						StartOfUse = issueDate,
+						Issued = need,
+						Returned = 0,
+						OverrideBefore = false,
+						DutyNorm = item.DutyNorm,
+						DutyNormItem = item,
+						ProtectionTools = item.ProtectionTools,
+					};
+					op.ExpiryByNorm = item.CalculateExpireDate(op.OperationTime, need);
+					op.AutoWriteoffDate = op.ExpiryByNorm;
+					virtualOperations.Add(op);
+
+					if(op.OperationTime >= startDate) {
+						issues.Add(new FutureIssueDutyNorm {
+							DutyNormItem = item,
+							OperationDate = op.OperationTime,
+							Nomenclature = nomenclature,
+							Amount = op.Issued,
+							LastIssueDate = lastIssueDate,
+							DelayIssueDate = delayIssue,
+							VirtualLastIssue = virtualOperations.Any(o => o.OperationTime == lastIssueDate)
+						});
+						delayIssue = null;
+					}
+
+					item.Graph.AddOperations(new List<IGraphIssueOperation> { op });
+					item.UpdateNextIssue();
+				}
+			}
+
+			progress?.Close();
+			return issues;
+		}
+
+		/// <summary>
+		/// Метод прогнозирует будущие выдачи сотрудникам
+		/// </summary>
+		/// <param name="startDate">Дата начала периода прогнозирования.</param>
+		/// <param name="endDate">Дата окончания периода прогнозирования.</param>
+		/// <param name="moveDebt">Если True перемещает все долги на начало периода прогнозирования, в этой ситуации все даты выдачи для должников будут сдвинуты на начало периода.</param>
 		/// <param name="employeeItems">Список потребностей для прогнозирования.</param>
 		/// <param name="progress">Не обязательный аргумент, прогресс выполнения.</param>
 		/// <returns></returns>
-		public List<FutureIssue> CalculateIssues(
+		public List<FutureIssueEmployee> CalculateIssues(
 			DateTime startDate,
 			DateTime endDate,
 			bool moveDebt,
 			IList<EmployeeCardItem> employeeItems,
-			IProgressBarDisplayable progress = null) 
+			IProgressBarDisplayable progress = null)
 		{
 			progress?.Start(employeeItems.Count() + 2);
 			int gc = 0;
-			var issues = new List<FutureIssue>();
+			var issues = new List<FutureIssueEmployee>();
 			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода
 
 			foreach(var item in employeeItems) {
@@ -51,7 +131,7 @@ namespace Workwear.Models.Analytics {
 
 				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 				//список созданных объектов операций
-				List<EmployeeIssueOperation> virtualOperations = new List<EmployeeIssueOperation>();
+				var virtualOperations = new List<EmployeeIssueOperation>();
 
 				Nomenclature nomenclature = item.ProtectionTools.GetSupplyNomenclature(item.EmployeeCard?.Sex);
 
@@ -62,7 +142,7 @@ namespace Workwear.Models.Analytics {
 					int need = item.CalculateRequiredIssue(baseParameters, issueDate, ignoreNormConditionPeriod: true);
 					if(need == 0)
 						break;
-					//Операция приведшая к возникновению потребности 
+					//Операция приведшая к возникновению потребности
 					var lastIssueDate = item.Graph.GetWrittenOffOperation((DateTime)item.NextIssue)?.OperationTime;
 
 					var op = new EmployeeIssueOperation(baseParameters) {
@@ -81,14 +161,14 @@ namespace Workwear.Models.Analytics {
 
 					//Создание строки выгрузки на эту выдачу
 					if(op.OperationTime >= startDate) {
-						issues.Add(new FutureIssue() {
+						issues.Add(new FutureIssueEmployee {
 							EmployeeCardItem = item,
 							OperationDate = op.OperationTime,
 							Nomenclature = nomenclature,
 							Amount = op.Issued,
 							LastIssueDate = lastIssueDate,
 							DelayIssueDate = delayIssue,
-//TODO протестировать 							
+							//TODO протестировать
 							VirtualLastIssue = virtualOperations.Any(o => o.OperationTime == lastIssueDate)
 						});
 						delayIssue = null;
@@ -111,35 +191,52 @@ namespace Workwear.Models.Analytics {
 			return issues;
 		}
 	}
-	
+
 	/// <summary>
-	/// Будущая выдача 
+	/// Базовый класс будущей выдачи
 	/// </summary>
-	public class FutureIssue {
-		public EmployeeCardItem EmployeeCardItem { get; set; }
+	public abstract class FutureIssue {
 		public Nomenclature Nomenclature { get; set; }
-		public DateTime ? LastIssueDate { get; set; }
+		public DateTime? LastIssueDate { get; set; }
 		public bool VirtualLastIssue { get; set; }
+		public DateTime? OperationDate { get; set; }
+		public DateTime? DelayIssueDate { get; set; }
+		public int Amount { get; set; }
+
+		public abstract ProtectionTools ProtectionTools { get; }
+		public ItemsType ItemsType => ProtectionTools.Type;
+		public virtual Size Size => null;
+		public virtual Size Height => null;
+	}
+
+	/// <summary>
+	/// Будущая выдача сотруднику
+	/// </summary>
+	public class FutureIssueEmployee : FutureIssue {
+		public EmployeeCardItem EmployeeCardItem { get; set; }
 
 		public EmployeeCard Employee => EmployeeCardItem.EmployeeCard;
 		public Subdivision Subdivision => Employee.Subdivision;
 		public Department Department => Employee.Department;
-		public Post Post => Employee.Post;	
-		public ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
-		public ItemsType ItemsType => ProtectionTools.Type;
+		public Post Post => Employee.Post;
+		public override ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
 		public NormItem NormItem => EmployeeCardItem.ActiveNormItem;
 		public Norm Norm => NormItem.Norm;
 
-		public Size Size =>
+		public override Size Size =>
 			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.SizeType))?.Size;
-		public Size Height =>
+		public override Size Height =>
 			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.HeightType))?.Size;
+	}
 
-		/// <summary>
-		/// Дата планируемой выдачи
-		/// </summary>
-		public DateTime ? OperationDate { get; set; }
-		public DateTime ? DelayIssueDate { get; set; }
-		public int Amount { get; set; }
+	/// <summary>
+	/// Будущая выдача по дежурной норме
+	/// </summary>
+	public class FutureIssueDutyNorm : FutureIssue {
+		public DutyNormItem DutyNormItem { get; set; }
+
+		public DutyNorm DutyNorm => DutyNormItem.DutyNorm;
+		public override ProtectionTools ProtectionTools => DutyNormItem.ProtectionTools;
+		public Subdivision Subdivision => DutyNorm.Subdivision;
 	}
 }
