@@ -50,19 +50,26 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 						AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, group, ClothesSex.Universal);
 						break;
 					case SupplyType.TwoSex:
-						var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();
+						var mensIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.M).ToList<FutureIssue>();
 						if(mensIssues.Any()) {
 							if(group.Key.ProtectionTools.SupplyNomenclatureMale != null)
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureMale, group.Key.Size, group.Key.Height, mensIssues);
 							else 
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, mensIssues, ClothesSex.Men);
 						}
-						var womenIssues = group.Where(x => x.Employee.Sex == Sex.F).ToList();
+						var womenIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.F).ToList<FutureIssue>();
 						if(womenIssues.Any()) {
 							if(group.Key.ProtectionTools.SupplyNomenclatureFemale != null)
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureFemale, group.Key.Size, group.Key.Height, womenIssues);
 							else 
 								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, womenIssues, ClothesSex.Women);
+						}
+						var universalIssues = group.Where(x => !(x is FutureIssueEmployee)).ToList();
+						if(universalIssues.Any()) {
+							if(group.Key.ProtectionTools.SupplyNomenclatureUnisex != null)
+								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.ProtectionTools.SupplyNomenclatureUnisex, group.Key.Size, group.Key.Height, universalIssues);
+							else
+								AddForecastingItem(result, group.Key.ProtectionTools, group.Key.Size, group.Key.Height, universalIssues, ClothesSex.Universal);
 						}
 						break;
 					default:

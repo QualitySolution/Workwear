@@ -36,12 +36,15 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 				if (supplyType == SupplyType.Unisex)
 					result.Add(new WarehouseForecastingItem(columnsModel, group.Key, group.ToList(), stocks, ClothesSex.Universal));
 				else {
-					var mensIssues = group.Where(x => x.Employee.Sex == Sex.M).ToList();
+					var mensIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.M).ToList<FutureIssue>();
 					if (mensIssues.Any())
 						result.Add(new WarehouseForecastingItem(columnsModel, group.Key, mensIssues, stocks, ClothesSex.Men));
-					var womenIssues = group.Where(x => x.Employee.Sex == Sex.F).ToList();
+					var womenIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.F).ToList<FutureIssue>();
 					if(womenIssues.Any())
 						result.Add(new WarehouseForecastingItem(columnsModel, group.Key, womenIssues, stocks, ClothesSex.Women));
+					var universalIssues = group.Where(x => !(x is FutureIssueEmployee)).ToList();
+					if(universalIssues.Any())
+						result.Add(new WarehouseForecastingItem(columnsModel, group.Key, universalIssues, stocks, ClothesSex.Universal));
 				}
 			}
 
