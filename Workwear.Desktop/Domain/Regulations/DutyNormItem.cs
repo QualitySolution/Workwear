@@ -231,7 +231,7 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 		
-		public string LifeText {
+		public virtual string LifeText {
 			get {
 				switch(NormPeriod) {
 					case DutyNormPeriodType.Year:

@@ -177,13 +177,13 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Post?.Name ?? "");}},
 				new ColumnInfo() {Label =
 					"Табельный",FillCell = (cell, item) => {
-					cell.SetCellValue(item.Employee.PersonnelNumber ?? "");}},
+					cell.SetCellValue(item.Employee?.PersonnelNumber ?? "");}},
 				new ColumnInfo() {Label =
 					"Орг. единица", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Department?.Code ?? "");}},
 				new ColumnInfo() {Label =
 					"ФИО", FillCell = (cell, item) => {
-					cell.SetCellValue(item.Employee.FullName);}},
+					cell.SetCellValue(item.Employee?.FullName);}},
 				new ColumnInfo() {Label =
 					"Пол", FillCell = (cell, item) => {
 					cell.SetCellValue(item.EmployeeSex == null ? "" : item.EmployeeSex == Sex.M ? "М" : item.EmployeeSex == Sex.F ? "Ж" : "-");}},
