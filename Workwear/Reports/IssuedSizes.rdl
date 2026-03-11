@@ -1,1 +1,529 @@
-<?xml version="1.0" encoding="UTF-8"?><Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">  <Description></Description>  <Author></Author>  <PageHeight>11.7in</PageHeight>  <PageWidth>8.3in</PageWidth>  <Width>7.5in</Width>  <TopMargin>.25in</TopMargin>  <LeftMargin>.25in</LeftMargin>  <RightMargin>.25in</RightMargin>  <BottomMargin>.25in</BottomMargin>  <DataSets>    <DataSet Name="Data">      <Query >        <DataSourceName>DS1</DataSourceName>        <CommandText>SELECT    tab1.nomenclature_id,    tab1.nomenclature_number,    tab1.nomenclature_name,    tab1.type_id,    tab1.type,    tab1.need_size,    tab1.issue_size,    tab1.quantity,    tab1.quantity * 1.0 / tab2.total_quantity AS percentFROM (SELECT            nomenclature.id AS nomenclature_id,            nomenclature.number AS nomenclature_number,            nomenclature.name AS nomenclature_name,            size_types.id AS type_id,            size_types.name AS type,            emp_size.id AS need_size_id,            emp_size.name AS need_size,            issued_size.id AS issue_size_id,            issued_size.name AS issue_size,            COUNT(*) AS quantity        FROM operation_issued_by_employee                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id                 LEFT JOIN item_types ON nomenclature.type_id = item_types.id                 LEFT JOIN size_types ON item_types.size_type_id = size_types.id                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id            AND employees_sizes.employee_id = employees.id)                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id        WHERE operation_issued_by_employee.issued != 0          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish          AND emp_size.id IS NOT NULL          AND ((-1 IN (@nomenclature_ids)) OR operation_issued_by_employee.nomenclature_id IN (@nomenclature_ids))      GROUP BY nomenclature.id, nomenclature.number, nomenclature.name, size_types.id, size_types.name, emp_size.id, issued_size.id    ) AS tab1        LEFT JOIN ( #Общее количество выдач по сотруднику и номенклатуре        SELECT            nomenclature.id AS nomenclature_id,            emp_size.id AS need_size_id,            COUNT(*) AS total_quantity        FROM operation_issued_by_employee                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id            AND employees_sizes.employee_id = employees.id)                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id        WHERE operation_issued_by_employee.issued != 0          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish          AND emp_size.id IS NOT NULL        GROUP BY nomenclature.id, emp_size.id    ) AS tab2    ON tab1.nomenclature_id = tab2.nomenclature_id        AND tab1.need_size_id = tab2.need_size_idORDER BY    tab1.nomenclature_name,    tab1.need_size,    percent DESC;</CommandText>        <QueryParameters>          <QueryParameter Name="start">            <Value>={?start}</Value>          </QueryParameter>          <QueryParameter Name="finish">            <Value>={?finish}</Value>          </QueryParameter>          <QueryParameter Name="nomenclature_ids">            <Value>={?nomenclature_ids}</Value>          </QueryParameter>        </QueryParameters>      </Query>      <Fields >        <Field Name="nomenclature_id">          <DataField>nomenclature_id</DataField>          <rd:TypeName>System.UInt32</rd:TypeName>        </Field>        <Field Name="nomenclature_number">          <DataField>nomenclature_number</DataField>          <rd:TypeName>System.String</rd:TypeName>        </Field>        <Field Name="nomenclature_name">          <DataField>nomenclature_name</DataField>          <rd:TypeName>System.String</rd:TypeName>        </Field>        <Field Name="type_id">          <DataField>type_id</DataField>          <rd:TypeName>System.UInt32</rd:TypeName>        </Field>        <Field Name="type">          <DataField>type</DataField>          <rd:TypeName>System.String</rd:TypeName>        </Field>        <Field Name="need_size">          <DataField>need_size</DataField>          <rd:TypeName>System.String</rd:TypeName>        </Field>        <Field Name="issue_size">          <DataField>issue_size</DataField>          <rd:TypeName>System.String</rd:TypeName>        </Field>        <Field Name="quantity">          <DataField>quantity</DataField>          <rd:TypeName>System.Int32</rd:TypeName>        </Field>        <Field Name="percent">          <DataField>percent</DataField>          <rd:TypeName>System.Decimal</rd:TypeName>        </Field>      </Fields>    </DataSet>  </DataSets>  <PageHeader>    <Height>.5in</Height>    <PrintOnFirstPage>true</PrintOnFirstPage>    <PrintOnLastPage>true</PrintOnLastPage>  </PageHeader>  <Body>    <ReportItems>      <Table Name="Table1">        <DataSetName>Data</DataSetName>        <NoRows>Query returned no rows!</NoRows>        <Style>          <BorderStyle>            <Default>Solid</Default>          </BorderStyle>          <BorderColor />          <BorderWidth />        </Style>        <TableColumns>          <TableColumn>            <Width>82.0pt</Width>          </TableColumn>          <TableColumn>            <Width>427.6pt</Width>          </TableColumn>          <TableColumn>            <Width>51.6pt</Width>          </TableColumn>        </TableColumns>        <Header>          <TableRows>            <TableRow>              <Height>22.2pt</Height>              <TableCells>                <TableCell>                  <ReportItems>                    <Textbox Name="Textbox5">                      <Value>Соотношение размеров выданных СИЗ и размеров сотрудника</Value>                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                        <TextAlign>Center</TextAlign>                        <BorderStyle>                          <Default>None</Default>                          <Left>None</Left>                          <Right>None</Right>                          <Top>None</Top>                          <Bottom>None</Bottom>                        </BorderStyle>                        <FontWeight>Bold</FontWeight>                        <BorderColor />                        <BorderWidth />                        <FontSize>16pt</FontSize>                      </Style>                    </Textbox>                  </ReportItems>                  <ColSpan>3</ColSpan>                </TableCell>              </TableCells>            </TableRow>          </TableRows>        </Header>        <TableGroups>          <TableGroup>            <Grouping Name="typeSizeGroup">              <PageBreakAtStart>false</PageBreakAtStart>              <PageBreakAtEnd>false</PageBreakAtEnd>              <GroupExpressions>                <GroupExpression>=Fields!type_id.Value</GroupExpression>              </GroupExpressions>            </Grouping>            <Header>              <RepeatOnNewPage>false</RepeatOnNewPage>              <TableRows>                <TableRow>                  <Height>28.5pt</Height>                  <TableCells>                    <TableCell>                      <ReportItems>                        <Textbox Name="Textbox4">                          <Value>=Fields.type.Value</Value>                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                            <BorderStyle>                              <Default>Solid</Default>                              <Left>Solid</Left>                              <Right>Solid</Right>                              <Top>Solid</Top>                              <Bottom>Solid</Bottom>                            </BorderStyle>                            <BorderColor />                            <BorderWidth>                              <Bottom>2pt</Bottom>                            </BorderWidth>                            <FontWeight>Bold</FontWeight>                            <FontSize>14pt</FontSize>                            <VerticalAlign>Bottom</VerticalAlign>                          </Style>                        </Textbox>                      </ReportItems>                      <ColSpan>3</ColSpan>                    </TableCell>                  </TableCells>                </TableRow>              </TableRows>            </Header>            <Sorting>              <SortBy>                <SortExpression>=Fields!type.Value</SortExpression>                <Direction>Ascending</Direction>              </SortBy>            </Sorting>          </TableGroup>          <TableGroup>            <Grouping Name="nomenclatureGroup">              <PageBreakAtStart>false</PageBreakAtStart>              <PageBreakAtEnd>false</PageBreakAtEnd>              <GroupExpressions>                <GroupExpression>=Fields!nomenclature_id.Value</GroupExpression>              </GroupExpressions>            </Grouping>            <Header>              <RepeatOnNewPage>false</RepeatOnNewPage>              <TableRows>                <TableRow>                  <Height>.2in</Height>                  <TableCells>                    <TableCell>                      <ReportItems>                        <Textbox Name="Textbox15">                          <Value>="     " + Fields.nomenclature_name.Value +" ("+Fields.nomenclature_number.Value+")"</Value>                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                            <BorderStyle>                              <Default>Solid</Default>                              <Left>Solid</Left>                              <Right>Solid</Right>                              <Top>Solid</Top>                              <Bottom>None</Bottom>                            </BorderStyle>                            <BorderColor>                              <Top>Gray</Top>                            </BorderColor>                            <BorderWidth>                              <Top>2pt</Top>                            </BorderWidth>                            <FontWeight>Bold</FontWeight>                            <FontSize>12pt</FontSize>                          </Style>                          <CanGrow >true</CanGrow>                        </Textbox>                      </ReportItems>                      <ColSpan>3</ColSpan>                    </TableCell>                  </TableCells>                </TableRow>              </TableRows>            </Header>            <Sorting>              <SortBy>                <SortExpression>=Fields!need_size.Value</SortExpression>                <Direction>Ascending</Direction>              </SortBy>            </Sorting>          </TableGroup>          <TableGroup>            <Grouping Name="sizeGroup">              <PageBreakAtStart>false</PageBreakAtStart>              <PageBreakAtEnd>false</PageBreakAtEnd>              <GroupExpressions>                <GroupExpression>=Fields.need_size.Value</GroupExpression>              </GroupExpressions>            </Grouping>            <Header>              <RepeatOnNewPage>false</RepeatOnNewPage>              <TableRows>                <TableRow>                  <Height>.2in</Height>                  <TableCells>                    <TableCell>                      <ReportItems>                        <Textbox Name="Textbox10">                          <Value>=Fields!need_size.Value</Value>                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                            <BorderStyle>                              <Default>Solid</Default>                              <Top>Solid</Top>                              <Bottom>None</Bottom>                              <Right>None</Right>                            </BorderStyle>                            <BorderColor />                            <BorderWidth />                            <FontWeight>Bold</FontWeight>                            <TextAlign>Center</TextAlign>                          </Style>                        </Textbox>                      </ReportItems>                    </TableCell>                    <TableCell>                      <ReportItems>                        <Textbox Name="Textbox8">                          <Value>=Sum({quantity})</Value>                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                            <BorderStyle>                              <Default>Solid</Default>                              <Top>Solid</Top>                              <Bottom>None</Bottom>                              <Left>None</Left>                            </BorderStyle>                            <BorderColor />                            <BorderWidth />                            <FontWeight>Bold</FontWeight>                            <TextAlign>Right</TextAlign>                          </Style>                        </Textbox>                      </ReportItems>                    </TableCell>                    <TableCell>                      <ReportItems>                        <Textbox Name="Textbox6">                          <Value></Value>                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                            <BorderStyle>                              <Default>Solid</Default>                              <Top>Solid</Top>                              <Bottom>None</Bottom>                            </BorderStyle>                            <BorderColor />                            <BorderWidth />                            <FontWeight>Bold</FontWeight>                          </Style>                        </Textbox>                      </ReportItems>                    </TableCell>                  </TableCells>                </TableRow>              </TableRows>            </Header>            <Sorting>              <SortBy>                <SortExpression>=Fields.percent.Value</SortExpression>                <Direction>Ascending</Direction>              </SortBy>            </Sorting>          </TableGroup>        </TableGroups>        <Details>          <TableRows>            <TableRow>              <Height>12pt</Height>              <TableCells>                <TableCell>                  <ReportItems>                    <Textbox Name="Сотрудник">                      <Value>=Fields!issue_size.Value</Value>                      <CanGrow>true</CanGrow>                      <Style>                        <BorderStyle>                          <Default>Solid</Default>                          <Right>None</Right>                          <Bottom>Dotted</Bottom>                          <Top>None</Top>                          <Left>Solid</Left>                        </BorderStyle>                        <PaddingLeft>2pt</PaddingLeft>                        <BorderColor />                        <BorderWidth />                        <TextAlign>Right</TextAlign>                      </Style>                    </Textbox>                  </ReportItems>                </TableCell>                <TableCell>                  <ReportItems>                    <Textbox Name="Textbox29">                      <Value>=Fields!quantity.Value</Value>                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                        <BorderStyle>                          <Default>Solid</Default>                          <Top>None</Top>                          <Bottom>Dotted</Bottom>                          <Left>None</Left>                        </BorderStyle>                        <PaddingLeft>2pt</PaddingLeft>                        <BorderColor />                        <BorderWidth />                        <TextAlign>Right</TextAlign>                      </Style>                    </Textbox>                  </ReportItems>                </TableCell>                <TableCell>                  <ReportItems>                    <Textbox Name="Textbox16">                      <Value>=Format(Fields!percent.Value,"##.##%")</Value>                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">                        <BorderStyle>                          <Default>Solid</Default>                          <Right>Solid</Right>                          <Bottom>Dotted</Bottom>                          <Top>Dotted</Top>                        </BorderStyle>                        <PaddingLeft>2pt</PaddingLeft>                        <BorderColor />                        <BorderWidth />                        <TextAlign>Right</TextAlign>                      </Style>                    </Textbox>                  </ReportItems>                </TableCell>              </TableCells>            </TableRow>          </TableRows>          <Sorting>            <SortBy>              <SortExpression>=Fields.need_size.Value</SortExpression>              <Direction>Ascending</Direction>            </SortBy>          </Sorting>        </Details>        <Left>0.8pt</Left>        <Top>0.0pt</Top>      </Table>    </ReportItems>    <Height>111.2pt</Height>    <Columns>1</Columns>  </Body>  <PageFooter>    <Height>14.7pt</Height>    <PrintOnFirstPage>true</PrintOnFirstPage>    <PrintOnLastPage>true</PrintOnLastPage>    <ReportItems>      <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">        <Height>12.00pt</Height>        <Width>266.47pt</Width>        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>        <ZIndex>1</ZIndex>        <Left>295.2pt</Left>        <Top>0.0pt</Top>        <Style>          <BorderStyle />          <BorderColor />          <BorderWidth />        </Style>        <CanGrow>true</CanGrow>        <Visibility>          <Hidden>=!{?printPromo}</Hidden>        </Visibility>      </Textbox>    </ReportItems>  </PageFooter>  <DataElementName>Report</DataElementName>  <DataElementStyle>AttributeNormal</DataElementStyle>  <DataSources>    <DataSource Name="DS1">      <ConnectionProperties>        <DataProvider>MySqlConnector</DataProvider>        <ConnectString>server=plutus.srv.qsolution.ru; user=Space; database=workwear_test_kos_27_12_25; port=3306;password=1050</ConnectString>        <IntegratedSecurity>false</IntegratedSecurity>      </ConnectionProperties>    </DataSource>  </DataSources>  <ReportParameters>    <ReportParameter Name="start">      <DataType>String</DataType>      <DefaultValue>        <Values>          <Value>2025-12-01</Value>        </Values>      </DefaultValue>      <Nullable>false</Nullable>      <AllowBlank>false</AllowBlank>      <MultiValue>false</MultiValue>      <Prompt></Prompt>    </ReportParameter>    <ReportParameter Name="finish">      <DataType>String</DataType>      <DefaultValue>        <Values>          <Value>2025-12-31</Value>        </Values>      </DefaultValue>      <Nullable>false</Nullable>      <AllowBlank>false</AllowBlank>      <MultiValue>false</MultiValue>      <Prompt></Prompt>    </ReportParameter>    <ReportParameter Name="nomenclature_ids">      <DataType>Integer</DataType>      <DefaultValue>        <Values>          <Value>-1</Value>        </Values>      </DefaultValue>      <Nullable>false</Nullable>      <AllowBlank>false</AllowBlank>      <MultiValue>true</MultiValue>      <Prompt></Prompt>    </ReportParameter>    <ReportParameter Name="printPromo">      <DataType>Boolean</DataType>      <Nullable>false</Nullable>      <AllowBlank>false</AllowBlank>      <MultiValue>false</MultiValue>      <Prompt></Prompt>    </ReportParameter>  </ReportParameters></Report>
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author></Author>
+  <PageHeight>11.7in</PageHeight>
+  <PageWidth>8.3in</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query >
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>SELECT
+    tab1.nomenclature_id,
+    tab1.nomenclature_number,
+    tab1.nomenclature_name,
+    tab1.type_id,
+    tab1.size_type,
+    tab1.need_size,
+    tab1.issue_size,
+    tab1.quantity,
+    tab1.quantity * 1.0 / tab2.total_quantity AS percent
+FROM (SELECT
+            nomenclature.id AS nomenclature_id,
+            nomenclature.number AS nomenclature_number,
+            nomenclature.name AS nomenclature_name,
+            size_types.id AS type_id,
+            size_types.name AS size_type,
+            emp_size.id AS need_size_id,
+            emp_size.name AS need_size,
+            issued_size.id AS issue_size_id,
+            issued_size.name AS issue_size,
+            COUNT(*) AS quantity
+        FROM operation_issued_by_employee
+                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+                 LEFT JOIN item_types ON nomenclature.type_id = item_types.id
+                 LEFT JOIN size_types ON item_types.size_type_id = size_types.id
+                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
+                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
+                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id
+            AND employees_sizes.employee_id = employees.id)
+                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
+        WHERE operation_issued_by_employee.issued != 0
+          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
+          AND emp_size.id IS NOT NULL
+          AND ((-1 IN (@nomenclature_ids)) OR operation_issued_by_employee.nomenclature_id IN (@nomenclature_ids))
+      GROUP BY nomenclature.id, nomenclature.number, nomenclature.name, size_types.id, size_types.name, emp_size.id, issued_size.id
+    ) AS tab1
+        LEFT JOIN ( #Общее количество выдач по сотруднику и номенклатуре
+        SELECT
+            nomenclature.id AS nomenclature_id,
+            emp_size.id AS need_size_id,
+            COUNT(*) AS total_quantity
+        FROM operation_issued_by_employee
+                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
+                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
+                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id
+            AND employees_sizes.employee_id = employees.id)
+                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
+        WHERE operation_issued_by_employee.issued != 0
+          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
+          AND emp_size.id IS NOT NULL
+        GROUP BY nomenclature.id, emp_size.id
+    ) AS tab2
+    ON tab1.nomenclature_id = tab2.nomenclature_id
+        AND tab1.need_size_id = tab2.need_size_id
+ORDER BY
+    tab1.nomenclature_name,
+    tab1.need_size,
+    percent DESC;</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="start">
+            <Value>={?start}</Value>
+          </QueryParameter>
+          <QueryParameter Name="finish">
+            <Value>={?finish}</Value>
+          </QueryParameter>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields >
+        <Field Name="nomenclature_id">
+          <DataField>nomenclature_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="nomenclature_number">
+          <DataField>nomenclature_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nomenclature_name">
+          <DataField>nomenclature_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="type_id">
+          <DataField>type_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="size_type">
+          <DataField>size_type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="need_size">
+          <DataField>need_size</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="issue_size">
+          <DataField>issue_size</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="quantity">
+          <DataField>quantity</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="percent">
+          <DataField>percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>.5in</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <ReportItems>
+      <Table Name="Table1">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Query returned no rows!</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>82.0pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>427.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>51.6pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>22.2pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox5">
+                      <Value>Соотношение размеров выданных СИЗ и размеров сотрудника</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontSize>16pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>3</ColSpan>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Header>
+        <TableGroups>
+          <TableGroup>
+            <Grouping Name="typeSizeGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression >=Fields!type_id.Value</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>28.5pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox4">
+                          <Value>=Fields.size_type.Value</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>Solid</Left>
+                              <Right>Solid</Right>
+                              <Top>Solid</Top>
+                              <Bottom>Solid</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth>
+                              <Bottom>2pt</Bottom>
+                            </BorderWidth>
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>14pt</FontSize>
+                            <VerticalAlign>Bottom</VerticalAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>3</ColSpan>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting >
+              <SortBy>
+                <SortExpression>=Fields!size_type.Value</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
+            <Grouping Name="nomenclatureGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>=Fields!nomenclature_id.Value</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox15">
+                          <Value>="     " + Fields.nomenclature_name.Value +" ("+Fields.nomenclature_number.Value+")"</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Left>Solid</Left>
+                              <Right>Solid</Right>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor>
+                              <Top>Gray</Top>
+                            </BorderColor>
+                            <BorderWidth>
+                              <Top>2pt</Top>
+                            </BorderWidth>
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>12pt</FontSize>
+                          </Style>
+                          <CanGrow>true</CanGrow>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>3</ColSpan>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>=Fields!need_size.Value</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
+            <Grouping Name="sizeGroup">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>=Fields.need_size.Value</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox10">
+                          <Value>=Fields!need_size.Value</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                              <Right>None</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox8">
+                          <Value>=Sum({quantity})</Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                              <Left>None</Left>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox6">
+                          <Value></Value>
+                          <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Top>Solid</Top>
+                              <Bottom>None</Bottom>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>=Fields.percent.Value</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+        </TableGroups>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Сотрудник">
+                      <Value>=Fields!issue_size.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Right>None</Right>
+                          <Bottom>Dotted</Bottom>
+                          <Top>None</Top>
+                          <Left>Solid</Left>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value>=Fields!quantity.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>None</Top>
+                          <Bottom>Dotted</Bottom>
+                          <Left>None</Left>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>=Format(Fields!percent.Value,"##.##%")</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Right>Solid</Right>
+                          <Bottom>Dotted</Bottom>
+                          <Top>Dotted</Top>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Right</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <Sorting>
+            <SortBy>
+              <SortExpression>=Fields.need_size.Value</SortExpression>
+              <Direction>Ascending</Direction>
+            </SortBy>
+          </Sorting>
+        </Details>
+        <Left>0.8pt</Left>
+        <Top>0.0pt</Top>
+      </Table>
+    </ReportItems>
+    <Height>111.2pt</Height>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>14.7pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems>
+      <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <Height>12.00pt</Height>
+        <Width>266.47pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>295.2pt</Left>
+        <Top>0.0pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
+    </ReportItems>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=plutus.srv.qsolution.ru; user=Space; database=workwear_test_kos_27_12_25; port=3306;password=1050</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="start">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2025-12-01</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="finish">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2025-12-31</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="nomenclature_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>
