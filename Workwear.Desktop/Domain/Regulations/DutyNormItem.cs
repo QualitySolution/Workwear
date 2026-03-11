@@ -231,6 +231,20 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 		
+		public string LifeText {
+			get {
+				switch(NormPeriod) {
+					case DutyNormPeriodType.Year:
+					case DutyNormPeriodType.Month:
+						return $"{PeriodCount} {PeriodText}";
+					case DutyNormPeriodType.Wearout:
+						return "До износа";
+					default:
+						return String.Empty;
+				}
+			}
+		}
+
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);

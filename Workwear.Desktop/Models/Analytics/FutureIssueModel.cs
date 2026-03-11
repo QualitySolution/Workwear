@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
-using QS.DomainModel.Entity;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Tools;
 
@@ -190,53 +188,5 @@ namespace Workwear.Models.Analytics {
 			progress?.Close();
 			return issues;
 		}
-	}
-
-	/// <summary>
-	/// Базовый класс будущей выдачи
-	/// </summary>
-	public abstract class FutureIssue {
-		public Nomenclature Nomenclature { get; set; }
-		public DateTime? LastIssueDate { get; set; }
-		public bool VirtualLastIssue { get; set; }
-		public DateTime? OperationDate { get; set; }
-		public DateTime? DelayIssueDate { get; set; }
-		public int Amount { get; set; }
-
-		public abstract ProtectionTools ProtectionTools { get; }
-		public ItemsType ItemsType => ProtectionTools.Type;
-		public virtual Size Size => null;
-		public virtual Size Height => null;
-	}
-
-	/// <summary>
-	/// Будущая выдача сотруднику
-	/// </summary>
-	public class FutureIssueEmployee : FutureIssue {
-		public EmployeeCardItem EmployeeCardItem { get; set; }
-
-		public EmployeeCard Employee => EmployeeCardItem.EmployeeCard;
-		public Subdivision Subdivision => Employee.Subdivision;
-		public Department Department => Employee.Department;
-		public Post Post => Employee.Post;
-		public override ProtectionTools ProtectionTools => EmployeeCardItem.ProtectionTools;
-		public NormItem NormItem => EmployeeCardItem.ActiveNormItem;
-		public Norm Norm => NormItem.Norm;
-
-		public override Size Size =>
-			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.SizeType))?.Size;
-		public override Size Height =>
-			Employee.Sizes.FirstOrDefault(s => DomainHelper.EqualDomainObjects(s.SizeType, ProtectionTools.Type.HeightType))?.Size;
-	}
-
-	/// <summary>
-	/// Будущая выдача по дежурной норме
-	/// </summary>
-	public class FutureIssueDutyNorm : FutureIssue {
-		public DutyNormItem DutyNormItem { get; set; }
-
-		public DutyNorm DutyNorm => DutyNormItem.DutyNorm;
-		public override ProtectionTools ProtectionTools => DutyNormItem.ProtectionTools;
-		public Subdivision Subdivision => DutyNorm.Subdivision;
 	}
 }
