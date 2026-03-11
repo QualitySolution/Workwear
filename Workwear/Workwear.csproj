@@ -964,7 +964,7 @@
     <Content Include="Reports\ClothingService\ClothingServiceCodes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Reports\ClothingService\ClothingServiceServisedReport.rdl">
+    <None Include="Reports\ClothingService\ClothingServiceServicedReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\Documents\ShipmentSheet.rdl">

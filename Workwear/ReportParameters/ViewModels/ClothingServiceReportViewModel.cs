@@ -66,7 +66,7 @@ namespace Workwear.ReportParameters.ViewModels {
 				       ? $"Количество обращений" : "") +
 			       (ReportType == ClothingServiceReportType.PostamatUse
 				       ? $"Использование постаматов" : "") +
-			       (ReportType == ClothingServiceReportType.Servised
+			       (ReportType == ClothingServiceReportType.Serviced
 				       ? $"Оказанные услуги" : "") +
 			       (VisiblePeriodOfBegitn ? $" за ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       $" от {DateTime.Today.ToShortDateString()}";
@@ -109,7 +109,7 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "start_date", StartDate },
 						{ "finish_date", EndDate },
 					};
-				case ClothingServiceReportType.Servised:
+				case ClothingServiceReportType.Serviced:
 					return new Dictionary<string, object> {
 						{ "report_name", Title },
 						{ "start_date", StartDate },
@@ -153,7 +153,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual string ShowClosedLabel => "Период" +
 			(reportType == ClothingServiceReportType.ClaimForStatus && status != null ? " перехода в статус:" : "") +
 			(reportType == ClothingServiceReportType.PostamatUse ? ":" : "") +
-			(reportType == ClothingServiceReportType.Servised ? ":" : "") +
+			(reportType == ClothingServiceReportType.Serviced ? ":" : "") +
 			(reportType == ClothingServiceReportType.ClaimForStatus && status == null 
 			 || reportType == ClothingServiceReportType.ClaimCount
 			 || reportType == ClothingServiceReportType.ClaimMetric ? " поступления заявок:" : "");
@@ -206,7 +206,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			(VisibleShowClosed && ShowClosed) ||
 			reportType == ClothingServiceReportType.PostamatUse ||
 			reportType == ClothingServiceReportType.ClaimForStatus ||
-			reportType == ClothingServiceReportType.Servised;
+			reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimMetric || reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleGroupSubdivision => reportType == ClothingServiceReportType.ClaimCount;
         public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric || reportType == ClothingServiceReportType.ClaimForStatus;
@@ -214,7 +214,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleShowComment => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision;
-		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Servised;
+		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Serviced;
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingService.ClothingServiceStatusReport")]
@@ -229,9 +229,9 @@ namespace Workwear.ReportParameters.ViewModels {
         [ReportIdentifier("ClothingService.ClothingServicePostamatReport")]
         [Display(Name = "Использование постаматов")]
         PostamatUse,
-		[ReportIdentifier("ClothingService.ClothingServiceServisedReport")]
+		[ReportIdentifier("ClothingService.ClothingServiceServicedReport")]
 		[Display(Name = "Оказанные услуги")]
-		Servised
+		Serviced
 	}
 	
 }
