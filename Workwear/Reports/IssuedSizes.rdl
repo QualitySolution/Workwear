@@ -71,7 +71,7 @@ FROM (SELECT
 ORDER BY
     tab1.nomenclature_name,
     tab1.need_size,
-    percent DESC;</CommandText>
+    percent DESC</CommandText>
         <QueryParameters>
           <QueryParameter Name="start">
             <Value>={?start}</Value>
@@ -189,7 +189,7 @@ ORDER BY
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression >=Fields!type_id.Value</GroupExpression>
+                <GroupExpression>=Fields!type_id.Value</GroupExpression>
               </GroupExpressions>
             </Grouping>
             <Header>
@@ -226,7 +226,7 @@ ORDER BY
                 </TableRow>
               </TableRows>
             </Header>
-            <Sorting >
+            <Sorting>
               <SortBy>
                 <SortExpression>=Fields!size_type.Value</SortExpression>
                 <Direction>Ascending</Direction>
