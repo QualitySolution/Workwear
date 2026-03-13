@@ -11,67 +11,68 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    tab1.nomenclature_id,
-    tab1.nomenclature_number,
-    tab1.nomenclature_name,
-    tab1.type_id,
-    tab1.size_type,
-    tab1.need_size,
-    tab1.issue_size,
-    tab1.quantity,
+    tab1.*,
     tab1.quantity * 1.0 / tab2.total_quantity AS percent
-FROM (SELECT
-            nomenclature.id AS nomenclature_id,
-            nomenclature.number AS nomenclature_number,
-            nomenclature.name AS nomenclature_name,
-            size_types.id AS type_id,
-            size_types.name AS size_type,
-            emp_size.id AS need_size_id,
-            emp_size.name AS need_size,
-            issued_size.id AS issue_size_id,
-            issued_size.name AS issue_size,
-            COUNT(*) AS quantity
-        FROM operation_issued_by_employee
-                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
-                 LEFT JOIN item_types ON nomenclature.type_id = item_types.id
-                 LEFT JOIN size_types ON item_types.size_type_id = size_types.id
-                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
-                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
-                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id
-            AND employees_sizes.employee_id = employees.id)
-                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
-        WHERE operation_issued_by_employee.issued != 0
-          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
-          AND emp_size.id IS NOT NULL
-          AND ((-1 IN (@nomenclature_ids)) OR operation_issued_by_employee.nomenclature_id IN (@nomenclature_ids))
-      GROUP BY nomenclature.id, nomenclature.number, nomenclature.name, size_types.id, size_types.name, emp_size.id, issued_size.id
-    ) AS tab1
-        LEFT JOIN ( #Общее количество выдач по сотруднику и номенклатуре
-        SELECT
-            nomenclature.id AS nomenclature_id,
-            emp_size.id AS need_size_id,
-            COUNT(*) AS total_quantity
-        FROM operation_issued_by_employee
-                 LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
-                 LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
-                 LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
-                 LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id
-            AND employees_sizes.employee_id = employees.id)
-                 LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
-        WHERE operation_issued_by_employee.issued != 0
-          AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
-          AND emp_size.id IS NOT NULL
-        GROUP BY nomenclature.id, emp_size.id
-    ) AS tab2
-    ON tab1.nomenclature_id = tab2.nomenclature_id
-        AND tab1.need_size_id = tab2.need_size_id
+FROM (
+         SELECT
+             nomenclature.id AS nomenclature_id,
+             nomenclature.number AS nomenclature_number,
+             nomenclature.name AS nomenclature_name,
+             size_types.id AS type_id,
+             size_types.name AS size_type,
+             emp_size.id AS need_size_id,
+             emp_size.name AS need_size,
+             issued_size.id AS issue_size_id,
+             issued_size.name AS issue_size,
+             COUNT(*) AS quantity
+         FROM operation_issued_by_employee
+                  LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+                  LEFT JOIN item_types ON nomenclature.type_id = item_types.id
+                  LEFT JOIN size_types ON item_types.size_type_id = size_types.id
+                  LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
+                  LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
+                  LEFT JOIN employees_sizes ON (
+             issued_size.size_type_id = employees_sizes.size_type_id
+                 AND employees_sizes.employee_id = employees.id
+             )
+                  LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
+         WHERE operation_issued_by_employee.issued != 0
+           AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
+           AND emp_size.id IS NOT NULL
+         GROUP BY
+             nomenclature.id,
+             nomenclature.number,
+             nomenclature.name,
+             size_types.id,
+             size_types.name,
+             emp_size.id,
+             emp_size.name,
+             issued_size.id,
+             issued_size.name
+     ) AS tab1
+         LEFT JOIN ( SELECT
+                nomenclature.id AS nomenclature_id,
+                emp_size.id AS need_size_id,
+                COUNT(*) AS total_quantity
+                FROM operation_issued_by_employee
+                LEFT JOIN nomenclature ON operation_issued_by_employee.nomenclature_id = nomenclature.id
+                LEFT JOIN sizes AS issued_size ON operation_issued_by_employee.size_id = issued_size.id
+                LEFT JOIN employees ON operation_issued_by_employee.employee_id = employees.id
+                LEFT JOIN employees_sizes ON (issued_size.size_type_id = employees_sizes.size_type_id AND employees_sizes.employee_id = employees.id)
+                LEFT JOIN sizes AS emp_size ON employees_sizes.size_id = emp_size.id
+                WHERE operation_issued_by_employee.issued != 0
+                AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
+                AND emp_size.id IS NOT NULL
+                GROUP BY nomenclature.id, emp_size.id
+                ) AS tab2 ON tab1.nomenclature_id = tab2.nomenclature_id
+    AND tab1.need_size_id = tab2.need_size_id
 ORDER BY
     tab1.nomenclature_name,
     tab1.need_size,
-    percent DESC;</CommandText>
+    percent DESC</CommandText>
         <QueryParameters>
           <QueryParameter Name="start">
             <Value>={?start}</Value>
@@ -84,7 +85,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -189,7 +190,7 @@ ORDER BY
               <PageBreakAtStart>false</PageBreakAtStart>
               <PageBreakAtEnd>false</PageBreakAtEnd>
               <GroupExpressions>
-                <GroupExpression >=Fields!type_id.Value</GroupExpression>
+                <GroupExpression>=Fields!type_id.Value</GroupExpression>
               </GroupExpressions>
             </Grouping>
             <Header>
@@ -226,7 +227,7 @@ ORDER BY
                 </TableRow>
               </TableRows>
             </Header>
-            <Sorting >
+            <Sorting>
               <SortBy>
                 <SortExpression>=Fields!size_type.Value</SortExpression>
                 <Direction>Ascending</Direction>
@@ -472,15 +473,6 @@ ORDER BY
   </PageFooter>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=plutus.srv.qsolution.ru; user=Space; database=workwear_test_kos_27_12_25; port=3306;password=1050</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
   <ReportParameters>
     <ReportParameter Name="start">
       <DataType>String</DataType>
@@ -526,4 +518,13 @@ ORDER BY
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
