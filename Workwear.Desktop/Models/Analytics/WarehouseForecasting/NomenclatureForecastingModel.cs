@@ -78,7 +78,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			}
 			progress.Add(text: "Разбивка расходов по периодам");
 			result.ForEach(x => x.FillForecast());
-
+			progress.Close();
 			return result;
 		}
 

@@ -47,7 +47,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 						result.Add(new WarehouseForecastingItem(columnsModel, group.Key, universalIssues, stocks, ClothesSex.Universal));
 				}
 			}
-
+			progress.Close();
 			return result;
 		}
 	}
