@@ -369,7 +369,7 @@ namespace Workwear.Test.Models.Analytics {
 
 			var dutyNorm = new DutyNorm {
 				Name = "Дежурная норма для теста",
-				DateFrom = new DateTime(2024, 1, 1)
+				DateFrom = new DateTime(2024, 1, 5)
 			};
 
 			var dutyNormItem = new DutyNormItem {
