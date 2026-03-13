@@ -105,6 +105,7 @@ namespace Workwear.ViewModels.ClothingService {
 				if(item.Select) {
 					item.Entity.Id = 0; //Отмечаем как новый, чтобы  пересоздался. Так коректно работает журналирование
 					item.Entity.Cost = item.Entity.Service.Cost;
+					item.Entity.ServiceDate = DateTime.Now;
 					Claim.ProvidedServices.Add(item.Entity);
 				} else
 					Claim.ProvidedServices.RemoveAll(x => DomainHelper.EqualDomainObjects(item.Entity, x));
@@ -241,7 +242,7 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = "Услуга не найдена.";
 				return;
 			}
-			var ser = ServicesList.FirstOrDefault(s => s.Entity.Id == service.Id);
+			var ser = ServicesList.FirstOrDefault(s => s.Entity.Service.Id == service.Id);
 			if(ser != default)
 				ser.Select = true;
 			else
@@ -316,9 +317,9 @@ namespace Workwear.ViewModels.ClothingService {
 			claim.NeedForRepair = NeedRepair;
 			if(NeedRepair && claim.Defect != DefectText)
 				claim.Defect = DefectText;
-			
+
 			foreach(var s in ServicesList.Where(x => x.Entity.Service.WithState == state))
-				s.Select = true;
+				SetService(s.Entity.Service);
 			
 			if(MoveDefiniteClaim) { //Сохранеине и коммит в вызвавающем объекте
 				Close(false, CloseSource.Self);

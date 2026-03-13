@@ -56,7 +56,8 @@ namespace Workwear.Views.ClothingService {
 			treeServices.CreateFluentColumnsConfig<SelectableEntity<ProvidedService>>()			
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
-				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Entity.Cost.ToString(CultureInfo.InvariantCulture))
+				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.Cost.ToString(CultureInfo.InvariantCulture) : String.Empty)
+				.AddColumn("Дата оказания").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.ServiceDate.ToShortDateString().ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.Finish();
 			treeServices.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.ServicesList, w => w.ItemsDataSource).InitializeFromSource();
