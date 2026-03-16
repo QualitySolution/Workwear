@@ -229,6 +229,10 @@ public partial class MainWindow
 
 	private global::Gtk.Action IssueSizeReport;
 
+	private global::Gtk.Action ActionDutyNormReports;
+
+	private global::Gtk.Action ActionDutyNormIssuedReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -401,7 +405,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -610,12 +614,18 @@ public partial class MainWindow
 		this.ActionIssuanceRequest.ShortLabel = global::Mono.Unix.Catalog.GetString("Заявки на выдачу");
 		w1.Add(this.ActionIssuanceRequest, null);
 		this.ActionOffAutoUpdate = new global::Gtk.RadioAction("ActionOffAutoUpdate", global::Mono.Unix.Catalog.GetString("Без обновлений"), null, null, 0);
-		this.ActionOffAutoUpdate.Group = this.ActionChannelCurrent.Group;
+		this.ActionOffAutoUpdate.Group = this.ActionChannelStable.Group;
 		this.ActionOffAutoUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Без обновлений");
 		w1.Add(this.ActionOffAutoUpdate, null);
 		this.IssueSizeReport = new global::Gtk.Action("IssueSizeReport", global::Mono.Unix.Catalog.GetString("Выдачи по размерам"), null, null);
 		this.IssueSizeReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдачи по размерам");
 		w1.Add(this.IssueSizeReport, null);
+		this.ActionDutyNormReports = new global::Gtk.Action("ActionDutyNormReports", global::Mono.Unix.Catalog.GetString("Дежурные нормы"), null, null);
+		this.ActionDutyNormReports.ShortLabel = global::Mono.Unix.Catalog.GetString("Дежурные нормы");
+		w1.Add(this.ActionDutyNormReports, null);
+		this.ActionDutyNormIssuedReport = new global::Gtk.Action("ActionDutyNormIssuedReport", global::Mono.Unix.Catalog.GetString("Отчёт по выданному"), null, null);
+		this.ActionDutyNormIssuedReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчёт по выданному");
+		w1.Add(this.ActionDutyNormIssuedReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -701,16 +711,18 @@ public partial class MainWindow
 				"sReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'ActionAmountEmployeeGet" +
 				"Wear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionProvision\' act" +
 				"ion=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' action=\'" +
-				"ActionBarcodeCompletenessReport\'/></menu><menu name=\'ActionHelp\' action=\'ActionH" +
-				"elp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdmi" +
-				"nGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' ac" +
-				"tion=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChann" +
-				"el\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuit" +
-				"em name=\'ActionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'Acti" +
-				"onOffAutoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpda" +
-				"te\' action=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'Actio" +
-				"nSite\'/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><me" +
-				"nuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNormReports\' action=\'Act" +
+				"ionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedReport\' action=\'ActionDu" +
+				"tyNormIssuedReport\'/></menu></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><" +
+				"menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide" +
+				"\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'" +
+				"ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><m" +
+				"enuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem nam" +
+				"e=\'ActionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffA" +
+				"utoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' ac" +
+				"tion=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'" +
+				"/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem" +
+				" name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -952,6 +964,7 @@ public partial class MainWindow
 		this.ActionIssuanceRequest.Activated += new global::System.EventHandler(this.OnActionIssuanceRequestActivated);
 		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
 		this.IssueSizeReport.Activated += new global::System.EventHandler(this.OnIssueSizeReportActivated);
+		this.ActionDutyNormIssuedReport.Activated += new global::System.EventHandler(this.OnActionDutyNormIssuedReportActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }
