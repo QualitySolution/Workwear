@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 
@@ -39,6 +40,13 @@ namespace Workwear.Domain.ClothingService {
 		public virtual decimal Cost {
 			get => cost;
 			set => SetField(ref cost, value);
+		}
+		
+		private DateTime serviceDate = DateTime.Now;
+		[Display(Name = "Дата оказания услуги")]
+		public virtual DateTime ServiceDate {
+			get => serviceDate;
+			set => SetField(ref serviceDate, value);
 		}
 
 		#region Вычисляемые свойства
