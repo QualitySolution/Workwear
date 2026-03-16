@@ -133,7 +133,7 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void FillFromShipment(Shipment doc) {
 			foreach(var s in doc.Items) {
 				if(s.Ordered - s.Received > 0)
-					AddItem(s.Nomenclature, s.WearSize, s.Height, s.Ordered - s.Received);
+					AddItem(s.Nomenclature, s.WearSize, s.Height, amount: s.Ordered - s.Received, price: s.Cost);
 			}
 		}
 			
