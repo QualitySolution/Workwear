@@ -2662,9 +2662,10 @@ DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 create table clothing_service_services_claim
 (
 	id         int unsigned auto_increment,
-	service_id int unsigned null,
-	claim_id   int unsigned,
+	service_id int unsigned not null,
+	claim_id   int unsigned not null,
 	`cost` 		DECIMAL DEFAULT 0 NULL,
+	service_date datetime null comment 'Время последней активации услуги для заявки',
 	constraint clothing_service_services_claim_pk
 		primary key (id),
 	constraint clothing_service_services_claim_service_id_claim_id_uindex
@@ -2902,7 +2903,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.8');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.9');
 
 COMMIT;
 
