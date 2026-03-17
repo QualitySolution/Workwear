@@ -1129,4 +1129,8 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnIssueSizeReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuedSizesViewModel));
 	}
+
+	protected void OnActionDutyNormIssuedReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedDutyNormsViewModel));
+	}
 }

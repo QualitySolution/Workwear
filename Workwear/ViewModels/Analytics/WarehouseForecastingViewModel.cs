@@ -40,6 +40,8 @@ namespace Workwear.ViewModels.Analytics {
 		private readonly EmployeeIssueModel issueModel;
 		private readonly FeaturesService featuresService;
 		private readonly FutureIssueModel futureIssueModel;
+		private readonly DutyNormIssueModel dutyNormIssueModel;
+		private readonly DutyNormRepository dutyNormRepository;
 		private readonly StockBalanceModel stockBalance;
 		private readonly SizeService sizeService;
 		private readonly IFileDialogService fileDialogService;
@@ -49,6 +51,8 @@ namespace Workwear.ViewModels.Analytics {
 			EmployeeIssueModel issueModel,
 			FeaturesService featuresService,
 			FutureIssueModel futureIssueModel,
+			DutyNormIssueModel dutyNormIssueModel,
+			DutyNormRepository dutyNormRepository,
 			IFileDialogService fileDialogService,
 			ILifetimeScope autofacScope,
 			INavigationManager navigation,
@@ -68,6 +72,8 @@ namespace Workwear.ViewModels.Analytics {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.fileDialogService = fileDialogService ?? throw new ArgumentNullException(nameof(fileDialogService));
@@ -256,6 +262,7 @@ namespace Workwear.ViewModels.Analytics {
 			: choiceProtectionToolsViewModel.AllSelected;
 		
 		IList<EmployeeCard> employees;
+		IList<DutyNormItem> dutyNormItems;
 		DateTime lastForecastUntil;
 		private List<FutureIssue> futureIssues = new List<FutureIssue>();
 		#endregion
@@ -265,7 +272,7 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
-			ProgressTotal.Start(5, text:"Получение данных");
+			ProgressTotal.Start(9, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -287,6 +294,10 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressTotal.Add(text: "Получение выданных вещей");
 			issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
+			ProgressTotal.Add(text: "Загрузка дежурных норм");
+			dutyNormItems = dutyNormRepository.AllItemsFor(uow: UoW);
+			dutyNormIssueModel.FillDutyNormItems(dutyNormItems.ToArray(), progress: ProgressLocal);
+
 			ProgressTotal.Add(text: "Прогнозирование выдач");
 			MakeForecast();
 		}
@@ -296,7 +307,7 @@ namespace Workwear.ViewModels.Analytics {
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(3, text: "Прогнозирование выдач");
+				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
 			HashSet<ProtectionTools> hashPt = new HashSet<ProtectionTools>();
@@ -311,8 +322,19 @@ namespace Workwear.ViewModels.Analytics {
 				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
 			}
 
+			futureIssues.Clear();
 			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
+
+			ProgressTotal.Add(text: "Прогнозирование выдач по дежурным нормам");
+			if(dutyNormItems.Any()) {
+				var filteredDutyItems = NomenclatureAllSelected
+					? dutyNormItems
+					: dutyNormItems.Where(x => hashPt.Contains(x.ProtectionTools)).ToList();
+				var dutyIssues = futureIssueModel.CalculateDutyNormIssues(DateTime.Today, EndDate, true, filteredDutyItems, ProgressLocal);
+				futureIssues.AddRange(dutyIssues);
+			}
+
 			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");
 			var nomenclatures = NomenclatureType == ForecastingNomenclatureType.ProtectionTools 
@@ -335,10 +357,9 @@ namespace Workwear.ViewModels.Analytics {
 				}
 			}
 
-			ProgressLocal.Add(text: "Сортировка");
+			ProgressTotal.Add(text: "Сортировка");
 			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
-			ProgressLocal.Close();
 			ProgressTotal.Close();
 			SensitiveSettings = true;
 		}

@@ -152,6 +152,7 @@
     <Compile Include="Models\WearLk\UnansweredClaimsCounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportParameters\ViewModels\AmountIssuedDutyNormsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
@@ -566,6 +567,8 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.cs" />
     <Compile Include="ReportParameters\Views\IssuedSizesView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.IssuedSizesView.cs" />
+    <Compile Include="ReportParameters\Views\AmountIssuedDutyNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.AmountIssuedDutyNormsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -964,6 +967,9 @@
     <Content Include="Reports\ClothingService\ClothingServiceCodes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Reports\ClothingService\ClothingServiceServicedReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\Documents\ShipmentSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -974,6 +980,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\IssuedSizes.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\DutyNorms\AmountIssuedDutyNorms.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
