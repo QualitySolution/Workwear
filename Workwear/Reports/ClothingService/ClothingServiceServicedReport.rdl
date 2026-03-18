@@ -42,7 +42,7 @@ FROM clothing_service_services_claim
     LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
     LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
     LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
-WHERE clothing_service_services_claim.service_date BETWEEN @start_date AND @end_date</CommandText>
+WHERE clothing_service_services_claim.service_date BETWEEN @start_date AND DATE(ADDDATE(@end_date, INTERVAL 1 DAY))</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>=Parameters!start_date</Value>
