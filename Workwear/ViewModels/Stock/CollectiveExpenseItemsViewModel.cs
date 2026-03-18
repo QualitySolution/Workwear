@@ -36,7 +36,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly CollectiveExpenseViewModel collectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
-		private readonly IInteractiveMessage interactive;
+		private readonly IInteractiveService interactive;
 		private readonly ICurrentPermissionService permissionService;
 		private readonly ModalProgressCreator modalProgress;
 		private readonly EmployeeRepository employeeRepository;
@@ -53,7 +53,7 @@ namespace Workwear.ViewModels.Stock
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
-			IInteractiveMessage interactive,
+			IInteractiveService interactive,
 			ICurrentPermissionService permissionService,
 			BaseParameters baseParameters,
 			ModalProgressCreator modalProgress,
@@ -373,6 +373,12 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Обновление документа
 
+		private void UpdateAmounts() {
+			foreach(var item in Entity.Items) {
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date) ?? 0;
+			}
+		}
+
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
 			AddEmployeesList(selectedCollectiveExpenseItem?.Select(x => x.Employee).Distinct(), performance);
@@ -414,6 +420,8 @@ namespace Workwear.ViewModels.Stock
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
+					if(Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
+						UpdateAmounts();
 					break;
 			}
 		}
