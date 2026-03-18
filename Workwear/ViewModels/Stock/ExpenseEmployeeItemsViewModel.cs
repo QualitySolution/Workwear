@@ -114,6 +114,8 @@ namespace Workwear.ViewModels.Stock
 						filter => {
 							filter.WarehouseEntry.IsEditable = false;
 							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
+							filter.Date = expenseEmployeeViewModel.Entity.Date;
+							filter.SensitiveDate = false;
 						});
 				});
 			
@@ -130,6 +132,8 @@ namespace Workwear.ViewModels.Stock
 							filter.WarehouseEntry.IsEditable = false;
 							filter.Warehouse = expenseEmployeeViewModel.Entity.Warehouse;
 							filter.ProtectionTools = item.ProtectionTools;
+							filter.Date = expenseEmployeeViewModel.Entity.Date;
+							filter.SensitiveDate = false;
 						});
 				});
 			

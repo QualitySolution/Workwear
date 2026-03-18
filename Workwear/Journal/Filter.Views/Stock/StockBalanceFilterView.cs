@@ -23,6 +23,7 @@ namespace workwear.Journal.Filter.Views.Stock
 				.InitializeFromSource();
 
 			ydateDate.Binding.AddBinding(viewModel, v=> v.Date, w => w.Date).InitializeFromSource();
+			ydateDate.Binding.AddBinding(viewModel, v => v.SensitiveDate, w => w.Sensitive).InitializeFromSource();
 			yenumcomboboxAmount.ItemsEnum = typeof(AddedAmount);
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.CanChooseAmount, w => w.Visible).InitializeFromSource();
 			yenumcomboboxAmount.Binding.AddBinding(viewModel, v => v.AddAmount, w => w.SelectedItem).InitializeFromSource();
