@@ -298,6 +298,7 @@ namespace Workwear.ViewModels.Stock
 							filter.Warehouse = collectiveExpenseViewModel.Entity.Warehouse;
 							filter.ProtectionTools = items.First().ProtectionTools;
 							filter.Date = collectiveExpenseViewModel.Entity.Date;
+							filter.SensitiveDate = false;
 						});
 				});
 			
