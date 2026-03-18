@@ -70,7 +70,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
+			builder.RegisterType<ExpenseEmployeeItemsViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			builder.RegisterType<StockBalanceModel>().AsSelf();

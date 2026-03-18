@@ -300,7 +300,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseEmployeeView.cs" />
     <Compile Include="Views\Stock\ExpenseDocItemEmployeeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.ExpenseDocItemEmployeeView.cs" />
-    <Compile Include="ViewModels\Stock\ExpenseDocItemsEmployeeViewModel.cs" />
+    <Compile Include="ViewModels\Stock\ExpenseEmployeeItemsViewModel.cs" />
     <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
     <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
     <Compile Include="Views\User\UserSettingsView.cs" />

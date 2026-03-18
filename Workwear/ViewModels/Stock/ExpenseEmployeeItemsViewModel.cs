@@ -30,7 +30,7 @@ using workwear.Journal.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
+	public class ExpenseEmployeeItemsViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		public readonly FeaturesService featuresService;
@@ -44,7 +44,7 @@ namespace Workwear.ViewModels.Stock
 		public BaseParameters BaseParameters { get; }
 		public IList<Owner> Owners { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(
+		public ExpenseEmployeeItemsViewModel(
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
 			FeaturesService featuresService, 
 			INavigationManager navigation,
