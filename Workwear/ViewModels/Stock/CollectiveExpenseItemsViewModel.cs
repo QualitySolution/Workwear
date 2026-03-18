@@ -240,7 +240,7 @@ namespace Workwear.ViewModels.Stock
 			
 			var needs = employees
 				.SelectMany(x => x.WorkwearItems)
-				.Where(x=> !Entity.Items.Any(y =>y.EmployeeCardItem == x))
+				.Where(x=> Entity.Items.All(y => y.EmployeeCardItem != x))
 				.ToList();
 			
 			foreach(var item in needs) {
@@ -303,6 +303,8 @@ namespace Workwear.ViewModels.Stock
 							filter.WarehouseEntry.IsEditable = false;
 							filter.Warehouse = collectiveExpenseViewModel.Entity.Warehouse;
 							filter.ProtectionTools = items.First().ProtectionTools;
+							filter.Date = collectiveExpenseViewModel.Entity.Date;
+							filter.SensitiveDate = false;
 						});
 				});
 			
