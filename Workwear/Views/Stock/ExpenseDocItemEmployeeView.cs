@@ -20,9 +20,9 @@ namespace Workwear.Views.Stock
 			this.Build();
 		}
 
-		private ExpenseDocItemsEmployeeViewModel viewModel;
+		private ExpenseEmployeeItemsViewModel viewModel;
 
-		public ExpenseDocItemsEmployeeViewModel ViewModel {
+		public ExpenseEmployeeItemsViewModel ViewModel {
 			get => viewModel;
 			set {
 				viewModel = value;

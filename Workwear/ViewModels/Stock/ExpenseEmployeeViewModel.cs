@@ -45,7 +45,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly SizeService sizeService;
 		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
+		public ExpenseEmployeeItemsViewModel EmployeeItemsViewModel;
 		private IInteractiveService interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
@@ -159,7 +159,7 @@ namespace Workwear.ViewModels.Stock {
 			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
-			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
+			EmployeeItemsViewModel = this.autofacScope.Resolve<ExpenseEmployeeItemsViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
 			
 			if(UoW.IsNew) {
@@ -319,10 +319,10 @@ namespace Workwear.ViewModels.Stock {
 				return true;
 			}
 			
-			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.NeedUpdateBarcodes) {
+			if(!SkipBarcodeCheck && EmployeeItemsViewModel.NeedUpdateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить маркировку." +
-				    (DocItemsEmployeeViewModel.NeedAddBarcodes ? "\nЕсть строки, где выдано больше, чем промаркировано." : "") +
-					(DocItemsEmployeeViewModel.NeedRemoveBarcodes ? "\nВ некоторых строках нужно удалить лишние метки(это можно сделать через контекстное меню)." : "") );
+				    (EmployeeItemsViewModel.NeedAddBarcodes ? "\nЕсть строки, где выдано больше, чем промаркировано." : "") +
+					(EmployeeItemsViewModel.NeedRemoveBarcodes ? "\nВ некоторых строках нужно удалить лишние метки(это можно сделать через контекстное меню)." : "") );
 				logger.Warn("Необходимо обновить маркировку.");
 				return false;
 			}
@@ -440,7 +440,7 @@ namespace Workwear.ViewModels.Stock {
 
 		#region ISelectItem
 		public void SelectItem(int id) {
-			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
+			EmployeeItemsViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
 
