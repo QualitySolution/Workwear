@@ -6,7 +6,9 @@ using Gamma.Utilities;
 using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 using QS.Report;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -17,12 +19,29 @@ namespace workwear.ReportParameters.ViewModels
 	{
 		private readonly SizeService sizeService;
 		private readonly FeaturesService featuresService;
+		
+		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 
-		public ListBySizeViewModel(RdlViewerViewModel rdlViewerViewModel, SizeService sizeService, FeaturesService featuresService) : base(rdlViewerViewModel)
+		public ListBySizeViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			SizeService sizeService,
+			FeaturesService featuresService,
+			IUnitOfWorkFactory uowFactory
+			) : base(rdlViewerViewModel)
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
-			Title = "Список по размерам";
 			this.featuresService=featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			Title = "Список по размерам";
+			var UoW = uowFactory.CreateWithoutRoot();
+			
+			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
+			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
+			
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 		}
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#list-by-size");
@@ -69,6 +88,8 @@ namespace workwear.ReportParameters.ViewModels
 				OnPropertyChanged(nameof(VisibleShowGroup));
 			}
 		}
+		
+		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		
 		public enum SizeReportType {
 			[ReportIdentifier("ListBySize")]

@@ -9,6 +9,12 @@ namespace workwear.ReportParameters.Views
 		public ListBySizeView(ListBySizeViewModel viewModel) : base(viewModel)
 		{
 			this.Build();
+			
+			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			
 			buttonRun.Clicked += OnButtonRunClicked;
 			comboReportType.ItemsEnum = typeof(ListBySizeViewModel.SizeReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
