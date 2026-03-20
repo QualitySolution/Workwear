@@ -188,7 +188,7 @@ namespace Workwear.Views.Stock
 			this.labelSum.UseMarkup = true;
 			this.hbox1.Add(this.labelSum);
 			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.labelSum]));
-			w19.Position = 4;
+			w19.Position = 3;
 			this.vbox2.Add(this.hbox1);
 			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox1]));
 			w20.Position = 2;
