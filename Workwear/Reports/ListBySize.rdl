@@ -45,6 +45,14 @@ FROM
         LEFT JOIN sizes AS size6 ON top6.size_id = size6.id
 WHERE
     (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
+    AND ((-1 IN (@employee_groups_ids))
+        OR(@without_groups AND NOT EXISTS
+            (SELECT * FROM employee_group_items as gi
+             WHERE gi.employee_id = employees.id) )
+        OR (EXISTS (SELECT * FROM employee_group_items as gi
+                WHERE gi.employee_id = employees.id
+                  AND gi.employee_group_id IN (@employee_groups_ids))) )
+    AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
 ORDER BY last_name , first_name , patronymic_name</CommandText>
         <QueryParameters>
           <QueryParameter Name="@type_id_0">
@@ -85,6 +93,18 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           </QueryParameter>
           <QueryParameter Name="group_by_subdivision">
             <Value>={?group_by_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="subdivision_ids">
+            <Value>={?subdivision_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_subdivision">
+            <Value>={?without_subdivision}</Value>
+          </QueryParameter>
+          <QueryParameter Name="employee_groups_ids">
+            <Value>={?employee_groups_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_groups">
+            <Value>={?without_groups}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -148,9 +168,9 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
         <Style>
           <FontSize>15pt</FontSize>
           <FontWeight>Bold</FontWeight>
-          <BorderStyle  />
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
         </Style>
       </Textbox>
     </ReportItems>
@@ -702,7 +722,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
-      <Textbox Name="Textbox10" >
+      <Textbox Name="Textbox10">
         <Height>12.00pt</Height>
         <Width>271.78pt</Width>
         <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
@@ -734,7 +754,7 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
   </DataSources>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="type_id_0">
       <DataType>Integer</DataType>
       <Nullable>false</Nullable>
@@ -836,7 +856,55 @@ ORDER BY last_name , first_name , patronymic_name</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="employee_groups_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_groups">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivision_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
