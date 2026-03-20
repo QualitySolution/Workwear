@@ -49,12 +49,16 @@ namespace workwear.ReportParameters.ViewModels
 		#endregion
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		private Dictionary<string, object> SetParameters() {
-			var parameters = new Dictionary<string, object>();
+			var parameters = new Dictionary<string, object> {
+				{ "group_by_subdivision", GroupBySubdivision },
+				{ "subdivision_ids", ChoiceSubdivisionViewModel.SelectedIdsMod },
+				{ "without_subdivision", ChoiceSubdivisionViewModel.NullIsSelected },
+				{ "without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },
+				{ "employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod },
+			};
 			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var sizes = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
-				parameters.Add($"group_by_subdivision", GroupBySubdivision);
-				for (var count = 0; count < sizes.Count; count++)
-				{
+				for (var count = 0; count < sizes.Count; count++) {
 					parameters.Add($"type_id_{count}", sizes[count].Id);
 					parameters.Add($"type_name_{count}", sizes[count].Name);
 				}

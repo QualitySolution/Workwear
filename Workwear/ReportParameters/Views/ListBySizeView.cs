@@ -23,6 +23,5 @@ namespace workwear.ReportParameters.Views
 			ycheckbuttongroupbysubdivision.Binding.AddBinding(ViewModel, v => v.VisibleShowGroup, w => w.Visible).InitializeFromSource();
 		}
 		protected void OnButtonRunClicked(object sender, EventArgs e) => ViewModel.LoadReport();
-		
 	}
 }
