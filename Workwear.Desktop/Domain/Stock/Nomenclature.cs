@@ -199,6 +199,15 @@ namespace Workwear.Domain.Stock {
 		}
 		#endregion
 		
+		#region Размеры номенклатуры
+		private IObservableList<NomenclatureSizes> nomenclatureSizes = new ObservableList<NomenclatureSizes>();
+		[Display(Name = "Варианты размеров номенклатуры")]
+		public virtual IObservableList<NomenclatureSizes> NomenclatureSizes {
+			get => nomenclatureSizes;
+			set => SetField(ref nomenclatureSizes, value);
+		}
+		#endregion
+		
 		#region Обслуживание одежды
 		private IObservableList<Service> useServices = new ObservableList<Service>();
 		[Display(Name = "Услуги обслуживания")]
