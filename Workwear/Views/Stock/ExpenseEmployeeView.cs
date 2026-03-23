@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NLog;
 using QS.Views.Dialog;
 using QS.Widgets;
@@ -21,8 +21,7 @@ namespace Workwear.Views.Stock
 
 		private void ConfigureDlg()
 		{
-			expensedocitememployeeview1.ViewModel = ViewModel.DocItemsEmployeeViewModel;
-			
+			expensedocitememployeeview1.ViewModel = ViewModel.EmployeeItemsViewModel;
 			entryId.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)

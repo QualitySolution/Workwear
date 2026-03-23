@@ -22389,7 +22389,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.ListBySizeView" design-size="384 323">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.ListBySizeView" design-size="418 398">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -22399,22 +22399,10 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">4</property>
+            <property name="NRows">2</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
             <child>
               <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
                 <property name="MemberName" />
@@ -22504,6 +22492,62 @@
           <packing>
             <property name="Position">0</property>
             <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expander2">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="QS.Views.Control.ChoiceListView" id="choicesubdivisionview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel13">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Подразделение:</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expanderEmployeeGroups">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="QS.Views.Control.ChoiceListView" id="choiceemployeegroupview1">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="GtkLabel17">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Группы сотрудников</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
           </packing>
         </child>
         <child>
@@ -22516,7 +22560,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">1</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

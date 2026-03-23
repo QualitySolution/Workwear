@@ -34,7 +34,7 @@ using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class ExpenseDocItemsEmployeeViewModel : ViewModelBase
+	public class ExpenseEmployeeItemsViewModel : ViewModelBase
 	{
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		public readonly FeaturesService featuresService;
@@ -49,7 +49,7 @@ namespace Workwear.ViewModels.Stock
 		public BaseParameters BaseParameters { get; }
 		public IList<Owner> Owners { get; }
 
-		public ExpenseDocItemsEmployeeViewModel(
+		public ExpenseEmployeeItemsViewModel(
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
 			FeaturesService featuresService, 
 			INavigationManager navigation,
@@ -296,7 +296,7 @@ namespace Workwear.ViewModels.Stock
 				return;
 			
 			item.UpdateOperations(UoW,BaseParameters,interactive);
-			navigation.OpenViewModel<BarcodeAddWidgetViewModel, ExpenseDocItemsEmployeeViewModel, ExpenseItem>(expenseEmployeeViewModel, this, item);
+			navigation.OpenViewModel<BarcodeAddWidgetViewModel, ExpenseEmployeeItemsViewModel, ExpenseItem>(expenseEmployeeViewModel, this, item);
 		}
 		public void AddBarcodes(ExpenseItem item, List<Barcode> barcodes) {
 			UoW.GetInSession(item); 

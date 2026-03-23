@@ -22,7 +22,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		private readonly BaseParameters baseParameters;
 		private readonly BarcodeRepository barcodeRepository;
 		private readonly EmployeeIssueOperation issueOperation;
-		private ExpenseDocItemsEmployeeViewModel docItemsVM;
+		private ExpenseEmployeeItemsViewModel employeeItemsVm;
 		private ExpenseItem expenseItem;
 
 		public BarcodeAddWidgetViewModel(
@@ -30,7 +30,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 			INavigationManager navigation,
 			BaseParameters baseParameters,
 			BarcodeRepository barcodeRepository,
-			ExpenseDocItemsEmployeeViewModel docItemsVM = null,
+			ExpenseEmployeeItemsViewModel employeeItemsVm = null,
 			ExpenseItem expenseItem = null,
 			IValidator validator = null,
 			string UoWTitle = null,
@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		{
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
-			this.docItemsVM = docItemsVM;
+			this.employeeItemsVm = employeeItemsVm;
 			this.expenseItem = expenseItem;
 			_ = UoW; //Дёргаем, чтобы заполнился провайдер
 		}
@@ -132,9 +132,9 @@ namespace Workwear.ViewModels.Stock.Widgets {
 		#endregion
 		
 		public void Accept() {
-			if(docItemsVM != null && expenseItem != null) {
+			if(employeeItemsVm != null && expenseItem != null) {
 				UoW.Commit();
-				docItemsVM.AddBarcodes(expenseItem, (List<Barcode>)AddedBarcodes);
+				employeeItemsVm.AddBarcodes(expenseItem, (List<Barcode>)AddedBarcodes);
 			}
 			Close(false, CloseSource.Save);
 		}
