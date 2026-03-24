@@ -64,12 +64,12 @@ namespace Workwear.Views.Stock
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.collectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType == null)
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
 					ViewModel.SizeService.GetSize(viewModel.collectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.HeightType != null)
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
